@@ -1,0 +1,27 @@
+# Manual (or tag-triggered) publish of the web build to itch.io via butler.
+# One-time setup — see RELEASE-ANLEITUNG.md:
+#   1. Repository secret BUTLER_API_KEY  (itch.io → Settings → API keys)
+#   2. Repository variable ITCH_TARGET   (e.g.  deinname/grand-gambit:html5)
+name: Release to itch.io
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Push to itch.io
+        uses: yeslayla/butler-publish-itchio-action@v1.0.3
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: html5
+          ITCH_GAME: ${{ vars.ITCH_GAME }}
+          ITCH_USER: ${{ vars.ITCH_USER }}
+          PACKAGE: dist
