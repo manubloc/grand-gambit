@@ -14,8 +14,8 @@ const inner = (svg) => {
 };
 const gg = (svg) => (svg.match(/data-gg="([^"]+)"/) || [])[1];
 
-const piece = {}, boss = {}, scenery = {}; let crest = "";
-for (const [dir, kinds] of [["assets/pieces", true], ["assets/scenery", false]]) {
+const piece = {}, boss = {}, scenery = {}, icon = {}; let crest = "";
+for (const [dir, kinds] of [["assets/pieces", true], ["assets/scenery", false], ["assets/icons", false]]) {
   for (const f of readdirSync(dir)) {
     if (!f.endsWith(".svg")) continue;
     const svg = readFileSync(`${dir}/${f}`, "utf8");
@@ -27,6 +27,7 @@ for (const [dir, kinds] of [["assets/pieces", true], ["assets/scenery", false]])
     else if (type === "boss") boss[key] = body;
     else if (type === "crest") crest = body;
     else if (type === "scenery") scenery[key] = body;
+    else if (type === "icon") icon[key] = body;
   }
 }
 const J = (o) => JSON.stringify(o, null, 0);
@@ -38,5 +39,6 @@ export const PIECE_ART = ${J(piece)};
 export const BOSS_ART = ${J(boss)};
 export const CREST_ART = ${JSON.stringify(crest)};
 export const SCENERY_ART = ${J(scenery)};
+export const ICON_ART = ${J(icon)};
 `);
-console.log(`art: ${Object.keys(piece).length} pieces, ${Object.keys(boss).length} bosses, crest, ${Object.keys(scenery).length} scenery`);
+console.log(`art: ${Object.keys(piece).length} pieces, ${Object.keys(boss).length} bosses, crest, ${Object.keys(scenery).length} scenery, ${Object.keys(icon).length} icons`);

@@ -12,6 +12,7 @@ import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button } from "../primitives.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
+import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
@@ -197,13 +198,13 @@ const SlotGlyph = ({ kind, size = 26 }) => (
 );
 
 // Classic is fixed standard chess → only non-classic maps are editable.
-const EDITABLE_MAPS = MAPS.filter((m) => !m.classic);
+const FORMATION_MAPS = MAPS; // Klassik zuerst — sie ist die Referenz
 
 function FormationEditor({ profile, dispatch, t, en }) {
   const pieces = CHARACTER_LIST.filter((c) => c.kind !== "P" && isUnlocked(c, profile));
   const unlockedIds = pieces.map((c) => c.id);
 
-  const [mapId, setMapId] = useState(EDITABLE_MAPS[0].id); // default: Arena
+  const [mapId, setMapId] = useState(FORMATION_MAPS[0].id); // default: die Klassik-Karte
   const map = mapById(mapId);
   const required = map.formation.required;
   const flexNeed = map.formation.flex;
@@ -239,7 +240,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
 
   return <Panel>
     <div style={{ fontWeight: 800, marginBottom: 2 }}>{t("army.formation")}</div>
-    <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{t("army.formationHint")}</div>
+    <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
     {!map.classic && (
       <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
         border: `1px solid ${T.gold}44` }}>
@@ -267,12 +268,19 @@ function FormationEditor({ profile, dispatch, t, en }) {
 
     {/* map selector */}
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-      {EDITABLE_MAPS.map((m) => {
+      {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;
         return <button key={m.id} onClick={() => setMapId(m.id)}
           style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
             border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text }}>
-          {(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}
+          <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
+            overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
+            {Array.from({ length: 16 }).map((_, k) => (
+              <span key={k} style={{ width: 4.5, height: 4.5,
+                background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
+            ))}
+          </span>
+          {(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
         </button>;
       })}
     </div>
@@ -280,7 +288,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
       {draft.map((id, i) => {
         const open = pick === i;
-        return <button key={i} onClick={() => setPick(open ? null : i)}
+        return <button key={i} disabled={map.classic} onClick={() => setPick(open ? null : i)}
           style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
             display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0,
             background: open ? T.lime : T.bg2, border: `2px solid ${open ? T.lime : T.line}` }}>
@@ -350,7 +358,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
           const full = it.kind === "key" ? owned : owned >= (it.max || 99);
           const can = !full && (profile.gold || 0) >= it.gold;
           return <div key={it.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 19, width: 24, textAlign: "center" }}>{it.emoji}</span>
+            <span style={{ width: 24, display: "grid", placeItems: "center" }}><ItemIcon id={it.id} size={22} /></span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 800 }}>
                 {en ? it.nameEn : it.nameDe}

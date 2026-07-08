@@ -90,8 +90,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           background: `linear-gradient(148deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.14) 100%), ${dark ? sqD : sqL}`,
           boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.22)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
-          {isLast && <div style={{ position: "absolute", inset: 0, background: T.lime, opacity: i === lastMove.to ? 0.2 : 0.1 }} />}
-          {isLast && i === lastMove.from && <div style={{ position: "absolute", inset: "10%", border: `0.14em dashed ${T.gold}aa`, borderRadius: "18%", pointerEvents: "none" }} />}
+          {isLast && <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            background: i === lastMove.to
+              ? `radial-gradient(circle at 50% 52%, ${T.lime}59, ${T.lime}14 68%, transparent 78%)`
+              : `radial-gradient(circle at 50% 52%, ${T.gold}3d, transparent 66%)` }} />}
           {isLast && i === lastMove.to && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 2px ${T.gold}cc`, pointerEvents: "none" }} />}
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
@@ -129,15 +131,33 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
       </div>
+      {lastMove && !anim && lastMove.from !== lastMove.to && (() => {
+        const a = disp(lastMove.from), b = disp(lastMove.to);
+        return (
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
+            style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+            {Array.from({ length: 6 }).map((_, k) => {
+              const q = (k + 1) / 7;
+              return <circle key={k} cx={a.x + (b.x - a.x) * q} cy={a.y + (b.y - a.y) * q}
+                r={0.55 + q * 1.15} fill={T.gold} opacity={0.06 + q * 0.2} />;
+            })}
+          </svg>
+        );
+      })()}
       {anim && (() => {
         const a = disp(anim.from), b = disp(anim.to), at = anim.phase ? b : a;
         return (
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
-              style={{ position: "absolute", inset: 0, animation: "arrowFade .95s ease forwards" }}>
-              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={T.gold} strokeWidth="1.6"
-                strokeLinecap="round" strokeDasharray="3 2.2" opacity="0.9" vectorEffect="non-scaling-stroke" />
-              <circle cx={b.x} cy={b.y} r="2.6" fill="none" stroke={T.gold} strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
+              style={{ position: "absolute", inset: 0, animation: "arrowFade 1.05s ease forwards" }}>
+              {/* comet trail: fading, shrinking orbs from origin toward target */}
+              {Array.from({ length: 7 }).map((_, k) => {
+                const q = (k + 1) / 8;
+                return <circle key={k} cx={a.x + (b.x - a.x) * q} cy={a.y + (b.y - a.y) * q}
+                  r={0.7 + q * 1.5} fill={T.gold} opacity={0.10 + q * 0.34} />;
+              })}
+              <circle cx={b.x} cy={b.y} r="3.1" fill={T.gold} opacity="0.16" />
+              <circle cx={b.x} cy={b.y} r="1.5" fill={T.gold} opacity="0.55" />
             </svg>
             <div style={{ position: "absolute", left: `${at.l}%`, top: `${at.t}%`, width: `${100 / W}%`, height: `${100 / H}%`,
               transition: "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",

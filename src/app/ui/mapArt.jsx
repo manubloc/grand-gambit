@@ -189,7 +189,29 @@ export function buildCampaignScenery(nodes, millAt, th = LEAGUE_THEMES[2]) {
     return { x, y, s: smin + r() * (smax - smin), tone, snow: !!th.snow };
   };
   const farPines = scatter(th.far ?? 0, 1700, treeGen(0.45, 0.7));   // distant tree line fills the gaps
-  const pines = scatter(th.pines ?? 0, 3200, treeGen(0.8, 1.65));
+  // REAL woods: most trees grow in groves around shared centers — with a dark
+  // forest-floor blob underneath, each cluster reads as one mystical wood the
+  // trail cuts through, instead of lonely trees on a green lawn.
+  const groveCenters = scatter(Math.max(0, Math.round((th.pines ?? 0) / 22)), 900, () => {
+    const x = 40 + r() * (WMAP - 80), y = TOPPAD - 10 + r() * (HMAP - TOPPAD - 40);
+    return clear(x, y, 66) ? { x, y, rx: 46 + r() * 46, ry: 20 + r() * 16 } : null;
+  });
+  const floors = groveCenters.map((g) => ({ ...g, o: 0.16 + r() * 0.08 }));
+  const pines = [];
+  const gen = treeGen(0.8, 1.65);
+  for (const g of groveCenters) {
+    const n = 12 + Math.floor(r() * 10);
+    for (let i = 0; i < n && pines.length < (th.pines ?? 0); i++) {
+      const a = r() * Math.PI * 2, d = Math.pow(r(), 0.6);
+      const x = g.x + Math.cos(a) * g.rx * d, y = g.y + Math.sin(a) * g.ry * d + 4;
+      if (!clear(x, y, 34)) continue;
+      const t = gen(); if (!t) continue;
+      pines.push({ ...t, x, y, s: t.s * (1.05 - d * 0.35) });
+    }
+  }
+  // a few loners between the woods keep it organic
+  for (const t of scatter(Math.round((th.pines ?? 0) * 0.22), 900, gen)) pines.push(t);
+  pines.sort((a, b) => a.y - b.y); // painters order: back rows behind front rows
   const [leafyN, leafyCrown, leafyHi] = th.leafy || [0];
   const leafy = scatter(leafyN, 400, () => {
     const x = 20 + r() * (WMAP * 0.5), y = TOPPAD - 10 + r() * (HMAP - TOPPAD - 40);
@@ -262,7 +284,7 @@ export function buildCampaignScenery(nodes, millAt, th = LEAGUE_THEMES[2]) {
     return clear(x, y, 88) ? { x, y, s: 0.5 + r() * 0.5 } : null;
   });
   const oasis = th.oasis ? { x: LEFT + 7.2 * STEP, y: TOPPAD + 3.55 * LANE } : null;
-  return { pines, farPines, leafy, blossoms, rocks, ridges, clouds, cottages, fields, birds, river2, riverXAt,
+  return { pines, farPines, floors, leafy, blossoms, rocks, ridges, clouds, cottages, fields, birds, river2, riverXAt,
     mistsBack, mistsFront, wisps, crystals, deadTrees, stonesAt: (my.stones ? stonesAt : null), ruin: !!my.ruin,
     cacti, dunes, drifts, grass, waves, isles, oasis };
 }

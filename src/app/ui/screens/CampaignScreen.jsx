@@ -10,6 +10,7 @@ import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
+import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon } from "../icons.jsx";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse } from "../mapArt.jsx";
 
@@ -51,7 +52,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
   }
   const scenery = useScenery(th);
   const scrollRef = useRef(null);           // now the fixed VIEWPORT (no free scrolling)
-  const [zoom, setZoom] = useState(1);      // the wanderer decides where we look; you only zoom
+  const [zoom, setZoom] = useState(1.18);   // the wanderer decides where we look; you only zoom
   const [vw, setVw] = useState(720);
   useEffect(() => {
     const el = scrollRef.current;
@@ -134,7 +135,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
           const can = !itemOk && (profile.gold || 0) >= it.gold;
           return <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "9px 11px",
             background: "#8a6fb01a", border: "1.5px dashed #8a6fb0", borderRadius: T.radiusSm }}>
-            <span style={{ fontSize: 19 }}>{it.emoji}</span>
+            <ItemIcon id={it.id} size={22} />
             <div style={{ flex: 1, fontSize: 12.5 }}>
               <b>{itemOk ? "✅ " : ""}{t("camp.gateNeed", { item: en ? it.nameEn : it.nameDe })}</b>
               <div style={{ color: T.dim, fontSize: 11.5 }}>{en ? it.textEn : it.textDe}</div>
@@ -200,6 +201,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
             {scenery.clouds.map((c, i) => Cloud({ ...c, k: "cl" + i }))}
             {scenery.ridges.map((m, i) => RidgeCluster({ ...m, k: "ri" + i }))}
             {scenery.dunes.map((m, i) => Dune({ ...m, k: "du" + i }))}
+            {scenery.floors.map((f, i) => <ellipse key={"fl" + i} cx={f.x} cy={f.y + 6} rx={f.rx + 14} ry={f.ry + 7}
+              fill={MP.pineDark} opacity={f.o} />)}
             {scenery.drifts.map((m, i) => SnowDrift({ ...m, k: "sd" + i }))}
             {scenery.isles.map((m, i) => Isle({ ...m, k: "is" + i }))}
             {th.sea && CAMPAIGN.map((n, i) => Isle({ x: nx(n), y: ny(n) + 14, s: 1.05, k: "nis" + i }))}
@@ -305,7 +308,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
                     background: T.gold, color: "#17110a", fontSize: 10.5, fontWeight: 900, display: "flex", alignItems: "center",
                     justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>}
                   {st === "gated" && <span style={{ position: "absolute", bottom: -5, right: -6, fontSize: 13,
-                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{ITEMS[gateOf(n)?.item]?.emoji || "🔒"}</span>}
+                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={13} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : "🔒"}</span>}
                   {n.boss && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: -4, right: -4, width: 15, height: 15,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
                     border: "1.5px solid #efe9da", fontSize: 8.5 }}>☠</span>}
@@ -376,7 +379,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
       <div style={{ position: "absolute", right: 10, top: 10, zIndex: 6, display: "flex", gap: 6 }}>
         {[["−", -1], ["+", 1]].map(([lbl, d]) => (
           <button key={lbl} onClick={() => setZoom((z) => {
-            const steps = [0.72, 1, 1.35];
+            const steps = [0.9, 1.18, 1.5];
             const i = clamp(steps.findIndex((x) => Math.abs(x - z) < 0.01) + d, 0, steps.length - 1);
             return steps[i];
           })} style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.gold}77`,

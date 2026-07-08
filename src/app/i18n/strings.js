@@ -26,7 +26,7 @@ const DE = {
   "camp.intro": "Alles beginnt mit einer normalen Partie Schach. Dann erwachen die Figuren — und neue Arenen öffnen sich Etappe für Etappe.",
   "camp.play": "Spielen", "camp.replay": "Nochmal", "camp.cleared": "Geschafft", "camp.locked": "Gesperrt",
   "camp.reward": "Bonus", "camp.league": "Die Liga", "camp.boss": "Endboss", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
-  "army.formation": "Aufstellung", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
+  "army.formation": "Aufstellung", "army.classicHint": "Die klassische Schlacht — traditionelle Aufstellung, hier wird nichts verstellt.", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
 };
 const EN = {
@@ -54,7 +54,7 @@ const EN = {
   "camp.intro": "It all starts with an ordinary game of chess. Then the pieces awaken — and new arenas open stage by stage.",
   "camp.play": "Play", "camp.replay": "Replay", "camp.cleared": "Cleared", "camp.locked": "Locked",
   "camp.reward": "Bonus", "camp.league": "The League", "camp.boss": "Boss", "camp.unknown": "Movement unknown", "camp.back": "Back to campaign", "game.stageCleared": "Stage cleared!",
-  "army.formation": "Formation", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
+  "army.formation": "Formation", "army.classicHint": "The classic battle — traditional setup, nothing to rearrange here.", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
   "army.standard": "Standard", "army.flex": "Flex", "army.invalid": "Formation incomplete",
 };
 

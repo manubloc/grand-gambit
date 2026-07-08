@@ -30,6 +30,7 @@ function worldSvg(league) {
       </>}
       {sc.clouds.map((c, i) => Cloud({ ...c, k: "cl" + i }))}
       {sc.ridges.map((m, i) => RidgeCluster({ ...m, k: "ri" + i }))}
+      {sc.floors.map((f, i) => <ellipse key={"fl" + i} cx={f.x} cy={f.y + 6} rx={f.rx + 14} ry={f.ry + 7} fill={MP.pineDark} opacity={f.o} />)}
       {sc.dunes.map((m, i) => Dune({ ...m, k: "du" + i }))}
       {sc.drifts.map((m, i) => SnowDrift({ ...m, k: "sd" + i }))}
       {sc.isles.map((m, i) => Isle({ ...m, k: "is" + i }))}
