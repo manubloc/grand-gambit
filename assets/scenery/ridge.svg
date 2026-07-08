@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-34 -20 68 38" data-gg="scenery:ridge">
+<path d="M-30 14 L-18 -10 L-10 0 L-2 -16 L8 -2 L14 -12 L30 14 Z" fill="#6f7488" opacity=".75"></path><path d="M-24 14 L-12 -4 L-5 3 L4 -10 L12 2 L22 14 Z" fill="#8b90a1"></path><path d="M-2 -16 L1 -9.5 L3.6 -12 L6 -6 L1 -8 L-4.6 -10.6 Z" fill="#f2eee2" style="display:var(--caps, inline)"></path><path d="M-18 -10 L-15.6 -5 L-13.4 -7.2 L-11.6 -2.6 L-15 -5.4 L-19.8 -6.4 Z" fill="#f2eee2" opacity=".95" style="display:var(--caps, inline)"></path><path d="M4 -10 L6 -5.4 L8 -7.4 L9.6 -3.4 L5.4 -5.8 L1.6 -6.8 Z" fill="#f2eee2" opacity=".9" style="display:var(--caps, inline)"></path><ellipse cx="0" cy="14" rx="30" ry="3" fill="rgba(46,42,32,.14)"></ellipse>
+</svg>

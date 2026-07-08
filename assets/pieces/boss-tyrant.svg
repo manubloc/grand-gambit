@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 4 36 40" data-gg="boss:tyrant">
+<path d="M18 17 L19.5 11 L22 15 L24 9.5 L26 15 L28.5 11 L30 17 Z
+        M15 40 L16 20 L20 24 L24 19.5 L28 24 L32 20 L33 40 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none)"></path><circle cx="24" cy="21.4" r="1.4" style="fill:var(--accent, #e8c96a)"></circle><path d="M16.5 29 L14 34 M31.5 29 L34 34 M19 34.6 Q24 36.8 29 34.6" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--accent, #e8c96a)"></path>
+</svg>

@@ -1,0 +1,37 @@
+{
+  "name": "gambit",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "description": "GAMBIT \u2014 chess that levels up. Characters gain special moves and shields; new pieces unlock over time. Deterministic, UI-free core (command/event sim with replay) for cross-platform reuse.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:single": "vite build --config vite.single.config.js && node scripts/singlefile-iife.mjs",
+    "preview": "esbuild preview_assets.jsx --bundle --platform=node --jsx=automatic --outfile=.preview.mjs --format=esm --external:react --external:react-dom --log-level=silent && node .preview.mjs",
+    "test": "node test_core.mjs && node test_engine.mjs && node test_progression.mjs && node test_features.mjs && node test_maps.mjs && node test_boards.mjs && node test_combat.mjs && node test_boss.mjs && node test_net.mjs && npm run smoke",
+    "smoke": "esbuild smoke_render.jsx --bundle --platform=node --jsx=automatic --outfile=.smoke.mjs --format=esm --external:react --external:react-dom --log-level=silent && node .smoke.mjs",
+    "art": "node scripts/build-art.mjs",
+    "prebuild": "npm run art",
+    "prebuild:single": "npm run art",
+    "pretest": "npm run art",
+    "presmoke": "npm run art",
+    "prepreview": "npm run art",
+    "predev": "npm run art",
+    "map:svg": "node scripts/export-map.mjs",
+    "deploy:site": "node scripts/deploy-pages.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "happy-dom": "^20.10.6",
+    "jsdom": "^29.1.1",
+    "vite": "^5.4.10",
+    "vite-plugin-pwa": "^1.3.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

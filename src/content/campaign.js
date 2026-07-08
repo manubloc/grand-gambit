@@ -1,0 +1,93 @@
+// ── Campaign — a BRANCHING map to the League ─────────────────────────────────
+// The story starts as plain chess. After the awakening the road FORKS into
+// three paths — Blades, Magic, Order — each guarded by different end bosses.
+// Defeating a PIECE BOSS unlocks that piece for your army (the only way to get
+// new pieces; XP merely upgrades what you own). Paths reconverge, so nothing is
+// ever lost — but your route decides which pieces join you first.
+//
+// Node fields: col/row lay out the map (row 0 at the bottom, the League on
+// top). `next` lists forward edges. `boss` is either { piece: charId } (unlock
+// on kill) or { pure: bossId } (a monster from bosses.js). `tier` scales boss
+// stats for balance (1 easy … 4 final).
+export const CAMPAIGN = [
+  // ── Prologue ────────────────────────────────────────────────────────────────
+  { id: "n01", place: "Glanzfeste", storyDe: "Vor den Toren der Glanzfeste beginnt jede Legende mit einem einzigen Zug.", storyEn: "Before the gates of Gleamhold, every legend begins with a single move.", col: 2, row: 0, map: "classic", rules: "chess", difficulty: "easy",   bump: 0, next: ["n02"], tagDe: "Die Eröffnung", tagEn: "The opening", reward: { xp: 35 } },
+  { id: "n02", place: "Silbermühle", storyDe: "Ein alter Rivale wartet an der Silbermühle. Er kennt deine Eröffnungen — noch.", storyEn: "An old rival waits at the Silver Mill. He knows your openings — for now.", col: 2, row: 1, map: "classic", rules: "chess", difficulty: "normal", bump: 0, next: ["n03"], tagDe: "Der Rivale",    tagEn: "The rival",   reward: { xp: 50 } },
+  { id: "n03", place: "Vergessener Schrein", storyDe: "Im vergessenen Schrein erwacht die alte Magie: Figuren bluten, Figuren halten stand. Nichts ist mehr wie Schach.", storyEn: "In the forgotten shrine the old magic wakes: pieces bleed, pieces endure. Nothing is mere chess anymore.", col: 2, row: 2, map: "classic", rules: "hp",    difficulty: "easy",   bump: 0, next: ["a1", "b1", "c1"], boss: { pure: "b01" }, tier: 1, tagDe: "Das Erwachen", tagEn: "The awakening", reward: { xp: 60 } },
+
+  // ── Path of Blades (west): fast killers ─────────────────────────────────────
+  { id: "a1", place: "Nordwacht", storyDe: "Auf der Nordwacht flüstert der Wind von einem Späher, der niemals zweimal denselben Weg nimmt.", storyEn: "On the Northwatch the wind whispers of a scout who never takes the same path twice.", col: 0, row: 3, branch: "blades", map: "skirmish",  rules: "hp", difficulty: "easy",   bump: 0, next: ["a2", "g8"], boss: { piece: "hawk" },       tier: 1, reward: { xp: 65 } },
+  { id: "a2", place: "Schattenklippe", storyDe: "In der Schattenklippe wartet der Attentäter. Wer seine Sprünge überlebt, darf sie lernen.", storyEn: "In the Shadow Cliff waits the Assassin. Survive his leaps and you may learn them.", col: 0, row: 4, branch: "blades", map: "skirmish",  rules: "hp", difficulty: "normal", bump: 0, next: ["a3"], boss: { piece: "assassin" },   tier: 2, reward: { xp: 75 } },
+  { id: "a3", place: "Wolfspass", storyDe: "Der Wolfspass gehört dem Kundschafter — drei Felder weit, einen Herzschlag voraus.", storyEn: "The Wolf Pass belongs to the Pathfinder — three squares far, one heartbeat ahead.", col: 0, row: 5, branch: "blades", map: "courtyard", rules: "hp", difficulty: "normal", bump: 1, next: ["a4"], boss: { piece: "pathfinder" }, tier: 2, reward: { xp: 85 } },
+  { id: "a4", place: "Drachenhort", storyDe: "Im Drachenhort schlägt ein uraltes Herz. Sein Flügelschlag ignoriert jede Mauer.", storyEn: "In the Dragon Hoard beats an ancient heart. Its wings ignore every wall.", col: 0, row: 6, branch: "blades", map: "gauntlet",  rules: "hp", difficulty: "normal", bump: 1, next: ["a5"], boss: { piece: "dragon" },     tier: 3, reward: { xp: 95 } },
+  { id: "a5", place: "Klingenschlucht", storyDe: "Die Klingenschlucht spuckt den Zerreißer aus. Hier endet der Pfad der Klingen — oder du.", storyEn: "The Blade Gorge spits out the Render. Here the Path of Blades ends — or you do.", col: 0, row: 7, branch: "blades", map: "gauntlet",  rules: "hp", difficulty: "hard",   bump: 1, next: ["n16", "g4"], boss: { pure: "b22" },        tier: 3, reward: { xp: 110 } },
+
+  // ── Path of Magic (center): tricksters ──────────────────────────────────────
+  { id: "b1", place: "Sonnenheiligtum", storyDe: "Im Sonnenheiligtum übt ein Magier Licht zu Pfeilen zu biegen. Er zielt bereits.", storyEn: "In the Sun Sanctum a mage bends light into arrows. He is already aiming.", col: 2, row: 3, branch: "magic", map: "courtyard", rules: "hp", difficulty: "easy",   bump: 0, next: ["b2"], boss: { piece: "mage" },      tier: 1, reward: { xp: 65 } },
+  { id: "b2", place: "Alte Sternwarte", storyDe: "Die alte Sternwarte destilliert Tinkturen aus Mondlicht. Ihr Alchemist verkauft nichts — er testet.", storyEn: "The old observatory distils tinctures from moonlight. Its alchemist sells nothing — he tests.", col: 2, row: 4, branch: "magic", map: "courtyard", rules: "hp", difficulty: "normal", bump: 0, next: ["b3"], boss: { piece: "alchemist" }, tier: 2, reward: { xp: 75 } },
+  { id: "b3", place: "Hexenmoor", storyDe: "Im Hexenmoor tanzt die Hexerin im Zweierring. Wo sie landet, weiß nicht einmal sie.", storyEn: "In the Witch Fen the sorceress dances the ring of two. Where she lands, not even she knows.", col: 2, row: 5, branch: "magic", map: "skirmish",  rules: "hp", difficulty: "normal", bump: 1, next: ["b4"], boss: { piece: "sorceress" }, tier: 2, reward: { xp: 85 } },
+  { id: "b4", place: "Nebelmoor", storyDe: "Nebelmoor: Der Warlock erntet Leben wie Weizen. Deine Figuren sind die Saat.", storyEn: "Mist Fen: the warlock harvests life like wheat. Your pieces are the seed.", col: 2, row: 6, branch: "magic", map: "gauntlet",  rules: "hp", difficulty: "normal", bump: 1, next: ["b5"], boss: { piece: "warlock" },   tier: 3, reward: { xp: 95 } },
+  { id: "b5", place: "Geisterfeld", storyDe: "Auf dem Geisterfeld endet der Pfad der Magie in einem Schemen, der durch Reihen gleitet.", storyEn: "On the Ghost Field the Path of Magic ends in a wraith that glides through ranks.", col: 2, row: 7, branch: "magic", map: "gauntlet",  rules: "hp", difficulty: "hard",   bump: 1, next: ["n16"], boss: { pure: "b07" },       tier: 3, reward: { xp: 110 } },
+
+  // ── Path of Order (east): shields & banners ─────────────────────────────────
+  { id: "c1", place: "Waldfeste", storyDe: "Die Waldfeste fällt nie, sagt man. Ihr Schildträger möchte, dass das so bleibt.", storyEn: "The Forest Keep never falls, they say. Its guardian intends to keep it that way.", col: 4, row: 3, branch: "order", map: "skirmish",  rules: "hp", difficulty: "easy",   bump: 0, next: ["c2", "g5"], boss: { piece: "guardian" },   tier: 1, reward: { xp: 65 } },
+  { id: "c2", place: "Lindenhain", storyDe: "Im Lindenhain singt ein Barde von deinen Niederlagen. Zeit, die Ballade umzuschreiben.", storyEn: "In the Linden Grove a bard sings of your defeats. Time to rewrite the ballad.", col: 4, row: 4, branch: "order", map: "courtyard", rules: "hp", difficulty: "normal", bump: 0, next: ["c3", "g1"], boss: { piece: "bard" },       tier: 2, reward: { xp: 75 } },
+  { id: "c3", place: "Kronenstadt", storyDe: "Kronenstadt: Der Paladin duldet keinen falschen Zug — und definiert selbst, was falsch ist.", storyEn: "Crown City: the paladin tolerates no false move — and decides himself what is false.", col: 4, row: 5, branch: "order", map: "courtyard", rules: "hp", difficulty: "normal", bump: 1, next: ["c4"], boss: { piece: "paladin" },    tier: 2, reward: { xp: 85 } },
+  { id: "c4", place: "Eisenbollwerk", storyDe: "Das Eisenbollwerk verhört jeden Reisenden. Der Inquisitor stellt nur eine Frage: Schach?", storyEn: "The Iron Bulwark interrogates every traveler. The inquisitor asks only one question: check?", col: 4, row: 6, branch: "order", map: "gauntlet",  rules: "hp", difficulty: "normal", bump: 1, next: ["c5"], boss: { piece: "inquisitor" }, tier: 3, reward: { xp: 95 } },
+  { id: "c5", place: "Grenzwall", storyDe: "Am Grenzwall endet der Pfad der Ordnung an einem Bollwerk, das zurückschlägt.", storyEn: "At the Border Wall the Path of Order ends at a bulwark that strikes back.", col: 4, row: 7, branch: "order", map: "gauntlet",  rules: "hp", difficulty: "hard",   bump: 1, next: ["n16", "g7"], boss: { pure: "b06" },        tier: 3, reward: { xp: 110 } },
+
+  // ── The paths reconverge ────────────────────────────────────────────────────
+  { id: "n16", place: "Hohes Heiligtum", storyDe: "Im Hohen Heiligtum kreuzen sich alle Wege. Der Erzbischof segnet nur, wen er nicht besiegt.", storyEn: "In the High Sanctum all roads cross. The archbishop blesses only those he cannot beat.", col: 2, row: 8, map: "arena", rules: "hp", difficulty: "hard", bump: 1, next: ["n17"], boss: { piece: "archbishop" }, tier: 3, reward: { xp: 120 } },
+  { id: "n17", place: "Ratshalle", storyDe: "Die Ratshalle stimmt ab: Der Kanzler gegen dich, zehn gegen zehn, keine Enthaltungen.", storyEn: "The Council Hall votes: the chancellor against you, ten to ten, no abstentions.", col: 2, row: 9, map: "arena", rules: "hp", difficulty: "hard", bump: 1, next: ["d1", "e1", "g2"], boss: { piece: "chancellor" }, tier: 3, reward: { xp: 125 } },
+
+  // ── Fork of Power / Wisdom ──────────────────────────────────────────────────
+  { id: "d1", place: "Schmiedegrund", storyDe: "Im Schmiedegrund baut der Techniker Maschinen, die springen. Diplomatie ist keine davon.", storyEn: "In Forge Hollow the engineer builds machines that leap. Diplomacy is not one of them.", col: 1, row: 10, branch: "power",  map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["d2"], boss: { piece: "engineer" },   tier: 3, reward: { xp: 135 } },
+  { id: "d2", place: "Bannerhöhe", storyDe: "Auf der Bannerhöhe weht die Standarte des Gegners. Hol sie dir.", storyEn: "On Banner Height flies the enemy standard. Take it.", col: 1, row: 11, branch: "power",  map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["n20", "g6"], boss: { piece: "standard" },  tier: 4, reward: { xp: 145 } },
+  { id: "e1", place: "Verlassene Ruinen", storyDe: "In den verlassenen Ruinen plant der Stratege seit Jahren genau diese Partie.", storyEn: "In the abandoned ruins the strategist has planned exactly this match for years.", col: 3, row: 10, branch: "wisdom", map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["e2"], boss: { piece: "strategist" }, tier: 3, reward: { xp: 135 } },
+  { id: "e2", place: "Sturmfeste", storyDe: "Die Sturmfeste trägt ihren Namen zu Recht. Die Sturmkrähe wartet im Auge.", storyEn: "The Storm Keep earns its name. The Storm Crow waits in the eye.", col: 3, row: 11, branch: "wisdom", map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["n20", "g9"], boss: { pure: "b15" },        tier: 4, reward: { xp: 145 } },
+
+  // ── The final ascent ────────────────────────────────────────────────────────
+  { id: "n20", place: "Königssteig", storyDe: "Am Königssteig verteidigt die Amazone den letzten Aufstieg. Sie kämpft wie vier.", storyEn: "On the King's Climb the Amazon defends the final ascent. She fights like four.", col: 2, row: 12, map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["n21", "g3"], boss: { piece: "amazon" }, tier: 4, reward: { xp: 155 } },
+  { id: "n21", place: "Aschenpass", storyDe: "Der Aschenpass: Die Erzfeindin erinnert sich an jeden, der je gegen sie zog. Auch an dich.", storyEn: "Ash Pass: the Archnemesis remembers everyone who ever moved against her. You included.", col: 2, row: 13, map: "arena", rules: "hp", difficulty: "hard", bump: 3, next: ["n22"], boss: { pure: "b23" },     tier: 4, reward: { xp: 175 } },
+  { id: "n22", place: "Ligafeste", storyDe: "Die Ligafeste. Der Ligameister erhebt sich. Ein Brett, zwei Könige, eine Legende.", storyEn: "League Keep. The League Master rises. One board, two kings, one legend.", col: 2, row: 14, map: "arena", rules: "hp", difficulty: "hard", bump: 3, next: [],      boss: { pure: "b25" },     tier: 4, tagDe: "Die Liga", tagEn: "The League", reward: { xp: 250 } },
+  // ── league combos: item + companion piece open a world-specific site ────────
+  { id: "g4", place: "Seilbahnstation", storyDe: "Ein rostiges Bergwerk, eine Gondel im Wind. Der Techniker dreht am Werk, der Bergschlüssel öffnet die Winde — oben wartet ein Paladin im ewigen Eis.", storyEn: "A rusted mine, a gondola in the wind. The Engineer works the gears, the mountain key frees the winch — above waits a paladin in eternal ice.", col: -0.5, row: 8, league: 5, gate: { item: "bergschluessel", piece: "engineer" }, map: "gauntlet", rules: "hp", difficulty: "hard", bump: 2, next: [], boss: { piece: "paladin" }, tier: 3, reward: { xp: 150 } },
+  { id: "g5", place: "Schwarzes Tor", storyDe: "Das Schwarze Tor, von keiner Klinge geritzt. Schildträger und Kriegsaxt sprengen es — dahinter braut ein Hexer im Ödland seinen Zorn.", storyEn: "A gate of black iron, unscarred by any blade. Guardian and war axe breach it — beyond, a warlock brews his wrath in the badlands.", col: 4.62, row: 3, league: 6, gate: { item: "kriegsaxt", piece: "guardian" }, map: "gauntlet", rules: "hp", difficulty: "hard", bump: 2, next: [], boss: { piece: "warlock" }, tier: 3, reward: { xp: 155 } },
+  { id: "g6", place: "Karawanenrast", storyDe: "Nur ein Kamel trägt dich durch das Dürrgras bis zur Rast der Händler. Ihr Späher kennt jede Fährte — und verteidigt sie.", storyEn: "Only a camel carries you through the dry grass to the traders' rest. Their pathfinder knows every trail — and defends it.", col: -0.5, row: 12, league: 7, gate: { item: "kamel" }, map: "skirmish", rules: "hp", difficulty: "hard", bump: 2, next: [], boss: { piece: "pathfinder" }, tier: 4, reward: { xp: 170, gold: 60 } },
+  { id: "g7", place: "Gesprengter Pass", storyDe: "Der Canyonpass liegt unter Geröll begraben. Alchemist und Donnerpulver räumen ihn frei — im Staub dahinter glüht ein Drache.", storyEn: "The canyon pass lies buried under rubble. Alchemist and thunder powder clear it — in the dust beyond, a dragon glows.", col: 4.62, row: 8, league: 8, gate: { item: "donnerpulver", piece: "alchemist" }, map: "gauntlet", rules: "hp", difficulty: "hard", bump: 3, next: [], boss: { piece: "dragon" }, tier: 4, reward: { xp: 185 } },
+  { id: "g8", place: "Verborgener Schrein", storyDe: "Bei Nacht zeigt der Sternenkompass einen Pfad, den nur der Späher lesen kann. Am Schrein wacht eine Zauberin über das Wasser der Wüste.", storyEn: "By night the star compass reveals a path only the Pathfinder can read. At the shrine, a sorceress guards the desert's water.", col: -0.5, row: 3, league: 9, gate: { item: "sternenkompass", piece: "pathfinder" }, map: "arena", rules: "hp", difficulty: "hard", bump: 3, next: [], boss: { piece: "sorceress" }, tier: 4, reward: { xp: 190 }, grant: "potion" },
+  { id: "g9", place: "Ankerbucht", storyDe: "Nur wer einen Anker führt, darf hier festmachen — sagt der Kapitän. In der Bucht kreist ein Sturmfalke, den noch kein Netz hielt.", storyEn: "Only those who carry an anchor may moor here — so says the Captain. In the bay circles a storm hawk no net has ever held.", col: 4.62, row: 12, league: 10, gate: { item: "anker", piece: "captain" }, map: "arena", rules: "hp", difficulty: "hard", bump: 3, next: [], boss: { piece: "hawk" }, tier: 4, reward: { xp: 200 } },
+
+  // ── secret sites: item-gated side paths with heavyweight guardians ──────────
+  { id: "g1", place: "Schmugglersteig", storyDe: "Dornen dicht wie Mauern — nur ein Buschmesser öffnet den Steig. Dahinter hortet ein junger Drache gestohlene Fracht.", storyEn: "Thorns thick as walls — only a machete opens the trail. Beyond, a young dragon hoards stolen freight.", col: 4.62, row: 5, gate: "machete", map: "skirmish", rules: "hp", difficulty: "hard", bump: 1, next: ["c4"], boss: { piece: "dragon" }, tier: 2, reward: { xp: 90 } },
+  { id: "g2", place: "Vergessene Kluft", storyDe: "Über der Kluft hängt eine zerrissene Brücke. Mit Enterhaken hinüber — drüben wacht eine Amazone, die niemand je zweimal herausforderte.", storyEn: "A torn bridge dangles over the chasm. Swing across with a grapnel — an Amazon waits whom nobody ever challenged twice.", col: 4.62, row: 10, gate: "grapnel", map: "arena", rules: "hp", difficulty: "hard", bump: 2, next: ["n20"], boss: { piece: "amazon" }, tier: 4, reward: { xp: 160 } },
+  { id: "g3", place: "Sturmgrotte", storyDe: "Stockdunkel und voller Echos. Eine Fackel zeigt den Weg — und den Kanzler des Schattenhofs, der hier sein Exil verbringt.", storyEn: "Pitch dark and full of echoes. A torch shows the way — and the Shadow Court's chancellor serving his exile here.", col: 4.62, row: 13, gate: "torch", map: "gauntlet", rules: "hp", difficulty: "hard", bump: 3, next: ["n22"], boss: { piece: "chancellor" }, tier: 4, reward: { xp: 190 } },
+];
+
+
+export const CHAPTERS = [
+  { n: 1, fromRow: 0,  toRow: 2,  titleDe: "Der Aufbruch",     titleEn: "The Departure" },
+  { n: 2, fromRow: 3,  toRow: 7,  titleDe: "Die drei Pfade",   titleEn: "The Three Paths" },
+  { n: 3, fromRow: 8,  toRow: 11, titleDe: "Die Prüfungen",    titleEn: "The Trials" },
+  { n: 4, fromRow: 12, toRow: 14, titleDe: "Der Aufstieg",     titleEn: "The Ascent" },
+];
+export const chapterForRow = (row) => CHAPTERS.find((c) => row >= c.fromRow && row <= c.toRow) || CHAPTERS[0];
+
+export const nodeById = (id) => CAMPAIGN.find((n) => n.id === id) || null;
+
+export const BRANCHES = {
+  blades: { nameDe: "Pfad der Klingen",  nameEn: "Path of Blades",  icon: "fire" },
+  magic:  { nameDe: "Pfad der Magie",    nameEn: "Path of Magic",   icon: "water" },
+  order:  { nameDe: "Pfad der Ordnung",  nameEn: "Path of Order",   icon: "order" },
+  power:  { nameDe: "Pfad der Macht",    nameEn: "Path of Power",   icon: "power" },
+  wisdom: { nameDe: "Pfad der Weisheit", nameEn: "Path of Wisdom",  icon: "wisdom" },
+};
+
+import { bossById, bossName } from "./bosses.js";
+import { CHARACTERS } from "./characters.js";
+export const campaignTag = (node, en) => {
+  if (node.tagDe || node.tagEn) return en ? node.tagEn : node.tagDe;
+  if (node.boss?.piece) { const c = CHARACTERS[node.boss.piece]; return en ? c.nameEn : c.nameDe; }
+  if (node.boss?.pure) { const b = bossById(node.boss.pure); return b ? bossName(b, en) : node.id; }
+  return node.id;
+};

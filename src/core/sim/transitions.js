@@ -1,0 +1,162 @@
+import { other, WHITE, BLACK, BASE_HP, BASE_ATK } from "../domain/constants.js";
+import { cloneBoard, findKing } from "../domain/board.js";
+import { pseudoMoves, pieceMoves } from "../rules/moves.js";
+import { inCheck } from "../rules/attacks.js";
+
+export function cloneState(state) {
+  return {
+    board: cloneBoard(state.board),
+    w: state.w, h: state.h, holes: state.holes, // board geometry is immutable per match → shared by ref
+    rules: state.rules,
+    turn: state.turn,
+    captured: { w: [...state.captured.w], b: [...state.captured.b] },
+    history: state.history, // shared by reference; only real moves push to it
+    lastMove: state.lastMove,
+    moveCount: state.moveCount,
+    log: state.log,
+    seed: state.seed,
+  };
+}
+
+// In HP mode a promoting piece adopts the new kind's stats.
+function repromote(piece, kind) {
+  piece.kind = kind;
+  if (piece.maxHp != null) { piece.maxHp = BASE_HP[kind] || piece.maxHp; piece.hp = piece.maxHp; piece.atk = BASE_ATK[kind] || piece.atk; }
+}
+
+/**
+ * Apply a move and return a NEW state (immutable). Pass {record:true} for real
+ * moves so undo works; search uses record:false.
+ *
+ * CHESS rules: capturing removes the target and the attacker advances. A shielded
+ * target absorbs one hit (attacker bounces, shield consumed).
+ * HP rules: an attack deals the attacker's `atk` as damage. If it kills, the
+ * attacker advances onto the square; if the target survives, the attacker stays
+ * put (a "bump"). Either way the move costs a turn. Regicide ends the game.
+ */
+export function applyMove(state, move, opts) {
+  const record = !!(opts && opts.record);
+  const hp = state.rules === "hp";
+  const ns = cloneState(state);
+  const b = ns.board;
+  const piece = b[move.from];
+  if (!piece) return state;
+  const target = b[move.to];
+
+  let bounced = false, damaged = false, lethal = false, dmg = 0;
+
+  // ── spawn: the piece stays put and creates a pawn on an empty adjacent
+  // square (bosses with a spawn budget). Costs the turn like any move. ──
+  if (move.special === "spawn") {
+    if ((piece.spawnLeft || 0) > 0 && !target) {
+      const pawn = { id: (state.moveCount + 1) * 100000 + move.to, kind: "P", color: piece.color,
+        level: 1, abilities: [], shield: 0, used: {}, hasMoved: true };
+      if (hp) { pawn.maxHp = BASE_HP.P; pawn.hp = pawn.maxHp; pawn.atk = BASE_ATK.P; }
+      b[move.to] = pawn;
+      piece.spawnLeft -= 1;
+    }
+    ns.turn = other(state.turn);
+    ns.lastMove = { from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
+    ns.moveCount = state.moveCount + 1;
+    if (record) { ns.history = [...state.history, state]; }
+    return ns;
+  }
+
+  if (hp) {
+    const has = (id) => piece.abilities.includes(id);
+    if (target) {
+      const soak = target.abilities.includes("bulwark") ? 1 : 0;
+      dmg = Math.max(1, (piece.atk || 1) - soak);
+      target.hp -= dmg;
+      if (move.consumes) piece.used[move.consumes] = true;
+      if (has("lifesteal")) piece.hp = Math.min(piece.maxHp, piece.hp + Math.ceil(dmg / 2));
+      if (target.hp <= 0) {                       // kill
+        lethal = true;
+        ns.captured[piece.color].push(target.kind);
+        if (move.noAdvance) {                      // ranged kill: target gone, shooter stays
+          b[move.to] = null;
+        } else {                                   // melee kill: attacker advances
+          b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
+          if (move.promotion) repromote(piece, move.promotion);
+        }
+      } else {
+        damaged = true;                            // bump / ranged hit: attacker stays, target wounded
+      }
+    } else {                                       // quiet move
+      b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
+      if (move.consumes) piece.used[move.consumes] = true;
+      if (move.promotion) repromote(piece, move.promotion);
+    }
+    if (has("regen")) piece.hp = Math.min(piece.maxHp, (piece.hp || 0) + 1);
+  } else {
+    if (target && target.shield > 0) {            // chess: shield absorbs the hit
+      target.shield -= 1; bounced = true;
+      if (move.consumes) piece.used[move.consumes] = true;
+    } else {
+      if (target) ns.captured[piece.color].push(target.kind);
+      b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
+      if (move.consumes) piece.used[move.consumes] = true;
+      if (move.promotion) piece.kind = move.promotion;
+    }
+  }
+
+  const captured = hp ? lethal : (!!target && !bounced);
+  ns.turn = other(state.turn);
+  ns.moveCount = state.moveCount + 1;
+  ns.lastMove = {
+    from: move.from, to: move.to, color: piece.color, kind: move.kind,
+    capture: captured, bounced, damaged, dmg, lethal,
+    targetHpAfter: hp && target ? Math.max(0, target.hp) : null,
+    captured: captured ? target.kind : null,
+    hitKind: target ? target.kind : null,
+    hitColor: target ? target.color : null,
+    special: move.special || null, promotion: move.promotion || null,
+  };
+  if (record) ns.history = state.history.concat([state]);
+  return ns;
+}
+
+/** Legal moves. Chess: pseudo moves that don't leave your king in check.
+ *  HP: every pseudo move is legal (no check rule — you win by regicide). */
+export function legalMoves(state, color = state.turn) {
+  const pseudo = pseudoMoves(state, color);
+  if (state.rules === "hp") return pseudo;
+  const out = [];
+  for (let i = 0; i < pseudo.length; i++) {
+    const ns = applyMove(state, pseudo[i]);
+    if (!inCheck(ns, color)) out.push(pseudo[i]);
+  }
+  return out;
+}
+
+export function legalMovesFrom(state, sqIndex) {
+  const piece = state.board[sqIndex];
+  if (!piece || piece.color !== state.turn) return [];
+  const pseudo = pieceMoves(state, sqIndex);
+  if (state.rules === "hp") return pseudo;
+  return pseudo.filter((m) => !inCheck(applyMove(state, m), piece.color));
+}
+
+export function status(state) {
+  const color = state.turn;
+  if (state.rules === "hp") {
+    const wk = findKing(state.board, WHITE, state.w);
+    const bk = findKing(state.board, BLACK, state.w);
+    if (!wk || !bk) return { over: true, result: "regicide", winner: wk ? WHITE : BLACK, check: false };
+    const legal = legalMoves(state, color);
+    if (legal.length === 0) return { over: true, result: "draw", winner: null, check: false };
+    return { over: false, result: "ongoing", winner: null, check: false, legalCount: legal.length };
+  }
+  const legal = legalMoves(state, color);
+  const check = inCheck(state, color);
+  if (legal.length === 0)
+    return check
+      ? { over: true, result: "checkmate", winner: other(color), check: true }
+      : { over: true, result: "stalemate", winner: null, check: false };
+  return { over: false, result: "ongoing", winner: null, check, legalCount: legal.length };
+}
+
+export function undo(state) {
+  if (!state.history || state.history.length === 0) return state;
+  return state.history[state.history.length - 1];
+}

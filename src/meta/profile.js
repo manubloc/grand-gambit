@@ -1,0 +1,95 @@
+import { storage } from "../platform/index.js";
+
+const KEY = "profile";
+
+export function emptyStats() {
+  return { games: 0, wins: 0, losses: 0, draws: 0, captures: 0, promotions: 0, checkmates: 0, winStreak: 0, bestStreak: 0, flawlessQueenWins: 0, fastWins: 0 };
+}
+const rid = (n) => Array.from({ length: n }, () => "abcdefghjkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 31)]).join("");
+
+export function defaultProfile() {
+  return {
+    v: 2, name: "", lang: "de", pin: null,
+    xp: 0,            // spendable balance (upgrades cost XP)
+    xpEarned: 0,      // lifetime earnings (player level, achievements)
+    pieces: { levels: {} },              // purchased per-piece levels (default 1)
+    loadout: { formations: {} },         // per-map formations, keyed by map id
+    notices: {},                          // seen one-time notices (privacy, online consent)
+    gold: 0,
+    sp: 0,
+    claims: {},
+    items: { potion: 0 },
+    campaign: { league: 1, cleared: [], unlocked: [], dupes: {} }, // per-league clears; unlocks + duplication stars persist
+    online: { id: rid(6), secret: rid(18), privacy: "public", server: "" }, // multiplayer identity
+    difficulty: "easy",
+    stats: emptyStats(),
+  };
+}
+function migrate(p) {
+  const d = defaultProfile();
+  const lo = p.loadout || {};
+  const formations = { ...(lo.formations || {}) };
+  // legacy single 10-wide formation → the Arena map's slot
+  if (lo.formation && !formations.arena) formations.arena = lo.formation;
+  // v1 → v2: charXp auto-levels become purchased levels; any piece the player
+  // had progressed counts as unlocked; linear campaign progress maps onto the
+  // intro nodes of the new branching map.
+  const pieces = { levels: { ...((p.pieces && p.pieces.levels) || {}) } };
+  const unlocked = new Set((p.campaign && p.campaign.unlocked) || []);
+  if (p.charXp) {
+    for (const [id, xp] of Object.entries(p.charXp)) {
+      if (!xp) continue;
+      let lvl = 1; while (Math.round(40 * Math.pow(lvl, 1.7)) <= xp) lvl++;
+      pieces.levels[id] = Math.max(pieces.levels[id] || 1, lvl);
+      unlocked.add(id);
+    }
+  }
+  let cleared = (p.campaign && p.campaign.cleared) || [];
+  if (typeof cleared === "number") cleared = ["n01", "n02", "n03"].slice(0, Math.min(cleared, 3));
+  return {
+    ...d, ...p,
+    v: 2,
+    online: { ...d.online, ...(p.online || {}) },
+    gold: p.gold || 0,
+    sp: p.sp != null ? p.sp : Math.round((p.xp || 0) / 60),
+    claims: { ...(p.claims || {}) },
+    items: (() => {
+      const it = { ...d.items, ...(p.items || {}) };
+      if (it.potions != null) { it.potion = (it.potion || 0) + it.potions; delete it.potions; }
+      return it;
+    })(),
+    xpEarned: Math.max(p.xpEarned || 0, p.xp || 0),
+    pieces,
+    stats: { ...d.stats, ...(p.stats || {}) },
+    loadout: { formations, heroCols: { ...((p.loadout || {}).heroCols || {}) } },
+    notices: { ...(p.notices || {}) },
+    campaign: {
+      league: (p.campaign && p.campaign.league) || 1,
+      dupes: { ...((p.campaign && p.campaign.dupes) || {}) },
+      cleared: [...cleared],
+      unlocked: [...unlocked],
+    },
+  };
+}
+export async function loadProfile() {
+  try { const r = await storage.get(KEY, false); if (r && r.value) return migrate(JSON.parse(r.value)); } catch {}
+  return defaultProfile();
+}
+export async function saveProfile(p) {
+  try { await storage.set(KEY, JSON.stringify(p), false); } catch {}
+}
+
+// ── save export / import ─────────────────────────────────────────────────────
+/** Serialize the profile as a portable save file (versioned envelope). */
+export function serializeSave(profile) {
+  return JSON.stringify({ gg: "grand-gambit-save", v: profile.v || 2,
+    exported: new Date().toISOString(), profile }, null, 2);
+}
+/** Parse + validate a save file. Returns a migrated profile or throws. */
+export function parseSave(text) {
+  let data;
+  try { data = JSON.parse(text); } catch { throw new Error("no valid JSON"); }
+  if (!data || data.gg !== "grand-gambit-save" || !data.profile || typeof data.profile !== "object")
+    throw new Error("not a Grand Gambit save file");
+  return migrate(data.profile);
+}

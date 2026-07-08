@@ -1,0 +1,380 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useMedia } from "../../App.jsx";
+import { WHITE, BLACK, createGame, reduce, moveCommand, status, undo, encodeState } from "../../../core/index.js";
+import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
+import { buildArmy, buildAiArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked } from "../../../meta/index.js";
+import { chooseMove } from "../../../ai/index.js";
+import { T } from "../theme.js";
+import { stateHash } from "../../../platform/net.web.js";
+import { Button, Panel, Segmented, Chip } from "../primitives.jsx";
+import { BoardView } from "../board/BoardView.jsx";
+import { PieceGlyph } from "../board/PieceGlyph.jsx";
+
+function Tray({ kinds, color }) {
+  if (!kinds.length) return <span style={{ color: T.faint, fontSize: 13 }}>—</span>;
+  return <span style={{ display: "inline-flex", flexWrap: "wrap", fontSize: 18, lineHeight: 1 }}>
+    {kinds.map((k, i) => <span key={i} style={{ width: "1em", height: "1em", display: "inline-grid" }}><PieceGlyph piece={{ kind: k, color, level: 1, abilities: [], used: {}, shield: 0 }} /></span>)}
+  </span>;
+}
+
+// Total HP and total attack power per side — the at-a-glance force balance.
+function forces(board) {
+  const f = { w: { hp: 0, atk: 0 }, b: { hp: 0, atk: 0 } };
+  for (const p of board) if (p) { const s = f[p.color]; s.hp += p.hp || 0; s.atk += p.atk || 0; }
+  return f;
+}
+function ForceBadge({ hp, atk, neon, t }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "3px 9px", borderRadius: 999,
+      background: "rgba(8,6,15,.55)", border: `1px solid ${neon}66`, boxShadow: `0 0 10px ${neon}30`, fontSize: 12, fontWeight: 900, whiteSpace: "nowrap" }}>
+      <span style={{ color: neon }}>♥ {hp}</span>
+      <span style={{ width: 1, height: 11, background: `${neon}55` }} />
+      <span style={{ color: neon }} title={t("game.power")}>⚔ {atk}</span>
+    </span>
+  );
+}
+
+export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null }) {
+  const campaign = !!match;
+  const en = profile.lang === "en";
+  const myColor = pvp && pvp.color === "b" ? BLACK : WHITE;
+  const oppColor = myColor === WHITE ? BLACK : WHITE;
+  const hpOpen = hpUnlocked(profile);
+  const [difficulty, setDifficulty] = useState(profile.difficulty || "easy");
+  const [mapId, setMapId] = useState("classic"); // quick play starts on standard 8×8 chess
+  const [mode, setMode] = useState("chess");      // the story starts as chess — HP unlocks via the campaign
+  const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(mapId);
+  const rules = pvp ? "hp" : campaign ? match.rules : mode;
+  const depth = campaign ? match.depth : difficultyById(difficulty).depth;
+  const playerArmy = useMemo(() => buildArmy(profile, map), [profile, map]);
+  const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
+
+  const [state, setState] = useState(() => {
+    if (pvp) {
+      const white = myColor === WHITE ? playerArmy : pvp.oppArmy;
+      const black = myColor === WHITE ? pvp.oppArmy : playerArmy;
+      return createGame(white, black, { map, rules, seed: pvp.seed >>> 0 });
+    }
+    const seed = freshSeed();
+    const ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
+    return createGame(playerArmy, ai, { map, rules, seed, potions: rules === "hp" ? { w: profile.items?.potion || 0, b: 0 } : undefined });
+  });
+  const [desync, setDesync] = useState(false);
+  const wide = useMedia("(min-width: 980px)");
+  const [potionArm, setPotionArm] = useState(false);
+  const [showSetup, setShowSetup] = useState(false);
+  const potionsUsedRef = useRef(0);
+  function usePotion(i) {
+    setPotionArm(false);
+    setState((s) => {
+      const r = reduce(s, potionCommand(WHITE, i));
+      if (r.state !== s) potionsUsedRef.current++;
+      return r.state;
+    });
+  }
+  const [rated, setRated] = useState(null);          // { rating, delta } after a pvp match
+  const [rematch, setRematch] = useState("");        // "" | "wait" | "offer"
+  const [banner, setBanner] = useState(null);
+  const [intro, setIntro] = useState(() => !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
+  const [thinking, setThinking] = useState(false);
+  const finished = useRef(false);
+
+  function reset(diff, m = map, rl = rules) {
+    finished.current = false;
+    setBanner(null);
+    setThinking(false);
+    const seed = freshSeed();
+    const ai = campaign ? match.aiArmy : buildAiArmyForMap(diff, m, seed);
+    setState(createGame(buildArmy(profile, m), ai, { map: m, rules: rl, seed }));
+  }
+  function newGame() { reset(difficulty); }
+  function changeMap(id) {
+    setMapId(id);
+    reset(difficulty, mapById(id), rules);
+  }
+  function changeMode(m) {
+    if (m === "hp" && !hpOpen) return;
+    setMode(m);
+    reset(difficulty, map, m);
+  }
+  function changeDifficulty(d) {
+    setDifficulty(d);
+    dispatch({ type: "SET_DIFFICULTY", difficulty: d });
+    reset(d);
+  }
+
+  // End of game → derive the result purely from the command log (event-sourced).
+  function finish(result, reason) {
+    if (finished.current) return;
+    finished.current = true;
+    const foe = pvp ? pvp.oppArmy : campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, state.seed);
+    const summary = summarizeMatch(playerArmy, foe, state.seed, state.log, result, myColor, { map, rules });
+    summary.hpRules = rules === "hp";
+    summary.potionsUsed = potionsUsedRef.current;
+    const { profile: next, gained } = applyResult(profile, summary);
+    dispatch({ type: "REPLACE", profile: next });
+    if (campaign && result === "win") dispatch({ type: "CAMPAIGN_CLEAR", id: match.nodeId });
+    if (pvp && reason !== "resign" && reason !== "left") {
+      const winner = result === "draw" ? "draw" : result === "win" ? pvp.color : (pvp.color === "w" ? "b" : "w");
+      pvp.net.send({ t: "result", matchId: pvp.matchId, winner });
+    }
+    setBanner({ result, gained, reason });
+  }
+
+  // Advance the simulation with a single command (player or AI move).
+  function play(move) {
+    setState((s) => {
+      const cmd = moveCommand(move);
+      const next = reduce(s, cmd).state;
+      if (pvp) pvp.net.send({ t: "cmd", matchId: pvp.matchId, cmd, n: next.log.length, hash: stateHash(encodeState(next)) });
+      return next;
+    });
+  }
+
+  // Drive the AI and detect terminal positions after every committed state.
+  useEffect(() => {
+    if (finished.current) return;
+    const st = status(state);
+    if (st.over) {
+      if (st.winner === myColor) finish("win", st.result);
+      else if (st.winner === oppColor) finish("loss", st.result);
+      else finish("draw", st.result);
+      return;
+    }
+    if (!pvp && state.turn === BLACK) {
+      setThinking(true);
+      const id = setTimeout(() => {
+        const mv = chooseMove(state, depth);
+        setThinking(false);
+        if (mv) play(mv);
+      }, 260);
+      return () => clearTimeout(id);
+    }
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // PvP: apply the opponent's relayed commands; verify determinism via hashes.
+  useEffect(() => {
+    if (!pvp) return;
+    const u1 = pvp.net.on("cmd", (m) => {
+      setState((s) => {
+        const next = reduce(s, m.cmd).state;
+        if (m.hash && stateHash(encodeState(next)) !== m.hash) setDesync(true);
+        return next;
+      });
+    });
+    const u2 = pvp.net.on("oppResign", () => finish("win", "resign"));
+    const u3 = pvp.net.on("oppLeft", () => finish("win", "left"));
+    const u4 = pvp.net.on("rated", (m) => { setRated(m); dispatch({ type: "SET_ONLINE", online: { rating: m.rating } }); });
+    const u5 = pvp.net.on("rematchOffer", () => setRematch((r) => (r === "wait" ? r : "offer")));
+    return () => { u1(); u2(); u3(); u4(); u5(); };
+  }, [pvp, state.seed]); // eslint-disable-line
+
+  function doUndo() {
+    if (finished.current) return;
+    setState((s) => { let n = undo(s); if (n !== s && n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; } return n; });
+  }
+  function resign() { if (pvp) pvp.net.send({ t: "resign" }); finish("loss", "resign"); }
+
+  const myTurn = state.turn === myColor && !banner;
+  const st = status(state);
+  const hpMode = state.rules === "hp";
+  const F = hpMode ? forces(state.board) : null;
+  const statusText = banner ? "" : st.check ? t("game.check") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
+
+  return (
+    <div style={{ paddingBottom: 8, display: wide ? "grid" : "block",
+      gridTemplateColumns: wide ? "minmax(0,1.35fr) minmax(300px,1fr)" : undefined,
+      gap: wide ? 18 : 0, alignItems: "start" }}>
+      <div style={{ gridColumn: wide ? "1 / -1" : undefined, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        {pvp
+          ? <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={onExit} style={{ background: T.panel, border: `1px solid ${T.line}`, color: T.text, borderRadius: 8, padding: "5px 11px", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14 }}>←</button>
+              <Chip color={T.gold} bg={T.panel}>⚔ {pvp.oppName}</Chip>
+              <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
+              {desync && <Chip color={T.danger} bg={T.panel}>{t("online.desync")}</Chip>}
+            </div>
+          : campaign
+          ? <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={onExit} style={{ background: T.panel, border: `1px solid ${T.line}`, color: T.text, borderRadius: 8, padding: "5px 11px", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14 }}>←</button>
+              <Chip color={T.gold} bg={T.panel}>{campaignTag(match.node, en)}</Chip>
+              {match.boss && <Chip color={T.danger} bg={T.panel}>☠ {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
+            </div>
+          : <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>
+              {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
+            </div>}
+        <Tray kinds={state.captured.b} color="w" />
+      </div>
+
+      <div style={{ position: "relative", gridColumn: wide ? "1" : undefined }}>
+        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={oppColor} flip={myColor === BLACK} theme={map.theme}
+          fitVh={wide ? null : 232} pick={potionArm ? WHITE : null} onPick={usePotion} pov={myColor} />
+        {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
+          background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
+          borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap" }}>🧪 {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
+        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => setIntro(false)} />}
+        {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
+          pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
+          unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null} />}
+      </div>
+
+      <div style={{ gridColumn: wide ? "2" : undefined, position: wide ? "sticky" : "static", top: wide ? 18 : undefined,
+        background: wide ? T.panel : "none", border: wide ? `1px solid ${T.line}` : "none",
+        borderRadius: wide ? 18 : 0, padding: wide ? "14px 14px 12px" : 0, boxShadow: wide ? T.shadow : "none" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: wide ? "0 0 12px" : "8px 0 12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Chip color={T.limeInk} bg={T.lime}>{t("game.you")}</Chip>
+          {!pvp && hpMode && (state.potions?.w || 0) > 0 && !banner && (
+            <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
+              style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
+                border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
+                fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5 }}>
+              🧪 {state.potions.w}
+            </button>
+          )}
+          {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
+        </div>
+        <Tray kinds={state.captured.w} color="b" />
+      </div>
+
+      <div style={{ textAlign: "center", fontWeight: 800, fontSize: 16, minHeight: 22, color: st.check ? T.danger : T.text, marginBottom: 12 }}>
+        {statusText}
+      </div>
+
+      {!campaign && !pvp && (
+        <button onClick={() => setShowSetup((v) => !v)} style={{ width: "100%", textAlign: "left", background: "none",
+          border: "none", color: T.dim, fontFamily: "inherit", fontSize: 12.5, fontWeight: 800, cursor: "pointer",
+          padding: "0 2px 8px", letterSpacing: ".03em" }}>
+          {showSetup ? "▾" : "▸"} ⚙ {t("game.setup")}
+        </button>
+      )}
+      {showSetup && !campaign && !pvp && (
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.map")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+            {MAPS.map((m) => {
+              const open = mapUnlocked(profile, m.id);
+              const on = m.id === mapId;
+              return (
+                <button key={m.id} onClick={() => open && changeMap(m.id)} disabled={!open}
+                  title={open ? undefined : t("game.unlockHint")}
+                  style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
+                    border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel, color: on ? T.limeInk : open ? T.text : T.faint,
+                    opacity: open ? 1 : 0.55 }}>
+                  <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
+                    overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
+                    {Array.from({ length: 16 }).map((_, k) => (
+                      <span key={k} style={{ width: 4.5, height: 4.5,
+                        background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
+                    ))}
+                  </span>
+                  {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
+                </button>
+              );
+            })}
+          </div>
+          <Segmented value={mode} onChange={changeMode}
+            options={[
+              { value: "chess", label: t("mode.chess") },
+              { value: "hp", label: hpOpen ? t("mode.hp") : `🔒 ${t("mode.hp")}`, disabled: !hpOpen },
+            ]} />
+          {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
+          <div style={{ height: 8 }} />
+          <Segmented value={difficulty} onChange={changeDifficulty}
+            options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
+        </div>
+      )}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+        <Button variant="primary" onClick={pvp ? onExit : newGame}>{pvp ? t("common.back") : t("game.newgame")}</Button>
+        {!pvp && <Button variant="subtle" onClick={doUndo} disabled={!state.history.length || !!banner}>{t("game.undo")}</Button>}
+        <Button variant="danger" onClick={resign} disabled={!!banner}>{t("game.resign")}</Button>
+      </div>
+      </div>
+    </div>
+  );
+}
+
+
+// Pre-battle story card for campaign stages: chapter, place, a line of lore,
+// and the boss you are about to face.
+function StoryIntro({ node, boss, t, en, onBegin }) {
+  const ch = chapterForRow(node.row || 0);
+  const roman = ["I", "II", "III", "IV"][ch.n - 1];
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.74)", backdropFilter: "blur(2px)", borderRadius: 12, padding: 14, zIndex: 5 }}>
+      <div style={{ background: "#efe9da", color: "#2e2a20", borderRadius: 14, padding: "18px 18px 16px",
+        maxWidth: 340, width: "100%", boxShadow: "0 14px 34px rgba(0,0,0,.5)", border: "1px solid #c9bfa4", textAlign: "center" }}>
+        <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".22em", color: "#8a6f4d" }}>
+          {t("story.chapter", { r: roman }).toUpperCase()} · {(en ? ch.titleEn : ch.titleDe).toUpperCase()}
+        </div>
+        <div className="gg-serif" style={{ fontSize: 23, letterSpacing: ".04em", marginTop: 6 }}>{node.place}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "8px 0 10px" }}>
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+          <span style={{ width: 6, height: 6, background: "#8a6f4d", transform: "rotate(45deg)" }} />
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+        </div>
+        <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55 }}>
+          {en ? node.storyEn : node.storyDe}
+        </div>
+        {boss && <div style={{ marginTop: 12, fontSize: 12.5, fontWeight: 800, color: "#8e2f39" }}>
+          ☠ {boss.name[en ? "en" : "de"]}
+        </div>}
+        <button onClick={onBegin} style={{ marginTop: 14, width: "100%", padding: "11px 14px", borderRadius: 10,
+          background: "#1d2436", color: "#e9e2cf", fontWeight: 800, fontSize: 14.5, border: "none",
+          fontFamily: "inherit", cursor: "pointer", letterSpacing: ".04em" }}>{t("story.begin")} ›</button>
+      </div>
+    </div>
+  );
+}
+
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, unlockName = null, pvpInfo = null }) {
+  const win = banner.result === "win";
+  const color = win ? T.lime : banner.result === "draw" ? T.gold : T.danger;
+  const title = win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
+  const sub = campaign && win && unlockName ? t("game.unlocked", { name: unlockName })
+    : campaign && win ? t("game.stageCleared")
+    : banner.reason === "checkmate" ? t("game.checkmate")
+    : banner.reason === "regicide" ? t("game.regicide")
+    : (banner.reason === "stalemate" || banner.reason === "draw") ? t("game.stalemate")
+    : t("game.resigned");
+  const g = banner.gained;
+  const leveled = g.levelAfter > g.levelBefore;
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(8,10,14,.72)", backdropFilter: "blur(2px)", borderRadius: 12, padding: 14 }}>
+      <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", animation: "rise .25s ease", borderColor: color + "66" }}>
+        <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1 }}>{sub}</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
+          <Chip color={T.limeInk} bg={T.lime}>+{g.xp} {t("game.rewards")}</Chip>
+          {g.sp > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("banner.sp", { n: g.sp })}</Chip>}
+          {g.gold > 0 && <Chip color={"#17110a"} bg={"#e8c96a"}>🪙 +{g.gold}</Chip>}
+          {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
+        </div>
+        {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
+        {campaign ? (
+          win
+            ? <Button variant="primary" style={{ width: "100%" }} onClick={onExit}>{t("camp.back")}</Button>
+            : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <Button variant="primary" onClick={onNew}>{t("camp.replay")}</Button>
+                <Button variant="subtle" onClick={onExit}>{t("common.back")}</Button>
+              </div>
+        ) : (
+          pvpInfo
+          ? <div style={{ display: "grid", gap: 8 }}>
+              {pvpInfo.rated && <div style={{ fontSize: 13, color: T.gold, textAlign: "center", fontWeight: 800 }}>
+                {t("online.rated", { r: pvpInfo.rated.rating, d: (pvpInfo.rated.delta >= 0 ? "+" : "") + pvpInfo.rated.delta })}</div>}
+              {pvpInfo.rematch === "offer" && <div style={{ fontSize: 12.5, color: T.green, textAlign: "center" }}>⚔ {t("online.rematchOffer")}</div>}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <Button variant="primary" disabled={pvpInfo.rematch === "wait"} onClick={pvpInfo.onRematch}>
+                  {pvpInfo.rematch === "wait" ? t("online.rematchWait") : "⚔ " + t("online.rematch")}
+                </Button>
+                <Button variant="subtle" onClick={onNew}>{t("common.back")}</Button>
+              </div>
+            </div>
+          : <Button variant="primary" style={{ width: "100%" }} onClick={onNew}>{t("game.newgame")}</Button>
+        )}
+      </Panel>
+    </div>
+  );
+}

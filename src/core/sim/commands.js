@@ -1,0 +1,19 @@
+/**
+ * Commands are the only way to advance the simulation. They are serializable
+ * intents — exactly what you record for a replay, send across the wire for
+ * online play, or hand to a server for authoritative validation.
+ */
+export const COMMAND = {
+  MOVE: "MOVE",
+  RESIGN: "RESIGN",
+  POTION: "POTION",
+};
+
+/** Wrap a chosen move (from legalMoves/legalMovesFrom) as a MOVE command. */
+export const moveCommand = (move) => ({ type: COMMAND.MOVE, move });
+
+/** Spend one healing draught: +2 HP (up to max) on an own piece; ends the turn. */
+export const potionCommand = (color, target) => ({ type: COMMAND.POTION, color, target });
+
+/** `color` resigns; the other side wins. */
+export const resignCommand = (color) => ({ type: COMMAND.RESIGN, color });
