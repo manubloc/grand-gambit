@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
-import { buildArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked } from "../../../meta/index.js";
+import { buildArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
+import { SkillStar, GoldCoin } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 
 function Tray({ kinds, color }) {
@@ -121,6 +122,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     const summary = summarizeMatch(playerArmy, foe, state.seed, state.log, result, myColor, { map, rules });
     summary.hpRules = rules === "hp";
     summary.potionsUsed = potionsUsedRef.current;
+    // The purse (v0.5): every win pays gold — stages carry their own reward
+    // (bosses more, replays half), free play scales with difficulty.
+    summary.gold = result !== "win" ? 0
+      : campaign ? (match.firstClear ? (match.gold || 0) : Math.round((match.gold || 0) / 2))
+      : pvp ? 6
+      : winGold(difficulty);
     const { profile: next, gained } = applyResult(profile, summary);
     dispatch({ type: "REPLACE", profile: next });
     if (campaign && result === "win") dispatch({ type: "CAMPAIGN_CLEAR", id: match.nodeId });
@@ -183,6 +190,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (finished.current) return;
     setState((s) => { let n = undo(s); if (n !== s && n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; } return n; });
   }
+  const [armResign, setArmResign] = useState(false); // one tap arms, the second concedes
+  useEffect(() => {
+    if (!armResign) return;
+    const id = setTimeout(() => setArmResign(false), 3500);
+    return () => clearTimeout(id);
+  }, [armResign]);
   function resign() { if (pvp) pvp.net.send({ t: "resign" }); finish("loss", "resign"); }
 
   const myTurn = state.turn === myColor && !banner;
@@ -203,7 +216,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, overflow: "hidden" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
           {pvp ? <>
               <Chip color={T.gold} bg={T.panel}>⚔ {pvp.oppName}</Chip>
               <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
@@ -215,17 +228,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             </>
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
-        <div style={{ flex: 1 }} />
         {clockLbl && (
           <span className="gg-serif" style={pill({ cursor: "default",
             border: `1.5px solid ${clockHot ? T.danger : T.gold}55`, color: clockHot ? T.danger : T.gold,
             letterSpacing: ".06em", fontSize: 14 })}>⏳ {clockLbl}</span>
         )}
-        <button onClick={resign} disabled={!!banner || !!intro}
-          style={pill({ border: `1.5px solid ${T.danger}88`, color: T.danger, opacity: banner || intro ? 0.5 : 1,
-            cursor: banner || intro ? "default" : "pointer" })}>
-          ⚑ {t("game.resign")}
-        </button>
+        {armResign ? (
+          <span style={pill({ cursor: "default", border: `1.5px solid ${T.danger}`, color: T.danger, gap: 9 })}>
+            {t("game.confirmResign")}
+            <span onClick={resign} style={{ cursor: "pointer", fontWeight: 900, padding: "0 2px" }}>✓</span>
+            <span onClick={() => setArmResign(false)} style={{ cursor: "pointer", opacity: 0.75, padding: "0 2px" }}>✕</span>
+          </span>
+        ) : (
+          <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro}
+            style={pill({ border: `1.5px solid ${T.danger}88`, color: T.danger, opacity: banner || intro ? 0.5 : 1,
+              cursor: banner || intro ? "default" : "pointer" })}>
+            ⚑ {t("game.resign")}
+          </button>
+        )}
       </div>
 
       {/* enemy strip */}
@@ -284,6 +304,12 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   const [mapId, setMapId] = useState(initial?.mapId && mapUnlocked(profile, initial.mapId) ? initial.mapId : "classic");
   const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : "chess");
   const [difficulty, setDifficulty] = useState(initial?.difficulty || profile.difficulty || "easy");
+  const [lockHint, setLockHint] = useState(false); // tap on a locked map explains the lock (no hover on touch)
+  useEffect(() => {
+    if (!lockHint) return;
+    const id = setTimeout(() => setLockHint(false), 3200);
+    return () => clearTimeout(id);
+  }, [lockHint]);
   return (
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
@@ -293,9 +319,9 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
           const open = mapUnlocked(profile, m.id);
           const on = m.id === mapId;
           return (
-            <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
+            <button key={m.id} onClick={() => open ? setMapId(m.id) : setLockHint(true)}
               title={open ? undefined : t("game.unlockHint")}
-              style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 11px",
+              style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 11px",
                 border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2, color: on ? T.limeInk : open ? T.text : T.faint,
                 opacity: open ? 1 : 0.55 }}>
               <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
@@ -310,6 +336,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
           );
         })}
       </div>
+      {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}>🔒 {t("game.unlockHint")}</div>}
       <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
         options={[
           { value: "chess", label: t("mode.chess") },
@@ -387,8 +414,8 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
         <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
           <Chip color={T.limeInk} bg={T.lime}>+{g.xp} {t("game.rewards")}</Chip>
-          {g.sp > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("banner.sp", { n: g.sp })}</Chip>}
-          {g.gold > 0 && <Chip color={"#17110a"} bg={"#e8c96a"}>🪙 +{g.gold}</Chip>}
+          {g.sp > 0 && <Chip color={"#17110a"} bg={T.gold}><SkillStar size={12} /> {t("banner.sp", { n: g.sp })}</Chip>}
+          {g.gold > 0 && <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{g.gold}</Chip>}
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
         </div>
         {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}

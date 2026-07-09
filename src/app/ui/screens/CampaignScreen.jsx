@@ -7,13 +7,13 @@
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, clearedCount, campaignLength, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, clearedCount, campaignLength, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
-import { ElementIcon } from "../icons.jsx";
+import { ElementIcon, GoldCoin } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse } from "../mapArt.jsx";
 
@@ -265,7 +265,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     background: T.gold, color: "#17110a", fontSize: 8.5, fontWeight: 900, display: "flex", alignItems: "center",
                     justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>}
                   {st === "gated" && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11,
-                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : "🔒"}</span>}
+                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : gateOf(n)?.gold ? <GoldCoin size={11} style={{ verticalAlign: "-2px" }} /> : "🔒"}</span>}
                   {n.boss && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 12.5, height: 12.5,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
                     border: "1.5px solid #efe9da", fontSize: 7 }}>☠</span>}
@@ -394,6 +394,26 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           )}
           {status === "gated" ? (() => {
             const g = gateOf(node);
+            if (g.gold) {
+              const cost = tollCost(node, profile.campaign?.league || 1);
+              const have = profile.gold || 0;
+              const can = have >= cost;
+              return <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "9px 11px",
+                background: "#c9a45c26", border: "1.5px dashed #a9853f", borderRadius: 9 }}>
+                <GoldCoin size={22} />
+                <div style={{ flex: 1, fontSize: 12.5 }}>
+                  <b>{t("camp.tollNeed", { n: cost })}</b>
+                  <div style={{ color: can ? PP.dim : "#8e2f39", fontSize: 11.5 }}>
+                    {can ? t("camp.tollHint") : t("camp.tollShort", { have })}
+                  </div>
+                </div>
+                <Button variant={can ? "primary" : "subtle"} disabled={!can}
+                  onClick={() => dispatch({ type: "PAY_TOLL", id: node.id })}
+                  style={{ padding: "9px 14px", whiteSpace: "nowrap", ...(can ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
+                  🪙 {cost} · {t("camp.payToll")}
+                </Button>
+              </div>;
+            }
             const it = ITEMS[g.item];
             const pieceCh2 = g.piece ? CHARACTERS[g.piece] : null;
             const pieceOk = !g.piece || (profile.campaign?.unlocked || []).includes(g.piece);

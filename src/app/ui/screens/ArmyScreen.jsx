@@ -5,11 +5,12 @@ import { BASE_HP, BASE_ATK, SHIELD_HP, createGame } from "../../../core/index.js
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, MAX_PIECE_LEVEL,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap,
-  chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor,
+  chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented } from "../primitives.jsx";
+import { SkillStar, GoldCoin } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -276,9 +277,12 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
       {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;
-        return <button key={m.id} onClick={() => setMapId(m.id)}
-          style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
-            border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text }}>
+        const open = mapUnlocked(profile, m.id); // same locks as quick play — no phantom formations
+        return <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
+          title={open ? undefined : t("game.unlockHint")}
+          style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
+            border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2,
+            color: on ? T.limeInk : open ? T.text : T.faint, opacity: open ? 1 : 0.55 }}>
           <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
             overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
             {Array.from({ length: 16 }).map((_, k) => (
@@ -286,7 +290,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
                 background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
             ))}
           </span>
-          {(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
+          {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
         </button>;
       })}
     </div>
@@ -391,8 +395,8 @@ export function ArmyScreen({ profile, dispatch, t }) {
       background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
       <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
       <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-        <span style={{ fontWeight: 900, fontSize: 18, color: T.gold }}>⭐ {profile.sp || 0}</span>
-        <span style={{ fontWeight: 900, fontSize: 18, color: "#e8c96a" }}>🪙 {profile.gold || 0}</span>
+        <span style={{ fontWeight: 900, fontSize: 18, color: T.gold, display: "inline-flex", alignItems: "center", gap: 6 }}><SkillStar size={17} /> {profile.sp || 0}</span>
+        <span style={{ fontWeight: 900, fontSize: 18, color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 6 }}><GoldCoin size={17} /> {profile.gold || 0}</span>
       </span>
     </div>
     {/* three rooms instead of one endless scroll */}

@@ -26,7 +26,7 @@ export const ACHIEVEMENTS = [
  *  (deeper tiers pay more) plus a purse of gold derived from the tier's weight. */
 export const claimedTiers = (profile, achId) => (profile?.claims?.[achId]) || 0;
 export function claimReward(item, tierIdx) {
-  return { sp: tierIdx + 1, gold: Math.max(2, Math.round((item.ptsAt ? item.ptsAt[tierIdx] : 5) / 2)) };
+  return { sp: tierIdx + 1, gold: Math.max(5, Math.round((item.ptsAt ? item.ptsAt[tierIdx] : 5) * 0.8)) };
 }
 export function claimableCount(profile) {
   const { items } = evaluate(profile?.stats || {});

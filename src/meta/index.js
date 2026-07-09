@@ -12,13 +12,13 @@ export {
   FORMATION_REQUIRED, FORMATION_FLEX, FORMATION_FLEX_COUNT,
 } from "./leveling.js";
 export { ACHIEVEMENTS, evaluate, completedSet, claimedTiers, claimReward, claimableCount, claimAchievement } from "./achievements.js";
-export { applyResult } from "./rewards.js";
+export { applyResult, winGold } from "./rewards.js";
 export { emptyStats, defaultProfile, loadProfile, saveProfile, serializeSave, parseSave } from "./profile.js";
 export { newSession, applyEvents, summarize, summarizeMatch } from "./session.js";
 export {
   campaignLength, clearedCount, clearedIds, nodeStatus, currentNodeId, predsOf, nodeBossSpec,
   buildStageMatch, advanceCampaign, mapUnlocked, hpUnlocked, stageTimer,
-  leagueRewardMult, leagueBump, bossPieceFor, leagueFinalBossPiece, seaAccessible, nodeInLeague, gateOf, leagueNo,
+  leagueRewardMult, leagueBump, stageGold, tollCost, payToll, bossPieceFor, leagueFinalBossPiece, seaAccessible, nodeInLeague, gateOf, leagueNo,
 } from "./campaign.js";
 export { retinueScore, scoreBand } from "./rating.js";
 export { applySnapshot, readSnapshot, listRestorePoints, takeRestorePoint, BK_RECENT, BK_DAILY_DAYS, BK_MIN_GAP_MS } from "./backups.js";

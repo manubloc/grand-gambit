@@ -55,3 +55,47 @@ export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
   };
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>{shapes[id] || shapes.play}</svg>;
 }
+
+// ── Currency — the treasury's own coinage, drawn in-house. Real gold: light
+// falls from the upper left, facets break it, a glint crowns it. ─────────────
+export function SkillStar({ size = 18, style }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"
+      style={{ display: "inline-block", verticalAlign: "-0.14em", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))", ...style }}>
+      <defs>
+        <linearGradient id="ggStarG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f8e6ab" /><stop offset=".55" stopColor="#d9b565" /><stop offset="1" stopColor="#8a6d35" />
+        </linearGradient>
+      </defs>
+      <path d="M12 1.6 L14.9 8.5 L22.3 9.1 L16.7 14 L18.4 21.4 L12 17.4 L5.6 21.4 L7.3 14 L1.7 9.1 L9.1 8.5 Z"
+        fill="url(#ggStarG)" stroke="#6f5526" strokeWidth=".9" strokeLinejoin="round" />
+      <path d="M12 1.6 L12 17.4 L5.6 21.4 L7.3 14 L1.7 9.1 L9.1 8.5 Z" fill="#fff6d8" opacity=".22" />
+      <path d="M12 8.2 L13.2 11 L12 17.4 L10.8 11 Z" fill="#6f5526" opacity=".3" />
+      <circle cx="8.7" cy="6.9" r="1.05" fill="#fff8e0" opacity=".95" />
+    </svg>
+  );
+}
+
+export function GoldCoin({ size = 18, style }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"
+      style={{ display: "inline-block", verticalAlign: "-0.14em", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))", ...style }}>
+      <defs>
+        <radialGradient id="ggCoinG" cx=".35" cy=".28" r=".95">
+          <stop offset="0" stopColor="#f8e6ab" /><stop offset=".55" stopColor="#d9a94f" /><stop offset="1" stopColor="#8a6224" />
+        </radialGradient>
+      </defs>
+      <circle cx="12" cy="12" r="10.3" fill="url(#ggCoinG)" stroke="#6f5526" strokeWidth=".9" />
+      <circle cx="12" cy="12" r="9" fill="none" stroke="#fff3cf" strokeWidth=".7" strokeDasharray="1.2 2" opacity=".6" />
+      <circle cx="12" cy="12" r="7.4" fill="none" stroke="#7c5c22" strokeWidth=".8" opacity=".85" />
+      {/* embossed pawn: bright edge above, dark body below */}
+      <g transform="translate(0,.2)">
+        <path d="M12 5.9 a2.15 2.15 0 0 1 1.35 3.83 l1 4.57 h-4.7 l1 -4.57 A2.15 2.15 0 0 1 12 5.9 Z M9.3 15.6 h5.4 l.55 1.8 h-6.5 Z"
+          fill="#fff2c8" opacity=".55" transform="translate(-.45,-.45)" />
+        <path d="M12 5.9 a2.15 2.15 0 0 1 1.35 3.83 l1 4.57 h-4.7 l1 -4.57 A2.15 2.15 0 0 1 12 5.9 Z M9.3 15.6 h5.4 l.55 1.8 h-6.5 Z"
+          fill="#7c5c22" />
+      </g>
+      <ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.5" fill="#ffffff" opacity=".3" transform="rotate(-28 8.4 7.2)" />
+    </svg>
+  );
+}

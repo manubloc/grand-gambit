@@ -4,8 +4,18 @@
 import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../meta/index.js";
 import { T } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
-import { AchIcon } from "../icons.jsx";
+import { AchIcon, SkillStar, GoldCoin } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
+
+// Gold that reads as gold: gradient-filled serif numerals.
+const goldText = {
+  backgroundImage: "linear-gradient(168deg, #f8e6ab 8%, #d9b565 45%, #a17f3e 78%, #e9cf8a 100%)",
+  WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+};
+const cornerDiamond = (pos) => (
+  <span style={{ position: "absolute", width: 7, height: 7, transform: "rotate(45deg)",
+    background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588", ...pos }} />
+);
 
 export function AchievementsScreen({ profile, dispatch, t }) {
   const en = profile.lang === "en";
@@ -16,18 +26,44 @@ export function AchievementsScreen({ profile, dispatch, t }) {
   const wide = useMedia("(min-width: 900px)");
 
   return <div style={{ display: "grid", gap: 10, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
-    <Panel style={{ gridColumn: "1 / -1", textAlign: "center", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})` }}>
-      <div className="gg-serif" style={{ fontSize: 12, color: T.dim, textTransform: "uppercase", letterSpacing: ".22em" }}>{t("ach.wallet")}</div>
-      <div style={{ display: "flex", justifyContent: "center", gap: 22, alignItems: "baseline", margin: "4px 0 8px" }}>
-        <span className="gg-serif" style={{ fontSize: 40, fontWeight: 700, color: T.gold, textShadow: `0 0 22px ${T.gold}44` }}>⭐ {profile.sp || 0}</span>
-        <span className="gg-serif" style={{ fontSize: 26, fontWeight: 700, color: "#e8c96a" }}>🪙 {profile.gold || 0}</span>
+    {/* ── the vault: a gilded frame, a passing gleam, real coinage ── */}
+    <div style={{ gridColumn: "1 / -1", position: "relative", borderRadius: T.radius, padding: 1.5,
+      background: "linear-gradient(135deg, #6f5526, #f0d68a 28%, #8a6d35 52%, #e9cf8a 76%, #6f5526)",
+      boxShadow: `${T.shadow}, 0 0 26px #d9b56522` }}>
+      <style>{`@keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 55%, 100% { transform: translateX(320%) skewX(-18deg); } }`}</style>
+      <div style={{ position: "relative", overflow: "hidden", borderRadius: T.radius - 2, textAlign: "center",
+        padding: "18px 16px 15px",
+        background: `radial-gradient(130% 100% at 50% 0%, #2b2410 0%, ${T.panel2} 46%, ${T.panel} 100%)` }}>
+        <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%", pointerEvents: "none",
+          background: "linear-gradient(90deg, transparent, rgba(255,240,190,.09), transparent)",
+          animation: "ggShine 4.6s ease-in-out infinite" }} />
+        {cornerDiamond({ top: 7, left: 7 })}{cornerDiamond({ top: 7, right: 7 })}
+        {cornerDiamond({ bottom: 7, left: 7 })}{cornerDiamond({ bottom: 7, right: 7 })}
+        <div className="gg-serif" style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".3em",
+          ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("ach.wallet")}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "9px 12%" }}>
+          <span style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, #8a6d35)" }} />
+          <span style={{ width: 5, height: 5, background: "#d9b565", transform: "rotate(45deg)" }} />
+          <span style={{ flex: 1, height: 1, background: "linear-gradient(90deg, #8a6d35, transparent)" }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 26, alignItems: "center", margin: "2px 0 10px" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+            <SkillStar size={30} />
+            <span className="gg-serif" style={{ fontSize: 42, fontWeight: 700, lineHeight: 1, ...goldText }}>{profile.sp || 0}</span>
+          </span>
+          <span style={{ width: 1, height: 34, background: "#8a6d3566" }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+            <GoldCoin size={28} />
+            <span className="gg-serif" style={{ fontSize: 34, fontWeight: 700, lineHeight: 1, ...goldText }}>{profile.gold || 0}</span>
+          </span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
+          <Chip color={T.dim} bg={T.panel2}>{tiersDone} / {tiersTotal} {t("ach.tiers")}</Chip>
+          {claimable > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("ach.claimable", { n: claimable })}</Chip>}
+        </div>
+        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 9 }}><SkillStar size={11} /> {t("ach.spHint")}</div>
       </div>
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
-        <Chip color={T.dim} bg={T.panel2}>{tiersDone} / {tiersTotal} {t("ach.tiers")}</Chip>
-        {claimable > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("ach.claimable", { n: claimable })}</Chip>}
-      </div>
-      <div style={{ fontSize: 11.5, color: T.faint, marginTop: 8 }}>{t("ach.spHint")}</div>
-    </Panel>
+    </div>
 
     {items.map((it) => {
       const done = it.nextN === null;
@@ -70,9 +106,10 @@ export function AchievementsScreen({ profile, dispatch, t }) {
                 const r = claimReward(it, cl);
                 return <button onClick={() => dispatch({ type: "CLAIM_ACH", id: it.id })}
                   style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12, borderRadius: 999, padding: "7px 13px",
-                    border: "none", background: T.gold, color: "#17110a", cursor: "pointer",
-                    boxShadow: `0 0 12px ${T.gold}66`, whiteSpace: "nowrap" }}>
-                  {t("ach.claim")} · ⭐{r.sp} 🪙{r.gold}
+                    border: "none", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
+                    boxShadow: `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa`, whiteSpace: "nowrap",
+                    display: "inline-flex", alignItems: "center", gap: 5 }}>
+                  {t("ach.claim")} · <SkillStar size={12} />{r.sp} <GoldCoin size={12} />{r.gold}
                 </button>;
               })()}
             </div>

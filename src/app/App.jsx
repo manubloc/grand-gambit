@@ -1,8 +1,9 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, takeRestorePoint, serializeSave } from "../meta/index.js";
+import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
+import { SERVER_URL } from "./config.js";
 import { playerXpProgress } from "../meta/index.js";
 import { T } from "./ui/theme.js";
 import { Splash, Wordmark } from "./ui/Brand.jsx";
@@ -56,6 +57,7 @@ function reducer(state, a) {
     case "UNLOCK_ABILITY": return unlockAbility(state, a.id, a.ability);
     case "RESPEC": return respecPiece(state, a.id);
     case "CLAIM_ACH": return claimAchievement(state, a.id);
+    case "PAY_TOLL": return payToll(state, a.id);
     case "BUY_ITEM": return buyItem(state, a.id);
     case "BUY_POTION": return buyItem(state, "potion");
     case "GIFT_GOLD": return { ...state, gold: (state.gold || 0) + (a.n || 0) };
@@ -71,8 +73,8 @@ function reducer(state, a) {
 
 const TABS = [
   { id: "play", icon: "♟", key: "nav.play" },
-  { id: "army", icon: "🛡️", key: "nav.army" },
-  { id: "ach", icon: "🏆", key: "nav.ach" },
+  { id: "army", icon: "⚜️", key: "nav.army" },
+  { id: "ach", icon: "👑", key: "nav.ach" },
   { id: "profile", icon: "👤", key: "nav.profile" },
 ];
 
@@ -162,7 +164,7 @@ export default function App() {
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: T.dim, marginBottom: 3 }}>
           <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
         </div>
-        <Bar pct={prog.pct} height={5} />
+        <Bar pct={Math.max(prog.pct, 0.035)} height={6} color={T.gold} />
       </div>
     </div>
   );
@@ -171,7 +173,7 @@ export default function App() {
     <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
       ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
       {!inMatch && (
         <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -183,7 +185,7 @@ export default function App() {
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.dim, marginBottom: 4 }}>
               <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
             </div>
-            <Bar pct={prog.pct} height={5} />
+            <Bar pct={Math.max(prog.pct, 0.035)} height={6} color={T.gold} />
           </div>
         </aside>
       )}
@@ -196,7 +198,7 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
       {!inMatch && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,
@@ -275,8 +277,8 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
       background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
       borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
       <div style={{ position: "absolute", right: -6, top: -4, opacity: 0.9 }}>{art}</div>
-      <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold }}>{title}</div>
-      <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4 }}>{sub}</div>
+      <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 64 }}>{title}</div>
+      <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 64 }}>{sub}</div>
       {extra && <div style={{ fontSize: 12.5, color: T.text, marginTop: 10 }}>{extra}</div>}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "8px 14px",
         borderRadius: T.radiusSm, background: T.lime, color: T.limeInk, fontWeight: 800, fontSize: 13.5 }}>{cta} ›</div>
@@ -287,11 +289,13 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
       <Card title={t("camp.title")} sub={t("hub.campSub")} onGo={onCamp} cta={t("hub.continue")}
         extra={<>
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
-          <b style={{ color: T.gold }}>{done} / {total}</b> · {t("hub.at")}: <b>{cur?.place}</b></>}
+          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
+          <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
         art={<CampArt />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<QuickArt />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
+        extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
         art={<OnlineArt />} />
     </div>
   );
@@ -321,7 +325,7 @@ function Lock({ t, profile, onUnlock }) {
 
 // ── first-run game intro (once): what Grand Gambit IS and what makes it
 // special — a parchment card in the world's own voice. ───────────────────────
-function GameIntro({ t, dispatch }) {
+function GameIntro({ t, dispatch, onStart }) {
   const Row = ({ icon, children }) => (
     <div style={{ display: "flex", gap: 10, alignItems: "flex-start", textAlign: "left" }}>
       <span style={{ fontSize: 17, width: 24, textAlign: "center", flex: "0 0 auto" }}>{icon}</span>
@@ -346,7 +350,7 @@ function GameIntro({ t, dispatch }) {
           <Row icon="⭐">{t("intro.p2")}</Row>
           <Row icon="🗺">{t("intro.p3")}</Row>
         </div>
-        <button onClick={() => dispatch({ type: "SET_NOTICE", key: "intro" })}
+        <button onClick={() => { dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart(); }}
           style={{ marginTop: 14, width: "100%", padding: "12px 14px", borderRadius: 10, background: "#1d2436",
             color: "#e9e2cf", fontWeight: 800, fontSize: 14.5, border: "none", fontFamily: "inherit",
             cursor: "pointer", letterSpacing: ".04em" }}>{t("intro.ok")} ›</button>

@@ -2,7 +2,7 @@
 
 ## Was ist das
 Story-Taktik-Schach-RPG als PWA. React 18 + Vite 5, plain JS ESM, Node 22.
-Kern deterministisch & UI-frei (core/content/meta/ai/app/platform), 234 Tests
+Kern deterministisch & UI-frei (core/content/meta/ai/app/platform), 235 Tests
 (`npm test`), 115 KB gzip. Alle Grafiken (26 Figuren, 6 Bosse, Wappen,
 27 Landschafts-Bausteine, 12 Item-Icons) sind editierbare SVGs unter assets/
 → `npm run art` (läuft via pre-Hooks automatisch). Doku: README, assets/README,
@@ -21,7 +21,7 @@ RELEASE-ANLEITUNG, ACCOUNTS-ANLEITUNG, CHANGELOG, **UMBAU-PLAN.md (= nächste Au
 2. Sandbox: clone nach /tmp mit `https://x-access-token:${GH_TOKEN}@github.com/...`,
    Projekt per **tar-Pipe** überlagern (rsync existiert nicht!), Excludes:
    node_modules dist dist-single .git server/data.json server/backups assets/map-export.
-3. `npm test` vorher (234 erwartet), commit, push → Cloudflare baut selbst.
+3. `npm test` vorher (235 erwartet), commit, push → Cloudflare baut selbst.
 4. Verifizieren: Service Worker cached! Neue Version am besten über die
    frische Deployment-Preview-URL (hash.grand-gambit.pages.dev) prüfen oder
    Seite zweimal laden. Versions-Anzeige: Profil unten "v0.2.x".

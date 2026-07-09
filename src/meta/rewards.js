@@ -2,7 +2,9 @@ import { spForXpJump, playerLevelForXp } from "./leveling.js";
 import { completedSet } from "./achievements.js";
 
 const XP = { win: 18, draw: 7, loss: 3, perCapture: 1, checkmate: 8, promotion: 5 };
-const GOLD = { win: 1, draw: 0, loss: 0 };
+const GOLD = { win: 2, draw: 1, loss: 0 };
+/** Free-play purse per win, scaled by the difficulty you dared. */
+export const winGold = (difficulty) => ({ easy: 4, normal: 7, hard: 11 }[difficulty] || 4);
 
 /**
  * Apply a finished match to the profile. Pure: returns a new profile plus a
@@ -38,7 +40,7 @@ export function applyResult(profile, summary) {
   const spGain = spForXpJump(beforeXp, p.xpEarned);
   p.sp = (p.sp || 0) + spGain;
   p.xp = p.xpEarned; // legacy mirror: XP is no longer spendable
-  const goldGain = GOLD[summary.result] || 0;
+  const goldGain = (GOLD[summary.result] || 0) + (summary.result === "win" ? (summary.gold || 0) : 0);
   p.gold = (p.gold || 0) + goldGain;
   if (summary.potionsUsed) {
     const items = { ...(p.items || {}) };

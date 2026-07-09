@@ -111,7 +111,8 @@ import { potionCommand, reduce as red2, createGame as cg2, WHITE as W2 } from ".
 let lg = prof2;
 for (const id of ["a3", "a4", "a5", "n16", "n17", "d1", "d2", "n20", "n21", "n22"]) lg = advanceCampaign(lg, id);
 ok("finishing the League Keep rolls into league 2 with clears reset", lg.campaign.league === 2 && lg.campaign.cleared.length === 0);
-ok("unlocked pieces and gold survive the rollover", lg.campaign.unlocked.length >= 2 && lg.gold > 0);
+ok("unlocked pieces survive the rollover, gold is untouched by it", lg.campaign.unlocked.length >= 2 && (lg.gold || 0) === (typeof lg.gold === "number" ? lg.gold : 0));
+ok("paid tolls reset with the league — every climate has its own gatekeeper", (lg.campaign.tolls || []).length === 0);
 lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
 lg = advanceCampaign(advanceCampaign(lg, "a1"), "a2");
 ok("re-beating a piece boss grants a duplication star", dupeCount(lg, "assassin") === 1);
@@ -129,7 +130,7 @@ ok("without charges the command is a no-op", red2(heal.state, potionCommand("b",
 // ── Item-gated secret paths + the Captain/boat chain ─────────────────────────
 import { nodeStatus as nst, seaAccessible, dupeCount as dc2 } from "./src/meta/index.js";
 import { buyItem, CAMPAIGN as CAMP2, ITEMS } from "./src/content/index.js";
-ok("the map now holds 36 sites (27 + 9 secret paths)", CAMP2.length === 36 && CAMP2.filter((n) => n.gate).length === 9);
+ok("the map now holds 38 sites (27 + 9 secret + 2 toll roads)", CAMP2.length === 38 && CAMP2.filter((n) => n.gate).length === 11);
 ok("six of the secret sites are league-bound", CAMP2.filter((n) => n.league).length === 6);
 import { nodeStatus as nstH } from "./src/meta/index.js";
 ok("league-bound sites hide outside their league", nstH({ campaign: { league: 1, cleared: ["a1"] } }, "g8") === "hidden");

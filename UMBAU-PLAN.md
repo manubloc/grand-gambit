@@ -20,7 +20,9 @@ Sichtung gern nachziehen.
 Aufstellung (Brett+Heldenposition) · Ausrüstung (Shop) · Charaktere (Level+Fähigkeiten).
 Kein Endlos-Scroll mehr.
 
-## C) Währungs-SVGs + zentrale Ressourcen-Leiste
+## C) Währungs-SVGs + zentrale Ressourcen-Leiste — ✅ UMGESETZT (v0.5.0)
+
+Gezeichneter Skillpunkt-Stern + geprägte Goldmünze (icons.jsx) ersetzen die Emojis in Schatzkammer, Hofstaat-Guthaben, Banner, Claim-Buttons und Karten-Medaillons. Guthaben sichtbar in Hofstaat + Schatzkammer-Kopf.
 Eigene gezeichnete Icons (assets/icons, Muster wie Items): gold (Münze mit ♟-Prägung),
 skillpunkt (Stern/Siegel), xp (aufsteigender Funke). Überall wo gekauft wird:
 fixe Leiste oben mit aktuellen Beständen; jeder Preis mit Icon.
@@ -51,3 +53,7 @@ Performance-Rating aus Ergebnissen gegen bekannte KI-Stärke ableitbar.
 - Schnellspiel-Setup vorgelagert (Karte/Modus/Schwierigkeit vor Start)
 - Zeitdruck ab Liga 5 (pure Bosse: Gesamtzeit · Elite-Bosse bump≥2: Zug-Limit) — stageTimer() in meta
 - Spiel-Intro beim ersten Start (Pergament-Karte)
+
+## G) UX-Review-Batch + Gold-Ökonomie — ✅ UMGESETZT (v0.5.0)
+
+Hofstaat/Schatzkammer-Renames, pompöse Schatzkammer (Goldrahmen, Glanz-Sweep, Gradient-Serifen), Gold pro Sieg sichtbar im Banner (Etappen-Beutel, Endboss-Aufschlag, Replays halb, Schnellspiel 4/7/11), Zollwege Nebelfähre + Zollbrücke (Zoll pro Liga, Schatz > Zoll), Claims 80 % der Stufenpunkte, Aufgeben-Confirm, Intro-CTA → Kampagne, Online „Bald verfügbar", Aufstellungs-Locks, Hub-Stationszeile + Balken, Lock-Tap-Hinweis, Level-Leiste, zentrierte Match-Chips. Ökonomie-Invariante als Test (Liga 1: 1015 vs. 845).

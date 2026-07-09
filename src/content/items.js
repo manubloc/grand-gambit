@@ -1,4 +1,4 @@
-// Equipment & expedition gear — bought with gold in the retinue's supply
+// Equipment & expedition gear — bought with gold in the court's supply
 // chest. Two flavors: CONSUMABLES burn per use (draughts), KEYS are owned
 // once and forever — they unlock hidden paths on the campaign map, and one
 // of them (the boat, together with the Captain) opens the Endless Sea.
@@ -30,8 +30,8 @@ export const ITEMS = {
   bergschluessel: {
     id: "bergschluessel", emoji: "🗝", kind: "key", gold: 55,
     nameDe: "Bergschlüssel", nameEn: "Mountain key",
-    textDe: "Löst die Winde der Seilbahnstation im Hochgebirge (Liga V) — ein Techniker im Gefolge wartet das Werk.",
-    textEn: "Frees the winch of the cable-car station in the High Mountains (League V) — an Engineer in your retinue services the gears.",
+    textDe: "Löst die Winde der Seilbahnstation im Hochgebirge (Liga V) — ein Techniker im Hofstaat wartet das Werk.",
+    textEn: "Frees the winch of the cable-car station in the High Mountains (League V) — an Engineer in your court services the gears.",
   },
   kriegsaxt: {
     id: "kriegsaxt", emoji: "🪓", kind: "key", gold: 75,

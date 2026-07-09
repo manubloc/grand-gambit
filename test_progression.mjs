@@ -100,5 +100,42 @@ ok("buildStageMatch carries the clock", (() => {
   return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2("n03", dp2()).timer === null;
 })());
 
+// ── the purse (v0.5): visible gold per win, tolls, richer claims ─────────────
+import { stageGold, tollCost, payToll, winGold, nodeStatus as ns2, claimReward as cr2, evaluate as ev2 } from "./src/meta/index.js";
+import { CAMPAIGN as CAMP3, ITEM_LIST as IL3 } from "./src/content/index.js";
+
+// end bosses simply carry more gold
+ok("stage gold grows down the road and peaks at the League Keep",
+  stageGold(nb2("n22"), 1) > stageGold(nb2("n03"), 1) && stageGold(nb2("n03"), 1) > stageGold(nb2("n01"), 1));
+ok("pure monster bosses pay a premium over plain sites",
+  stageGold(nb2("n03"), 1) - stageGold(nb2("n02"), 1) >= 8);
+ok("league scaling multiplies the purse", stageGold(nb2("n22"), 3) === Math.round(stageGold(nb2("n22"), 1) * 2));
+ok("quick-play purses scale with difficulty", winGold("easy") < winGold("normal") && winGold("normal") < winGold("hard"));
+
+// tolls: reachable but gated until paid; paying opens the way for this league
+const tp0 = { ...dp2(), gold: 500, campaign: { league: 1, cleared: ["n01", "n02", "n03", "a1", "a2", "a3"], unlocked: [] } };
+ok("the Mist Ferry is reachable but wants its toll", ns2(tp0, "z1") === "gated");
+ok("toll cost scales with the league", tollCost(nb2("z1"), 1) === 40 && tollCost(nb2("z1"), 3) === 80);
+const tpPoor = payToll({ ...tp0, gold: 10 }, "z1");
+ok("too little gold: the ferryman does not row", tpPoor.gold === 10 && !(tpPoor.campaign.tolls || []).includes("z1"));
+const tp1 = payToll(tp0, "z1");
+ok("paying the toll opens the way and empties the purse accordingly",
+  tp1.gold === 500 - 40 && ns2(tp1, "z1") === "available");
+ok("paying twice is a no-op", payToll(tp1, "z1") === tp1);
+ok("toll sites reward more than they cost", CAMP3.filter((n) => n.gate?.gold).every((n) => (n.reward?.gold || 0) > n.gate.gold));
+
+// richer claims: gold = max(5, 80% of the tier's points)
+const evItems = ev2({ wins: 5 }).items;
+const winsIt = evItems.find((i) => i.id === "wins");
+ok("claims pay a fatter purse (80% of tier points, min 5)",
+  cr2(winsIt, 0).gold === 5 && cr2(winsIt, 5).gold === 160);
+
+// the big invariant: league 1 first-clear income comfortably covers every key item
+const l1Income = CAMP3.filter((n) => !n.league).reduce((a, n) => a + stageGold(n, 1), 0);
+const keyCost = IL3.filter((i) => i.kind === "key").reduce((a, i) => a + i.gold, 0);
+const tolls1 = CAMP3.filter((n) => n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
+ok("league 1 income covers all keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
+  l1Income > (keyCost + tolls1) * 1.1);
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

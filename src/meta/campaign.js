@@ -24,17 +24,42 @@ export const predsOf = (id) => PREDS[id] || [];
 export const leagueNo = (league) => ((Math.max(1, league || 1) - 1) % 10) + 1;
 /** League-bound sites (the combo paths) only exist in their own climate. */
 export const nodeInLeague = (node, league) => !node.league || node.league === leagueNo(league);
-/** Gates come as "item" or { item, piece } — normalize. */
+/** Gates come as "item", { item, piece } or { gold } (a toll) — normalize. */
 export const gateOf = (node) => !node?.gate ? null
-  : typeof node.gate === "string" ? { item: node.gate, piece: null }
-  : { item: node.gate.item, piece: node.gate.piece || null };
+  : typeof node.gate === "string" ? { item: node.gate, piece: null, gold: null }
+  : { item: node.gate.item || null, piece: node.gate.piece || null, gold: node.gate.gold || null };
 export const gateSatisfied = (profile, node) => {
   const g = gateOf(node);
   if (!g) return true;
+  if (g.gold) return (profile?.campaign?.tolls || []).includes(node.id);
   if (!hasItem(profile, g.item)) return false;
   if (g.piece && !isUnlocked(CHARACTERS[g.piece], profile)) return false;
   return true;
 };
+
+/** Gold a stage pays on a FIRST clear — the deeper the road and the bigger
+ *  the boss, the heavier the purse. End bosses simply carry more gold.
+ *  Scales with the league; replays pay half (handled by the caller). */
+export const stageGold = (node, league = 1) =>
+  Math.round((5 + 2 * (node.row || 0) + (node.boss ? 6 : 0) + (node.boss?.pure ? 6 : 0) + (node.reward?.gold || 0)) * leagueRewardMult(league));
+
+/** Tolls scale with the league — every climate has its own gatekeeper. */
+export const tollCost = (node, league = 1) => {
+  const g = gateOf(node);
+  return g?.gold ? Math.round(g.gold * leagueRewardMult(league)) : 0;
+};
+/** Pay a toll gate: gold changes hands, the path opens (for this league). */
+export function payToll(profile, id) {
+  const node = nodeById(id);
+  const g = gateOf(node);
+  if (!g?.gold) return profile;
+  const paid = profile.campaign?.tolls || [];
+  if (paid.includes(id)) return profile;
+  const cost = tollCost(node, profile.campaign?.league || 1);
+  if ((profile.gold || 0) < cost) return profile;
+  return { ...profile, gold: (profile.gold || 0) - cost,
+    campaign: { ...(profile.campaign || {}), tolls: [...paid, id] } };
+}
 
 export function nodeStatus(profile, id) {
   const node = nodeById(id);
@@ -110,6 +135,8 @@ export function buildStageMatch(id, profile = null) {
     depth: node.depth || d.depth,
     aiArmy,
     timer: stageTimer(node, lg),
+    gold: stageGold(node, lg),
+    firstClear: profile ? nodeStatus(profile, id) === "available" : true,
     reward: node.reward || { xp: 0 },
   };
 }
@@ -122,7 +149,8 @@ export function advanceCampaign(profile, id) {
   const league = profile.campaign?.league || 1;
   const mult = leagueRewardMult(league);
   const bonus = Math.round((node.reward?.xp || 0) * mult);
-  const goldGain = Math.round((5 + 2 * node.row + (node.boss ? 6 : 0) + (node.reward?.gold || 0)) * mult);
+  // NOTE (v0.5): stage gold is granted through applyResult (visible in the
+  // result banner) — advanceCampaign only handles progress, XP and recruits.
   const unlocked = new Set(profile.campaign?.unlocked || []);
   const dupes = { ...(profile.campaign?.dupes || {}) };
   const bossPiece = node.boss ? bossPieceFor(node, league) : null;
@@ -147,11 +175,10 @@ export function advanceCampaign(profile, id) {
     xp: xpEarned,
     sp: (profile.sp || 0) + spGain,
     xpEarned,
-    gold: (profile.gold || 0) + goldGain,
     stats,
     campaign: finished
-      ? { league: league + 1, cleared: [], unlocked: [...unlocked], dupes }
-      : { league, cleared: [...clearedIds(profile), id], unlocked: [...unlocked], dupes },
+      ? { league: league + 1, cleared: [], unlocked: [...unlocked], dupes, tolls: [] }
+      : { league, cleared: [...clearedIds(profile), id], unlocked: [...unlocked], dupes, tolls: profile.campaign?.tolls || [] },
   };
 }
 
