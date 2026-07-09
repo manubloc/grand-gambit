@@ -1,8 +1,10 @@
-// Campaign — a HORIZONTAL illustrated journey. The Gleamhold stands on the
-// left, the crimson LIGA keep on the far right; the dotted trail winds through
-// four chapters of parchment landscape (forest → moors → highlands → ash).
-// The five branch lanes run as vertical offsets; the map scrolls sideways and
-// auto-centers on your current waypoint.
+// Campaign — a HORIZONTAL illustrated journey, now a full-screen WINDOW onto
+// the world: the map IS the screen (100dvh minus the app header), every piece
+// of UI floats above it. The Gleamhold stands on the left, the crimson LIGA
+// keep on the far right; the dotted trail winds through four chapters of
+// parchment landscape. The wanderer is the hero — the camera follows him, the
+// medallions are waypoints (small), and the node detail lives in a parchment
+// panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
 import { nodeStatus, currentNodeId, clearedCount, campaignLength, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf } from "../../../meta/index.js";
@@ -12,10 +14,18 @@ import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon } from "../icons.jsx";
+import { useMedia } from "../../App.jsx";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse } from "../mapArt.jsx";
 
 // ── geometry (pixels; shared with previews via mapArt.GEO) ───────────────────
 const { STEP, LANE, LEFT, TOPPAD, WMAP, HMAP, nx, ny } = GEO;
+
+// v0.3 map immersion: medallions ~30% smaller (46 → 32), wanderer ~40% larger
+// (34×36 → 48×50) — he is the hero, the stations are just waypoints.
+const MEDAL = 32, MEDAL_ART = 22, HIT = 44;
+// parchment palette for the embedded node panel — map-world UI, not app chrome
+const PP = { bg: "linear-gradient(170deg, #f4eee0, #ece4cf)", bg2: "#e7dfc9", line: "#c9bfa4",
+  ink: MP.ink, dim: "#6f6752", chipInk: "#4a4433", green: "#3e7d47" };
 
 function useScenery(th) {
   return useMemo(() => {
@@ -26,22 +36,25 @@ function useScenery(th) {
   }, [th]);
 }
 
-const Swords = ({ c = MP.ivory }) => (
-  <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 5 L17 17 M19 5 L7 17 M5 5 L8 5 M5 5 L5 8 M19 5 L16 5 M19 5 L19 8 M8.4 15.6 L6 20 M15.6 15.6 L18 20" stroke={c} strokeWidth="1.9" strokeLinecap="round" fill="none" /></svg>
+const Swords = ({ c = MP.ivory, size = 16 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size}><path d="M5 5 L17 17 M19 5 L7 17 M5 5 L8 5 M5 5 L5 8 M19 5 L16 5 M19 5 L19 8 M8.4 15.6 L6 20 M15.6 15.6 L18 20" stroke={c} strokeWidth="1.9" strokeLinecap="round" fill="none" /></svg>
 );
-const CrownIc = ({ c = "#f2d98c" }) => (
-  <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 17 L5.2 8.5 L9 12 L12 6.5 L15 12 L18.8 8.5 L20 17 Z" fill={c} /><path d="M5.5 19.5 L18.5 19.5" stroke={c} strokeWidth="2" strokeLinecap="round" /></svg>
+const CrownIc = ({ c = "#f2d98c", size = 16 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size}><path d="M4 17 L5.2 8.5 L9 12 L12 6.5 L15 12 L18.8 8.5 L20 17 Z" fill={c} /><path d="M5.5 19.5 L18.5 19.5" stroke={c} strokeWidth="2" strokeLinecap="round" /></svg>
 );
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+const CAM_EASE = "cubic-bezier(.45,.05,.35,1)";
 
-export function CampaignScreen({ profile, dispatch, t, onStart }) {
+export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const en = profile.lang === "en";
+  const wide = useMedia("(min-width: 900px)");
   const league = profile.campaign?.league || 1;
   const th = themeForLeague(league);
   const mult = leagueRewardMult(league);
   const [sel, setSel] = useState(() => currentNodeId(profile));
   const [token, setToken] = useState(() => ({ at: currentNodeId(profile), moving: false }));
+  const [panelOpen, setPanelOpen] = useState(true);
   const walkT = useRef(null);
   function walkTo(id) {
     const stT = nodeStatus(profile, id);
@@ -51,19 +64,21 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
     walkT.current = setTimeout(() => setToken({ at: id, moving: false }), 760);
   }
   const scenery = useScenery(th);
-  const scrollRef = useRef(null);           // now the fixed VIEWPORT (no free scrolling)
-  const [zoom, setZoom] = useState(1.18);   // the wanderer decides where we look; you only zoom
-  const [vw, setVw] = useState(720);
+  // the viewport: fills the whole screen below the header; we measure it and
+  // fit-scale the map so the parchment always covers it (no letterboxing)
+  const vpRef = useRef(null);
+  const [vp, setVp] = useState({ w: 720, h: 560 });
   useEffect(() => {
-    const el = scrollRef.current;
+    const el = vpRef.current;
     if (!el) return;
-    const measure = () => setVw(el.clientWidth || 720);
+    const measure = () => { const w = el.clientWidth, h = el.clientHeight; if (w > 0 && h > 0) setVp({ w, h }); };
     measure();
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
     ro?.observe(el);
     window.addEventListener("resize", measure);
     return () => { ro?.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
+  const [zi, setZi] = useState(0); // zoom step on top of the cover-fit scale
   const cur = currentNodeId(profile);
   const node = nodeById(sel);
   const status = nodeStatus(profile, sel);
@@ -75,12 +90,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
 
   // camera target = the Grand Gambit's position (he leads, the map follows)
   const camNode = nodeById(token.at) || nodeById(cur);
-  const viewH = Math.round(HMAP * Math.min(zoom, 1));
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const camX = WMAP * zoom <= vw ? -(vw - WMAP * zoom) / 2
-    : clamp(nx(camNode) * zoom - vw * 0.46, 0, WMAP * zoom - vw);
-  const camY = HMAP * zoom <= viewH ? 0
-    : clamp(ny(camNode) * zoom - viewH * 0.5, 0, HMAP * zoom - viewH);
+  const fit = Math.max(vp.h / HMAP, vp.w / WMAP);       // cover the viewport
+  const z = fit * [1, 1.3, 1.65][zi];
+  const camX = clamp(nx(camNode) * z - vp.w * 0.46, 0, Math.max(0, WMAP * z - vp.w));
+  const camY = clamp(ny(camNode) * z - vp.h * 0.5, 0, Math.max(0, HMAP * z - vp.h));
   // fog of war: everything past the frontline stays a blurred rumour until
   // the league's end boss falls — the map never spoils the road ahead
   const frontierX = useMemo(() => {
@@ -92,91 +106,30 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
     return fx + 88;
   }, [profile]);
 
-  return (
-    <div style={{ padding: "0 0 96px", maxWidth: "100%", margin: "0 auto" }}>
-      {/* sticky detail card */}
-      <div style={{ position: "sticky", top: 8, zIndex: 6, background: T.panel, border: `1px solid ${T.line}`,
-        borderRadius: T.radius, boxShadow: T.shadow, padding: "12px 14px", marginBottom: 12 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-          <div className="gg-serif" style={{ fontSize: 19, color: T.gold, letterSpacing: ".04em" }}>{node?.place}</div>
-          <div style={{ fontSize: 11, color: T.dim }}>{t("camp.sites", { a: clearedCount(profile), b: campaignLength(profile) })}</div>
-        </div>
-        {node?.storyDe && <div className="gg-serif" style={{ fontSize: 12.5, color: T.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
-          {en ? node.storyEn : node.storyDe}</div>}
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 9 }}>
-          <Chip color={T.text} bg={T.panel2}>{mapById(node.map)[en ? "nameEn" : "nameDe"]}</Chip>
-          <Chip color={T.text} bg={T.panel2}>{t("mode." + node.rules)}</Chip>
-          <Chip color={T.text} bg={T.panel2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
-          <Chip color={T.limeInk} bg={T.lime}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
-          <Chip color={"#17110a"} bg={"#e8c96a"}>🪙 +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
-        </div>
-        {boss && (
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
-            background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
-            <div style={{ width: 40, height: 40, flex: "0 0 auto" }}>
-              <PieceArt kind={boss.kind} art={boss.art} fill={unlockCh ? "#c9a45c" : "#242d44"} rim={unlockCh ? "#f0dfae" : "#93a0bb"}
-                detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12.5, fontWeight: 800, color: T.danger }}>☠ {t("camp.boss")}: <span style={{ color: T.text }}>{boss.name[en ? "en" : "de"]}</span></div>
-              <div style={{ fontSize: 12, color: T.dim, marginTop: 2 }}>
-                ♥ {boss.hp} · ⚔ {boss.atk}{unlockCh ? <> · <span style={{ color: T.gold }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
-                {!known && <> · {t("camp.unknown")}</>}
-              </div>
-            </div>
-          </div>
-        )}
-        {status === "gated" ? (() => {
-          const g = gateOf(node);
-          const it = ITEMS[g.item];
-          const pieceCh2 = g.piece ? CHARACTERS[g.piece] : null;
-          const pieceOk = !g.piece || (profile.campaign?.unlocked || []).includes(g.piece);
-          const itemOk = hasItem(profile, g.item);
-          const can = !itemOk && (profile.gold || 0) >= it.gold;
-          return <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "9px 11px",
-            background: "#8a6fb01a", border: "1.5px dashed #8a6fb0", borderRadius: T.radiusSm }}>
-            <ItemIcon id={it.id} size={22} />
-            <div style={{ flex: 1, fontSize: 12.5 }}>
-              <b>{itemOk ? "✅ " : ""}{t("camp.gateNeed", { item: en ? it.nameEn : it.nameDe })}</b>
-              <div style={{ color: T.dim, fontSize: 11.5 }}>{en ? it.textEn : it.textDe}</div>
-              {pieceCh2 && <div style={{ fontSize: 11.5, marginTop: 3, color: pieceOk ? T.green : T.danger }}>
-                {pieceOk ? "✅" : "⬜"} {t("camp.gatePiece", { name: en ? pieceCh2.nameEn : pieceCh2.nameDe })}
-              </div>}
-            </div>
-            {!itemOk && <Button variant={can ? "primary" : "subtle"} disabled={!can}
-              onClick={() => dispatch({ type: "BUY_ITEM", id: it.id })} style={{ padding: "9px 14px", whiteSpace: "nowrap" }}>
-              🪙 {it.gold} · {t("camp.buyHere")}
-            </Button>}
-          </div>;
-        })() : (
-        <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-          <Button variant={status === "available" ? "primary" : "subtle"} disabled={status === "locked"}
-            onClick={() => onStart(sel)} style={{ flex: 1 }}>
-            {status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : t("camp.play")}
-          </Button>
-        </div>
-        )}
-      </div>
+  // ── the embedded node panel: parchment overlay near the selected medallion,
+  //    projected into viewport coords so text never scales with zoom ─────────
+  const seaLock = th.sea && !seaAccessible(profile);
+  const px = node ? nx(node) * z - camX : 0;
+  const py = node ? ny(node) * z - camY : 0;
+  const panelW = Math.min(340, vp.w - 20);
+  const panelLeft = clamp(px - panelW / 2, 10, Math.max(10, vp.w - panelW - 10));
+  const above = py > vp.h * 0.52;                        // node low → panel above it
+  const gapUp = Math.round(62 * z + 12);                 // clear the hero standing on the node
+  const gapDown = Math.round(40 * z + 10);               // clear medallion + label block
+  const panelPos = above
+    ? { bottom: clamp(vp.h - py + gapUp, wide ? 14 : 104, Math.max(120, vp.h - 150)) }
+    : { top: clamp(py + gapDown, 58, Math.max(58, vp.h - 200)) };
+  const showPanel = panelOpen && !!node && !token.moving && !seaLock;
 
-      {th.sea && !seaAccessible(profile) && (
-        <div style={{ padding: "16px 14px", background: `linear-gradient(160deg, #14324a, #0c1e30)`,
-          border: `1.5px solid #3f7fa0`, borderRadius: T.radius, boxShadow: T.shadow }}>
-          <div className="gg-serif" style={{ fontSize: 17, color: "#cfe6f2", letterSpacing: ".06em" }}>🌊 {t("camp.seaLockedTitle")}</div>
-          <div style={{ fontSize: 12.5, color: "#9dbdd0", margin: "6px 0 10px", lineHeight: 1.5 }}>{t("camp.seaLockedText")}</div>
-          <div style={{ display: "grid", gap: 6, fontSize: 13 }}>
-            <div>{(profile.campaign?.unlocked || []).includes("captain") ? "✅" : "⬜"} ⚓ {t("camp.seaNeedCaptain")}</div>
-            <div>{hasItem(profile, "boat") ? "✅" : "⬜"} 🛶 {t("camp.seaNeedBoat")}</div>
-          </div>
-        </div>
-      )}
-      {/* the wanderer's window onto the world — camera follows him, no scrolling */}
-      <div style={{ position: "relative" }}>
-      <div ref={scrollRef} style={{ overflow: "hidden", position: "relative", height: viewH, borderRadius: T.radius,
-        border: `1px solid ${T.line}`, background: th.paper, boxShadow: T.shadow, touchAction: "manipulation",
-        ...(th.sea && !seaAccessible(profile) ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
+  return (
+    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%" }}>
+      {/* the wanderer's window onto the world — the map fills the screen */}
+      <div ref={vpRef} style={{ position: "absolute", inset: 0, overflow: "hidden", background: th.paper,
+        touchAction: "manipulation",
+        ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         <div style={{ position: "relative", width: WMAP, height: HMAP, transformOrigin: "0 0",
-          transform: `translate(${-camX}px, ${-camY}px) scale(${zoom})`,
-          transition: "transform .72s cubic-bezier(.45,.05,.35,1)" }}>
+          transform: `translate(${-camX}px, ${-camY}px) scale(${z})`,
+          transition: `transform .72s ${CAM_EASE}` }}>
           <svg width={WMAP} height={HMAP} viewBox={`0 0 ${WMAP} ${HMAP}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
               <linearGradient id="wash" x1="0" y1="0" x2="1" y2="0">
@@ -271,8 +224,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
           {/* branch ribbons */}
           {[{ id: "blades", n: nodeById("a1"), above: true }, { id: "magic", n: nodeById("b1"), above: true },
             { id: "order", n: nodeById("c1"), above: false }, { id: "power", n: nodeById("d1"), above: true },
-            { id: "wisdom", n: nodeById("e1"), above: false }].map(({ id, n, above }) => (
-            <div key={id} style={{ position: "absolute", left: nx(n), top: ny(n) + (above ? -66 : 56), transform: "translateX(-50%)",
+            { id: "wisdom", n: nodeById("e1"), above: false }].map(({ id, n, above: rAbove }) => (
+            <div key={id} style={{ position: "absolute", left: nx(n), top: ny(n) + (rAbove ? -58 : 48), transform: "translateX(-50%)",
               display: "flex", alignItems: "center", gap: 5, background: "#efe9da", border: `1px solid #c9bfa4`,
               borderRadius: 999, padding: "3px 9px", boxShadow: "0 2px 6px rgba(0,0,0,.15)", whiteSpace: "nowrap" }}>
               <ElementIcon id={BRANCHES[id].icon} color={MP.ink} size={13} />
@@ -280,7 +233,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
             </div>
           ))}
 
-          {/* medallions + labels */}
+          {/* medallions + labels — small waypoints now; the wanderer is the star */}
           {CAMPAIGN.map((n) => {
             const st = nodeStatus(profile, n.id);
             const isSel = sel === n.id, isCur = cur === n.id;
@@ -291,34 +244,38 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
             const ringCol = st === "locked" ? "#8d8672" : st === "gated" ? "#8a6fb0" : st === "cleared" ? "#7c5f3d" : T.gold;
             return (
               <div key={n.id} style={{ position: "absolute", left: nx(n), top: ny(n), transform: "translate(-50%,-50%)" }}>
-                <button onClick={() => { setSel(n.id); walkTo(n.id); }} style={{ width: 46, height: 46, borderRadius: "50%",
-                  background: MP.medal, border: `2.5px solid ${ringCol}`, cursor: "pointer", padding: 0, position: "relative",
-                  opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1,
-                  boxShadow: isSel ? `0 0 0 3px ${T.gold}55, 0 3px 8px rgba(0,0,0,.35)` : "0 3px 8px rgba(0,0,0,.3)",
-                  animation: isCur ? "herePulse 1.8s ease-in-out infinite" : "none",
-                  display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {pieceCh ? <div style={{ width: 32, height: 32 }}>
-                      <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
-                    : pure ? <div style={{ width: 32, height: 32 }}>
-                      <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
-                    : n.id === "n22" ? (((league - 1) % 10) + 1 === 9
-                        ? <div style={{ width: 32, height: 32 }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
-                        : <CrownIc />) : <Swords />}
-                  {st === "cleared" && <span style={{ position: "absolute", top: -5, right: -5, width: 16, height: 16, borderRadius: "50%",
-                    background: T.gold, color: "#17110a", fontSize: 10.5, fontWeight: 900, display: "flex", alignItems: "center",
+                <button onClick={() => { setSel(n.id); setPanelOpen(true); walkTo(n.id); }}
+                  style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: "pointer",
+                    position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
+                    opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1 }}>
+                  <div style={{ width: MEDAL, height: MEDAL, borderRadius: "50%",
+                    background: MP.medal, border: `2px solid ${ringCol}`,
+                    boxShadow: isSel ? `0 0 0 3px ${T.gold}55, 0 2px 6px rgba(0,0,0,.35)` : "0 2px 6px rgba(0,0,0,.3)",
+                    animation: isCur ? "herePulse 1.8s ease-in-out infinite" : "none",
+                    display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {pieceCh ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
+                        <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
+                      : pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
+                        <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
+                      : n.id === "n22" ? (((league - 1) % 10) + 1 === 9
+                          ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
+                          : <CrownIc />) : <Swords />}
+                  </div>
+                  {st === "cleared" && <span style={{ position: "absolute", top: 2, right: 2, width: 13, height: 13, borderRadius: "50%",
+                    background: T.gold, color: "#17110a", fontSize: 8.5, fontWeight: 900, display: "flex", alignItems: "center",
                     justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>}
-                  {st === "gated" && <span style={{ position: "absolute", bottom: -5, right: -6, fontSize: 13,
-                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={13} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : "🔒"}</span>}
-                  {n.boss && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: -4, right: -4, width: 15, height: 15,
+                  {st === "gated" && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11,
+                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : "🔒"}</span>}
+                  {n.boss && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 12.5, height: 12.5,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
-                    border: "1.5px solid #efe9da", fontSize: 8.5 }}>☠</span>}
+                    border: "1.5px solid #efe9da", fontSize: 7 }}>☠</span>}
                 </button>
-                <div style={{ position: "absolute", left: "50%", [below ? "top" : "bottom"]: 30, transform: "translateX(-50%)",
-                  width: 104, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
-                  <span style={{ display: "inline-flex", minWidth: 16, height: 15, background: MP.ink, color: "#efe9da", fontSize: 9.5,
+                <div style={{ position: "absolute", left: "50%", [below ? "top" : "bottom"]: 27, transform: "translateX(-50%)",
+                  width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
+                  <span style={{ display: "inline-flex", minWidth: 14, height: 13, background: MP.ink, color: "#efe9da", fontSize: 8.5,
                     fontWeight: 800, borderRadius: 4, alignItems: "center", justifyContent: "center", padding: "0 3px",
-                    verticalAlign: "middle", marginRight: 4 }}>{order[n.id]}</span>
-                  <span className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".05em", color: MP.ink, lineHeight: 1.15,
+                    verticalAlign: "middle", marginRight: 3 }}>{order[n.id]}</span>
+                  <span className="gg-serif" style={{ fontSize: 10, letterSpacing: ".05em", color: MP.ink, lineHeight: 1.15,
                     textShadow: `0 1px 0 ${th.paper}, 0 -1px 0 ${th.paper}, 1px 0 0 ${th.paper}, -1px 0 0 ${th.paper}` }}>{n.place}</span>
                   <span style={{ display: "block", marginTop: 2 }}>
                     {(() => {
@@ -326,44 +283,32 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
                       const pips = Math.min(4, base + (n.bump ? 1 : 0) + (league - 1));
                       const col = pips <= 1 ? "#4d7a45" : pips === 2 ? "#8a6f4d" : pips === 3 ? "#a1512e" : "#8e2f39";
                       return Array.from({ length: 4 }).map((_, k) => (
-                        <span key={k} style={{ display: "inline-block", width: 5, height: 5, borderRadius: "50%",
+                        <span key={k} style={{ display: "inline-block", width: 4.5, height: 4.5, borderRadius: "50%",
                           margin: "0 1.5px", background: k < pips ? col : "#c9bfa4" }} />
                       ));
                     })()}
                   </span>
                 </div>
-                {isCur && <div className="gg-serif" style={{ position: "absolute", left: "50%", [below ? "bottom" : "top"]: 32,
+                {isCur && <div className="gg-serif" style={{ position: "absolute", left: "50%", [below ? "bottom" : "top"]: 30,
                   transform: "translateX(-50%)", fontSize: 9, letterSpacing: ".08em", color: "#8a6f4d", whiteSpace: "nowrap",
                   pointerEvents: "none" }}>{below ? "▴" : "▾"} {t("camp.current")}</div>}
               </div>
             );
           })}
-          {/* the traveller — your pawn walks the trail */}
+          {/* the traveller — the Grand Gambit walks the trail, larger than life */}
           {(() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
-            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 34, height: 36, zIndex: 5,
-              pointerEvents: "none", transition: "left .72s cubic-bezier(.45,.05,.35,1), top .72s cubic-bezier(.45,.05,.35,1)",
+            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 48, height: 50, zIndex: 5,
+              pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
               transform: "translate(-50%,-118%)",
               animation: token.moving ? "walkBob .3s ease-in-out infinite" : "idleBob 2.4s ease-in-out infinite",
-              filter: "drop-shadow(0 3px 4px rgba(0,0,0,.45))" }}>
-              {th.sea && hasItem(profile, "boat") && <div style={{ position: "absolute", left: "50%", bottom: -8, transform: "translateX(-50%)", width: 44, height: 22 }}>
+              filter: "drop-shadow(0 4px 5px rgba(0,0,0,.45))" }}>
+              {th.sea && hasItem(profile, "boat") && <div style={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", width: 58, height: 29 }}>
                 <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
               </div>}
               <PieceArt kind="P" fill="#c9a45c" rim="#7a5c26" detail="#7a5c26" size="100%" level={1} hero />
             </div>;
-          })()}
-          {/* arrival → the challenge call-to-action */}
-          {!token.moving && sel === token.at && (status === "available" || status === "cleared") && (() => {
-            const tn = nodeById(token.at);
-            const below = tn.col <= 2;
-            return <button onClick={() => onStart(sel)} style={{ position: "absolute", left: nx(tn),
-              top: ny(tn) + (below ? 62 : 36), transform: "translateX(-50%)", zIndex: 6,
-              animation: "ctaPop .22s ease", background: T.gold, color: "#17110a", border: "none",
-              borderRadius: 999, padding: "9px 16px", fontFamily: "inherit", fontWeight: 900, fontSize: 13,
-              cursor: "pointer", boxShadow: `0 6px 18px rgba(0,0,0,.4), 0 0 14px ${T.gold}66`, whiteSpace: "nowrap" }}>
-              ⚔ {status === "cleared" ? t("camp.replay") : t("camp.startChallenge")}
-            </button>;
           })()}
           {frontierX < WMAP - 60 && (
             <div style={{ position: "absolute", top: 0, bottom: 0, left: frontierX, right: 0, zIndex: 5,
@@ -375,19 +320,128 @@ export function CampaignScreen({ profile, dispatch, t, onStart }) {
           )}
         </div>
       </div>
-      {/* zoom control (the only camera freedom the wanderer allows) */}
-      <div style={{ position: "absolute", right: 10, top: 10, zIndex: 6, display: "flex", gap: 6 }}>
-        {[["−", -1], ["+", 1]].map(([lbl, d]) => (
-          <button key={lbl} onClick={() => setZoom((z) => {
-            const steps = [0.9, 1.18, 1.5];
-            const i = clamp(steps.findIndex((x) => Math.abs(x - z) < 0.01) + d, 0, steps.length - 1);
-            return steps[i];
-          })} style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.gold}77`,
-            background: "#0d1017d9", color: T.gold, fontSize: 18, fontWeight: 800, cursor: "pointer",
-            fontFamily: "inherit", boxShadow: "0 3px 10px rgba(0,0,0,.4)" }}>{lbl}</button>
-        ))}
+
+      {/* floating chrome: back pill + league badge (left), zoom (right) */}
+      <div style={{ position: "absolute", top: 10, left: 10, right: 10, zIndex: 8, display: "flex",
+        alignItems: "center", gap: 8, pointerEvents: "none" }}>
+        {onBack && (
+          <button onClick={onBack} style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+            cursor: "pointer", background: "#0d1017d9", border: `1.5px solid ${T.gold}88`, color: T.gold, borderRadius: 999,
+            padding: "8px 14px 8px 10px", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5,
+            boxShadow: "0 3px 10px rgba(0,0,0,.4)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
+            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {t("common.back")}
+          </button>
+        )}
+        <div className="gg-serif" style={{ background: "#0d1017d9", border: `1px solid ${T.line}`, color: T.gold,
+          borderRadius: 999, padding: "8px 13px", fontSize: 12, letterSpacing: ".08em", whiteSpace: "nowrap",
+          overflow: "hidden", textOverflow: "ellipsis", minWidth: 0, boxShadow: "0 3px 10px rgba(0,0,0,.4)",
+          backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
+          {wide ? `${t("camp.title")} · ` : ""}{t("camp.leagueNo", { r: ROMAN[league - 1] || league })}
+          <span style={{ color: T.dim }}> · {clearedCount(profile)}/{campaignLength(profile)}</span>
+        </div>
+        <div style={{ flex: 1 }} />
+        <div style={{ display: "flex", gap: 6, pointerEvents: "auto" }}>
+          {[["−", -1], ["+", 1]].map(([lbl, d]) => (
+            <button key={lbl} onClick={() => setZi((i) => clamp(i + d, 0, 2))}
+              style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.gold}77`,
+                background: "#0d1017d9", color: T.gold, fontSize: 18, fontWeight: 800, cursor: "pointer",
+                fontFamily: "inherit", boxShadow: "0 3px 10px rgba(0,0,0,.4)",
+                backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>{lbl}</button>
+          ))}
+        </div>
       </div>
-      </div>
+
+      {/* embedded node panel — parchment overlay near the medallion; arrival is
+          part of the world, not a card below the map */}
+      {showPanel && (
+        <div key={sel + (token.at === sel ? "@" : "")} style={{ position: "absolute", left: panelLeft, width: panelW, ...panelPos,
+          zIndex: 7, background: PP.bg, border: `1px solid ${PP.line}`, borderRadius: 12, color: PP.ink,
+          boxShadow: "0 12px 32px rgba(30,25,15,.38), inset 0 1px 0 #fffef98c", padding: "11px 12px 12px",
+          animation: "rise .26s ease", maxHeight: Math.max(160, vp.h - 140), overflowY: "auto",
+          transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, bottom .72s ${CAM_EASE}` }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
+            <span style={{ display: "inline-flex", minWidth: 17, height: 16, background: MP.ink, color: "#efe9da", fontSize: 10,
+              fontWeight: 800, borderRadius: 4, alignItems: "center", justifyContent: "center", padding: "0 4px", flex: "0 0 auto",
+              transform: "translateY(-1px)" }}>{order[sel]}</span>
+            <div className="gg-serif" style={{ fontSize: 17.5, letterSpacing: ".04em", color: PP.ink, flex: 1, minWidth: 0 }}>{node?.place}</div>
+            <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
+              color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>
+          </div>
+          {node?.storyDe && <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
+            {en ? node.storyEn : node.storyDe}</div>}
+          <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 9 }}>
+            <Chip color={PP.chipInk} bg={PP.bg2}>{mapById(node.map)[en ? "nameEn" : "nameDe"]}</Chip>
+            <Chip color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
+            <Chip color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
+            <Chip color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
+            <Chip color={"#17110a"} bg={"#e8c96a"}>🪙 +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
+          </div>
+          {boss && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
+              background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
+              <div style={{ width: 40, height: 40, flex: "0 0 auto" }}>
+                <PieceArt kind={boss.kind} art={boss.art} fill={unlockCh ? "#c9a45c" : "#242d44"} rim={unlockCh ? "#f0dfae" : "#93a0bb"}
+                  detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>☠ {t("camp.boss")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
+                <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
+                  ♥ {boss.hp} · ⚔ {boss.atk}{unlockCh ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
+                  {!known && <> · {t("camp.unknown")}</>}
+                </div>
+              </div>
+            </div>
+          )}
+          {status === "gated" ? (() => {
+            const g = gateOf(node);
+            const it = ITEMS[g.item];
+            const pieceCh2 = g.piece ? CHARACTERS[g.piece] : null;
+            const pieceOk = !g.piece || (profile.campaign?.unlocked || []).includes(g.piece);
+            const itemOk = hasItem(profile, g.item);
+            const can = !itemOk && (profile.gold || 0) >= it.gold;
+            return <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "9px 11px",
+              background: "#8a6fb01f", border: "1.5px dashed #8a6fb0", borderRadius: 9 }}>
+              <ItemIcon id={it.id} size={22} />
+              <div style={{ flex: 1, fontSize: 12.5 }}>
+                <b>{itemOk ? "✅ " : ""}{t("camp.gateNeed", { item: en ? it.nameEn : it.nameDe })}</b>
+                <div style={{ color: PP.dim, fontSize: 11.5 }}>{en ? it.textEn : it.textDe}</div>
+                {pieceCh2 && <div style={{ fontSize: 11.5, marginTop: 3, color: pieceOk ? PP.green : MP.liga, fontWeight: 700 }}>
+                  {pieceOk ? "✅" : "⬜"} {t("camp.gatePiece", { name: en ? pieceCh2.nameEn : pieceCh2.nameDe })}
+                </div>}
+              </div>
+              {!itemOk && <Button variant={can ? "primary" : "subtle"} disabled={!can}
+                onClick={() => dispatch({ type: "BUY_ITEM", id: it.id })}
+                style={{ padding: "9px 14px", whiteSpace: "nowrap", ...(can ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
+                🪙 {it.gold} · {t("camp.buyHere")}
+              </Button>}
+            </div>;
+          })() : (
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <Button variant={status === "available" ? "primary" : "subtle"} disabled={status === "locked"}
+                onClick={() => onStart(sel)} style={{ flex: 1,
+                  ...(status === "available" ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
+                ⚔ {status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* the Endless Sea gate — floats over the greyed-out map */}
+      {seaLock && (
+        <div style={{ position: "absolute", inset: 0, zIndex: 7, display: "grid", placeItems: "center",
+          padding: "18px 18px 110px", pointerEvents: "none" }}>
+          <div style={{ width: "100%", maxWidth: 400, padding: "16px 14px", background: `linear-gradient(160deg, #14324a, #0c1e30)`,
+            border: `1.5px solid #3f7fa0`, borderRadius: T.radius, boxShadow: "0 16px 44px rgba(0,0,0,.55)" }}>
+            <div className="gg-serif" style={{ fontSize: 17, color: "#cfe6f2", letterSpacing: ".06em" }}>🌊 {t("camp.seaLockedTitle")}</div>
+            <div style={{ fontSize: 12.5, color: "#9dbdd0", margin: "6px 0 10px", lineHeight: 1.5 }}>{t("camp.seaLockedText")}</div>
+            <div style={{ display: "grid", gap: 6, fontSize: 13, color: "#cfe6f2" }}>
+              <div>{(profile.campaign?.unlocked || []).includes("captain") ? "✅" : "⬜"} ⚓ {t("camp.seaNeedCaptain")}</div>
+              <div>{hasItem(profile, "boat") ? "✅" : "⬜"} 🛶 {t("camp.seaNeedBoat")}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

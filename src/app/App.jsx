@@ -120,7 +120,7 @@ export default function App() {
     ? <GameScreen key={"camp" + match.nodeId} profile={profile} dispatch={dispatch} t={t} match={match} onExit={() => setMatch(null)} />
     : tab === "play" ? (
         view === "quick" ? sub(t("hub.quick"), <GameScreen profile={profile} dispatch={dispatch} t={t} />)
-        : view === "camp" ? sub(t("camp.title"), <CampaignScreen profile={profile} dispatch={dispatch} t={t} onStart={(id) => setMatch(buildStageMatch(id, profile))} />)
+        : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => setMatch(buildStageMatch(id, profile))} />
         : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} />
       )
@@ -129,6 +129,9 @@ export default function App() {
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} />;
 
   const inMatch = !!match || !!pvp;
+  // map immersion (v0.3): the campaign fills the screen — the shell locks to
+  // 100dvh, the map becomes the viewport, all UI floats above it
+  const immersive = !inMatch && tab === "play" && view === "camp";
   const railItems = TABS.map((tb) => {
     const on = tab === tb.id;
     return (
@@ -159,7 +162,8 @@ export default function App() {
   );
 
   if (wide) return (
-    <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px" }}>
+    <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
+      ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {!inMatch && (
         <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
@@ -176,12 +180,14 @@ export default function App() {
           </div>
         </aside>
       )}
-      <main style={{ width: "100%", maxWidth: inMatch ? 1020 : 720, minWidth: 0 }}>{screen}</main>
+      <main style={{ width: "100%", maxWidth: immersive ? "none" : inMatch ? 1020 : 720, minWidth: 0,
+        ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
     </div>
   );
 
   return (
-    <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
+      ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {!inMatch && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
@@ -189,7 +195,8 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, padding: inMatch ? "14px 14px 24px" : "14px 14px 108px" }}>{screen}</main>
+      <main style={{ flex: 1, minHeight: 0, padding: immersive ? 0 : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+        ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {!inMatch && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 7,
           padding: "0 12px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>

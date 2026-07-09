@@ -1,6 +1,13 @@
 # Umbau-Plan v0.3 (vom Nutzer beauftragt, Umsetzung im nächsten Arbeitsblock)
 
-## A) Map-Immersion (zuerst, danach Deploy)
+## A) Map-Immersion (zuerst, danach Deploy) — ✅ UMGESETZT (v0.3.0)
+Umsetzung: Shell lockt in Kampagnen-Ansicht auf 100dvh (App.jsx `immersive`),
+Karte = Cover-Fit-Viewport ohne Seiten-Scroll; Zurück-Pille/Liga-Abzeichen/Zoom
+schweben oben; Medaillons 46→32 px, Wanderer 34×36→48×50; Node-Detail als
+Pergament-Panel in Viewport-Koordinaten am Node verankert (gleitet mit Kamera/
+Zoom, ✕ zum Einklappen); Meer-Sperre als zentriertes Overlay. 228 Tests grün.
+Referenzbild lag bei Umsetzung nicht vor — Feintuning (Offsets/Look) nach
+Sichtung gern nachziehen.
 1. Kampagne füllt den Screen: kein Seiten-Scroll mehr um die Karte herum —
    Karte = fester Viewport (100dvh minus Kopfleiste), UI-Elemente schweben darüber.
 2. Stations-Medaillons ~30% kleiner; Grand-Gambit-Wanderfigur ~40% größer
