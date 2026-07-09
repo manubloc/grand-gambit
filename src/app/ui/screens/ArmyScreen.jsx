@@ -9,7 +9,7 @@ import {
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { Panel, Bar, Chip, Shields, Button } from "../primitives.jsx";
+import { Panel, Bar, Chip, Shields, Button, Segmented } from "../primitives.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -97,6 +97,12 @@ function CharCard({ char, profile, dispatch, t, en }) {
         </div>
       </div>
     </div>
+    {epic && (
+      <div style={{ marginTop: 9, fontSize: 11.5, lineHeight: 1.5 }}>
+        <span style={{ color: T.gold, fontWeight: 700 }}>{t("army.gambitTag")}</span>{" "}
+        <span style={{ color: T.dim }}>{t("army.gambitExplain")}</span>
+      </div>
+    )}
     {!unlocked && bossNode && (
       <div style={{ marginTop: 9, fontSize: 12, color: T.dim, display: "flex", alignItems: "center", gap: 6 }}>
         ☠ {t("army.lockedBoss", { place: bossNode.place })}
@@ -337,20 +343,10 @@ function FormationEditor({ profile, dispatch, t, en }) {
   </Panel>;
 }
 
-export function ArmyScreen({ profile, dispatch, t }) {
-  const en = profile.lang === "en";
-  const wide = useMedia("(min-width: 900px)");
-  const span = wide ? { gridColumn: "1 / -1" } : {};
-  return <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
-    <div style={{ ...span, display: "flex", justifyContent: "space-between", alignItems: "center",
-      background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
-      <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
-      <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-        <span style={{ fontWeight: 900, fontSize: 18, color: T.gold }}>⭐ {profile.sp || 0}</span>
-        <span style={{ fontWeight: 900, fontSize: 18, color: "#e8c96a" }}>🪙 {profile.gold || 0}</span>
-      </span>
-    </div>
-    <div style={{ ...span, background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
+// Gear & supplies — its own room now (tab 2), no longer part of one long scroll.
+function GearPanel({ profile, dispatch, t, en }) {
+  return (
+    <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase", marginBottom: 8 }}>{t("army.supplies")}</div>
       <div style={{ display: "grid", gap: 8 }}>
         {ITEM_LIST.map((it) => {
@@ -377,18 +373,49 @@ export function ArmyScreen({ profile, dispatch, t }) {
         })}
       </div>
     </div>
-    <div style={span}><FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} /></div>
-    {(() => {
-      const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile));
-      const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
-      const H = ({ children }) => <div className="gg-serif" style={{ ...span, fontSize: 14, letterSpacing: ".14em",
-        color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase" }}>{children}</div>;
-      return <>
+  );
+}
+
+export function ArmyScreen({ profile, dispatch, t }) {
+  const en = profile.lang === "en";
+  const wide = useMedia("(min-width: 900px)");
+  const [tab, setTab] = useState("formation"); // formation | gear | chars
+  // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
+  const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
+  const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
+  const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
+    color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
+  return <div style={{ display: "grid", gap: 12 }}>
+    {/* balance — always in sight, whatever the tab */}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+      background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
+      <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
+      <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+        <span style={{ fontWeight: 900, fontSize: 18, color: T.gold }}>⭐ {profile.sp || 0}</span>
+        <span style={{ fontWeight: 900, fontSize: 18, color: "#e8c96a" }}>🪙 {profile.gold || 0}</span>
+      </span>
+    </div>
+    {/* three rooms instead of one endless scroll */}
+    <Segmented value={tab} onChange={setTab} options={[
+      { value: "formation", label: t("army.tabFormation") },
+      { value: "gear", label: t("army.tabGear") },
+      { value: "chars", label: t("army.tabChars") },
+    ]} />
+    {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "chars" && (
+      <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
         <H>{t("army.secRecruited")} · {rec.length}</H>
-        {rec.map((c) => <CharCard key={c.id} char={c} profile={profile} dispatch={dispatch} t={t} en={en} />)}
+        {rec.map((c) => (
+          <div key={c.id} style={c.epic && wide ? { gridColumn: "1 / -1" } : undefined}>
+            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} />
+          </div>
+        ))}
         {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
-        {hid.map((c) => <CharCard key={c.id} char={c} profile={profile} dispatch={dispatch} t={t} en={en} />)}
-      </>;
-    })()}
+        {hid.map((c) => (
+          <div key={c.id}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} /></div>
+        ))}
+      </div>
+    )}
   </div>;
 }

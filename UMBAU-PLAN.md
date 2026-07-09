@@ -16,7 +16,7 @@ Sichtung gern nachziehen.
    IN der Map (Pergament-Overlay nahe dem Node, Ankunft = Teil der Welt).
 4. Nutzer liefert Referenzbild — vor Umsetzung ansehen.
 
-## B) Gefolge → 3 Reiter
+## B) Gefolge → 3 Reiter — ✅ UMGESETZT (v0.4.0)
 Aufstellung (Brett+Heldenposition) · Ausrüstung (Shop) · Charaktere (Level+Fähigkeiten).
 Kein Endlos-Scroll mehr.
 
@@ -44,3 +44,10 @@ Performance-Rating aus Ergebnissen gegen bekannte KI-Stärke ableitbar.
 - Datenschutz: weiterhin KEINE Cookies nötig (Token in localStorage) → kein
   Cookie-Banner; privacy.html um Auth-Abschnitt (Supabase als Auftrags-
   verarbeiter, Art. 28) erweitern, Online-Consent-Text anpassen.
+
+## F) Nutzerbatch v0.4 — ✅ UMGESETZT (v0.4.0)
+- Brett: Ganzzahl-Kacheln (keine Verzerrung), Klassik-Farben überall, Mini-Koordinaten, Desktop volle Höhe
+- Spiel-Immersion: kein Scrollen, Brett fest, ‹ Zurück + ⚑ Aufgeben als schwebende Pillen
+- Schnellspiel-Setup vorgelagert (Karte/Modus/Schwierigkeit vor Start)
+- Zeitdruck ab Liga 5 (pure Bosse: Gesamtzeit · Elite-Bosse bump≥2: Zug-Limit) — stageTimer() in meta
+- Spiel-Intro beim ersten Start (Pergament-Karte)

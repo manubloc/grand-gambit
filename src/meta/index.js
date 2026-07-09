@@ -17,7 +17,7 @@ export { emptyStats, defaultProfile, loadProfile, saveProfile, serializeSave, pa
 export { newSession, applyEvents, summarize, summarizeMatch } from "./session.js";
 export {
   campaignLength, clearedCount, clearedIds, nodeStatus, currentNodeId, predsOf, nodeBossSpec,
-  buildStageMatch, advanceCampaign, mapUnlocked, hpUnlocked,
+  buildStageMatch, advanceCampaign, mapUnlocked, hpUnlocked, stageTimer,
   leagueRewardMult, leagueBump, bossPieceFor, leagueFinalBossPiece, seaAccessible, nodeInLeague, gateOf, leagueNo,
 } from "./campaign.js";
 export { retinueScore, scoreBand } from "./rating.js";

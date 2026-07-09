@@ -84,5 +84,21 @@ const rp = retinueScore(adv2(adv2(dp2(), "n01"), "n02"));
 ok("retinue score starts modest and grows with progress", r0 > 50 && r0 < 400 && rp > r0);
 ok("upgrades raise the retinue score", retinueScore({ ...dp2(), pieces: { levels: { rook: 3 } } }) === r0 + 80);
 
+// ── stage clock (v0.4): time pressure begins in league 5, only on SOME nodes ─
+import { stageTimer, buildStageMatch as bsm2 } from "./src/meta/index.js";
+import { nodeById as nb2 } from "./src/content/index.js";
+ok("no clock before league 5", stageTimer(nb2("n22"), 4) === null && stageTimer(nb2("n03"), 1) === null);
+ok("plain stages never get a clock", stageTimer(nb2("n01"), 7) === null);
+const tMon = stageTimer(nb2("n03"), 5);
+ok("league 5 monster boss: 6-minute total budget", tMon?.type === "total" && tMon.seconds === 360);
+const tEli = stageTimer(nb2("n20"), 5);
+ok("league 5 elite piece boss: 20s per move", tEli?.type === "move" && tEli.seconds === 20);
+ok("clocks tighten but stay bounded", stageTimer(nb2("n22"), 30).seconds === 180 && stageTimer(nb2("n20"), 30).seconds === 12);
+ok("buildStageMatch carries the clock", (() => {
+  const p = { ...dp2(), campaign: { league: 5, cleared: [], unlocked: [] } };
+  const m = bsm2("n03", p);
+  return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2("n03", dp2()).timer === null;
+})());
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

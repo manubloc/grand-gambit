@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useMedia } from "../../App.jsx";
-import { WHITE, BLACK, createGame, reduce, moveCommand, status, undo, encodeState } from "../../../core/index.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
-import { buildArmy, buildAiArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked } from "../../../meta/index.js";
+import { buildArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { stateHash } from "../../../platform/net.web.js";
@@ -34,15 +33,23 @@ function ForceBadge({ hp, atk, neon, t }) {
   );
 }
 
-export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null }) {
+// The floating pill style shared by ‹ Back and ⚑ Resign (same shape, the
+// resign just wears a slightly different tone — exactly as requested).
+const pill = (extra) => ({ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
+  background: "#0d1017d9", borderRadius: 999, padding: "8px 13px", fontFamily: "inherit", fontWeight: 800,
+  fontSize: 13, boxShadow: "0 3px 10px rgba(0,0,0,.4)", whiteSpace: "nowrap", flex: "0 0 auto",
+  backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", ...extra });
+
+export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null }) {
   const campaign = !!match;
   const en = profile.lang === "en";
   const myColor = pvp && pvp.color === "b" ? BLACK : WHITE;
   const oppColor = myColor === WHITE ? BLACK : WHITE;
-  const hpOpen = hpUnlocked(profile);
-  const [difficulty, setDifficulty] = useState(profile.difficulty || "easy");
-  const [mapId, setMapId] = useState("classic"); // quick play starts on standard 8×8 chess
-  const [mode, setMode] = useState("chess");      // the story starts as chess — HP unlocks via the campaign
+  // Match settings are decided BEFORE the match (QuickSetup / campaign node /
+  // pvp lobby) — in here they are fixed; the screen is the board, nothing else.
+  const difficulty = quick?.difficulty || profile.difficulty || "easy";
+  const mapId = quick?.mapId || "classic";
+  const mode = quick?.mode || "chess";
   const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(mapId);
   const rules = pvp ? "hp" : campaign ? match.rules : mode;
   const depth = campaign ? match.depth : difficultyById(difficulty).depth;
@@ -60,9 +67,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     return createGame(playerArmy, ai, { map, rules, seed, potions: rules === "hp" ? { w: profile.items?.potion || 0, b: 0 } : undefined });
   });
   const [desync, setDesync] = useState(false);
-  const wide = useMedia("(min-width: 980px)");
   const [potionArm, setPotionArm] = useState(false);
-  const [showSetup, setShowSetup] = useState(false);
   const potionsUsedRef = useRef(0);
   function usePotion(i) {
     setPotionArm(false);
@@ -79,29 +84,34 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
 
+  // ── the stage clock (v0.4): some campaign stages from league 5 carry time
+  // pressure — a total budget (bosses) or a per-move limit (hard stages).
+  // The clock only runs on YOUR move and pauses for story intro and banner;
+  // hitting zero flags the game, chess-style.
+  const timer = campaign ? match.timer : null;
+  const [clock, setClock] = useState(timer ? timer.seconds : null);
+  useEffect(() => {
+    if (timer?.type === "move" && state.turn === myColor) setClock(timer.seconds);
+  }, [state, timer, myColor]);
+  useEffect(() => {
+    if (!timer || clock == null || banner || intro || state.turn !== myColor) return;
+    const id = setInterval(() => setClock((c) => (c == null ? c : c - 1)), 1000);
+    return () => clearInterval(id);
+  }, [timer, state.turn, myColor, banner, intro]); // eslint-disable-line
+  useEffect(() => {
+    if (timer && clock != null && clock <= 0 && !finished.current) finish("loss", "time");
+  }, [clock]); // eslint-disable-line
+
   function reset(diff, m = map, rl = rules) {
     finished.current = false;
     setBanner(null);
     setThinking(false);
+    setClock(timer ? timer.seconds : null);
     const seed = freshSeed();
     const ai = campaign ? match.aiArmy : buildAiArmyForMap(diff, m, seed);
     setState(createGame(buildArmy(profile, m), ai, { map: m, rules: rl, seed }));
   }
   function newGame() { reset(difficulty); }
-  function changeMap(id) {
-    setMapId(id);
-    reset(difficulty, mapById(id), rules);
-  }
-  function changeMode(m) {
-    if (m === "hp" && !hpOpen) return;
-    setMode(m);
-    reset(difficulty, map, m);
-  }
-  function changeDifficulty(d) {
-    setDifficulty(d);
-    dispatch({ type: "SET_DIFFICULTY", difficulty: d });
-    reset(d);
-  }
 
   // End of game → derive the result purely from the command log (event-sourced).
   function finish(result, reason) {
@@ -180,124 +190,148 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const hpMode = state.rules === "hp";
   const F = hpMode ? forces(state.board) : null;
   const statusText = banner ? "" : st.check ? t("game.check") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
+  const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
+  const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
 
   return (
-    <div style={{ paddingBottom: 8, display: wide ? "grid" : "block",
-      gridTemplateColumns: wide ? "minmax(0,1.35fr) minmax(300px,1fr)" : undefined,
-      gap: wide ? 18 : 0, alignItems: "start" }}>
-      <div style={{ gridColumn: wide ? "1 / -1" : undefined, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        {pvp
-          ? <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <button onClick={onExit} style={{ background: T.panel, border: `1px solid ${T.line}`, color: T.text, borderRadius: 8, padding: "5px 11px", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14 }}>←</button>
+    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%",
+      display: "flex", flexDirection: "column" }}>
+      {/* top bar: ‹ back · context · clock · ⚑ resign — everything floats, nothing scrolls */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
+        {onExit && (
+          <button onClick={onExit} style={pill({ border: `1.5px solid ${T.gold}88`, color: T.gold })}>
+            <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
+          </button>
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, overflow: "hidden" }}>
+          {pvp ? <>
               <Chip color={T.gold} bg={T.panel}>⚔ {pvp.oppName}</Chip>
               <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
               {desync && <Chip color={T.danger} bg={T.panel}>{t("online.desync")}</Chip>}
-            </div>
-          : campaign
-          ? <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <button onClick={onExit} style={{ background: T.panel, border: `1px solid ${T.line}`, color: T.text, borderRadius: 8, padding: "5px 11px", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14 }}>←</button>
-              <Chip color={T.gold} bg={T.panel}>{campaignTag(match.node, en)}</Chip>
+            </>
+            : campaign ? <>
+              <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
               {match.boss && <Chip color={T.danger} bg={T.panel}>☠ {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
-            </div>
-          : <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>
-              {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
-            </div>}
+            </>
+            : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
+        </div>
+        <div style={{ flex: 1 }} />
+        {clockLbl && (
+          <span className="gg-serif" style={pill({ cursor: "default",
+            border: `1.5px solid ${clockHot ? T.danger : T.gold}55`, color: clockHot ? T.danger : T.gold,
+            letterSpacing: ".06em", fontSize: 14 })}>⏳ {clockLbl}</span>
+        )}
+        <button onClick={resign} disabled={!!banner || !!intro}
+          style={pill({ border: `1.5px solid ${T.danger}88`, color: T.danger, opacity: banner || intro ? 0.5 : 1,
+            cursor: banner || intro ? "default" : "pointer" })}>
+          ⚑ {t("game.resign")}
+        </button>
+      </div>
+
+      {/* enemy strip */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
+        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
+        <div style={{ flex: 1 }} />
         <Tray kinds={state.captured.b} color="w" />
       </div>
 
-      <div style={{ position: "relative", gridColumn: wide ? "1" : undefined }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={oppColor} flip={myColor === BLACK} theme={map.theme}
-          fitVh={wide ? null : 232} pick={potionArm ? WHITE : null} onPick={usePotion} pov={myColor} />
+      {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
+      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
+        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={oppColor}
+          flip={myColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={myColor} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap" }}>🧪 {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
-        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => setIntro(false)} />}
+        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => setIntro(false)} timer={timer} />}
         {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
+          onSettings={!campaign && !pvp ? onExit : null}
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
           unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null} />}
       </div>
 
-      <div style={{ gridColumn: wide ? "2" : undefined, position: wide ? "sticky" : "static", top: wide ? 18 : undefined,
-        background: wide ? T.panel : "none", border: wide ? `1px solid ${T.line}` : "none",
-        borderRadius: wide ? 18 : 0, padding: wide ? "14px 14px 12px" : 0, boxShadow: wide ? T.shadow : "none" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: wide ? "0 0 12px" : "8px 0 12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Chip color={T.limeInk} bg={T.lime}>{t("game.you")}</Chip>
-          {!pvp && hpMode && (state.potions?.w || 0) > 0 && !banner && (
-            <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
-              style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
-                border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
-                fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5 }}>
-              🧪 {state.potions.w}
-            </button>
-          )}
-          {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
-        </div>
+      {/* your strip: badges · status · captured · undo */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
+        padding: "2px 14px calc(10px + env(safe-area-inset-bottom))" }}>
+        <Chip color={T.limeInk} bg={T.lime}>{t("game.you")}</Chip>
+        {!pvp && hpMode && (state.potions?.w || 0) > 0 && !banner && (
+          <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
+            style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
+              border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
+              fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5 }}>
+            🧪 {state.potions.w}
+          </button>
+        )}
+        {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
+        <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
+          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.danger : T.dim }}>{statusText}</div>
         <Tray kinds={state.captured.w} color="b" />
-      </div>
-
-      <div style={{ textAlign: "center", fontWeight: 800, fontSize: 16, minHeight: 22, color: st.check ? T.danger : T.text, marginBottom: 12 }}>
-        {statusText}
-      </div>
-
-      {!campaign && !pvp && (
-        <button onClick={() => setShowSetup((v) => !v)} style={{ width: "100%", textAlign: "left", background: "none",
-          border: "none", color: T.dim, fontFamily: "inherit", fontSize: 12.5, fontWeight: 800, cursor: "pointer",
-          padding: "0 2px 8px", letterSpacing: ".03em" }}>
-          {showSetup ? "▾" : "▸"} ⚙ {t("game.setup")}
-        </button>
-      )}
-      {showSetup && !campaign && !pvp && (
-        <div style={{ marginBottom: 10 }}>
-          <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.map")}</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
-            {MAPS.map((m) => {
-              const open = mapUnlocked(profile, m.id);
-              const on = m.id === mapId;
-              return (
-                <button key={m.id} onClick={() => open && changeMap(m.id)} disabled={!open}
-                  title={open ? undefined : t("game.unlockHint")}
-                  style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
-                    border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel, color: on ? T.limeInk : open ? T.text : T.faint,
-                    opacity: open ? 1 : 0.55 }}>
-                  <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
-                    overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
-                    {Array.from({ length: 16 }).map((_, k) => (
-                      <span key={k} style={{ width: 4.5, height: 4.5,
-                        background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
-                    ))}
-                  </span>
-                  {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
-                </button>
-              );
-            })}
-          </div>
-          <Segmented value={mode} onChange={changeMode}
-            options={[
-              { value: "chess", label: t("mode.chess") },
-              { value: "hp", label: hpOpen ? t("mode.hp") : `🔒 ${t("mode.hp")}`, disabled: !hpOpen },
-            ]} />
-          {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
-          <div style={{ height: 8 }} />
-          <Segmented value={difficulty} onChange={changeDifficulty}
-            options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
-        </div>
-      )}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-        <Button variant="primary" onClick={pvp ? onExit : newGame}>{pvp ? t("common.back") : t("game.newgame")}</Button>
-        {!pvp && <Button variant="subtle" onClick={doUndo} disabled={!state.history.length || !!banner}>{t("game.undo")}</Button>}
-        <Button variant="danger" onClick={resign} disabled={!!banner}>{t("game.resign")}</Button>
-      </div>
+        {!pvp && (
+          <button onClick={doUndo} disabled={!state.history.length || !!banner} title={t("game.undo")}
+            style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.line}`, background: T.panel,
+              color: T.text, fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
+              opacity: !state.history.length || banner ? 0.45 : 1 }}>↶</button>
+        )}
       </div>
     </div>
   );
 }
 
+// ── Pre-game setup (v0.4): map, mode and difficulty are chosen HERE, before
+// the match — inside the match only the board remains. ────────────────────────
+export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
+  const en = profile.lang === "en";
+  const hpOpen = hpUnlocked(profile);
+  const [mapId, setMapId] = useState(initial?.mapId && mapUnlocked(profile, initial.mapId) ? initial.mapId : "classic");
+  const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : "chess");
+  const [difficulty, setDifficulty] = useState(initial?.difficulty || profile.difficulty || "easy");
+  return (
+    <Panel>
+      <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
+      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.map")}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+        {MAPS.map((m) => {
+          const open = mapUnlocked(profile, m.id);
+          const on = m.id === mapId;
+          return (
+            <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
+              title={open ? undefined : t("game.unlockHint")}
+              style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 11px",
+                border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2, color: on ? T.limeInk : open ? T.text : T.faint,
+                opacity: open ? 1 : 0.55 }}>
+              <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
+                overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
+                {Array.from({ length: 16 }).map((_, k) => (
+                  <span key={k} style={{ width: 4.5, height: 4.5,
+                    background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
+                ))}
+              </span>
+              {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
+            </button>
+          );
+        })}
+      </div>
+      <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
+        options={[
+          { value: "chess", label: t("mode.chess") },
+          { value: "hp", label: hpOpen ? t("mode.hp") : `🔒 ${t("mode.hp")}`, disabled: !hpOpen },
+        ]} />
+      {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
+      <div style={{ height: 10 }} />
+      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.difficulty")}</div>
+      <Segmented value={difficulty} onChange={setDifficulty}
+        options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
+      <Button variant="primary" style={{ width: "100%", marginTop: 16, padding: "13px 16px", fontSize: 16 }}
+        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty }); }}>
+        ⚔ {t("quick.start")}
+      </Button>
+    </Panel>
+  );
+}
 
 // Pre-battle story card for campaign stages: chapter, place, a line of lore,
-// and the boss you are about to face.
-function StoryIntro({ node, boss, t, en, onBegin }) {
+// and the boss you are about to face. The stage clock (if any) is announced
+// here — it starts ticking only once you step in.
+function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   const ch = chapterForRow(node.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
   return (
@@ -320,6 +354,11 @@ function StoryIntro({ node, boss, t, en, onBegin }) {
         {boss && <div style={{ marginTop: 12, fontSize: 12.5, fontWeight: 800, color: "#8e2f39" }}>
           ☠ {boss.name[en ? "en" : "de"]}
         </div>}
+        {timer && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: "#8a6f4d" }}>
+          ⏳ {timer.type === "total"
+            ? `${Math.round(timer.seconds / 60)} min`
+            : `${timer.seconds}s ${en ? "per move" : "pro Zug"}`}
+        </div>}
         <button onClick={onBegin} style={{ marginTop: 14, width: "100%", padding: "11px 14px", borderRadius: 10,
           background: "#1d2436", color: "#e9e2cf", fontWeight: 800, fontSize: 14.5, border: "none",
           fontFamily: "inherit", cursor: "pointer", letterSpacing: ".04em" }}>{t("story.begin")} ›</button>
@@ -328,7 +367,7 @@ function StoryIntro({ node, boss, t, en, onBegin }) {
   );
 }
 
-function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, unlockName = null, pvpInfo = null }) {
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, pvpInfo = null }) {
   const win = banner.result === "win";
   const color = win ? T.lime : banner.result === "draw" ? T.gold : T.danger;
   const title = win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
@@ -336,6 +375,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, unloc
     : campaign && win ? t("game.stageCleared")
     : banner.reason === "checkmate" ? t("game.checkmate")
     : banner.reason === "regicide" ? t("game.regicide")
+    : banner.reason === "time" ? t("game.timeout")
     : (banner.reason === "stalemate" || banner.reason === "draw") ? t("game.stalemate")
     : t("game.resigned");
   const g = banner.gained;
@@ -371,6 +411,11 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, unloc
                 </Button>
                 <Button variant="subtle" onClick={onNew}>{t("common.back")}</Button>
               </div>
+            </div>
+          : onSettings
+          ? <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <Button variant="primary" onClick={onNew}>{t("game.newgame")}</Button>
+              <Button variant="subtle" onClick={onSettings}>⚙ {t("game.settings")}</Button>
             </div>
           : <Button variant="primary" style={{ width: "100%" }} onClick={onNew}>{t("game.newgame")}</Button>
         )}

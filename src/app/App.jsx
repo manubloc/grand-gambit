@@ -10,7 +10,7 @@ import { OnlineScreen } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
 import { NavIcon } from "./ui/icons.jsx";
 import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
-import { GameScreen } from "./ui/screens/GameScreen.jsx";
+import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
@@ -85,6 +85,8 @@ export default function App() {
   const [view, setView] = useState("hub"); // play tab: hub | quick | camp | online
   const [match, setMatch] = useState(null);
   const [pvp, setPvp] = useState(null);
+  const [quick, setQuick] = useState(null);   // running quick match (config decided in QuickSetup)
+  const lastQuick = useRef(null);             // remembered setup for the next visit
   const wide = useMedia("(min-width: 900px)");
   const netRef = useRef(null);
   if (!netRef.current) netRef.current = createNet();
@@ -108,6 +110,7 @@ export default function App() {
 
   if (!ready || !profile) return splash ? <Splash onDone={() => setSplash(false)} /> : null;
   const showPrivacy = !splash && !profile.notices?.privacy;
+  const showIntro = !splash && !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   if (splash) return <Splash onDone={() => setSplash(false)} />;
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)} />;
@@ -118,8 +121,11 @@ export default function App() {
     ? <GameScreen key={"pvp" + pvp.matchId} profile={profile} dispatch={dispatch} t={t} pvp={pvp} onExit={() => setPvp(null)} />
     : match
     ? <GameScreen key={"camp" + match.nodeId} profile={profile} dispatch={dispatch} t={t} match={match} onExit={() => setMatch(null)} />
+    : quick
+    ? <GameScreen key={"q" + quick.n} profile={profile} dispatch={dispatch} t={t} quick={quick} onExit={() => setQuick(null)} />
     : tab === "play" ? (
-        view === "quick" ? sub(t("hub.quick"), <GameScreen profile={profile} dispatch={dispatch} t={t} />)
+        view === "quick" ? sub(t("hub.quick"), <QuickSetup profile={profile} dispatch={dispatch} t={t} initial={lastQuick.current}
+          onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
         : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => setMatch(buildStageMatch(id, profile))} />
         : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} />
@@ -128,10 +134,10 @@ export default function App() {
         : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} />;
 
-  const inMatch = !!match || !!pvp;
-  // map immersion (v0.3): the campaign fills the screen — the shell locks to
-  // 100dvh, the map becomes the viewport, all UI floats above it
-  const immersive = !inMatch && tab === "play" && view === "camp";
+  const inMatch = !!match || !!pvp || !!quick;
+  // map & match immersion (v0.3/v0.4): the campaign map and every running
+  // match fill the screen — the shell locks to 100dvh, UI floats above
+  const immersive = inMatch || (tab === "play" && view === "camp");
   const railItems = TABS.map((tb) => {
     const on = tab === tb.id;
     return (
@@ -165,6 +171,7 @@ export default function App() {
     <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
       ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} />}
       {!inMatch && (
         <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -189,6 +196,7 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} />}
       {!inMatch && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,
@@ -310,6 +318,42 @@ function Lock({ t, profile, onUnlock }) {
   </div>;
 }
 
+
+// ── first-run game intro (once): what Grand Gambit IS and what makes it
+// special — a parchment card in the world's own voice. ───────────────────────
+function GameIntro({ t, dispatch }) {
+  const Row = ({ icon, children }) => (
+    <div style={{ display: "flex", gap: 10, alignItems: "flex-start", textAlign: "left" }}>
+      <span style={{ fontSize: 17, width: 24, textAlign: "center", flex: "0 0 auto" }}>{icon}</span>
+      <span style={{ fontSize: 13, lineHeight: 1.5 }}>{children}</span>
+    </div>
+  );
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
+      <div style={{ width: "100%", maxWidth: 420, background: "#efe9da", color: "#2e2a20", border: "1px solid #c9bfa4",
+        borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "22px 20px 18px", textAlign: "center",
+        animation: "rise .3s ease", maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
+        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em" }}>{t("intro.title")}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 0" }}>
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+          <span style={{ width: 6, height: 6, background: "#8a6f4d", transform: "rotate(45deg)" }} />
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+        </div>
+        <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: "#4a4433" }}>{t("intro.lead")}</div>
+        <div style={{ display: "grid", gap: 10, margin: "14px 0 4px" }}>
+          <Row icon="♟">{t("intro.p1")}</Row>
+          <Row icon="⭐">{t("intro.p2")}</Row>
+          <Row icon="🗺">{t("intro.p3")}</Row>
+        </div>
+        <button onClick={() => dispatch({ type: "SET_NOTICE", key: "intro" })}
+          style={{ marginTop: 14, width: "100%", padding: "12px 14px", borderRadius: 10, background: "#1d2436",
+            color: "#e9e2cf", fontWeight: 800, fontSize: 14.5, border: "none", fontFamily: "inherit",
+            cursor: "pointer", letterSpacing: ".04em" }}>{t("intro.ok")} ›</button>
+      </div>
+    </div>
+  );
+}
 
 // ── first-run privacy notice (no cookies, local save, optional online) ──────
 function PrivacyNotice({ t, dispatch }) {

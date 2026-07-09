@@ -15,41 +15,45 @@ export const holeSet = (map) => { const s = new Set(); for (const [f, r] of map.
 export const playableCount = (map) => map.w * map.h - (map.holes ? map.holes.length : 0);
 
 // Standard chess back rank (used by the 8-wide maps).
+// One board look for EVERY map (v0.4): the Klassik palette is the reference —
+// maps differ by size and holes, never by square colors.
+export const CLASSIC_SQ = { sqLight: "#6f6a5f", sqDark: "#26282d" };
+
 const CHESS_BACK = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"];
 // Full 10-wide GAMBIT back rank (matches DEFAULT_BACK_RANK in core).
 const ARENA_BACK = ["rook", "knight", "knight", "bishop", "queen", "king", "bishop", "knight", "knight", "rook"];
 
 export const MAPS = [
   {
-    id: "classic", nameDe: "Klassik", nameEn: "Classic", theme: { sqLight: "#6f6a5f", sqDark: "#26282d" },
+    id: "classic", nameDe: "Klassik", nameEn: "Classic", theme: CLASSIC_SQ,
     w: 8, h: 8, holes: [], classic: true,
     back: { whiteBack: 0, blackBack: 7, whitePawn: 1, blackPawn: 6 },
     formation: { required: { king: 1, queen: 1, rook: 2, bishop: 2 }, flex: 2 },
     defaultFormation: CHESS_BACK,
   },
   {
-    id: "arena", nameDe: "Arena", nameEn: "Arena", theme: { sqLight: "#5a58ab", sqDark: "#0d0c1e" },
+    id: "arena", nameDe: "Arena", nameEn: "Arena", theme: CLASSIC_SQ,
     w: 10, h: 10, holes: [], classic: false,
     back: { whiteBack: 0, blackBack: 9, whitePawn: 1, blackPawn: 8 },
     formation: { required: { king: 1, queen: 1, rook: 2, bishop: 2 }, flex: 4 },
     defaultFormation: ARENA_BACK,
   },
   {
-    id: "skirmish", nameDe: "Scharmützel", nameEn: "Skirmish", theme: { sqLight: "#7a683c", sqDark: "#120e07" },
+    id: "skirmish", nameDe: "Scharmützel", nameEn: "Skirmish", theme: CLASSIC_SQ,
     w: 6, h: 6, holes: [], classic: false,
     back: { whiteBack: 0, blackBack: 5, whitePawn: 1, blackPawn: 4 },
     formation: { required: { king: 1, queen: 1, rook: 1, bishop: 1 }, flex: 2 },
     defaultFormation: ["rook", "knight", "queen", "king", "bishop", "knight"],
   },
   {
-    id: "courtyard", nameDe: "Hof", nameEn: "Courtyard", theme: { sqLight: "#487455", sqDark: "#09110b" },
+    id: "courtyard", nameDe: "Hof", nameEn: "Courtyard", theme: CLASSIC_SQ,
     w: 8, h: 8, holes: [[3, 3], [4, 3], [3, 4], [4, 4]], classic: false,
     back: { whiteBack: 0, blackBack: 7, whitePawn: 1, blackPawn: 6 },
     formation: { required: { king: 1, queen: 1, rook: 2, bishop: 2 }, flex: 2 },
     defaultFormation: CHESS_BACK,
   },
   {
-    id: "gauntlet", nameDe: "Schneise", nameEn: "Gauntlet", theme: { sqLight: "#7f4b4b", sqDark: "#130a0a" },
+    id: "gauntlet", nameDe: "Schneise", nameEn: "Gauntlet", theme: CLASSIC_SQ,
     w: 8, h: 8, holes: [[2, 3], [2, 4], [5, 3], [5, 4]], classic: false,
     back: { whiteBack: 0, blackBack: 7, whitePawn: 1, blackPawn: 6 },
     formation: { required: { king: 1, queen: 1, rook: 2, bishop: 2 }, flex: 2 },

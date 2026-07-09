@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { PieceGlyph } from "./PieceGlyph.jsx";
@@ -25,10 +25,26 @@ function HpBar({ hp, max }) {
   );
 }
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitVh = null, pick = null, onPick = null, pov = "w" }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w" }) {
   const sqL = theme?.sqLight || T.sqLight, sqD = theme?.sqDark || T.sqDark;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
+
+  // Integer-pixel sizing: fr-tracks round to different pixel widths per column
+  // (tiles visibly unequal on some screens), so we measure the available box
+  // and hand the grid EXACT pixel cells — every square identical, every time.
+  const wrapRef = useRef(null);
+  const [avail, setAvail] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => { const w = el.clientWidth, h = el.clientHeight; if (w > 0) setAvail({ w, h }); };
+    measure();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+    window.addEventListener("resize", measure);
+    return () => { ro?.disconnect(); window.removeEventListener("resize", measure); };
+  }, []);
 
   // Enemy-move animation: a ghost of the moved piece glides from → to, with a
   // fading gold arrow underneath, so the opponent's move is unmissable.
@@ -85,11 +101,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const isSel = sel === i;
       const isLast = lastMove && (lastMove.from === i || lastMove.to === i);
       const isHit = hpMode && lastMove && lastMove.to === i && (lastMove.damaged || lastMove.lethal);
+      // Tiny coordinates on the rim squares (a–j / 1–10), chess-board style:
+      // file letters along the bottom edge, rank numbers along the left edge.
+      const coordCol = dark ? sqL : sqD;
+      const fileLbl = rr === H - 1 ? "abcdefghij"[f] : null;
+      const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
           background: `linear-gradient(148deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.14) 100%), ${dark ? sqD : sqL}`,
           boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.22)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
+          {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
+            color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
+          {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
+            color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{rankLbl}</span>}
           {isLast && <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: i === lastMove.to
               ? `radial-gradient(circle at 50% 52%, ${T.lime}59, ${T.lime}14 68%, transparent 78%)`
@@ -113,8 +138,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     }
   }
 
-  // Smaller boards → larger cells, so scale the glyph to keep it ~85% of a cell.
-  const glyph = `min(${(0.85 * 88 / W).toFixed(1)}vw, ${Math.round(0.85 * maxPx / W)}px)`;
+  // Integer cell size from the measured box — SSR / first paint fall back to a
+  // fluid grid; the client snaps to exact pixels right after mount, so every
+  // tile is the same size on every screen (no fr-track rounding drift).
+  const GAP = 1;
+  let cell = 0;
+  if (avail.w > 0) {
+    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
+    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / H : Infinity;
+    cell = Math.max(8, Math.floor(Math.min(byW, byH)));
+  }
+  const bw = cell ? cell * W + (W - 1) * GAP : null;
+  const bh = cell ? cell * H + (H - 1) * GAP : null;
+  // Smaller boards → larger cells; glyph stays ~85% of a cell.
+  const glyph = cell ? `${Math.round(cell * 0.85)}px` : `min(${(0.85 * 88 / W).toFixed(1)}vw, ${Math.round(0.85 * maxPx / W)}px)`;
 
   // display coords for the overlay (respect flip)
   const disp = (i) => {
@@ -123,11 +160,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     return { x: ((c + 0.5) / W) * 100, y: ((row + 0.5) / H) * 100, l: (c / W) * 100, t: (row / H) * 100 };
   };
 
-  return (
-    <div style={{ position: "relative", width: fitVh ? `min(100%, ${maxPx}px, calc((100dvh - ${fitVh}px) * ${(W / H).toFixed(4)}))` : `min(100%, ${maxPx}px)`, margin: "0 auto", fontSize: glyph }}>
-      <div style={{ aspectRatio: `${W} / ${H}`, display: "grid",
-        gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)`,
-        gap: "1px", background: T.grid, borderRadius: 12, overflow: "hidden",
+  const board = (
+    <div style={{ position: "relative", width: bw ?? `min(100%, ${maxPx}px)`, maxWidth: "100%",
+      margin: fitBox ? 0 : "0 auto", fontSize: glyph }}>
+      <div style={{ ...(cell
+          ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
+          : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
+        display: "grid", gap: GAP, background: T.grid, borderRadius: 12, overflow: "hidden",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
       </div>
@@ -169,4 +208,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       })()}
     </div>
   );
+  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>{board}</div>;
+  return <div ref={wrapRef} style={{ width: "100%" }}>{board}</div>;
 }

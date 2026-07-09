@@ -109,6 +109,7 @@ export function buildStageMatch(id, profile = null) {
     boss: bossInfo,
     depth: node.depth || d.depth,
     aiArmy,
+    timer: stageTimer(node, lg),
     reward: node.reward || { xp: 0 },
   };
 }
@@ -165,3 +166,17 @@ export const seaAccessible = (profile) =>
 /** Rewards & foes both scale with the league you are climbing. */
 export const leagueRewardMult = (league) => 1 + 0.5 * ((league || 1) - 1);
 export const leagueBump = (league) => 2 * ((league || 1) - 1);
+
+/** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
+ *  the monster milestones (pure bosses, incl. the League Keep) grant a total
+ *  time budget, the elite piece bosses (bump ≥ 2) a per-move limit. Both
+ *  tighten each league but stay bounded, so they remain winnable. The clock
+ *  is UI-side only (a flagged loss on timeout); the deterministic core stays
+ *  untouched. */
+export function stageTimer(node, league = 1) {
+  const lg = league || 1;
+  if (lg < 5 || !node || !node.boss) return null;
+  if (node.boss.pure) return { type: "total", seconds: Math.max(180, 360 - 30 * (lg - 5)) };
+  if ((node.bump || 0) >= 2) return { type: "move", seconds: Math.max(12, 20 - (lg - 5)) };
+  return null;
+}
