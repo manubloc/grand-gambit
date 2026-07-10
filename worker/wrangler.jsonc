@@ -1,0 +1,14 @@
+// Grand Gambit multiplayer — Cloudflare Worker + SQLite Durable Object.
+// Deploy from this directory:  npx wrangler deploy
+{
+  "name": "gg-hall",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-06-01",
+  "durable_objects": {
+    "bindings": [{ "name": "HALL", "class_name": "Hall" }]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Hall"] }
+  ],
+  "observability": { "enabled": true }
+}

@@ -22,20 +22,23 @@ async function sb() {
 // mere touch of window.localStorage. Probe defensively; fall back to an
 // in-memory map so the game still boots and plays (progress then lives only
 // for the session — fine for previews, real installs get persistence).
+const memShim = () => {
+  const mem = new Map();
+  return {
+    getItem: (k) => (mem.has(k) ? mem.get(k) : null),
+    setItem: (k, v) => { mem.set(k, String(v)); },
+    removeItem: (k) => { mem.delete(k); },
+  };
+};
 const LS = (() => {
   try {
     const l = typeof window !== "undefined" ? window.localStorage : null;
-    if (!l) return null;
+    if (!l) return memShim();   // Node/SSR/tests: session-scoped memory
     const probe = "gambit:probe";
     l.setItem(probe, "1"); l.removeItem(probe);
     return l;
   } catch {
-    const mem = new Map();
-    return {
-      getItem: (k) => (mem.has(k) ? mem.get(k) : null),
-      setItem: (k, v) => { mem.set(k, String(v)); },
-      removeItem: (k) => { mem.delete(k); },
-    };
+    return memShim();
   }
 })();
 const pfx = (shared) => (shared ? "gambit:s::" : "gambit:u::");

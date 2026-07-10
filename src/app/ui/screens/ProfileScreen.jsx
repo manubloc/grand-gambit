@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat } from "../primitives.jsx";
 
-export function ProfileScreen({ profile, dispatch, t }) {
+export function ProfileScreen({ profile, dispatch, t, account }) {
   const [pin, setPin] = useState("");
   const s = profile.stats;
 
@@ -61,8 +61,8 @@ export function ProfileScreen({ profile, dispatch, t }) {
       )}
     </Panel>
 
-    <Panel>
-      <div style={{ fontWeight: 800 }}>{t("profile.saveTitle")}</div>
+    {account?.isAdmin && <Panel>
+      <div style={{ fontWeight: 800 }}>{t("profile.saveTitle")} <span style={{ color: T.gold, fontSize: 11 }}>· Admin</span></div>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.saveHint")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         <Button variant="subtle" onClick={() => {
@@ -85,13 +85,13 @@ export function ProfileScreen({ profile, dispatch, t }) {
           inp.click();
         }}>⬆ {t("profile.saveImport")}</Button>
       </div>
-    </Panel>
+    </Panel>}
 
-    <Panel>
-      <div style={{ fontWeight: 800 }}>{t("profile.rpTitle")}</div>
+    {account?.isAdmin && <Panel>
+      <div style={{ fontWeight: 800 }}>{t("profile.rpTitle")} <span style={{ color: T.gold, fontSize: 11 }}>· Admin</span></div>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.rpHint")}</div>
       <RestorePoints t={t} dispatch={dispatch} />
-    </Panel>
+    </Panel>}
 
     <Panel>
       <div style={{ fontWeight: 800 }}>{t("profile.pinTitle")}</div>
@@ -99,7 +99,7 @@ export function ProfileScreen({ profile, dispatch, t }) {
       {profile.pin
         ? <Button variant="ghost" onClick={() => dispatch({ type: "SET_PIN", pin: null })} style={{ width: "100%" }}>{t("profile.clearPin")}</Button>
         : <div style={{ display: "flex", gap: 8 }}>
-            <input value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 8))} placeholder={t("profile.pinPh")} inputMode="numeric" type="password"
+            <input value={pin} onChange={(e) => setPin(e.target.value.slice(0, 64))} placeholder={t("profile.pinPh")} type="password" autoComplete="new-password"
               style={{ flex: 1, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 15, outline: "none" }} />
             <Button onClick={setPinProtect} disabled={pin.length < 4}>{t("profile.setPin")}</Button>
           </div>}

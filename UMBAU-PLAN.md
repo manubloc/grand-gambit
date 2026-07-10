@@ -97,3 +97,15 @@ w3 Stiller Hain (n02→w3 Sackgasse, col0/row1.2); Vollzuweisungs-Matching (Hung
 ## Q) Ligen V–X gemalt + Liga-Orte — ✅ UMGESETZT (v0.15.0)
 
 Adaptive Detektion (V − uniform_filter(171) > .045, fill_holes, Formfilter), knotenseitiges Hungarian auf Kandidaten + 2-opt (Kantenlänge+Anker); 6 Assets (356–473 KB, emittiert); 9 league-wilds (s1,s2,u1–u3,o1–o3,r1 mit league-Feld, Sackgassen, 3 piece-Bosse); bm: Labels top 24 (immer unten), Wanderer translate(-50%,-58%); Tests 50 Sites/15 league-bound/40 Boss-Stages/33 piece.
+
+## R) Login + Savegames + Admin — ✅ UMGESETZT (v0.16.0)
+
+accounts.js (lokal, SHA-256+Salt, Admin-Seed admin/gambit-admin, Session), saves.js (Slots-Index + Profile je Slot, playtimeSec, pct, withProgressPct 0–100 in leagueOrder, Legacy-Migration), cloudAuth.js (Supabase Google/Email, aktiv bei VITE_SUPABASE_URL/KEY, ADMIN_EMAILS in config), LoginScreen/SavesScreen (eigene DE/EN-Strings), App-Gate splash→login→saves→hub, Playtime-Ticker 5s/Flush 30s, storage memShim für Node/SSR, smoke-Loader-Fix, test_saves.mjs (27), OG-Meta + og.jpg. Plan E damit teilweise erledigt (Auth-Seite).
+
+## S) Logo, Bestenlisten, Admin-Werkzeuge — ✅ UMGESETZT (v0.17.0)
+
+logo.jpg (640px, 40KB) im LoginScreen mit Radial-Halo; WandererArt v4 nach Logo (Doppelkragen, Rauten-Emblem, Stufen-Sockel); records.js (moves-Bestwerte, runStartAt/fastestRunMs bei n22) + RECORD_STAGE vor CAMPAIGN_CLEAR; leaderboard.js (lb:<board> shared, mergeBoard pure, Top 50, uid-Upsert) + LeaderboardSection als 2. Reiter im Erfolge-Tab (trophyTab in App); Export/Import + RestorePoints admin-only (account-Prop); PIN→Passphrase (4–64 Zeichen, Lock+Profil+i18n); cloudAuth signInWithProvider (google/apple/discord); slot-State wird nach writeSave aktualisiert; smoke +1; Tests 37.
+
+## T) Multiplayer auf Durable Objects — ✅ UMGESETZT (v0.18.0)
+
+worker/ (wrangler.jsonc: gg-hall, new_sqlite_classes [Hall]); logic.mjs = HallCore (store-injiziert: players/kv/vault; Live-State queue/matches/challenges/finished als kv-Blobs → hibernation-fest; lazy Rematch-Expiry statt Timer; konstante-Zeit-Admin-Compare + IP-Lockout); index.mjs = DO-Adapter (acceptWebSocket Hibernation, serializeAttachment {id,ip}, Re-Seat im Konstruktor, wsFor-Scan, /health); test_worker.mjs 29 Tests am memoryStore; DEPLOY-WORKER.md; SERVER_URL-Hinweis. Plan E damit komplett (Auth via Supabase-Hooks + Server via DO).

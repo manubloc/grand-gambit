@@ -130,7 +130,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       : winGold(difficulty);
     const { profile: next, gained } = applyResult(profile, summary);
     dispatch({ type: "REPLACE", profile: next });
-    if (campaign && result === "win") dispatch({ type: "CAMPAIGN_CLEAR", id: match.nodeId });
+    if (campaign && result === "win") {
+      dispatch({ type: "RECORD_STAGE", id: match.nodeId, moves: summary.moveCount || 0 });
+      dispatch({ type: "CAMPAIGN_CLEAR", id: match.nodeId });
+    }
     if (pvp && reason !== "resign" && reason !== "left") {
       const winner = result === "draw" ? "draw" : result === "win" ? pvp.color : (pvp.color === "w" ? "b" : "w");
       pvp.net.send({ t: "result", matchId: pvp.matchId, winner });

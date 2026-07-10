@@ -40,3 +40,12 @@ RELEASE-ANLEITUNG, ACCOUNTS-ANLEITUNG, CHANGELOG, **UMBAU-PLAN.md (= nächste Au
 ## Arbeitsweise des Nutzers
 Deutsch, knappe Mobile-Nachrichten, Deliverables statt Rückfragen, am Ende
 jeweils Deploy. Nach jedem Feature: npm test + Smoke, dann push.
+
+## Login & Admin (v0.16)
+
+- Eingebauter Admin: **admin / gambit-admin** — nach erstem Login ändern! Admin sieht je Spielstand den Fortschrittsregler (0–100 %).
+- Online-Anmeldung (Google/E-Mail als Cloud-Konten): SUPABASE-SETUP.md befolgen (2 Env-Variablen), Code ist fertig.
+
+## Multiplayer (v0.18)
+
+- Server = Cloudflare Worker + Durable Object: `cd worker && npx wrangler deploy`, dann SERVER_URL in src/app/config.js (DEPLOY-WORKER.md). Free Plan reicht. Admin optional via `wrangler secret put ADMIN_TOKEN` (≥24 Zeichen).

@@ -587,38 +587,43 @@ export function siteTypeFor(node) {
 // ── the wanderer, painted: soft gold washes instead of hard game-piece lines,
 // so he belongs to the artwork he walks through. (The in-match piece is untouched.)
 export function WandererArt({ size = "100%" }) {
-  // A pawn you can READ as a pawn — round head, collar swell, tapered body,
-  // skirted base — but painted: soft contours, watercolour shading, warm aura.
-  const BODY = `M24 4.6
-    c3.1 0 5.5 2.4 5.5 5.4 c0 1.6 -.7 3 -1.8 4
-    c2.1 .5 3.6 1.5 3.6 2.7 c0 1.1 -1.2 2 -3 2.5
-    c1.8 2.3 3 5.6 3.7 9.8 c.4 2.4 1.2 4.4 2.5 6.1
-    c1.4 1.8 2.1 3.3 1.8 4.8 c-.4 2 -3.9 3.1 -12.3 3.1
-    c-8.4 0 -11.9 -1.1 -12.3 -3.1 c-.3 -1.5 .4 -3 1.8 -4.8
-    c1.3 -1.7 2.1 -3.7 2.5 -6.1 c.7 -4.2 1.9 -7.5 3.7 -9.8
-    c-1.8 -.5 -3 -1.4 -3 -2.5 c0 -1.2 1.5 -2.2 3.6 -2.7
-    c-1.1 -1 -1.8 -2.4 -1.8 -4 c0 -3 2.4 -5.4 5.5 -5.4 Z`;
   return (
-    <svg viewBox="0 0 48 50" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
+    <svg viewBox="0 0 48 54" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
       <defs>
-        <radialGradient id="ggWndAura" cx=".5" cy=".6" r=".62">
-          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".48" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
+        <radialGradient id="ggWndAura" cx=".5" cy=".58" r=".62">
+          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".46" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="ggWndBody" x1=".28" y1="0" x2=".72" y2="1">
-          <stop offset="0" stopColor="#f4e4b4" /><stop offset=".55" stopColor="#d0aa60" /><stop offset="1" stopColor="#94733c" />
+        <linearGradient id="ggWndGold" x1=".22" y1="0" x2=".82" y2="1">
+          <stop offset="0" stopColor="#f6e6b2" /><stop offset=".5" stopColor="#d3ab61" /><stop offset="1" stopColor="#7a5c2b" />
         </linearGradient>
-        <radialGradient id="ggWndShade" cx=".7" cy=".68" r=".8">
-          <stop offset=".4" stopColor="#6e5527" stopOpacity="0" /><stop offset="1" stopColor="#6e5527" stopOpacity=".42" />
+        <linearGradient id="ggWndGoldD" x1=".2" y1="0" x2=".9" y2="1">
+          <stop offset="0" stopColor="#e8d094" /><stop offset="1" stopColor="#5f4720" />
+        </linearGradient>
+        <radialGradient id="ggWndSheen" cx=".32" cy=".28" r=".75">
+          <stop offset="0" stopColor="#fff7dd" stopOpacity=".65" /><stop offset=".45" stopColor="#fff7dd" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <ellipse cx="24" cy="26" rx="24.5" ry="21" fill="url(#ggWndAura)" />
-      <g>
-        <path d={BODY} fill="url(#ggWndBody)" stroke="#5d4a26" strokeWidth=".9" strokeOpacity=".3" strokeLinejoin="round" />
-        <path d={BODY} fill="url(#ggWndShade)" />
-        <path d="M20.9 6.6 c-1.3 .9 -1.9 2.2 -1.9 3.4 m-2.7 7 c1.1 -.7 2.4 -1.2 3.4 -1.4 m-3.4 12.6 c.6 -2.9 1.5 -5.4 2.8 -7.3"
-          fill="none" stroke="#fdf3d2" strokeWidth="1.7" strokeOpacity=".42" strokeLinecap="round" />
-        <ellipse cx="21.3" cy="8.9" rx="2" ry="1.3" fill="#fdf3d2" opacity=".55" transform="rotate(-24 21.3 8.9)" />
+      <ellipse cx="24" cy="27" rx="24.5" ry="21" fill="url(#ggWndAura)" />
+      <g stroke="#4a3818" strokeOpacity=".3" strokeWidth=".7" strokeLinejoin="round">
+        {/* head */}
+        <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndGold)" />
+        {/* double-ring collar, like the mark */}
+        <path d="M16.9 18.9 q7.1 -3.2 14.2 0 q.9 1 .2 1.9 q-7.4 2.6 -14.6 0 q-.7 -.9 .2 -1.9 Z" fill="url(#ggWndGoldD)" />
+        <path d="M16.1 21.9 q7.9 -3 15.8 0 q1 1.1 .2 2.1 q-8.2 2.7 -16.2 0 q-.8 -1 .2 -2.1 Z" fill="url(#ggWndGold)" />
+        {/* smooth tapered body flaring into the skirt */}
+        <path d="M19.6 24.6 q4.4 1.5 8.8 0 q.9 8.4 4.8 13.6 q-9.2 3.2 -18.4 0 q3.9 -5.2 4.8 -13.6 Z" fill="url(#ggWndGold)" />
+        {/* stepped double base */}
+        <path d="M13.6 38.4 q10.4 -3.4 20.8 0 q1.5 1.6 .8 3 q-11.2 3 -22.4 0 q-.7 -1.4 .8 -3 Z" fill="url(#ggWndGoldD)" />
+        <path d="M11.3 41.8 q12.7 -3.4 25.4 0 q1.8 1.9 .9 3.6 q-13.6 3.4 -27.2 0 q-.9 -1.7 .9 -3.6 Z" fill="url(#ggWndGold)" />
       </g>
+      {/* diamond emblem with the four-ray star */}
+      <path d="M24 27.2 l3.1 4.9 -3.1 4.9 -3.1 -4.9 Z" fill="#3a2c12" opacity=".85" />
+      <path d="M24 28.5 l2.3 3.6 -2.3 3.6 -2.3 -3.6 Z" fill="none" stroke="#f2dfa6" strokeWidth=".7" strokeOpacity=".9" />
+      <path d="M24 29.9 l.7 1.7 1.6 .5 -1.6 .5 -.7 1.7 -.7 -1.7 -1.6 -.5 1.6 -.5 Z" fill="#f6e6b2" />
+      {/* left light, like the mark's key light */}
+      <ellipse cx="21.4" cy="8.2" rx="2.4" ry="1.6" fill="#fff7dd" opacity=".6" transform="rotate(-26 21.4 8.2)" />
+      <path d="M20.4 25.6 q-1.6 7 -4 11.4" fill="none" stroke="#fdf3d2" strokeWidth="1.6" strokeOpacity=".4" strokeLinecap="round" />
+      <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndSheen)" />
     </svg>
   );
 }

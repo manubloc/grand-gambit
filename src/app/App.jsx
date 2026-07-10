@@ -7,6 +7,9 @@ import { SERVER_URL } from "./config.js";
 import { playerXpProgress } from "../meta/index.js";
 import { T } from "./ui/theme.js";
 import { Splash, Wordmark } from "./ui/Brand.jsx";
+import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
+import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
+import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
 import { OnlineScreen } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
 import { NavIcon } from "./ui/icons.jsx";
@@ -15,6 +18,7 @@ import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
+import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
 
 // viewport hook for the responsive shell (mobile dock ↔ desktop rail)
@@ -53,6 +57,7 @@ function reducer(state, a) {
     case "SET_HERO_COL": return { ...state, loadout: { ...state.loadout, heroCols: { ...(state.loadout.heroCols || {}), [a.mapId]: a.col } } };
     case "SET_FORMATION": return { ...state, loadout: { ...state.loadout, formations: { ...(state.loadout.formations || {}), [a.mapId]: a.formation } } };
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);
+    case "RECORD_STAGE": return recordStage(state, a);
     case "UPGRADE_PIECE": return upgradePiece(state, a.id);
     case "UNLOCK_ABILITY": return unlockAbility(state, a.id, a.ability);
     case "RESPEC": return respecPiece(state, a.id);
@@ -94,6 +99,11 @@ export default function App() {
   if (!netRef.current) netRef.current = createNet();
   const profileRef = useRef(null);
   useEffect(() => { profileRef.current = profile; }, [profile]);
+  const [account, setAccount] = useState(null);     // signed-in account (null → login screen)
+  const [slot, setSlot] = useState(null);           // active save slot (null → save select)
+  const [authReady, setAuthReady] = useState(false);
+  const [trophyTab, setTrophyTab] = useState("ach");
+  const playtimeRef = useRef(0);                    // unflushed seconds of visible play
   useEffect(() => netRef.current.on("welcome", () => {
     // one cloud restore point per session, automatically on connect
     const p = profileRef.current;
@@ -107,13 +117,48 @@ export default function App() {
       oppName: m.opp?.name || "?", oppScore: m.opp?.score || 0, oppArmy: m.oppArmy, net: netRef.current });
   }), []);
 
-  useEffect(() => { (async () => { const p = await loadProfile(); dispatch({ type: "HYDRATE", profile: p }); setLocked(!!p.pin); setReady(true); })(); }, []);
-  useEffect(() => { if (ready && profile) { saveProfile(profile); takeRestorePoint(profile); } }, [profile, ready]);
+  // boot: resume a cloud session (OAuth redirect) or the local one; the game
+  // itself only hydrates once an account picked a save slot.
+  useEffect(() => { (async () => {
+    let acc = null;
+    try { acc = await resumeCloudSession(); } catch {}
+    if (!acc) acc = await currentAccount();
+    setAccount(acc); setAuthReady(true);
+  })(); }, []);
 
-  if (!ready || !profile) return splash ? <Splash onDone={() => setSplash(false)} /> : null;
+  // playtime: count visible seconds, flush into the slot with every persist
+  useEffect(() => {
+    const iv = setInterval(() => {
+      if (typeof document === "undefined" || document.visibilityState === "visible") playtimeRef.current += 5;
+    }, 5000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => { if (ready && profile && account && slot) {
+    saveProfile(profile); takeRestorePoint(profile);
+    const add = playtimeRef.current; playtimeRef.current = 0;
+    writeSave(account.id, slot.id, profile, add).then((e) => e && setSlot((sl) => (sl && sl.id === e.id ? e : sl)));
+  } }, [profile, ready]);
+  // idle playtime flush (menus, reading): every 30 s without a profile change
+  useEffect(() => {
+    if (!(account && slot)) return;
+    const iv = setInterval(() => {
+      const add = playtimeRef.current;
+      if (add > 0 && profileRef.current) { playtimeRef.current = 0;
+        writeSave(account.id, slot.id, profileRef.current, add).then((e) => e && setSlot((sl) => (sl && sl.id === e.id ? e : sl))); }
+    }, 30000);
+    return () => clearInterval(iv);
+  }, [account, slot]);
+
+  if (splash) return <Splash onDone={() => setSplash(false)} />;
+  if (!authReady) return null;
+  if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
+  if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
+    onLogout={async () => { await clearSession(); await signOutCloud(); setAccount(null); }}
+    onOpen={(sl, prof) => { dispatch({ type: "HYDRATE", profile: prof }); setLocked(!!prof.pin); setSlot(sl); setReady(true); }} />;
+  if (!ready || !profile) return null;
   const showPrivacy = !splash && !profile.notices?.privacy;
   const showIntro = !splash && !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
-  if (splash) return <Splash onDone={() => setSplash(false)} />;
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)} />;
 
@@ -133,8 +178,19 @@ export default function App() {
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} />
       )
       : tab === "army" ? <ArmyScreen profile={profile} dispatch={dispatch} t={t} />
-        : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
-          : <ProfileScreen profile={profile} dispatch={dispatch} t={t} />;
+        : tab === "ach" ? <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            {[["ach", t("ranks.tabAch")], ["lb", t("ranks.tabLb")]].map(([id, lbl]) => (
+              <button key={id} onClick={() => setTrophyTab(id)} style={{ flex: 1, background: trophyTab === id ? "rgba(201,164,92,.22)" : "none",
+                border: `1px solid ${trophyTab === id ? T.gold + "88" : T.line}`, color: trophyTab === id ? T.gold : T.dim,
+                borderRadius: 999, padding: "8px 6px", fontFamily: "inherit", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>{lbl}</button>
+            ))}
+          </div>
+          {trophyTab === "lb"
+            ? <LeaderboardSection profile={profile} playtimeSec={slot?.playtimeSec || 0} />
+            : <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />}
+        </div>
+          : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account} />;
 
   const inMatch = !!match || !!pvp || !!quick;
   // map & match immersion (v0.3/v0.4): the campaign map and every running
@@ -325,10 +381,10 @@ function Lock({ t, profile, onUnlock }) {
     <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center" }}>
       <div style={{ fontSize: 34, marginBottom: 6 }}>🔒</div>
       <div style={{ fontWeight: 800, marginBottom: 14 }}>{t("lock.title")}</div>
-      <input autoFocus value={pin} type="password" inputMode="numeric" placeholder={t("lock.enter")}
-        onChange={(e) => { setWrong(false); setPin(e.target.value.replace(/\D/g, "").slice(0, 8)); }}
+      <input autoFocus value={pin} type="password" placeholder={t("lock.enter")}
+        onChange={(e) => { setWrong(false); setPin(e.target.value.slice(0, 64)); }}
         onKeyDown={(e) => e.key === "Enter" && tryUnlock()}
-        style={{ width: "100%", textAlign: "center", letterSpacing: 6, background: T.bg2, border: `1px solid ${wrong ? T.danger : T.line}`, borderRadius: 10, color: T.text, padding: "12px", fontSize: 18, outline: "none", marginBottom: 10 }} />
+        style={{ width: "100%", textAlign: "center", letterSpacing: 2, background: T.bg2, border: `1px solid ${wrong ? T.danger : T.line}`, borderRadius: 10, color: T.text, padding: "12px", fontSize: 18, outline: "none", marginBottom: 10 }} />
       {wrong && <div style={{ color: T.danger, fontSize: 13, marginBottom: 10 }}>{t("lock.wrong")}</div>}
       <Button style={{ width: "100%" }} onClick={tryUnlock} disabled={pin.length < 4}>{t("lock.unlock")}</Button>
     </Panel>

@@ -1,0 +1,128 @@
+// Career select — every account keeps several save slots, each documenting
+// its league, cleared count, percentage and total playtime. Admins get the
+// progress dial: any slot can be set to 0…100% in journey order.
+import { useEffect, useState } from "react";
+import { T } from "../theme.js";
+import { Wordmark } from "../Brand.jsx";
+import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
+  migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
+
+const STR = {
+  de: { hello: "Willkommen", pick: "Wähle deinen Spielstand", new: "+ Neuer Spielstand", play: "Weiterspielen",
+    league: "Liga", time: "Spielzeit", last: "Zuletzt", del: "Löschen", delSure: "Wirklich löschen?", rename: "Umbenennen",
+    empty: "Noch kein Spielstand — beginne deine erste Reise.", logout: "Abmelden",
+    admin: "Admin · Spielfortschritt", adminHint: "Setzt den gewählten Spielstand auf einen Fortschritt (Reihenfolge der Reise).",
+    apply: "Anwenden", zero: "0 %", full: "100 %", namePh: "Name des Spielstands",
+    defaultPass: "Der Admin nutzt noch das Standard-Passwort („gambit-admin\u201C) — bitte im Profil ändern." },
+  en: { hello: "Welcome", pick: "Choose your save", new: "+ New save", play: "Continue",
+    league: "League", time: "Playtime", last: "Last played", del: "Delete", delSure: "Really delete?", rename: "Rename",
+    empty: "No saves yet — begin your first journey.", logout: "Sign out",
+    admin: "Admin · game progress", adminHint: "Sets the selected save to a progress level (in journey order).",
+    apply: "Apply", zero: "0 %", full: "100 %", namePh: "Save name",
+    defaultPass: "The admin still uses the default password (\u201Cgambit-admin\u201D) — please change it in the profile." },
+};
+const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+const fmtDate = (ts, lang) => new Date(ts).toLocaleDateString(lang === "de" ? "de-DE" : "en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
+
+export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
+  const [lang, setLang] = useState(initialLang);
+  const [saves, setSaves] = useState(null);
+  const [confirmDel, setConfirmDel] = useState(null);
+  const [adminSlot, setAdminSlot] = useState(null);
+  const [adminPct, setAdminPct] = useState(100);
+  const [passNote, setPassNote] = useState(false);
+  const s = STR[lang];
+
+  const refresh = async () => setSaves(await listSaves(account.id));
+  useEffect(() => { (async () => {
+    await migrateLegacyInto(account.id);
+    await refresh();
+    if (account.isAdmin) setPassNote(await adminHasDefaultPass());
+  })(); }, [account.id]);
+
+  const open = async (slot) => { const p = await loadSave(account.id, slot.id); if (p) onOpen(slot, p); };
+  const create = async () => { const e = await createSave(account.id, null); const p = await loadSave(account.id, e.id); onOpen(e, p); };
+  const applyAdmin = async (slot, pct) => {
+    const prof = await loadSave(account.id, slot.id);
+    if (!prof) return;
+    await writeSave(account.id, slot.id, withProgressPct(prof, pct));
+    setAdminSlot(null); await refresh();
+  };
+
+  const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
+  return (
+    <div style={{ minHeight: "100%", background: T.bg, padding: "26px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
+        background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
+        fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
+      <Wordmark size={34} />
+      <div style={{ color: T.dim, fontSize: 14, margin: "6px 0 2px" }}>{s.hello}, <b style={{ color: T.text }}>{account.name}</b>
+        {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
+        <button onClick={onLogout} style={{ background: "none", border: "none", color: T.dim, textDecoration: "underline",
+          fontFamily: "inherit", fontSize: 12.5, cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
+      </div>
+      <div className="gg-quill" style={{ color: T.text, fontSize: 21, margin: "10px 0 16px" }}>{s.pick}</div>
+      {passNote && <div style={{ maxWidth: 430, color: "#e0c98f", fontSize: 12.5, lineHeight: 1.5, marginBottom: 12,
+        border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}>{s.defaultPass}</div>}
+
+      <div style={{ width: "100%", maxWidth: 430, display: "flex", flexDirection: "column", gap: 10 }}>
+        {saves && saves.length === 0 && <div style={{ color: T.dim, fontSize: 14, textAlign: "center", padding: "12px 0" }}>{s.empty}</div>}
+        {(saves || []).map((sv, i) => (
+          <div key={sv.id} style={card}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+              <div className="gg-serif" style={{ fontSize: 16.5, color: T.text, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sv.name}</div>
+              <div style={{ color: T.gold, fontWeight: 800, fontSize: 15 }}>{sv.pct ?? 0}%</div>
+            </div>
+            <div style={{ color: T.dim, fontSize: 12.5, margin: "3px 0 8px" }}>
+              {s.league} {ROMAN[(sv.league || 1) - 1] || sv.league} · {sv.clearedCount ?? 0}/{sv.total ?? "–"} · {s.time} {fmtPlaytime(sv.playtimeSec)} · {s.last} {fmtDate(sv.updatedAt || sv.createdAt, lang)}
+            </div>
+            <div style={{ height: 5, background: "#0d1017", borderRadius: 99, overflow: "hidden", marginBottom: 10 }}>
+              <div style={{ width: `${sv.pct ?? 0}%`, height: "100%", background: `linear-gradient(90deg, ${T.gold}bb, ${T.gold})` }} />
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button onClick={() => open(sv)} style={{ flex: 1, position: "relative", overflow: "hidden",
+                background: i === 0 ? "rgba(201,164,92,.78)" : "rgba(201,164,92,.28)",
+                border: "1px solid rgba(255,240,200,.45)", color: i === 0 ? "#17110a" : T.text, borderRadius: 11,
+                padding: "10px 12px", fontFamily: "inherit", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>
+                {i === 0 && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
+                  background: "linear-gradient(90deg, transparent, rgba(255,244,210,.3), transparent)",
+                  animation: "ggShine 4.4s ease-in-out infinite", pointerEvents: "none" }} />}
+                ▶ {s.play}
+              </button>
+              <button onClick={() => { const n = prompt(s.rename, sv.name); if (n != null) renameSave(account.id, sv.id, n).then(refresh); }}
+                style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>✎</button>
+              <button onClick={() => (confirmDel === sv.id ? (deleteSave(account.id, sv.id).then(() => { setConfirmDel(null); refresh(); })) : setConfirmDel(sv.id))}
+                style={{ background: confirmDel === sv.id ? "#5a2626" : "none", border: `1px solid ${confirmDel === sv.id ? "#a05050" : T.line}`,
+                  color: confirmDel === sv.id ? "#f0c0c0" : T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
+                {confirmDel === sv.id ? s.delSure : "🗑"}
+              </button>
+            </div>
+            {account.isAdmin && (
+              adminSlot === sv.id
+                ? <div style={{ marginTop: 10, borderTop: `1px dashed ${T.line}`, paddingTop: 9 }}>
+                    <div style={{ color: T.gold, fontSize: 12.5, fontWeight: 800, marginBottom: 2 }}>{s.admin}</div>
+                    <div style={{ color: T.dim, fontSize: 11.5, marginBottom: 7 }}>{s.adminHint}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                      <button onClick={() => setAdminPct(0)} style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 9, padding: "6px 10px", fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{s.zero}</button>
+                      <input type="range" min="0" max="100" step="5" value={adminPct} onChange={(e) => setAdminPct(+e.target.value)} style={{ flex: 1, accentColor: T.gold }} />
+                      <button onClick={() => setAdminPct(100)} style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 9, padding: "6px 10px", fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{s.full}</button>
+                      <div style={{ color: T.text, fontWeight: 800, width: 44, textAlign: "right" }}>{adminPct}%</div>
+                    </div>
+                    <button onClick={() => applyAdmin(sv, adminPct)} style={{ marginTop: 8, width: "100%", background: "rgba(201,164,92,.7)",
+                      border: "1px solid rgba(255,240,200,.5)", color: "#17110a", borderRadius: 10, padding: "9px 12px",
+                      fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, cursor: "pointer" }}>{s.apply}</button>
+                  </div>
+                : <button onClick={() => { setAdminSlot(sv.id); setAdminPct(sv.pct ?? 0); }}
+                    style={{ marginTop: 9, background: "none", border: "none", color: T.gold, fontFamily: "inherit",
+                      fontSize: 12, cursor: "pointer", padding: 0, textDecoration: "underline" }}>⚙ {s.admin}</button>
+            )}
+          </div>
+        ))}
+        <button onClick={create} style={{ background: "none", border: `1.5px dashed ${T.gold}66`, color: T.gold,
+          borderRadius: 16, padding: "14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5, cursor: "pointer" }}>
+          {s.new}
+        </button>
+      </div>
+    </div>
+  );
+}

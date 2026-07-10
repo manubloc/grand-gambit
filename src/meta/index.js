@@ -22,3 +22,15 @@ export {
 } from "./campaign.js";
 export { retinueScore, scoreBand } from "./rating.js";
 export { applySnapshot, readSnapshot, listRestorePoints, takeRestorePoint, BK_RECENT, BK_DAILY_DAYS, BK_MIN_GAP_MS } from "./backups.js";
+export {
+  ensureAccounts, register, login, loginGuest, upsertCloudAccount, changePassword,
+  adminHasDefaultPass, currentAccount, setSession, clearSession, findAccount,
+  normEmail, validEmail, hashPass, mkAccount, ADMIN_EMAIL, ADMIN_DEFAULT_PASS,
+} from "./accounts.js";
+export {
+  listSaves, createSave, loadSave, writeSave, deleteSave, renameSave,
+  progressPct, withProgressPct, leagueOrder, summarize as summarizeSave, migrateLegacyInto, fmtPlaytime,
+} from "./saves.js";
+export { cloudConfigured, signInWithGoogle, signInWithProvider, signInEmailCloud, signUpEmailCloud, resumeCloudSession, signOutCloud } from "./cloudAuth.js";
+export { emptyRecords, recordStage, totalBestMoves, fmtMs } from "./records.js";
+export { BOARDS, LB_MAX, mergeBoard, fetchBoard, submitScore } from "./leaderboard.js";
