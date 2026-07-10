@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState } from "../../../core/index.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
@@ -58,7 +58,13 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const playerArmy = useMemo(() => buildArmy(profile, map), [profile, map]);
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
 
+  // ── pause & resume (v0.19): a campaign match interrupted mid-fight waits in
+  // the profile (compact snapshot via the codec, history dropped) and picks up
+  // exactly where it stood — board, potions, clock and burned time-turners.
+  const resume = campaign && !pvp && profile.pausedMatch?.v === 1
+    && profile.pausedMatch.nodeId === match.nodeId ? profile.pausedMatch : null;
   const [state, setState] = useState(() => {
+    if (resume) { try { return decodeState(resume.enc); } catch { /* corrupt → fresh */ } }
     if (pvp) {
       const white = myColor === WHITE ? playerArmy : pvp.oppArmy;
       const black = myColor === WHITE ? pvp.oppArmy : playerArmy;
@@ -70,8 +76,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   });
   const [desync, setDesync] = useState(false);
   const [potionArm, setPotionArm] = useState(false);
-  const potionsUsedRef = useRef(0);
-  const hourglassUsedRef = useRef(0);   // time-turners burned this match
+  const potionsUsedRef = useRef(resume?.potionsUsed || 0);
+  const hourglassUsedRef = useRef(resume?.hourglassUsed || 0);   // time-turners burned this match
   function usePotion(i) {
     setPotionArm(false);
     setState((s) => {
@@ -83,7 +89,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [rated, setRated] = useState(null);          // { rating, delta } after a pvp match
   const [rematch, setRematch] = useState("");        // "" | "wait" | "offer"
   const [banner, setBanner] = useState(null);
-  const [intro, setIntro] = useState(() => !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
+  const [intro, setIntro] = useState(() => !resume && !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
 
@@ -92,7 +98,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // The clock only runs on YOUR move and pauses for story intro and banner;
   // hitting zero flags the game, chess-style.
   const timer = campaign ? match.timer : null;
-  const [clock, setClock] = useState(timer ? timer.seconds : null);
+  const [clock, setClock] = useState(resume?.clock ?? (timer ? timer.seconds : null));
   useEffect(() => {
     if (timer?.type === "move" && state.turn === myColor) setClock(timer.seconds);
   }, [state, timer, myColor]);
@@ -133,6 +139,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       : pvp ? 6
       : winGold(difficulty);
     const { profile: next, gained } = applyResult(profile, summary);
+    if (campaign && next.pausedMatch?.nodeId === match.nodeId) next.pausedMatch = null;
     dispatch({ type: "REPLACE", profile: next });
     if (campaign && result === "win") {
       dispatch({ type: "RECORD_STAGE", id: match.nodeId, moves: summary.moveCount || 0 });
@@ -214,6 +221,23 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   }, [armResign]);
   function resign() { if (pvp) pvp.net.send({ t: "resign" }); finish("loss", "resign"); }
 
+  // Leaving mid-fight pauses instead of forfeiting: snapshot into the profile.
+  const pauseRef = useRef(null);
+  pauseRef.current = { state, clock };
+  function pauseNow() {
+    if (!campaign || pvp || finished.current) return;
+    const cur = pauseRef.current;
+    dispatch({ type: "PAUSE_MATCH", data: { v: 1, nodeId: match.nodeId, enc: encodeState(cur.state),
+      potionsUsed: potionsUsedRef.current, hourglassUsed: hourglassUsedRef.current, clock: cur.clock } });
+  }
+  function leave() { pauseNow(); onExit && onExit(); }
+  useEffect(() => {
+    if (!campaign || pvp) return;
+    const fn = () => { if (document.visibilityState === "hidden") pauseNow(); };
+    document.addEventListener("visibilitychange", fn);
+    return () => document.removeEventListener("visibilitychange", fn);
+  }, []); // eslint-disable-line
+
   const myTurn = state.turn === myColor && !banner;
   const st = status(state);
   const hpMode = state.rules === "hp";
@@ -228,7 +252,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* top bar: ‹ back · context · clock · ⚑ resign — everything floats, nothing scrolls */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
         {onExit && (
-          <button onClick={onExit} style={pill({ border: `1.5px solid ${T.gold}88`, color: T.gold })}>
+          <button onClick={leave} style={pill({ border: `1.5px solid ${T.gold}88`, color: T.gold })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}

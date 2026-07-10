@@ -31,6 +31,7 @@ export function decodeState(json) {
     rules: o.rules ?? "chess",
     turn: o.turn,
     captured: o.captured || { w: [], b: [] },
+    potions: o.potions || { w: 0, b: 0 },
     history: [], // fresh; undo starts over after a load
     lastMove: o.lastMove || null,
     moveCount: o.moveCount || 0,

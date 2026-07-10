@@ -68,6 +68,7 @@ function reducer(state, a) {
     case "GIFT_GOLD": return { ...state, gold: (state.gold || 0) + (a.n || 0) };
     case "SET_NOTICE": return { ...state, notices: { ...(state.notices || {}), [a.key]: true } };
     case "SET_ONLINE": return { ...state, online: { ...state.online, ...a.online } };
+    case "PAUSE_MATCH": return { ...state, pausedMatch: a.data || null };
     case "REPLACE": if (state) takeRestorePoint(state, { force: true });
       // eslint-disable-next-line no-fallthrough
  return a.profile;

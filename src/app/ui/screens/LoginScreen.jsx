@@ -30,6 +30,11 @@ const STR = {
   },
 };
 
+// Apple & Discord are wired in code but their providers are not configured in
+// Supabase yet (Apple needs a paid developer account). Hidden until then —
+// flip to true after following SUPABASE-SETUP.md for the provider.
+const SHOW_EXTRA_PROVIDERS = false;
+
 const field = {
   width: "100%", boxSizing: "border-box", background: "#0d1017", border: `1px solid ${T.line}`,
   color: T.text, borderRadius: 12, padding: "13px 14px", fontSize: 16, fontFamily: "inherit", outline: "none",
@@ -114,7 +119,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
             opacity: cloud ? 1 : 0.75 }}>
           <GoogleG /> {s.google}
         </button>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {SHOW_EXTRA_PROVIDERS && <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           <button disabled={busy} onClick={() => (cloud ? run(() => signInWithProvider("apple")) : setCloudNote(true))}
             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               background: "#000", border: "1px solid #333", color: "#fff", borderRadius: 12,
@@ -129,7 +134,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
               opacity: cloud ? 1 : 0.75 }}>
 <svg width="16" height="16" viewBox="0 0 640 512" aria-hidden><path fill="#fff" d="M524.5 69.8a1.5 1.5 0 0 0-.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0-1.9.9 337.5 337.5 0 0 0-14.9 30.6 447.8 447.8 0 0 0-134.4 0 309.5 309.5 0 0 0-15.1-30.6 1.9 1.9 0 0 0-1.9-.9A483.7 483.7 0 0 0 116.1 69.1a1.7 1.7 0 0 0-.8.7C39.1 183.7 18.2 294.7 28.4 404.4a2 2 0 0 0 .8 1.4A487.7 487.7 0 0 0 176 479.9a1.9 1.9 0 0 0 2.1-.7A348.2 348.2 0 0 0 208.1 430.4a1.9 1.9 0 0 0-1-2.6 321.2 321.2 0 0 1-45.9-21.9 1.9 1.9 0 0 1-.2-3.1c3.1-2.3 6.2-4.7 9.1-7.1a1.8 1.8 0 0 1 1.9-.3c96.3 44 200.6 44 295.8 0a1.8 1.8 0 0 1 1.9.2c2.9 2.4 6 4.9 9.1 7.2a1.9 1.9 0 0 1-.2 3.1 301.4 301.4 0 0 1-45.9 21.8 1.9 1.9 0 0 0-1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1.7A486 486 0 0 0 610.7 405.7a1.9 1.9 0 0 0 .8-1.4c12.2-126.7-20.6-236.8-87-334.5zM222.5 337.6c-29 0-52.8-26.6-52.8-59.2s23.4-59.3 52.8-59.3c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.3-52.8 59.3zm195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.3 52.8-59.3c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.3-52.8 59.3z"/></svg> {s.discord}
           </button>
-        </div>
+        </div>}
         {cloudNote && !cloud && <div style={{ color: T.dim, fontSize: 12.5, lineHeight: 1.45, padding: "0 3px" }}>{s.cloudOff}</div>}
 
         <button disabled={busy} onClick={() => run(() => loginGuest())}

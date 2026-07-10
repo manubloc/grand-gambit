@@ -104,6 +104,28 @@ const { mergeBoard } = await import("./src/meta/leaderboard.js");
 }
 
 await clearSession();
+
+// ── v0.19 pause & resume: the codec round-trips a mid-fight snapshot ─────────
+{
+  const { createGame, reduce, moveCommand, encodeState, decodeState } = await import("./src/core/index.js");
+  const { buildAiArmyForMap, buildArmyFromFormation } = await import("./src/meta/index.js");
+  const { mapById } = await import("./src/content/index.js");
+  const map = mapById("classic");
+  const mine = buildArmyFromFormation(() => 1, map.defaultFormation);
+  const foe = buildAiArmyForMap("easy", map, 7);
+  let st = createGame(mine, foe, { map, rules: "hp", seed: 7, potions: { w: 2, b: 0 } });
+  const mv = (await import("./src/core/index.js")).pieceMoves ? null : null;
+  // play the first legal pawn-ish move via the move generator on the sim
+  const { status } = await import("./src/core/index.js");
+  const legal = (await import("./src/core/index.js")).legalMoves ? (await import("./src/core/index.js")).legalMoves(st) : null;
+  if (legal && legal.length) st = reduce(st, moveCommand(legal[0])).state;
+  const back = decodeState(encodeState(st));
+  ok("pause codec keeps the turn", back.turn === st.turn);
+  ok("pause codec keeps the log", (back.log || []).length === (st.log || []).length);
+  ok("pause codec keeps the potions", back.potions?.w === st.potions?.w);
+  ok("pause codec keeps the board", JSON.stringify(back.board) === JSON.stringify(st.board));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);
 

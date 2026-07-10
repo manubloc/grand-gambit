@@ -10,6 +10,7 @@ export function cloneState(state) {
     rules: state.rules,
     turn: state.turn,
     captured: { w: [...state.captured.w], b: [...state.captured.b] },
+    potions: state.potions, // carried through every move; the POTION command replaces it immutably
     history: state.history, // shared by reference; only real moves push to it
     lastMove: state.lastMove,
     moveCount: state.moveCount,

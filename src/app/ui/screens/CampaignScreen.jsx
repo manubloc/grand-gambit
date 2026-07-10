@@ -491,7 +491,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 4.4s ease-in-out infinite", pointerEvents: "none" }} />}
-                ⚔ {status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                ⚔ {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}
