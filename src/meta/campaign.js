@@ -13,6 +13,17 @@ export const campaignLength = (profile = null) =>
 export const clearedIds = (profile) => profile?.campaign?.cleared || [];
 export const clearedCount = (profile) => clearedIds(profile).length;
 
+/** Progressive supply chest: an item shows up in the shop only once the
+ *  journey has reached it — by league, and within its league by stages
+ *  cleared. Before that it sits in the chest as a veiled mystery. */
+export function itemRevealed(profile, item) {
+  const lg = profile?.campaign?.league || 1;
+  const min = item.minLeague || 1;
+  if (lg > min) return true;
+  if (lg < min) return false;
+  return clearedCount(profile) >= (item.minCleared || 0);
+}
+
 // reverse edges, computed once
 const PREDS = (() => {
   const m = {};

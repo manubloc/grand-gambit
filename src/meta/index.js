@@ -16,7 +16,7 @@ export { applyResult, winGold } from "./rewards.js";
 export { emptyStats, defaultProfile, loadProfile, saveProfile, serializeSave, parseSave } from "./profile.js";
 export { newSession, applyEvents, summarize, summarizeMatch } from "./session.js";
 export {
-  campaignLength, clearedCount, clearedIds, nodeStatus, currentNodeId, predsOf, nodeBossSpec,
+  campaignLength, clearedCount, clearedIds, nodeStatus, currentNodeId, predsOf, nodeBossSpec, itemRevealed,
   buildStageMatch, advanceCampaign, mapUnlocked, hpUnlocked, stageTimer,
   leagueRewardMult, leagueBump, stageGold, tollCost, payToll, bossPieceFor, leagueFinalBossPiece, seaAccessible, nodeInLeague, gateOf, leagueNo,
 } from "./campaign.js";

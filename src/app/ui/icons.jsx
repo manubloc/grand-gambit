@@ -104,3 +104,63 @@ export function GoldCoin({ size = 18, style }) {
     </svg>
   );
 }
+
+// ── small in-house UI glyphs (v0.19): every icon drawn, no emoji anywhere ────
+const gs = (color, w = 1.9) => ({ fill: "none", stroke: color, strokeWidth: w, strokeLinecap: "round", strokeLinejoin: "round" });
+
+/** True bosses only — the league's monsters wear the skull. */
+export function SkullIc({ color = "#8e2f39", size = 14 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M12 3 C7 3 4.5 6.4 4.5 10.2 C4.5 13 6 14.8 7.5 15.8 L7.5 18.5 L10 18.5 L10 20.5 L14 20.5 L14 18.5 L16.5 18.5 L16.5 15.8 C18 14.8 19.5 13 19.5 10.2 C19.5 6.4 17 3 12 3 Z" fill={color} />
+    <circle cx="9.2" cy="10.6" r="1.9" fill="#f6f0de" /><circle cx="14.8" cy="10.6" r="1.9" fill="#f6f0de" />
+    <path d="M12 12.6 L13 14.6 L11 14.6 Z" fill="#f6f0de" />
+  </svg>;
+}
+
+/** Challengers — crossed blades, a fight worth picking. */
+export function BladesIc({ color = "#8a6f4d", size = 14 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M5 5 L17 17 M19 5 L7 17 M5 5 L8 5 M5 5 L5 8 M19 5 L16 5 M19 5 L19 8 M8.4 15.6 L6 20 M15.6 15.6 L18 20" {...gs(color)} />
+  </svg>;
+}
+
+export function LockIc({ color = "#8b90a3", size = 13 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <rect x="5" y="10.5" width="14" height="9.5" rx="2.2" fill={color} />
+    <path d="M8 10.5 L8 7.6 A4 4 0 0 1 16 7.6 L16 10.5" {...gs(color, 2.2)} />
+    <circle cx="12" cy="14.6" r="1.5" fill="#0d1017" /><path d="M12 15.6 L12 17.4" stroke="#0d1017" strokeWidth="1.6" strokeLinecap="round" />
+  </svg>;
+}
+
+export function FlagIc({ color = "currentColor", size = 14 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M6 3.5 L6 20.5" {...gs(color, 2.1)} />
+    <path d="M6 4.5 L17.5 4.5 L14.8 8 L17.5 11.5 L6 11.5 Z" fill={color} />
+  </svg>;
+}
+
+export function TrashIc({ color = "#8b90a3", size = 15 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M4.5 6.5 L19.5 6.5 M9.5 6.5 L9.5 4.5 L14.5 4.5 L14.5 6.5 M6.5 6.5 L7.4 20 L16.6 20 L17.5 6.5" {...gs(color)} />
+    <path d="M10 10 L10.3 16.5 M14 10 L13.7 16.5" {...gs(color, 1.6)} />
+  </svg>;
+}
+
+/** The time-turner in play: an hourglass whose sand runs upward. */
+export function HourglassIc({ color = "#c9a45c", size = 16 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M6.5 3.5 L17.5 3.5 M6.5 20.5 L17.5 20.5" {...gs(color, 2)} />
+    <path d="M8 5 L16 5 C16 8 14.2 9.9 13 11.2 L13 12.8 C14.2 14.1 16 16 16 19 L8 19 C8 16 9.8 14.1 11 12.8 L11 11.2 C9.8 9.9 8 8 8 5 Z" {...gs(color, 1.5)} />
+    <path d="M9.3 17.6 C9.9 16.1 10.9 15 12 13.9 C13.1 15 14.1 16.1 14.7 17.6 Z" fill={color} />
+    <path d="M12 12.4 L12 9.4 M12 8.2 L10.9 9.5 M12 8.2 L13.1 9.5" {...gs("#f0dfae", 1.3)} />
+  </svg>;
+}
+
+/** A veiled thing in the supply chest — a wax seal over a question. */
+export function SealIc({ color = "#6f6b5e", size = 20 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>
+    <path d="M12 2.8 L20.2 12 L12 21.2 L3.8 12 Z" fill="none" stroke={color} strokeWidth="1.7" strokeLinejoin="round" />
+    <path d="M9.6 9.4 C9.6 7.8 10.7 6.9 12.1 6.9 C13.5 6.9 14.5 7.8 14.5 9.2 C14.5 11.2 12.2 11.2 12.2 13.2" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" />
+    <circle cx="12.2" cy="16.4" r="1.15" fill={color} />
+  </svg>;
+}

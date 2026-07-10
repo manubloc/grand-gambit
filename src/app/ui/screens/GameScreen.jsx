@@ -7,7 +7,8 @@ import { T } from "../theme.js";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
-import { SkillStar, GoldCoin } from "../icons.jsx";
+import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc } from "../icons.jsx";
+import { ItemIcon } from "../ItemIcon.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 
 function Tray({ kinds, color }) {
@@ -70,6 +71,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [desync, setDesync] = useState(false);
   const [potionArm, setPotionArm] = useState(false);
   const potionsUsedRef = useRef(0);
+  const hourglassUsedRef = useRef(0);   // time-turners burned this match
   function usePotion(i) {
     setPotionArm(false);
     setState((s) => {
@@ -122,6 +124,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     const summary = summarizeMatch(playerArmy, foe, state.seed, state.log, result, myColor, { map, rules });
     summary.hpRules = rules === "hp";
     summary.potionsUsed = potionsUsedRef.current;
+    summary.hourglassUsed = hourglassUsedRef.current;
+    summary.resigned = reason === "resign" && result === "loss";
     // The purse (v0.5): every win pays gold — stages carry their own reward
     // (bosses more, replays half), free play scales with difficulty.
     summary.gold = result !== "win" ? 0
@@ -189,9 +193,18 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     return () => { u1(); u2(); u3(); u4(); u5(); };
   }, [pvp, state.seed]); // eslint-disable-line
 
+  // Undo is no free lunch anymore (v0.19): each take-back burns a
+  // Time-turner from the supply chest — bought with gold, capped at 2.
+  const hourglassLeft = Math.max(0, (profile.items?.hourglass || 0) - hourglassUsedRef.current);
   function doUndo() {
-    if (finished.current) return;
-    setState((s) => { let n = undo(s); if (n !== s && n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; } return n; });
+    if (finished.current || pvp || hourglassLeft <= 0) return;
+    setState((s) => {
+      let n = undo(s);
+      if (n === s) return s;
+      if (n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; }
+      hourglassUsedRef.current++;
+      return n;
+    });
   }
   const [armResign, setArmResign] = useState(false); // one tap arms, the second concedes
   useEffect(() => {
@@ -227,7 +240,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             </>
             : campaign ? <>
               <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
-              {match.boss && <Chip color={T.danger} bg={T.panel}>☠ {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
+              {match.boss && <Chip color={T.danger} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <BladesIc color={T.danger} size={12} /> : <SkullIc size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
@@ -246,7 +259,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro}
             style={pill({ border: `1.5px solid ${T.danger}88`, color: T.danger, opacity: banner || intro ? 0.5 : 1,
               cursor: banner || intro ? "default" : "pointer" })}>
-            ⚑ {t("game.resign")}
+            <FlagIc size={13} /> {t("game.resign")}
           </button>
         )}
       </div>
@@ -264,7 +277,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           flip={myColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={myColor} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
-          borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap" }}>🧪 {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
+          borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
         {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => setIntro(false)} timer={timer} />}
         {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
           onSettings={!campaign && !pvp ? onExit : null}
@@ -280,19 +293,22 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
             style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
               border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
-              fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5 }}>
-            🧪 {state.potions.w}
+              fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5,
+              display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <ItemIcon id="potion" size={14} /> {state.potions.w}
           </button>
         )}
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
           textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.danger : T.dim }}>{statusText}</div>
         <Tray kinds={state.captured.w} color="b" />
-        {!pvp && (
-          <button onClick={doUndo} disabled={!state.history.length || !!banner} title={t("game.undo")}
-            style={{ width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.line}`, background: T.panel,
-              color: T.text, fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
-              opacity: !state.history.length || banner ? 0.45 : 1 }}>↶</button>
+        {!pvp && (profile.items?.hourglass || 0) > 0 && (
+          <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
+            style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, borderRadius: 10,
+              border: `1px solid ${hourglassLeft > 0 ? T.gold + "88" : T.line}`, background: T.panel,
+              color: T.gold, fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
+              padding: "0 9px", opacity: !state.history.length || banner || hourglassLeft <= 0 ? 0.45 : 1 }}>
+            <HourglassIc size={15} /> {hourglassLeft}</button>
         )}
       </div>
     </div>
@@ -334,16 +350,16 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
                     background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
                 ))}
               </span>
-              {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
+              {open ? null : <><LockIc size={11} />{" "}</>}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
             </button>
           );
         })}
       </div>
-      {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}>🔒 {t("game.unlockHint")}</div>}
+      {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}><LockIc color={T.gold} size={11} /> {t("game.unlockHint")}</div>}
       <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
         options={[
           { value: "chess", label: t("mode.chess") },
-          { value: "hp", label: hpOpen ? t("mode.hp") : `🔒 ${t("mode.hp")}`, disabled: !hpOpen },
+          { value: "hp", label: hpOpen ? t("mode.hp") : <><LockIc size={11} /> {t("mode.hp")}</>, disabled: !hpOpen },
         ]} />
       {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
       <div style={{ height: 10 }} />
@@ -382,7 +398,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
           {en ? node.storyEn : node.storyDe}
         </div>
         {boss && <div style={{ marginTop: 12, fontSize: 12.5, fontWeight: 800, color: "#8e2f39" }}>
-          ☠ {boss.name[en ? "en" : "de"]}
+          {boss.bossId?.startsWith("pb_") ? <BladesIc color="#8e2f39" size={12} /> : <SkullIc size={12} />} {boss.name[en ? "en" : "de"]}
         </div>}
         {timer && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: "#8a6f4d" }}>
           ⏳ {timer.type === "total"

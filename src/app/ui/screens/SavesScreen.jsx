@@ -3,6 +3,7 @@
 // progress dial: any slot can be set to 0…100% in journey order.
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
+import { TrashIc } from "../icons.jsx";
 import { Wordmark } from "../Brand.jsx";
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
@@ -94,7 +95,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
               <button onClick={() => (confirmDel === sv.id ? (deleteSave(account.id, sv.id).then(() => { setConfirmDel(null); refresh(); })) : setConfirmDel(sv.id))}
                 style={{ background: confirmDel === sv.id ? "#5a2626" : "none", border: `1px solid ${confirmDel === sv.id ? "#a05050" : T.line}`,
                   color: confirmDel === sv.id ? "#f0c0c0" : T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
-                {confirmDel === sv.id ? s.delSure : "🗑"}
+                {confirmDel === sv.id ? s.delSure : <TrashIc size={15} />}
               </button>
             </div>
             {account.isAdmin && (

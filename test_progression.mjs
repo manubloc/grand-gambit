@@ -1,6 +1,7 @@
 import { createInitialState, status, applyMove, KIND } from "./src/core/index.js";
 import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel } from "./src/meta/index.js";
-import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL } from "./src/meta/index.js";
+import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL, itemRevealed } from "./src/meta/index.js";
+import { ITEMS } from "./src/content/index.js";
 import { evaluate as evalAch } from "./src/meta/index.js";
 import { chooseMove } from "./src/ai/index.js";
 import { CHARACTERS } from "./src/content/index.js";
@@ -136,6 +137,30 @@ const keyCost = IL3.filter((i) => i.kind === "key").reduce((a, i) => a + i.gold,
 const tolls1 = CAMP3.filter((n) => n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
 ok("league 1 income covers all keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
   l1Income > (keyCost + tolls1) * 1.1);
+
+
+// ── v0.19: resigning forfeits everything; the chest reveals itself slowly ────
+{
+  const p0 = { ...structuredClone(base), gold: 10, items: { hourglass: 2 } };
+  const rr = applyResult(p0, { result: "loss", resigned: true, captures: 3, checkmate: false, promotions: 0, charXpGains: { pawn: 40 }, hourglassUsed: 1 });
+  ok("resign grants zero XP", rr.profile.xpEarned === (p0.xpEarned || 0));
+  ok("resign grants zero gold", rr.profile.gold === 10);
+  ok("resign grants zero piece XP", !(rr.profile.charXp?.pawn > (p0.charXp?.pawn || 0)));
+  ok("resign still counts the loss", rr.profile.stats.losses === (base.stats.losses || 0) + 1);
+  ok("time-turner burned on resign too", rr.profile.items.hourglass === 1);
+  const rl = applyResult(p0, { result: "loss", captures: 3, charXpGains: {} });
+  ok("a fought loss still pays a little XP", rl.profile.xpEarned > (p0.xpEarned || 0));
+}
+{
+  const fresh = { campaign: { league: 1, cleared: [] } };
+  ok("potion revealed from the start", itemRevealed(fresh, ITEMS.potion));
+  ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));
+  const mid = { campaign: { league: 1, cleared: ["n01","n02","n03","c1","c2"] } };
+  ok("machete revealed after 4 stages", itemRevealed(mid, ITEMS.machete));
+  ok("mountain key veiled in league 1", !itemRevealed(mid, ITEMS.bergschluessel));
+  ok("mountain key revealed in league 5", itemRevealed({ campaign: { league: 5, cleared: [] } }, ITEMS.bergschluessel));
+  ok("time-turner revealed after 2 stages", itemRevealed({ campaign: { league: 1, cleared: ["n01","n02"] } }, ITEMS.hourglass));
+}
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

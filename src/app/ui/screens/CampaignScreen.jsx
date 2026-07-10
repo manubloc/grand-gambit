@@ -13,7 +13,7 @@ import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
-import { ElementIcon, GoldCoin } from "../icons.jsx";
+import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse, SiteGlyph, siteTypeFor, WandererArt } from "../mapArt.jsx";
@@ -317,10 +317,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                         background: T.gold, color: "#17110a", fontSize: 8.5, fontWeight: 900, display: "flex", alignItems: "center",
                         justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>)}
                   {st === "gated" && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
-                    filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : gateOf(n)?.gold ? <GoldCoin size={11} style={{ verticalAlign: "-2px" }} /> : "🔒"}</span>}
-                  {!bm && n.boss && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 12.5, height: 12.5,
+                    filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : gateOf(n)?.gold ? <GoldCoin size={11} style={{ verticalAlign: "-2px" }} /> : <LockIc size={11} />}</span>}
+                  {!bm && n.boss?.pure && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 13, height: 13,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
-                    border: "1.5px solid #efe9da", fontSize: 7 }}>☠</span>}
+                    border: "1.5px solid #efe9da" }}><SkullIc color="#f6f0de" size={8} /></span>}
                 </button>
                 <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 24 : below ? 27 : 52, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
@@ -417,7 +417,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <Chip color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
             <Chip color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
             <Chip color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
-            <Chip color={"#17110a"} bg={"#e8c96a"}>🪙 +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
+            <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
           </div>
           {boss && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
@@ -427,7 +427,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />
               </div>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>☠ {t("camp.boss")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>
+                  {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
+                  {t(node?.boss?.pure ? "camp.boss" : "camp.challenger")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
                   ♥ {boss.hp} · ⚔ {boss.atk}{unlockCh ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
                   {!known && <> · {t("camp.unknown")}</>}
@@ -453,7 +455,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 <Button variant={can ? "primary" : "subtle"} disabled={!can}
                   onClick={() => dispatch({ type: "PAY_TOLL", id: node.id })}
                   style={{ padding: "9px 14px", whiteSpace: "nowrap", ...(can ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
-                  🪙 {cost} · {t("camp.payToll")}
+                  <GoldCoin size={13} /> {cost} · {t("camp.payToll")}
                 </Button>
               </div>;
             }
@@ -475,7 +477,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               {!itemOk && <Button variant={can ? "primary" : "subtle"} disabled={!can}
                 onClick={() => dispatch({ type: "BUY_ITEM", id: it.id })}
                 style={{ padding: "9px 14px", whiteSpace: "nowrap", ...(can ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
-                🪙 {it.gold} · {t("camp.buyHere")}
+                <GoldCoin size={13} /> {it.gold} · {t("camp.buyHere")}
               </Button>}
             </div>;
           })() : (

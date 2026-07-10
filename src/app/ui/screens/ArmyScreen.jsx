@@ -6,11 +6,12 @@ import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, MAX_PIECE_LEVEL,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
+  itemRevealed,
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle } from "../primitives.jsx";
-import { SkillStar, GoldCoin } from "../icons.jsx";
+import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -59,10 +60,10 @@ function CharCard({ char, profile, dispatch, t, en }) {
               </div>
             )}
             <div style={{ fontSize: 12, color: T.faint, marginTop: 3 }}>
-              🔒 {bossNode ? t("army.lockedBoss", { place: bossNode.place }) : t("army.locked")}
+              <LockIc size={12} /> {bossNode ? t("army.lockedBoss", { place: bossNode.place }) : t("army.locked")}
             </div>
           </div>
-          <span style={{ fontSize: 20, color: T.faint }}>🔒</span>
+          <span style={{ display: "grid", placeItems: "center" }}><LockIc size={19} /></span>
         </div>
       </Panel>
     );
@@ -93,7 +94,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
           <div style={{ fontWeight: 800 }}>{en ? char.nameEn : char.nameDe}</div>
           {unlocked
             ? <>{stars > 0 && <Chip color={"#17110a"} bg={T.gold}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
-            : <Chip color={T.faint} bg={T.panel2}>🔒 {t("camp.boss")}</Chip>}
+            : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
         </div>
         <div style={{ display: "flex", gap: 14, marginTop: 6, alignItems: "center" }}>
           <StatPill icon="♥" val={maxHp} color={T.green} />
@@ -116,7 +117,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
     )}
     {!unlocked && bossNode && (
       <div style={{ marginTop: 9, fontSize: 12, color: T.dim, display: "flex", alignItems: "center", gap: 6 }}>
-        ☠ {t("army.lockedBoss", { place: bossNode.place })}
+        <BladesIc size={13} /> {t("army.lockedBoss", { place: bossNode.place })}
       </div>
     )}
     {unlocked && (
@@ -380,7 +381,7 @@ function GearPanel({ profile, dispatch, t, en }) {
     <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase", marginBottom: 8 }}>{t("army.supplies")}</div>
       <div style={{ display: "grid", gap: 8 }}>
-        {ITEM_LIST.map((it) => {
+        {ITEM_LIST.filter((it) => itemRevealed(profile, it)).map((it) => {
           const owned = it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0);
           const full = it.kind === "key" ? owned : owned >= (it.max || 99);
           const can = !full && (profile.gold || 0) >= it.gold;
@@ -402,6 +403,17 @@ function GearPanel({ profile, dispatch, t, en }) {
             </button>
           </div>;
         })}
+        {(() => {
+          // the veiled remainder: one quiet row, no names, no prices — the road
+          // ahead keeps its secrets until you walk it
+          const hidden = ITEM_LIST.filter((it) => !itemRevealed(profile, it)).length;
+          if (!hidden) return null;
+          return <div style={{ display: "flex", alignItems: "center", gap: 10, opacity: 0.6, paddingTop: 2 }}>
+            <span style={{ width: 24, display: "grid", placeItems: "center" }}><SealIc size={20} /></span>
+            <div style={{ fontSize: 12, color: T.faint, fontStyle: "italic" }}
+              className="gg-serif">{t(hidden === 1 ? "army.itemHidden1" : "army.itemsHidden", { n: hidden })}</div>
+          </div>;
+        })()}
       </div>
     </div>
   );

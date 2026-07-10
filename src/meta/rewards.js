@@ -15,7 +15,10 @@ export function applyResult(profile, summary) {
   const p = structuredClone(profile);
   const levelBefore = playerLevelForXp(p.xpEarned || p.xp);
 
-  const gain = (summary.result === "win" ? XP.win : summary.result === "draw" ? XP.draw : XP.loss)
+  // Resigning forfeits the purse entirely: no XP, no gold, no piece XP —
+  // the loss still counts, but points must be fought for, not conceded.
+  const gain = summary.resigned ? 0
+    : (summary.result === "win" ? XP.win : summary.result === "draw" ? XP.draw : XP.loss)
     + (summary.captures || 0) * XP.perCapture
     + (summary.checkmate ? XP.checkmate : 0)
     + (summary.promotions || 0) * XP.promotion;
@@ -23,7 +26,7 @@ export function applyResult(profile, summary) {
   p.xpEarned = (p.xpEarned || 0) + gain;
 
   p.charXp = p.charXp || {};
-  for (const [id, xp] of Object.entries(summary.charXpGains || {})) p.charXp[id] = (p.charXp[id] || 0) + xp;
+  if (!summary.resigned) for (const [id, xp] of Object.entries(summary.charXpGains || {})) p.charXp[id] = (p.charXp[id] || 0) + xp;
 
   const st = p.stats;
   st.games++;
@@ -40,11 +43,12 @@ export function applyResult(profile, summary) {
   const spGain = spForXpJump(beforeXp, p.xpEarned);
   p.sp = (p.sp || 0) + spGain;
   p.xp = p.xpEarned; // legacy mirror: XP is no longer spendable
-  const goldGain = (GOLD[summary.result] || 0) + (summary.result === "win" ? (summary.gold || 0) : 0);
+  const goldGain = summary.resigned ? 0 : (GOLD[summary.result] || 0) + (summary.result === "win" ? (summary.gold || 0) : 0);
   p.gold = (p.gold || 0) + goldGain;
-  if (summary.potionsUsed) {
+  if (summary.potionsUsed || summary.hourglassUsed) {
     const items = { ...(p.items || {}) };
-    items.potion = Math.max(0, (items.potion || 0) - summary.potionsUsed);
+    if (summary.potionsUsed) items.potion = Math.max(0, (items.potion || 0) - summary.potionsUsed);
+    if (summary.hourglassUsed) items.hourglass = Math.max(0, (items.hourglass || 0) - summary.hourglassUsed);
     p.items = items;
   }
 
