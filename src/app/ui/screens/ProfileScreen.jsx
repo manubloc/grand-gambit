@@ -20,7 +20,7 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
     <Panel>
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
-        style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 15, outline: "none" }} />
+        style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />
@@ -29,14 +29,14 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
     <Panel>
       <div className="gg-serif" style={{ fontSize: 15, letterSpacing: ".1em", textTransform: "uppercase", color: T.dim }}>{t("profile.record")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 12 }}>
-        <Stat label={t("profile.wins")} value={s.wins || 0} color={T.green} />
-        <Stat label={t("profile.losses")} value={s.losses || 0} color={T.danger} />
-        <Stat label={t("profile.draws")} value={s.draws || 0} color={T.gold} />
+        <Stat label={t("profile.wins")} value={s.wins || 0} />
+        <Stat label={t("profile.losses")} value={s.losses || 0} />
+        <Stat label={t("profile.draws")} value={s.draws || 0} />
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
         <Stat label={t("profile.games")} value={s.games || 0} />
-        <Stat label={t("profile.winrate")} value={`${Math.round(100 * (s.wins || 0) / Math.max(1, (s.wins || 0) + (s.losses || 0)))}%`} color={T.gold} />
-        <Stat label={t("profile.bestStreak")} value={s.bestStreak || 0} color={T.gold} />
+        <Stat label={t("profile.winrate")} value={`${Math.round(100 * (s.wins || 0) / Math.max(1, (s.wins || 0) + (s.losses || 0)))}%`} />
+        <Stat label={t("profile.bestStreak")} value={s.bestStreak || 0} />
       </div>
     </Panel>
 
@@ -44,13 +44,13 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
       <div className="gg-serif" style={{ fontSize: 15, letterSpacing: ".1em", textTransform: "uppercase", color: T.dim }}>{t("profile.journey")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 12 }}>
         <Stat label={t("profile.stages")} value={s.stagesCleared || 0} />
-        <Stat label={t("profile.bosses")} value={s.bossKills || 0} color={T.danger} />
-        <Stat label={t("profile.recruits")} value={s.recruits || 0} color={T.gold} />
+        <Stat label={t("profile.bosses")} value={s.bossKills || 0} />
+        <Stat label={t("profile.recruits")} value={s.recruits || 0} />
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
         <Stat label={t("profile.upgrades")} value={s.upgrades || 0} />
         <Stat label={t("profile.captures")} value={s.captures || 0} />
-        <Stat label={t("profile.xpTotal")} value={profile.xpEarned || 0} color={T.gold} />
+        <Stat label={t("profile.xpTotal")} value={profile.xpEarned || 0} />
       </div>
       {profile.online?.rating != null && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12,
@@ -100,7 +100,7 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
         ? <Button variant="ghost" onClick={() => dispatch({ type: "SET_PIN", pin: null })} style={{ width: "100%" }}>{t("profile.clearPin")}</Button>
         : <div style={{ display: "flex", gap: 8 }}>
             <input value={pin} onChange={(e) => setPin(e.target.value.slice(0, 64))} placeholder={t("profile.pinPh")} type="password" autoComplete="new-password"
-              style={{ flex: 1, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 15, outline: "none" }} />
+              style={{ flex: 1, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
             <Button onClick={setPinProtect} disabled={pin.length < 4}>{t("profile.setPin")}</Button>
           </div>}
     </Panel>

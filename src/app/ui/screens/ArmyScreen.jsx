@@ -416,7 +416,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
-  return <div style={{ display: "grid", gap: 12 }}>
+  return <div style={{ display: "grid", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
     {/* balance — always in sight, whatever the tab */}
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
       background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>

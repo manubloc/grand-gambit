@@ -586,49 +586,53 @@ export function siteTypeFor(node) {
 
 // ── the wanderer, painted: soft gold washes instead of hard game-piece lines,
 // so he belongs to the artwork he walks through. (The in-match piece is untouched.)
+// ── the wanderer — the mark's pawn brought onto the parchment: one bold navy
+// contour so he pops off the painted ground, lacquered gold with a hard key
+// light, the double collar and navy diamond straight from the logo. Built to
+// read at 48px: few shapes, strong silhouette.
 export function WandererArt({ size = "100%" }) {
   return (
-    <svg viewBox="0 0 48 54" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
+    <svg viewBox="0 0 48 56" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
       <defs>
-        <radialGradient id="ggWndAura" cx=".5" cy=".58" r=".62">
-          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".4" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="ggWndGold" x1=".22" y1="0" x2=".85" y2="1">
-          <stop offset="0" stopColor="#fdf1c6" /><stop offset=".42" stopColor="#dcb268" />
-          <stop offset=".78" stopColor="#a37e39" /><stop offset="1" stopColor="#5f4720" />
+        <linearGradient id="ggWndGold" x1=".18" y1=".05" x2=".85" y2="1">
+          <stop offset="0" stopColor="#fdf2c8" /><stop offset=".38" stopColor="#e3bd72" />
+          <stop offset=".72" stopColor="#b58a3f" /><stop offset="1" stopColor="#6d5222" />
         </linearGradient>
-        <linearGradient id="ggWndGoldD" x1=".2" y1="0" x2=".92" y2="1">
-          <stop offset="0" stopColor="#efd89b" /><stop offset=".6" stopColor="#a17c37" /><stop offset="1" stopColor="#4c3a16" />
+        <linearGradient id="ggWndGoldD" x1=".2" y1="0" x2=".9" y2="1">
+          <stop offset="0" stopColor="#e9cf92" /><stop offset=".65" stopColor="#96742f" /><stop offset="1" stopColor="#4a3814" />
         </linearGradient>
-        <radialGradient id="ggWndSheen" cx=".3" cy=".26" r=".72">
-          <stop offset="0" stopColor="#fffbe8" stopOpacity=".85" /><stop offset=".42" stopColor="#fff7dd" stopOpacity="0" />
+        <radialGradient id="ggWndSheen" cx=".32" cy=".26" r=".68">
+          <stop offset="0" stopColor="#fffdf0" stopOpacity=".95" /><stop offset=".4" stopColor="#fff7dd" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <ellipse cx="24" cy="27" rx="24.5" ry="21" fill="url(#ggWndAura)" />
-      <g stroke="#3a2c12" strokeOpacity=".55" strokeWidth=".9" strokeLinejoin="round">
-        {/* head */}
-        <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndGold)" />
-        {/* double-ring collar, like the mark */}
-        <path d="M16.9 18.9 q7.1 -3.2 14.2 0 q.9 1 .2 1.9 q-7.4 2.6 -14.6 0 q-.7 -.9 .2 -1.9 Z" fill="url(#ggWndGoldD)" />
-        <path d="M16.1 21.9 q7.9 -3 15.8 0 q1 1.1 .2 2.1 q-8.2 2.7 -16.2 0 q-.8 -1 .2 -2.1 Z" fill="url(#ggWndGold)" />
-        {/* smooth tapered body flaring into the skirt */}
-        <path d="M19.6 24.6 q4.4 1.5 8.8 0 q.9 8.4 4.8 13.6 q-9.2 3.2 -18.4 0 q3.9 -5.2 4.8 -13.6 Z" fill="url(#ggWndGold)" />
+      {/* one continuous navy contour around every part — the logo's dark ground,
+          carried along as an outline */}
+      <g stroke="#1a2133" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
         {/* stepped double base */}
-        <path d="M13.6 38.4 q10.4 -3.4 20.8 0 q1.5 1.6 .8 3 q-11.2 3 -22.4 0 q-.7 -1.4 .8 -3 Z" fill="url(#ggWndGoldD)" />
-        <path d="M11.3 41.8 q12.7 -3.4 25.4 0 q1.8 1.9 .9 3.6 q-13.6 3.4 -27.2 0 q-.9 -1.7 .9 -3.6 Z" fill="url(#ggWndGold)" />
+        <path d="M9.6 46.6 Q24 42.4 38.4 46.6 Q40.4 48.9 39.3 50.9 Q24 54.4 8.7 50.9 Q7.6 48.9 9.6 46.6 Z" fill="url(#ggWndGoldD)" />
+        <path d="M12.9 42.6 Q24 39.2 35.1 42.6 Q36.8 44.5 35.8 46.2 Q24 49.2 12.2 46.2 Q11.2 44.5 12.9 42.6 Z" fill="url(#ggWndGold)" />
+        {/* tapered body flaring into the skirt */}
+        <path d="M19.4 25.2 Q24 26.6 28.6 25.2 Q29.4 34.8 33.4 41.8 Q24 44.8 14.6 41.8 Q18.6 34.8 19.4 25.2 Z" fill="url(#ggWndGold)" />
+        {/* double collar */}
+        <path d="M15.8 21.6 Q24 18.7 32.2 21.6 Q33.3 22.8 32.4 24 Q24 26.8 15.6 24 Q14.7 22.8 15.8 21.6 Z" fill="url(#ggWndGold)" />
+        <path d="M17.3 18.3 Q24 15.9 30.7 18.3 Q31.6 19.3 30.8 20.3 Q24 22.6 17.2 20.3 Q16.4 19.3 17.3 18.3 Z" fill="url(#ggWndGoldD)" />
+        {/* head sphere */}
+        <circle cx="24" cy="10.4" r="7.4" fill="url(#ggWndGold)" />
       </g>
-      {/* form shadow along the right flank — turns the flat wash into a body */}
-      <path d="M28.4 24.6 q.9 8.4 4.8 13.6 q-3.2 1.1 -6.4 1.5 q1.8 -7.4 1.6 -15.1 Z" fill="#4c3a16" opacity=".3" />
-      <path d="M27.2 6 a6.9 6.9 0 0 1 -1.6 11.1 a6.9 6.9 0 0 0 1.6 -11.1 Z" fill="#4c3a16" opacity=".28" />
-      {/* navy diamond emblem with the four-ray star, straight off the mark */}
-      <path d="M24 26.6 l3.5 5.5 -3.5 5.5 -3.5 -5.5 Z" fill="#101828" />
-      <path d="M24 28.2 l2.5 3.9 -2.5 3.9 -2.5 -3.9 Z" fill="none" stroke="#e8c97e" strokeWidth=".8" strokeOpacity=".95" />
-      <path d="M24 29.7 l.8 1.9 1.8 .5 -1.8 .5 -.8 1.9 -.8 -1.9 -1.8 -.5 1.8 -.5 Z" fill="#f8ecc2" />
-      {/* left key light + polished rim */}
-      <ellipse cx="21.2" cy="8" rx="2.6" ry="1.7" fill="#fffbe8" opacity=".8" transform="rotate(-26 21.2 8)" />
-      <path d="M20.4 25.6 q-1.6 7 -4 11.4" fill="none" stroke="#fdf3d2" strokeWidth="1.8" strokeOpacity=".55" strokeLinecap="round" />
-      <path d="M12.6 42.6 q11.4 -2.9 22.8 0" fill="none" stroke="#fdf3d2" strokeWidth=".9" strokeOpacity=".4" strokeLinecap="round" />
-      <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndSheen)" />
+      {/* right-flank form shadow — the lacquer turn */}
+      <path d="M28.6 25.2 Q29.4 34.8 33.4 41.8 Q30.6 42.7 27.7 43.1 Q29.6 34.4 27.1 25.5 Z" fill="#3f2f11" opacity=".34" />
+      <path d="M28.2 4.4 a7.4 7.4 0 0 1 0 12 a9.4 9.4 0 0 0 0 -12 Z" fill="#3f2f11" opacity=".3" />
+      <path d="M34 47.2 Q37.5 48 39.3 50.9 Q32 52.6 24.6 52.8 Q30.6 51 34 47.2 Z" fill="#3f2f11" opacity=".22" />
+      {/* the navy diamond with the four-ray star */}
+      <path d="M24 29.4 l3.9 5.9 -3.9 5.9 -3.9 -5.9 Z" fill="#0e1424" stroke="#1a2133" strokeWidth=".6" />
+      <path d="M24 31.1 l2.8 4.2 -2.8 4.2 -2.8 -4.2 Z" fill="none" stroke="#e8c97e" strokeWidth=".9" />
+      <path d="M24 32.6 l.9 2.1 2 .6 -2 .6 -.9 2.1 -.9 -2.1 -2 -.6 2 -.6 Z" fill="#f9edc4" />
+      {/* hard key light: head specular + body streak + base rim */}
+      <ellipse cx="21" cy="7.4" rx="2.9" ry="1.9" fill="#fffdf0" opacity=".9" transform="rotate(-28 21 7.4)" />
+      <path d="M20.6 26.4 Q19.2 34.6 16.6 40.2" fill="none" stroke="#fdf3d2" strokeWidth="2" strokeOpacity=".6" strokeLinecap="round" />
+      <path d="M17.5 19 Q24 16.9 30.5 19" fill="none" stroke="#fff4d0" strokeWidth=".9" strokeOpacity=".55" strokeLinecap="round" />
+      <path d="M12 43.6 Q23.8 40.6 30 42.2" fill="none" stroke="#fdf3d2" strokeWidth="1" strokeOpacity=".5" strokeLinecap="round" />
+      <circle cx="24" cy="10.4" r="7.4" fill="url(#ggWndSheen)" />
     </svg>
   );
 }

@@ -32,7 +32,7 @@ const STR = {
 
 const field = {
   width: "100%", boxSizing: "border-box", background: "#0d1017", border: `1px solid ${T.line}`,
-  color: T.text, borderRadius: 12, padding: "13px 14px", fontSize: 15, fontFamily: "inherit", outline: "none",
+  color: T.text, borderRadius: 12, padding: "13px 14px", fontSize: 16, fontFamily: "inherit", outline: "none",
 };
 
 function GoogleG() {

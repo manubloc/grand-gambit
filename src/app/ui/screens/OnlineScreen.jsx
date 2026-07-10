@@ -97,7 +97,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
 
   const Line = ({ children }) => <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>{children}</div>;
   const input = { flex: 1, minWidth: 120, background: T.bg2, border: `1px solid ${T.line}`, color: T.text,
-    borderRadius: T.radiusSm, padding: "10px 12px", fontSize: 14, fontFamily: "inherit" };
+    borderRadius: T.radiusSm, padding: "10px 12px", fontSize: 16, fontFamily: "inherit" };
 
   const wideOn = useMedia("(min-width: 980px)");
   return (
