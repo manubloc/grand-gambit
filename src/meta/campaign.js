@@ -139,10 +139,13 @@ export function buildStageMatch(id, profile = null) {
     bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: bossPieceFor(node, lg),
       art: boss.art || null, accent: boss.accent, kind: boss.kind };
   }
+  const recruitId = bossPieceFor(node, lg);
+  const turncoat = !!(recruitId && profile && (profile.campaign?.unlocked || []).includes(recruitId));
   return {
     nodeId: id, node,
     map: node.map, rules: node.rules,
     boss: bossInfo,
+    turncoat, excludeId: turncoat ? recruitId : null,
     depth: node.depth || d.depth,
     aiArmy,
     timer: stageTimer(node, lg),

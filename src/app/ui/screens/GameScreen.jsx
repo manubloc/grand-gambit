@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
-import { buildArmy, buildAiArmyForMap, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
+import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { stateHash } from "../../../platform/net.web.js";
@@ -45,6 +45,7 @@ const pill = (extra) => ({ display: "inline-flex", alignItems: "center", gap: 6,
 export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null }) {
   const campaign = !!match;
   const en = profile.lang === "en";
+  const hotseat = !pvp && !match && !!quick?.hotseat;   // two players, one device
   const myColor = pvp && pvp.color === "b" ? BLACK : WHITE;
   const oppColor = myColor === WHITE ? BLACK : WHITE;
   // Match settings are decided BEFORE the match (QuickSetup / campaign node /
@@ -55,7 +56,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(mapId);
   const rules = pvp ? "hp" : campaign ? match.rules : mode;
   const depth = campaign ? match.depth : difficultyById(difficulty).depth;
-  const playerArmy = useMemo(() => buildArmy(profile, map), [profile, map]);
+  const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null), [profile, map]); // eslint-disable-line
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
 
   // ── pause & resume (v0.19): a campaign match interrupted mid-fight waits in
@@ -71,6 +72,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       return createGame(white, black, { map, rules, seed: pvp.seed >>> 0 });
     }
     const seed = freshSeed();
+    if (hotseat) {
+      const side = () => buildArmyFromFormation(() => 1, map.defaultFormation);
+      return createGame(side(), side(), { map, rules, seed });
+    }
     const ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
     return createGame(playerArmy, ai, { map, rules, seed, potions: rules === "hp" ? { w: profile.items?.potion || 0, b: 0 } : undefined });
   });
@@ -117,8 +122,13 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     setThinking(false);
     setClock(timer ? timer.seconds : null);
     const seed = freshSeed();
+    if (hotseat) {
+      const side = () => buildArmyFromFormation(() => 1, m.defaultFormation);
+      setState(createGame(side(), side(), { map: m, rules: rl, seed }));
+      return;
+    }
     const ai = campaign ? match.aiArmy : buildAiArmyForMap(diff, m, seed);
-    setState(createGame(buildArmy(profile, m), ai, { map: m, rules: rl, seed }));
+    setState(createGame(buildArmy(profile, m, campaign ? match.excludeId : null), ai, { map: m, rules: rl, seed }));
   }
   function newGame() { reset(difficulty); }
 
@@ -126,6 +136,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   function finish(result, reason) {
     if (finished.current) return;
     finished.current = true;
+    if (hotseat) {
+      setBanner({ result, reason, hotseat: true,
+        gained: { gold: 0, sp: 0, xp: 0, levelBefore: 0, levelAfter: 0, newAchievements: [] } });
+      return;
+    }
     const foe = pvp ? pvp.oppArmy : campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, state.seed);
     const summary = summarizeMatch(playerArmy, foe, state.seed, state.log, result, myColor, { map, rules });
     summary.hpRules = rules === "hp";
@@ -172,7 +187,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       else finish("draw", st.result);
       return;
     }
-    if (!pvp && state.turn === BLACK) {
+    if (!pvp && !hotseat && state.turn === BLACK) {
       setThinking(true);
       const id = setTimeout(() => {
         const mv = chooseMove(state, depth);
@@ -219,7 +234,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     const id = setTimeout(() => setArmResign(false), 3500);
     return () => clearTimeout(id);
   }, [armResign]);
-  function resign() { if (pvp) pvp.net.send({ t: "resign" }); finish("loss", "resign"); }
+  function resign() {
+    if (pvp) pvp.net.send({ t: "resign" });
+    if (hotseat) { finish(state.turn === WHITE ? "loss" : "win", "resign"); return; }
+    finish("loss", "resign");
+  }
 
   // Leaving mid-fight pauses instead of forfeiting: snapshot into the profile.
   const pauseRef = useRef(null);
@@ -238,11 +257,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     return () => document.removeEventListener("visibilitychange", fn);
   }, []); // eslint-disable-line
 
-  const myTurn = state.turn === myColor && !banner;
+  const viewColor = hotseat ? state.turn : myColor;   // the board faces whoever moves
+  const myTurn = (hotseat ? true : state.turn === myColor) && !banner;
   const st = status(state);
   const hpMode = state.rules === "hp";
   const F = hpMode ? forces(state.board) : null;
-  const statusText = banner ? "" : st.check ? t("game.check") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
+  const statusText = banner ? "" : st.check ? t("game.check") : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
   const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
 
@@ -266,6 +286,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
               <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
               {match.boss && <Chip color={T.danger} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <BladesIc color={T.danger} size={12} /> : <SkullIc size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
+            : hotseat ? <Chip color={T.text} bg={T.panel}>{t("quick.hotseat")}</Chip>
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
         {clockLbl && (
@@ -297,8 +318,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={oppColor}
-          flip={myColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={myColor} />
+        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
+          flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
@@ -312,8 +333,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* your strip: badges · status · captured · undo */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
         padding: "2px 14px calc(10px + env(safe-area-inset-bottom))" }}>
-        <Chip color={T.limeInk} bg={T.lime}>{t("game.you")}</Chip>
-        {!pvp && hpMode && (state.potions?.w || 0) > 0 && !banner && (
+        <Chip color={hotseat && state.turn === BLACK ? T.magentaInk : T.limeInk} bg={hotseat && state.turn === BLACK ? T.magenta : T.lime}>{hotseat ? t(state.turn === WHITE ? "hs.white" : "hs.black") : t("game.you")}</Chip>
+        {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
           <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
             style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
               border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
@@ -326,7 +347,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
           textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.danger : T.dim }}>{statusText}</div>
         <Tray kinds={state.captured.w} color="b" />
-        {!pvp && (profile.items?.hourglass || 0) > 0 && (
+        {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
           <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
             style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, borderRadius: 10,
               border: `1px solid ${hourglassLeft > 0 ? T.gold + "88" : T.line}`, background: T.panel,
@@ -347,6 +368,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   const [mapId, setMapId] = useState(initial?.mapId && mapUnlocked(profile, initial.mapId) ? initial.mapId : "classic");
   const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : "chess");
   const [difficulty, setDifficulty] = useState(initial?.difficulty || profile.difficulty || "easy");
+  const [foe, setFoe] = useState(initial?.hotseat ? "hotseat" : "ai");
   const [lockHint, setLockHint] = useState(false); // tap on a locked map explains the lock (no hover on touch)
   useEffect(() => {
     if (!lockHint) return;
@@ -387,11 +409,18 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
         ]} />
       {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
       <div style={{ height: 10 }} />
-      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.difficulty")}</div>
-      <Segmented value={difficulty} onChange={setDifficulty}
-        options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
+      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("quick.opponent")}</div>
+      <Segmented value={foe} onChange={setFoe}
+        options={[{ value: "ai", label: t("quick.vsAi") }, { value: "hotseat", label: t("quick.hotseat") }]} />
+      {foe === "hotseat" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.hotseatHint")}</div>}
+      {foe === "ai" && <>
+        <div style={{ height: 10 }} />
+        <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.difficulty")}</div>
+        <Segmented value={difficulty} onChange={setDifficulty}
+          options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
+      </>}
       <Button variant="primary" style={{ width: "100%", marginTop: 16, padding: "13px 16px", fontSize: 16 }}
-        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty }); }}>
+        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty, hotseat: foe === "hotseat" }); }}>
         ⚔ {t("quick.start")}
       </Button>
     </Panel>
@@ -439,8 +468,10 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
 
 function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, pvpInfo = null }) {
   const win = banner.result === "win";
-  const color = win ? T.lime : banner.result === "draw" ? T.gold : T.danger;
-  const title = win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
+  const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : T.danger;
+  const title = banner.hotseat
+    ? (banner.result === "draw" ? t("game.draw") : t(win ? "hs.winWhite" : "hs.winBlack"))
+    : win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
   const sub = campaign && win && unlockName ? t("game.unlocked", { name: unlockName })
     : campaign && win ? t("game.stageCleared")
     : banner.reason === "checkmate" ? t("game.checkmate")
@@ -455,12 +486,12 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
       <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", animation: "rise .25s ease", borderColor: color + "66" }}>
         <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1 }}>{sub}</div>
         <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
+        {!banner.hotseat && <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
           <Chip color={T.limeInk} bg={T.lime}>+{g.xp} {t("game.rewards")}</Chip>
           {g.sp > 0 && <Chip color={"#17110a"} bg={T.gold}><SkillStar size={12} /> {t("banner.sp", { n: g.sp })}</Chip>}
           {g.gold > 0 && <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{g.gold}</Chip>}
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
-        </div>
+        </div>}
         {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
         {campaign ? (
           win

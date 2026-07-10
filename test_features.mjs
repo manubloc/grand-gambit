@@ -237,5 +237,24 @@ ok("fresh profile: only classic, no HP", mapUnlocked(fresh, "classic") && !mapUn
 ok("hp opens once the awakening is reachable", hpUnlocked(advanceCampaign(advanceCampaign(fresh, "n01"), "n02")));
 ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish") && mapUnlocked(prof, "courtyard") && !mapUnlocked(prof, "arena"));
 
+
+// ── v0.20: turncoat duels bench your own copy of the challenger ──────────────
+{
+  const { buildStageMatch, buildArmy } = await import("./src/meta/index.js");
+  const { mapById } = await import("./src/content/index.js");
+  const prof = { campaign: { league: 1, cleared: ["n01","n02","n03"], unlocked: ["hawk"] },
+    loadout: { formations: { skirmish: null } }, charXp: {}, items: {} };
+  const mt = buildStageMatch("a1", prof); // a1 recruits the hawk
+  ok("rematch vs owned challenger is flagged turncoat", mt.turncoat === true && mt.excludeId === "hawk");
+  const arena = mapById("arena");
+  const saved = ["rook","hawk","knight","bishop","queen","king","bishop","knight","hawk","rook"];
+  const p2 = { ...prof, loadout: { formations: { arena: saved } } };
+  const kinds = (a) => a.back.map((x) => x.kind).join("");
+  ok("player army fields the hawk normally", kinds(buildArmy(p2, arena)).includes("H"));
+  ok("player army benches the hawk in a turncoat duel", !kinds(buildArmy(p2, arena, "hawk")).includes("H"));
+  const fresh = buildStageMatch("a1", { campaign: { league: 1, cleared: [], unlocked: [] } });
+  ok("first encounter is no turncoat", !fresh.turncoat && !fresh.excludeId);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

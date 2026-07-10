@@ -220,13 +220,18 @@ function heroSpec(profile) {
   return { kind: ch.kind, level, abilities, shield };
 }
 
-export function buildArmyForMap(profile, map) {
+export function buildArmyForMap(profile, map, excludeId = null) {
   const levelOf = map.classic ? () => 1 : (id) => characterLevel(profile, id);
   const chosenOf = map.classic ? null : (id) => chosenAbilities(profile, id);
   const boostOf = map.classic ? null : (id) => dupeCount(profile, id);
   const saved = profile?.loadout?.formations?.[map.id];
   const ok = !map.classic && saved && formationLegalOn(saved, unlockedCharacterIds(profile), map);
-  const army = buildArmyFromFormation(levelOf, ok ? saved : map.defaultFormation, chosenOf, boostOf);
+  let formation = ok ? saved : map.defaultFormation;
+  // Turncoat duels (v0.20): fighting the double of a piece you own — your own
+  // copy sits the match out, its slot falls back to the map's default rank.
+  if (excludeId) formation = formation.map((cid, i) =>
+    cid === excludeId ? (map.defaultFormation[i] !== excludeId ? map.defaultFormation[i] : "knight") : cid);
+  const army = buildArmyFromFormation(levelOf, formation, chosenOf, boostOf);
   if (!map.classic) army.hero = { col: heroColFor(profile, map), spec: heroSpec(profile) };
   return army;
 }
@@ -272,7 +277,7 @@ export function buildAiArmyForMap(difficultyId, map, seed = 0) {
 
 /** Player army. Defaults to the 10×10 Arena (used by the campaign); the app
  *  passes the active map for quick play. */
-export const buildArmy = (profile, map = ARENA()) => buildArmyForMap(profile, map);
+export const buildArmy = (profile, map = ARENA(), excludeId = null) => buildArmyForMap(profile, map, excludeId);
 
 export const buildAiArmy = (difficultyId) => {
   const d = difficultyById(difficultyId);

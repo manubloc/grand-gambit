@@ -17,6 +17,7 @@ import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
+import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
@@ -174,7 +175,8 @@ export default function App() {
           onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
         : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => setMatch(buildStageMatch(id, profile))} />
         : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} />)
-        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} />
+        : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
+        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} onTutorial={() => setView("tutorial")} />
       )
       : tab === "army" ? <ArmyScreen profile={profile} dispatch={dispatch} t={t} />
         : tab === "ach" ? <div>
@@ -330,7 +332,7 @@ const OnlineArt = () => (
   </HubArt>
 );
 
-export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
+export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null }) {
   const en = profile.lang === "en";
   const hubWide = useMedia("(min-width: 900px)");
   const cur = nodeById(currentNodeId(profile));
@@ -366,6 +368,14 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
         art={<OnlineArt />} shineDelay={2.8} />
+      {onTutorial && (
+        <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
+          cursor: "pointer", background: "none", border: `1px dashed ${T.line}`, borderRadius: T.radius,
+          padding: "11px 14px", color: T.dim, fontSize: 13 }}>
+          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("tut.title")}</span>
+          {" · "}{t("tut.sub")}
+        </button>
+      )}
     </div>
   );
 }

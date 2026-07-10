@@ -431,9 +431,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
                   {t(node?.boss?.pure ? "camp.boss" : "camp.challenger")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
-                  ♥ {boss.hp} · ⚔ {boss.atk}{unlockCh ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
+                  ♥ {boss.hp} · ⚔ {boss.atk}{unlockCh && !known ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
                   {!known && <> · {t("camp.unknown")}</>}
                 </div>
+                {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
+                  {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
               </div>
             </div>
           )}
