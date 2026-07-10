@@ -102,7 +102,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const camNode = nodeById(token.at) || nodeById(cur);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const fit = Math.max(vp.h / HM, vp.w / WMAP);       // cover the viewport
-  const z = fit * (wide ? 0.9 : 1); // one well-fitted scale; desktop steps back a little
+  // the painted worlds are 1796px wide — rendered any larger they go soft on
+  // hi-DPI screens, so the window sits a step back from full bleed
+  const z = fit * (wide ? 0.8 : 0.85);
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.min(vp.h, HM * z);
   const frameX = Math.round((vp.w - frameW) / 2), frameY = Math.round((vp.h - frameH) / 2);

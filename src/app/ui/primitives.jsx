@@ -3,16 +3,28 @@ import { T } from "./theme.js";
 export function Button({ variant = "primary", disabled, style, children, ...p }) {
   const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.45 : 1, transition: "filter .15s", WebkitTapHighlightColor: "transparent" };
   const variants = {
-    primary: { background: T.lime, color: T.limeInk },
+    // the court's seal: brushed gold with an ivory hairline — one CTA style everywhere
+    primary: { background: "linear-gradient(165deg, #e0b76c, #b78d43)", color: T.limeInk,
+      border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
-    subtle: { background: T.panel2, color: T.text },
+    subtle: { background: T.panel2, color: T.text, border: `1px solid ${T.line}` },
   };
   return <button disabled={disabled} style={{ ...base, ...variants[variant], ...style }} {...p}>{children}</button>;
 }
 
 export function Panel({ style, children, ...p }) {
-  return <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: 16, ...style }} {...p}>{children}</div>;
+  return <div style={{ background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: 16, ...style }} {...p}>{children}</div>;
+}
+
+/** The one panel headline: serif, gold, led by the brand diamond — so every
+ *  screen speaks in the campaign's voice instead of bold sans shouting. */
+export function PanelTitle({ children, tag, style }) {
+  return <div style={{ display: "flex", alignItems: "center", gap: 7, ...style }}>
+    <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
+    <span className="gg-serif" style={{ fontSize: 15.5, letterSpacing: ".07em", color: T.goldBright }}>{children}</span>
+    {tag && <span style={{ color: T.gold, fontSize: 11, fontWeight: 800 }}>· {tag}</span>}
+  </div>;
 }
 
 export function Bar({ pct = 0, color = T.lime, height = 8, track = "#0009" }) {
@@ -30,7 +42,7 @@ export function Segmented({ options, value, onChange }) {
   return <div style={{ display: "flex", gap: 4, background: T.bg2, padding: 4, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
     {options.map((o) => {
       const on = value === o.value;
-      return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1, border: "none", borderRadius: 8, padding: "9px 6px", fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer", opacity: o.disabled ? 0.45 : 1, background: on ? T.lime : "transparent", color: on ? T.limeInk : T.dim }}>{o.label}</button>;
+      return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1, border: on ? "1px solid rgba(255,240,200,.45)" : "1px solid transparent", borderRadius: 8, padding: "9px 6px", fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer", opacity: o.disabled ? 0.45 : 1, background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent", color: on ? T.limeInk : T.dim }}>{o.label}</button>;
     })}
   </div>;
 }
@@ -44,7 +56,7 @@ export function Shields({ n, size = 7 }) {
 
 export function Stat({ label, value, color = T.text }) {
   return <div style={{ textAlign: "center" }}>
-    <div style={{ fontSize: 22, fontWeight: 800, color }}>{value}</div>
+    <div className="gg-serif" style={{ fontSize: 22, fontWeight: 700, letterSpacing: ".02em", color }}>{value}</div>
     <div style={{ fontSize: 11, color: T.faint, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</div>
   </div>;
 }

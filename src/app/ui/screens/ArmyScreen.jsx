@@ -9,7 +9,7 @@ import {
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { Panel, Bar, Chip, Shields, Button, Segmented } from "../primitives.jsx";
+import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle } from "../primitives.jsx";
 import { SkillStar, GoldCoin } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
@@ -271,7 +271,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
 
   return <>
   <Panel>
-    <div style={{ fontWeight: 800, marginBottom: 2 }}>{t("army.formation")}</div>
+    <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
     <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
 
     {preview && (

@@ -3,7 +3,7 @@
 // players by retinue score, or challenge an online friend directly.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
-import { Button, Chip, Panel, Segmented } from "../primitives.jsx";
+import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
 import { SERVER_URL } from "../../config.js";
@@ -230,7 +230,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
 
       {conn === "on" && (<>
         <Panel>
-          <div style={{ fontWeight: 800 }}>☁ {t("online.vaultTitle")}</div>
+          <PanelTitle>☁ {t("online.vaultTitle")}</PanelTitle>
           <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("online.vaultHint")}</div>
           <Button variant="subtle" style={{ width: "100%", marginBottom: 8 }} onClick={() => {
             net.send({ t: "vaultPush", save: serializeSave(profile),

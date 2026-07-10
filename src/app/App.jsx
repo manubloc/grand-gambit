@@ -206,7 +206,8 @@ export default function App() {
         padding: wide ? "11px 14px" : "9px 4px 8px", color: on ? T.goldBright : T.faint,
         transition: "background .18s, color .18s" }}>
         <NavIcon id={tb.id} color={on ? T.gold : T.faint} size={wide ? 21 : 22} />
-        <span style={{ fontSize: wide ? 13.5 : 10.5, fontWeight: 800, marginTop: wide ? 0 : 3, letterSpacing: ".02em" }}>{t(tb.key)}</span>
+        <span className="gg-serif" style={{ fontSize: wide ? 13 : 9.5, fontWeight: 700, marginTop: wide ? 0 : 3,
+          letterSpacing: ".09em", textTransform: "uppercase" }}>{t(tb.key)}</span>
       </button>
     );
   });

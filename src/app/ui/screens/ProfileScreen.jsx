@@ -3,7 +3,7 @@ import { hashPin } from "../../../platform/index.js";
 import { serializeSave, parseSave, listRestorePoints, readSnapshot } from "../../../meta/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
-import { Panel, Button, Segmented, Stat } from "../primitives.jsx";
+import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
 
 export function ProfileScreen({ profile, dispatch, t, account }) {
   const [pin, setPin] = useState("");
@@ -62,7 +62,7 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
     </Panel>
 
     {account?.isAdmin && <Panel>
-      <div style={{ fontWeight: 800 }}>{t("profile.saveTitle")} <span style={{ color: T.gold, fontSize: 11 }}>· Admin</span></div>
+      <PanelTitle tag="Admin">{t("profile.saveTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.saveHint")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         <Button variant="subtle" onClick={() => {
@@ -88,13 +88,13 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
     </Panel>}
 
     {account?.isAdmin && <Panel>
-      <div style={{ fontWeight: 800 }}>{t("profile.rpTitle")} <span style={{ color: T.gold, fontSize: 11 }}>· Admin</span></div>
+      <PanelTitle tag="Admin">{t("profile.rpTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.rpHint")}</div>
       <RestorePoints t={t} dispatch={dispatch} />
     </Panel>}
 
     <Panel>
-      <div style={{ fontWeight: 800 }}>{t("profile.pinTitle")}</div>
+      <PanelTitle>{t("profile.pinTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.pinHint")}</div>
       {profile.pin
         ? <Button variant="ghost" onClick={() => dispatch({ type: "SET_PIN", pin: null })} style={{ width: "100%" }}>{t("profile.clearPin")}</Button>
