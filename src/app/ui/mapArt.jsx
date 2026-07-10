@@ -591,20 +591,21 @@ export function WandererArt({ size = "100%" }) {
     <svg viewBox="0 0 48 54" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
       <defs>
         <radialGradient id="ggWndAura" cx=".5" cy=".58" r=".62">
-          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".46" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
+          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".4" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="ggWndGold" x1=".22" y1="0" x2=".82" y2="1">
-          <stop offset="0" stopColor="#f6e6b2" /><stop offset=".5" stopColor="#d3ab61" /><stop offset="1" stopColor="#7a5c2b" />
+        <linearGradient id="ggWndGold" x1=".22" y1="0" x2=".85" y2="1">
+          <stop offset="0" stopColor="#fdf1c6" /><stop offset=".42" stopColor="#dcb268" />
+          <stop offset=".78" stopColor="#a37e39" /><stop offset="1" stopColor="#5f4720" />
         </linearGradient>
-        <linearGradient id="ggWndGoldD" x1=".2" y1="0" x2=".9" y2="1">
-          <stop offset="0" stopColor="#e8d094" /><stop offset="1" stopColor="#5f4720" />
+        <linearGradient id="ggWndGoldD" x1=".2" y1="0" x2=".92" y2="1">
+          <stop offset="0" stopColor="#efd89b" /><stop offset=".6" stopColor="#a17c37" /><stop offset="1" stopColor="#4c3a16" />
         </linearGradient>
-        <radialGradient id="ggWndSheen" cx=".32" cy=".28" r=".75">
-          <stop offset="0" stopColor="#fff7dd" stopOpacity=".65" /><stop offset=".45" stopColor="#fff7dd" stopOpacity="0" />
+        <radialGradient id="ggWndSheen" cx=".3" cy=".26" r=".72">
+          <stop offset="0" stopColor="#fffbe8" stopOpacity=".85" /><stop offset=".42" stopColor="#fff7dd" stopOpacity="0" />
         </radialGradient>
       </defs>
       <ellipse cx="24" cy="27" rx="24.5" ry="21" fill="url(#ggWndAura)" />
-      <g stroke="#4a3818" strokeOpacity=".3" strokeWidth=".7" strokeLinejoin="round">
+      <g stroke="#3a2c12" strokeOpacity=".55" strokeWidth=".9" strokeLinejoin="round">
         {/* head */}
         <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndGold)" />
         {/* double-ring collar, like the mark */}
@@ -616,13 +617,17 @@ export function WandererArt({ size = "100%" }) {
         <path d="M13.6 38.4 q10.4 -3.4 20.8 0 q1.5 1.6 .8 3 q-11.2 3 -22.4 0 q-.7 -1.4 .8 -3 Z" fill="url(#ggWndGoldD)" />
         <path d="M11.3 41.8 q12.7 -3.4 25.4 0 q1.8 1.9 .9 3.6 q-13.6 3.4 -27.2 0 q-.9 -1.7 .9 -3.6 Z" fill="url(#ggWndGold)" />
       </g>
-      {/* diamond emblem with the four-ray star */}
-      <path d="M24 27.2 l3.1 4.9 -3.1 4.9 -3.1 -4.9 Z" fill="#3a2c12" opacity=".85" />
-      <path d="M24 28.5 l2.3 3.6 -2.3 3.6 -2.3 -3.6 Z" fill="none" stroke="#f2dfa6" strokeWidth=".7" strokeOpacity=".9" />
-      <path d="M24 29.9 l.7 1.7 1.6 .5 -1.6 .5 -.7 1.7 -.7 -1.7 -1.6 -.5 1.6 -.5 Z" fill="#f6e6b2" />
-      {/* left light, like the mark's key light */}
-      <ellipse cx="21.4" cy="8.2" rx="2.4" ry="1.6" fill="#fff7dd" opacity=".6" transform="rotate(-26 21.4 8.2)" />
-      <path d="M20.4 25.6 q-1.6 7 -4 11.4" fill="none" stroke="#fdf3d2" strokeWidth="1.6" strokeOpacity=".4" strokeLinecap="round" />
+      {/* form shadow along the right flank — turns the flat wash into a body */}
+      <path d="M28.4 24.6 q.9 8.4 4.8 13.6 q-3.2 1.1 -6.4 1.5 q1.8 -7.4 1.6 -15.1 Z" fill="#4c3a16" opacity=".3" />
+      <path d="M27.2 6 a6.9 6.9 0 0 1 -1.6 11.1 a6.9 6.9 0 0 0 1.6 -11.1 Z" fill="#4c3a16" opacity=".28" />
+      {/* navy diamond emblem with the four-ray star, straight off the mark */}
+      <path d="M24 26.6 l3.5 5.5 -3.5 5.5 -3.5 -5.5 Z" fill="#101828" />
+      <path d="M24 28.2 l2.5 3.9 -2.5 3.9 -2.5 -3.9 Z" fill="none" stroke="#e8c97e" strokeWidth=".8" strokeOpacity=".95" />
+      <path d="M24 29.7 l.8 1.9 1.8 .5 -1.8 .5 -.8 1.9 -.8 -1.9 -1.8 -.5 1.8 -.5 Z" fill="#f8ecc2" />
+      {/* left key light + polished rim */}
+      <ellipse cx="21.2" cy="8" rx="2.6" ry="1.7" fill="#fffbe8" opacity=".8" transform="rotate(-26 21.2 8)" />
+      <path d="M20.4 25.6 q-1.6 7 -4 11.4" fill="none" stroke="#fdf3d2" strokeWidth="1.8" strokeOpacity=".55" strokeLinecap="round" />
+      <path d="M12.6 42.6 q11.4 -2.9 22.8 0" fill="none" stroke="#fdf3d2" strokeWidth=".9" strokeOpacity=".4" strokeLinecap="round" />
       <circle cx="24" cy="10.6" r="6.9" fill="url(#ggWndSheen)" />
     </svg>
   );

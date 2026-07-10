@@ -17,8 +17,10 @@ export const T = {
 };
 
 export const GLOBAL_CSS = `
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body, #root { height: 100%; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
   body {
     margin: 0; color: ${T.text};
     background: ${T.bg};

@@ -49,3 +49,46 @@ jeweils Deploy. Nach jedem Feature: npm test + Smoke, dann push.
 ## Multiplayer (v0.18)
 
 - Server = Cloudflare Worker + Durable Object: `cd worker && npx wrangler deploy`, dann SERVER_URL in src/app/config.js (DEPLOY-WORKER.md). Free Plan reicht. Admin optional via `wrangler secret put ADMIN_TOKEN` (≥24 Zeichen).
+
+## ── LIVE-STAND (Session 10.07.2026 — Cloud komplett eingerichtet) ──
+
+Alles Folgende ist LIVE und verifiziert. Repo-Stand = Commit 24cf9d7 auf main.
+
+### Supabase (Login, Cloud-Konten, Online-Bestenlisten)
+- Projekt: **grand-gambit**, Org "manubloc's Org" (Free), Region Europe
+- Projekt-Ref: **kuhriectbryhezhbnsrq** → Dashboard: supabase.com/dashboard/project/kuhriectbryhezhbnsrq
+- URL: `https://kuhriectbryhezhbnsrq.supabase.co`
+- Publishable Key (öffentlich ok): `sb_publishable_ASusbTX5wkBnGvrQvjNRFA_Oy5Ph_kg`
+- Tabelle `gambit_store` (key/value/updated_at) + RLS-Policy "gambit rw" (offen) angelegt
+- Auth: Site URL = https://grandgambit.win · E-Mail-Login aktiv (Confirm email an)
+- Google-Provider AKTIV: Client-ID `565450682520-p1mm2mi18iojictjs578ss5q9hom0hit.apps.googleusercontent.com`
+  (Secret liegt NUR in Supabase + Google Console; bei Verlust: Google Console → Client → "Add secret")
+- DB-Passwort wurde generiert und nicht notiert → bei Bedarf im Dashboard resetten (wird i.d.R. nicht gebraucht)
+
+### Google Cloud (OAuth)
+- Projekt "My First Project" (project-41d010ca-6649-414c-8cb), Konto frey.manu@gmail.com
+- Google Auth Platform: App "Grand Gambit", Extern, **Status: In Produktion** (alle Google-Konten)
+- OAuth-Client "Grand Gambit Web": Redirect `https://kuhriectbryhezhbnsrq.supabase.co/auth/v1/callback`,
+  JS-Origin `https://grandgambit.win`
+
+### Cloudflare (Account 73af6b7e9469b4f0ac2577e7c9e5ac18, Frey.manu@gmail.com)
+- Pages "grand-gambit": Auto-Deploy von manubloc/grand-gambit main; Env (Production):
+  `VITE_SUPABASE_URL`, `VITE_SUPABASE_KEY`, `NODE_VERSION=22`
+- Worker **gg-hall** (Multiplayer, Durable Objects): via "Import repository", Root `/worker`,
+  Deploy `npx wrangler deploy`, baut bei jedem Push automatisch mit
+- Worker-URL: `https://gg-hall.frey-manu.workers.dev` (workers.dev Production-Toggle: AN)
+- Health: /health → {"ok":true,...} ✓ · SERVER_URL im Client: `wss://gg-hall.frey-manu.workers.dev/ws`
+- Optional offen: Custom Domain pvp.grandgambit.win · ADMIN_TOKEN-Secret für Server-Admin-Kommandos
+
+### Verifiziert am Ende der Session
+- grandgambit.win zeigt nach Hard-Reload den neuen Login (Logo, E-Mail, Google/Apple/Discord, Gast)
+- Google-OAuth-Flow bis zur Kontoauswahl fehlerfrei (Consent "Grand Gambit" → Supabase-Callback)
+- Alte Clients laden die neue Version nach Service-Worker-Update (ggf. Hard-Reload)
+
+### Offene Punkte für die nächste Session
+1. GitHub-Token widerrufen (falls noch nicht geschehen) — der genutzte Token ist verbraucht zu behandeln.
+2. Lokal geändert, NOCH NICHT gepusht: index.html theme-color #0f1115 → **#0c111e** (an T.bg angeglichen).
+3. Apple/Discord-Login: Buttons live, Provider in Supabase noch nicht konfiguriert (analog Google).
+4. privacy.html ist Platzhalter (Pflicht!), LICENSE [NAME] eintragen.
+5. Erster echter Live-Test: E-Mail-Registrierung + Google-Login + PvP-Duell zu zweit.
+6. Admin-Spielkonto admin/gambit-admin nach erstem Login ändern (App erinnert daran).

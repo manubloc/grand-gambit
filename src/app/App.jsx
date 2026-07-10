@@ -6,7 +6,7 @@ import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { playerXpProgress } from "../meta/index.js";
 import { T } from "./ui/theme.js";
-import { Splash, Wordmark } from "./ui/Brand.jsx";
+import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
 import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
@@ -86,7 +86,6 @@ const TABS = [
 export default function App() {
   const [profile, dispatch] = useReducer(reducer, null);
   const [ready, setReady] = useState(false);
-  const [splash, setSplash] = useState(true);
   const [locked, setLocked] = useState(false);
   const [tab, setTab] = useState("play");
   const [view, setView] = useState("hub"); // play tab: hub | quick | camp | online
@@ -150,15 +149,14 @@ export default function App() {
     return () => clearInterval(iv);
   }, [account, slot]);
 
-  if (splash) return <Splash onDone={() => setSplash(false)} />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
     onLogout={async () => { await clearSession(); await signOutCloud(); setAccount(null); }}
     onOpen={(sl, prof) => { dispatch({ type: "HYDRATE", profile: prof }); setLocked(!!prof.pin); setSlot(sl); setReady(true); }} />;
   if (!ready || !profile) return null;
-  const showPrivacy = !splash && !profile.notices?.privacy;
-  const showIntro = !splash && !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
+  const showPrivacy = !profile.notices?.privacy;
+  const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)} />;
 

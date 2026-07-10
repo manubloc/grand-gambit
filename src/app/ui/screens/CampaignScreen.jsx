@@ -7,7 +7,7 @@
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, clearedCount, campaignLength, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
@@ -96,7 +96,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const boss = node?.boss ? nodeBossSpec(node) : null;
   const unlockCh = node?.boss?.piece ? CHARACTERS[node.boss.piece] : null;
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
-  const order = useMemo(() => Object.fromEntries(CAMPAIGN.map((n, i) => [n.id, i + 1])), []);
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
   // camera target = the Grand Gambit's position (he leads, the map follows)
@@ -241,6 +240,30 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             const ringCol = st === "locked" ? "#8d8672" : st === "gated" ? "#a9853f" : st === "cleared" ? "#7c5f3d" : T.gold;
             return (
               <div key={n.id} style={{ position: "absolute", left: nx(n), top: ny(n), transform: "translate(-50%,-50%)" }}>
+                {/* on painted maps every boss stands at his station in person —
+                    dark and waiting until beaten, gold once he joined the court;
+                    the league finale towers over the road's end */}
+                {bm && n.boss && (() => {
+                  const spec = nodeBossSpec(n, league);
+                  if (!spec) return null;
+                  const finale = n.id === "n22";
+                  const size = finale ? 62 : 42;
+                  const beaten = st === "cleared";
+                  const fill = beaten ? "#c9a45c" : "#242d44";
+                  const rim = beaten ? "#f0dfae" : "#93a0bb";
+                  const detail = beaten ? "#59421a" : "#9aa8c6";
+                  return <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 12,
+                    transform: "translateX(-50%)", width: size, height: size, zIndex: 0, pointerEvents: "none",
+                    opacity: st === "locked" ? 0.55 : 1, filter: st === "locked"
+                      ? "grayscale(.65) drop-shadow(0 2px 3px rgba(40,32,16,.3))"
+                      : "drop-shadow(0 3px 4px rgba(40,32,16,.42))" }}>
+                    <div style={{ position: "absolute", left: "50%", bottom: -2, transform: "translateX(-50%)",
+                      width: size * 0.62, height: size * 0.16, borderRadius: "50%",
+                      background: "radial-gradient(ellipse at center, rgba(46,42,32,.32), transparent 72%)" }} />
+                    <PieceArt kind={spec.kind} art={spec.art} fill={fill} rim={rim} detail={detail}
+                      accent={spec.accent || T.gold} size="100%" level={1} />
+                  </div>;
+                })()}
                 {!bm && <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 24, transform: "translateX(-26%)",
                   zIndex: 0, pointerEvents: "none", opacity: st === "locked" ? 0.42 : 0.94,
                   filter: st === "locked" ? "grayscale(.6)" : "none" }}>
@@ -300,11 +323,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 24 : below ? 27 : 52, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
-                    <span aria-hidden style={{ position: "absolute", inset: "-6px -14px", borderRadius: "50%",
-                      background: `radial-gradient(ellipse at center, ${th.paper}c0 0%, ${th.paper}73 48%, transparent 74%)`,
-                      filter: "blur(4px)", pointerEvents: "none" }} />
-                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 12.5, color: MP.ink,
-                      lineHeight: 0.92, textShadow: `0 1px 0 ${th.paper}99` }}>{n.place}</span>
+                    <span aria-hidden style={{ position: "absolute", inset: "-7px -16px", borderRadius: "50%",
+                      background: "radial-gradient(ellipse at center, rgba(248,242,226,.95) 0%, rgba(248,242,226,.78) 52%, transparent 76%)",
+                      filter: "blur(3px)", pointerEvents: "none" }} />
+                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
+                      lineHeight: 0.94, textShadow: "0 1px 0 rgba(248,242,226,.9)" }}>{n.place}</span>
                   </span>
                   <span style={{ display: "block", marginTop: 2 }}>
                     {(() => {
@@ -318,9 +341,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     })()}
                   </span>
                 </div>
-                {isCur && <div className="gg-quill" style={{ position: "absolute", left: "50%", [bm ? "bottom" : below ? "bottom" : "top"]: bm ? 30 : below ? 54 : 30,
-                  transform: "translateX(-50%)", fontSize: 9, letterSpacing: ".08em", color: "#8a6f4d", whiteSpace: "nowrap",
-                  pointerEvents: "none" }}>{below ? "▴" : "▾"} {t("camp.current")}</div>}
               </div>
             );
           })}
@@ -367,11 +387,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           </button>
         )}
         <div style={{ flex: 1 }} />
-        <div className="gg-serif" style={{ background: "#0d1017b8", border: `1px solid ${T.line}`, color: T.dim,
-          borderRadius: 999, padding: "8px 12px", fontSize: 12, letterSpacing: ".06em", whiteSpace: "nowrap",
-          boxShadow: "0 3px 10px rgba(0,0,0,.4)", backdropFilter: "blur(13px)", WebkitBackdropFilter: "blur(13px)" }}>
-          {clearedCount(profile)}/{campaignLength(profile)}
-        </div>
       </div>
 
       {/* embedded node panel — parchment overlay near the medallion; arrival is
@@ -389,9 +404,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               {BRANCHES[br][en ? "nameEn" : "nameDe"]}</div> : null;
           })()}
           <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
-            <span style={{ display: "inline-flex", minWidth: 17, height: 16, background: MP.ink, color: "#efe9da", fontSize: 10,
-              fontWeight: 800, borderRadius: 4, alignItems: "center", justifyContent: "center", padding: "0 4px", flex: "0 0 auto",
-              transform: "translateY(-1px)" }}>{order[sel]}</span>
             <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.05 }}>{node?.place}</div>
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
               color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>

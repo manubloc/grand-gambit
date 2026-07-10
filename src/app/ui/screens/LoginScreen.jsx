@@ -77,13 +77,10 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
 
-      <div style={{ position: "relative", width: "min(66vw, 250px)", marginTop: -8 }}>
-        <div aria-hidden style={{ position: "absolute", inset: "-14%", borderRadius: "50%",
-          background: "radial-gradient(ellipse at center, #000 38%, rgba(0,0,0,.65) 62%, transparent 76%)" }} />
-        <img src={logoUrl} alt="Grand Gambit" style={{ position: "relative", width: "100%", display: "block",
-          filter: "drop-shadow(0 6px 24px rgba(201,164,92,.18))" }} />
-      </div>
-      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "10px 0 24px" }}>{s.tag}</div>
+      {/* the artwork carries its own night sky — no vignette, no glow, nothing
+          between the eye and the wordmark at its base */}
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(78vw, 300px)", display: "block", marginTop: -6 }} />
+      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 24px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>
         <input style={field} type="email" placeholder={s.email} value={email} autoComplete="username"
