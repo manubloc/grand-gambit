@@ -421,16 +421,16 @@ const TONES = {
 };
 export const LEAGUE_THEMES = [
   null,
-  { id: "fruehling", nameDe: "Frühling", paper: "#e9ecd8", wash: [["0%","#6f9a5c",.3],["45%","#9ab86f",.2],["100%","#7aa06a",.24]], tones: TONES.spring, pines: 120, far: 70, leafy: [14, "#8fbf6f", "#b8dd93"], blossoms: 12, river: "#a9c2cf", mystic: { mists: 4, wisps: 8 }, settle: true, ridges: 1, caps: true, birds: 4 },
-  { id: "sommer", nameDe: "Sommer", paper: "#ece5d2", wash: [["0%","#5f7a52",.28],["45%","#c9b68a",.24],["100%","#8e2f39",.2]], tones: TONES.summer, pines: 150, far: 85, leafy: [15, null, null], river: "#a9b6c4", mystic: { mists: 6, wisps: 12, crystals: 7, dead: 9, stones: true, ruin: true }, settle: true, ridges: 1, caps: true, birds: 3 },
-  { id: "herbst", nameDe: "Herbst", paper: "#ecdfc4", wash: [["0%","#a86a2e",.26],["45%","#c98a3a",.22],["100%","#7a3a2a",.26]], tones: TONES.autumn, pines: 130, far: 75, leafy: [18, "#c07a2a", "#e0a54e"], river: "#a9b6c4", mystic: { mists: 8, wisps: 10 }, settle: true, ridges: 1, caps: true, birds: 5 },
-  { id: "winter", nameDe: "Winter", paper: "#eef1f4", wash: [["0%","#8fa7bd",.22],["45%","#c9d6e2",.18],["100%","#6d84a3",.26]], tones: TONES.winter, snow: true, pines: 130, far: 75, leafy: [0], drifts: 14, river: "#d7e5ee", frozen: true, mystic: { mists: 9, wisps: 8 }, settle: true, ridges: 1.2, caps: true, birds: 2 },
-  { id: "hochgebirge", nameDe: "Hochgebirge", paper: "#e4e3dc", wash: [["0%","#7d8593",.24],["45%","#9aa2ae",.2],["100%","#5d6675",.28]], tones: TONES.alpine, snow: true, pines: 60, far: 40, leafy: [0], rocks: 34, drifts: 10, river: "#c4d6e0", mystic: { mists: 10 }, settle: false, ridges: 3, caps: true, birds: 2 },
-  { id: "oedland", nameDe: "Ödland", paper: "#e0dbc9", wash: [["0%","#8a7f66",.26],["45%","#a3947a",.2],["100%","#6e6250",.28]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], dead: 18, rocks: 40, river: null, mystic: { mists: 5 }, settle: false, ridges: 2.2, caps: false, birds: 1 },
-  { id: "steppe", nameDe: "Steppe", paper: "#eadfb8", wash: [["0%","#b09a52",.24],["45%","#c9ae62",.2],["100%","#8a6f3a",.26]], tones: TONES.dry, pines: 0, far: 0, leafy: [8, "#a9964e", "#c7b46a"], dead: 16, grass: 34, rocks: 12, river: "#b7c0b2", mystic: { wisps: 5 }, settle: true, ridges: 0.8, caps: false, birds: 4 },
-  { id: "canyon", nameDe: "Roter Canyon", paper: "#e6cdb0", wash: [["0%","#b0603a",.26],["45%","#c97a4a",.22],["100%","#8a3a2a",.3]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], cacti: 10, rocks: 30, dead: 6, river: null, mystic: {}, settle: false, ridges: 2.6, caps: false, birds: 2 },
-  { id: "wueste", nameDe: "Wüste", paper: "#ecd9ac", wash: [["0%","#d9a95c",.26],["45%","#e8c377",.2],["100%","#b0763a",.3]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], cacti: 16, dunes: 12, rocks: 10, river: null, oasis: true, mystic: {}, settle: false, ridges: 1.2, caps: false, birds: 2 },
-  { id: "meer", nameDe: "Endloses Meer", paper: "#5e93ad", wash: [["0%","#2e6a8a",.4],["45%","#3f7fa0",.3],["100%","#1e4a66",.45]], sea: true, tones: TONES.summer, pines: 0, far: 0, leafy: [0], waves: 26, isles: 6, river: null, mystic: { mists: 6 }, settle: false, ridges: 0, caps: false, birds: 6 },
+  { id: "fruehling", nameDe: "Frühling", bitmap: "fruehling", paper: "#e9ecd8", wash: [["0%","#6f9a5c",.3],["45%","#9ab86f",.2],["100%","#7aa06a",.24]], tones: TONES.spring, pines: 120, far: 70, leafy: [14, "#8fbf6f", "#b8dd93"], blossoms: 12, river: "#a9c2cf", mystic: { mists: 4, wisps: 8 }, settle: true, ridges: 1, caps: true, birds: 4 },
+  { id: "sommer", nameDe: "Sommer", bitmap: "sommer", paper: "#ece5d2", wash: [["0%","#5f7a52",.28],["45%","#c9b68a",.24],["100%","#8e2f39",.2]], tones: TONES.summer, pines: 150, far: 85, leafy: [15, null, null], river: "#a9b6c4", mystic: { mists: 6, wisps: 12, crystals: 7, dead: 9, stones: true, ruin: true }, settle: true, ridges: 1, caps: true, birds: 3 },
+  { id: "herbst", nameDe: "Herbst", bitmap: "herbst", paper: "#ecdfc4", wash: [["0%","#a86a2e",.26],["45%","#c98a3a",.22],["100%","#7a3a2a",.26]], tones: TONES.autumn, pines: 130, far: 75, leafy: [18, "#c07a2a", "#e0a54e"], river: "#a9b6c4", mystic: { mists: 8, wisps: 10 }, settle: true, ridges: 1, caps: true, birds: 5 },
+  { id: "winter", nameDe: "Winter", bitmap: "winter", paper: "#eef1f4", wash: [["0%","#8fa7bd",.22],["45%","#c9d6e2",.18],["100%","#6d84a3",.26]], tones: TONES.winter, snow: true, pines: 130, far: 75, leafy: [0], drifts: 14, river: "#d7e5ee", frozen: true, mystic: { mists: 9, wisps: 8 }, settle: true, ridges: 1.2, caps: true, birds: 2 },
+  { id: "hochgebirge", nameDe: "Hochgebirge", bitmap: "hochgebirge", paper: "#e4e3dc", wash: [["0%","#7d8593",.24],["45%","#9aa2ae",.2],["100%","#5d6675",.28]], tones: TONES.alpine, snow: true, pines: 60, far: 40, leafy: [0], rocks: 34, drifts: 10, river: "#c4d6e0", mystic: { mists: 10 }, settle: false, ridges: 3, caps: true, birds: 2 },
+  { id: "oedland", nameDe: "Ödland", bitmap: "oedland", paper: "#e0dbc9", wash: [["0%","#8a7f66",.26],["45%","#a3947a",.2],["100%","#6e6250",.28]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], dead: 18, rocks: 40, river: null, mystic: { mists: 5 }, settle: false, ridges: 2.2, caps: false, birds: 1 },
+  { id: "steppe", nameDe: "Steppe", bitmap: "steppe", paper: "#eadfb8", wash: [["0%","#b09a52",.24],["45%","#c9ae62",.2],["100%","#8a6f3a",.26]], tones: TONES.dry, pines: 0, far: 0, leafy: [8, "#a9964e", "#c7b46a"], dead: 16, grass: 34, rocks: 12, river: "#b7c0b2", mystic: { wisps: 5 }, settle: true, ridges: 0.8, caps: false, birds: 4 },
+  { id: "canyon", nameDe: "Roter Canyon", bitmap: "canyon", paper: "#e6cdb0", wash: [["0%","#b0603a",.26],["45%","#c97a4a",.22],["100%","#8a3a2a",.3]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], cacti: 10, rocks: 30, dead: 6, river: null, mystic: {}, settle: false, ridges: 2.6, caps: false, birds: 2 },
+  { id: "wueste", nameDe: "Wüste", bitmap: "wueste", paper: "#ecd9ac", wash: [["0%","#d9a95c",.26],["45%","#e8c377",.2],["100%","#b0763a",.3]], tones: TONES.dry, pines: 0, far: 0, leafy: [0], cacti: 16, dunes: 12, rocks: 10, river: null, oasis: true, mystic: {}, settle: false, ridges: 1.2, caps: false, birds: 2 },
+  { id: "meer", nameDe: "Endloses Meer", bitmap: "meer", paper: "#5e93ad", wash: [["0%","#2e6a8a",.4],["45%","#3f7fa0",.3],["100%","#1e4a66",.45]], sea: true, tones: TONES.summer, pines: 0, far: 0, leafy: [0], waves: 26, isles: 6, river: null, mystic: { mists: 6 }, settle: false, ridges: 0, caps: false, birds: 6 },
 ];
 export const themeForLeague = (league) => LEAGUE_THEMES[((Math.max(1, league) - 1) % 10) + 1];
 
@@ -482,3 +482,143 @@ export const Palm = (p) => Scn("palm", p);
 export const Wave = (p) => Scn("wave", p);
 export const Isle = (p) => Scn("isle", p);
 export const Lighthouse = (p) => Scn("lighthouse", p);
+
+// ── site glyphs (v0.6): every station is a PLACE now — a hamlet, a keep, a
+// toll bridge — drawn small above its medallion so the wanderer can walk INTO
+// somewhere instead of standing on a dot. Parchment palette, ink outlines. ──
+const SG = { wall: "#efe7d2", wall2: "#e4d9bd", roof: "#8a6f4d", roof2: "#6f5a3e",
+  dark: "#3a3427", ink: "#2e2a20", gold: "#c9a45c", sw: 1 };
+
+export function SiteGlyph({ type, width = 46 }) {
+  const P = {};
+  const g = (() => {
+    switch (type) {
+      case "keep": return <>
+        <path d="M8 28 V14 h6 v3 h4 V8 h-2 V4 h2 v2 h2 V4 h2 v2 h2 V4 h2 v4 h-2 v9 h4 v-3 h6 v14 Z" transform="translate(4,0)" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M22 28 v-6 c0-2 1.2-3 2.8-3 c1.6 0 2.8 1 2.8 3 v6 Z" fill={SG.dark} />
+        <path d="M12 14 h2 v-2 h-2 Z M34 14 h2 v-2 h-2 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth=".7" />
+        <path d="M25 4 V-1 l5 1.6 L25 2.2" fill={SG.gold} stroke={SG.ink} strokeWidth=".7" strokeLinejoin="round" />
+      </>;
+      case "tower": return <>
+        <path d="M18 28 V9 h-2 V5 h2.4 v2 h2.6 V5 h2.6 v2 h2.6 V5 H29 v4 h-2 v19 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M20.6 28 v-5 c0-1.7 1-2.6 2.4-2.6 c1.4 0 2.4.9 2.4 2.6 v5 Z" fill={SG.dark} />
+        <path d="M21.5 13.5 h3 v3 h-3 Z" fill={SG.dark} opacity=".8" />
+        <path d="M27 5 V0 l4.6 1.5 L27 3" fill={SG.gold} stroke={SG.ink} strokeWidth=".7" strokeLinejoin="round" />
+      </>;
+      case "village": return <>
+        <path d="M6 28 V19 h11 v9 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M4.5 19.5 L11.5 13 L18.5 19.5 Z" fill={SG.roof} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M9.5 28 v-5 h4 v5 Z" fill={SG.dark} />
+        <path d="M22 28 V16 h14 v12 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M20 16.5 L29 9 L38 16.5 Z" fill={SG.roof2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M26.5 28 v-6 h5 v6 Z" fill={SG.dark} />
+        <path d="M31 12 v-4 h1.8 v4" fill="none" stroke={SG.ink} strokeWidth=".9" />
+      </>;
+      case "court": return <>
+        <path d="M5 28 V15 h3 v2 h4 v-2 h3 v2 h4 v-2 h3 v2 h4 v-2 h3 v2 h4 v-2 h3 v13 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M18.5 28 v-7 c0-2.6 1.6-4 4.5-4 c2.9 0 4.5 1.4 4.5 4 v7 Z" fill={SG.dark} />
+        <path d="M3.5 15.5 V8.5 h6 v7 Z M36.5 15.5 V8.5 h6 v7 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M6.5 8.5 v-3 M39.5 8.5 v-3" stroke={SG.ink} strokeWidth=".9" />
+        <path d="M6.5 5.5 h4 l-4 1.8 Z" fill={SG.gold} stroke={SG.ink} strokeWidth=".6" />
+      </>;
+      case "arena": return <>
+        <path d="M5 28 C6 17 14 11 23 11 C32 11 40 17 41 28 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M11 28 v-6 a3 3 0 0 1 6 0 v6 Z M20 28 v-7 a3 3 0 0 1 6 0 v7 Z M29 28 v-6 a3 3 0 0 1 6 0 v6 Z" fill={SG.dark} />
+        <path d="M8 17 C13 13.5 18 12.4 23 12.4 C28 12.4 33 13.5 38 17" fill="none" stroke={SG.ink} strokeWidth=".8" opacity=".7" />
+      </>;
+      case "camp": return <>
+        <path d="M8 28 L17 13 L26 28 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M14.5 28 L17 21.5 L19.5 28 Z" fill={SG.dark} />
+        <path d="M27 28 L33 18.5 L39 28 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M35 18 V6" stroke={SG.ink} strokeWidth="1" />
+        <path d="M35 6 h6.5 l-6.5 3 Z" fill={SG.gold} stroke={SG.ink} strokeWidth=".7" strokeLinejoin="round" />
+      </>;
+      case "palisade": return <>
+        <path d="M6 28 V14 l2.6-3.2 L11.2 14 V28 Z M12.4 28 V14 l2.6-3.2 L17.6 14 V28 Z M28.4 28 V14 l2.6-3.2 L33.6 14 V28 Z M34.8 28 V14 l2.6-3.2 L40 14 V28 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M17.6 15 h10.8" stroke={SG.roof} strokeWidth="2.4" />
+        <path d="M19 28 h8" stroke={SG.roof} strokeWidth="1.4" strokeDasharray="1.5 2" opacity=".7" />
+      </>;
+      case "cave": return <>
+        <path d="M5 28 C5.5 17 11 10 21 9 C31 8 39 14 41 24 L41 28 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M15 28 v-8 c0-4 3-6.5 7-6.5 c4 0 7 2.5 7 6.5 v8 Z" fill={SG.dark} />
+        <path d="M33 27 a2.6 2 0 0 1 5 0 Z" fill={SG.wall} stroke={SG.ink} strokeWidth=".8" />
+        <path d="M10 15 l3 2 M31 10.5 l2.4 2" stroke={SG.ink} strokeWidth=".7" opacity=".6" />
+      </>;
+      case "bridge": return <>
+        <path d="M4 24 h38 v4 h-38 Z" fill={SG.wall} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M12 28 a6 6 0 0 1 10 0 Z M26 28 a6 6 0 0 1 10 0 Z" fill={SG.dark} opacity=".85" />
+        <path d="M8 24 V13 h6 v11 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M9.5 13 v-2.6 h3 V13" fill="none" stroke={SG.ink} strokeWidth=".8" />
+        <path d="M14 20 L36 14.5" stroke={SG.roof2} strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="14" cy="20" r="1.4" fill={SG.gold} stroke={SG.ink} strokeWidth=".6" />
+      </>;
+      case "crystal": return <>
+        <path d="M8 28 l3-4 5 1 6-2 7 3 5-2 3 4 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M19 25 L16 12 L21 7 L24 25 Z" fill="#dfe6ea" stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M21 7 L21.8 25" stroke="#aebcc6" strokeWidth=".8" />
+        <path d="M13 26 L11.5 17.5 L15 14 L17 26 Z M26 25.5 L26 15 L29.5 12 L31 25.5 Z" fill="#cfd9df" stroke={SG.ink} strokeWidth=".9" strokeLinejoin="round" />
+        <path d="M15 14 L15.8 26 M29.5 12 L30.2 25.5" stroke="#aebcc6" strokeWidth=".7" />
+      </>;
+      case "ferry": return <>
+        <path d="M5 26.5 h20 M8 26.5 v-4 M14 26.5 v-4 M20 26.5 v-4" stroke={SG.roof2} strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M5 22.5 h20" stroke={SG.roof} strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M27 25 h13 l-2.5 3.5 h-8 Z" fill={SG.wall2} stroke={SG.ink} strokeWidth={SG.sw} strokeLinejoin="round" />
+        <path d="M33 25 V13" stroke={SG.ink} strokeWidth="1" />
+        <path d="M33 13.5 c4.5 1 6.5 5 6 10 l-6 -1.2 Z" fill={SG.wall} stroke={SG.ink} strokeWidth=".9" strokeLinejoin="round" />
+      </>;
+      default: return null;
+    }
+  })();
+  return <svg viewBox="-1 -2 48 31" width={width} height={Math.round(width * 31 / 48)} style={{ display: "block", overflow: "visible" }}>{g}</svg>;
+}
+
+/** Which kind of place is this station? Story overrides first, then the map. */
+export function siteTypeFor(node) {
+  if (!node) return "village";
+  if (node.id === "n22") return "keep";
+  if (node.id === "z1") return "ferry";
+  if (node.id === "z2") return "bridge";
+  if (node.id === "w2") return "crystal";
+  if (node.gate && (typeof node.gate === "string" || node.gate.item)) return "cave";
+  if (node.boss?.pure) return "tower";
+  return { courtyard: "court", arena: "arena", skirmish: "camp", gauntlet: "palisade", classic: "village" }[node.map] || "village";
+}
+
+// ── the wanderer, painted: soft gold washes instead of hard game-piece lines,
+// so he belongs to the artwork he walks through. (The in-match piece is untouched.)
+export function WandererArt({ size = "100%" }) {
+  // A pawn you can READ as a pawn — round head, collar swell, tapered body,
+  // skirted base — but painted: soft contours, watercolour shading, warm aura.
+  const BODY = `M24 4.6
+    c3.1 0 5.5 2.4 5.5 5.4 c0 1.6 -.7 3 -1.8 4
+    c2.1 .5 3.6 1.5 3.6 2.7 c0 1.1 -1.2 2 -3 2.5
+    c1.8 2.3 3 5.6 3.7 9.8 c.4 2.4 1.2 4.4 2.5 6.1
+    c1.4 1.8 2.1 3.3 1.8 4.8 c-.4 2 -3.9 3.1 -12.3 3.1
+    c-8.4 0 -11.9 -1.1 -12.3 -3.1 c-.3 -1.5 .4 -3 1.8 -4.8
+    c1.3 -1.7 2.1 -3.7 2.5 -6.1 c.7 -4.2 1.9 -7.5 3.7 -9.8
+    c-1.8 -.5 -3 -1.4 -3 -2.5 c0 -1.2 1.5 -2.2 3.6 -2.7
+    c-1.1 -1 -1.8 -2.4 -1.8 -4 c0 -3 2.4 -5.4 5.5 -5.4 Z`;
+  return (
+    <svg viewBox="0 0 48 50" width={size} height={size} style={{ display: "block", overflow: "visible" }}>
+      <defs>
+        <radialGradient id="ggWndAura" cx=".5" cy=".6" r=".62">
+          <stop offset="0" stopColor="#f6e3a8" stopOpacity=".48" /><stop offset="1" stopColor="#f6e3a8" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="ggWndBody" x1=".28" y1="0" x2=".72" y2="1">
+          <stop offset="0" stopColor="#f4e4b4" /><stop offset=".55" stopColor="#d0aa60" /><stop offset="1" stopColor="#94733c" />
+        </linearGradient>
+        <radialGradient id="ggWndShade" cx=".7" cy=".68" r=".8">
+          <stop offset=".4" stopColor="#6e5527" stopOpacity="0" /><stop offset="1" stopColor="#6e5527" stopOpacity=".42" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="24" cy="26" rx="24.5" ry="21" fill="url(#ggWndAura)" />
+      <g>
+        <path d={BODY} fill="url(#ggWndBody)" stroke="#5d4a26" strokeWidth=".9" strokeOpacity=".3" strokeLinejoin="round" />
+        <path d={BODY} fill="url(#ggWndShade)" />
+        <path d="M20.9 6.6 c-1.3 .9 -1.9 2.2 -1.9 3.4 m-2.7 7 c1.1 -.7 2.4 -1.2 3.4 -1.4 m-3.4 12.6 c.6 -2.9 1.5 -5.4 2.8 -7.3"
+          fill="none" stroke="#fdf3d2" strokeWidth="1.7" strokeOpacity=".42" strokeLinecap="round" />
+        <ellipse cx="21.3" cy="8.9" rx="2" ry="1.3" fill="#fdf3d2" opacity=".55" transform="rotate(-24 21.3 8.9)" />
+      </g>
+    </svg>
+  );
+}

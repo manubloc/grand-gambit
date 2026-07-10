@@ -6,6 +6,7 @@ import { KIND } from "../core/index.js";
 export const CHARACTERS = {
   pawn: {
     id: "pawn", kind: KIND.PAWN, glyph: "♟", nameDe: "Bauer", nameEn: "Pawn",
+flavorDe: "Der erste Schritt jeder Schlacht — und öfter, als Lieder es zugeben, ihr letzter.", flavorEn: "The first step of every battle — and, more often than songs admit, its last.",
     unlock: { type: "start" }, flank: false,
     ladder: [
       { level: 2, shield: 1 },
@@ -19,6 +20,7 @@ export const CHARACTERS = {
   },
   gambit: {
     id: "gambit", kind: KIND.PAWN, glyph: "♟", nameDe: "Grand Gambit", nameEn: "Grand Gambit",
+flavorDe: "Geboren, geopfert zu werden — entschlossen, es nicht zu bleiben.", flavorEn: "Born to be sacrificed — determined not to stay that way.",
     unlock: { type: "start" }, flank: false, epic: true, costValue: 380,
     // The pawn the whole tale is named after: raised to be offered — and to
     // walk further than anyone expects. Richer ladder than any common pawn.
@@ -35,6 +37,7 @@ export const CHARACTERS = {
   },
   knight: {
     id: "knight", kind: KIND.KNIGHT, glyph: "♞", nameDe: "Springer", nameEn: "Knight",
+flavorDe: "Reitet Winkel, die keine Mauer je bedacht hat.", flavorEn: "Rides angles no wall was ever built for.",
     unlock: { type: "start" }, flank: true,
     ladder: [
       { level: 2, shield: 1 },
@@ -49,6 +52,7 @@ export const CHARACTERS = {
   },
   bishop: {
     id: "bishop", kind: KIND.BISHOP, glyph: "♝", nameDe: "Läufer", nameEn: "Bishop",
+flavorDe: "Sieht die Welt nur schräg — und trifft sie deshalb umso genauer.", flavorEn: "Sees the world only aslant — and strikes it all the truer.",
     unlock: { type: "start" }, flank: false,
     ladder: [
       { level: 2, shield: 1 },
@@ -62,6 +66,7 @@ export const CHARACTERS = {
   },
   rook: {
     id: "rook", kind: KIND.ROOK, glyph: "♜", nameDe: "Turm", nameEn: "Rook",
+flavorDe: "Eine wandernde Festung mit schlechter Laune.", flavorEn: "A walking fortress in a foul mood.",
     unlock: { type: "start" }, flank: false,
     ladder: [
       { level: 2, shield: 1 },
@@ -76,6 +81,7 @@ export const CHARACTERS = {
   },
   queen: {
     id: "queen", kind: KIND.QUEEN, glyph: "♛", nameDe: "Dame", nameEn: "Queen",
+flavorDe: "Der Hof flüstert, sie führe den König. Der Hof flüstert leise.", flavorEn: "The court whispers she commands the king. The court whispers quietly.",
     unlock: { type: "start" }, flank: false,
     ladder: [
       { level: 2, shield: 1 },
@@ -93,6 +99,7 @@ export const CHARACTERS = {
   },
   king: {
     id: "king", kind: KIND.KING, glyph: "♚", nameDe: "König", nameEn: "King",
+flavorDe: "Fällt er, fällt alles — also fällt er nicht.", flavorEn: "If he falls, everything falls — so he does not.",
     unlock: { type: "start" }, flank: false,
     // Kings never get shields (keeps chess-mode check/mate logic clean).
     ladder: [
@@ -104,6 +111,7 @@ export const CHARACTERS = {
   },
   archbishop: {
     id: "archbishop", kind: KIND.ARCHBISHOP, glyph: null, nameDe: "Erzbischof", nameEn: "Archbishop",
+flavorDe: "Predigt Vergebung und nimmt die Beichte gleich selbst ab.", flavorEn: "Preaches forgiveness and hears the confession himself.",
     unlock: { type: "boss" }, flank: true,
     ladder: [
       { level: 2, shield: 1 },
@@ -118,6 +126,7 @@ export const CHARACTERS = {
   },
   chancellor: {
     id: "chancellor", kind: KIND.CHANCELLOR, glyph: null, nameDe: "Kanzler", nameEn: "Chancellor",
+flavorDe: "Verwaltet das Reich — und im Exil seine Rache.", flavorEn: "Administers the realm — and, in exile, his revenge.",
     unlock: { type: "boss" }, flank: true,
     ladder: [
       { level: 2, shield: 1 },
@@ -132,6 +141,7 @@ export const CHARACTERS = {
   },
   hawk: {
     id: "hawk", kind: KIND.HAWK, glyph: null, nameDe: "Späher", nameEn: "Hawk",
+flavorDe: "Kein Pfad, den er nicht zweimal gegangen wäre, bevor du ihn einmal siehst.", flavorEn: "No path he hasn't walked twice before you see it once.",
     unlock: { type: "boss" }, flank: true,
     ladder: [
       { level: 2, shield: 1 },
@@ -144,6 +154,7 @@ export const CHARACTERS = {
   },
   amazon: {
     id: "amazon", kind: KIND.AMAZON, glyph: null, nameDe: "Amazone", nameEn: "Amazon",
+flavorDe: "Niemand fordert sie zweimal heraus.", flavorEn: "Nobody challenges her twice.",
     unlock: { type: "boss" }, flank: true,
     ladder: [
       { level: 2, shield: 1 },
@@ -162,6 +173,7 @@ export const CHARACTERS = {
   // ── Boss-unlocked specialists (movement is data-driven via moveSpec) ────────
   captain: {
     id: "captain", kind: KIND.CAPTAIN, glyph: "⚓", nameDe: "Kapitän", nameEn: "Captain",
+flavorDe: "Hält Kurs, wo die Karten enden.", flavorEn: "Holds course where the maps end.",
     unlock: { type: "boss" }, flank: true,
     // Sea legs: strides three straight, steps one diagonal — and can hook foes in.
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1]], range: 3, leaps: [[1,1],[1,-1],[-1,1],[-1,-1]] },
@@ -175,6 +187,7 @@ export const CHARACTERS = {
   },
   assassin: {
     id: "assassin", kind: KIND.ASSASSIN, glyph: "🗡", nameDe: "Attentäter", nameEn: "Assassin",
+flavorDe: "Rechnet in Schritten, zahlt in Stille.", flavorEn: "Counts in steps, pays in silence.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[1,1],[1,-1],[-1,1],[-1,-1],[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
@@ -186,6 +199,7 @@ export const CHARACTERS = {
   },
   guardian: {
     id: "guardian", kind: KIND.GUARDIAN, glyph: "🛡", nameDe: "Schildträger", nameEn: "Guardian",
+flavorDe: "Sein Schild hat mehr Schlachten gesehen als mancher General.", flavorEn: "His shield has seen more battles than most generals.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1]], range: 2 },
     ladder: [
@@ -197,6 +211,7 @@ export const CHARACTERS = {
   },
   dragon: {
     id: "dragon", kind: KIND.DRAGON, glyph: "🐉", nameDe: "Drache", nameEn: "Dragon",
+flavorDe: "Jung, gierig und fest überzeugt, dass alles Gold ihm gehört.", flavorEn: "Young, greedy, and firmly convinced all gold is his.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1],[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
@@ -208,6 +223,7 @@ export const CHARACTERS = {
   },
   mage: {
     id: "mage", kind: KIND.MAGE, glyph: "✨", nameDe: "Magier", nameEn: "Mage",
+flavorDe: "Dreißig Jahre Studium — jetzt kommt die Prüfung.", flavorEn: "Thirty years of study — now comes the exam.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,1],[1,-1],[-1,1],[-1,-1]], range: 2 },
     ladder: [
@@ -219,6 +235,7 @@ export const CHARACTERS = {
   },
   sorceress: {
     id: "sorceress", kind: KIND.SORCERESS, glyph: "🔮", nameDe: "Hexerin", nameEn: "Sorceress",
+flavorDe: "Der Sturm fragt sie um Erlaubnis.", flavorEn: "The storm asks her permission.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[-2,-2],[-1,-2],[0,-2],[1,-2],[2,-2],[-2,-1],[2,-1],[-2,0],[2,0],[-2,1],[2,1],[-2,2],[-1,2],[0,2],[1,2],[2,2]] },
     ladder: [
@@ -230,6 +247,7 @@ export const CHARACTERS = {
   },
   alchemist: {
     id: "alchemist", kind: KIND.ALCHEMIST, glyph: "⚗", nameDe: "Alchemist", nameEn: "Alchemist",
+flavorDe: "Hat den Pass gesprengt. Aus Versehen. Zweimal.", flavorEn: "Blew up the pass. By accident. Twice.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]], range: 1, leaps: [[0,2],[0,-2],[2,0],[-2,0]] },
     ladder: [
@@ -241,6 +259,7 @@ export const CHARACTERS = {
   },
   warlock: {
     id: "warlock", kind: KIND.WARLOCK, glyph: "🜏", nameDe: "Warlock", nameEn: "Warlock",
+flavorDe: "Sein Preis war hoch. Er verrät nicht, wofür.", flavorEn: "His price was steep. He won't say for what.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,1],[1,-1],[-1,1],[-1,-1]], range: 3 },
     ladder: [
@@ -252,6 +271,7 @@ export const CHARACTERS = {
   },
   paladin: {
     id: "paladin", kind: KIND.PALADIN, glyph: "⚔", nameDe: "Paladin", nameEn: "Paladin",
+flavorDe: "Sein Eid wiegt schwerer als seine Rüstung.", flavorEn: "His oath weighs more than his armor.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1]], range: 2, leaps: [[1,1],[1,-1],[-1,1],[-1,-1]] },
     ladder: [
@@ -263,6 +283,7 @@ export const CHARACTERS = {
   },
   inquisitor: {
     id: "inquisitor", kind: KIND.INQUISITOR, glyph: "✠", nameDe: "Inquisitor", nameEn: "Inquisitor",
+flavorDe: "Stellt eine Frage. Nur eine.", flavorEn: "Asks one question. Only one.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1]], range: 3 },
     ladder: [
@@ -273,6 +294,7 @@ export const CHARACTERS = {
   },
   bard: {
     id: "bard", kind: KIND.BARD, glyph: "🎵", nameDe: "Barde", nameEn: "Bard",
+flavorDe: "Singt von deinen Siegen — die Gage verhandelt er vorher.", flavorEn: "Sings of your victories — the fee is agreed beforehand.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]], range: 1, leaps: [[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
@@ -284,6 +306,7 @@ export const CHARACTERS = {
   },
   engineer: {
     id: "engineer", kind: KIND.ENGINEER, glyph: "⚙", nameDe: "Techniker", nameEn: "Engineer",
+flavorDe: "Repariert alles außer seinen Ruf.", flavorEn: "Fixes everything except his reputation.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[0,2],[0,-2],[2,0],[-2,0],[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
@@ -294,6 +317,7 @@ export const CHARACTERS = {
   },
   standard: {
     id: "standard", kind: KIND.STANDARD, glyph: "🚩", nameDe: "Flaggenträger", nameEn: "Standard Bearer",
+flavorDe: "Wo sein Banner steht, weicht keiner.", flavorEn: "Where his banner stands, nobody yields.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[1,0],[-1,0],[0,1],[0,-1],[0,2],[0,-2],[2,0],[-2,0]] },
     ladder: [
@@ -304,6 +328,7 @@ export const CHARACTERS = {
   },
   strategist: {
     id: "strategist", kind: KIND.STRATEGIST, glyph: "🧭", nameDe: "Stratege", nameEn: "Strategist",
+flavorDe: "Hat diese Partie schon gestern gewonnen.", flavorEn: "Won this game yesterday.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1]], range: 2, leaps: [[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
@@ -314,6 +339,7 @@ export const CHARACTERS = {
   },
   pathfinder: {
     id: "pathfinder", kind: KIND.PATHFINDER, glyph: "🧿", nameDe: "Kundschafter", nameEn: "Pathfinder",
+flavorDe: "Kennt den Weg. Auch den, den es nicht gibt.", flavorEn: "Knows the way. Even the one that doesn't exist.",
     unlock: { type: "boss" }, flank: true,
     moveSpec: { leaps: [[1,3],[3,1],[-1,3],[-3,1],[1,-3],[3,-1],[-1,-3],[-3,-1]] },
     ladder: [

@@ -53,6 +53,11 @@ function CharCard({ char, profile, dispatch, t, en }) {
           <div style={{ minWidth: 0, flex: 1 }}>
             <div className="gg-serif" style={{ fontSize: 16, letterSpacing: ".04em", color: T.dim }}>{en ? char.nameEn : char.nameDe}</div>
           {epic && <div style={{ fontSize: 11, color: T.gold, letterSpacing: ".04em", marginTop: 1 }}>{t("army.gambitTag")}</div>}
+            {(en ? char.flavorEn : char.flavorDe) && (
+              <div className="gg-serif" style={{ fontSize: 11.5, color: "#9a947f", fontStyle: "italic", marginTop: 2, lineHeight: 1.4 }}>
+                „{en ? char.flavorEn : char.flavorDe}“
+              </div>
+            )}
             <div style={{ fontSize: 12, color: T.faint, marginTop: 3 }}>
               🔒 {bossNode ? t("army.lockedBoss", { place: bossNode.place }) : t("army.locked")}
             </div>
@@ -79,9 +84,8 @@ function CharCard({ char, profile, dispatch, t, en }) {
   const tag = a ? TAGS[a.tag] : null;
   const infoLevel = a ? (rungs.find((r) => r.id === info) || {}).level : 0;
 
-  return <Panel style={{ opacity: unlocked ? 1 : 0.74,
-    ...(epic ? { border: `1.5px solid ${T.gold}aa`, background: `linear-gradient(160deg, ${T.gold}12, ${T.panel})`,
-      boxShadow: `inset 3px 0 0 ${T.gold}, 0 0 16px ${T.gold}33, ${T.shadow}` } : {}) }}>
+  const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
+  return <Panel style={{ opacity: unlocked ? 1 : 0.74 }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
       <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} />
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -94,14 +98,20 @@ function CharCard({ char, profile, dispatch, t, en }) {
         <div style={{ display: "flex", gap: 14, marginTop: 6, alignItems: "center" }}>
           <StatPill icon="♥" val={maxHp} color={T.green} />
           <StatPill icon="⚔" val={atk} color={T.gold} />
-          <span style={{ fontSize: 11.5, color: T.faint }}>{rungs.length} {en ? "abilities" : "Fähigkeiten"}</span>
+          <span style={{ fontSize: 11.5, color: T.dim }}>{rungs.length} {en ? "abilities" : "Fähigkeiten"}</span>
         </div>
       </div>
     </div>
+    {(en ? char.flavorEn : char.flavorDe) && (
+      <div className="gg-serif" style={{ marginTop: 8, fontSize: 12, lineHeight: 1.45, color: "#b9b295",
+        fontStyle: "italic", letterSpacing: ".015em" }}>
+        „{en ? char.flavorEn : char.flavorDe}“
+      </div>
+    )}
     {epic && (
-      <div style={{ marginTop: 9, fontSize: 11.5, lineHeight: 1.5 }}>
+      <div style={{ marginTop: 7, fontSize: 11.5, lineHeight: 1.5 }}>
         <span style={{ color: T.gold, fontWeight: 700 }}>{t("army.gambitTag")}</span>{" "}
-        <span style={{ color: T.dim }}>{t("army.gambitExplain")}</span>
+        <span style={{ color: INK }}>{t("army.gambitExplain")}</span>
       </div>
     )}
     {!unlocked && bossNode && (
@@ -113,7 +123,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
-          {maxed ? t("army.maxed") : <>Level {level} → {level + 1} · <b style={{ color: affordable ? T.gold : T.danger }}>{cost} ⭐</b></>}
+          {maxed ? t("army.maxed") : <>Level {level} → {level + 1} · <b style={{ color: affordable ? T.gold : T.danger }}>{cost} <SkillStar size={12} /></b></>}
         </div>
         {!maxed && <Button variant={affordable ? "primary" : "subtle"} disabled={!affordable}
           style={{ padding: "8px 14px", fontSize: 13 }}
@@ -145,12 +155,26 @@ function CharCard({ char, profile, dispatch, t, en }) {
               <span>{ab.icon}</span>{en ? ab.nameEn : ab.nameDe}
             </button>;
           })}
-          {rungs.filter((rg) => level < rg.level).map((rg) => (
-            <span key={rg.id} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
+          {rungs.filter((rg) => level < rg.level).map((rg, i) => {
+            // Tactics need a horizon: the next two rungs show their cards
+            // face-up (grayed), the deeper ones stay a mystery.
+            if (i < 2) {
+              const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
+              const sel = info === rg.id;
+              return <button key={rg.id} onClick={() => setInfo(sel ? null : rg.id)}
+                style={{ cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5,
+                  fontSize: 12, fontWeight: 800, padding: "5px 9px", borderRadius: 999,
+                  border: `1px dashed ${tg.color}77`, background: sel ? tg.color + "1f" : T.panel2,
+                  color: tg.color + "bb", filter: "saturate(.65)" }}>
+                <span style={{ opacity: .8 }}>{ab.icon}</span>{en ? ab.nameEn : ab.nameDe}
+                <span style={{ fontSize: 10, fontWeight: 700, color: T.faint }}>L{rg.level}</span>
+              </button>;
+            }
+            return <span key={rg.id} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
               padding: "5px 9px", borderRadius: 999, border: `1px dashed ${T.line}`, background: T.panel2, color: T.faint }}>
               🔒 L{rg.level} · ???
-            </span>
-          ))}
+            </span>;
+          })}
         </div>
         {rungs.filter((rg) => !chosen.includes(rg.id) && level >= rg.level).map((rg) => {
           const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
@@ -161,13 +185,13 @@ function CharCard({ char, profile, dispatch, t, en }) {
             <span style={{ fontSize: 15 }}>{ab.icon}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 12.5, fontWeight: 800, color: tg.color }}>{en ? ab.nameEn : ab.nameDe}</div>
-              <div style={{ fontSize: 11, color: T.dim }}>{en ? ab.textEn : ab.textDe}</div>
+              <div style={{ fontSize: 11.5, color: INK }}>{en ? ab.textEn : ab.textDe}</div>
             </div>
             <button onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} disabled={!can}
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12, borderRadius: 999, padding: "7px 12px",
                 cursor: can ? "pointer" : "default", border: `1.5px solid ${can ? T.gold : T.line}`,
                 background: can ? T.gold : T.panel, color: can ? "#17110a" : T.faint, whiteSpace: "nowrap" }}>
-              ⛏ {price} ⭐
+              ⛏ {price} <SkillStar size={12} />
             </button>
           </div>;
         })}
@@ -191,7 +215,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
           <Chip color={a.once ? T.gold : T.green} bg={T.panel2}>{a.once ? (en ? "once" : "einmalig") : (en ? "passive" : "dauerhaft")}</Chip>
           {!a.live && <Chip color={T.faint} bg={T.panel2}>⚙ {en ? "soon" : "bald"}</Chip>}
         </div>
-        <div style={{ fontSize: 13, color: T.dim, marginTop: 6, lineHeight: 1.45 }}>{en ? a.descEn : a.descDe}</div>
+        <div style={{ fontSize: 13, color: INK, marginTop: 6, lineHeight: 1.5 }}>{en ? a.descEn : a.descDe}</div>
         {unlocked && level < infoLevel && <div style={{ fontSize: 12, color: T.faint, marginTop: 5 }}>{en ? "Unlocks at level" : "Schaltet frei ab Stufe"} {infoLevel}</div>}
       </div>
     )}
@@ -245,55 +269,19 @@ function FormationEditor({ profile, dispatch, t, en }) {
     return createGame(mine, foe, { map, rules: "hp", seed: 1 });
   }, [draft, mapId, legal, profile]); // eslint-disable-line
 
-  return <Panel>
+  return <>
+  <Panel>
     <div style={{ fontWeight: 800, marginBottom: 2 }}>{t("army.formation")}</div>
     <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
-    {!map.classic && (
-      <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
-        border: `1px solid ${T.gold}44` }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 7 }}>
-          <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>♟ {t("army.heroPos")}</span>
-          <span style={{ fontSize: 10.5, color: T.faint }}>{t("army.heroPosHint")}</span>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3 }}>
-          {Array.from({ length: map.w }).map((_, f) => {
-            const on = f === heroColFor(profile, map);
-            return <button key={f} onClick={() => dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f })}
-              style={{ aspectRatio: "1", borderRadius: 7, cursor: "pointer", padding: 1,
-                background: on ? `radial-gradient(circle at 40% 32%, ${T.gold}33, ${T.panel})` : T.panel,
-                border: on ? `1.5px solid ${T.gold}` : `1px solid ${T.line}`,
-                boxShadow: on ? `0 0 8px ${T.gold}55` : "none", display: "grid", placeItems: "center" }}>
-              <div style={{ width: "82%", height: "82%", opacity: on ? 1 : 0.4 }}>
-                <PieceArt kind="P" fill={on ? "#c9a45c" : "#5b617a"} rim={on ? null : "#3a415c"}
-                  detail={on ? "#7a5c26" : "#3a415c"} size="100%" level={1} hero={on} />
-              </div>
-            </button>;
-          })}
-        </div>
+
+    {preview && (
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
+        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} />
+        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}
 
-    {/* map selector */}
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-      {FORMATION_MAPS.map((m) => {
-        const on = m.id === mapId;
-        const open = mapUnlocked(profile, m.id); // same locks as quick play — no phantom formations
-        return <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
-          title={open ? undefined : t("game.unlockHint")}
-          style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "5px 10px",
-            border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2,
-            color: on ? T.limeInk : open ? T.text : T.faint, opacity: open ? 1 : 0.55 }}>
-          <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
-            overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
-            {Array.from({ length: 16 }).map((_, k) => (
-              <span key={k} style={{ width: 4.5, height: 4.5,
-                background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
-            ))}
-          </span>
-          {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
-        </button>;
-      })}
-    </div>
 
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
       {draft.map((id, i) => {
@@ -322,11 +310,28 @@ function FormationEditor({ profile, dispatch, t, en }) {
       </div>
     )}
 
-    {preview && (
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
-        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} />
-        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
+    {!map.classic && (
+      <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
+        border: `1px solid ${T.gold}44` }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 7 }}>
+          <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>♟ {t("army.heroPos")}</span>
+          <span style={{ fontSize: 10.5, color: T.faint }}>{t("army.heroPosHint")}</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3 }}>
+          {Array.from({ length: map.w }).map((_, f) => {
+            const on = f === heroColFor(profile, map);
+            return <button key={f} onClick={() => dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f })}
+              style={{ aspectRatio: "1", borderRadius: 7, cursor: "pointer", padding: 1,
+                background: on ? `radial-gradient(circle at 40% 32%, ${T.gold}33, ${T.panel})` : T.panel,
+                border: on ? `1.5px solid ${T.gold}` : `1px solid ${T.line}`,
+                boxShadow: on ? `0 0 8px ${T.gold}55` : "none", display: "grid", placeItems: "center" }}>
+              <div style={{ width: "82%", height: "82%", opacity: on ? 1 : 0.4 }}>
+                <PieceArt kind="P" fill={on ? "#c9a45c" : "#5b617a"} rim={on ? null : "#3a415c"}
+                  detail={on ? "#7a5c26" : "#3a415c"} size="100%" level={1} hero={on} />
+              </div>
+            </button>;
+          })}
+        </div>
       </div>
     )}
 
@@ -344,7 +349,29 @@ function FormationEditor({ profile, dispatch, t, en }) {
       <Button variant="subtle" onClick={() => setDraft(map.defaultFormation)}>{t("army.standard")}</Button>
     </div>
     {!legal && <div style={{ fontSize: 12, color: T.danger, marginTop: 8 }}>{t("army.invalid")}</div>}
-  </Panel>;
+  </Panel>
+
+  {/* map choice — its own strip below the box: ONE row, scroll if it must */}
+  <div>
+    <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase",
+      margin: "0 2px 6px" }}>{t("army.mapPick")}</div>
+    <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch",
+      paddingBottom: 4, scrollbarWidth: "thin" }}>
+      {FORMATION_MAPS.map((m) => {
+        const on = m.id === mapId;
+        const open = mapUnlocked(profile, m.id);
+        return <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
+          title={open ? undefined : t("game.unlockHint")}
+          style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999,
+            padding: "7px 12px", flex: "0 0 auto", whiteSpace: "nowrap",
+            border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2,
+            color: on ? T.limeInk : open ? T.text : T.faint, opacity: open ? 1 : 0.55 }}>
+          {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}
+        </button>;
+      })}
+    </div>
+  </div>
+  </>;
 }
 
 // Gear & supplies — its own room now (tab 2), no longer part of one long scroll.
@@ -371,7 +398,7 @@ function GearPanel({ profile, dispatch, t, en }) {
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
                 border: `1.5px solid ${can ? T.gold : T.line}`, background: can ? T.gold : T.panel,
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default", whiteSpace: "nowrap" }}>
-              {full ? (it.kind === "key" ? "✓" : t("army.full")) : `🪙 ${it.gold}`}
+              {full ? (it.kind === "key" ? "✓" : t("army.full")) : <><GoldCoin size={13} /> {it.gold}</>}
             </button>
           </div>;
         })}
@@ -395,8 +422,8 @@ export function ArmyScreen({ profile, dispatch, t }) {
       background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
       <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
       <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-        <span style={{ fontWeight: 900, fontSize: 18, color: T.gold, display: "inline-flex", alignItems: "center", gap: 6 }}><SkillStar size={17} /> {profile.sp || 0}</span>
-        <span style={{ fontWeight: 900, fontSize: 18, color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 6 }}><GoldCoin size={17} /> {profile.gold || 0}</span>
+        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillStar size={17} /> {profile.sp || 0}</span>
+        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><GoldCoin size={17} /> {profile.gold || 0}</span>
       </span>
     </div>
     {/* three rooms instead of one endless scroll */}

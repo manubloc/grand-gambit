@@ -6,6 +6,7 @@ import pkg from "./package.json";
 // base: "./" makes the build portable (Cloudflare/GitHub Pages, itch.io,
 // any subfolder, TWA/Capacitor wrapper).
 export default defineConfig({
+  build: { assetsInlineLimit: 400 * 1024 },
   base: "./",
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [

@@ -56,46 +56,51 @@ export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>{shapes[id] || shapes.play}</svg>;
 }
 
-// ── Currency — the treasury's own coinage, drawn in-house. Real gold: light
-// falls from the upper left, facets break it, a glint crowns it. ─────────────
+// ── Currency v3 — an order star and a crowned coin, drawn as insignia rather
+// than cartoon gold: clean silhouettes, fine dark contours, one soft light
+// edge. Reads crisp at chip size, shows its engraving when large. ───────────
 export function SkillStar({ size = 18, style }) {
+  const fine = size >= 16;
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"
-      style={{ display: "inline-block", verticalAlign: "-0.14em", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))", ...style }}>
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
+      style={{ display: "inline-block", verticalAlign: "-0.14em", ...style }}>
       <defs>
-        <linearGradient id="ggStarG" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f8e6ab" /><stop offset=".55" stopColor="#d9b565" /><stop offset="1" stopColor="#8a6d35" />
+        <linearGradient id="ggStarG3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f7e5ac" /><stop offset=".55" stopColor="#d3ac5c" /><stop offset="1" stopColor="#96742f" />
         </linearGradient>
       </defs>
-      <path d="M12 1.6 L14.9 8.5 L22.3 9.1 L16.7 14 L18.4 21.4 L12 17.4 L5.6 21.4 L7.3 14 L1.7 9.1 L9.1 8.5 Z"
-        fill="url(#ggStarG)" stroke="#6f5526" strokeWidth=".9" strokeLinejoin="round" />
-      <path d="M12 1.6 L12 17.4 L5.6 21.4 L7.3 14 L1.7 9.1 L9.1 8.5 Z" fill="#fff6d8" opacity=".22" />
-      <path d="M12 8.2 L13.2 11 L12 17.4 L10.8 11 Z" fill="#6f5526" opacity=".3" />
-      <circle cx="8.7" cy="6.9" r="1.05" fill="#fff8e0" opacity=".95" />
+      {/* four-ray order star: long N/S rays, shorter E/W, slim diagonals */}
+      <path d="M12 0.8 L14 9.2 L12 12 L10 9.2 Z M12 23.2 L10 14.8 L12 12 L14 14.8 Z M0.8 12 L8.4 10.3 L12 12 L8.4 13.7 Z M23.2 12 L15.6 13.7 L12 12 L15.6 10.3 Z"
+        fill="url(#ggStarG3)" stroke="#59461e" strokeWidth={fine ? 0.8 : 1.1} strokeLinejoin="round" />
+      <path d="M12 2.6 L12 12 L10.6 10 Z M2.8 12 L12 12 L9.6 10.9 Z" fill="#fff7dc" opacity=".5" />
+      {fine && <path d="M5.9 5.9 L10.4 10.4 M18.1 5.9 L13.6 10.4 M5.9 18.1 L10.4 13.6 M18.1 18.1 L13.6 13.6"
+        stroke="#d3ac5c" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />}
+      <circle cx="12" cy="12" r={fine ? 1.7 : 2} fill="#f7e5ac" stroke="#59461e" strokeWidth=".7" />
     </svg>
   );
 }
 
 export function GoldCoin({ size = 18, style }) {
+  const fine = size >= 16;
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"
-      style={{ display: "inline-block", verticalAlign: "-0.14em", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))", ...style }}>
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
+      style={{ display: "inline-block", verticalAlign: "-0.14em", ...style }}>
       <defs>
-        <radialGradient id="ggCoinG" cx=".35" cy=".28" r=".95">
-          <stop offset="0" stopColor="#f8e6ab" /><stop offset=".55" stopColor="#d9a94f" /><stop offset="1" stopColor="#8a6224" />
-        </radialGradient>
+        <linearGradient id="ggCoinG3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f2dfa2" /><stop offset=".55" stopColor="#cfa254" /><stop offset="1" stopColor="#8d6b2a" />
+        </linearGradient>
       </defs>
-      <circle cx="12" cy="12" r="10.3" fill="url(#ggCoinG)" stroke="#6f5526" strokeWidth=".9" />
-      <circle cx="12" cy="12" r="9" fill="none" stroke="#fff3cf" strokeWidth=".7" strokeDasharray="1.2 2" opacity=".6" />
-      <circle cx="12" cy="12" r="7.4" fill="none" stroke="#7c5c22" strokeWidth=".8" opacity=".85" />
-      {/* embossed pawn: bright edge above, dark body below */}
-      <g transform="translate(0,.2)">
-        <path d="M12 5.9 a2.15 2.15 0 0 1 1.35 3.83 l1 4.57 h-4.7 l1 -4.57 A2.15 2.15 0 0 1 12 5.9 Z M9.3 15.6 h5.4 l.55 1.8 h-6.5 Z"
-          fill="#fff2c8" opacity=".55" transform="translate(-.45,-.45)" />
-        <path d="M12 5.9 a2.15 2.15 0 0 1 1.35 3.83 l1 4.57 h-4.7 l1 -4.57 A2.15 2.15 0 0 1 12 5.9 Z M9.3 15.6 h5.4 l.55 1.8 h-6.5 Z"
-          fill="#7c5c22" />
-      </g>
-      <ellipse cx="8.4" cy="7.2" rx="3.2" ry="1.5" fill="#ffffff" opacity=".3" transform="rotate(-28 8.4 7.2)" />
+      <circle cx="12" cy="12" r="10.6" fill="url(#ggCoinG3)" stroke="#59461e" strokeWidth={fine ? 0.9 : 1.2} />
+      <circle cx="12" cy="12" r="8.2" fill="none" stroke="#6e5423" strokeWidth={fine ? 0.8 : 1.1} opacity=".9" />
+      <path d="M4.4 8.2 A8.6 8.6 0 0 1 19.6 8.2" fill="none" stroke="#fff4d2" strokeWidth="1" opacity=".5" strokeLinecap="round" />
+      {/* crowned coinage — three points, jewelled band */}
+      <path d="M7.6 14.6 L7 9.4 L9.8 11.6 L12 8.4 L14.2 11.6 L17 9.4 L16.4 14.6 Z"
+        fill={fine ? "#6e5423" : "#6e5423"} stroke={fine ? "#59461e" : "none"} strokeWidth=".5" strokeLinejoin="round" />
+      <path d="M7.7 15.6 h8.6 v1.5 h-8.6 Z" fill="#6e5423" />
+      {fine && <path d="M7.3 9.7 L9.9 11.8 L12 8.8 L14.1 11.8 L16.7 9.7" fill="none" stroke="#f2dfa2" strokeWidth=".7" opacity=".7" />}
+      {fine && <circle cx="9.8" cy="16.35" r=".55" fill="#f2dfa2" />}
+      {fine && <circle cx="12" cy="16.35" r=".55" fill="#f2dfa2" />}
+      {fine && <circle cx="14.2" cy="16.35" r=".55" fill="#f2dfa2" />}
     </svg>
   );
 }

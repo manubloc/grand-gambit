@@ -314,7 +314,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
       <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.map")}</div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin" }}>
         {MAPS.map((m) => {
           const open = mapUnlocked(profile, m.id);
           const on = m.id === mapId;

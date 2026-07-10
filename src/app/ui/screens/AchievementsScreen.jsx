@@ -30,7 +30,6 @@ export function AchievementsScreen({ profile, dispatch, t }) {
     <div style={{ gridColumn: "1 / -1", position: "relative", borderRadius: T.radius, padding: 1.5,
       background: "linear-gradient(135deg, #6f5526, #f0d68a 28%, #8a6d35 52%, #e9cf8a 76%, #6f5526)",
       boxShadow: `${T.shadow}, 0 0 26px #d9b56522` }}>
-      <style>{`@keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 55%, 100% { transform: translateX(320%) skewX(-18deg); } }`}</style>
       <div style={{ position: "relative", overflow: "hidden", borderRadius: T.radius - 2, textAlign: "center",
         padding: "18px 16px 15px",
         background: `radial-gradient(130% 100% at 50% 0%, #2b2410 0%, ${T.panel2} 46%, ${T.panel} 100%)` }}>
@@ -49,12 +48,12 @@ export function AchievementsScreen({ profile, dispatch, t }) {
         <div style={{ display: "flex", justifyContent: "center", gap: 26, alignItems: "center", margin: "2px 0 10px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
             <SkillStar size={30} />
-            <span className="gg-serif" style={{ fontSize: 42, fontWeight: 700, lineHeight: 1, ...goldText }}>{profile.sp || 0}</span>
+            <span className="gg-serif" style={{ fontSize: 44, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.sp || 0}</span>
           </span>
           <span style={{ width: 1, height: 34, background: "#8a6d3566" }} />
           <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
             <GoldCoin size={28} />
-            <span className="gg-serif" style={{ fontSize: 34, fontWeight: 700, lineHeight: 1, ...goldText }}>{profile.gold || 0}</span>
+            <span className="gg-serif" style={{ fontSize: 36, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.gold || 0}</span>
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>

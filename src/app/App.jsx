@@ -174,7 +174,7 @@ export default function App() {
       ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
-      {!inMatch && (
+      {!immersive && (
         <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 22, boxShadow: T.shadow, padding: "20px 12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
@@ -199,7 +199,7 @@ export default function App() {
       ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
-      {!inMatch && (
+      {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
@@ -207,7 +207,7 @@ export default function App() {
       )}
       <main style={{ flex: 1, minHeight: 0, padding: immersive ? 0 : inMatch ? "14px 14px 24px" : "14px 14px 108px",
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
-      {!inMatch && (
+      {!immersive && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 7,
           padding: "0 12px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
           <div style={{ maxWidth: 536, margin: "0 auto", pointerEvents: "auto",
@@ -222,46 +222,55 @@ export default function App() {
   );
 }
 
+// ── hub emblems: heraldic shields, fully inside the card, bold shapes ───────
 export const HubArt = ({ children }) => (
-  <svg width="86" height="86" viewBox="0 0 64 64">
+  <svg width="72" height="80" viewBox="0 0 64 72">
     <defs>
-      <radialGradient id="hubg" cx="38%" cy="30%" r="80%">
-        <stop offset="0%" stopColor="#2a3350" /><stop offset="100%" stopColor="#141b2c" />
+      <radialGradient id="hubg" cx="38%" cy="26%" r="85%">
+        <stop offset="0%" stopColor="#2c3554" /><stop offset="100%" stopColor="#121828" />
       </radialGradient>
+      <linearGradient id="hubrim" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#ecd08c" /><stop offset=".5" stopColor="#c9a45c" /><stop offset="1" stopColor="#8a6d35" />
+      </linearGradient>
     </defs>
-    <circle cx="32" cy="32" r="29" fill="url(#hubg)" stroke="#c9a45c" strokeWidth="1.6" />
-    <circle cx="32" cy="32" r="24.5" fill="none" stroke="#c9a45c55" strokeWidth="1" strokeDasharray="1 3.4" />
+    <path d="M32 2.5 L58.5 9.5 V33 C58.5 51.5 46.5 62.5 32 69.5 C17.5 62.5 5.5 51.5 5.5 33 V9.5 Z"
+      fill="url(#hubg)" stroke="url(#hubrim)" strokeWidth="2.4" strokeLinejoin="round" />
+    <path d="M32 7 L54.5 13 V33 C54.5 49 44 58.8 32 64.9 C20 58.8 9.5 49 9.5 33 V13 Z"
+      fill="none" stroke="#c9a45c55" strokeWidth="1" />
     {children}
   </svg>
 );
-const G = "#c9a45c", GH = "#e3c07a", NV = "#0e1424";
+const G = "#c9a45c", GH = "#e8c97e", NV = "#0e1424";
 
 const CampArt = () => (
   <HubArt>
-    <path d="M14 42 C20 36 24 38 28 31 C32 24 38 27 44 20" stroke={G} strokeWidth="2.2" strokeDasharray="0.4 4.4" strokeLinecap="round" fill="none" />
-    <path d="M40 13 L40 24 L48 24 L48 13 L46 13 L46 16 L44.6 16 L44.6 13 L43.4 13 L43.4 16 L42 16 L42 13 Z" fill={GH} />
-    <path d="M39 24 L49 24 L50 26.5 L38 26.5 Z" fill={G} />
-    <circle cx="15" cy="43.5" r="3.4" fill="none" stroke={GH} strokeWidth="1.8" />
-    <circle cx="15" cy="43.5" r="1.2" fill={GH} />
-    <path d="M20 50 L26 47 M42 44 L47 40" stroke="#4c6247" strokeWidth="2" strokeLinecap="round" />
-    <path d="M22 18 L24.5 12.5 L27 18 Z M17 21 L19 17 L21 21 Z" fill="#4c6247" />
+    {/* a keep on a hill, banner in the wind, the road winding up to its gate */}
+    <path d="M12 52 C20 47 24 49 32 46 C40 43 44 45 52 40" stroke={G} strokeWidth="2.6" strokeDasharray="0.5 5" strokeLinecap="round" fill="none" opacity=".95" />
+    <path d="M22 44 L22 26 L26 26 L26 29 L30 29 L30 26 L34 26 L34 29 L38 29 L38 26 L42 26 L42 44 Z" fill={GH} />
+    <path d="M28.6 44 L28.6 36.5 C28.6 34 30.1 32.8 32 32.8 C33.9 32.8 35.4 34 35.4 36.5 L35.4 44 Z" fill={NV} />
+    <path d="M20 44 L44 44 L46 48 L18 48 Z" fill={G} />
+    <path d="M32 26 L32 15.5 L40 18.2 L32 21 Z" fill="none" stroke={GH} strokeWidth="1.6" strokeLinejoin="round" />
+    <path d="M32 16.4 L38.6 18.3 L32 20.2 Z" fill={GH} />
   </HubArt>
 );
 const QuickArt = () => (
   <HubArt>
-    <path d="M19 18 L42 41 M45 18 L22 41 M19 18 L24.5 18 M19 18 L19 23.5 M45 18 L39.5 18 M45 18 L45 23.5" stroke={GH} strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    <path d="M24.4 38.6 L20 46 M39.6 38.6 L44 46" stroke={G} strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M32 46.5 L33.3 49.8 L36.8 50 L34.1 52.2 L35 55.6 L32 53.6 L29 55.6 L29.9 52.2 L27.2 50 L30.7 49.8 Z" fill={G} />
+    {/* crossed blades, heavy guards — a fight you can pick up in a heartbeat */}
+    <path d="M18.5 15.5 L44 43 M45.5 15.5 L20 43" stroke={GH} strokeWidth="3.4" strokeLinecap="round" />
+    <path d="M18.5 15.5 L44 43 M45.5 15.5 L20 43" stroke="#fff4d4" strokeWidth="1" strokeLinecap="round" opacity=".55" />
+    <path d="M22.6 40.2 L15.4 47.4 M41.4 40.2 L48.6 47.4" stroke={G} strokeWidth="3.4" strokeLinecap="round" />
+    <path d="M25 45.6 L20.3 42.4 M39 45.6 L43.7 42.4" stroke={G} strokeWidth="3" strokeLinecap="round" />
+    <circle cx="14.2" cy="48.6" r="2.3" fill={GH} /><circle cx="49.8" cy="48.6" r="2.3" fill={GH} />
+    <path d="M32 47 L33.4 50.6 L37.2 50.9 L34.3 53.3 L35.2 57 L32 54.9 L28.8 57 L29.7 53.3 L26.8 50.9 L30.6 50.6 Z" fill={GH} />
   </HubArt>
 );
 const OnlineArt = () => (
   <HubArt>
-    <circle cx="32" cy="30" r="13.5" fill="none" stroke={G} strokeWidth="1.8" />
-    <ellipse cx="32" cy="30" rx="6.2" ry="13.5" fill="none" stroke={G} strokeWidth="1.3" opacity=".8" />
-    <path d="M18.8 26 L45.2 26 M18.8 34 L45.2 34" stroke={G} strokeWidth="1.3" opacity=".8" />
-    <path d="M22 47 C24.5 43.5 28 42 32 42 C36 42 39.5 43.5 42 47" stroke={GH} strokeWidth="2.2" strokeLinecap="round" fill="none" />
-    <circle cx="24" cy="20" r="2.6" fill={GH} /><circle cx="41" cy="38" r="2.6" fill={GH} />
-    <path d="M25.8 21.6 L39.2 36.4" stroke={GH} strokeWidth="1.6" strokeDasharray="2.4 2.6" strokeLinecap="round" />
+    {/* the courier dove — word travels between courts on quick wings */}
+    <path d="M30.5 34 C24 33 18.5 29 15.5 23.5 C21 24.5 25 26.5 28 29.5 C27.5 24 29 18.5 33.5 15 C34.5 20.5 33.8 25.5 31.8 29.8 C36.5 27.5 42.5 27 48.5 29 C44.5 33.5 38.5 35.5 33.4 34.6 L30 46 L27.5 44.8 L28.6 40.4 L25.8 42 L24.6 39.6 L29.2 36.8 Z" fill={GH} />
+    <circle cx="34.8" cy="19.5" r="0.001" fill={NV} />
+    <path d="M24 50 L40 50 L40 60 L24 60 Z" fill="none" stroke={G} strokeWidth="1.8" strokeLinejoin="round" />
+    <path d="M24 50 L32 56 L40 50" fill="none" stroke={G} strokeWidth="1.8" strokeLinejoin="round" />
   </HubArt>
 );
 
@@ -272,13 +281,17 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
   const done = clearedCount(profile), total = campaignLength(profile);
   const ch = chapterForRow(cur?.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
-  const Card = ({ title, sub, extra, cta, onGo, art, style }) => (
+  const Card = ({ title, sub, extra, cta, onGo, art, style, shineDelay = 0 }) => (
     <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
       background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
       borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
-      <div style={{ position: "absolute", right: -6, top: -4, opacity: 0.9 }}>{art}</div>
-      <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 64 }}>{title}</div>
-      <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 64 }}>{sub}</div>
+      {/* a faint passing gleam — the treasury's shimmer, dialed way down */}
+      <div aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "38%", pointerEvents: "none",
+        background: "linear-gradient(90deg, transparent, rgba(255,238,190,.05), transparent)",
+        animation: `ggShine 7s ease-in-out ${shineDelay}s infinite` }} />
+      <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
+      <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
+      <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
       {extra && <div style={{ fontSize: 12.5, color: T.text, marginTop: 10 }}>{extra}</div>}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "8px 14px",
         borderRadius: T.radiusSm, background: T.lime, color: T.limeInk, fontWeight: 800, fontSize: 13.5 }}>{cta} ›</div>
@@ -293,10 +306,10 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline }) {
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
         art={<CampArt />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<QuickArt />} />
+        art={<QuickArt />} shineDelay={1.4} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
-        art={<OnlineArt />} />
+        art={<OnlineArt />} shineDelay={2.8} />
     </div>
   );
 }
