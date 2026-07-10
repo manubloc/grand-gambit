@@ -3,7 +3,7 @@
 // set this to your hosted server (see README-ONLINE.md) before shipping.
 // Until it is set, the Online screen shows a friendly setup note instead of
 // asking players to type addresses.
-export const SERVER_URL = "";            // e.g. "wss://gg-hall.<sub>.workers.dev/ws" — see DEPLOY-WORKER.md
+export const SERVER_URL = "wss://gg-hall.frey-manu.workers.dev/ws";  // Cloudflare Durable Object (worker/, DEPLOY-WORKER.md)
 export const APP_VERSION = "2.0";
 
 // Cloud accounts (Supabase) whose e-mail addresses get admin powers.
