@@ -173,7 +173,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
             }
             return <span key={rg.id} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
               padding: "5px 9px", borderRadius: 999, border: `1px dashed ${T.line}`, background: T.panel2, color: T.faint }}>
-              🔒 L{rg.level} · ???
+              <LockIc size={10} /> L{rg.level} · ???
             </span>;
           })}
         </div>
@@ -353,11 +353,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
   </Panel>
 
   {/* map choice — its own strip below the box: ONE row, scroll if it must */}
-  <div>
+  <div style={{ minWidth: 0, maxWidth: "100%" }}>
     <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase",
       margin: "0 2px 6px" }}>{t("army.mapPick")}</div>
     <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch",
-      paddingBottom: 4, scrollbarWidth: "thin" }}>
+      paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
       {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;
         const open = mapUnlocked(profile, m.id);
@@ -367,7 +367,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             padding: "7px 12px", flex: "0 0 auto", whiteSpace: "nowrap",
             border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2,
             color: on ? T.limeInk : open ? T.text : T.faint, opacity: open ? 1 : 0.55 }}>
-          {open ? "" : "🔒 "}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}
+          {open ? null : <><LockIc size={11} />{" "}</>}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}
         </button>;
       })}
     </div>
@@ -428,7 +428,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
-  return <div style={{ display: "grid", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
+  return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
     {/* balance — always in sight, whatever the tab */}
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
       background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
