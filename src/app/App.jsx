@@ -19,6 +19,16 @@ import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
+import crest1 from "./ui/assets/crest-1.webp";
+import crest2 from "./ui/assets/crest-2.webp";
+import crest3 from "./ui/assets/crest-3.webp";
+
+// the painted crests of the three roads: the wanderer's star for the campaign,
+// crossed blades for a quick bout, the keep for duels across the realm
+const CrestArt = ({ src }) => (
+  <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
+    filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
+);
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
@@ -302,37 +312,6 @@ export const HubArt = ({ children }) => (
 );
 const G = "#c9a45c", GH = "#e8c97e", NV = "#0e1424";
 
-const CampArt = () => (
-  <HubArt>
-    {/* a keep on a hill, banner in the wind, the road winding up to its gate */}
-    <path d="M12 52 C20 47 24 49 32 46 C40 43 44 45 52 40" stroke={G} strokeWidth="2.6" strokeDasharray="0.5 5" strokeLinecap="round" fill="none" opacity=".95" />
-    <path d="M22 44 L22 26 L26 26 L26 29 L30 29 L30 26 L34 26 L34 29 L38 29 L38 26 L42 26 L42 44 Z" fill={GH} />
-    <path d="M28.6 44 L28.6 36.5 C28.6 34 30.1 32.8 32 32.8 C33.9 32.8 35.4 34 35.4 36.5 L35.4 44 Z" fill={NV} />
-    <path d="M20 44 L44 44 L46 48 L18 48 Z" fill={G} />
-    <path d="M32 26 L32 15.5 L40 18.2 L32 21 Z" fill="none" stroke={GH} strokeWidth="1.6" strokeLinejoin="round" />
-    <path d="M32 16.4 L38.6 18.3 L32 20.2 Z" fill={GH} />
-  </HubArt>
-);
-const QuickArt = () => (
-  <HubArt>
-    {/* crossed blades, heavy guards — a fight you can pick up in a heartbeat */}
-    <path d="M18.5 15.5 L44 43 M45.5 15.5 L20 43" stroke={GH} strokeWidth="3.4" strokeLinecap="round" />
-    <path d="M18.5 15.5 L44 43 M45.5 15.5 L20 43" stroke="#fff4d4" strokeWidth="1" strokeLinecap="round" opacity=".55" />
-    <path d="M22.6 40.2 L15.4 47.4 M41.4 40.2 L48.6 47.4" stroke={G} strokeWidth="3.4" strokeLinecap="round" />
-    <path d="M25 45.6 L20.3 42.4 M39 45.6 L43.7 42.4" stroke={G} strokeWidth="3" strokeLinecap="round" />
-    <circle cx="14.2" cy="48.6" r="2.3" fill={GH} /><circle cx="49.8" cy="48.6" r="2.3" fill={GH} />
-    <path d="M32 47 L33.4 50.6 L37.2 50.9 L34.3 53.3 L35.2 57 L32 54.9 L28.8 57 L29.7 53.3 L26.8 50.9 L30.6 50.6 Z" fill={GH} />
-  </HubArt>
-);
-const OnlineArt = () => (
-  <HubArt>
-    {/* the courier dove — word travels between courts on quick wings */}
-    <path d="M30.5 34 C24 33 18.5 29 15.5 23.5 C21 24.5 25 26.5 28 29.5 C27.5 24 29 18.5 33.5 15 C34.5 20.5 33.8 25.5 31.8 29.8 C36.5 27.5 42.5 27 48.5 29 C44.5 33.5 38.5 35.5 33.4 34.6 L30 46 L27.5 44.8 L28.6 40.4 L25.8 42 L24.6 39.6 L29.2 36.8 Z" fill={GH} />
-    <circle cx="34.8" cy="19.5" r="0.001" fill={NV} />
-    <path d="M24 50 L40 50 L40 60 L24 60 Z" fill="none" stroke={G} strokeWidth="1.8" strokeLinejoin="round" />
-    <path d="M24 50 L32 56 L40 50" fill="none" stroke={G} strokeWidth="1.8" strokeLinejoin="round" />
-  </HubArt>
-);
 
 export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null }) {
   const en = profile.lang === "en";
@@ -364,12 +343,12 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
-        art={<CampArt />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
+        art={<CrestArt src={crest1} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<QuickArt />} shineDelay={1.4} />
+        art={<CrestArt src={crest2} />} shineDelay={1.4} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
-        art={<OnlineArt />} shineDelay={2.8} />
+        art={<CrestArt src={crest3} />} shineDelay={2.8} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
           cursor: "pointer", background: "none", border: `1px dashed ${T.line}`, borderRadius: T.radius,
