@@ -9,6 +9,28 @@ import { T } from "./theme.js";
 
 const DISMISS_KEY = "gg-install-dismissed";
 
+// Chrome fires beforeinstallprompt very early — often before React has even
+// mounted. So the event is captured here at module scope, the moment the
+// bundle evaluates, and handed to whoever asks later.
+let deferredEvt = null;
+const subs = new Set();
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredEvt = e;
+    subs.forEach((f) => f(e));
+  });
+}
+export const getDeferredInstall = () => deferredEvt;
+export const onInstallReady = (f) => { subs.add(f); return () => subs.delete(f); };
+export async function promptInstall() {
+  if (!deferredEvt) return false;
+  deferredEvt.prompt();
+  try { await deferredEvt.userChoice; } catch { /* dismissed */ }
+  deferredEvt = null;
+  return true;
+}
+
 const isStandalone = () =>
   (typeof matchMedia !== "undefined" && matchMedia("(display-mode: standalone)").matches) ||
   (typeof navigator !== "undefined" && navigator.standalone === true);
@@ -16,7 +38,7 @@ const isStandalone = () =>
 const isIOS = () => typeof navigator !== "undefined" && /iphone|ipad|ipod/i.test(navigator.userAgent);
 
 export function InstallBanner({ en = false }) {
-  const [prompt, setPrompt] = useState(null);   // the captured beforeinstallprompt event
+  const [prompt, setPrompt] = useState(() => deferredEvt);   // may already be captured
   const [ios, setIos] = useState(false);
   const [gone, setGone] = useState(() => {
     try { return localStorage.getItem(DISMISS_KEY) === "1"; } catch { return false; }
@@ -24,27 +46,20 @@ export function InstallBanner({ en = false }) {
 
   useEffect(() => {
     if (gone || isStandalone()) return;
-    const onPrompt = (e) => { e.preventDefault(); setPrompt(e); };
-    window.addEventListener("beforeinstallprompt", onPrompt);
+    const off = onInstallReady((e) => setPrompt(e));
     // iOS never fires the event — offer the hint after a moment instead
     let tid = null;
     if (isIOS()) tid = setTimeout(() => setIos(true), 1200);
     const onInstalled = () => dismiss();
     window.addEventListener("appinstalled", onInstalled);
-    return () => { window.removeEventListener("beforeinstallprompt", onPrompt);
-      window.removeEventListener("appinstalled", onInstalled); if (tid) clearTimeout(tid); };
+    return () => { off(); window.removeEventListener("appinstalled", onInstalled); if (tid) clearTimeout(tid); };
   }, []); // eslint-disable-line
 
   function dismiss() {
     setPrompt(null); setIos(false); setGone(true);
     try { localStorage.setItem(DISMISS_KEY, "1"); } catch { /* private mode */ }
   }
-  async function install() {
-    if (!prompt) return;
-    prompt.prompt();
-    try { await prompt.userChoice; } catch { /* user closed the sheet */ }
-    dismiss();
-  }
+  async function install() { await promptInstall(); dismiss(); }
 
   if (gone || (!prompt && !ios) || isStandalone()) return null;
   return (

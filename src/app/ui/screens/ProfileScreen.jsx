@@ -4,9 +4,18 @@ import { serializeSave, parseSave, listRestorePoints, readSnapshot } from "../..
 import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
+import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
+
+const inApp = () =>
+  (typeof matchMedia !== "undefined" && matchMedia("(display-mode: standalone)").matches) ||
+  (typeof navigator !== "undefined" && navigator.standalone === true);
 
 export function ProfileScreen({ profile, dispatch, t, account }) {
   const [pin, setPin] = useState("");
+  // manual install entry — the banner is missable, this one always waits here
+  const [canPrompt, setCanPrompt] = useState(() => !!getDeferredInstall());
+  const [showIosHint, setShowIosHint] = useState(false);
+  useEffect(() => onInstallReady(() => setCanPrompt(true)), []);
   const s = profile.stats;
 
   async function setPinProtect() {
@@ -24,6 +33,16 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />
+      {!inApp() && <>
+        <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.install")}</div>
+        <Button style={{ width: "100%" }} onClick={async () => {
+          if (canPrompt) { await promptInstall(); setCanPrompt(false); }
+          else setShowIosHint(true);
+        }}>{t("profile.installBtn")}</Button>
+        {showIosHint && !canPrompt && (
+          <div style={{ fontSize: 12, color: T.dim, lineHeight: 1.55, marginTop: 8 }}>{t("profile.installHint")}</div>
+        )}
+      </>}
     </Panel>
 
     <Panel>
