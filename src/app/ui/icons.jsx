@@ -202,3 +202,12 @@ export function LaurelIc({ rank = 1, size = 16 }) {
     <path d="M9.4 18.6 L14.6 18.6" stroke={c} strokeWidth="1.5" strokeLinecap="round" />
   </svg>;
 }
+
+
+export function MapIc({ color = "#c9a45c", size = 16 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M4 6.5 L9.3 4.5 L14.7 6.5 L20 4.5 L20 17.5 L14.7 19.5 L9.3 17.5 L4 19.5 Z" fill="none" stroke={color} strokeWidth="1.7" strokeLinejoin="round" />
+    <path d="M9.3 4.5 L9.3 17.5 M14.7 6.5 L14.7 19.5" stroke={color} strokeWidth="1.3" opacity=".7" />
+    <path d="M6.4 12.6 C8 11 10.5 12.8 12 11.2 C13.5 9.6 16 11.6 17.6 9.8" fill="none" stroke={color} strokeWidth="1.2" strokeDasharray="0.5 2.4" strokeLinecap="round" />
+  </svg>;
+}

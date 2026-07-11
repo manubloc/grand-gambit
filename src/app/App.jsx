@@ -12,7 +12,7 @@ import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
 import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
 import { OnlineScreen } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
-import { NavIcon } from "./ui/icons.jsx";
+import { NavIcon, HeartIc, SkillStar, MapIc } from "./ui/icons.jsx";
 import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
@@ -386,33 +386,37 @@ function Lock({ t, profile, onUnlock }) {
 // ── first-run game intro (once): what Grand Gambit IS and what makes it
 // special — a parchment card in the world's own voice. ───────────────────────
 function GameIntro({ t, dispatch, onStart }) {
+  // Dark and quiet like the privacy notice before it — night blue, gold serif,
+  // drawn glyphs. The parchment look stays on the campaign map where it lives.
   const Row = ({ icon, children }) => (
-    <div style={{ display: "flex", gap: 10, alignItems: "flex-start", textAlign: "left" }}>
-      <span style={{ fontSize: 17, width: 24, textAlign: "center", flex: "0 0 auto" }}>{icon}</span>
-      <span style={{ fontSize: 13, lineHeight: 1.5 }}>{children}</span>
+    <div style={{ display: "flex", gap: 11, alignItems: "flex-start", textAlign: "left" }}>
+      <span style={{ width: 24, display: "grid", placeItems: "center", flex: "0 0 auto", paddingTop: 1 }}>{icon}</span>
+      <span style={{ fontSize: 13, lineHeight: 1.55, color: T.dim }}>{children}</span>
     </div>
   );
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
       background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
-      <div style={{ width: "100%", maxWidth: 420, background: "#efe9da", color: "#2e2a20", border: "1px solid #c9bfa4",
-        borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "22px 20px 18px", textAlign: "center",
-        animation: "rise .3s ease", maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
-        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em" }}>{t("intro.title")}</div>
+      <div style={{ width: "100%", maxWidth: 420, background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
+        border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
+        padding: "22px 20px 18px", textAlign: "center", animation: "rise .3s ease",
+        maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
+        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em", color: T.goldBright }}>{t("intro.title")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 0" }}>
-          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
-          <span style={{ width: 6, height: 6, background: "#8a6f4d", transform: "rotate(45deg)" }} />
-          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+          <span style={{ flex: 1, height: 1, background: `${T.gold}44` }} />
+          <span style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)" }} />
+          <span style={{ flex: 1, height: 1, background: `${T.gold}44` }} />
         </div>
-        <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: "#4a4433" }}>{t("intro.lead")}</div>
-        <div style={{ display: "grid", gap: 10, margin: "14px 0 4px" }}>
-          <Row icon="♟">{t("intro.p1")}</Row>
-          <Row icon="⭐">{t("intro.p2")}</Row>
-          <Row icon="🗺">{t("intro.p3")}</Row>
+        <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: T.dim }}>{t("intro.lead")}</div>
+        <div style={{ display: "grid", gap: 11, margin: "15px 0 4px" }}>
+          <Row icon={<HeartIc size={16} />}>{t("intro.p1")}</Row>
+          <Row icon={<SkillStar size={16} />}>{t("intro.p2")}</Row>
+          <Row icon={<MapIc size={16} />}>{t("intro.p3")}</Row>
         </div>
         <button onClick={() => { dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart(); }}
-          style={{ marginTop: 14, width: "100%", padding: "12px 14px", borderRadius: 10, background: "#1d2436",
-            color: "#e9e2cf", fontWeight: 800, fontSize: 14.5, border: "none", fontFamily: "inherit",
+          style={{ marginTop: 15, width: "100%", padding: "12px 14px", borderRadius: 10,
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+            color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
             cursor: "pointer", letterSpacing: ".04em" }}>{t("intro.ok")} ›</button>
       </div>
     </div>

@@ -4,14 +4,8 @@
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
-import logoUrl from "../assets/logo.jpg";
-import crest1 from "../assets/crest-1.webp";
-import crest2 from "../assets/crest-2.webp";
-import crest3 from "../assets/crest-3.webp";
-
-// every save carries a coat of arms: the star of the wanderer, the crossed
-// blades, the keep — assigned by slot, painted in the mark's own gold.
-const CRESTS = [crest1, crest2, crest3];
+import logoUrl from "../assets/logo.webp";
+import { LeagueShield } from "../LeagueShield.jsx";
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
 
@@ -86,8 +80,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         {(saves || []).map((sv, i) => (
           <div key={sv.id} style={card}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <img src={CRESTS[i % 3]} alt="" aria-hidden style={{ width: 46, height: 58, objectFit: "contain",
-                flex: "0 0 auto", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.45))" }} />
+              <LeagueShield league={sv.league || 1} size={58} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
                   <div className="gg-serif" style={{ fontSize: 16.5, color: T.text, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sv.name}</div>
@@ -142,7 +135,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         ))}
         <button onClick={create} style={{ background: "none", border: `1.5px dashed ${T.gold}66`, color: T.gold,
           borderRadius: 16, padding: "14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5, cursor: "pointer" }}>
-          <img src={CRESTS[(saves?.length || 0) % 3]} alt="" aria-hidden style={{ width: 22, height: 28, objectFit: "contain", filter: "grayscale(1) brightness(1.4)", opacity: 0.55, verticalAlign: "-8px", marginRight: 8 }} />{s.new}
+          <LeagueShield league={1} size={26} dim style={{ verticalAlign: "-7px", marginRight: 8 }} />{s.new}
         </button>
       </div>
     </div>

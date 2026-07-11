@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { T } from "../theme.js";
 import { register, login, loginGuest, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
-import logoUrl from "../assets/logo.jpg";
+import logoUrl from "../assets/logo.webp";
 
 const STR = {
   de: {
