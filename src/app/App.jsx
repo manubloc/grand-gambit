@@ -18,6 +18,7 @@ import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
+import { InstallBanner } from "./ui/InstallBanner.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
@@ -265,6 +266,7 @@ export default function App() {
       )}
       <main style={{ flex: 1, minHeight: 0, padding: immersive ? 0 : inMatch ? "14px 14px 24px" : "14px 14px 108px",
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
+      {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {!immersive && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 7,
           padding: "0 12px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>

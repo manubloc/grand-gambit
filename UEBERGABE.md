@@ -92,3 +92,27 @@ Alles Folgende ist LIVE und verifiziert. Repo-Stand = Commit 24cf9d7 auf main.
 4. privacy.html ist Platzhalter (Pflicht!), LICENSE [NAME] eintragen.
 5. Erster echter Live-Test: E-Mail-Registrierung + Google-Login + PvP-Duell zu zweit.
 6. Admin-Spielkonto admin/gambit-admin nach erstem Login ändern (App erinnert daran).
+
+
+---
+
+## Nachtrag Session 11.07.2026 (v0.18.1 → v0.20.1)
+
+Deploys auf main: 9c2935f, 34b6e84, 085d293, 03265ae, 6fc4a3b, 19045ea, + Install-Banner.
+Highlights: neues Logo ohne Schimmer + Splash entfernt; Bosse/Herausforderer stehen auf der Karte;
+heraldischer Design-Pass (PanelTitle, Gold-CTAs, Serif-Nav); iOS-Input-Zoom-Fix (Inputs ≥16px);
+Aufgeben = 0 Punkte; Zeitenwender-Gadget statt Gratis-Undo; progressive Vorratstruhe (itemRevealed);
+Emoji→gezeichnete Icons; Match-Pause&Fortsetzen (profile.pausedMatch, Codec); cloneState-Potion-Bugfix;
+Abtrünnige (excludeId in buildStageMatch/buildArmy); Hotseat „Zu zweit · ein Gerät" (Brett dreht zum
+Ziehenden); Akademie-Tutorial (7 Lektionen, überspringbar); PWA-Install-Banner (nur im Browser,
+beforeinstallprompt + iOS-Hinweis, localStorage gg-install-dismissed).
+Login: Apple/Discord hinter SHOW_EXTRA_PROVIDERS=false (LoginScreen.jsx) bis Provider konfiguriert.
+
+## Geplant (noch NICHT gebaut): zwei Editionen
+
+Free-Edition bis Liga II, Vollversion bis Liga X (Kampagne kostenpflichtig), Launch als zwei
+getrennte Apps. Vorgesehene Umsetzung, wenn es so weit ist: Build-Flag `EDITION` ('free'|'full')
+in src/app/config.js + `MAX_LEAGUE` (2 bzw. 10); advanceLeague deckelt auf MAX_LEAGUE und zeigt
+statt Liga-III-Aufstieg einen Upgrade-Hinweis; zwei Cloudflare-Pages-Projekte aus demselben Repo
+mit ENV VITE_GG_EDITION. Der Install-Banner ist bereits Web-only (display-mode standalone wird
+erkannt) und stört eine spätere Store-Variante nicht.
