@@ -27,15 +27,16 @@ function HpBar({ hp, max }) {
 
 // hex -> rgba: with a texture underlay the squares go slightly translucent so
 // the material (fine scratches, grain) whispers through — a breath, not a print.
-const hexA = (hex, a) => {
+const hexA = (hex, a, lift = 0) => {
   const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+  const c = (v) => Math.round(v + (255 - v) * lift);   // gently lift toward ivory
+  return `rgba(${c((n >> 16) & 255)},${c((n >> 8) & 255)},${c(n & 255)},${a})`;
 };
 
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
-  const sqL = texture ? hexA(sqL0, 0.8) : sqL0;
-  const sqD = texture ? hexA(sqD0, 0.84) : sqD0;
+  const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
+  const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
 
@@ -184,7 +185,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             scratches and grain read across light and dark squares alike */}
         {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${texture})`, backgroundSize: "280px 280px", backgroundRepeat: "repeat",
-          mixBlendMode: "soft-light", opacity: 0.6 }} />}
+          mixBlendMode: "soft-light", opacity: 0.7 }} />}
       </div>
       {lastMove && !anim && lastMove.from !== lastMove.to && (() => {
         const a = disp(lastMove.from), b = disp(lastMove.to);
