@@ -80,7 +80,7 @@ export function SkillStar({ size = 18, style }) {
   );
 }
 
-export function GoldCoin({ size = 18, style }) {
+export function GoldCoin({ size = 18, style, shine = false }) {
   const fine = size >= 16;
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
@@ -93,6 +93,8 @@ export function GoldCoin({ size = 18, style }) {
       <circle cx="12" cy="12" r="10.6" fill="url(#ggCoinG3)" stroke="#59461e" strokeWidth={fine ? 0.9 : 1.2} />
       <circle cx="12" cy="12" r="8.2" fill="none" stroke="#6e5423" strokeWidth={fine ? 0.8 : 1.1} opacity=".9" />
       <path d="M4.4 8.2 A8.6 8.6 0 0 1 19.6 8.2" fill="none" stroke="#fff4d2" strokeWidth="1" opacity=".5" strokeLinecap="round" />
+      {shine && <ellipse cx="9.5" cy="7.6" rx="4.6" ry="1.8" fill="#fffbe6"
+        transform="rotate(-24 9.5 7.6)" style={{ animation: "ggGlint 5.6s ease-in-out infinite" }} opacity="0" />}
       {/* crowned coinage — three points, jewelled band */}
       <path d="M7.6 14.6 L7 9.4 L9.8 11.6 L12 8.4 L14.2 11.6 L17 9.4 L16.4 14.6 Z"
         fill={fine ? "#6e5423" : "#6e5423"} stroke={fine ? "#59461e" : "none"} strokeWidth=".5" strokeLinejoin="round" />
@@ -162,5 +164,41 @@ export function SealIc({ color = "#6f6b5e", size = 20 }) {
     <path d="M12 2.8 L20.2 12 L12 21.2 L3.8 12 Z" fill="none" stroke={color} strokeWidth="1.7" strokeLinejoin="round" />
     <path d="M9.6 9.4 C9.6 7.8 10.7 6.9 12.1 6.9 C13.5 6.9 14.5 7.8 14.5 9.2 C14.5 11.2 12.2 11.2 12.2 13.2" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" />
     <circle cx="12.2" cy="16.4" r="1.15" fill={color} />
+  </svg>;
+}
+
+
+export function HeartIc({ color = "#58c98b", size = 13 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M12 20.4 C7 16.4 3.6 13.2 3.6 9.6 C3.6 6.9 5.7 5 8.1 5 C9.7 5 11.1 5.8 12 7.1 C12.9 5.8 14.3 5 15.9 5 C18.3 5 20.4 6.9 20.4 9.6 C20.4 13.2 17 16.4 12 20.4 Z" fill={color} />
+    <path d="M7.4 8.2 C6.6 8.7 6.1 9.5 6.1 10.4" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>;
+}
+
+export function CloudIc({ color = "#c9a45c", size = 14 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M7 18.5 A4.2 4.2 0 0 1 7.6 10.2 A5.4 5.4 0 0 1 18 11.5 A3.6 3.6 0 0 1 17.4 18.5 Z"
+      fill="none" stroke={color} strokeWidth="1.9" strokeLinejoin="round" />
+  </svg>;
+}
+
+export function PigeonIc({ color = "#c9a45c", size = 14 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M4.5 17.5 C8.5 17.8 13.6 16.6 15.6 12.4 L20 11 L16.6 9.9 C16.2 7.6 14.3 6.2 12.3 6.6 C9.6 7.1 8.8 9.8 9.4 12 C7.8 12.9 5.9 14.6 4.5 17.5 Z"
+      fill="none" stroke={color} strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+    <path d="M9.4 12 C11.4 11.6 13.4 10.4 14.2 8.6" fill="none" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <circle cx="14.4" cy="9" r=".85" fill={color} />
+  </svg>;
+}
+
+/** Leaderboard laurels: gold, silver, bronze — drawn, never emoji medals. */
+export function LaurelIc({ rank = 1, size = 16 }) {
+  const c = rank === 1 ? "#e3c07a" : rank === 2 ? "#b9c0cc" : "#b98a5e";
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-3px" }}>
+    <path d="M6.5 4 C5.4 9.6 7 14.8 12 17.6 M17.5 4 C18.6 9.6 17 14.8 12 17.6" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M6.9 6.6 L4.9 5.9 M7 9.5 L5 9.3 M7.8 12.3 L6 12.7 M17.1 6.6 L19.1 5.9 M17 9.5 L19 9.3 M16.2 12.3 L18 12.7"
+      stroke={c} strokeWidth="1.4" strokeLinecap="round" />
+    <text x="12" y="12.6" textAnchor="middle" fontSize="8.4" fontWeight="800" fill={c} fontFamily="Georgia, serif">{rank}</text>
+    <path d="M9.4 18.6 L14.6 18.6" stroke={c} strokeWidth="1.5" strokeLinecap="round" />
   </svg>;
 }

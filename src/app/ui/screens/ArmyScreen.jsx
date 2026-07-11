@@ -11,7 +11,7 @@ import {
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
-import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc } from "../icons.jsx";
+import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -97,8 +97,8 @@ function CharCard({ char, profile, dispatch, t, en }) {
             : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
         </div>
         <div style={{ display: "flex", gap: 14, marginTop: 6, alignItems: "center" }}>
-          <StatPill icon="♥" val={maxHp} color={T.green} />
-          <StatPill icon="⚔" val={atk} color={T.gold} />
+          <StatPill icon={<HeartIc size={12} />} val={maxHp} color={T.green} />
+          <StatPill icon={<BladesIc color={T.gold} size={12} />} val={atk} color={T.gold} />
           <span style={{ fontSize: 11.5, color: T.dim }}>{rungs.length} {en ? "abilities" : "Fähigkeiten"}</span>
         </div>
       </div>
@@ -315,7 +315,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
         border: `1px solid ${T.gold}44` }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 7 }}>
-          <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>♟ {t("army.heroPos")}</span>
+          <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>{t("army.heroPos")}</span>
           <span style={{ fontSize: 10.5, color: T.faint }}>{t("army.heroPosHint")}</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3 }}>
@@ -429,7 +429,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
       <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
       <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
         <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillStar size={17} /> {profile.sp || 0}</span>
-        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><GoldCoin size={17} /> {profile.gold || 0}</span>
+        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><GoldCoin size={17} shine /> {profile.gold || 0}</span>
       </span>
     </div>
     {/* three rooms instead of one endless scroll */}

@@ -175,11 +175,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
-        display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden",
+        display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
         background: texture ? `url(${texture}) ${T.grid}` : T.grid,
         backgroundSize: texture ? "280px 280px" : undefined, backgroundRepeat: "repeat",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
+        {/* the material rides on top too: a soft-light wash of the same wood, so
+            scratches and grain read across light and dark squares alike */}
+        {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: `url(${texture})`, backgroundSize: "280px 280px", backgroundRepeat: "repeat",
+          mixBlendMode: "soft-light", opacity: 0.6 }} />}
       </div>
       {lastMove && !anim && lastMove.from !== lastMove.to && (() => {
         const a = disp(lastMove.from), b = disp(lastMove.to);

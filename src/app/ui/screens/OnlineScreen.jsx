@@ -3,6 +3,7 @@
 // players by retinue score, or challenge an online friend directly.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
+import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
@@ -109,7 +110,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
           <div style={{ display: "grid", gap: 10 }}>
             {askConsent && (
               <div style={{ padding: "11px 12px", background: T.panel2, border: `1.5px solid ${T.gold}88`, borderRadius: T.radiusSm }}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: T.gold, marginBottom: 5 }}>🐦 {t("online.consentTitle")}</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: T.gold, marginBottom: 5 }}><PigeonIc size={13} /> {t("online.consentTitle")}</div>
                 <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 10 }}>{t("online.consentBody")}{" "}
                   <a href="./privacy.html" target="_blank" rel="noreferrer" style={{ color: T.gold }}>{t("privacy.link")}</a></div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -161,7 +162,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
             </Line>
             {!searching ? (
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>
-                ⚔ {t("online.random")}
+                <BladesIc color={T.limeInk} size={13} /> {t("online.random")}
               </Button>
             ) : (
               <div style={{ display: "grid", placeItems: "center", gap: 10, padding: "18px 10px 14px",
@@ -216,12 +217,12 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
                 <span style={{ fontSize: 13.5, flex: 1 }}>{f.name} <span style={{ color: T.faint, fontSize: 11.5 }}>{f.online ? f.score : t("online.offline")}</span></span>
                 {f.online && hasItem(profile, "brieftaube") && (
                   (profile.online?.giftLeague || 0) === (profile.campaign?.league || 1)
-                    ? <span style={{ fontSize: 11, color: T.faint }}>🐦 ✓</span>
+                    ? <span style={{ fontSize: 11, color: T.faint }}><PigeonIc color={T.faint} size={12} /> ✓</span>
                     : <Button variant="subtle" style={{ padding: "6px 9px", fontSize: 12.5 }} title={t("online.gift")}
-                        onClick={() => { net.send({ t: "gift", to: f.id }); }}>🐦</Button>
+                        onClick={() => { net.send({ t: "gift", to: f.id }); }}><PigeonIc color={T.limeInk} size={14} /></Button>
                 )}
                 {f.online && <Button variant="subtle" style={{ padding: "6px 11px", fontSize: 12.5 }}
-                  onClick={() => challengeFriend(f)}>⚔ {t("online.challenge")}</Button>}
+                  onClick={() => challengeFriend(f)}><BladesIc color={T.limeInk} size={12} /> {t("online.challenge")}</Button>}
               </Line>
             ))}
           </div>
@@ -230,7 +231,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
 
       {conn === "on" && (<>
         <Panel>
-          <PanelTitle>☁ {t("online.vaultTitle")}</PanelTitle>
+          <PanelTitle><CloudIc size={13} /> {t("online.vaultTitle")}</PanelTitle>
           <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("online.vaultHint")}</div>
           <Button variant="subtle" style={{ width: "100%", marginBottom: 8 }} onClick={() => {
             net.send({ t: "vaultPush", save: serializeSave(profile),
@@ -265,7 +266,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
                   <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 9px",
                     borderRadius: T.radiusSm, background: isMe ? T.lime + "1e" : "transparent",
                     border: isMe ? `1px solid ${T.lime}66` : "1px solid transparent" }}>
-                    <span style={{ width: 24, textAlign: "center", fontSize: 13 }}>{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : <span style={{ color: T.faint, fontWeight: 800 }}>{i + 1}</span>}</span>
+                    <span style={{ width: 24, textAlign: "center", fontSize: 13 }}>{i < 3 ? <LaurelIc rank={i + 1} size={16} /> : <span style={{ color: T.faint, fontWeight: 800 }}>{i + 1}</span>}</span>
                     <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.online ? T.green : T.faint, flex: "none" }} />
                     <span style={{ flex: 1, fontSize: 13.5, fontWeight: isMe ? 800 : 500, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</span>
                     <span style={{ fontSize: 11.5, color: T.dim }}>{r.wins}/{r.losses}</span>
@@ -287,7 +288,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
         <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "grid", placeItems: "center", background: "rgba(8,10,14,.7)", padding: 16 }}>
           <Panel style={{ maxWidth: 340, width: "100%" }}>
             <div className="gg-serif" style={{ fontSize: 17, color: T.gold, marginBottom: 6 }}>
-              ⚔ {t("online.challengeFrom", { name: challenge.from.name })}
+              <BladesIc size={13} /> {t("online.challengeFrom", { name: challenge.from.name })}
             </div>
             <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 12 }}>{t("online.score")}: {challenge.from.score}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>

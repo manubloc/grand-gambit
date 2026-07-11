@@ -270,7 +270,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     return () => document.removeEventListener("visibilitychange", fn);
   }, []); // eslint-disable-line
 
-  const viewColor = hotseat ? state.turn : myColor;   // the board faces whoever moves
+  const hsFlip = quick?.hotseatFlip !== false;        // optional: keep the board fixed (phone stays in hand)
+  const viewColor = hotseat ? (hsFlip ? state.turn : WHITE) : myColor; // the board faces whoever moves
   const myTurn = (hotseat ? true : state.turn === myColor) && !banner;
   const st = status(state);
   const hpMode = state.rules === "hp";
@@ -291,31 +292,32 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         )}
         <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
           {pvp ? <>
-              <Chip color={T.gold} bg={T.panel}>⚔ {pvp.oppName}</Chip>
+              <Chip color={T.gold} bg={T.panel}><BladesIc color={T.gold} size={12} /> {pvp.oppName}</Chip>
               <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
-              {desync && <Chip color={T.danger} bg={T.panel}>{t("online.desync")}</Chip>}
+              {desync && <Chip color={"#b4636c"} bg={T.panel}>{t("online.desync")}</Chip>}
             </>
             : campaign ? <>
               <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
-              {match.boss && <Chip color={T.danger} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <BladesIc color={T.danger} size={12} /> : <SkullIc size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
+              {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <BladesIc color={T.gold} size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
             : hotseat ? <Chip color={T.text} bg={T.panel}>{t("quick.hotseat")}</Chip>
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
         {clockLbl && (
           <span className="gg-serif" style={pill({ cursor: "default",
-            border: `1.5px solid ${clockHot ? T.danger : T.gold}55`, color: clockHot ? T.danger : T.gold,
-            letterSpacing: ".06em", fontSize: 14 })}>⏳ {clockLbl}</span>
+            border: `1.5px solid ${T.gold}${clockHot ? "cc" : "55"}`, color: clockHot ? T.goldBright : T.gold,
+            letterSpacing: ".06em", fontSize: 14, gap: 5 })}><HourglassIc size={14} color={clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
         )}
         {armResign ? (
-          <span style={pill({ cursor: "default", border: `1.5px solid ${T.danger}`, color: T.danger, gap: 9 })}>
+          <span style={pill({ cursor: "default", border: `1.5px solid ${T.gold}`, color: T.goldBright, gap: 9,
+            animation: "ggGlow 1.6s ease-in-out infinite" })}>
             {t("game.confirmResign")}
             <span onClick={resign} style={{ cursor: "pointer", fontWeight: 900, padding: "0 2px" }}>✓</span>
             <span onClick={() => setArmResign(false)} style={{ cursor: "pointer", opacity: 0.75, padding: "0 2px" }}>✕</span>
           </span>
         ) : (
           <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro}
-            style={pill({ border: `1.5px solid ${T.danger}88`, color: T.danger, opacity: banner || intro ? 0.5 : 1,
+            style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro ? 0.5 : 1,
               cursor: banner || intro ? "default" : "pointer" })}>
             <FlagIc size={13} /> {t("game.resign")}
           </button>
@@ -359,7 +361,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         )}
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
-          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.danger : T.dim }}>{statusText}</div>
+          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
         <Tray kinds={state.captured.w} color="b" />
         {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
           <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
@@ -383,6 +385,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : "chess");
   const [difficulty, setDifficulty] = useState(initial?.difficulty || profile.difficulty || "easy");
   const [foe, setFoe] = useState(initial?.hotseat ? "hotseat" : "ai");
+  const [hsTurn, setHsTurn] = useState(initial?.hotseatFlip === false ? "fixed" : "turn");
   const [lockHint, setLockHint] = useState(false); // tap on a locked map explains the lock (no hover on touch)
   useEffect(() => {
     if (!lockHint) return;
@@ -415,7 +418,13 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
       <FieldLabel>{t("quick.opponent")}</FieldLabel>
       <Segmented value={foe} onChange={setFoe}
         options={[{ value: "ai", label: t("quick.vsAi") }, { value: "hotseat", label: t("quick.hotseat") }]} />
-      {foe === "hotseat" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.hotseatHint")}</div>}
+      {foe === "hotseat" && <>
+        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.hotseatHint")}</div>
+        <div style={{ height: 12 }} />
+        <FieldLabel>{t("quick.board")}</FieldLabel>
+        <Segmented value={hsTurn} onChange={setHsTurn}
+          options={[{ value: "turn", label: t("quick.boardTurns") }, { value: "fixed", label: t("quick.boardFixed") }]} />
+      </>}
       {foe === "ai" && <>
         <div style={{ height: 12 }} />
         <FieldLabel>{t("game.difficulty")}</FieldLabel>
@@ -423,8 +432,8 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
           options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
       </>}
       <Button variant="primary" style={{ width: "100%", marginTop: 16, padding: "13px 16px", fontSize: 16 }}
-        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty, hotseat: foe === "hotseat" }); }}>
-        ⚔ {t("quick.start")}
+        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
+        <BladesIc color={T.limeInk} size={15} /> {t("quick.start")}
       </Button>
     </Panel>
   );
@@ -457,7 +466,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
           {boss.bossId?.startsWith("pb_") ? <BladesIc color="#8e2f39" size={12} /> : <SkullIc size={12} />} {boss.name[en ? "en" : "de"]}
         </div>}
         {timer && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: "#8a6f4d" }}>
-          ⏳ {timer.type === "total"
+          <HourglassIc size={13} color="#8a6f4d" /> {timer.type === "total"
             ? `${Math.round(timer.seconds / 60)} min`
             : `${timer.seconds}s ${en ? "per move" : "pro Zug"}`}
         </div>}
@@ -471,7 +480,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
 
 function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, pvpInfo = null }) {
   const win = banner.result === "win";
-  const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : T.danger;
+  const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : "#b4636c";
   const title = banner.hotseat
     ? (banner.result === "draw" ? t("game.draw") : t(win ? "hs.winWhite" : "hs.winBlack"))
     : win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
