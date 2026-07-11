@@ -3,6 +3,7 @@
 // players by retinue score, or challenge an online friend directly.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
+import crest3 from "../assets/crest-3.webp";
 import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
@@ -104,8 +105,15 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
   return (
     <div style={{ display: "grid", gap: 12, gridTemplateColumns: wideOn ? "1.1fr 1fr" : "1fr", alignItems: "start" }}>
       <Panel>
-        <div className="gg-serif" style={{ fontSize: 18, color: T.gold, letterSpacing: ".05em", marginBottom: 4 }}>{t("online.title")}</div>
-        <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 10 }}>{t("online.sub")}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="gg-serif" style={{ fontSize: 18, color: T.gold, letterSpacing: ".05em", marginBottom: 4 }}>{t("online.title")}</div>
+            <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 10 }}>{t("online.sub")}</div>
+          </div>
+          {/* the crest of the keep watches over every online bout */}
+          <img src={crest3} alt="" aria-hidden style={{ width: 52, height: 62, objectFit: "contain", flex: "0 0 auto",
+            marginTop: -2, filter: "drop-shadow(0 3px 7px rgba(0,0,0,.5))" }} />
+        </div>
         {conn !== "on" ? (
           <div style={{ display: "grid", gap: 10 }}>
             {askConsent && (

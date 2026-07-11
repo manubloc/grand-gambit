@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
 import logoUrl from "../assets/logo.jpg";
+import crest1 from "../assets/crest-1.webp";
+import crest2 from "../assets/crest-2.webp";
+import crest3 from "../assets/crest-3.webp";
+
+// every save carries a coat of arms: the star of the wanderer, the crossed
+// blades, the keep — assigned by slot, painted in the mark's own gold.
+const CRESTS = [crest1, crest2, crest3];
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
 
@@ -25,9 +32,9 @@ const STR = {
 const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X"];
 const fmtDate = (ts, lang) => new Date(ts).toLocaleDateString(lang === "de" ? "de-DE" : "en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
 
-export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
+export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __testSaves = null }) {
   const [lang, setLang] = useState(initialLang);
-  const [saves, setSaves] = useState(null);
+  const [saves, setSaves] = useState(__testSaves);
   const [confirmDel, setConfirmDel] = useState(null);
   const [adminSlot, setAdminSlot] = useState(null);
   const [adminPct, setAdminPct] = useState(100);
@@ -36,6 +43,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
 
   const refresh = async () => setSaves(await listSaves(account.id));
   useEffect(() => { (async () => {
+    if (__testSaves) return;   // harness: keep injected slots
     await migrateLegacyInto(account.id);
     await refresh();
     if (account.isAdmin) setPassNote(await adminHasDefaultPass());
@@ -77,12 +85,18 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
         {saves && saves.length === 0 && <div style={{ color: T.dim, fontSize: 14, textAlign: "center", padding: "12px 0" }}>{s.empty}</div>}
         {(saves || []).map((sv, i) => (
           <div key={sv.id} style={card}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-              <div className="gg-serif" style={{ fontSize: 16.5, color: T.text, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sv.name}</div>
-              <div style={{ color: T.gold, fontWeight: 800, fontSize: 15 }}>{sv.pct ?? 0}%</div>
-            </div>
-            <div style={{ color: T.dim, fontSize: 12.5, margin: "3px 0 8px" }}>
-              {s.league} {ROMAN[(sv.league || 1) - 1] || sv.league} · {sv.clearedCount ?? 0}/{sv.total ?? "–"} · {s.time} {fmtPlaytime(sv.playtimeSec)} · {s.last} {fmtDate(sv.updatedAt || sv.createdAt, lang)}
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <img src={CRESTS[i % 3]} alt="" aria-hidden style={{ width: 46, height: 58, objectFit: "contain",
+                flex: "0 0 auto", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.45))" }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <div className="gg-serif" style={{ fontSize: 16.5, color: T.text, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sv.name}</div>
+                  <div style={{ color: T.gold, fontWeight: 800, fontSize: 15 }}>{sv.pct ?? 0}%</div>
+                </div>
+                <div style={{ color: T.dim, fontSize: 12.5, margin: "3px 0 8px" }}>
+                  {s.league} {ROMAN[(sv.league || 1) - 1] || sv.league} · {sv.clearedCount ?? 0}/{sv.total ?? "–"} · {s.time} {fmtPlaytime(sv.playtimeSec)} · {s.last} {fmtDate(sv.updatedAt || sv.createdAt, lang)}
+                </div>
+              </div>
             </div>
             <div style={{ height: 5, background: "#0d1017", borderRadius: 99, overflow: "hidden", marginBottom: 10 }}>
               <div style={{ width: `${sv.pct ?? 0}%`, height: "100%", background: `linear-gradient(90deg, ${T.gold}bb, ${T.gold})` }} />
@@ -100,8 +114,8 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
               <button onClick={() => { const n = prompt(s.rename, sv.name); if (n != null) renameSave(account.id, sv.id, n).then(refresh); }}
                 style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>✎</button>
               <button onClick={() => (confirmDel === sv.id ? (deleteSave(account.id, sv.id).then(() => { setConfirmDel(null); refresh(); })) : setConfirmDel(sv.id))}
-                style={{ background: confirmDel === sv.id ? "#5a2626" : "none", border: `1px solid ${confirmDel === sv.id ? "#a05050" : T.line}`,
-                  color: confirmDel === sv.id ? "#f0c0c0" : T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
+                style={{ background: confirmDel === sv.id ? "#3d222a" : "none", border: `1px solid ${confirmDel === sv.id ? "#b4636c" : T.line}`,
+                  color: confirmDel === sv.id ? "#d9a7ae" : T.dim, borderRadius: 11, padding: "10px 11px", fontFamily: "inherit", fontSize: 13, cursor: "pointer" }}>
                 {confirmDel === sv.id ? s.delSure : <TrashIc size={15} />}
               </button>
             </div>
@@ -128,7 +142,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
         ))}
         <button onClick={create} style={{ background: "none", border: `1.5px dashed ${T.gold}66`, color: T.gold,
           borderRadius: 16, padding: "14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5, cursor: "pointer" }}>
-          {s.new}
+          <img src={CRESTS[(saves?.length || 0) % 3]} alt="" aria-hidden style={{ width: 22, height: 28, objectFit: "contain", filter: "grayscale(1) brightness(1.4)", opacity: 0.55, verticalAlign: "-8px", marginRight: 8 }} />{s.new}
         </button>
       </div>
     </div>
