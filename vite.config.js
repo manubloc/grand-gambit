@@ -6,7 +6,7 @@ import pkg from "./package.json";
 // base: "./" makes the build portable (Cloudflare/GitHub Pages, itch.io,
 // any subfolder, TWA/Capacitor wrapper).
 export default defineConfig({
-  build: { assetsInlineLimit: 400 * 1024 },
+  build: { assetsInlineLimit: (file, content) => file.endsWith(".webp") ? false : content.length < 400 * 1024 },
   base: "./",
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
@@ -31,7 +31,7 @@ export default defineConfig({
           { src: "icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       },
-      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"] },
+      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,webp,webmanifest}"] },
     }),
   ],
 });

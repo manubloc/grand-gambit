@@ -25,8 +25,17 @@ function HpBar({ hp, max }) {
   );
 }
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w" }) {
-  const sqL = theme?.sqLight || T.sqLight, sqD = theme?.sqDark || T.sqDark;
+// hex -> rgba: with a texture underlay the squares go slightly translucent so
+// the material (fine scratches, grain) whispers through — a breath, not a print.
+const hexA = (hex, a) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+};
+
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null }) {
+  const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
+  const sqL = texture ? hexA(sqL0, 0.84) : sqL0;
+  const sqD = texture ? hexA(sqD0, 0.87) : sqD0;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
 
@@ -166,7 +175,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
-        display: "grid", gap: GAP, background: T.grid, borderRadius: 12, overflow: "hidden",
+        display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden",
+        background: texture ? `url(${texture}) ${T.grid}` : T.grid,
+        backgroundSize: texture ? "280px 280px" : undefined, backgroundRepeat: "repeat",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
       </div>

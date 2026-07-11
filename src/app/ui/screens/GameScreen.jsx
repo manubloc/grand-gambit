@@ -9,6 +9,19 @@ import { Button, Panel, Segmented, Chip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
+import texWear1 from "../assets/tex-wear-1.webp";
+import texWear2 from "../assets/tex-wear-2.webp";
+import texWear3 from "../assets/tex-wear-3.webp";
+
+// The board's material ages with the journey: leagues I–IV play on cared-for
+// wood, V–VII on well-used boards, VIII–X on veterans full of scars. Quick
+// play, hotseat and pvp keep the pristine one.
+const WEAR_TEX = [texWear1, texWear2, texWear3];
+const boardTexture = (campaign, profile) => {
+  if (!campaign) return WEAR_TEX[0];
+  const lg = profile?.campaign?.league || 1;
+  return WEAR_TEX[lg >= 8 ? 2 : lg >= 5 ? 1 : 0];
+};
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 
 function Tray({ kinds, color }) {
@@ -319,7 +332,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
-          flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor} />
+          flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
+          texture={boardTexture(campaign, profile)} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
