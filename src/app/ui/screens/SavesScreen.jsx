@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
-import { Wordmark } from "../Brand.jsx";
+import logoUrl from "../assets/logo.jpg";
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
 
@@ -56,13 +56,14 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
-      <Wordmark size={34} />
-      <div style={{ color: T.dim, fontSize: 14, margin: "6px 0 2px" }}>{s.hello}, <b style={{ color: T.text }}>{account.name}</b>
+      {/* the emblem greets returning strategists too — same night sky, no glow */}
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(56vw, 220px)", display: "block", marginTop: -4 }} />
+      <div style={{ color: T.dim, fontSize: 14, margin: "2px 0 2px" }}>{s.hello}, <b style={{ color: T.text }}>{account.name}</b>
         {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
         <button onClick={onLogout} style={{ background: "none", border: "none", color: T.dim, textDecoration: "underline",
           fontFamily: "inherit", fontSize: 12.5, cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>
-      <div className="gg-quill" style={{ color: T.text, fontSize: 21, margin: "10px 0 16px" }}>{s.pick}</div>
+      <div className="gg-quill" style={{ color: T.text, fontSize: 21, margin: "8px 0 14px" }}>{s.pick}</div>
       {passNote && <div style={{ maxWidth: 430, color: "#e0c98f", fontSize: 12.5, lineHeight: 1.5, marginBottom: 12,
         border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}>{s.defaultPass}</div>}
 

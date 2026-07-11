@@ -21,34 +21,53 @@
 <body>
 <main>
   <h1>Grand Gambit — Datenschutzerklärung</h1>
-  <p><em>Stand: <span class="todo">[DATUM EINSETZEN]</span></em></p>
+  <p><em>Stand: 11. Juli 2026</em></p>
 
-  <div class="box"><b>Kurzfassung:</b> Grand Gambit läuft vollständig in deinem Browser.
-  Wir setzen keine Cookies, keine Analyse-Tools und keine Werbung ein. Dein Spielstand
-  wird ausschließlich lokal auf deinem Gerät gespeichert. Nur wenn du den optionalen
-  Online-Modus aktiv verbindest, werden die unten genannten Spieldaten an unseren
-  Spielserver übertragen.</div>
+  <div class="box"><b>Kurzfassung:</b> Grand Gambit läuft in deinem Browser.
+  Es gibt keine Cookies zu Werbe- oder Analysezwecken, keine Analyse-Tools und keine Werbung.
+  Spielstände liegen auf deinem Gerät und — bei angemeldeten Konten — in deinem persönlichen
+  Konto-Speicher. Ein Konto (E-Mail oder Google) ist optional: Du kannst auch als Gast spielen.
+  Der Online-Duell-Modus überträgt nur die unten genannten Spieldaten, wenn du ihn aktiv verbindest.</div>
 
   <h2>1. Verantwortlicher</h2>
-  <p><span class="todo">[VOR- UND NACHNAME]</span><br>
-  <span class="todo">[STRASSE HAUSNR.]</span><br>
-  <span class="todo">[PLZ ORT, LAND]</span><br>
-  E-Mail: <span class="todo">[E-MAIL-ADRESSE]</span></p>
+  <p>Manuel Frey<br>
+  Macairestraße 3<br>
+  78467 Konstanz, Deutschland<br>
+  E-Mail: frey.manu@gmail.com</p>
 
-  <h2>2. Lokale Speicherung (kein Datenversand)</h2>
-  <p>Das Spiel speichert im lokalen Speicher deines Browsers (localStorage):
-  Spielstand und Fortschritt, gewählter Anzeigename, Spracheinstellung sowie —
-  falls von dir eingerichtet — einen Hashwert deiner Spiel-PIN (nie die PIN selbst).
-  Diese Daten verlassen dein Gerät nicht und sind für den Betrieb des Spiels
-  erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst sie jederzeit löschen, indem du
-  im Spiel den Spielstand zurücksetzt oder die Website-Daten in deinem Browser löschst.</p>
+  <h2>2. Lokale Speicherung (technisch notwendig)</h2>
+  <p>Das Spiel speichert im lokalen Speicher deines Browsers (localStorage/IndexedDB):
+  Spielstände und Fortschritt, gewählter Anzeigename, Spracheinstellung, die Merker
+  „Install-Hinweis ausgeblendet" sowie — falls eingerichtet — einen Hashwert deines
+  Spiel-Passworts (nie das Passwort selbst). Bei angemeldeten Konten liegt dort zudem
+  das Anmelde-Token deiner Sitzung. Diese Daten sind für den Betrieb des Spiels
+  erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG); klassische Cookies werden nicht gesetzt.
+  Du kannst alles jederzeit löschen, indem du dich abmeldest, den Spielstand
+  zurücksetzt oder die Website-Daten in deinem Browser löschst.</p>
+
+  <h2>2a. Konto &amp; Anmeldung (optional)</h2>
+  <p>Du kannst als <b>Gast</b> ohne Konto spielen. Legst du ein Konto an, verarbeiten
+  wir zur Bereitstellung des Kontos (Art. 6 Abs. 1 lit. b DSGVO): deine E-Mail-Adresse,
+  einen Anzeigenamen, Anmeldezeitpunkte sowie deine an das Konto gebundenen Spielstände
+  und Cloud-Sicherungen. Die Anmeldung erfolgt über unseren Auth- und Datenbank-Dienst
+  <b>Supabase</b> (Supabase Inc., 970 Toa Payoh North, Singapur; Verarbeitung auf von uns
+  gewählten EU-Servern; Auftragsverarbeitung nach Art. 28 DSGVO,
+  <a href="https://supabase.com/privacy" rel="noopener">Datenschutzhinweise</a>).
+  Bei der Anmeldung mit <b>Google</b> („Sign in with Google") übermittelt Google uns
+  E-Mail-Adresse und Namen deines Google-Kontos; es gelten ergänzend die
+  <a href="https://policies.google.com/privacy" rel="noopener">Datenschutzhinweise von Google</a>
+  (Google Ireland Ltd., Dublin). Du kannst dein Konto samt Daten jederzeit löschen lassen
+  (E-Mail an die oben genannte Adresse genügt).</p>
 
   <h2>3. Hosting (Server-Logfiles)</h2>
   <p>Beim Aufruf der Seite verarbeitet unser Hosting-Anbieter technisch notwendige
   Verbindungsdaten (IP-Adresse, Zeitpunkt, abgerufene Datei, User-Agent) zur
   Auslieferung und Absicherung des Dienstes (Art. 6 Abs. 1 lit. f DSGVO).
-  Hosting-Anbieter: <span class="todo">[z. B. Cloudflare, Inc. — je nach gewähltem Hoster
-  anpassen und ggf. dessen Datenschutzhinweise verlinken]</span>.</p>
+  Hosting-Anbieter: Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA
+  (Cloudflare Pages/Workers; EU-Datenverarbeitung nach EU-Standardvertragsklauseln,
+  <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Datenschutzhinweise</a>).
+  Logfiles werden von Cloudflare nur kurzzeitig zur Absicherung vorgehalten;
+  wir selbst betreiben keine Reichweiten-Auswertung.</p>
 
   <h2>4. Optionaler Online-Modus</h2>
   <p>Der Mehrspieler-Modus ist standardmäßig <b>aus</b>. Erst wenn du dich aktiv
@@ -64,8 +83,8 @@
   Ausfallsicherheit Sicherungskopien für bis zu 14 Tage aufbewahrt.
   Die Daten werden gelöscht, wenn du deinen Eintrag entfernst oder das
   Konto inaktiv wird.
-  <span class="todo">[Serverstandort/Anbieter eintragen, sobald der Online-Modus live ist —
-  bis dahin kann dieser Abschnitt bleiben, er beschreibt den Aus-Zustand korrekt.]</span></p>
+  Der Spielserver läuft als Cloudflare Worker mit Durable Objects
+  (Anbieter: Cloudflare, Inc., s. Abschnitt 3).</p>
 
   <h2>5. Deine Rechte</h2>
   <p>Dir stehen die Rechte aus Art. 15–21 DSGVO zu (Auskunft, Berichtigung, Löschung,
@@ -77,20 +96,22 @@
 
   <h1>Impressum</h1>
   <p>Angaben gemäß § 5 DDG:</p>
-  <p><span class="todo">[VOR- UND NACHNAME]</span><br>
-  <span class="todo">[STRASSE HAUSNR.]</span><br>
-  <span class="todo">[PLZ ORT]</span><br>
-  E-Mail: <span class="todo">[E-MAIL-ADRESSE]</span></p>
-  <p>Verantwortlich für den Inhalt: siehe oben.</p>
+  <p>Manuel Frey<br>
+  Macairestraße 3<br>
+  78467 Konstanz, Deutschland<br>
+  E-Mail: frey.manu@gmail.com</p>
+  <p>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Manuel Frey (Anschrift wie oben).</p>
 
   <hr>
 
   <h2>English summary</h2>
-  <p>Grand Gambit runs entirely in your browser. No cookies, no analytics, no ads.
-  Your save data is stored only on your device (localStorage). The optional online
-  mode — off by default — transmits only your chosen display name, rating, friend
-  code and match moves to our game server when you actively connect.
-  Controller / contact: see the German section above.</p>
+  <p>Grand Gambit runs in your browser. No advertising or analytics cookies, no ads.
+  Save data lives on your device; with an optional account (email or Google via
+  Supabase) your saves and cloud backups are bound to that account. Guest play needs
+  no account. The online duel mode transmits only your display name, rating, friend
+  code and match moves to our game server (Cloudflare Workers) when you actively
+  connect. Hosting: Cloudflare. Controller / contact: see the German section above —
+  Manuel Frey, Macairestraße 3, 78467 Konstanz, Germany, frey.manu@gmail.com.</p>
 
   <footer>Grand Gambit · <a href="./">zurück zum Spiel</a></footer>
 </main>

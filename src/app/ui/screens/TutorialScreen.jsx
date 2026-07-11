@@ -46,18 +46,75 @@ const STEPS = [
   },
 ];
 
+// ── the chess school: how each piece moves, drawn as a 5×5 slate — gold dots
+// are quiet steps, red-ringed dots are squares it attacks. ───────────────────
+function MoveDiagram({ kind, dots, hits = [] }) {
+  const C = 30, N = 5;
+  const sq = (x, y) => ((x + y) % 2 === 0 ? "#20283e" : "#161d30");
+  const px = 150, cell = px / N;
+  return (
+    <div style={{ position: "relative", width: px, height: px }}>
+      <svg viewBox={`0 0 ${N * C} ${N * C}`} width={px} height={px} style={{ borderRadius: 10, display: "block" }}>
+        {Array.from({ length: N * N }).map((_, i) => {
+          const x = i % N, y = Math.floor(i / N);
+          return <rect key={i} x={x * C} y={y * C} width={C} height={C} fill={sq(x, y)} />;
+        })}
+        {dots.map(([x, y], i) => <circle key={"d" + i} cx={x * C + C / 2} cy={y * C + C / 2} r={5.5} fill="#c9a45c" opacity=".9" />)}
+        {hits.map(([x, y], i) => <circle key={"h" + i} cx={x * C + C / 2} cy={y * C + C / 2} r={6.5} fill="none" stroke="#c25b66" strokeWidth="2.4" />)}
+      </svg>
+      <div style={{ position: "absolute", left: 2 * cell + 2, top: 2 * cell + 1, width: cell - 4, height: cell - 4 }}>
+        <PieceArt kind={kind} fill="#c9a45c" rim="#f0dfae" detail="#59421a" size="100%" level={1} />
+      </div>
+    </div>
+  );
+}
+
+const ray = (dx, dy) => Array.from({ length: 4 }, (_, k) => [2 + dx * (k + 1), 2 + dy * (k + 1)]).filter(([x, y]) => x >= 0 && x < 5 && y >= 0 && y < 5);
+const SCHOOL = [
+  { kind: "P", dots: [[2, 1], [2, 0]], hits: [[1, 1], [3, 1]],
+    de: { title: "Der Bauer", text: "Zieht ein Feld geradeaus (aus der Grundstellung zwei) — angreifen kann er aber nur schräg vorwärts. Erreicht ein Bauer die letzte Reihe, wird er befördert. Der Grand Gambit ist ein Bauer mit einem großen Schicksal." },
+    en: { title: "The pawn", text: "Moves one square straight ahead (two from its home row) — but it only attacks diagonally forward. Reaching the last rank, a pawn is promoted. The Grand Gambit is a pawn with a great destiny." } },
+  { kind: "N", dots: [[1, 0], [3, 0], [0, 1], [4, 1], [0, 3], [4, 3], [1, 4], [3, 4]],
+    de: { title: "Der Springer", text: "Springt im L: zwei Felder in eine Richtung, eines zur Seite — als einzige Figur über alles hinweg. Stark in vollen Stellungen, in denen Läufer und Türme feststecken." },
+    en: { title: "The knight", text: "Leaps in an L: two squares one way, one to the side — the only piece that jumps over everything. Strong in crowded positions where bishops and rooks are stuck." } },
+  { kind: "B", dots: [...ray(1, 1), ...ray(-1, 1), ...ray(1, -1), ...ray(-1, -1)],
+    de: { title: "Der Läufer", text: "Gleitet beliebig weit diagonal und bleibt sein Leben lang auf seiner Feldfarbe. Zwei Läufer zusammen bestreichen das ganze Brett." },
+    en: { title: "The bishop", text: "Glides any distance diagonally and stays on its square colour for life. Two bishops together sweep the whole board." } },
+  { kind: "R", dots: [...ray(1, 0), ...ray(-1, 0), ...ray(0, 1), ...ray(0, -1)],
+    de: { title: "Der Turm", text: "Fährt beliebig weit gerade — waagrecht oder senkrecht. Türme lieben offene Linien und werden im Endspiel zu Riesen." },
+    en: { title: "The rook", text: "Runs any distance in straight lines — across or down. Rooks love open files and grow into giants in the endgame." } },
+  { kind: "Q", dots: [...ray(1, 0), ...ray(-1, 0), ...ray(0, 1), ...ray(0, -1), ...ray(1, 1), ...ray(-1, 1), ...ray(1, -1), ...ray(-1, -1)],
+    de: { title: "Die Dame", text: "Turm und Läufer in einer Figur: beliebig weit in alle acht Richtungen. Die stärkste Figur — und gerade darum kein Werkzeug für leichtsinnige Ausflüge." },
+    en: { title: "The queen", text: "Rook and bishop in one: any distance in all eight directions. The strongest piece — which is exactly why she is no tool for careless outings." } },
+  { kind: "K", dots: [[1, 1], [2, 1], [3, 1], [1, 2], [3, 2], [1, 3], [2, 3], [3, 3]],
+    de: { title: "Der König", text: "Ein Feld in jede Richtung — langsam, aber unersetzlich: Fällt der König, ist die Partie verloren. In Grand Gambit gilt wie im Schach: Ihn zu schützen ist Auftrag Nummer eins." },
+    en: { title: "The king", text: "One square in any direction — slow but irreplaceable: lose the king, lose the game. In Grand Gambit as in chess, guarding him is task number one." } },
+];
+
 export function TutorialScreen({ t, en, onDone }) {
+  const [track, setTrack] = useState("game");   // "game" | "chess"
   const [i, setI] = useState(0);
-  const step = STEPS[i];
+  const PAGES = track === "game" ? STEPS : SCHOOL;
+  const step = PAGES[i];
   const L = en ? step.en : step.de;
-  const last = i === STEPS.length - 1;
+  const last = i === PAGES.length - 1;
+  const roman = ["I", "II", "III", "IV", "V", "VI", "VII"];
   return (
     <div style={{ maxWidth: 460, margin: "0 auto" }}>
+      <div style={{ display: "flex", gap: 6, justifyContent: "center", marginBottom: 12 }}>
+        {[["game", en ? "The adventure" : "Das Abenteuer"], ["chess", en ? "Chess school" : "Schachschule"]].map(([id, lbl]) => (
+          <button key={id} onClick={() => { setTrack(id); setI(0); }} className="gg-serif"
+            style={{ fontFamily: "inherit", cursor: "pointer", fontSize: 13, letterSpacing: ".05em", borderRadius: 999,
+              padding: "7px 15px", border: `1px solid ${track === id ? "rgba(255,240,200,.45)" : T.line}`,
+              background: track === id ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent",
+              color: track === id ? "#17110a" : T.dim, fontWeight: 700 }}>{lbl}</button>
+        ))}
+      </div>
       <div style={{ background: "#efe9da", color: "#2e2a20", border: "1px solid #c9bfa4", borderRadius: 16,
         boxShadow: "0 14px 40px rgba(0,0,0,.45)", padding: "20px 18px 16px", textAlign: "center",
-        animation: "rise .22s ease" }} key={i}>
+        animation: "rise .22s ease" }} key={track + i}>
         <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".22em", color: "#8a6f4d" }}>
-          {(en ? "LESSON " : "LEKTION ")}{["I", "II", "III", "IV", "V", "VI", "VII"][i]} / VII
+          {(en ? "LESSON " : "LEKTION ")}{roman[i]} / {roman[PAGES.length - 1]}
         </div>
         <div className="gg-serif" style={{ fontSize: 22, letterSpacing: ".04em", marginTop: 5 }}>{L.title}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "9px 0 12px" }}>
@@ -65,10 +122,12 @@ export function TutorialScreen({ t, en, onDone }) {
           <span style={{ width: 6, height: 6, background: "#8a6f4d", transform: "rotate(45deg)" }} />
           <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
         </div>
-        <div style={{ display: "grid", placeItems: "center", minHeight: 66, marginBottom: 10 }}>{step.art}</div>
+        <div style={{ display: "grid", placeItems: "center", minHeight: 66, marginBottom: 10 }}>
+          {track === "chess" ? <MoveDiagram kind={step.kind} dots={step.dots} hits={step.hits || []} /> : step.art}
+        </div>
         <div className="gg-serif" style={{ fontSize: 13.5, lineHeight: 1.6, color: "#4a4433", textAlign: "left" }}>{L.text}</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 5, margin: "14px 0 12px" }}>
-          {STEPS.map((_, k) => (
+          {PAGES.map((_, k) => (
             <span key={k} style={{ width: 6, height: 6, borderRadius: "50%", transform: "rotate(45deg)",
               background: k === i ? "#8a6f4d" : "#cfc5a8" }} />
           ))}
