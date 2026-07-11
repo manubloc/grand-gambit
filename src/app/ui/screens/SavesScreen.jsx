@@ -58,12 +58,18 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de" }) {
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
       <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(56vw, 220px)", display: "block", marginTop: -4 }} />
-      <div style={{ color: T.dim, fontSize: 14, margin: "2px 0 2px" }}>{s.hello}, <b style={{ color: T.text }}>{account.name}</b>
+      <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
+        {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
-        <button onClick={onLogout} style={{ background: "none", border: "none", color: T.dim, textDecoration: "underline",
-          fontFamily: "inherit", fontSize: 12.5, cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
+        <button onClick={onLogout} className="gg-serif" style={{ background: "none", border: "none", color: T.faint,
+          textDecoration: "underline", fontSize: 12.5, letterSpacing: ".05em", cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>
-      <div className="gg-quill" style={{ color: T.text, fontSize: 21, margin: "8px 0 14px" }}>{s.pick}</div>
+      <div className="gg-serif" style={{ color: T.goldBright, fontSize: 19, letterSpacing: ".07em", margin: "10px 0 14px",
+        display: "flex", alignItems: "center", gap: 8 }}>
+        <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />
+        {s.pick}
+        <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />
+      </div>
       {passNote && <div style={{ maxWidth: 430, color: "#e0c98f", fontSize: 12.5, lineHeight: 1.5, marginBottom: 12,
         border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}>{s.defaultPass}</div>}
 
