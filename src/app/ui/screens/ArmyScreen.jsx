@@ -10,7 +10,7 @@ import {
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle } from "../primitives.jsx";
+import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
@@ -354,21 +354,15 @@ function FormationEditor({ profile, dispatch, t, en }) {
 
   {/* map choice — its own strip below the box: ONE row, scroll if it must */}
   <div style={{ minWidth: 0, maxWidth: "100%" }}>
-    <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase",
-      margin: "0 2px 6px" }}>{t("army.mapPick")}</div>
+    <FieldLabel>{t("army.mapPick")}</FieldLabel>
     <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch",
       paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
       {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;
         const open = mapUnlocked(profile, m.id);
-        return <button key={m.id} onClick={() => open && setMapId(m.id)} disabled={!open}
-          title={open ? undefined : t("game.unlockHint")}
-          style={{ cursor: open ? "pointer" : "default", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999,
-            padding: "7px 12px", flex: "0 0 auto", whiteSpace: "nowrap",
-            border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2,
-            color: on ? T.limeInk : open ? T.text : T.faint, opacity: open ? 1 : 0.55 }}>
-          {open ? null : <><LockIc size={11} />{" "}</>}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}
-        </button>;
+        return <MapChip key={m.id} on={on} locked={!open} theme={m.theme}
+          onClick={() => open && setMapId(m.id)}
+          label={<>{open ? null : <LockIc size={11} />}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}</>} />;
       })}
     </div>
   </div>

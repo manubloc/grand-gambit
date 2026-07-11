@@ -34,8 +34,8 @@ const hexA = (hex, a) => {
 
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
-  const sqL = texture ? hexA(sqL0, 0.84) : sqL0;
-  const sqD = texture ? hexA(sqD0, 0.87) : sqD0;
+  const sqL = texture ? hexA(sqL0, 0.8) : sqL0;
+  const sqD = texture ? hexA(sqD0, 0.84) : sqD0;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
 

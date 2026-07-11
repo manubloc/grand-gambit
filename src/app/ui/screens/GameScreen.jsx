@@ -5,7 +5,7 @@ import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, applyResult, summ
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { stateHash } from "../../../platform/net.web.js";
-import { Button, Panel, Segmented, Chip } from "../primitives.jsx";
+import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -392,44 +392,33 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   return (
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
-      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.map")}</div>
-      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin" }}>
+      <FieldLabel>{t("game.map")}</FieldLabel>
+      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto",
+        WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
         {MAPS.map((m) => {
           const open = mapUnlocked(profile, m.id);
-          const on = m.id === mapId;
-          return (
-            <button key={m.id} onClick={() => open ? setMapId(m.id) : setLockHint(true)}
-              title={open ? undefined : t("game.unlockHint")}
-              style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 11px",
-                border: `1px solid ${on ? T.lime : T.line}`, background: on ? T.lime : T.panel2, color: on ? T.limeInk : open ? T.text : T.faint,
-                opacity: open ? 1 : 0.55 }}>
-              <span style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 2.5,
-                overflow: "hidden", verticalAlign: "-3px", marginRight: 6, border: `1px solid ${on ? "#00000033" : T.line}` }}>
-                {Array.from({ length: 16 }).map((_, k) => (
-                  <span key={k} style={{ width: 4.5, height: 4.5,
-                    background: ((k + Math.floor(k / 4)) % 2 === 0) ? m.theme.sqLight : m.theme.sqDark }} />
-                ))}
-              </span>
-              {open ? null : <><LockIc size={11} />{" "}</>}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}{m.classic ? " ♟" : ""}
-            </button>
-          );
+          return <MapChip key={m.id} on={m.id === mapId} locked={!open} theme={m.theme}
+            title={open ? undefined : t("game.unlockHint")}
+            onClick={() => open ? setMapId(m.id) : setLockHint(true)}
+            label={<>{open ? null : <LockIc size={11} />}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}</>} />;
         })}
       </div>
       {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}><LockIc color={T.gold} size={11} /> {t("game.unlockHint")}</div>}
+      <FieldLabel>{t("game.mode")}</FieldLabel>
       <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
         options={[
           { value: "chess", label: t("mode.chess") },
           { value: "hp", label: hpOpen ? t("mode.hp") : <><LockIc size={11} /> {t("mode.hp")}</>, disabled: !hpOpen },
         ]} />
       {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
-      <div style={{ height: 10 }} />
-      <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("quick.opponent")}</div>
+      <div style={{ height: 12 }} />
+      <FieldLabel>{t("quick.opponent")}</FieldLabel>
       <Segmented value={foe} onChange={setFoe}
         options={[{ value: "ai", label: t("quick.vsAi") }, { value: "hotseat", label: t("quick.hotseat") }]} />
       {foe === "hotseat" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.hotseatHint")}</div>}
       {foe === "ai" && <>
-        <div style={{ height: 10 }} />
-        <div style={{ fontSize: 12, color: T.dim, marginBottom: 6, fontWeight: 700 }}>{t("game.difficulty")}</div>
+        <div style={{ height: 12 }} />
+        <FieldLabel>{t("game.difficulty")}</FieldLabel>
         <Segmented value={difficulty} onChange={setDifficulty}
           options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
       </>}
