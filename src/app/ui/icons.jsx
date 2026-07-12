@@ -211,3 +211,13 @@ export function MapIc({ color = "#c9a45c", size = 16 }) {
     <path d="M6.4 12.6 C8 11 10.5 12.8 12 11.2 C13.5 9.6 16 11.6 17.6 9.8" fill="none" stroke={color} strokeWidth="1.2" strokeDasharray="0.5 2.4" strokeLinecap="round" />
   </svg>;
 }
+
+
+export function TrophyIc({ color = "#17110a", size = 15 }) {
+  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+    <path d="M8 4.5 L16 4.5 L16 10 A4 4 0 0 1 8 10 Z" fill="none" stroke={color} strokeWidth="1.8" strokeLinejoin="round" />
+    <path d="M8 6 L5.2 6 A0.1 0.1 0 0 0 5.2 9.4 C5.8 10.6 6.9 11.2 8.2 11.4 M16 6 L18.8 6 A0.1 0.1 0 0 1 18.8 9.4 C18.2 10.6 17.1 11.2 15.8 11.4"
+      fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M12 14 L12 16.6 M9.2 19 L14.8 19 M10 16.6 L14 16.6" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+  </svg>;
+}

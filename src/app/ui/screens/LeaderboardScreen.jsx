@@ -5,6 +5,7 @@
 // moment Supabase is configured.
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
+import { TrophyIc } from "../icons.jsx";
 import { Panel, Button } from "../primitives.jsx";
 import { progressPct, totalBestMoves, fmtMs, fmtPlaytime, fetchBoard, submitScore, cloudConfigured,
   clearedCount, campaignLength } from "../../../meta/index.js";
@@ -103,7 +104,7 @@ export function LeaderboardSection({ profile, playtimeSec = 0 }) {
             ))}
           </div>}
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 11 }}>
-        <Button onClick={share} style={{ flex: 1 }}>🏆 {s.share}</Button>
+        <Button onClick={share} style={{ flex: 1 }}><TrophyIc size={14} /> {s.share}</Button>
         {note && <span style={{ color: T.gold, fontSize: 12.5 }}>{note}</span>}
       </div>
     </Panel>
