@@ -81,6 +81,7 @@ function reducer(state, a) {
     case "SET_NOTICE": return { ...state, notices: { ...(state.notices || {}), [a.key]: true } };
     case "SET_ONLINE": return { ...state, online: { ...state.online, ...a.online } };
     case "PAUSE_MATCH": return { ...state, pausedMatch: a.data || null };
+    case "SET_PIECE_ART": return { ...state, pieceArt: a.style };
     case "REPLACE": if (state) takeRestorePoint(state, { force: true });
       // eslint-disable-next-line no-fallthrough
  return a.profile;

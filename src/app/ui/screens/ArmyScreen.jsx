@@ -14,6 +14,7 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
+import { paintedById } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 
@@ -88,7 +89,11 @@ function CharCard({ char, profile, dispatch, t, en }) {
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
   return <Panel style={{ opacity: unlocked ? 1 : 0.74 }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-      <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} />
+      {paintedById(char.id)
+        ? <img src={paintedById(char.id)} alt="" style={{ width: 44, height: 56, objectFit: "contain", objectPosition: "bottom",
+            flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
+            opacity: unlocked ? 1 : 0.6 }} />
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800 }}>{en ? char.nameEn : char.nameDe}</div>
@@ -278,7 +283,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     {preview && (
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
-        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} />
+        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "svg"} />
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}

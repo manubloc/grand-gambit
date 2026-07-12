@@ -16,7 +16,7 @@ const profile = defaultProfile();
 profile.campaign = { ...(profile.campaign || {}), league: 6, cleared: [], unlocked: Object.keys(CHARACTERS) };
 
 const map = mapById("classic");
-const side = () => buildArmyFromFormation(() => 1, map.defaultFormation);
+const side = () => buildArmyFromFormation(() => 1, ["rook","dragon","mage","king","paladin","bard","engineer","rook"]);
 const state = createGame(side(), buildAiArmyForMap("easy", map, 3), { map, rules: "hp", seed: 3 });
 
 const style = document.createElement("style");
@@ -30,6 +30,6 @@ rootEl.style.padding = "14px";
 createRoot(rootEl).render(
   <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 16 }}>
     <QuickSetup profile={profile} dispatch={() => {}} t={t} onStart={() => {}} />
-    <BoardView state={state} interactive={false} theme={map.theme} maxPx={360} texture={texWear2} />
+    <BoardView state={state} interactive={false} theme={map.theme} maxPx={360} texture={texWear2} artStyle="painted" />
   </div>
 );

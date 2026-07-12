@@ -1,6 +1,7 @@
 import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt, CategoryMark } from "./PieceArt.jsx";
+import { paintedForPiece, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -9,7 +10,7 @@ const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "prom
 // a row of category emblems (one per distinct ability category it has — more
 // abilities ⇒ more emblems), plus its exact LEVEL, its ATK (HP mode) and shield
 // pips (chess mode). Player glows cyan, enemy magenta.
-export function PieceGlyph({ piece, showLevel = true, pov = "w" }) {
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "svg" }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -46,7 +47,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w" }) {
         </div>
       )}
       <div style={{ width: pieceSize, height: pieceSize, filter: glow }}>
-        <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />
+        {(() => {
+          // the gallery: painted figurines when chosen — enemy turned to steel
+          const painting = artStyle === "painted" ? paintedForPiece(piece) : null;
+          if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
+            objectFit: "contain", objectPosition: "bottom", filter: white ? undefined : ENEMY_FILTER,
+            userSelect: "none", pointerEvents: "none" }} />;
+          return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
+        })()}
       </div>
 
       {showLevel && lvl > 1 && (
