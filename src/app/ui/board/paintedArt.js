@@ -12,6 +12,8 @@ import pHawk from "../assets/painted/painted-hawk.webp";
 import pAmazon from "../assets/painted/painted-amazon.webp";
 import pAssassin from "../assets/painted/painted-assassin.webp";
 import pGuardian from "../assets/painted/painted-guardian.webp";
+import pCaptain from "../assets/painted/painted-captain.webp";
+import pPathfinder from "../assets/painted/painted-pathfinder.webp";
 import pRook from "../assets/painted/painted-rook.webp";
 import pKing from "../assets/painted/painted-king.webp";
 import pChancellor from "../assets/painted/painted-chancellor.webp";
@@ -36,6 +38,7 @@ import bLeaguemaster from "../assets/painted/painted-boss-leaguemaster.webp";
 export const PAINTED = {
   pawn: pPawn, gambit: pGambit, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
+  captain: pCaptain, pathfinder: pPathfinder,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,
   alchemist: pAlchemist, warlock: pWarlock, paladin: pPaladin, inquisitor: pInquisitor,
   bard: pBard, engineer: pEngineer, standard: pStandard, strategist: pStrategist,
