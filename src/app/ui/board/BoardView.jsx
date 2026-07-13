@@ -7,26 +7,6 @@ const MOVE_DOT = "#c9a45c";
 
 // Modern game-style HP: one segment per hit point (readable at a glance),
 // falling back to a continuous bar when segments would get too tiny.
-function HpBar({ hp, max }) {
-  const ratio = Math.max(0, Math.min(1, hp / max));
-  const col = ratio > 0.55 ? "#3ad98a" : ratio > 0.28 ? "#ffb454" : "#ff4d5e";
-  // Big beasts keep a slim bar; everyone else wears quiet dots, centered.
-  if (max > 10) {
-    return <div style={{ position: "absolute", left: "20%", right: "20%", bottom: "3.4%", height: "5.5%", minHeight: 3,
-      background: "rgba(0,0,0,.55)", borderRadius: 3, overflow: "hidden", pointerEvents: "none", padding: 1 }}>
-      <div style={{ width: `${ratio * 100}%`, height: "100%", background: col, borderRadius: 2, transition: "width .2s ease" }} />
-    </div>;
-  }
-  return <div style={{ position: "absolute", left: 0, right: 0, bottom: "3%", display: "flex",
-    justifyContent: "center", gap: "3%", pointerEvents: "none" }}>
-    {Array.from({ length: max }).map((_, i) => (
-      <span key={i} style={{ width: `max(3px, ${Math.min(5.2, 46 / max)}%)`, aspectRatio: "1 / 1", borderRadius: "50%",
-        background: i < hp ? col : "rgba(8, 12, 20, .68)",
-        boxShadow: i < hp ? `0 0 3px ${col}88` : "inset 0 0 0 1px rgba(255,255,255,.15)",
-        transition: "background .2s ease" }} />
-    ))}
-  </div>;
-}
 
 
 // hex -> rgba: with a texture underlay the squares go slightly translucent so
@@ -138,7 +118,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={false} pov={pov} artStyle={artStyle} /></div>}
-          {hpMode && piece && piece.maxHp > 0 && <HpBar hp={piece.hp} max={piece.maxHp} />}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />

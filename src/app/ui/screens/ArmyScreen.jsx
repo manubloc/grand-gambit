@@ -228,8 +228,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
 }
 
 const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
-  <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center",
-    transform: "translateY(-7%)" }}>
+  <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center" }}>
     <PieceGlyph piece={{ kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle={art} />
   </span>
 );
@@ -288,7 +287,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       <div style={{ marginBottom: feWide ? 0 : 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ width: "100%", maxWidth: feWide ? "min(700px, calc(100dvh - 250px))" : 340 }}>
+          <div style={{ width: "100%", maxWidth: feWide ? "min(700px, calc(100dvh / var(--vhz, 1) - 250px))" : 340 }}>
             <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={profile.pieceArt || "painted"} />
           </div>
         </div>

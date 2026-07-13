@@ -48,7 +48,11 @@ export function AchIcon({ id, color = "#c9a45c", size = 22 }) {
 export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
   const s = { fill: "none", stroke: color, strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
   const shapes = {
-    play:    <><path d="M5 5 L16.5 16.5 M19 5 L7.5 16.5 M5 5 L8.2 5 M5 5 L5 8.2 M19 5 L15.8 5 M19 5 L19 8.2 M8.6 15.4 L6 19.5 M15.4 15.4 L18 19.5" {...s} /></>,
+    play:    <><path d="M4.4 3.4 L7 3.8 L17.3 14.1 L15.7 15.7 L5.4 5.4 Z" fill={color} />
+      <path d="M19.6 3.4 L17 3.8 L6.7 14.1 L8.3 15.7 L18.6 5.4 Z" fill={color} />
+      <path d="M13.7 16.5 L16.5 13.7 M7.5 13.7 L10.3 16.5" stroke={color} strokeWidth="1.7" strokeLinecap="round" fill="none" />
+      <path d="M15.8 16.2 L18.1 18.5 M8.2 16.2 L5.9 18.5" stroke={color} strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <circle cx="19.1" cy="19.5" r="1.35" fill={color} /><circle cx="4.9" cy="19.5" r="1.35" fill={color} /></>,
     army:    <><path d="M12 3.5 C14.8 5 17.4 5.4 19 5 C19.4 12 17 17.5 12 20.5 C7 17.5 4.6 12 5 5 C6.6 5.4 9.2 5 12 3.5 Z" {...s} /><path d="M12 7 L12 16.5 M8 11.5 L16 11.5" {...s} strokeWidth="1.6" /></>,
     ach:     <><path d="M8 4 L16 4 L16 9 A4 4 0 0 1 8 9 Z" {...s} /><path d="M8 5.5 L4.5 5.5 A3.5 3.5 0 0 0 8 9.8 M16 5.5 L19.5 5.5 A3.5 3.5 0 0 1 16 9.8" {...s} /><path d="M12 13 L12 16.5 M9 20 L15 20 L14.2 16.5 L9.8 16.5 Z" {...s} /></>,
     profile: <><circle cx="12" cy="8" r="3.6" {...s} /><path d="M4.8 20 C5.4 15.4 8.2 13.2 12 13.2 C15.8 13.2 18.6 15.4 19.2 20" {...s} /></>,

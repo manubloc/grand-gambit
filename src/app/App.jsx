@@ -244,7 +244,7 @@ export default function App() {
 
   if (wide) return (
     <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
-      ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
+      ...(immersive ? { height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
@@ -266,13 +266,13 @@ export default function App() {
         maxWidth: immersive ? "none" : inMatch ? 1020 : tab === "play" && view === "camp" ? 920 : 720,
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
-          ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh - 72px)" } : {}) }}>{screen}</main>
+          ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh / var(--vhz, 1) - 72px)" } : {}) }}>{screen}</main>
     </div>
   );
 
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
-      ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
+      ...(immersive ? { maxWidth: "none", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (

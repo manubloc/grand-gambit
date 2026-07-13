@@ -15,7 +15,7 @@ export function LeagueShield({ league = 1, size = 58, dim = false, style }) {
       flex: "0 0 auto", filter: dim ? "grayscale(1) brightness(1.35)" : "drop-shadow(0 3px 6px rgba(0,0,0,.45))",
       opacity: dim ? 0.55 : 1, ...style }}>
       <img src={shieldUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
-      <span className="gg-serif" style={{ position: "absolute", left: "48.5%", top: "43.6%",
+      <span className="gg-serif" style={{ position: "absolute", left: "50.0%", top: "47.5%",
         transform: "translate(-50%, -50%)", fontSize: fs, fontWeight: 700, letterSpacing: txt.length > 2 ? 0 : ".04em",
         color: "#e8c97e", textShadow: "0 1px 2px rgba(0,0,0,.85), 0 0 7px rgba(201,164,92,.3)", lineHeight: 1 }}>
         {txt}
