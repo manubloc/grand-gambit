@@ -34,7 +34,7 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceArt")}</div>
-      <Segmented value={profile.pieceArt || "svg"} onChange={(v) => dispatch({ type: "SET_PIECE_ART", style: v })}
+      <Segmented value={profile.pieceArt || "painted"} onChange={(v) => dispatch({ type: "SET_PIECE_ART", style: v })}
         options={[{ value: "svg", label: t("profile.artSvg") }, { value: "painted", label: t("profile.artPainted") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("profile.artHint")}</div>
       {!inApp() && <>

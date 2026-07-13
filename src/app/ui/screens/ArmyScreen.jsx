@@ -283,7 +283,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     {preview && (
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
-        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "svg"} />
+        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "painted"} />
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}

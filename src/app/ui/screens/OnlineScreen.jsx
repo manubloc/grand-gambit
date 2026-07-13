@@ -149,7 +149,11 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
             </button>
             {adv && (
               <Line>
-                <input style={input} value={server} onChange={(e) => setServer(e.target.value)} placeholder="wss://…" />
+                {/* the built-in address stays out of sight — only a custom
+                    server (self-hosters) ever appears in this field */}
+                <input style={input} value={server === SERVER_URL ? "" : server}
+                  onChange={(e) => setServer(e.target.value.trim() || SERVER_URL)}
+                  placeholder={t("online.serverPh")} />
                 <Button variant="subtle" onClick={connect} style={{ padding: "9px 14px" }}>{t("online.connect")}</Button>
               </Line>
             )}
