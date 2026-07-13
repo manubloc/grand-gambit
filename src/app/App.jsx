@@ -203,7 +203,9 @@ export default function App() {
             ? <LeaderboardSection profile={profile} playtimeSec={slot?.playtimeSec || 0} />
             : <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />}
         </div>
-          : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account} />;
+          : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account}
+              onSwitchSave={() => setSlot(null)}
+              onLogout={async () => { await clearSession(); await signOutCloud(); setSlot(null); setAccount(null); }} />;
 
   const inMatch = !!match || !!pvp || !!quick;
   // map & match immersion (v0.3/v0.4): the campaign map and every running
@@ -259,8 +261,11 @@ export default function App() {
           </div>
         </aside>
       )}
-      <main style={{ width: "100%", maxWidth: immersive ? "none" : inMatch ? 1020 : 720, minWidth: 0,
-        ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
+      <main style={{ width: "100%", minWidth: 0,
+        maxWidth: immersive ? "none" : inMatch ? 1020 : tab === "play" && view === "camp" ? 920 : 720,
+        ...(immersive ? { display: "flex", flexDirection: "column" } : {}),
+        ...(tab === "play" && view === "hub" && !inMatch && !immersive
+          ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh - 72px)" } : {}) }}>{screen}</main>
     </div>
   );
 

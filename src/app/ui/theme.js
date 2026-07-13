@@ -17,6 +17,11 @@ export const T = {
 };
 
 export const GLOBAL_CSS = `
+  /* Desktop: bei 100% Browser-Zoom soll die App nicht verloren wirken —
+     große Fenster bekommen eine sanfte eingebaute Vergrößerung. */
+  @keyframes ggFade { from { opacity: 0 } to { opacity: 1 } }
+  @media (min-width: 1440px) { #root { zoom: 1.15; } }
+  @media (min-width: 1760px) { #root { zoom: 1.3; } }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body, #root { height: 100%; }
   button, a { -webkit-tap-highlight-color: transparent; }

@@ -54,7 +54,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
 
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
-    <div style={{ minHeight: "100%", background: T.bg, padding: "26px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div style={{ minHeight: "100dvh", background: T.bg, padding: "26px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>

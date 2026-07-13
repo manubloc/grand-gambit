@@ -37,7 +37,7 @@ function StatPill({ icon, val, color }) {
   return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12.5, fontWeight: 900, color }}>{icon} {val}</span>;
 }
 
-function CharCard({ char, profile, dispatch, t, en }) {
+function CharCard({ char, profile, dispatch, t, en, onZoom }) {
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const [info, setInfo] = useState(null);
@@ -91,10 +91,12 @@ function CharCard({ char, profile, dispatch, t, en }) {
   return <Panel style={{ opacity: unlocked ? 1 : 0.74 }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
       {paintedById(char.id)
-        ? <img src={paintedById(char.id)} alt="" style={{ width: 44, height: 56, objectFit: "contain", objectPosition: "bottom",
+        ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? () => onZoom(char) : undefined}
+            title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
+            style={{ width: 62, height: 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
-            opacity: unlocked ? 1 : 0.6 }} />
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={profile.pieceArt || "painted"} />}
+            opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={profile.pieceArt || "painted"} size={44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800 }}>{en ? char.nameEn : char.nameDe}</div>
@@ -284,7 +286,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
     {preview && (
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
-        <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "painted"} />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "painted"} />
+        </div>
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}
@@ -419,7 +423,30 @@ function GearPanel({ profile, dispatch, t, en }) {
   );
 }
 
+// Tap a figurine → the painting fills the stage. One tap anywhere closes it.
+function CharLightbox({ char, en, onClose }) {
+  if (!char) return null;
+  const src = paintedById(char.id);
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 80, background: "rgba(5, 8, 16, .88)",
+      backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)", display: "grid", placeItems: "center",
+      cursor: "zoom-out", padding: 20, animation: "ggFade .18s ease-out" }}>
+      <div style={{ textAlign: "center", maxWidth: 520 }}>
+        {src && <img src={src} alt="" style={{ height: "min(58vh, 470px)", maxWidth: "88vw", objectFit: "contain",
+          filter: "drop-shadow(0 18px 40px rgba(0,0,0,.65))" }} />}
+        <div className="gg-serif" style={{ color: T.goldBright, fontSize: 23, letterSpacing: ".06em", marginTop: 14 }}>
+          {en ? char.nameEn : char.nameDe}</div>
+        {(en ? char.flavorEn : char.flavorDe) && (
+          <div className="gg-serif" style={{ color: "#9a947f", fontStyle: "italic", fontSize: 13.5, lineHeight: 1.5, marginTop: 6 }}>
+            „{en ? char.flavorEn : char.flavorDe}“</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function ArmyScreen({ profile, dispatch, t }) {
+  const [zoomChar, setZoomChar] = useState(null);
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
   const [tab, setTab] = useState("formation"); // formation | gear | chars
@@ -429,6 +456,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
   return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
+    <CharLightbox char={zoomChar} en={profile.lang === "en"} onClose={() => setZoomChar(null)} />
     {/* balance — always in sight, whatever the tab */}
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
       background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
@@ -451,12 +479,12 @@ export function ArmyScreen({ profile, dispatch, t }) {
         <H>{t("army.secRecruited")} · {rec.length}</H>
         {rec.map((c) => (
           <div key={c.id} style={c.epic && wide ? { gridColumn: "1 / -1" } : undefined}>
-            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} />
+            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />
           </div>
         ))}
         {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
         {hid.map((c) => (
-          <div key={c.id}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} /></div>
+          <div key={c.id}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} /></div>
         ))}
       </div>
     )}

@@ -10,7 +10,7 @@ const inApp = () =>
   (typeof matchMedia !== "undefined" && matchMedia("(display-mode: standalone)").matches) ||
   (typeof navigator !== "undefined" && navigator.standalone === true);
 
-export function ProfileScreen({ profile, dispatch, t, account }) {
+export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onLogout }) {
   const [pin, setPin] = useState("");
   // manual install entry — the banner is missable, this one always waits here
   const [canPrompt, setCanPrompt] = useState(() => !!getDeferredInstall());
@@ -36,6 +36,12 @@ export function ProfileScreen({ profile, dispatch, t, account }) {
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceArt")}</div>
       <Segmented value={profile.pieceArt || "painted"} onChange={(v) => dispatch({ type: "SET_PIECE_ART", style: v })}
         options={[{ value: "svg", label: t("profile.artSvg") }, { value: "painted", label: t("profile.artPainted") }]} />
+
+      <div style={{ fontSize: 12, color: T.faint, margin: "16px 0 6px" }}>{t("profile.session")}</div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {onSwitchSave && <Button kind="ghost" onClick={onSwitchSave}>{t("profile.switchSave")}</Button>}
+        {onLogout && <Button kind="ghost" onClick={onLogout}>{t("profile.signout")}</Button>}
+      </div>
       <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("profile.artHint")}</div>
       {!inApp() && <>
         <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.install")}</div>
