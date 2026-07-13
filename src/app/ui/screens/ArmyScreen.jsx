@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
-import { GildedFrame, goldText } from "../Gilded.jsx";
+import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame } from "../../../core/index.js";
@@ -39,7 +39,7 @@ function StatPill({ icon, val, color }) {
   return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12.5, fontWeight: 900, color }}>{icon} {val}</span>;
 }
 
-function CharCard({ char, profile, dispatch, t, en, onZoom }) {
+function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle }) {
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const abWide = useMedia("(min-width: 680px)");
@@ -88,9 +88,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
 
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
   return <Panel style={{ opacity: unlocked ? 1 : 0.74, height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
-    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+    <div style={{ display: "flex", gap: 12, alignItems: "center", cursor: onToggle ? "pointer" : "default" }}
+      onClick={onToggle}>
       {paintedById(char.id)
-        ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? () => onZoom(char) : undefined}
+        ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
             style={{ width: 62, height: 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
@@ -98,7 +99,11 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
         : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={profile.pieceArt || "painted"} size={44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-          <div style={{ fontWeight: 800 }}>{en ? char.nameEn : char.nameDe}</div>
+          <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
+            {en ? char.nameEn : char.nameDe}
+            {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint,
+              transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
+          </div>
           {unlocked
             ? <>{stars > 0 && <Chip color={"#17110a"} bg={T.gold}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
             : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
@@ -116,7 +121,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
         „{en ? char.flavorEn : char.flavorDe}“
       </div>
     )}
-    {epic && (
+    {open && epic && (
       <div style={{ marginTop: 7, fontSize: 11.5, lineHeight: 1.5 }}>
         <span style={{ color: T.gold, fontWeight: 700 }}>{t("army.gambitTag")}</span>{" "}
         <span style={{ color: INK }}>{t("army.gambitExplain")}</span>
@@ -127,28 +132,27 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
         <BladesIc size={13} /> {t("army.lockedBoss", { place: bossNode.place })}
       </div>
     )}
-    {unlocked && (
+    {open && unlocked && (
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
           {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
         </div>
-        {!maxed && <Button variant={affordable ? "primary" : "subtle"} disabled={!affordable}
-          style={{ padding: "8px 14px", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}
+        {!maxed && <GoldShineButton disabled={!affordable} style={{ padding: "8px 14px", fontSize: 13 }}
           onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}>
-          {t("army.upgrade")} · {cost} <SkillStar size={12} /></Button>}
+          {t("army.upgrade")} · {cost} <SkillStar size={12} /></GoldShineButton>}
       </div>
     )}
 
-    <div style={{ display: "flex", gap: 4, marginTop: 9 }} aria-label={t("army.lvl") + " " + level}>
+    {open && <div style={{ display: "flex", gap: 4, marginTop: 9 }} aria-label={t("army.lvl") + " " + level}>
       {Array.from({ length: MAX_PIECE_LEVEL }).map((_, i) => (
         <span key={i} style={{ flex: 1, height: 5, borderRadius: 3,
           background: i < level ? `linear-gradient(90deg, ${T.lime}, ${T.gold})` : T.panel2,
           boxShadow: i < level ? `0 0 6px ${T.gold}66` : "none",
           border: i < level ? "none" : `1px solid ${T.line}` }} />
       ))}
-    </div>
-    {unlocked && (() => {
+    </div>}
+    {open && unlocked && (() => {
       // Every talent is a tile of equal height: owned ones glow in their tag
       // color behind a gold-tinted frame, purchasable ones invite with a gold
       // button, near-future ones sit dimmed — and once a talent is revealed,
@@ -168,27 +172,29 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
                 {en ? "Level" : "Stufe"} {rg.level} · {en ? "still veiled" : "noch verhüllt"}</span>
             </div>
           );
-          const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
+          const ab = ABILITIES[rg.id];
+          const tg = (ab && TAGS[ab.tag]) || { color: T.gold, nameDe: "Talent", nameEn: "Talent" };
+          if (!ab) return null;
           const price = abilityCost(rg.level);
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
           return (
             <div key={rg.id} style={{ display: "flex", flexDirection: "column", gap: 6, padding: "10px 12px 9px",
               borderRadius: 12,
-              border: `1px solid ${owned ? tg.color + "88" : reach ? "#8a6d3566" : T.line}`,
+              border: `1px solid ${owned ? tg.color + "88" : reach ? "#8a6d3566" : "#3d4666"}`,
               background: owned
                 ? `linear-gradient(165deg, ${tg.color}16, rgba(8, 10, 20, .55))`
                 : reach ? `linear-gradient(165deg, rgba(43, 36, 16, .35), ${T.panel2})` : T.panel2,
               boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)` : "none",
-              opacity: owned || reach ? 1 : 0.66, filter: owned || reach ? "none" : "saturate(.55)" }}>
+              opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <span style={{ fontSize: 15, lineHeight: 1 }}>{ab.icon}</span>
-                <b style={{ fontSize: 12.5, letterSpacing: ".01em", color: owned ? tg.color : reach ? T.text : T.dim }}>
+                <b style={{ fontSize: 12.5, letterSpacing: ".01em", color: owned ? tg.color : reach ? T.text : "#b9b295" }}>
                   {en ? ab.nameEn : ab.nameDe}</b>
                 <span style={{ flex: 1 }} />
                 {owned && <span aria-hidden style={{ width: 7, height: 7, transform: "rotate(45deg)", flex: "0 0 auto",
                   background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588" }} />}
               </div>
-              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: owned || reach ? INK : T.dim }}>
+              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: owned || reach ? INK : "#a8a28c" }}>
                 {en ? ab.descEn : ab.descDe}</div>
               <div style={{ flex: 1 }} />
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
@@ -201,13 +207,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
                   ? <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".08em", color: "#d9b565" }}>
                       {en ? "Acquired" : "Erworben"}</span>
                   : reach
-                    ? <button onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} disabled={!can}
-                        style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 12px",
-                          display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap",
-                          cursor: can ? "pointer" : "default", border: `1.5px solid ${can ? "#e3c07a" : T.line}`,
-                          background: can ? "linear-gradient(170deg, #e9cf8a, #c9a45c)" : T.panel,
-                          color: can ? "#17110a" : T.faint }}>
-                        {en ? "Acquire" : "Erwerben"} · {price} <SkillStar size={12} /></button>
+                    ? <GoldShineButton disabled={!can} style={{ fontSize: 12, padding: "6px 12px" }}
+                        onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })}>
+                        {en ? "Acquire" : "Erwerben"} · {price} <SkillStar size={12} /></GoldShineButton>
                     : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".06em", color: T.faint }}>
                         {en ? "from level" : "ab Stufe"} {rg.level}</span>}
               </div>
@@ -487,6 +489,7 @@ function CharLightbox({ char, en, onClose }) {
 
 export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const [zoomChar, setZoomChar] = useState(null);
+  const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
   const [tab, setTab] = useState(initialTab || "formation"); // formation | gear | chars
@@ -521,12 +524,12 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
         <H>{t("army.secRecruited")} · {rec.length}</H>
         {rec.map((c) => (
           <div key={c.id} style={c.epic && wide ? { gridColumn: "1 / -1" } : undefined}>
-            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />
+            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} open={openChar === c.id} onToggle={() => setOpenChar(openChar === c.id ? null : c.id)} />
           </div>
         ))}
         {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
         {hid.map((c) => (
-          <div key={c.id} style={{ height: "100%" }}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} /></div>
+          <div key={c.id} style={{ height: "100%" }}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} open={openChar === c.id} onToggle={() => setOpenChar(openChar === c.id ? null : c.id)} /></div>
         ))}
       </div>
     )}

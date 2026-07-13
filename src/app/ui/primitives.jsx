@@ -76,9 +76,6 @@ export function Segmented({ options, value, onChange }) {
         background: on ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : "transparent",
         boxShadow: on ? `0 0 12px ${T.gold}55, inset 0 1px 0 #fff6d8aa` : "none",
         color: on ? "#17110a" : T.dim }}>
-        {on && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
-          background: "linear-gradient(90deg, transparent, rgba(255,252,235,.35), transparent)",
-          animation: "ggShine 3.8s ease-in-out infinite" }} />}
         <span style={{ position: "relative" }}>{o.label}</span>
       </button>;
     })}

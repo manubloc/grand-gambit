@@ -310,11 +310,18 @@ export class HallCore {
       return me;
     }
     if (msg.t === "leaderboard") {
+      // Only real contenders make the board: anyone who has finished at least
+      // one rated duel, plus whoever is online right now. Idle test husks and
+      // one-time visitors stay invisible.
       const rows = this.store.playerIds()
-        .map((id) => { const pl = this.player(id); return { id, name: pl.name, rating: pl.rating ?? 1000, wins: pl.wins || 0, losses: pl.losses || 0, online: this.isOnline(id) }; })
+        .map((id) => { const pl = this.player(id); return { id, name: pl.name, rating: pl.rating ?? 1000, wins: pl.wins || 0, losses: pl.losses || 0, draws: pl.draws || 0, online: this.isOnline(id) }; })
+        .filter((r) => r.wins + r.losses + (r.draws || 0) > 0 || r.online)
         .sort((a, b) => b.rating - a.rating);
       const rank = rows.findIndex((r) => r.id === me) + 1;
-      this.send(me, { t: "leaderboard", top: rows.slice(0, 20), me: { rank, ...rows[rank - 1] } });
+      const self = this.player(me);
+      const meRow = rank > 0 ? { rank, ...rows[rank - 1] }
+        : { rank: null, id: me, name: self?.name || "?", rating: self?.rating ?? 1000, wins: self?.wins || 0, losses: self?.losses || 0, online: true };
+      this.send(me, { t: "leaderboard", top: rows.slice(0, 20), me: meRow });
       return me;
     }
     if (msg.t === "matchOver") return me; // legacy no-op

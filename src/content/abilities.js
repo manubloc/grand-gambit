@@ -12,6 +12,7 @@ export const TAGS = {
   aoe:     { nameDe: "Fläche",     nameEn: "Area",     color: "#ff8a4c" },
   control: { nameDe: "Kontrolle",  nameEn: "Control",  color: "#ff5d8f" },
   promo:   { nameDe: "Krönung",    nameEn: "Promotion", color: "#ffd166" },
+  trick:   { nameDe: "List",       nameEn: "Trickery",  color: "#e3c07a" },
 };
 
 export const ABILITIES = {

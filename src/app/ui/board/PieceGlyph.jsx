@@ -19,14 +19,16 @@ function HpDots({ hp, max }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
   const [col, deep] = ratio > 0.55 ? ["#3ad98a", "#188a52"] : ratio > 0.28 ? ["#ffb454", "#b56f1f"] : ["#ff4d5e", "#a12030"];
   if (max > 10) {
-    return <span style={{ display: "block", width: "0.62em", height: "max(3px, 0.05em)", marginTop: "0.035em",
+    return <span style={{ position: "absolute", bottom: "0.02em", left: "50%", transform: "translateX(-50%)",
+      display: "block", width: "0.56em", height: "max(3px, 0.045em)",
       background: "rgba(8,12,20,.66)", borderRadius: 99, overflow: "hidden", pointerEvents: "none" }}>
       <span style={{ display: "block", width: `${ratio * 100}%`, height: "100%", borderRadius: 99,
         background: `linear-gradient(180deg, ${col}, ${deep})`, transition: "width .2s ease" }} />
     </span>;
   }
-  const d = Math.min(0.088, 0.52 / max);
-  return <span style={{ display: "flex", gap: "0.028em", marginTop: "0.03em", pointerEvents: "none",
+  const d = Math.min(0.066, 0.42 / max);
+  return <span style={{ position: "absolute", bottom: "0.018em", left: "50%", transform: "translateX(-50%)",
+    display: "flex", gap: "0.022em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))" }}>
     {Array.from({ length: max }).map((_, i) => (
       <span key={i} style={{ width: `max(3.5px, ${d}em)`, height: `max(3.5px, ${d}em)`, borderRadius: "50%",
@@ -61,15 +63,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     .map((id) => ABILITIES[id]).filter(Boolean)
     .sort((x, y) => TAG_ORDER.indexOf(x.tag) - TAG_ORDER.indexOf(y.tag))
     .slice(0, 6)
-    .map((ab) => ({ id: ab.id, color: TAGS[ab.tag].color, spent: !!(ab.once && piece.used?.[ab.id]) }));
+    .map((ab) => ({ id: ab.id, color: (TAGS[ab.tag] || { color: T.gold }).color, spent: !!(ab.once && piece.used?.[ab.id]) }));
 
   // Crisp, modern: a short drop shadow for depth — no neon bloom.
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
-  const pieceSize = hpMode && piece.maxHp > 0 ? "0.76em" : "0.88em";
+  const pieceSize = hpMode && piece.maxHp > 0 ? "0.84em" : "0.9em";
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", animation: "pop .18s ease" }}>
+      alignItems: "center", justifyContent: "center", animation: "pop .18s ease",
+      paddingBottom: "0.095em", boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel
@@ -86,9 +89,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         <span aria-hidden style={{ position: "absolute", top: "-0.035em", left: "50%", transform: "translateX(-50%)",
           display: "flex", gap: "0.032em", pointerEvents: "none" }}>
           {Array.from({ length: Math.min(lvl, 10) }).map((_, i) => (
-            <span key={i} style={{ width: "max(3px, 0.07em)", height: "max(3px, 0.07em)", transform: "rotate(45deg)",
-              background: "linear-gradient(135deg, #f0d68a, #a17f3e)",
-              boxShadow: "0 0 3px #d9b56599, 0 1px 1px rgba(0,0,0,.55)" }} />
+            <span key={i} style={{ width: "max(2.5px, 0.058em)", height: "max(2.5px, 0.058em)", transform: "rotate(45deg)",
+              background: "linear-gradient(135deg, #fff3c4, #f0d68a 45%, #b98f3f)",
+              boxShadow: "0 0 4px #ffe9a8cc, 0 0 1.5px #f0d68a" }} />
           ))}
         </span>
       )}

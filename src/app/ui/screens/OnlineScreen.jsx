@@ -13,7 +13,7 @@ import { hasItem } from "../../../content/index.js";
 import { serializeSave, parseSave } from "../../../meta/index.js";
 import { useMedia } from "../../App.jsx";
 
-export function OnlineScreen({ profile, dispatch, t, net }) {
+export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
   const score = useMemo(() => retinueScore(profile), [profile]);
@@ -226,7 +226,7 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
         </Panel>
       )}
 
-      {conn === "on" && (<>
+      {conn === "on" && account?.isAdmin && (<>
         <Panel>
           <PanelTitle><CloudIc size={13} /> {t("online.vaultTitle")}</PanelTitle>
           <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("online.vaultHint")}</div>

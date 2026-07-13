@@ -42,3 +42,23 @@ export function GildedFrame({ children, pad = "14px 16px", center = false, corne
     </div>
   );
 }
+
+/** The claim-button, bottled: gold gradient, glow, and a passing gleam.
+ *  Reserve it for the ONE action a screen truly wants pressed. */
+export function GoldShineButton({ children, onClick, disabled = false, style }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "9px 16px",
+        border: "none", position: "relative", overflow: "hidden", whiteSpace: "nowrap",
+        display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 5,
+        background: disabled ? T.panel : "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
+        boxShadow: disabled ? "none" : `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa`,
+        outline: disabled ? `1.5px solid ${T.line}` : "none",
+        color: disabled ? T.faint : "#17110a", cursor: disabled ? "default" : "pointer", ...style }}>
+      {!disabled && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%",
+        pointerEvents: "none", background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
+        animation: "ggShine 3.6s ease-in-out infinite" }} />}
+      <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 5 }}>{children}</span>
+    </button>
+  );
+}

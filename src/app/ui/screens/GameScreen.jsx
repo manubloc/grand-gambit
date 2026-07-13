@@ -4,6 +4,7 @@ import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS a
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
+import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -468,10 +469,10 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
         <Segmented value={difficulty} onChange={setDifficulty}
           options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
       </>}
-      <Button variant="primary" style={{ width: "100%", marginTop: 16, padding: "13px 16px", fontSize: 16 }}
+      <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12 }}
         onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
-        <BladesIc color={T.limeInk} size={15} /> {t("quick.start")}
-      </Button>
+        <BladesIc color="#17110a" size={15} /> {t("quick.start")}
+      </GoldShineButton>
     </Panel>
   );
 }
