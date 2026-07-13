@@ -2,6 +2,16 @@
 // imports — esbuild-friendly — and a resolver from a live board piece to its
 // painting. Pieces without a painting yet fall back to the drawn SVG silently,
 // so the set may grow one figure at a time.
+import pPawn from "../assets/painted/painted-pawn.webp";
+import pGambit from "../assets/painted/painted-gambit.webp";
+import pKnight from "../assets/painted/painted-knight.webp";
+import pBishop from "../assets/painted/painted-bishop.webp";
+import pQueen from "../assets/painted/painted-queen.webp";
+import pArchbishop from "../assets/painted/painted-archbishop.webp";
+import pHawk from "../assets/painted/painted-hawk.webp";
+import pAmazon from "../assets/painted/painted-amazon.webp";
+import pAssassin from "../assets/painted/painted-assassin.webp";
+import pGuardian from "../assets/painted/painted-guardian.webp";
 import pRook from "../assets/painted/painted-rook.webp";
 import pKing from "../assets/painted/painted-king.webp";
 import pChancellor from "../assets/painted/painted-chancellor.webp";
@@ -24,6 +34,8 @@ import bArchenemy from "../assets/painted/painted-boss-archenemy.webp";
 import bLeaguemaster from "../assets/painted/painted-boss-leaguemaster.webp";
 
 export const PAINTED = {
+  pawn: pPawn, gambit: pGambit, knight: pKnight, bishop: pBishop, queen: pQueen,
+  archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,
   alchemist: pAlchemist, warlock: pWarlock, paladin: pPaladin, inquisitor: pInquisitor,
   bard: pBard, engineer: pEngineer, standard: pStandard, strategist: pStrategist,

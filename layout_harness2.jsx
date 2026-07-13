@@ -16,7 +16,7 @@ const profile = defaultProfile();
 profile.campaign = { ...(profile.campaign || {}), league: 6, cleared: [], unlocked: Object.keys(CHARACTERS) };
 
 const map = mapById("classic");
-const side = () => buildArmyFromFormation(() => 1, ["rook","dragon","mage","king","paladin","bard","engineer","rook"]);
+const side = () => buildArmyFromFormation(() => 1, map.defaultFormation);
 const state = createGame(side(), buildAiArmyForMap("easy", map, 3), { map, rules: "hp", seed: 3 });
 
 const style = document.createElement("style");
