@@ -48,11 +48,11 @@ export function AchIcon({ id, color = "#c9a45c", size = 22 }) {
 export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
   const s = { fill: "none", stroke: color, strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
   const shapes = {
-    play:    <><path d="M4.4 3.4 L7 3.8 L17.3 14.1 L15.7 15.7 L5.4 5.4 Z" fill={color} />
-      <path d="M19.6 3.4 L17 3.8 L6.7 14.1 L8.3 15.7 L18.6 5.4 Z" fill={color} />
-      <path d="M13.7 16.5 L16.5 13.7 M7.5 13.7 L10.3 16.5" stroke={color} strokeWidth="1.7" strokeLinecap="round" fill="none" />
-      <path d="M15.8 16.2 L18.1 18.5 M8.2 16.2 L5.9 18.5" stroke={color} strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <circle cx="19.1" cy="19.5" r="1.35" fill={color} /><circle cx="4.9" cy="19.5" r="1.35" fill={color} /></>,
+    play:    <><path d="M4.8 3.8 L15.3 14.3 M19.2 3.8 L8.7 14.3" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none" />
+    <path d="M13.1 16.5 L17.5 12.1 M6.5 12.1 L10.9 16.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" fill="none" />
+    <path d="M16.3 15.3 L18.5 17.5 M7.7 15.3 L5.5 17.5" stroke={color} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <circle cx="19.2" cy="18.4" r="1.3" fill={color} />
+    <circle cx="4.8" cy="18.4" r="1.3" fill={color} /></>,
     army:    <><path d="M12 3.5 C14.8 5 17.4 5.4 19 5 C19.4 12 17 17.5 12 20.5 C7 17.5 4.6 12 5 5 C6.6 5.4 9.2 5 12 3.5 Z" {...s} /><path d="M12 7 L12 16.5 M8 11.5 L16 11.5" {...s} strokeWidth="1.6" /></>,
     ach:     <><path d="M8 4 L16 4 L16 9 A4 4 0 0 1 8 9 Z" {...s} /><path d="M8 5.5 L4.5 5.5 A3.5 3.5 0 0 0 8 9.8 M16 5.5 L19.5 5.5 A3.5 3.5 0 0 1 16 9.8" {...s} /><path d="M12 13 L12 16.5 M9 20 L15 20 L14.2 16.5 L9.8 16.5 Z" {...s} /></>,
     profile: <><circle cx="12" cy="8" r="3.6" {...s} /><path d="M4.8 20 C5.4 15.4 8.2 13.2 12 13.2 C15.8 13.2 18.6 15.4 19.2 20" {...s} /></>,
@@ -125,14 +125,13 @@ export function SkullIc({ color = "#8e2f39", size = 14 }) {
 
 /** Challengers — crossed blades, a fight worth picking. */
 export function BladesIc({ color = "#8a6f4d", size = 14 }) {
-  // a duelist's crest: two slender blades, proper guards, grips, pommels
+  // crossed duelling swords, drawn in clean strokes — round caps, no odd unions
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
-    <path d="M4.4 3.4 L7 3.8 L17.3 14.1 L15.7 15.7 L5.4 5.4 Z" fill={color} />
-    <path d="M19.6 3.4 L17 3.8 L6.7 14.1 L8.3 15.7 L18.6 5.4 Z" fill={color} />
-    <path d="M13.7 16.5 L16.5 13.7 M7.5 13.7 L10.3 16.5" stroke={color} strokeWidth="1.7" strokeLinecap="round" />
-    <path d="M15.8 16.2 L18.1 18.5 M8.2 16.2 L5.9 18.5" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
-    <circle cx="19.1" cy="19.5" r="1.35" fill={color} />
-    <circle cx="4.9" cy="19.5" r="1.35" fill={color} />
+    <path d="M4.8 3.8 L15.3 14.3 M19.2 3.8 L8.7 14.3" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none" />
+    <path d="M13.1 16.5 L17.5 12.1 M6.5 12.1 L10.9 16.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" fill="none" />
+    <path d="M16.3 15.3 L18.5 17.5 M7.7 15.3 L5.5 17.5" stroke={color} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <circle cx="19.2" cy="18.4" r="1.3" fill={color} />
+    <circle cx="4.8" cy="18.4" r="1.3" fill={color} />
   </svg>;
 }
 

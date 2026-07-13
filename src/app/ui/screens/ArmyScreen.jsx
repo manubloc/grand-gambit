@@ -89,7 +89,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
   return <Panel style={{ opacity: unlocked ? 1 : 0.74, height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center", cursor: onToggle ? "pointer" : "default" }}
-      onClick={onToggle}>
+      onClick={onToggle ? (e) => { e.stopPropagation(); onToggle(); } : undefined}>
       {paintedById(char.id)
         ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
@@ -520,13 +520,19 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chars" && (
-      <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
+      <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>
         <H>{t("army.secRecruited")} · {rec.length}</H>
-        {rec.map((c) => (
-          <div key={c.id} style={c.epic && wide ? { gridColumn: "1 / -1" } : undefined}>
-            <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} open={openChar === c.id} onToggle={() => setOpenChar(openChar === c.id ? null : c.id)} />
-          </div>
-        ))}
+        {rec.map((c) => {
+          const isOpen = openChar === c.id;
+          return (
+            <div key={c.id} onClick={() => { if (!isOpen) setOpenChar(c.id); }}
+              style={{ height: "100%", cursor: isOpen ? "default" : "pointer",
+                ...((c.epic && wide) || (isOpen && wide) ? { gridColumn: "1 / -1" } : {}) }}>
+              <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar}
+                open={isOpen} onToggle={() => setOpenChar(isOpen ? null : c.id)} />
+            </div>
+          );
+        })}
         {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
         {hid.map((c) => (
           <div key={c.id} style={{ height: "100%" }}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} open={openChar === c.id} onToggle={() => setOpenChar(openChar === c.id ? null : c.id)} /></div>

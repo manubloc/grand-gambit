@@ -329,20 +329,24 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   const done = clearedCount(profile), total = campaignLength(profile);
   const ch = chapterForRow(cur?.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
-  const Card = ({ title, sub, extra, cta, onGo, art, style, shineDelay = 0 }) => (
+  const Card = ({ title, sub, extra, cta, onGo, art, style }) => (
     <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
       background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
       borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
-      {/* a faint passing gleam — the treasury's shimmer, dialed way down */}
-      <div aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "38%", pointerEvents: "none",
-        background: "linear-gradient(90deg, transparent, rgba(255,238,190,.05), transparent)",
-        animation: `ggShine 7s ease-in-out ${shineDelay}s infinite` }} />
       <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
       <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
       <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
       {extra && <div style={{ fontSize: 12.5, color: T.text, marginTop: 10 }}>{extra}</div>}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "8px 14px",
-        borderRadius: T.radiusSm, background: T.lime, color: T.limeInk, fontWeight: 800, fontSize: 13.5 }}>{cta} ›</div>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
+        borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
+        background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
+        boxShadow: `0 0 12px ${T.gold}55, inset 0 1px 0 #fff6d8aa`,
+        color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
+        <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
+          background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
+          animation: "ggShine 3.6s ease-in-out infinite" }} />
+        <span style={{ position: "relative" }}>{cta} ›</span>
+      </div>
     </button>
   );
   return (
@@ -354,10 +358,10 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
         art={<CrestArt src={crest1} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<CrestArt src={crest2} />} shineDelay={1.4} />
+        art={<CrestArt src={crest2} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
-        art={<CrestArt src={crest3} />} shineDelay={2.8} />
+        art={<CrestArt src={crest3} />} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
           cursor: "pointer", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`,
