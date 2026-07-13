@@ -105,10 +105,15 @@ export class Hall extends DurableObject {
   webSocketMessage(ws, raw) {
     let msg; try { msg = JSON.parse(raw); } catch { return; }
     const att = ws.deserializeAttachment() || {};
+    // hello: seat the identity BEFORE handling — the welcome (and friend
+    // pushes) are delivered by id, so the socket must already carry it.
+    const preSeat = msg.t === "hello" && msg.id && att.id !== msg.id;
+    if (preSeat) ws.serializeAttachment({ ...att, id: msg.id });
     try {
       const id = this.core.handle(att.id, msg, att.ip || "?");
       if (id && id !== att.id) ws.serializeAttachment({ ...att, id });
     } catch (e) {
+      if (preSeat) ws.serializeAttachment(att); // a rejected hello must not hijack the seat
       try { ws.send(JSON.stringify({ t: "error", error: String(e.message || e) })); } catch {}
     }
   }
