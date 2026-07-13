@@ -121,8 +121,14 @@ export function SkullIc({ color = "#8e2f39", size = 14 }) {
 
 /** Challengers — crossed blades, a fight worth picking. */
 export function BladesIc({ color = "#8a6f4d", size = 14 }) {
+  // a duelist's crest: two slender blades, proper guards, grips, pommels
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
-    <path d="M5 5 L17 17 M19 5 L7 17 M5 5 L8 5 M5 5 L5 8 M19 5 L16 5 M19 5 L19 8 M8.4 15.6 L6 20 M15.6 15.6 L18 20" {...gs(color)} />
+    <path d="M4.4 3.4 L7 3.8 L17.3 14.1 L15.7 15.7 L5.4 5.4 Z" fill={color} />
+    <path d="M19.6 3.4 L17 3.8 L6.7 14.1 L8.3 15.7 L18.6 5.4 Z" fill={color} />
+    <path d="M13.7 16.5 L16.5 13.7 M7.5 13.7 L10.3 16.5" stroke={color} strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M15.8 16.2 L18.1 18.5 M8.2 16.2 L5.9 18.5" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+    <circle cx="19.1" cy="19.5" r="1.35" fill={color} />
+    <circle cx="4.9" cy="19.5" r="1.35" fill={color} />
   </svg>;
 }
 

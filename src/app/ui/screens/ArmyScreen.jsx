@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
+import { GildedFrame, goldText } from "../Gilded.jsx";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame } from "../../../core/index.js";
 import {
@@ -40,7 +41,7 @@ function StatPill({ icon, val, color }) {
 function CharCard({ char, profile, dispatch, t, en, onZoom }) {
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
-  const [info, setInfo] = useState(null);
+  const abWide = useMedia("(min-width: 680px)");
 
   // Locked pieces stay a MYSTERY: a grayed silhouette, the name, and only the
   // place where their boss awaits — no stats, no abilities, pure temptation.
@@ -83,12 +84,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
   const cost = upgradeCost(char.id, level);
   const affordable = canUpgrade(profile, char.id);
 
-  const a = info ? ABILITIES[info] : null;
-  const tag = a ? TAGS[a.tag] : null;
-  const infoLevel = a ? (rungs.find((r) => r.id === info) || {}).level : 0;
 
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
-  return <Panel style={{ opacity: unlocked ? 1 : 0.74 }}>
+  return <Panel style={{ opacity: unlocked ? 1 : 0.74, height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
       {paintedById(char.id)
         ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? () => onZoom(char) : undefined}
@@ -149,90 +147,87 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
       ))}
     </div>
     {unlocked && (() => {
-      // Abilities are BOUGHT, not granted: owned = glowing chip; reachable = a
-      // purchase row with cost; beyond your level = a quiet "L{n} · ???" tease.
-      return <div style={{ display: "grid", gap: 6, marginTop: 10 }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
-          {rungs.filter((rg) => chosen.includes(rg.id)).map((rg) => {
-            const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
-            const sel = info === rg.id;
-            return <button key={rg.id} onClick={() => setInfo(sel ? null : rg.id)}
-              style={{ cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5,
-                fontSize: 12, fontWeight: 800, padding: "5px 9px", borderRadius: 999,
-                border: `1px solid ${tg.color}`, boxShadow: `0 0 8px ${tg.color}44`,
-                background: sel ? tg.color + "26" : "rgba(8,6,15,.4)", color: tg.color }}>
-              <span>{ab.icon}</span>{en ? ab.nameEn : ab.nameDe}
-            </button>;
-          })}
-          {rungs.filter((rg) => level < rg.level).map((rg, i) => {
-            // Tactics need a horizon: the next two rungs show their cards
-            // face-up (grayed), the deeper ones stay a mystery.
-            if (i < 2) {
-              const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
-              const sel = info === rg.id;
-              return <button key={rg.id} onClick={() => setInfo(sel ? null : rg.id)}
-                style={{ cursor: "pointer", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5,
-                  fontSize: 12, fontWeight: 800, padding: "5px 9px", borderRadius: 999,
-                  border: `1px dashed ${tg.color}77`, background: sel ? tg.color + "1f" : T.panel2,
-                  color: tg.color + "bb", filter: "saturate(.65)" }}>
-                <span style={{ opacity: .8 }}>{ab.icon}</span>{en ? ab.nameEn : ab.nameDe}
-                <span style={{ fontSize: 10, fontWeight: 700, color: T.faint }}>L{rg.level}</span>
-              </button>;
-            }
-            return <span key={rg.id} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
-              padding: "5px 9px", borderRadius: 999, border: `1px dashed ${T.line}`, background: T.panel2, color: T.faint }}>
-              <LockIc size={10} /> L{rg.level} · ???
-            </span>;
-          })}
-        </div>
-        {rungs.filter((rg) => !chosen.includes(rg.id) && level >= rg.level).map((rg) => {
+      // Every talent is a tile of equal height: owned ones glow in their tag
+      // color behind a gold-tinted frame, purchasable ones invite with a gold
+      // button, near-future ones sit dimmed — and once a talent is revealed,
+      // its explanation NEVER disappears again, bought or not.
+      const future = rungs.filter((rg) => level < rg.level);
+      return <div style={{ display: "grid", gap: 8, marginTop: 12,
+        gridTemplateColumns: abWide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>
+        {rungs.map((rg) => {
+          const owned = chosen.includes(rg.id);
+          const reach = level >= rg.level;
+          if (!reach && future.indexOf(rg) >= 2) return (
+            <div key={rg.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+              minHeight: 72, borderRadius: 12, border: `1px dashed ${T.line}`, background: "rgba(10, 14, 26, .45)",
+              color: T.faint, fontSize: 12 }}>
+              <LockIc size={12} />
+              <span className="gg-serif" style={{ letterSpacing: ".08em" }}>
+                {en ? "Level" : "Stufe"} {rg.level} · {en ? "still veiled" : "noch verhüllt"}</span>
+            </div>
+          );
           const ab = ABILITIES[rg.id], tg = TAGS[ab.tag];
           const price = abilityCost(rg.level);
-          const can = canUnlockAbility(profile, char.id, rg.id);
-          return <div key={rg.id} style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px",
-            background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${tg.color}66` }}>
-            <span style={{ fontSize: 15 }}>{ab.icon}</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 12.5, fontWeight: 800, color: tg.color }}>{en ? ab.nameEn : ab.nameDe}</div>
-              <div style={{ fontSize: 11.5, color: INK }}>{en ? ab.textEn : ab.textDe}</div>
+          const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
+          return (
+            <div key={rg.id} style={{ display: "flex", flexDirection: "column", gap: 6, padding: "10px 12px 9px",
+              borderRadius: 12,
+              border: `1px solid ${owned ? tg.color + "88" : reach ? "#8a6d3566" : T.line}`,
+              background: owned
+                ? `linear-gradient(165deg, ${tg.color}16, rgba(8, 10, 20, .55))`
+                : reach ? `linear-gradient(165deg, rgba(43, 36, 16, .35), ${T.panel2})` : T.panel2,
+              boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)` : "none",
+              opacity: owned || reach ? 1 : 0.66, filter: owned || reach ? "none" : "saturate(.55)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                <span style={{ fontSize: 15, lineHeight: 1 }}>{ab.icon}</span>
+                <b style={{ fontSize: 12.5, letterSpacing: ".01em", color: owned ? tg.color : reach ? T.text : T.dim }}>
+                  {en ? ab.nameEn : ab.nameDe}</b>
+                <span style={{ flex: 1 }} />
+                {owned && <span aria-hidden style={{ width: 7, height: 7, transform: "rotate(45deg)", flex: "0 0 auto",
+                  background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588" }} />}
+              </div>
+              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: owned || reach ? INK : T.dim }}>
+                {en ? ab.descEn : ab.descDe}</div>
+              <div style={{ flex: 1 }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                <Chip color={tg.color} bg={"rgba(8, 10, 20, .5)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
+                <Chip color={ab.once ? T.gold : T.green} bg={"rgba(8, 10, 20, .5)"}>
+                  {ab.once ? (en ? "once" : "einmalig") : (en ? "passive" : "dauerhaft")}</Chip>
+                {!ab.live && <Chip color={T.faint} bg={"rgba(8, 10, 20, .5)"}>{en ? "soon" : "bald"}</Chip>}
+                <span style={{ flex: 1 }} />
+                {owned
+                  ? <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".08em", color: "#d9b565" }}>
+                      {en ? "Acquired" : "Erworben"}</span>
+                  : reach
+                    ? <button onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} disabled={!can}
+                        style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 12, borderRadius: 999, padding: "6px 12px",
+                          display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap",
+                          cursor: can ? "pointer" : "default", border: `1.5px solid ${can ? "#e3c07a" : T.line}`,
+                          background: can ? "linear-gradient(170deg, #e9cf8a, #c9a45c)" : T.panel,
+                          color: can ? "#17110a" : T.faint }}>
+                        {en ? "Acquire" : "Erwerben"} · {price} <SkillStar size={12} /></button>
+                    : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".06em", color: T.faint }}>
+                        {en ? "from level" : "ab Stufe"} {rg.level}</span>}
+              </div>
             </div>
-            <button onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} disabled={!can}
-              style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12, borderRadius: 999, padding: "7px 12px",
-                cursor: can ? "pointer" : "default", border: `1.5px solid ${can ? T.gold : T.line}`,
-                background: can ? T.gold : T.panel, color: can ? "#17110a" : T.faint, whiteSpace: "nowrap" }}>
-              ⛏ {price} <SkillStar size={12} />
-            </button>
-          </div>;
+          );
         })}
         {chosen.length > 0 && (
           <button onClick={() => dispatch({ type: "RESPEC", id: char.id })} disabled={(profile.gold || 0) < RESPEC_GOLD}
-            style={{ justifySelf: "start", background: "none", border: "none", fontFamily: "inherit", cursor: "pointer",
-              fontSize: 11.5, color: (profile.gold || 0) >= RESPEC_GOLD ? T.dim : T.faint, padding: "2px 2px 0",
-              textDecoration: "underline" }}>
+            style={{ gridColumn: "1 / -1", justifySelf: "start", background: "none", border: "none", fontFamily: "inherit",
+              cursor: "pointer", fontSize: 11.5, color: (profile.gold || 0) >= RESPEC_GOLD ? T.dim : T.faint,
+              padding: "0 2px", textDecoration: "underline" }}>
             ↺ {t("army.respec", { g: RESPEC_GOLD })}
           </button>
         )}
       </div>;
     })()}
-
-    {a && (
-      <div style={{ marginTop: 10, padding: 10, borderRadius: 12, background: T.bg2, border: `1px solid ${tag.color}55`, borderLeft: `3px solid ${tag.color}` }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 16 }}>{a.icon}</span>
-          <b style={{ color: T.text }}>{en ? a.nameEn : a.nameDe}</b>
-          <Chip color={tag.color} bg={T.panel2}>{en ? tag.nameEn : tag.nameDe}</Chip>
-          <Chip color={a.once ? T.gold : T.green} bg={T.panel2}>{a.once ? (en ? "once" : "einmalig") : (en ? "passive" : "dauerhaft")}</Chip>
-          {!a.live && <Chip color={T.faint} bg={T.panel2}>⚙ {en ? "soon" : "bald"}</Chip>}
-        </div>
-        <div style={{ fontSize: 13, color: INK, marginTop: 6, lineHeight: 1.5 }}>{en ? a.descEn : a.descDe}</div>
-        {unlocked && level < infoLevel && <div style={{ fontSize: 12, color: T.faint, marginTop: 5 }}>{en ? "Unlocks at level" : "Schaltet frei ab Stufe"} {infoLevel}</div>}
-      </div>
-    )}
   </Panel>;
 }
 
 const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
-  <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center" }}>
+  <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center",
+    transform: "translateY(-7%)" }}>
     <PieceGlyph piece={{ kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle={art} />
   </span>
 );
@@ -241,6 +236,7 @@ const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
 const FORMATION_MAPS = MAPS; // Klassik zuerst — sie ist die Referenz
 
 function FormationEditor({ profile, dispatch, t, en }) {
+  const feWide = useMedia("(min-width: 900px)");
   const pieces = CHARACTER_LIST.filter((c) => c.kind !== "P" && isUnlocked(c, profile));
   const unlockedIds = pieces.map((c) => c.id);
 
@@ -287,7 +283,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <BoardView state={preview} interactive={false} theme={map.theme} maxPx={340} artStyle={profile.pieceArt || "painted"} />
+          <BoardView state={preview} interactive={false} theme={map.theme} maxPx={feWide ? 560 : 340} artStyle={profile.pieceArt || "painted"} />
         </div>
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
@@ -365,8 +361,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
   {/* map choice — its own strip below the box: ONE row, scroll if it must */}
   <div style={{ minWidth: 0, maxWidth: "100%" }}>
     <FieldLabel>{t("army.mapPick")}</FieldLabel>
-    <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 10,
-      paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
+    <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 10, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
       {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;
         const open = mapUnlocked(profile, m.id);
@@ -445,11 +440,11 @@ function CharLightbox({ char, en, onClose }) {
   );
 }
 
-export function ArmyScreen({ profile, dispatch, t }) {
+export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const [zoomChar, setZoomChar] = useState(null);
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
-  const [tab, setTab] = useState("formation"); // formation | gear | chars
+  const [tab, setTab] = useState(initialTab || "formation"); // formation | gear | chars
   // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
   const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
@@ -457,15 +452,17 @@ export function ArmyScreen({ profile, dispatch, t }) {
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
   return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
     <CharLightbox char={zoomChar} en={profile.lang === "en"} onClose={() => setZoomChar(null)} />
-    {/* balance — always in sight, whatever the tab */}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
-      background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "10px 14px" }}>
-      <span className="gg-serif" style={{ fontSize: 14, letterSpacing: ".08em", color: T.dim }}>{t("army.balance")}</span>
+    {/* balance — always in sight, whatever the tab; wears the treasury's gold */}
+    <GildedFrame pad="11px 16px">
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span className="gg-serif" style={{ fontSize: 13, letterSpacing: ".22em", textTransform: "uppercase",
+        ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("army.balance")}</span>
       <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
         <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillStar size={17} /> {profile.sp || 0}</span>
         <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><GoldCoin size={17} shine /> {profile.gold || 0}</span>
       </span>
     </div>
+    </GildedFrame>
     {/* three rooms instead of one endless scroll */}
     <Segmented value={tab} onChange={setTab} options={[
       { value: "formation", label: t("army.tabFormation") },
@@ -484,7 +481,7 @@ export function ArmyScreen({ profile, dispatch, t }) {
         ))}
         {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
         {hid.map((c) => (
-          <div key={c.id}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} /></div>
+          <div key={c.id} style={{ height: "100%" }}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} /></div>
         ))}
       </div>
     )}

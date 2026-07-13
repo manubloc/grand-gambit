@@ -281,6 +281,8 @@ export default function App() {
         </header>
       )}
       <main style={{ flex: 1, minHeight: 0, padding: immersive ? 0 : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+        ...(tab === "play" && view === "hub" && !inMatch && !immersive
+          ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {!immersive && (
@@ -357,10 +359,15 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         art={<CrestArt src={crest3} />} shineDelay={2.8} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
-          cursor: "pointer", background: "none", border: `1px dashed ${T.line}`, borderRadius: T.radius,
-          padding: "11px 14px", color: T.dim, fontSize: 13 }}>
-          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("tut.title")}</span>
-          {" · "}{t("tut.sub")}
+          cursor: "pointer", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`,
+          border: "1px solid #8a6d3544", borderRadius: T.radius, boxShadow: T.shadow,
+          padding: "13px 14px", color: T.dim, fontSize: 13 }}>
+          <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
+            transform: "rotate(45deg)", verticalAlign: "2px", marginRight: 10 }} />
+          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".08em", fontSize: 14.5 }}>{t("tut.title")}</span>
+          <span style={{ color: T.faint }}>{" · "}</span>{t("tut.sub")}
+          <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
+            transform: "rotate(45deg)", verticalAlign: "2px", marginLeft: 10 }} />
         </button>
       )}
     </div>

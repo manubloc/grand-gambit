@@ -4,6 +4,7 @@ import { serializeSave, parseSave, listRestorePoints, readSnapshot } from "../..
 import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
+import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
 import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
 
 const inApp = () =>
@@ -26,6 +27,15 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
   }
 
   return <div style={{ display: "grid", gap: 12 }}>
+    <GildedFrame center pad="15px 16px 13px">
+      <div className="gg-serif" style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".3em",
+        ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("profile.title")}</div>
+      <GoldRule margin="8px 18%" />
+      <div className="gg-serif" style={{ fontSize: 22, letterSpacing: ".04em", color: T.goldBright }}>
+        {profile.name || account?.name || "—"}</div>
+      {account?.name && <div style={{ fontSize: 12, color: T.dim, marginTop: 3 }}>
+        {account.name}{account.isAdmin ? " · Admin" : ""}</div>}
+    </GildedFrame>
     <Panel>
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
