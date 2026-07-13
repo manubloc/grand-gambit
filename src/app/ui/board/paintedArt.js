@@ -60,7 +60,12 @@ export function paintedForPiece(piece) {
   if (!piece) return null;
   if (piece.bossId) {
     if (piece.bossId.startsWith("pb_")) return PAINTED[piece.bossId.slice(3)] || null;
-    return PAINTED["boss-" + String(piece.bossId).replace(/^b[_-]?/, "")] || null;
+    // dedicated portrait first (painted-boss-<id>.webp), then the two named
+    // finals, then the boss's art family (golem/beast/serpent/wraith/tyrant)
+    return PAINTED["boss-" + piece.bossId]
+      || (piece.bossId === "b23" ? PAINTED["boss-archenemy"] : null)
+      || (piece.bossId === "b25" ? PAINTED["boss-leaguemaster"] : null)
+      || PAINTED["boss-" + (piece.art || "")] || null;
   }
   if (piece.hero) return PAINTED.gambit || null; // hero keeps his own portrait or stays drawn
   const id = KIND2ID[piece.kind];

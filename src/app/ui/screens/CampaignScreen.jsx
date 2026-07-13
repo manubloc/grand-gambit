@@ -429,7 +429,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>
                   {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
-                  {t(node?.boss?.pure ? "camp.boss" : "camp.challenger")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
+                  {t(node?.boss?.pure
+                    ? ((node.next || []).length === 0 && !node.gate ? "camp.boss" : "camp.rival")
+                    : "camp.newPiece")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
                   <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
                   {!known && <> · {t("camp.unknown")}</>}

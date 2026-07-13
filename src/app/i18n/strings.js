@@ -52,7 +52,7 @@ const DE = {
   "camp.tollShort": "Zu wenig Gold — du hast {have}.", "camp.payToll": "Zoll zahlen",
   "game.confirmResign": "Wirklich aufgeben?",
   "hub.station": "Station {a} von {b}", "hub.nextStop": "Nächster Halt", "hub.soon": "Bald verfügbar",
-  "camp.reward": "Bonus", "camp.league": "Die Liga", "camp.boss": "Endboss", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
+  "camp.reward": "Bonus", "camp.league": "Die Liga", "camp.boss": "Endboss", "camp.rival": "Konkurrent", "camp.newPiece": "Neue Figur", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
   "army.formation": "Aufstellung", "army.mapPick": "Karte wählen", "army.classicHint": "Die klassische Schlacht — traditionelle Aufstellung, hier wird nichts verstellt.", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
 };
@@ -107,7 +107,7 @@ const EN = {
   "camp.tollShort": "Not enough gold — you have {have}.", "camp.payToll": "Pay the toll",
   "game.confirmResign": "Really resign?",
   "hub.station": "Stage {a} of {b}", "hub.nextStop": "Next stop", "hub.soon": "Coming soon",
-  "camp.reward": "Bonus", "camp.league": "The League", "camp.boss": "Boss", "camp.unknown": "Movement unknown", "camp.back": "Back to campaign", "game.stageCleared": "Stage cleared!",
+  "camp.reward": "Bonus", "camp.league": "The League", "camp.boss": "Boss", "camp.rival": "Rival", "camp.newPiece": "New piece", "camp.unknown": "Movement unknown", "camp.back": "Back to campaign", "game.stageCleared": "Stage cleared!",
   "army.formation": "Formation", "army.mapPick": "Choose a map", "army.classicHint": "The classic battle — traditional setup, nothing to rearrange here.", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
   "army.standard": "Standard", "army.flex": "Flex", "army.invalid": "Formation incomplete",
 };
