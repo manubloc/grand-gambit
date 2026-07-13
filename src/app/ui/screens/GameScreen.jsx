@@ -389,7 +389,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   if (wideMatch) return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%", display: "flex" }}>
-      <div style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", padding: "10px 2px 14px 10px" }}>
         {boardBlock}
       </div>
       <aside style={{ width: 272, flex: "0 0 auto", minHeight: 0, display: "flex", flexDirection: "column",

@@ -1,6 +1,7 @@
 import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { PieceArt, CategoryMark } from "./PieceArt.jsx";
+import { PieceArt } from "./PieceArt.jsx";
+import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -26,26 +27,22 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // then only his OWN commander (pov) still sees who he is.
   const showHero = !!piece.hero && (piece.color === pov || !(piece.abilities || []).includes("gambit_masquerade"));
 
-  const tags = [];
-  for (const id of piece.abilities || []) {
-    const ab = ABILITIES[id];
-    if (ab && !tags.includes(ab.tag)) tags.push(ab.tag);
-  }
-  tags.sort((x, y) => TAG_ORDER.indexOf(x) - TAG_ORDER.indexOf(y));
+  // Ability dots (right rail): sorted by tag for a stable column; once-spent
+  // talents fade to ash so a glance tells you what is left in the tank.
+  const abilityDots = (piece.abilities || [])
+    .map((id) => ABILITIES[id]).filter(Boolean)
+    .sort((x, y) => TAG_ORDER.indexOf(x.tag) - TAG_ORDER.indexOf(y.tag))
+    .slice(0, 6)
+    .map((ab) => ({ id: ab.id, color: TAGS[ab.tag].color, spent: !!(ab.once && piece.used?.[ab.id]) }));
 
   // Crisp, modern: a short drop shadow for depth — no neon bloom.
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
-  const shownTags = tags.slice(0, isBoss ? 4 : 5);
-  if (isBoss) shownTags.unshift("boss");
-  const pieceSize = shownTags.length ? "0.83em" : "0.93em";
+  const pieceSize = "0.9em";
 
   return (
-    <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", animation: "pop .18s ease" }}>
-      {shownTags.length > 0 && (
-        <div style={{ display: "flex", gap: "0.04em", height: "0.17em", alignItems: "center", marginBottom: "-0.01em" }}>
-          {shownTags.map((tg) => <CategoryMark key={tg} tag={tg} color={tg === "boss" ? T.danger : TAGS[tg].color} size="0.16em" />)}
-        </div>
-      )}
+    <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "flex-end", animation: "pop .18s ease",
+      paddingBottom: "0.055em", boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel
@@ -58,14 +55,36 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       </div>
 
       {showLevel && lvl > 1 && (
-        <span style={{ position: "absolute", top: "-0.06em", left: "-0.08em", fontSize: "0.23em", fontWeight: 900,
-          color: neon, background: "#0d1017", border: `1px solid ${neon}`, borderRadius: "0.3em",
-          padding: "0 0.26em", lineHeight: 1.5, boxShadow: "0 1px 2px rgba(0,0,0,.6)" }}>{lvl}</span>
+        <span aria-hidden style={{ position: "absolute", top: "-0.035em", left: "50%", transform: "translateX(-50%)",
+          display: "flex", gap: "0.032em", pointerEvents: "none" }}>
+          {Array.from({ length: Math.min(lvl, 10) }).map((_, i) => (
+            <span key={i} style={{ width: "max(3px, 0.07em)", height: "max(3px, 0.07em)", transform: "rotate(45deg)",
+              background: "linear-gradient(135deg, #f0d68a, #a17f3e)",
+              boxShadow: "0 0 3px #d9b56599, 0 1px 1px rgba(0,0,0,.55)" }} />
+          ))}
+        </span>
       )}
       {hpMode && (
-        <span style={{ position: "absolute", bottom: "-0.05em", right: "-0.09em", fontSize: "0.22em", fontWeight: 900,
-          color: neon, background: "#0d1017", border: `1px solid ${neon}aa`, borderRadius: "0.3em",
-          padding: "0 0.24em", lineHeight: 1.5 }}>{piece.atk}</span>
+        <span style={{ position: "absolute", left: "-0.045em", bottom: "0.16em", display: "flex",
+          flexDirection: "column", alignItems: "center", gap: "0.005em", pointerEvents: "none",
+          filter: "drop-shadow(0 1px 2px rgba(0,0,0,.85))" }}>
+          <span style={{ fontSize: "0.185em", fontWeight: 900, color: neon, lineHeight: 1,
+            textShadow: "0 1px 2px rgba(0,0,0,.9)" }}>{piece.atk}</span>
+          <BladesIc color={neon} size={"0.16em"} />
+        </span>
+      )}
+      {abilityDots.length > 0 && (
+        <span aria-hidden style={{ position: "absolute", right: "-0.035em", top: "50%", transform: "translateY(-50%)",
+          display: "flex", flexDirection: "column", gap: "0.04em", pointerEvents: "none" }}>
+          {isBoss && <span style={{ width: "max(3px, 0.075em)", height: "max(3px, 0.075em)", transform: "rotate(45deg)",
+            background: T.danger, boxShadow: `0 0 4px ${T.danger}88` }} />}
+          {abilityDots.map((d) => (
+            <span key={d.id} style={{ width: "max(3px, 0.08em)", height: "max(3px, 0.08em)", borderRadius: "50%",
+              background: d.spent ? "#454a58" : d.color,
+              boxShadow: d.spent ? "inset 0 0 0 1px rgba(255,255,255,.12)" : `0 0 4px ${d.color}77`,
+              opacity: d.spent ? 0.6 : 1 }} />
+          ))}
+        </span>
       )}
       {!hpMode && piece.shield > 0 && (
         <span style={{ position: "absolute", bottom: "-0.02em", right: "-0.04em", display: "flex", gap: "0.05em" }}>

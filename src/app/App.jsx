@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave } from "../meta/index.js";
+import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
@@ -71,6 +71,7 @@ function reducer(state, a) {
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);
     case "RECORD_STAGE": return recordStage(state, a);
     case "UPGRADE_PIECE": return upgradePiece(state, a.id);
+    case "BUY_SP_SHARD": return buySpShard(state);
     case "UNLOCK_ABILITY": return unlockAbility(state, a.id, a.ability);
     case "RESPEC": return respecPiece(state, a.id);
     case "CLAIM_ACH": return claimAchievement(state, a.id);

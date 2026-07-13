@@ -53,6 +53,19 @@ export const canUpgrade = (profile, charId) => {
   const l = characterLevel(profile, charId);
   return l < MAX_PIECE_LEVEL && skillPoints(profile) >= upgradeCost(charId);
 };
+
+// ── Star shards: bottled skill points, rationed by league ─────────────────
+// Two shards lie in the court's vault per league you have reached; each one
+// grinds down into a single skill point. Gold buys them, the road unlocks them.
+export const SP_SHARD_GOLD = 45;
+export const SP_SHARDS_PER_LEAGUE = 2;
+export function spShardCap(profile) { return SP_SHARDS_PER_LEAGUE * (profile.campaign?.league || 1); }
+export function buySpShard(profile) {
+  const bought = profile.spShards || 0;
+  if (bought >= spShardCap(profile) || (profile.gold || 0) < SP_SHARD_GOLD) return profile;
+  return { ...profile, gold: (profile.gold || 0) - SP_SHARD_GOLD, sp: (profile.sp || 0) + 1, spShards: bought + 1 };
+}
+
 export function upgradePiece(profile, charId) {
   const l = characterLevel(profile, charId);
   if (l >= MAX_PIECE_LEVEL) return profile;

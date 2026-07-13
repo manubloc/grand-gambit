@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText } from "../Gilded.jsx";
+import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame } from "../../../core/index.js";
 import {
@@ -130,11 +131,12 @@ function CharCard({ char, profile, dispatch, t, en, onZoom }) {
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
-          {maxed ? t("army.maxed") : <>Level {level} → {level + 1} · <b style={{ color: affordable ? T.gold : T.danger }}>{cost} <SkillStar size={12} /></b></>}
+          {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
         </div>
         {!maxed && <Button variant={affordable ? "primary" : "subtle"} disabled={!affordable}
-          style={{ padding: "8px 14px", fontSize: 13 }}
-          onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}>{t("army.upgrade")}</Button>}
+          style={{ padding: "8px 14px", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}
+          onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}>
+          {t("army.upgrade")} · {cost} <SkillStar size={12} /></Button>}
       </div>
     )}
 
@@ -279,17 +281,23 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
     <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
 
+    <div style={{ display: feWide ? "grid" : "block", gridTemplateColumns: feWide ? "minmax(0, 1fr) minmax(280px, 360px)" : undefined,
+      gap: feWide ? 18 : 0, alignItems: "start" }}>
+    <div style={{ minWidth: 0 }}>
     {preview && (
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: feWide ? 0 : 12 }}>
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <BoardView state={preview} interactive={false} theme={map.theme} maxPx={feWide ? 560 : 340} artStyle={profile.pieceArt || "painted"} />
+          <div style={{ width: "100%", maxWidth: feWide ? "min(700px, calc(100dvh - 250px))" : 340 }}>
+            <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={profile.pieceArt || "painted"} />
+          </div>
         </div>
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}
+    </div>
 
-
+    <div style={{ minWidth: 0 }}>
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
       {draft.map((id, i) => {
         const open = pick === i;
@@ -356,6 +364,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
       <Button variant="subtle" onClick={() => setDraft(map.defaultFormation)}>{t("army.standard")}</Button>
     </div>
     {!legal && <div style={{ fontSize: 12, color: T.danger, marginTop: 8 }}>{t("army.invalid")}</div>}
+    </div>
+    </div>
   </Panel>
 
   {/* map choice — its own strip below the box: ONE row, scroll if it must */}
@@ -380,6 +390,42 @@ function GearPanel({ profile, dispatch, t, en }) {
     <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase", marginBottom: 8 }}>{t("army.supplies")}</div>
       <div style={{ display: "grid", gap: 8 }}>
+        {(() => {
+          // Star shards: the treasury's rarest ware — skill points for gold,
+          // strictly rationed: two per league the campaign has reached.
+          const cap = spShardCap(profile);
+          const bought = profile.spShards || 0;
+          const left = Math.max(0, cap - bought);
+          const can = left > 0 && (profile.gold || 0) >= SP_SHARD_GOLD;
+          return <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: 10,
+            border: "1px solid #8a6d3566", background: `linear-gradient(165deg, rgba(43, 36, 16, .4), ${T.panel2})`,
+            position: "relative", overflow: "hidden" }}>
+            <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "40%", pointerEvents: "none",
+              background: "linear-gradient(90deg, transparent, rgba(255,240,190,.06), transparent)",
+              animation: "ggShine 6s ease-in-out infinite" }} />
+            <span style={{ width: 24, display: "grid", placeItems: "center", position: "relative" }}><SkillStar size={22} /></span>
+            <div style={{ flex: 1, minWidth: 0, position: "relative" }}>
+              <div style={{ fontSize: 13, fontWeight: 800 }}>
+                <span className="gg-serif" style={{ letterSpacing: ".04em", ...goldText }}>{en ? "Star shard" : "Sternensplitter"}</span>
+                <span style={{ color: T.dim, fontWeight: 700 }}> · {bought}/{cap}</span>
+              </div>
+              <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.5 }}>
+                {en
+                  ? `A captured spark of insight, ground into a skill point. The court keeps ${"" + 2} per league in its vault.`
+                  : "Ein gebannter Funke Erleuchtung, zu einem Skillpunkt geschliffen. Der Hof verwahrt zwei je erreichter Liga."}
+              </div>
+            </div>
+            <button onClick={() => dispatch({ type: "BUY_SP_SHARD" })} disabled={!can}
+              style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
+                position: "relative", border: "none", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 5,
+                background: can ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : T.panel,
+                boxShadow: can ? `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa` : "none",
+                color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default",
+                outline: can ? "none" : `1.5px solid ${T.line}` }}>
+              {left === 0 ? (en ? "Vault empty" : "Tresor leer") : <><GoldCoin size={13} /> {SP_SHARD_GOLD}</>}
+            </button>
+          </div>;
+        })()}
         {ITEM_LIST.filter((it) => itemRevealed(profile, it)).map((it) => {
           const owned = it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0);
           const full = it.kind === "key" ? owned : owned >= (it.max || 99);

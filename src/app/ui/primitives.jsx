@@ -69,7 +69,18 @@ export function Segmented({ options, value, onChange }) {
   return <div style={{ display: "flex", gap: 4, background: T.bg2, padding: 4, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
     {options.map((o) => {
       const on = value === o.value;
-      return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1, border: on ? "1px solid rgba(255,240,200,.45)" : "1px solid transparent", borderRadius: 8, padding: "9px 6px", fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer", opacity: o.disabled ? 0.45 : 1, background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent", color: on ? T.limeInk : T.dim }}>{o.label}</button>;
+      return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
+        border: on ? "1px solid rgba(255,240,200,.5)" : "1px solid transparent", borderRadius: 8, padding: "9px 6px",
+        fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer",
+        opacity: o.disabled ? 0.45 : 1, position: "relative", overflow: "hidden",
+        background: on ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : "transparent",
+        boxShadow: on ? `0 0 12px ${T.gold}55, inset 0 1px 0 #fff6d8aa` : "none",
+        color: on ? "#17110a" : T.dim }}>
+        {on && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
+          background: "linear-gradient(90deg, transparent, rgba(255,252,235,.35), transparent)",
+          animation: "ggShine 3.8s ease-in-out infinite" }} />}
+        <span style={{ position: "relative" }}>{o.label}</span>
+      </button>;
     })}
   </div>;
 }

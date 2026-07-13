@@ -34,3 +34,5 @@ export {
 export { cloudConfigured, signInWithGoogle, signInWithProvider, signInEmailCloud, signUpEmailCloud, resumeCloudSession, signOutCloud } from "./cloudAuth.js";
 export { emptyRecords, recordStage, totalBestMoves, fmtMs } from "./records.js";
 export { BOARDS, LB_MAX, mergeBoard, fetchBoard, submitScore } from "./leaderboard.js";
+
+export { SP_SHARD_GOLD, SP_SHARDS_PER_LEAGUE, spShardCap, buySpShard } from "./leveling.js";

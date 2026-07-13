@@ -10,20 +10,24 @@ const MOVE_DOT = "#c9a45c";
 function HpBar({ hp, max }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
   const col = ratio > 0.55 ? "#3ad98a" : ratio > 0.28 ? "#ffb454" : "#ff4d5e";
-  const wrap = { position: "absolute", left: "8%", right: "8%", bottom: "4.5%", height: "9%", minHeight: 4,
-    background: "rgba(0,0,0,.62)", borderRadius: 3, overflow: "hidden", pointerEvents: "none",
-    boxShadow: "0 0 0 1px rgba(0,0,0,.5)", padding: 1 };
-  if (max > 14) {
-    return <div style={wrap}><div style={{ width: `${ratio * 100}%`, height: "100%", background: col, borderRadius: 2, transition: "width .2s ease" }} /></div>;
+  // Big beasts keep a slim bar; everyone else wears quiet dots, centered.
+  if (max > 10) {
+    return <div style={{ position: "absolute", left: "20%", right: "20%", bottom: "3.4%", height: "5.5%", minHeight: 3,
+      background: "rgba(0,0,0,.55)", borderRadius: 3, overflow: "hidden", pointerEvents: "none", padding: 1 }}>
+      <div style={{ width: `${ratio * 100}%`, height: "100%", background: col, borderRadius: 2, transition: "width .2s ease" }} />
+    </div>;
   }
-  return (
-    <div style={{ ...wrap, display: "flex", gap: 1 }}>
-      {Array.from({ length: max }).map((_, i) => (
-        <span key={i} style={{ flex: 1, borderRadius: 1, background: i < hp ? col : "rgba(255,255,255,.13)", transition: "background .2s ease" }} />
-      ))}
-    </div>
-  );
+  return <div style={{ position: "absolute", left: 0, right: 0, bottom: "3%", display: "flex",
+    justifyContent: "center", gap: "3%", pointerEvents: "none" }}>
+    {Array.from({ length: max }).map((_, i) => (
+      <span key={i} style={{ width: `max(3px, ${Math.min(5.2, 46 / max)}%)`, aspectRatio: "1 / 1", borderRadius: "50%",
+        background: i < hp ? col : "rgba(8, 12, 20, .68)",
+        boxShadow: i < hp ? `0 0 3px ${col}88` : "inset 0 0 0 1px rgba(255,255,255,.15)",
+        transition: "background .2s ease" }} />
+    ))}
+  </div>;
 }
+
 
 // hex -> rgba: with a texture underlay the squares go slightly translucent so
 // the material (fine scratches, grain) whispers through — a breath, not a print.
