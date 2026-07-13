@@ -280,17 +280,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
   const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
 
-  return (
-    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%",
-      display: "flex", flexDirection: "column" }}>
+  const [wideMatch, setWideMatch] = useState(typeof window !== "undefined" && window.innerWidth >= 940);
+  useEffect(() => {
+    const on = () => setWideMatch(window.innerWidth >= 940);
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
+
+  // Desktop: the board claims every pixel it can get — pills, trays and
+  // status move into a slim column beside it. Phones keep the stacked layout.
+  const headerBar = (<>
       {/* top bar: ‹ back · context · clock · ⚑ resign — everything floats, nothing scrolls */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
+      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
         {onExit && (
           <button onClick={leave} style={pill({ border: `1.5px solid ${T.gold}88`, color: T.gold })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
+        <div style={{ flex: "1 1 130px", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
           {pvp ? <>
               <Chip color={T.gold} bg={T.panel}><BladesIc color={T.gold} size={12} /> {pvp.oppName}</Chip>
               <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
@@ -324,6 +331,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         )}
       </div>
 
+</>);
+  const enemyStrip = (<>
       {/* enemy strip */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
         {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
@@ -331,6 +340,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <Tray kinds={state.captured.b} color="w" />
       </div>
 
+</>);
+  const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
@@ -346,6 +357,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null} />}
       </div>
 
+</>);
+  const yourStrip = (<>
       {/* your strip: badges · status · captured · undo */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
         padding: "2px 14px calc(10px + env(safe-area-inset-bottom))" }}>
@@ -372,6 +385,30 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <HourglassIc size={15} /> {hourglassLeft}</button>
         )}
       </div>
+</>);
+
+  if (wideMatch) return (
+    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%", display: "flex" }}>
+      <div style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}>
+        {boardBlock}
+      </div>
+      <aside style={{ width: 272, flex: "0 0 auto", minHeight: 0, display: "flex", flexDirection: "column",
+        overflowY: "auto", padding: "2px 6px 6px 0" }}>
+        {headerBar}
+        {enemyStrip}
+        <div style={{ flex: 1, minHeight: 14 }} />
+        {yourStrip}
+      </aside>
+    </div>
+  );
+
+  return (
+    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%",
+      display: "flex", flexDirection: "column" }}>
+      {headerBar}
+      {enemyStrip}
+      {boardBlock}
+      {yourStrip}
     </div>
   );
 }
@@ -396,7 +433,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
       <FieldLabel>{t("game.map")}</FieldLabel>
-      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto",
+      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", paddingBottom: 10,
         WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
         {MAPS.map((m) => {
           const open = mapUnlocked(profile, m.id);

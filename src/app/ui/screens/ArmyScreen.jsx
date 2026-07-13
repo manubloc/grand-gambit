@@ -20,9 +20,9 @@ import { BoardView } from "../board/BoardView.jsx";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
-function Glyph({ kind, level, abilities, shield, size = 36, hero = false }) {
+function Glyph({ kind, level, abilities, shield, size = 36, hero = false, art = "painted" }) {
   return <div style={{ fontSize: size, width: "1.3em", height: "1.3em", display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
-    <PieceGlyph piece={{ kind, color: "w", level, abilities, shield, used: {}, hero }} />
+    <PieceGlyph piece={{ kind, color: "w", level, abilities, shield, used: {}, hero }} artStyle={art} />
   </div>;
 }
 
@@ -50,7 +50,8 @@ function CharCard({ char, profile, dispatch, t, en }) {
       <Panel style={{ position: "relative", overflow: "hidden", opacity: 0.62 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, filter: "grayscale(1)" }}>
           <div style={{ width: 46, height: 48, flex: "0 0 auto", opacity: 0.75 }}>
-            <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} />
+            {/* locked pieces stay a mystery: always the plain silhouette, never the painting */}
+            <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div className="gg-serif" style={{ fontSize: 16, letterSpacing: ".04em", color: T.dim }}>{en ? char.nameEn : char.nameDe}</div>
@@ -93,7 +94,7 @@ function CharCard({ char, profile, dispatch, t, en }) {
         ? <img src={paintedById(char.id)} alt="" style={{ width: 44, height: 56, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6 }} />
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} />}
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={profile.pieceArt || "painted"} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800 }}>{en ? char.nameEn : char.nameDe}</div>
@@ -228,9 +229,9 @@ function CharCard({ char, profile, dispatch, t, en }) {
   </Panel>;
 }
 
-const SlotGlyph = ({ kind, size = 26 }) => (
+const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
   <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center" }}>
-    <PieceGlyph piece={{ kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} />
+    <PieceGlyph piece={{ kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle={art} />
   </span>
 );
 
@@ -296,7 +297,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
           style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
             display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0,
             background: open ? T.lime : T.bg2, border: `2px solid ${open ? T.lime : T.line}` }}>
-          <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} />
+          <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={profile.pieceArt || "painted"} />
         </button>;
       })}
     </div>
@@ -309,7 +310,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             return <button key={c.id} onClick={() => setSlot(pick, c.id)}
               style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", borderRadius: 9, cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13,
                 background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text, border: `1px solid ${on ? T.lime : T.line}` }}>
-              <SlotGlyph kind={c.kind} size={18} />{en ? c.nameEn : c.nameDe}
+              <SlotGlyph kind={c.kind} size={18} art={profile.pieceArt || "painted"} />{en ? c.nameEn : c.nameDe}
             </button>;
           })}
         </div>
@@ -344,7 +345,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12, alignItems: "center" }}>
       {reqChips.map((r) => (
         <Chip key={r.id} color={r.have === r.need ? T.green : T.danger} bg={T.panel2}>
-          <SlotGlyph kind={CHARACTERS[r.id].kind} size={13} /> {r.have}/{r.need}
+          <SlotGlyph kind={CHARACTERS[r.id].kind} size={13} art={profile.pieceArt || "painted"} /> {r.have}/{r.need}
         </Chip>
       ))}
       <Chip color={flexCount === flexNeed ? T.green : T.danger} bg={T.panel2}>{t("army.flex")} {flexCount}/{flexNeed}</Chip>
@@ -360,7 +361,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
   {/* map choice — its own strip below the box: ONE row, scroll if it must */}
   <div style={{ minWidth: 0, maxWidth: "100%" }}>
     <FieldLabel>{t("army.mapPick")}</FieldLabel>
-    <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch",
+    <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 10,
       paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
       {FORMATION_MAPS.map((m) => {
         const on = m.id === mapId;

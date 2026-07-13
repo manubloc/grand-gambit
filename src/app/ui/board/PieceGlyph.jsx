@@ -10,7 +10,7 @@ const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "prom
 // a row of category emblems (one per distinct ability category it has — more
 // abilities ⇒ more emblems), plus its exact LEVEL, its ATK (HP mode) and shield
 // pips (chess mode). Player glows cyan, enemy magenta.
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "svg" }) {
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted" }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction

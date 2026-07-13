@@ -243,7 +243,7 @@ export default function App() {
     <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
       ...(immersive ? { height: "100dvh", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
         <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -268,7 +268,7 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none", height: "100dvh", overflow: "hidden" } : {}) }}>
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("camp"); }} />}
+      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,

@@ -28,8 +28,12 @@ export const GLOBAL_CSS = `
     -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
   button:active { transform: scale(.97); }
-  ::-webkit-scrollbar { width: 9px; height: 9px; }
-  ::-webkit-scrollbar-thumb { background: ${T.line}; border-radius: 9px; }
+  ::-webkit-scrollbar { width: 10px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2b3550; border: 2.5px solid ${T.bg}; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c9a45c88; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+  * { scrollbar-width: thin; scrollbar-color: #2b3550 transparent; }
   input { font-family: inherit; }
   .gg-serif { font-family: ${T.serif}; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
