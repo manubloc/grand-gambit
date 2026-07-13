@@ -8,7 +8,7 @@ import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
-import { SERVER_URL } from "../../config.js";
+import { SERVER_URL, SERVER_URL_FALLBACK } from "../../config.js";
 import { hasItem } from "../../../content/index.js";
 import { serializeSave, parseSave } from "../../../meta/index.js";
 import { useMedia } from "../../App.jsx";
@@ -23,7 +23,6 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
   const [server, setServer] = useState(SERVER_URL || o.server || "");
   const name = profile.name || "Spieler " + (o.id || "").slice(0, 4);
   const [conn, setConn] = useState(net.open ? "on" : "off"); // off | busy | on | fail
-  const [adv, setAdv] = useState(false);
   const [waitSec, setWaitSec] = useState(0);
   const [onlineN, setOnlineN] = useState(0);
   const [friends, setFriends] = useState([]);
@@ -82,9 +81,17 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
     if (!force && !profile.notices?.online) { setAskConsent(true); return; }
     setConn("busy");
     dispatch({ type: "SET_ONLINE", online: { ...o, server } });
+    const creds = { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public" };
     try {
-      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public" });
-    } catch { setConn("fail"); }
+      await net.connect(server, creds);
+    } catch {
+      // primary unreachable — quietly try the legacy address once (until the
+      // custom domain is live), the player only ever sees neutral status text
+      if (server === SERVER_URL && SERVER_URL_FALLBACK && SERVER_URL_FALLBACK !== server) {
+        try { await net.connect(SERVER_URL_FALLBACK, creds); return; } catch {}
+      }
+      setConn("fail");
+    }
   }
   function setPrivacy(privacy) {
     dispatch({ type: "SET_ONLINE", online: { ...o, privacy } });
@@ -142,20 +149,6 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
                 <div style={{ fontSize: 13.5, color: T.danger }}>{t("online.unreachable")}</div>
                 <Button variant="primary" onClick={connect}>{t("online.retry")}</Button>
               </>
-            )}
-            <button onClick={() => setAdv(!adv)} style={{ background: "none", border: "none", color: T.faint,
-              fontFamily: "inherit", fontSize: 11.5, cursor: "pointer", textAlign: "left", padding: 0 }}>
-              {adv ? "▾" : "▸"} {t("online.advanced")}
-            </button>
-            {adv && (
-              <Line>
-                {/* the built-in address stays out of sight — only a custom
-                    server (self-hosters) ever appears in this field */}
-                <input style={input} value={server === SERVER_URL ? "" : server}
-                  onChange={(e) => setServer(e.target.value.trim() || SERVER_URL)}
-                  placeholder={t("online.serverPh")} />
-                <Button variant="subtle" onClick={connect} style={{ padding: "9px 14px" }}>{t("online.connect")}</Button>
-              </Line>
             )}
           </div>
         ) : (
