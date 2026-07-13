@@ -8,7 +8,7 @@ import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
-import { SERVER_URL, SERVER_URL_FALLBACK } from "../../config.js";
+import { SERVER_URL } from "../../config.js";
 import { hasItem } from "../../../content/index.js";
 import { serializeSave, parseSave } from "../../../meta/index.js";
 import { useMedia } from "../../App.jsx";
@@ -81,17 +81,9 @@ export function OnlineScreen({ profile, dispatch, t, net }) {
     if (!force && !profile.notices?.online) { setAskConsent(true); return; }
     setConn("busy");
     dispatch({ type: "SET_ONLINE", online: { ...o, server } });
-    const creds = { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public" };
     try {
-      await net.connect(server, creds);
-    } catch {
-      // primary unreachable — quietly try the legacy address once (until the
-      // custom domain is live), the player only ever sees neutral status text
-      if (server === SERVER_URL && SERVER_URL_FALLBACK && SERVER_URL_FALLBACK !== server) {
-        try { await net.connect(SERVER_URL_FALLBACK, creds); return; } catch {}
-      }
-      setConn("fail");
-    }
+      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public" });
+    } catch { setConn("fail"); }
   }
   function setPrivacy(privacy) {
     dispatch({ type: "SET_ONLINE", online: { ...o, privacy } });

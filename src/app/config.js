@@ -4,8 +4,6 @@
 // Until it is set, the Online screen shows a friendly setup note instead of
 // asking players to type addresses.
 export const SERVER_URL = "wss://duell.grandgambit.win/ws"; // neutral custom domain (Cloudflare Worker gg-hall)
-// Silent fallback while the custom domain is being set up — remove once duell.* is live.
-export const SERVER_URL_FALLBACK = "wss://gg-hall.frey-manu.workers.dev/ws";
 export const APP_VERSION = "2.0";
 
 // Cloud accounts (Supabase) whose e-mail addresses get admin powers.
