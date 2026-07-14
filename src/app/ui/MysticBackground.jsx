@@ -34,63 +34,59 @@ export function MysticBackground({ league = 1 }) {
     const reduced = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) return; // the hall stands still; no smoke
     const ctx = cv.getContext && cv.getContext("2d");
-    if (!ctx || typeof innerWidth === "undefined") return; // headless / test envs: the hall stands still
+    if (!ctx || typeof innerWidth === "undefined") return; // headless / test envs
+
+    // Rendered at HALF resolution and blurred by the GPU (CSS filter on the
+    // canvas): soft as fog, never pixelated, and cheap enough for plain
+    // circles instead of gradients. No trail buffer — every frame is cleared,
+    // so nothing lingers. The flame look comes from OVERLAP: dozens of small
+    // tongues rise from each lower corner, flicker sideways, shrink and dim
+    // as they climb — as if vanishing into the depth of the hall.
+    const S = 0.5;
     let W = 0, H = 0, raf = 0, running = true, t = 0;
-    const fit = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; }; // 1x — fog needs no retina
+    const fit = () => { W = cv.width = Math.round(innerWidth * S); H = cv.height = Math.round(innerHeight * S); };
     fit();
     addEventListener("resize", fit);
 
-    // CRESCENT wisps: rare, large and slow. At most a couple drift at once,
-    // born only in the lower corners; each rides a circular arc, so its
-    // lingering trail paints a sickle curling inward.
-    const wisps = [];
-    let nextSpawn = 0;
-    const spawnWisp = () => {
-      const left = Math.random() < 0.5;
-      const cx = left ? W * (0.02 + Math.random() * 0.16) : W * (0.82 + Math.random() * 0.16);
-      const cy = H * (0.8 + Math.random() * 0.22);
-      const r = 130 + Math.random() * Math.min(260, H * 0.32);   // arc radius — some sweep wide
-      const a0 = left ? Math.PI * 0.28 : Math.PI * 0.72;         // start low, curl up & inward
-      const da = (left ? -1 : 1) * (0.0016 + Math.random() * 0.0018); // SLOW
-      return { cx, cy, r, a: a0, da, life: 0,
-        maxLife: 1100 + Math.random() * 900,                      // ~20–35 s per crescent
-        size: 42 + Math.random() * 58,                            // large, soft bodies
-        grow: 0.05 + Math.random() * 0.07,                        // the arc breathes outward
-        gold: Math.random() < 0.3, seed: Math.random() * 7 };
+    const mk = (side) => {                       // side: -1 left corner, +1 right
+      const ex = side < 0 ? W * (0.06 + Math.random() * 0.1) : W * (0.84 + Math.random() * 0.1);
+      return { side, ex, x: ex + (Math.random() - 0.5) * W * 0.05,
+        y: H * (1.0 + Math.random() * 0.14),
+        vy: -(0.45 + Math.random() * 0.75),      // brisk rise — flame, not fog
+        life: 0, maxLife: 220 + Math.random() * 200,
+        size: (26 + Math.random() * 44), seed: Math.random() * 9,
+        warm: Math.random() < 0.42 };
     };
+    const N = 96;                                 // many tongues → dense overlap
+    const ps = [];
+    for (let i = 0; i < N; i++) { const p = mk(i % 2 ? 1 : -1); p.life = Math.random() * p.maxLife; ps.push(p); }
 
     const step = () => {
       if (!running) return;
       t += 0.016;
-      // the trail lingers long — that is what draws the sickle
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0,0.018)";
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H);                 // NO lingering trails
       ctx.globalCompositeOperation = "lighter";
       const tint = tintRef.current;
-      // rare births: only ever one or two (at most three) crescents share the night
-      if (t > nextSpawn && wisps.length < 3) {
-        wisps.push(spawnWisp());
-        nextSpawn = t + 5 + Math.random() * 11;
-      }
-      for (let i = wisps.length - 1; i >= 0; i--) {
-        const p = wisps[i];
-        p.a += p.da * (0.8 + 0.2 * Math.sin(t * 0.4 + p.seed)); // uneven, breathing sweep
-        p.r += p.grow;
-        p.life += 1;
+      for (const p of ps) {
         const k = p.life / p.maxLife;
-        if (k >= 1) { wisps.splice(i, 1); continue; }
-        const x = p.cx + Math.cos(p.a) * p.r + Math.sin(t * 0.6 + p.seed) * 6;
-        const y = p.cy + Math.sin(p.a) * p.r * -1 + Math.cos(t * 0.5 + p.seed) * 4;
-        const alpha = (k < 0.18 ? k / 0.18 : k > 0.7 ? (1 - k) / 0.3 : 1) * (p.gold ? 0.05 : 0.075);
-        const c = p.gold ? tint.a : tint.s;
-        const size = p.size * (0.85 + 0.3 * Math.sin(p.life * 0.02 + p.seed));
-        const g = ctx.createRadialGradient(x, y, 0, x, y, size);
-        g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${alpha})`);
-        g.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
-        ctx.fillStyle = g;
+        // flicker like a tongue of flame; a soft homing pull keeps every wisp
+        // near its corner — the middle of the screen stays untouched
+        p.x += Math.sin(t * 1.5 + p.seed * 7 + p.y * 0.02) * 0.55 + (p.ex - p.x) * 0.004;
+        p.y += p.vy * (1 - k * 0.55);            // slows with height → reads as distance
+        p.x += (W * 0.5 - p.x) * 0.0007 * k;     // a whisper of vanishing-point pull (depth)
+        p.life += 1;
+        if (k >= 1 || p.y < H * 0.3) { Object.assign(p, mk(p.side)); continue; }
+        const size = p.size * (1 - k * 0.62);    // shrinks into the deep
+        const fadeIn = Math.min(1, k / 0.12);
+        const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
+        const a = fadeIn * fadeOut * fadeOut * (p.warm ? 0.07 : 0.06);
+        if (a <= 0.004) continue;
+        // warm at the root, smoke-cool as it climbs away
+        const cw = p.warm ? tint.a : tint.s, cs = tint.s;
+        const r = cw[0] + (cs[0] - cw[0]) * k, g2 = cw[1] + (cs[1] - cw[1]) * k, b = cw[2] + (cs[2] - cw[2]) * k;
+        ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, Math.max(2, size), 0, Math.PI * 2);
         ctx.fill();
       }
       raf = requestAnimationFrame(step);
@@ -111,7 +107,7 @@ export function MysticBackground({ league = 1 }) {
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", filter: "blur(16px) saturate(1.15)" }} />
     </div>
   );
 }
