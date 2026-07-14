@@ -40,47 +40,57 @@ export function MysticBackground({ league = 1 }) {
     fit();
     addEventListener("resize", fit);
 
-    // wisps: born low and at the flanks, they climb along a bending field
-    const N = Math.min(80, Math.round((innerWidth * innerHeight) / 26000));
-    const ps = [];
-    const spawn = () => {
-      const flank = Math.random();
-      const x = flank < 0.42 ? Math.random() * W * 0.3
-        : flank < 0.84 ? W - Math.random() * W * 0.3
-        : W * 0.3 + Math.random() * W * 0.4;                 // a few rise from the center
-      return { x, y: H * 0.72 + Math.random() * H * 0.36, vx: 0, vy: 0,
-        life: 0, maxLife: 380 + Math.random() * 300, seed: Math.random() * 7,
-        size: 14 + Math.random() * 26, gold: Math.random() < 0.24 };
+    // CRESCENT wisps: rare, large and slow. At most a couple drift at once,
+    // born only in the lower corners; each rides a circular arc, so its
+    // lingering trail paints a sickle curling inward.
+    const wisps = [];
+    let nextSpawn = 0;
+    const spawnWisp = () => {
+      const left = Math.random() < 0.5;
+      const cx = left ? W * (0.02 + Math.random() * 0.16) : W * (0.82 + Math.random() * 0.16);
+      const cy = H * (0.8 + Math.random() * 0.22);
+      const r = 130 + Math.random() * Math.min(260, H * 0.32);   // arc radius — some sweep wide
+      const a0 = left ? Math.PI * 0.28 : Math.PI * 0.72;         // start low, curl up & inward
+      const da = (left ? -1 : 1) * (0.0016 + Math.random() * 0.0018); // SLOW
+      return { cx, cy, r, a: a0, da, life: 0,
+        maxLife: 1100 + Math.random() * 900,                      // ~20–35 s per crescent
+        size: 42 + Math.random() * 58,                            // large, soft bodies
+        grow: 0.05 + Math.random() * 0.07,                        // the arc breathes outward
+        gold: Math.random() < 0.3, seed: Math.random() * 7 };
     };
-    for (let i = 0; i < N; i++) { const p = spawn(); p.life = Math.random() * p.maxLife; ps.push(p); }
 
     const step = () => {
       if (!running) return;
       t += 0.016;
-      // fading memory: yesterday's smoke thins, the trails stay a while
+      // the trail lingers long — that is what draws the sickle
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0,0.03)";
+      ctx.fillStyle = "rgba(0,0,0,0.018)";
       ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
       const tint = tintRef.current;
-      for (const p of ps) {
-        // the flow field: two slow waves bend every path into a ribbon
-        const ang = Math.sin(p.x * 0.004 + t * 0.3 + p.seed) * 1.7
-                  + Math.cos(p.y * 0.005 - t * 0.22 + p.seed * 0.6) * 1.4;
-        p.vx = (p.vx + Math.cos(ang) * 0.042) * 0.985;
-        p.vy = (p.vy + Math.sin(ang) * 0.03 - 0.016) * 0.985;
-        p.x += p.vx; p.y += p.vy; p.life += 1;
+      // rare births: only ever one or two (at most three) crescents share the night
+      if (t > nextSpawn && wisps.length < 3) {
+        wisps.push(spawnWisp());
+        nextSpawn = t + 5 + Math.random() * 11;
+      }
+      for (let i = wisps.length - 1; i >= 0; i--) {
+        const p = wisps[i];
+        p.a += p.da * (0.8 + 0.2 * Math.sin(t * 0.4 + p.seed)); // uneven, breathing sweep
+        p.r += p.grow;
+        p.life += 1;
         const k = p.life / p.maxLife;
-        const alpha = (k < 0.2 ? k / 0.2 : k > 0.75 ? (1 - k) / 0.25 : 1)
-          * (p.gold ? 0.05 : 0.085);
-        if (k >= 1 || p.y < -60 || p.x < -80 || p.x > W + 80) { Object.assign(p, spawn()); continue; }
+        if (k >= 1) { wisps.splice(i, 1); continue; }
+        const x = p.cx + Math.cos(p.a) * p.r + Math.sin(t * 0.6 + p.seed) * 6;
+        const y = p.cy + Math.sin(p.a) * p.r * -1 + Math.cos(t * 0.5 + p.seed) * 4;
+        const alpha = (k < 0.18 ? k / 0.18 : k > 0.7 ? (1 - k) / 0.3 : 1) * (p.gold ? 0.05 : 0.075);
         const c = p.gold ? tint.a : tint.s;
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+        const size = p.size * (0.85 + 0.3 * Math.sin(p.life * 0.02 + p.seed));
+        const g = ctx.createRadialGradient(x, y, 0, x, y, size);
         g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${alpha})`);
         g.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
       }
       raf = requestAnimationFrame(step);
@@ -91,14 +101,13 @@ export function MysticBackground({ league = 1 }) {
     return () => { running = false; cancelAnimationFrame(raf); removeEventListener("resize", fit); document.removeEventListener("visibilitychange", vis); };
   }, []);
 
-  const mask = "radial-gradient(ellipse 92% 78% at 50% 64%, #000 42%, rgba(0,0,0,.55) 68%, transparent 96%)";
+  const mask = "radial-gradient(ellipse 78% 72% at 50% 66%, #000 38%, rgba(0,0,0,.5) 64%, transparent 92%)";
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden",
       background: "radial-gradient(120% 100% at 50% 30%, #070a12 0%, #04060a 72%)" }}>
       <img src={bgHall} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: 0,
-        transform: "translateX(-50%)", width: "max(100%, 1400px)", minHeight: "62%", objectFit: "cover",
-        objectPosition: "center bottom", userSelect: "none",
-        WebkitMaskImage: mask, maskImage: mask, opacity: 0.92 }} />
+        transform: "translateX(-50%)", width: "min(96%, 1080px)", userSelect: "none",
+        WebkitMaskImage: mask, maskImage: mask, opacity: 0.9 }} />
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />

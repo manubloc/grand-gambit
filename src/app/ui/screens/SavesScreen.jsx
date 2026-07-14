@@ -1,6 +1,7 @@
 // Career select — every account keeps several save slots, each documenting
 // its league, cleared count, percentage and total playtime. Admins get the
 // progress dial: any slot can be set to 0…100% in journey order.
+import { MysticBackground } from "../MysticBackground.jsx";
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
@@ -55,6 +56,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
     <div style={{ minHeight: "100dvh", background: T.bg, padding: "26px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      <MysticBackground league={(saves || []).reduce((m, sv) => Math.max(m, sv?.league || sv?.meta?.league || 1), 1)} />
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
