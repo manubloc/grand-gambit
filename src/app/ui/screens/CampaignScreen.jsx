@@ -1,4 +1,5 @@
 // Campaign — a HORIZONTAL illustrated journey, now a full-screen WINDOW onto
+import { familyOf } from "../../../core/index.js";
 // the world: the map IS the screen (100dvh minus the app header), every piece
 // of UI floats above it. The Old Watch stands on the left, the crimson LIGA
 // keep on the far right; the dotted trail winds through four chapters of
@@ -409,12 +410,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {onBack && (
           <button onClick={onBack} className="gg-serif" style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-            cursor: "pointer", background: "linear-gradient(170deg, rgba(248,242,226,.95), rgba(233,224,199,.92))",
-            border: "1px solid #8a7a55", color: "#3a3020", borderRadius: 999,
-            padding: "8px 15px 8px 11px", fontFamily: "inherit", fontWeight: 700, fontSize: 13.5, letterSpacing: ".04em",
-            boxShadow: "0 2px 7px rgba(46,42,32,.35), inset 0 1px 0 rgba(255,252,240,.8)",
-            backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
-            <span style={{ fontSize: 16, lineHeight: 1, color: "#6d5b33" }}>‹</span> {t("common.back")}
+            cursor: "pointer", background: "rgba(8, 11, 20, .42)",
+            border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
+            padding: "8px 16px 8px 12px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
+            boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
+            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
         <div style={{ flex: 1 }} />
@@ -449,9 +450,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
           </div>
           {boss && (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
-              <div style={{ width: 40, height: 40, flex: "0 0 auto" }}>
+              <div style={{ width: 84, height: 108, flex: "0 0 auto" }}>
                 {(() => {
                   const painting = paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
                   return painting
@@ -463,13 +464,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                         detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />;
                 })()}
               </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>
-                  {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
-                  {t("camp.rival")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
-                <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
-                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}
-                  {!known && <> · {t("camp.unknown")}</>}
+              <div style={{ minWidth: 0, paddingBottom: 3 }}>
+                <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
+                <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                  <HeartIc color="#8a6f4d" size={12} /> {boss.hp} <span style={{ opacity: .55 }}>·</span> <BladesIc color="#8a6f4d" size={12} /> {boss.atk}
+                  {(() => { const f = familyOf(boss.kind);
+                    return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>
                 {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}

@@ -21,12 +21,16 @@ import mL0 from "../assets/marble-l0.webp"; import mL1 from "../assets/marble-l1
 import mL3 from "../assets/marble-l3.webp"; import mL4 from "../assets/marble-l4.webp"; import mL5 from "../assets/marble-l5.webp";
 import mD0 from "../assets/marble-d0.webp"; import mD1 from "../assets/marble-d1.webp"; import mD2 from "../assets/marble-d2.webp";
 import mD3 from "../assets/marble-d3.webp"; import mD4 from "../assets/marble-d4.webp"; import mD5 from "../assets/marble-d5.webp";
+import mG0 from "../assets/marble-g0.webp"; import mG1 from "../assets/marble-g1.webp"; import mG2 from "../assets/marble-g2.webp";
+import mG3 from "../assets/marble-g3.webp"; import mG4 from "../assets/marble-g4.webp"; import mG5 from "../assets/marble-g5.webp";
 // ── dark marble & gold: every square is a real slab cut from the reference
 // image; a deterministic hash deals the variants so no two boards feel cloned,
 // yet the same match always shows the same stone. ──
 const MARBLE_L = [mL0, mL1, mL2, mL3, mL4, mL5];
 const MARBLE_D = [mD0, mD1, mD2, mD3, mD4, mD5];
-const slab = (i, dark) => (dark ? MARBLE_D : MARBLE_L)[((i * 2654435761) >>> 8) % 6];
+const MARBLE_G = [mG0, mG1, mG2, mG3, mG4, mG5];   // vein glow, same crops as MARBLE_D
+const slabIx = (i) => ((i * 2654435761) >>> 8) % 6;
+const slab = (i, dark) => (dark ? MARBLE_D : MARBLE_L)[slabIx(i)];
 const REDUCED = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true }) {
@@ -117,6 +121,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           background: `linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
           boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.3)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
+          {dark && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen",
+            animation: `marblePulse 6s ease-in-out ${((i * 37) % 60) / 10}s infinite` }} />}
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
@@ -179,10 +186,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
           background: `radial-gradient(62% 54% at 50% 42%, rgba(255,208,110,.10), transparent 68%),
             radial-gradient(125% 108% at 50% 40%, transparent 42%, rgba(2,3,6,.52) 100%)` }} />
-        {/* the veins breathe: a slow golden sheen pulses over the stone */}
-        {!REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-          mixBlendMode: "overlay", animation: "marblePulse 6s ease-in-out infinite",
-          background: "radial-gradient(75% 65% at 50% 45%, rgba(255,196,92,.55), rgba(255,196,92,.08) 70%, transparent 100%)" }} />}
+
         {/* the material rides on top too: a soft-light wash of the same wood, so
             scratches and grain read across light and dark squares alike */}
         {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",

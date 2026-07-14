@@ -287,7 +287,7 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, padding: immersive ? 0 : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+      <main style={{ flex: 1, minHeight: 0, padding: immersive ? "0 6px" : inMatch ? "14px 14px 24px" : "14px 14px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
