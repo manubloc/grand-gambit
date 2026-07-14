@@ -12,7 +12,7 @@ import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
+import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
@@ -369,7 +369,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
               </div>}
               <div style={{ position: "relative", width: "100%", height: "100%", filter: "drop-shadow(0 2px 3px rgba(46,42,32,.35))" }}>
-                <WandererArt size="100%" />
+                {bm && PAINTED.gambit
+                  ? <img src={PAINTED.gambit} alt="" draggable={false} style={{ width: "100%", height: "100%",
+                      objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
+                  : <WandererArt size="100%" />}
               </div>
             </div>;
           })()}
@@ -390,11 +393,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
       <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {onBack && (
-          <button onClick={onBack} style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-            cursor: "pointer", background: "#0d1017b8", border: `1.5px solid ${T.gold}88`, color: T.gold, borderRadius: 999,
-            padding: "8px 14px 8px 10px", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5,
-            boxShadow: "0 3px 10px rgba(0,0,0,.4)", backdropFilter: "blur(13px)", WebkitBackdropFilter: "blur(13px)" }}>
-            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {t("common.back")}
+          <button onClick={onBack} className="gg-serif" style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+            cursor: "pointer", background: "linear-gradient(170deg, rgba(248,242,226,.95), rgba(233,224,199,.92))",
+            border: "1px solid #8a7a55", color: "#3a3020", borderRadius: 999,
+            padding: "8px 15px 8px 11px", fontFamily: "inherit", fontWeight: 700, fontSize: 13.5, letterSpacing: ".04em",
+            boxShadow: "0 2px 7px rgba(46,42,32,.35), inset 0 1px 0 rgba(255,252,240,.8)",
+            backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
+            <span style={{ fontSize: 16, lineHeight: 1, color: "#6d5b33" }}>‹</span> {t("common.back")}
           </button>
         )}
         <div style={{ flex: 1 }} />

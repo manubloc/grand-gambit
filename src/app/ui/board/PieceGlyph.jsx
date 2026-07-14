@@ -18,7 +18,7 @@ const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "prom
 // (>10 HP) keep a slim glass bar instead.
 function HpDots({ hp, max }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
-  const [col, deep] = ratio > 0.55 ? ["#1c9457", "#07421f"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
+  const [col, deep] = ratio > 0.55 ? ["#22a763", "#0a5229"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
   if (max > 10) {
     return <span style={{ position: "absolute", bottom: "0.006em", left: "50%", transform: "translateX(-50%)",
       display: "block", width: "0.56em", height: "max(3.5px, 0.05em)",
@@ -71,18 +71,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
 
   // Crisp, modern: a short drop shadow for depth — no neon bloom.
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
-  const pieceSize = hpMode && piece.maxHp > 0 ? "0.84em" : "0.9em";
+  const pieceSize = hpMode && piece.maxHp > 0 ? "0.8em" : "0.88em";
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center", animation: "pop .18s ease",
-      paddingBottom: hpMode && piece.maxHp > 0 ? "0.145em" : "0.1em", boxSizing: "border-box" }}>
+      boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel
           const painting = artStyle === "painted" ? paintedForPiece(piece) : null;
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
-            objectFit: "contain", objectPosition: "bottom", filter: white ? undefined : ENEMY_FILTER,
+            objectFit: "contain", objectPosition: "center", filter: white ? undefined : ENEMY_FILTER,
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}
@@ -90,22 +90,22 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {hpMode && piece.maxHp > 0 && <HpDots hp={piece.hp} max={piece.maxHp} />}
 
       {showLevel && lvl > 1 && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.012em", right: "-0.018em",
-          width: "max(10px, 0.165em)", height: "max(10px, 0.165em)", transform: "rotate(45deg)",
-          borderRadius: "18%", display: "grid", placeItems: "center", pointerEvents: "none",
-          background: "linear-gradient(135deg, #fff3c4 0%, #f0d68a 42%, #b98f3f 100%)",
-          boxShadow: "0 0 5px #ffe9a8aa, inset 0 0 0 0.5px #7a5c26, inset 0 1px 1px #fffbe6aa" }}>
-          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6.5px, 0.095em)", fontWeight: 900,
-            color: "#241a06", lineHeight: 1, letterSpacing: 0 }}>{lvl}</span>
+        <span aria-hidden style={{ position: "absolute", top: "-0.008em", right: "-0.012em",
+          width: "max(9.5px, 0.15em)", height: "max(9.5px, 0.15em)", transform: "rotate(45deg)",
+          borderRadius: "20%", display: "grid", placeItems: "center", pointerEvents: "none",
+          background: "linear-gradient(135deg, #efdc9e 0%, #d9b565 46%, #a5813c 100%)",
+          boxShadow: "0 1px 2px rgba(0,0,0,.5), inset 0 0 0 0.5px #6f5526, inset 0 0.5px 0.5px #fff3c488" }}>
+          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6px, 0.088em)", fontWeight: 800,
+            color: "#2a2008", lineHeight: 1, letterSpacing: 0 }}>{lvl}</span>
         </span>
       )}
       {hpMode && (
-        <span style={{ position: "absolute", left: "-0.04em", top: "50%", transform: "translateY(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: "0.008em", pointerEvents: "none",
-          filter: "drop-shadow(0 1px 2px rgba(0,0,0,.85))" }}>
-          <BladesIc color={neon} size={"0.155em"} />
-          <span style={{ fontSize: "0.185em", fontWeight: 900, color: neon, lineHeight: 1,
-            textShadow: "0 1px 2px rgba(0,0,0,.9)" }}>{piece.atk}</span>
+        <span style={{ position: "absolute", left: "-0.035em", top: "50%", transform: "translateY(-50%)",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: "0.006em", pointerEvents: "none",
+          filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.6))", opacity: 0.94 }}>
+          <BladesIc color={white ? "#cbae6d" : "#93a2be"} size={"0.14em"} />
+          <span style={{ fontSize: "0.17em", fontWeight: 800, color: white ? "#ecdfb4" : "#ccd6e8", lineHeight: 1,
+            textShadow: "0 1px 1.5px rgba(0,0,0,.7)" }}>{piece.atk}</span>
         </span>
       )}
       {abilityDots.length > 0 && (

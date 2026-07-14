@@ -158,7 +158,11 @@ export function buildStageMatch(id, profile = null) {
 /** Clearing an AVAILABLE node: grants bonus XP (spendable + lifetime) and, for
  *  piece bosses, unlocks that piece. Replays change nothing. */
 export function advanceCampaign(profile, id) {
-  if (nodeStatus(profile, id) !== "available") return profile;
+  const st = nodeStatus(profile, id);
+  // Winning the League Keep again still opens the next league — without this,
+  // a fully cleared map (e.g. set via the admin progress tool) is a dead end.
+  const keepRematch = id === "n22" && st === "cleared";
+  if (st !== "available" && !keepRematch) return profile;
   const node = nodeById(id);
   const league = profile.campaign?.league || 1;
   const mult = leagueRewardMult(league);
