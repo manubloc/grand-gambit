@@ -118,12 +118,14 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
-          background: `linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
-          boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.3)",
+          // a veil sits on the stone (structure ~50% back — pieces lead, the board recedes),
+          // then a soft diagonal light, then the slab itself
+          background: `linear-gradient(rgba(10,13,20,.35), rgba(10,13,20,.35)), linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
+          boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.45)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           {dark && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen",
-            animation: `marblePulse 6s ease-in-out ${((i * 37) % 60) / 10}s infinite` }} />}
+            animation: `marblePulse 14s ease-in-out ${((i * 37) % 140) / 10}s infinite` }} />}
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
@@ -153,7 +155,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // Integer cell size from the measured box — SSR / first paint fall back to a
   // fluid grid; the client snaps to exact pixels right after mount, so every
   // tile is the same size on every screen (no fr-track rounding drift).
-  const GAP = 1;
+  const GAP = 2; // dark seams between the slabs — the board reads as separate stone plates
   let cell = 0;
   if (avail.w > 0) {
     const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
@@ -179,7 +181,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
         display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
-        background: "linear-gradient(120deg, #5c4620, #c9a45c 45%, #8a6d35 70%, #5c4620)",
+        background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
         {/* the hall's light: a warm heart, night pressing in from the rim */}

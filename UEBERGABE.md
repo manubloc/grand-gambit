@@ -11,14 +11,16 @@ ACCOUNTS-ANLEITUNG, DEPLOY-WORKER.md, UMBAU-PLAN.md.
 ## Live & Infrastruktur
 - **https://grandgambit.win** (Cloudflare Pages "grand-gambit", Auto-Deploy bei
   Push auf main; Build `npm run build`, Output `dist`, NODE_VERSION=22).
-- GitHub: **manubloc/grand-gambit** (privat, main, HEAD **a622769** = v0.21.17).
+- GitHub: **manubloc/grand-gambit** (**ÖFFENTLICH**, main). Deshalb Grundregel:
+  niemals Zugangsdaten, Tokens, Konto-IDs oder private E-Mails in Repo-Dateien
+  schreiben — Betriebsdetails gehören in den Passwortmanager des Nutzers.
 - **Online-Duell:** Cloudflare Worker **gg-hall** (Durable Object "Hall", SQLite,
   hibernatable WebSockets). Neutrale Domain **wss://duell.grandgambit.win/ws**
   (Custom Domain aktiv, Zertifikat läuft). Alte URL gg-hall.frey-manu.workers.dev
   ist bewusst noch aktiv (fängt alte PWA-Caches), taucht aber nirgends mehr im
-  Quellcode auf. Cloudflare-Konto Frey.manu@gmail.com, Account-ID 73af6b7e9469b4f0ac2577e7c9e5ac18.
-- **Supabase** kuhriectbryhezhbnsrq (EU): Konten/Google-OAuth. Admin-Login lokal:
-  Benutzer `admin`, Passwort `gambit-admin` (Saves-Screen → „⚙ Admin · Spielfortschritt"
+  Quellcode auf. Cloudflare-Zugang: beim Nutzer (Passwortmanager).
+- **Supabase** (EU-Projekt, Ref beim Nutzer): Konten/Google-OAuth. Admin-Login lokal:
+  Konto `admin`, Passwort beim Nutzer (Saves-Screen → „⚙ Admin · Spielfortschritt"
   setzt beliebigen Fortschritt, z. B. 100%-Save für Tests).
 
 ## Deploy aus dem Chat (bewährter Ablauf)

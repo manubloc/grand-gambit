@@ -14,7 +14,7 @@ Grundregel für alle: **eigenes starkes Passwort (Passwortmanager) + 2FA an.**
   Mail — 10 Min beim Mail-Anbieter deines Hostings.
 
 ### ☑ 0.2 GitHub (vorhanden)
-- Privates Repo existiert. Es fehlt nur der **Fine-grained Token** für den
+- Repo existiert (inzwischen öffentlich). Es fehlt nur der **Fine-grained Token** für den
   Chat-Deploy:
   1. github.com → Profilbild → **Settings**
   2. ganz unten **Developer settings** → **Fine-grained tokens** → *Generate new token*

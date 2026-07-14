@@ -580,8 +580,9 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           return <div style={{ margin: "2px 0 12px", padding: "12px 12px 11px", borderRadius: 12,
             border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
             animation: "rise .35s ease" }}>
+            {/* redeemed: the portrait sheds the enemy blue and turns gold */}
             {pt && <img src={pt} alt="" draggable={false} style={{ width: 84, height: 84, objectFit: "contain",
-              filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))", userSelect: "none" }} />}
+              filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))", animation: "ggRedeem 1.5s ease .35s both", userSelect: "none" }} />}
             <div className="gg-serif" style={{ fontSize: 19, letterSpacing: ".05em", color: T.gold, marginTop: 2 }}>
               {en ? ch.nameEn : ch.nameDe}</div>
             {(ch.flavorDe || ch.flavorEn) && <div style={{ fontSize: 12, color: T.dim, fontStyle: "italic", marginTop: 3, lineHeight: 1.45 }}>

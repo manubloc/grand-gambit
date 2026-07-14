@@ -109,6 +109,8 @@ import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } fro
 import { nodeById as nbId } from "./src/content/index.js";
 // stubborn champions: the Dragon demands three victories, tallied across replays & leagues
 ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNeeded(nbId("a2")) === 1 && winsNeeded(nbId("b4")) === 2);
+// family pacing: the Crown yields fast (1-2 wins), the Shadows resist (2-3)
+ok("the standard falls in one win, moonlit adepts demand two", winsNeeded(nbId("d2")) === 1 && winsNeeded(nbId("b2")) === 2 && winsNeeded(nbId("b3")) === 2);
 {
   let d = prof2;                                     // a1+a2 cleared; road to the Dragon
   d = advanceCampaign(d, "a3");

@@ -38,6 +38,7 @@ Im SQL-Editor:
 
 ## Admin
 * Cloud-Konten: trage die E-Mail in `src/app/config.js` → `ADMIN_EMAILS` ein.
-* Lokal eingebaut: Konto **admin** / Passwort **gambit-admin** — nach dem
-  ersten Login bitte ändern (der Spielstand-Bildschirm erinnert daran).
+* Lokal eingebaut: Konto **admin** (Standard-Passwort steht im Code,
+  `src/meta/accounts.js` — das Repo ist öffentlich!). Nach dem ersten Login
+  daher unbedingt ändern (der Spielstand-Bildschirm erinnert daran).
   Admins sehen pro Spielstand den Fortschrittsregler (0–100 %).

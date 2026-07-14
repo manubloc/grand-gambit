@@ -7,7 +7,7 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
   const variants = {
     // the court's seal, now cut from the hall's stone: gold-veined marble for
     // the CTA, dark marble for quiet buttons — a wash keeps every label crisp
-    primary: { background: `linear-gradient(165deg, rgba(224,183,108,.93), rgba(183,141,67,.93)), url(${mBtn}) center / 200px`,
+    primary: { background: `linear-gradient(165deg, rgba(224,183,108,.83), rgba(183,141,67,.83)), url(${mBtn}) center / 200px`,
       color: T.limeInk, border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
@@ -65,8 +65,8 @@ export function Bar({ pct = 0, color = T.lime, height = 8, track = "#0009" }) {
   </div>;
 }
 
-export function Chip({ children, color = T.dim, bg = T.panel2, style }) {
-  return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: bg, color, borderRadius: 99, padding: "3px 9px", fontSize: 12, fontWeight: 700, ...style }}>{children}</span>;
+export function Chip({ children, color = T.dim, bg = T.panel2, style, className }) {
+  return <span className={className} style={{ display: "inline-flex", alignItems: "center", gap: 4, background: bg, color, borderRadius: 99, padding: "3px 9px", fontSize: 12, fontWeight: 700, ...style }}>{children}</span>;
 }
 
 export function Segmented({ options, value, onChange }) {

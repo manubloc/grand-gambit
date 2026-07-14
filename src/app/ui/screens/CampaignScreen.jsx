@@ -52,14 +52,20 @@ const CrownIc = ({ c = "#f2d98c", size = 16 }) => (
   <svg viewBox="0 0 24 24" width={size} height={size}><path d="M4 17 L5.2 8.5 L9 12 L12 6.5 L15 12 L18.8 8.5 L20 17 Z" fill={c} /><path d="M5.5 19.5 L18.5 19.5" stroke={c} strokeWidth="2" strokeLinecap="round" /></svg>
 );
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 const CAM_EASE = "cubic-bezier(.45,.05,.35,1)";
 
 export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
   const league = profile.campaign?.league || 1;
-  const th = themeForLeague(league);
+  // league selector: look back at worlds already mastered — view-only; the
+  // journey itself (status, wanderer, panel) always lives in the CURRENT league
+  const [viewLeague, setViewLeague] = useState(league);
+  useEffect(() => { setViewLeague(league); }, [league]);
+  const viewing = viewLeague !== league;
+  const [lgOpen, setLgOpen] = useState(false);
+  const th = themeForLeague(viewLeague);
   const bmDef = th.bitmap ? MAP_BITMAPS[th.bitmap] : null; // painted league worlds
   const bm = !!bmDef;
   const nx = (n) => (bm && n?.id && bmDef.pos[n.id]) ? bmDef.pos[n.id][0] : GEO.nx(n);
@@ -69,6 +75,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const [sel, setSel] = useState(() => currentNodeId(profile));
   const [token, setToken] = useState(() => ({ at: currentNodeId(profile), moving: false }));
   const [panelOpen, setPanelOpen] = useState(true);
+  // free panning: a finger (or mouse) drags the window across the world; the
+  // camera resumes following the wanderer on his next step
+  const [panOff, setPanOff] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef(null);
+  const clickSquelch = useRef(false);
   const walkT = useRef(null);
   const [stride, setStride] = useState({ angle: 0, dir: 1 }); // last travel heading — feeds tilt & trail
   // A champion beaten but not recruited FLEES the map to the east — GameScreen
@@ -92,6 +104,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
       setStride({ angle: Math.atan2(dy, dx) * 180 / Math.PI, dir: dx >= 0 ? 1 : -1 });
     }
     setToken({ at: id, moving: true });
+    setPanOff({ x: 0, y: 0 }); // the camera returns to the wanderer
     walkT.current = setTimeout(() => setToken({ at: id, moving: false }), 760);
   }
   const scenery = useScenery(th);
@@ -118,6 +131,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const haveWins = unlockCh ? Math.min(needWins, bossWinsFor(profile, unlockCh.id)) : 0;
   const canRecruit = !!unlockCh && haveWins + 1 >= needWins;  // the NEXT win seals it
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
+  const golden = !!unlockCh && known;                      // redeemed: only a recruited champion wears gold
+  const unlockedSet = useMemo(() => new Set(profile.campaign?.unlocked || []), [profile]);
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
   // camera target = the Grand Gambit's position (he leads, the map follows)
@@ -130,8 +145,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.min(vp.h, HM * z);
   const frameX = Math.round((vp.w - frameW) / 2), frameY = Math.round((vp.h - frameH) / 2);
-  const camX = clamp(nx(camNode) * z - frameW * 0.46, 0, Math.max(0, WMAP * z - frameW));
-  const camY = clamp(ny(camNode) * z - frameH * 0.5, 0, Math.max(0, HM * z - frameH));
+  const camMaxX = Math.max(0, WMAP * z - frameW), camMaxY = Math.max(0, HM * z - frameH);
+  const camX = clamp((viewing ? 0 : nx(camNode) * z - frameW * 0.46) + panOff.x, 0, camMaxX);
+  const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * z - frameH * 0.5) + panOff.y, 0, camMaxY);
   // fog of war: everything past the frontline stays a blurred rumour until
   // the league's end boss falls — the map never spoils the road ahead
   const frontierX = useMemo(() => {
@@ -145,24 +161,34 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
 
   // ── the embedded node panel: parchment overlay near the selected medallion,
   //    projected into viewport coords so text never scales with zoom ─────────
-  const seaLock = th.sea && !seaAccessible(profile);
+  const seaLock = !viewing && th.sea && !seaAccessible(profile);
   const panelW = Math.min(352, frameW - 28);
   const panelLeft = 14;
   const panelPos = { bottom: frameY + 14, maxHeight: frameH - 28, overflowY: "auto" };
-  const showPanel = panelOpen && !!node && !token.moving && !seaLock;
+  const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 
   return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%", background: T.bg }}>
       {/* the wanderer's window onto the world — a rounded frame; whatever the
           screen shape, chrome stays dark and every control lives INSIDE */}
       <div ref={vpRef} style={{ position: "absolute", inset: 0 }}>
-      <div style={{ position: "absolute", left: frameX, top: frameY, width: frameW, height: frameH,
+      <div
+        onPointerDown={(e) => { if (seaLock) return;
+          dragRef.current = { id: e.pointerId, px: e.clientX, py: e.clientY, ox: panOff.x, oy: panOff.y, moved: false, el: e.currentTarget }; }}
+        onPointerMove={(e) => { const d = dragRef.current; if (!d) return;
+          const dx = e.clientX - d.px, dy = e.clientY - d.py;
+          if (!d.moved && Math.hypot(dx, dy) > 6) { d.moved = true; clickSquelch.current = true; setDragging(true); try { d.el.setPointerCapture(d.id); } catch {} }
+          if (d.moved) setPanOff({ x: d.ox - dx, y: d.oy - dy }); }}
+        onPointerUp={() => { dragRef.current = null; setDragging(false); }}
+        onPointerCancel={() => { dragRef.current = null; setDragging(false); }}
+        onClickCapture={(e) => { if (clickSquelch.current) { clickSquelch.current = false; e.preventDefault(); e.stopPropagation(); } }}
+        style={{ position: "absolute", left: frameX, top: frameY, width: frameW, height: frameH,
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: th.paper,
-        boxShadow: "0 0 34px rgba(0,0,0,.45)", touchAction: "manipulation",
+        boxShadow: "0 0 34px rgba(0,0,0,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
           transform: `translate(${-camX}px, ${-camY}px) scale(${z})`,
-          transition: `transform .72s ${CAM_EASE}` }}>
+          transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
               <linearGradient id="wash" x1="0" y1="0" x2="1" y2="0">
@@ -221,10 +247,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             {!bm && (th.mystic?.wisps || 0) > 0 && [0, 1, 2].map((i) => Wisp({ x: nx(nodeById("n03")) - 34 + i * 30, y: ny(nodeById("n03")) - 40 + (i % 2) * 14, s: 0.9, k: "sw" + i }))}
             {/* dotted trail (procedural leagues only — painted maps have their own roads) */}
             {!bm && edges.map(({ a, b }, i) => {
+              const stOf = (id) => (viewing ? "cleared" : nodeStatus(profile, id)); // the look back shows every road walked
               const x1 = nx(a), y1 = ny(a), x2 = nx(b), y2 = ny(b), xm = (x1 + x2) / 2;
-              if (nodeStatus(profile, a.id) === "hidden" || nodeStatus(profile, b.id) === "hidden") return null;
-              const gated = nodeStatus(profile, b.id) === "gated";
-              const done = nodeStatus(profile, a.id) === "cleared" && !gated && nodeStatus(profile, b.id) !== "locked";
+              if (stOf(a.id) === "hidden" || stOf(b.id) === "hidden") return null;
+              const gated = stOf(b.id) === "gated";
+              const done = stOf(a.id) === "cleared" && !gated && stOf(b.id) !== "locked";
               return <path key={"e" + i} d={`M${x1} ${y1} C ${xm} ${y1}, ${xm} ${y2}, ${x2} ${y2}`} fill="none"
                 stroke={gated ? "#7a6a94" : done ? MP.trail : MP.trailDim} strokeWidth={gated ? 3.5 : 4.5} strokeLinecap="round"
                 strokeDasharray={gated ? "6 6" : "0.5 9.5"} opacity={gated ? 0.5 : done ? 0.95 : 0.62} />;
@@ -252,11 +279,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             </div>
           ))}
           <div className="gg-serif" style={{ position: "absolute", top: ny({ col: 2 }) - 74, left: WMAP - 84, transform: "translateX(-50%)",
-            color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ LIGA {ROMAN[league - 1] || league} ❖</div>
+            color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ LIGA {ROMAN[viewLeague - 1] || viewLeague} ❖</div>
           {/* medallions + labels — small waypoints now; the wanderer is the star */}
           {CAMPAIGN.map((n) => {
-            const st = nodeStatus(profile, n.id);
-            const isSel = sel === n.id, isCur = cur === n.id;
+            const st = viewing ? "available" : nodeStatus(profile, n.id); // a mastered world holds no locks
+            const isSel = !viewing && sel === n.id, isCur = !viewing && cur === n.id;
             const pieceCh = n.boss?.piece ? CHARACTERS[n.boss.piece] : null;
             const pure = n.boss?.pure ? nodeBossSpec(n) : null;
             const below = n.col <= 2; // labels toward the free side of the lane
@@ -268,12 +295,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     dark and waiting until beaten, gold once he joined the court;
                     the league finale towers over the road's end */}
                 {bm && n.boss && (() => {
-                  const spec = nodeBossSpec(n, league);
+                  const spec = nodeBossSpec(n, viewLeague);
                   if (!spec) return null;
                   const finale = n.id === "n22";
                   const size = finale ? 68 : 46;
                   const beaten = st === "cleared";
-                  const flee = fleeing === n.id;
+                  const flee = !viewing && fleeing === n.id;
                   // beaten champions leave the map: fled if they resisted you,
                   // joined your court if recruited — only the checkmark stays
                   if (beaten && !flee) return null;
@@ -290,7 +317,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     {painting
                       ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
                           objectFit: "contain", objectPosition: "bottom",
-                          filter: ENEMY_FILTER,
+                          filter: unlockedSet.has(n.boss.piece) ? undefined : ENEMY_FILTER,
                           userSelect: "none", pointerEvents: "none" }} />
                       : <PieceArt kind={spec.kind} art={spec.art} fill="#242d44" rim="#93a0bb" detail="#9aa8c6"
                           accent={spec.accent || T.gold} size="100%" level={1} />}
@@ -301,8 +328,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   filter: st === "locked" ? "grayscale(.6)" : "none" }}>
                   <SiteGlyph type={siteTypeFor(n)} width={n.id === "n22" ? 54 : 44} />
                 </div>}
-                <button onClick={() => { setSel(n.id); setPanelOpen(true); walkTo(n.id); }}
-                  style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: "pointer",
+                <button onClick={() => { if (viewing) return; setSel(n.id); setPanelOpen(true); walkTo(n.id); }}
+                  style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: viewing ? "default" : "pointer",
                     position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center",
                     opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1 }}>
                   <div style={{ position: "relative", width: MEDAL + 10, height: MEDAL + 9,
@@ -328,13 +355,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   </svg>}
                   {!bm && <div style={{ position: "absolute", left: "50%", bottom: 9, transform: "translateX(-50%)",
                     width: MEDAL_ART + 2, height: MEDAL_ART + 2,
-                    filter: "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
+                    filter: pieceCh && !unlockedSet.has(pieceCh.id) ? `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(0,0,0,.35))` : "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
                     display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {pieceCh ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                       : pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
-                      : n.id === "n22" ? (((league - 1) % 10) + 1 === 9
+                      : n.id === "n22" ? (((viewLeague - 1) % 10) + 1 === 9
                           ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                           : <CrownIc />) : <Swords />}
                   </div>}
@@ -366,7 +393,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             );
           })}
           {/* the traveller — the Grand Gambit walks the trail, larger than life */}
-          {(() => {
+          {!viewing && (() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
             return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 48, height: 50, zIndex: 5,
@@ -392,7 +419,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               </div>
             </div>;
           })()}
-          {frontierX < WMAP - 60 && (
+          {!viewing && frontierX < WMAP - 60 && (
             <div style={{ position: "absolute", top: 0, bottom: 0, left: frontierX, right: 0, zIndex: 5,
               pointerEvents: "none", backdropFilter: "blur(3.5px) saturate(.55) brightness(.6)",
               WebkitBackdropFilter: "blur(3.5px) saturate(.55) brightness(.6)",
@@ -417,6 +444,37 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
             <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
+        )}
+        {/* the atlas of conquered worlds: pick any mastered league and look back */}
+        {league > 1 && (
+          <div style={{ position: "relative", pointerEvents: "auto" }}>
+            <button onClick={() => setLgOpen((o) => !o)} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6,
+              cursor: "pointer", background: viewing ? "rgba(92, 62, 18, .55)" : "rgba(8, 11, 20, .42)",
+              border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
+              padding: "8px 14px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
+              boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
+              backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+              ❖ {ROMAN[viewLeague - 1] || viewLeague} <span style={{ fontSize: 9, opacity: .8 }}>▼</span>
+            </button>
+            {lgOpen && (
+              <div style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, width: 216, padding: "10px 11px 11px",
+                background: "rgba(8, 11, 20, .86)", border: "1px solid rgba(233, 210, 150, .3)", borderRadius: 14,
+                boxShadow: "0 10px 30px rgba(0,0,0,.5)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+                <div className="gg-serif" style={{ fontSize: 11, color: "#bba873", letterSpacing: ".1em", marginBottom: 8 }}>{t("camp.viewPast")}</div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {Array.from({ length: league }, (_, i) => i + 1).map((r) => (
+                    <button key={r} className="gg-serif" onClick={() => { setViewLeague(r); setLgOpen(false); setPanOff({ x: 0, y: 0 }); }}
+                      style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13, padding: "7px 0", width: 40,
+                        borderRadius: 9, border: r === viewLeague ? "1px solid rgba(255,240,200,.55)" : `1px solid ${T.line}`,
+                        background: r === viewLeague ? "linear-gradient(160deg, #f0d68a, #b08c44)" : "rgba(16,21,34,.7)",
+                        color: r === viewLeague ? "#17110a" : r === league ? T.goldBright : T.dim }}>
+                      {ROMAN[r - 1] || r}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
         <div style={{ flex: 1 }} />
       </div>
@@ -443,11 +501,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {node?.storyDe && <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
             {en ? node.storyEn : node.storyDe}</div>}
           <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 9 }}>
-            <Chip color={PP.chipInk} bg={PP.bg2}>{mapById(effectiveMap(node, league))[en ? "nameEn" : "nameDe"]}</Chip>
-            <Chip color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
-            <Chip color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
-            <Chip color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
-            <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
+            <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{mapById(effectiveMap(node, league))[en ? "nameEn" : "nameDe"]}</Chip>
+            <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
+            <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
+            <Chip className="gg-serif" color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
+            <Chip className="gg-serif" color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
           </div>
           {boss && (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
@@ -458,10 +516,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   return painting
                     ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
                         objectFit: "contain", objectPosition: "bottom",
-                        filter: unlockCh ? "drop-shadow(0 2px 2px rgba(40,32,16,.35))" : `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(40,32,16,.35))`,
+                        filter: golden ? "drop-shadow(0 2px 2px rgba(40,32,16,.35))" : `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(40,32,16,.35))`,
                         userSelect: "none", pointerEvents: "none" }} />
-                    : <PieceArt kind={boss.kind} art={boss.art} fill={unlockCh ? "#c9a45c" : "#242d44"} rim={unlockCh ? "#f0dfae" : "#93a0bb"}
-                        detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />;
+                    : <PieceArt kind={boss.kind} art={boss.art} fill={golden ? "#c9a45c" : "#242d44"} rim={golden ? "#f0dfae" : "#93a0bb"}
+                        detail={golden ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />;
                 })()}
               </div>
               <div style={{ minWidth: 0, paddingBottom: 3 }}>
@@ -476,6 +534,16 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               </div>
             </div>
           )}
+          {/* the aftermath, told on the spot: joined the retinue, fled again (with tally), or simply done */}
+          {status === "cleared" && (() => {
+            const nm = unlockCh ? unlockCh[en ? "nameEn" : "nameDe"] : null;
+            const txt = unlockCh
+              ? (known ? t("camp.stJoined", { name: nm })
+                       : t("camp.stFled", { n: bossWinsFor(profile, unlockCh.id), name: nm }))
+              : t("camp.stDone");
+            return <div className="gg-serif" style={{ marginTop: 9, fontSize: 12, fontStyle: "italic", lineHeight: 1.4,
+              color: golden ? PP.green : PP.dim }}>{golden ? "✦ " : "✓ "}{txt}</div>;
+          })()}
           {status === "gated" ? (() => {
             const g = gateOf(node);
             if (g.gold) {
