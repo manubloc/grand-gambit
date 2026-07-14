@@ -1,7 +1,7 @@
 // ── Boss system: data-driven movement, spawning, stats, campaign wiring ──────
 import { createGame, legalMovesFrom, reduce, moveCommand, idx, encodeState, decodeState } from "./src/core/index.js";
 import { mapById, BOSSES, bossById, bossSpec, CAMPAIGN } from "./src/content/index.js";
-import { buildStageMatch } from "./src/meta/index.js";
+import { buildStageMatch, nodeBossSpec } from "./src/meta/index.js";
 import { chooseMove } from "./src/ai/index.js";
 
 let pass = 0, fail = 0;
@@ -82,6 +82,13 @@ function loneBoss(boss) {
   ok("piece boss fields its own kind with boosted stats", pm.aiArmy.back.some((sp) => sp.kind === "S" && sp.hp >= 8) && pm.boss.unlocks === "assassin");
   ok("a stubborn champion resists until his last demanded win", buildStageMatch("a4").boss.unlocks === null
     && buildStageMatch("a4", { campaign: { bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
+  // monster stations rotate their champion by league — the whole bestiary marches
+  const nA5 = (id) => CAMPAIGN.find((n) => n.id === id);
+  ok("league rotation fields a fresh monster each league and cycles", nodeBossSpec(nA5("a5"), 1).bossId === "b22"
+    && nodeBossSpec(nA5("a5"), 2).bossId === "b09" && nodeBossSpec(nA5("a5"), 6).bossId === "b22"
+    && nodeBossSpec(nA5("n03"), 5).bossId === "b24" && nodeBossSpec(nA5("e2"), 3).bossId === "b12");
+  ok("every rotated monster resolves to a real boss", ["n03","a5","b5","c5","e2"].every((id) =>
+    (nA5(id).boss.rotation || []).every((b) => bossById(b))));
 }
 
 // 6) AI plays a boss without crashing; codec roundtrips boss fields

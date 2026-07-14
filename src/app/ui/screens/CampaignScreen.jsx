@@ -111,7 +111,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const cur = currentNodeId(profile);
   const node = nodeById(sel);
   const status = nodeStatus(profile, sel);
-  const boss = node?.boss ? nodeBossSpec(node) : null;
+  const boss = node?.boss ? nodeBossSpec(node, league) : null;
   const unlockCh = node?.boss?.piece ? CHARACTERS[node.boss.piece] : null;
   const needWins = winsNeeded(node);                       // stubborn champions demand several victories
   const haveWins = unlockCh ? Math.min(needWins, bossWinsFor(profile, unlockCh.id)) : 0;

@@ -106,7 +106,13 @@ const ATK_BOOST = [0, 0, 1, 1, 2];
 export function nodeBossSpec(node, league = 1) {
   if (!node.boss) return null;
   const override = node.id === "n22" ? leagueFinalBossPiece(league) : null;
-  if (node.boss.pure && !override) return bossSpec(bossById(node.boss.pure));
+  if (node.boss.pure && !override) {
+    // monster stations rotate their champion by league — over the climb, every
+    // named horror of the bestiary gets his entrance (and his own portrait)
+    const rot = node.boss.rotation;
+    const pid = rot ? rot[(leagueNo(league) - 1) % rot.length] : node.boss.pure;
+    return bossSpec(bossById(pid) || bossById(node.boss.pure));
+  }
   const ch = CHARACTERS[override || node.boss.piece];
   const tier = node.tier || 1;
   const { abilities } = resolveCharacter(ch, 1 + tier); // a taste of its ladder
