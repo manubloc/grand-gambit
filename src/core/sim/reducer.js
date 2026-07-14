@@ -37,6 +37,9 @@ export function reduce(state, command) {
       // Guards: HP rules only, right side to move, charges left, own hurt piece.
       if (state.rules !== "hp" || state.over) return { state, events: [] };
       if (command.color !== state.turn) return { state, events: [] };
+      // a hostile "noEnemyPotions" aura on the board forbids your draughts
+      const judged = state.board.some((p) => p && p.color !== command.color && p.aura && p.aura.type === "noEnemyPotions");
+      if (judged) return { state, events: [] };
       const left = (state.potions && state.potions[command.color]) || 0;
       if (left <= 0) return { state, events: [] };
       const piece = state.board[command.target];

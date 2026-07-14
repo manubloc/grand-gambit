@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
-import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST } from "../../../content/index.js";
-import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, packBonus, circleRifts } from "../../../core/index.js";
+import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById } from "../../../content/index.js";
+import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, MAX_PIECE_LEVEL,
-  formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap,
+  formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
   itemRevealed,
 } from "../../../meta/index.js";
@@ -257,7 +257,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
   // Load the selected map's saved formation when the map changes.
   useEffect(() => { setDraft(profile.loadout.formations?.[mapId] || mapById(mapId).defaultFormation); setPick(null); }, [mapId]); // eslint-disable-line
 
-  const legal = formationLegalOn(draft, unlockedIds, map);
+  const legal = formationLegalOn(draft, unlockedIds, map, ownedLeagueBosses(profile));
   const changed = JSON.stringify(draft) !== JSON.stringify(saved);
   const counts = formationCounts(draft);
   const flexCount = draft.filter((id) => required[id] === undefined).length;
@@ -297,10 +297,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
           </div>
         </div>
         {(() => {
-          const kin = { blades: 0, magic: 0, order: 0 };
+          const kin = { crown: 0, shadow: 0 };
           for (const p of preview.board) if (p && p.color === "w") { const f = familyOf(p); if (f) kin[f] += 1; }
-          if (!kin.blades && !kin.magic && !kin.order) return null;
-          const hp = packBonus(kin.blades), rifts = circleRifts(kin.magic);
+          if (!kin.crown && !kin.shadow) return null;
+          const wall = crownWallSoak(kin.crown), cHp = crownHp(kin.crown);
+          const rifts = shadowRifts(kin.shadow), sAtk = shadowAtk(kin.shadow);
           const chip = (f, label) => kin[f] > 0 && (
             <span key={f} style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px",
               borderRadius: 999, border: `1px solid ${FAMILIES[f].color}66`, background: `${FAMILIES[f].color}1c`,
@@ -308,10 +309,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
               <span style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 2, background: FAMILIES[f].color }} />
               {(en ? FAMILIES[f].en : FAMILIES[f].de)} {kin[f]}{label ? ` · ${label}` : ""}
             </span>);
+          const cParts = [wall ? `${t("army.famWall")} ${wall}` : t("army.famNeedTwo"), cHp ? `+${cHp} ♥` : null].filter(Boolean).join(" · ");
+          const sParts = [rifts ? `${rifts} ⧗` : t("army.famNeedTwo"), sAtk ? `+${sAtk} ⚔` : null].filter(Boolean).join(" · ");
           return <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
-            {chip("blades", hp > 0 ? `+${hp} ♥` : t("army.famNeedTwo"))}
-            {chip("magic", rifts > 0 ? `${rifts} ⧗ ${t("army.famRift")}` : t("army.famNeedTwo"))}
-            {chip("order", kin.order >= 2 ? t("army.famWallOn") : t("army.famNeedTwo"))}
+            {chip("crown", cParts)}
+            {chip("shadow", sParts)}
           </div>;
         })()}
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
@@ -327,7 +329,10 @@ function FormationEditor({ profile, dispatch, t, en }) {
           style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
             display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0,
             background: open ? T.lime : T.bg2, border: `2px solid ${open ? T.lime : T.line}` }}>
-          <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={profile.pieceArt || "painted"} />
+          {isBossEntry(id)
+            ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
+                style={{ height: "clamp(18px, 7vw, 34px)", objectFit: "contain", pointerEvents: "none" }} />
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={profile.pieceArt || "painted"} />}
         </button>;
       })}
     </div>
@@ -344,6 +349,33 @@ function FormationEditor({ profile, dispatch, t, en }) {
             </button>;
           })}
         </div>
+        {(() => {
+          // league bosses — trophies of finished leagues; ONE may take the queen's place
+          const owned = ownedLeagueBosses(profile);
+          if (!owned.length) return null;
+          const usedElsewhere = draft.some((d, j) => j !== pick && isBossEntry(d));
+          return <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px dashed ${T.gold}44` }}>
+            <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".1em", color: T.gold, marginBottom: 6 }}>
+              {t("army.bossSection")}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {owned.map((bid) => {
+                const b = bossById(bid);
+                const eid = "boss:" + bid;
+                const on = draft[pick] === eid;
+                const blocked = usedElsewhere && !on;
+                return <button key={bid} disabled={blocked} onClick={() => setSlot(pick, eid)}
+                  title={en ? undefined : (b.aura ? t("army.bossAuraHint") : undefined)}
+                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", borderRadius: 9,
+                    cursor: blocked ? "default" : "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13, opacity: blocked ? 0.45 : 1,
+                    background: on ? "#8a7ab8" : T.panel2, color: on ? "#171125" : T.text, border: `1px solid ${on ? "#8a7ab8" : T.line}` }}>
+                  {paintedById("boss-" + bid) && <img src={paintedById("boss-" + bid)} alt="" style={{ height: 20, objectFit: "contain" }} />}
+                  {en ? b.nameEn : b.nameDe}
+                </button>;
+              })}
+            </div>
+            <div style={{ fontSize: 10.5, color: T.faint, marginTop: 6 }}>{t("army.bossHint")}</div>
+          </div>;
+        })()}
       </div>
     )}
 
@@ -510,9 +542,8 @@ function CharLightbox({ char, en, onClose }) {
 
 // ── the three HOUSES: colors & names for badges and the muster line ──────────
 const FAMILIES = {
-  blades: { de: "Jagdrudel", en: "Hunting Pack", color: "#b4636c" },
-  magic:  { de: "Zirkel",    en: "Circle",       color: "#8a7ab8" },
-  order:  { de: "Schildwall", en: "Shield Wall", color: "#6e8aa8" },
+  crown:  { de: "Kronenfiguren", en: "Crown", color: "#c9a45c" },
+  shadow: { de: "Schattenwesen", en: "Shadows", color: "#8a7ab8" },
 };
 
 export function ArmyScreen({ profile, dispatch, t, initialTab }) {

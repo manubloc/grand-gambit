@@ -116,6 +116,22 @@ ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNee
   ok("a replay notches it again without progress or XP", (() => { const xp = d.xpEarned || 0; d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 2 && (d.xpEarned || 0) === xp && !unlockedCharacterIds(d).includes("dragon"); })());
   ok("the NEXT win would seal it — and the third replay recruits", (() => { const seal = recruitOnWin(nbId("a4"), d) === "dragon"; d = advanceCampaign(d, "a4"); return seal && unlockedCharacterIds(d).includes("dragon"); })());
 }
+// a won league boss may march in the queen's place — one at most
+import { formationLegalOn as fLegal, buildArmyFromFormation as bFromForm, ownedLeagueBosses } from "./src/meta/index.js";
+import { mapById as mapOf } from "./src/content/index.js";
+{
+  const arena = mapOf("arena");
+  const ids = ["hawk","assassin","pathfinder","dragon","guardian","bard","paladin","inquisitor","standard","engineer","chancellor","archbishop","mage","alchemist","sorceress","warlock","strategist","amazon","captain","knight","bishop","rook","queen","king","pawn"];
+  const base = ["rook","knight","knight","bishop","queen","king","bishop","knight","knight","rook"];
+  const withBoss = [...base]; withBoss[4] = "boss:b25";
+  const prof1 = { stats: { leaguesWon: 1 } }, prof0 = { stats: {} };
+  ok("league bosses are trophies of finished leagues", ownedLeagueBosses(prof1).join() === "b25" && ownedLeagueBosses(prof0).length === 0);
+  ok("a boss stands in for the queen — if you own him", fLegal(withBoss, ids, arena, ["b25"]) && !fLegal(withBoss, ids, arena, []));
+  const twoBosses = [...withBoss]; twoBosses[0] = "boss:b25";
+  ok("one boss at most on the field", !fLegal(twoBosses, ids, arena, ["b25"]));
+  const army = bFromForm(() => 1, withBoss);
+  ok("the fielded boss brings his stats and aura", army.back[4].bossId === "b25" && army.back[4].aura.type === "courtHp");
+}
 ok("Liga I fields classic boards; later leagues open the stages", effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 2) === "skirmish" && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "arena" && effectiveMap(nbId("n22"), 1) === "arena");
 
 // ── League 2 (New Game+): rollover, duplication stars, scaling ───────────────

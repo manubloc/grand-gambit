@@ -1,31 +1,45 @@
-// ── The three HOUSES ──────────────────────────────────────────────────────────
-// Every recruitable champion belongs to one of three families; the classic
-// pieces (and the Grand Gambit himself) stay unaligned. Families carry
-// COLLECTIVE traits that only wake when kin march together:
+// ── The TWO houses ────────────────────────────────────────────────────────────
+// Every recruitable champion serves one of two sides; classic pieces and the
+// Grand Gambit stay unaligned. You may always mix freely — but the more you
+// commit to one side, the stronger its gift grows:
 //
-//   blades — the HUNTING PACK: +1 max HP per additional pack member fielded
-//            (capped at +3). The pack hardens the lone wolf.
-//   magic  — the CIRCLE: fielding 2 members grants ONE Time Rift per match,
-//            4 members grant TWO. A rift lets your next move keep the turn.
-//   order  — the SHIELD WALL: while an order piece stands orthogonally beside
-//            another order ally, incoming hits deal 1 less damage (min 1).
+//   crown  — the CROWN: order, law and light.
+//            2+ fielded → SHIELD WALL: a crown piece standing orthogonally
+//            beside crown kin takes 1 less damage (min 1)
+//            4+ → every crown piece +1 max HP
+//            6+ → the wall soaks 2
+//            (the wall is LIVING: it weakens as the court falls)
 //
-// Family is derived from the piece KIND so the core stays self-contained and
-// nothing new has to survive the codec.
+//   shadow — the SHADOWS: night, hunger and stolen time.
+//            2+ fielded → 1 TIME RIFT per match (your next move keeps the turn)
+//            4+ → every shadow piece +1 attack, and a 2nd rift
+//            6+ → a 3rd rift
+//
+// Family derives from the piece KIND so the core stays self-contained.
 export const FAMILY_BY_KIND = {
-  // blades — fast killers of the western road
-  H: "blades", S: "blades", O: "blades", D: "blades", M: "blades", V: "blades",
-  // magic — tricksters and miracle-workers
-  E: "magic", L: "magic", Z: "magic", W: "magic", A: "magic", Y: "magic",
-  // order — shields, banners and the letter of the law
-  G: "order", J: "order", U: "order", I: "order", F: "order", T: "order", C: "order",
+  // the Crown — shields, banners, law and light-benders
+  G: "crown", J: "crown", U: "crown", I: "crown", F: "crown",
+  T: "crown", C: "crown", A: "crown", V: "crown", E: "crown",
+  // the Shadows — killers, beasts and moonlit alchemy
+  H: "shadow", S: "shadow", O: "shadow", D: "shadow", M: "shadow",
+  L: "shadow", Z: "shadow", W: "shadow", Y: "shadow",
 };
 
 export const familyOf = (kindOrPiece) =>
   FAMILY_BY_KIND[(kindOrPiece && kindOrPiece.kind) || kindOrPiece] || null;
 
-/** Hunting-pack HP bonus for `count` fielded blades (0 below two members). */
-export const packBonus = (count) => (count >= 2 ? Math.min(3, count - 1) : 0);
+/** Crown ladder: wall soak for n fielded crown pieces (0 · 1 · 2). */
+export const crownWallSoak = (n) => (n >= 6 ? 2 : n >= 2 ? 1 : 0);
+/** Crown ladder: bonus max HP per crown piece. */
+export const crownHp = (n) => (n >= 4 ? 1 : 0);
+/** Shadow ladder: time rifts banked for the match. */
+export const shadowRifts = (n) => (n >= 6 ? 3 : n >= 4 ? 2 : n >= 2 ? 1 : 0);
+/** Shadow ladder: bonus attack per shadow piece. */
+export const shadowAtk = (n) => (n >= 4 ? 1 : 0);
 
-/** Time Rifts granted for `count` fielded magic members. */
-export const circleRifts = (count) => (count >= 4 ? 2 : count >= 2 ? 1 : 0);
+/** Count living family members of `color` on a board. */
+export function familyCount(board, color, fam) {
+  let n = 0;
+  for (const p of board) if (p && p.color === color && familyOf(p) === fam) n += 1;
+  return n;
+}

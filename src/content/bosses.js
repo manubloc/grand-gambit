@@ -23,7 +23,7 @@ const ZEBRA = sym(2, 3);
 const RING2 = (() => { const o = []; for (let f = -2; f <= 2; f++) for (let r = -2; r <= 2; r++) if (Math.max(Math.abs(f), Math.abs(r)) === 2) o.push([f, r]); return o; })();
 
 const B = (id, nameDe, nameEn, art, accent, hp, atk, moveSpec, extra = {}) =>
-  ({ id, nameDe, nameEn, art, accent, hp, atk, moveSpec, abilities: extra.abilities || [], hintDe: extra.hintDe, hintEn: extra.hintEn });
+  ({ id, nameDe, nameEn, art, accent, hp, atk, moveSpec, abilities: extra.abilities || [], aura: extra.aura || null, hintDe: extra.hintDe, hintEn: extra.hintEn });
 
 export const BOSSES = [
   B("b01", "Der Wächter",      "The Warden",      "golem",   "#8fb4ff", 12, 2, { slides: KING, range: 1 }),
@@ -33,32 +33,39 @@ export const BOSSES = [
   B("b05", "Zebra",            "Zebra",           "beast",   "#ff8a4c",  9, 3, { leaps: ZEBRA }),
   B("b06", "Das Bollwerk",     "The Bulwark",     "golem",   "#9aa5b7", 18, 2, { slides: DIAG, range: 1 }),
   B("b07", "Der Geist",        "The Ghost",       "wraith",  "#7dd3fc",  6, 4, { leaps: RING2 }),
-  B("b08", "Kanonier",         "Cannoneer",       "golem",   "#ffd166", 10, 4, { slides: ORTHO, range: 3 }),
+  B("b08", "Kanonier",         "Cannoneer",       "golem",   "#ffd166", 10, 4, { slides: ORTHO, range: 3 }, { aura: { type: "courtHp", n: 2 } }),
   B("b09", "Skorpion",         "Scorpion",        "serpent", "#f472b6",  9, 4, { leaps: [...sym(2, 2), ...ORTHO] }),
-  B("b10", "Doppelritter",     "Twin Knight",     "beast",   "#3d9bff", 11, 3, { leaps: [...KNIGHT, ...KING] }),
+  B("b10", "Doppelritter",     "Twin Knight",     "beast",   "#3d9bff", 11, 3, { leaps: [...KNIGHT, ...KING] }, { aura: { type: "wardAdj" } }),
   B("b11", "Die Flüsterin",    "The Whisperer",   "wraith",  "#c4b5fd",  9, 2, { slides: KING, range: 1, spawn: { max: 3 } }),
-  B("b12", "Der Richter",      "The Judge",       "tyrant",  "#ffb454", 12, 3, { slides: KING, range: 2 }),
+  B("b12", "Der Richter",      "The Judge",       "tyrant",  "#ffb454", 12, 3, { slides: KING, range: 2 }, { aura: { type: "noEnemyPotions" } }),
   B("b13", "Brandstifter",     "Firestarter",     "serpent", "#ff4d5e",  7, 5, { slides: DIAG }),
-  B("b14", "Der Koloss",       "The Colossus",    "golem",   "#94a3b8", 20, 3, { slides: ORTHO, range: 2, leaps: DIAG }),
+  B("b14", "Der Koloss",       "The Colossus",    "golem",   "#94a3b8", 20, 3, { slides: ORTHO, range: 2, leaps: DIAG }, { aura: { type: "grant", id: "bulwark" } }),
   B("b15", "Sturmkrähe",       "Stormcrow",       "beast",   "#38bdf8",  8, 4, { leaps: [...CAMEL, ...sym(0, 3)] }),
-  B("b16", "Die Blutmagd",     "The Bloodmaid",   "serpent", "#fb7185", 10, 4, { slides: KING, range: 1, leaps: [[0, 2], [0, -2]] }, { abilities: ["lifesteal"] }),
-  B("b17", "Lanzenmeister",    "Lancemaster",     "tyrant",  "#eab308", 12, 3, { leaps: [...sym(0, 2), ...KING] }),
-  B("b18", "Eisenfaust",       "Ironfist",        "golem",   "#f97316", 13, 4, { slides: ORTHO }),
-  B("b19", "Schattenfürst",    "Shadowlord",      "wraith",  "#a78bfa",  9, 4, { slides: DIAG, leaps: KNIGHT }),
-  B("b20", "Der Hüter",        "The Keeper",      "tyrant",  "#34d399", 16, 3, { slides: KING, range: 1, leaps: sym(0, 2) }, { abilities: ["bulwark"] }),
+  B("b16", "Die Blutmagd",     "The Bloodmaid",   "serpent", "#fb7185", 10, 4, { slides: KING, range: 1, leaps: [[0, 2], [0, -2]] }, { aura: { type: "grant", id: "lifesteal" }, abilities: ["lifesteal"] }),
+  B("b17", "Lanzenmeister",    "Lancemaster",     "tyrant",  "#eab308", 12, 3, { leaps: [...sym(0, 2), ...KING] }, { aura: { type: "wardAdj" } }),
+  B("b18", "Eisenfaust",       "Ironfist",        "golem",   "#f97316", 13, 4, { slides: ORTHO }, { aura: { type: "courtAtk", n: 1 } }),
+  B("b19", "Schattenfürst",    "Shadowlord",      "wraith",  "#a78bfa",  9, 4, { slides: DIAG, leaps: KNIGHT }, { aura: { type: "courtAtk", n: 1 } }),
+  B("b20", "Der Hüter",        "The Keeper",      "tyrant",  "#34d399", 16, 3, { slides: KING, range: 1, leaps: sym(0, 2) }, { aura: { type: "courtHp", n: 2 }, abilities: ["bulwark"] }),
   B("b21", "Die Wandlerin",    "The Shifter",     "wraith",  "#f0abfc",  8, 3, { leaps: RING2, spawn: { max: 2 } }),
   B("b22", "Der Zerreißer",    "The Render",      "beast",   "#ef4444", 10, 5, { leaps: [...KNIGHT, ...CAMEL] }),
   B("b23", "Die Erzfeindin",   "The Archenemy",   "tyrant",  "#fbbf24", 13, 4, { slides: KING, range: 3 }, { abilities: ["regen"] }),
   B("b24", "Seuchenkönig",     "Plaguelord",      "serpent", "#84cc16",  9, 2, { slides: KING, range: 1, spawn: { max: 5 } }, { abilities: ["lifesteal"] }),
-  B("b25", "Der Ligameister",  "The League Master", "tyrant", "#ffd166", 18, 5, { slides: KING, range: 4, leaps: KNIGHT }, { abilities: ["bulwark"] }),
+  B("b25", "Der Ligameister",  "The League Master", "tyrant", "#ffd166", 18, 5, { slides: KING, range: 4, leaps: KNIGHT }, { aura: { type: "courtHp", n: 1 }, abilities: ["bulwark"] }),
 ];
 
 export const bossById = (id) => BOSSES.find((b) => b.id === id) || null;
+
+/** The ten LEAGUE BOSSES — the finale of each league (I–X). Beating a league
+ *  wins you its boss: he may then march for YOU, in place of the queen (one
+ *  boss at most). Every league boss carries an AURA that bends the whole
+ *  match, not just his square. */
+export const LEAGUE_BOSSES = ["b25", "b12", "b10", "b19", "b20", "b16", "b17", "b18", "b08", "b14"];
+export const leagueBossId = (league) => LEAGUE_BOSSES[(((league || 1) - 1) % 10)];
 export const bossName = (b, en) => (en ? b.nameEn : b.nameDe);
 
 /** Army-spec entry for a boss piece (drops into a back-rank slot). */
 export function bossSpec(b) {
   return { kind: "X", level: 1, abilities: b.abilities || [], shield: 0,
     hp: b.hp, atk: b.atk, moveSpec: b.moveSpec, art: b.art, accent: b.accent,
-    name: { de: b.nameDe, en: b.nameEn }, bossId: b.id };
+    aura: b.aura || null, name: { de: b.nameDe, en: b.nameEn }, bossId: b.id };
 }

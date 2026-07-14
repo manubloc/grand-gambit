@@ -6,6 +6,6 @@ export { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "./characters.js";
 export { DIFFICULTIES, difficultyById } from "./difficulties.js";
 export { CAMPAIGN, nodeById, BRANCHES, campaignTag, CHAPTERS, chapterForRow } from "./campaign.js";
 export { MAPS, mapById, validateMap, inMap, isHole, holeSet, mapIdx, playableCount } from "./maps.js";
-export { BOSSES, bossById, bossName, bossSpec } from "./bosses.js";
+export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } from "./bosses.js";
 
 export { ITEMS, ITEM_LIST, hasItem, buyItem } from "./items.js";

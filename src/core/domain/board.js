@@ -22,6 +22,8 @@ export function makePiece(spec) {
     hasMoved: false,
     // Optional extensions (bosses & special units) — copied verbatim when given.
     ...(spec.moveSpec ? { moveSpec: spec.moveSpec } : {}),
+    ...(spec.aura ? { aura: spec.aura } : {}),
+    ...(spec.bossId ? { bossId: spec.bossId } : {}),
     ...(spawn ? { spawnLeft: spawn.max ?? spawn } : {}),
     ...(spec.hp != null ? { baseHp: spec.hp } : {}),
     ...(spec.atk != null ? { baseAtk: spec.atk } : {}),

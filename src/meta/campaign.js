@@ -3,7 +3,7 @@
 // [charIds] }. A node is AVAILABLE when any predecessor is cleared (the start
 // node always is). Clearing a piece-boss node unlocks that piece — the only way
 // to gain new pieces. XP is a spendable currency for upgrades (leveling.js).
-import { CAMPAIGN, nodeById, difficultyById, mapById, bossById, bossSpec, CHARACTERS } from "../content/index.js";
+import { CAMPAIGN, nodeById, difficultyById, mapById, bossById, bossSpec, CHARACTERS, leagueBossId } from "../content/index.js";
 import { buildArmyFromFormation, resolveCharacter, spForXpJump, isUnlocked } from "./leveling.js";
 import { hasItem } from "../content/items.js";
 import { BASE_HP, BASE_ATK } from "../core/index.js";
@@ -107,8 +107,9 @@ export function nodeBossSpec(node, league = 1) {
   if (!node.boss) return null;
   const override = node.id === "n22" ? leagueFinalBossPiece(league) : null;
   if (node.boss.pure && !override) {
-    // monster stations rotate their champion by league — over the climb, every
-    // named horror of the bestiary gets his entrance (and his own portrait)
+    // the League Keep fields THIS league's boss — ten finales, ten auras;
+    // monster stations rotate their champion by league
+    if (node.id === "n22") return bossSpec(bossById(leagueBossId(league)) || bossById(node.boss.pure));
     const rot = node.boss.rotation;
     const pid = rot ? rot[(leagueNo(league) - 1) % rot.length] : node.boss.pure;
     return bossSpec(bossById(pid) || bossById(node.boss.pure));

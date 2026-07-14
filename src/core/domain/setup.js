@@ -1,5 +1,5 @@
 import { FILES, RANKS, WHITE, BLACK, KIND, idx, BASE_HP, BASE_ATK, SHIELD_HP } from "./constants.js";
-import { familyOf, packBonus, circleRifts } from "../rules/families.js";
+import { familyOf, crownHp, shadowAtk, shadowRifts } from "../rules/families.js";
 import { emptyBoard, makePiece } from "./board.js";
 
 // Default 10-wide back rank. Indices 2 and 7 are the "flank" slots that new
@@ -74,16 +74,29 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
       p.atk = (p.baseAtk ?? (BASE_ATK[p.kind] || 1)) + Math.floor((lvl - 1) / 2);
       p.shield = 0;
     }
-    // ── family traits: kin that march together fight harder ──────────────────
-    // the hunting pack toughens every fielded blade; the circle banks time rifts
+    // ── the two houses: commitment pays ───────────────────────────────────────
+    // crown kin harden together (4+ → +1 HP); shadows sharpen (4+ → +1 atk)
+    // and bank time rifts (2/4/6 → 1/2/3). The crown's shield wall is LIVING —
+    // it is read off the board at strike time, not stored here.
     for (const color of ["w", "b"]) {
-      const kin = { blades: 0, magic: 0, order: 0 };
+      const kin = { crown: 0, shadow: 0 };
       for (const p of board) if (p && p.color === color) { const f = familyOf(p); if (f) kin[f] += 1; }
-      const bonus = packBonus(kin.blades);
-      if (bonus > 0) for (const p of board) if (p && p.color === color && familyOf(p) === "blades") {
-        p.maxHp += bonus; p.hp += bonus;
+      const hpB = crownHp(kin.crown), atkB = shadowAtk(kin.shadow);
+      for (const p of board) if (p && p.color === color) {
+        const f = familyOf(p);
+        if (f === "crown" && hpB) { p.maxHp += hpB; p.hp += hpB; }
+        if (f === "shadow" && atkB) p.atk += atkB;
       }
-      rifts[color] = circleRifts(kin.magic);
+      rifts[color] = shadowRifts(kin.shadow);
+    }
+    // ── boss auras: a fielded boss bends the WHOLE match, not just his square ─
+    for (const color of ["w", "b"]) {
+      for (const p of board) if (p && p.color === color && p.aura) {
+        const a = p.aura;
+        if (a.type === "courtHp") for (const q of board) if (q && q.color === color && q !== p) { q.maxHp += a.n || 1; q.hp += a.n || 1; }
+        if (a.type === "courtAtk") for (const q of board) if (q && q.color === color && q !== p) q.atk += a.n || 1;
+        if (a.type === "grant") for (const q of board) if (q && q.color === color && q !== p && !q.abilities.includes(a.id)) q.abilities = [...q.abilities, a.id];
+      }
     }
   }
 

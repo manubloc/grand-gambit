@@ -1,5 +1,6 @@
 import { KIND, VALUE, BASE_HP, BASE_ATK } from "../core/index.js";
 import { DEFAULT_BACK_RANK, FLANK_SLOTS } from "../core/index.js";
+import { bossById, bossSpec, LEAGUE_BOSSES } from "../content/bosses.js";
 import { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "../content/index.js";
 import { difficultyById, mapById } from "../content/index.js";
 
@@ -185,8 +186,20 @@ export function formationLegal(formation, unlockedIds) {
 }
 
 /** Build an army from an explicit back-rank formation (array of character ids). */
+// ── League bosses in YOUR ranks ──────────────────────────────────────────────
+// Beating a league wins you its boss. A formation entry "boss:bXX" fields him
+// in place of the queen — one boss at most; his AURA then serves YOUR side.
+export const ownedLeagueBosses = (profile) =>
+  LEAGUE_BOSSES.slice(0, Math.min(LEAGUE_BOSSES.length, profile?.stats?.leaguesWon || 0));
+export const isBossEntry = (id) => typeof id === "string" && id.startsWith("boss:");
+export const bossEntryId = (id) => (isBossEntry(id) ? id.slice(5) : null);
+
 export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boostOf = null) {
   const back = formation.map((id) => {
+    if (isBossEntry(id)) {
+      const b = bossById(bossEntryId(id));
+      if (b) return { ...bossSpec(b) };            // the boss marches: stats, moves & aura
+    }
     const ch = CHARACTERS[id];
     const level = Math.max(1, levelOf(id) || 1);
     const { abilities, shield } = resolveCharacter(ch, level, chosenOf ? chosenOf(id) : null);
@@ -202,17 +215,25 @@ const ARENA = () => mapById("arena");
 export const formationSpec = (map) => ({ required: map.formation.required, flex: map.formation.flex, size: map.w });
 
 /** Map-aware legality: required composition + size come from the map. */
-export function formationLegalOn(formation, unlockedIds, map) {
+export function formationLegalOn(formation, unlockedIds, map, ownedBosses = []) {
   const { required, flex, size } = formationSpec(map);
   if (!Array.isArray(formation) || formation.length !== size) return false;
-  const unlocked = new Set(unlockedIds); let flexN = 0;
+  const unlocked = new Set(unlockedIds); let flexN = 0, bossN = 0;
   for (const id of formation) {
+    if (isBossEntry(id)) {                          // a league boss takes the queen's place
+      if (!ownedBosses.includes(bossEntryId(id))) return false;
+      bossN++; continue;
+    }
     const ch = CHARACTERS[id];
     if (!ch || ch.kind === KIND.PAWN || !unlocked.has(id)) return false;
     if (required[id] === undefined) { if (!FORMATION_FLEX.has(id)) return false; flexN++; }
   }
-  const c = formationCounts(formation);
-  for (const [id, n] of Object.entries(required)) if ((c[id] || 0) !== n) return false;
+  if (bossN > 1) return false;                      // one boss at most on the field
+  const c = formationCounts(formation.filter((id) => !isBossEntry(id)));
+  for (const [id, n] of Object.entries(required)) {
+    const need = id === "queen" ? n - bossN : n;    // the boss stands in for the queen
+    if ((c[id] || 0) !== need) return false;
+  }
   return flexN === flex;
 }
 
@@ -238,7 +259,7 @@ export function buildArmyForMap(profile, map, excludeId = null) {
   const chosenOf = map.classic ? null : (id) => chosenAbilities(profile, id);
   const boostOf = map.classic ? null : (id) => dupeCount(profile, id);
   const saved = profile?.loadout?.formations?.[map.id];
-  const ok = !map.classic && saved && formationLegalOn(saved, unlockedCharacterIds(profile), map);
+  const ok = !map.classic && saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
   let formation = ok ? saved : map.defaultFormation;
   // Turncoat duels (v0.20): fighting the double of a piece you own — your own
   // copy sits the match out, its slot falls back to the map's default rank.

@@ -8,7 +8,7 @@ export {
   MAX_PIECE_LEVEL, upgradeCost, canUpgrade, upgradePiece,
   isUnlocked, unlockedCharacterIds,
   buildArmyFrom, buildArmy, buildAiArmy, buildAiArmyScaled, buildArmyForMap, buildAiArmyForMap,
-  defaultFormation, formationLegal, formationLegalOn, formationSpec, formationCounts, buildArmyFromFormation,
+  defaultFormation, formationLegal, formationLegalOn, formationSpec, formationCounts, buildArmyFromFormation, ownedLeagueBosses, isBossEntry, bossEntryId,
   FORMATION_REQUIRED, FORMATION_FLEX, FORMATION_FLEX_COUNT,
 } from "./leveling.js";
 export { ACHIEVEMENTS, evaluate, completedSet, claimedTiers, claimReward, claimableCount, claimAchievement } from "./achievements.js";

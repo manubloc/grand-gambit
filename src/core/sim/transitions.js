@@ -2,7 +2,7 @@ import { other, WHITE, BLACK, BASE_HP, BASE_ATK } from "../domain/constants.js";
 import { cloneBoard, findKing } from "../domain/board.js";
 import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
-import { familyOf } from "../rules/families.js";
+import { familyOf, familyCount, crownWallSoak } from "../rules/families.js";
 
 export function cloneState(state) {
   return {
@@ -70,14 +70,20 @@ export function applyMove(state, move, opts) {
   if (hp) {
     const has = (id) => piece.abilities.includes(id);
     if (target) {
-      // the SHIELD WALL: an order piece standing orthogonally beside another
-      // order ally takes 1 less damage — the wall holds (never below 1)
+      // the SHIELD WALL: a crown piece flanked orthogonally by crown kin soaks
+      // damage — 1 while 2+ crown stand, 2 from 6+. The wall is living: it is
+      // read off the CURRENT board, so it crumbles as the court falls.
       const W = state.w || 8, H2 = state.h || 8, ti = move.to, tf = ti % W;
-      const wall = familyOf(target) === "order" && [
+      const flanked = familyOf(target) === "crown" && [
         tf > 0 ? ti - 1 : -1, tf < W - 1 ? ti + 1 : -1, ti - W, ti + W,
       ].some((n) => { const q = n >= 0 && n < W * H2 ? b[n] : null;
-        return q && q !== target && q.color === target.color && familyOf(q) === "order"; });
-      const soak = (target.abilities.includes("bulwark") ? 1 : 0) + (wall ? 1 : 0);
+        return q && q !== target && q.color === target.color && familyOf(q) === "crown"; });
+      const wall = flanked ? crownWallSoak(familyCount(b, target.color, "crown")) : 0;
+      // wardAdj aura: allies orthogonally beside their fielded boss stand warded
+      const warded = [tf > 0 ? ti - 1 : -1, tf < W - 1 ? ti + 1 : -1, ti - W, ti + W]
+        .some((n) => { const q = n >= 0 && n < W * H2 ? b[n] : null;
+          return q && q.color === target.color && q.aura && q.aura.type === "wardAdj"; });
+      const soak = (target.abilities.includes("bulwark") ? 1 : 0) + wall + (warded ? 1 : 0);
       dmg = Math.max(1, (piece.atk || 1) - soak);
       target.hp -= dmg;
       if (move.consumes) piece.used[move.consumes] = true;

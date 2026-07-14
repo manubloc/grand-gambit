@@ -99,51 +99,62 @@ let gr = reduce(hpState(gb), moveCommand(legalMoves(hpState(gb)).find((m) => m.f
 ok("regen heals 1 HP when moving", [...gr.state.board].find((p) => p && p.kind === "R" && p.color === "w").hp === 5);
 
 
-// ── the three HOUSES: pack, wall and rift ────────────────────────────────────
-import { shiftCommand, familyOf, packBonus, circleRifts, encodeState, decodeState } from "./src/core/index.js";
+// ── the TWO houses: crown and shadow, plus the boss auras ────────────────────
+import { shiftCommand, potionCommand as potCmd, familyOf, crownWallSoak, crownHp, shadowRifts, shadowAtk, encodeState, decodeState } from "./src/core/index.js";
+import { bossSpec, bossById } from "./src/content/index.js";
 {
-  // hunting pack: three fielded blades → each +2 max HP (H hawk base 3, atk-file layout kept simple)
-  const blades = { back: ["H", "S", "O", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
-  const g = createGame(blades, a8, { map: classic, rules: "hp" });
-  const hawk = g.board[idx(0, 0, 8)];
-  const gSolo = createGame({ back: ["H", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") }, a8, { map: classic, rules: "hp" });
-  const hawkSolo = gSolo.board[idx(0, 0, 8)];
-  ok("hunting pack: +1 max HP per additional blade (3 fielded → +2)", hawk.maxHp === hawkSolo.maxHp + 2 && hawk.hp === hawk.maxHp);
-  ok("family helpers agree", familyOf(hawk) === "blades" && packBonus(3) === 2 && packBonus(1) === 0 && circleRifts(2) === 1 && circleRifts(4) === 2);
+  // shadow ladder: 4 fielded shadows → +1 atk each and 2 rifts banked
+  const sh4 = { back: ["H", "S", "O", "Z", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const g4 = createGame(sh4, a8, { map: classic, rules: "hp" });
+  const hawk4 = g4.board[idx(0, 0, 8)];
+  const sh1 = { back: ["H", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const hawk1 = createGame(sh1, a8, { map: classic, rules: "hp" }).board[idx(0, 0, 8)];
+  ok("shadow ladder: 4 shadows → +1 atk each & 2 rifts", hawk4.atk === hawk1.atk + 1 && g4.shifts.w === 2);
+  ok("family helpers agree", familyOf(hawk4) === "shadow" && shadowRifts(2) === 1 && shadowRifts(6) === 3 && shadowAtk(3) === 0 && crownHp(4) === 1 && crownWallSoak(6) === 2);
 
-  // magic circle: two mages bank one Time Rift; arming it keeps the turn once
-  const magic = { back: ["E", "L", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
-  const mg = createGame(magic, a8, { map: classic, rules: "hp" });
-  ok("the circle banks one rift for two mages", mg.shifts.w === 1 && mg.shifts.b === 0);
-  const armed = reduce(mg, shiftCommand("w")).state;
-  ok("arming a rift spends it without ending the turn", armed.shifts.w === 0 && armed.shiftArmed === "w" && armed.turn === "w");
+  // a banked rift keeps the turn exactly once
+  const armed = reduce(g4, shiftCommand("w")).state;
+  ok("arming a rift spends it without ending the turn", armed.shifts.w === 1 && armed.shiftArmed === "w" && armed.turn === "w");
   const afterMove = reduce(armed, moveCommand(legalMoves(armed)[0])).state;
   ok("the rifted move keeps the turn — exactly once", afterMove.turn === "w" && afterMove.shiftArmed === null);
-  const afterSecond = reduce(afterMove, moveCommand(legalMoves(afterMove)[0])).state;
-  ok("the second move passes the turn as usual", afterSecond.turn === "b");
-  ok("rifts survive the codec", decodeState(encodeState(armed)).shifts.w === 0 && decodeState(encodeState(armed)).shiftArmed === "w");
-  ok("no rift without the circle", createGame(a8, a8, { map: classic, rules: "hp" }).shifts.w === 0);
+  ok("rifts survive the codec", decodeState(encodeState(armed)).shifts.w === 1 && decodeState(encodeState(armed)).shiftArmed === "w");
 
-  // shield wall: two adjacent order guardians soak 1 (min 1 stays)
-  const order = { back: ["G", "U", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
-  const og = createGame(order, a8, { map: classic, rules: "hp" });
-  const st0 = { ...og, board: og.board.slice(), turn: "b" };
-  // teleport a black queen next to the guardian pair for a clean strike
+  // crown ladder: 4 crowns → +1 max HP each; the wall soaks 1 while flanked
+  const cr4 = { back: ["G", "U", "I", "J", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const cg = createGame(cr4, a8, { map: classic, rules: "hp" });
+  const guard4 = cg.board[idx(0, 0, 8)];
+  const cr1 = { back: ["G", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const guard1 = createGame(cr1, a8, { map: classic, rules: "hp" }).board[idx(0, 0, 8)];
+  ok("crown ladder: 4 crowns → +1 max HP each", guard4.maxHp === guard1.maxHp + 1);
+  const st0 = { ...cg, board: cg.board.slice(), turn: "b" };
   const bq = { id: 999, kind: "Q", color: "b", level: 1, abilities: [], shield: 0, used: {}, hasMoved: true, maxHp: 7, hp: 7, atk: 4 };
-  st0.board[idx(0, 1, 8)] = null; st0.board[idx(1, 1, 8)] = null; // clear the pawns in front
+  st0.board[idx(0, 1, 8)] = null; st0.board[idx(1, 1, 8)] = null;
   st0.board[idx(0, 2, 8)] = bq;
   const strike = legalMoves(st0).find((m) => m.from === idx(0, 2, 8) && m.to === idx(0, 0, 8));
-  const hit = reduce(st0, moveCommand(strike)).state;
-  const guardian = hit.board[idx(0, 0, 8)];
-  ok("shield wall: the flanked guardian soaks 1 (4 atk → 3 dmg)", guardian && guardian.maxHp - guardian.hp === 3);
-  // the same strike against a LONE guardian takes full damage
-  const lone = { back: ["G", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
-  const lg2 = createGame(lone, a8, { map: classic, rules: "hp" });
-  const st1 = { ...lg2, board: lg2.board.slice(), turn: "b" };
-  st1.board[idx(0, 1, 8)] = null; st1.board[idx(0, 2, 8)] = { ...bq };
-  const strike1 = legalMoves(st1).find((m) => m.from === idx(0, 2, 8) && m.to === idx(0, 0, 8));
-  const lonely = reduce(st1, moveCommand(strike1)).state.board[idx(0, 0, 8)];
-  ok("no wall for the lone guardian: full 4 damage", lonely && lonely.maxHp - lonely.hp === 4);
+  const hitG = reduce(st0, moveCommand(strike)).state.board[idx(0, 0, 8)];
+  ok("living shield wall: flanked crown soaks 1 (4 atk → 3 dmg)", hitG && hitG.maxHp - hitG.hp === 3);
+  const stL = { ...createGame(cr1, a8, { map: classic, rules: "hp" }) };
+  stL.board = stL.board.slice(); stL.turn = "b";
+  stL.board[idx(0, 1, 8)] = null; stL.board[idx(0, 2, 8)] = { ...bq };
+  const strikeL = legalMoves(stL).find((m) => m.from === idx(0, 2, 8) && m.to === idx(0, 0, 8));
+  const lone = reduce(stL, moveCommand(strikeL)).state.board[idx(0, 0, 8)];
+  ok("no wall for the lone crown piece: full damage", lone && lone.maxHp - lone.hp === 4);
+
+  // boss auras bend the whole match
+  const withBoss = (bid) => {
+    const back = ["R", "N", "B", "Q", "K", "B", "N", "R"].map(spec);
+    back[3] = { ...bossSpec(bossById(bid)) };
+    return createGame({ back, pawn: spec("P") }, a8, { map: classic, rules: "hp" });
+  };
+  const disc = withBoss("b25"); // courtHp 1
+  ok("courtHp aura: the League Master grants his court +1 HP", disc.board[idx(4, 0, 8)].maxHp === 11); // king 10 → 11
+  const iron = withBoss("b14"); // grant bulwark
+  ok("grant aura: the Colossus makes his court bulwarks", iron.board[idx(0, 0, 8)].abilities.includes("bulwark"));
+  const judge = withBoss("b12"); // noEnemyPotions
+  const js = { ...judge, potions: { w: 0, b: 1 }, turn: "b", board: judge.board.slice() };
+  const hurtIx = js.board.findIndex((p) => p && p.color === "b" && p.kind === "P");
+  js.board[hurtIx] = { ...js.board[hurtIx], hp: 1 };
+  ok("noEnemyPotions aura: the Judge forbids hostile draughts", reduce(js, potCmd("b", hurtIx)).state === js);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

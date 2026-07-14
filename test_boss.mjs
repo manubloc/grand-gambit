@@ -84,9 +84,12 @@ function loneBoss(boss) {
     && buildStageMatch("a4", { campaign: { bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
   // monster stations rotate their champion by league — the whole bestiary marches
   const nA5 = (id) => CAMPAIGN.find((n) => n.id === id);
-  ok("league rotation fields a fresh monster each league and cycles", nodeBossSpec(nA5("a5"), 1).bossId === "b22"
-    && nodeBossSpec(nA5("a5"), 2).bossId === "b09" && nodeBossSpec(nA5("a5"), 6).bossId === "b22"
-    && nodeBossSpec(nA5("n03"), 5).bossId === "b24" && nodeBossSpec(nA5("e2"), 3).bossId === "b12");
+  ok("station rotation fields a fresh monster each league and cycles", nodeBossSpec(nA5("a5"), 1).bossId === "b22"
+    && nodeBossSpec(nA5("a5"), 2).bossId === "b09" && nodeBossSpec(nA5("a5"), 5).bossId === "b22"
+    && nodeBossSpec(nA5("n03"), 5).bossId === "b24" && nodeBossSpec(nA5("e2"), 3).bossId === "b15");
+  ok("the League Keep fields THIS league's boss with his aura", nodeBossSpec(nA5("n22"), 1).bossId === "b25"
+    && nodeBossSpec(nA5("n22"), 2).bossId === "b12" && nodeBossSpec(nA5("n22"), 2).aura.type === "noEnemyPotions"
+    && nodeBossSpec(nA5("n22"), 10).bossId === "b14" && nodeBossSpec(nA5("n22"), 11).bossId === "b25");
   ok("every rotated monster resolves to a real boss", ["n03","a5","b5","c5","e2"].every((id) =>
     (nA5(id).boss.rotation || []).every((b) => bossById(b))));
 }

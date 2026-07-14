@@ -19,7 +19,7 @@ export { isSquareAttacked, inCheck } from "./rules/attacks.js";
 export { createGame } from "./sim/state.js";
 export { applyMove, legalMoves, legalMovesFrom, status, undo, cloneState } from "./sim/transitions.js";
 export { COMMAND, moveCommand, resignCommand, potionCommand, shiftCommand } from "./sim/commands.js";
-export { familyOf, FAMILY_BY_KIND, packBonus, circleRifts } from "./rules/families.js";
+export { familyOf, FAMILY_BY_KIND, familyCount, crownWallSoak, crownHp, shadowRifts, shadowAtk } from "./rules/families.js";
 export { EVENT, Ev } from "./sim/events.js";
 export { reduce } from "./sim/reducer.js";
 
