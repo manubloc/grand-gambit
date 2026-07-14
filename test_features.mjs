@@ -102,12 +102,20 @@ ok("paths do not open each other", nodeStatus(advanceCampaign(prof, "a1"), "b2")
 const before = unlockedCharacterIds(prof);
 ok("assassin locked before its boss falls", !before.includes("assassin"));
 let prof2 = advanceCampaign(advanceCampaign(prof, "a1"), "a2");
-ok("the Hawk joins in Liga I; the Assassin fights now but joins later", unlockedCharacterIds(prof2).includes("hawk") && !unlockedCharacterIds(prof2).includes("assassin"));
-ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 1);
+ok("slaying Hawk & Assassin recruits both — their bosses demand a single win", unlockedCharacterIds(prof2).includes("hawk") && unlockedCharacterIds(prof2).includes("assassin"));
+ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 2);
 // recruit pacing: the enemy appears from league I, the RECRUIT waits for his league
-import { bossPieceFor, effectiveMap } from "./src/meta/index.js";
+import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } from "./src/meta/index.js";
 import { nodeById as nbId } from "./src/content/index.js";
-ok("fromLeague gates the recruit, not the fight", bossPieceFor(nbId("a2"), 1) === null && bossPieceFor(nbId("a2"), 2) === "assassin" && bossPieceFor(nbId("a1"), 1) === "hawk");
+// stubborn champions: the Dragon demands three victories, tallied across replays & leagues
+ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNeeded(nbId("a2")) === 1 && winsNeeded(nbId("b4")) === 2);
+{
+  let d = prof2;                                     // a1+a2 cleared; road to the Dragon
+  d = advanceCampaign(d, "a3");
+  ok("first Dragon win only notches the tally", (() => { d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 1 && !unlockedCharacterIds(d).includes("dragon"); })());
+  ok("a replay notches it again without progress or XP", (() => { const xp = d.xpEarned || 0; d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 2 && (d.xpEarned || 0) === xp && !unlockedCharacterIds(d).includes("dragon"); })());
+  ok("the NEXT win would seal it — and the third replay recruits", (() => { const seal = recruitOnWin(nbId("a4"), d) === "dragon"; d = advanceCampaign(d, "a4"); return seal && unlockedCharacterIds(d).includes("dragon"); })());
+}
 ok("Liga I fields classic boards; later leagues open the stages", effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 2) === "skirmish" && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "arena" && effectiveMap(nbId("n22"), 1) === "arena");
 
 // ── League 2 (New Game+): rollover, duplication stars, scaling ───────────────
@@ -120,8 +128,8 @@ ok("unlocked pieces survive the rollover, gold is untouched by it", lg.campaign.
 ok("paid tolls reset with the league — every climate has its own gatekeeper", (lg.campaign.tolls || []).length === 0);
 lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
 lg = advanceCampaign(advanceCampaign(lg, "a1"), "a2");
-ok("in league II the Assassin finally joins the court", unlockedCharacterIds(lg).includes("assassin") && dupeCount(lg, "assassin") === 0);
-ok("re-beating a recruited piece boss grants a duplication star", dupeCount(lg, "hawk") === 1);
+ok("re-beating recruited piece bosses in league II grants duplication stars", dupeCount(lg, "hawk") === 1 && dupeCount(lg, "assassin") === 1);
+ok("the win tally survives the league rollover", bossWinsFor(lg, "hawk") >= 2);
 ok("league 2 foes come level-boosted", bsm2("a3", lg).aiArmy.back[0].level === bsm2("a3", prof).aiArmy.back[0].level + leagueBump(2));
 
 // ── Healing draught: a real, guarded core command ─────────────────────────────

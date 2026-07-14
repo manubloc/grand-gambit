@@ -8,6 +8,7 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
+import { paintedById } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
@@ -62,7 +63,7 @@ const pill = (extra) => ({ display: "inline-flex", alignItems: "center", gap: 6,
   fontSize: 13, boxShadow: "0 3px 10px rgba(0,0,0,.4)", whiteSpace: "nowrap", flex: "0 0 auto",
   backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", ...extra });
 
-export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null }) {
+export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null, onArmy = null }) {
   const campaign = !!match;
   const en = profile.lang === "en";
   const hotseat = !pvp && !match && !!quick?.hotseat;   // two players, one device
@@ -179,6 +180,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (campaign && result === "win") {
       dispatch({ type: "RECORD_STAGE", id: match.nodeId, moves: summary.moveCount || 0 });
       dispatch({ type: "CAMPAIGN_CLEAR", id: match.nodeId });
+      // A champion beaten but not won over FLEES the map — leave the map a note
+      // so it can stage the escape on return (recruits join the court instead).
+      if (match.boss && !match.boss.unlocks && match.firstClear) {
+        try { sessionStorage.setItem("gg:fled", match.nodeId); } catch {}
+      }
     }
     if (pvp && reason !== "resign" && reason !== "left") {
       const winner = result === "draw" ? "draw" : result === "win" ? pvp.color : (pvp.color === "w" ? "b" : "w");
@@ -361,7 +367,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
           onSettings={!campaign && !pvp ? onExit : null}
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
-          unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null} />}
+          unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
+          unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} />}
       </div>
 
 </>);
@@ -522,7 +529,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   );
 }
 
-function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, pvpInfo = null }) {
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, en = false, onArmy = null, pvpInfo = null }) {
   const win = banner.result === "win";
   const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : "#b4636c";
   const title = banner.hotseat
@@ -549,9 +556,37 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
         </div>}
         {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
+        {campaign && win && unlockId && (() => {
+          const ch = CHARACTERS_BY_ID[unlockId];
+          if (!ch) return null;
+          const abilities = (ch.ladder || []).filter((r) => r.ability).length;
+          const shields = (ch.ladder || []).reduce((a, r) => a + (r.shield || 0), 0);
+          const maxLv = (ch.ladder || []).reduce((a, r) => Math.max(a, r.level), 1);
+          const pt = paintedById(unlockId);
+          return <div style={{ margin: "2px 0 12px", padding: "12px 12px 11px", borderRadius: 12,
+            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
+            animation: "rise .35s ease" }}>
+            {pt && <img src={pt} alt="" draggable={false} style={{ width: 84, height: 84, objectFit: "contain",
+              filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))", userSelect: "none" }} />}
+            <div className="gg-serif" style={{ fontSize: 19, letterSpacing: ".05em", color: T.gold, marginTop: 2 }}>
+              {en ? ch.nameEn : ch.nameDe}</div>
+            {(ch.flavorDe || ch.flavorEn) && <div style={{ fontSize: 12, color: T.dim, fontStyle: "italic", marginTop: 3, lineHeight: 1.45 }}>
+              {en ? ch.flavorEn : ch.flavorDe}</div>}
+            <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 9, flexWrap: "wrap" }}>
+              <Chip color={T.gold} bg={T.panel2}>✦ {t("banner.abilities", { n: abilities })}</Chip>
+              {shields > 0 && <Chip color={T.gold} bg={T.panel2}>⛨ {t("banner.shields", { n: shields })}</Chip>}
+              <Chip color={T.gold} bg={T.panel2}>{t("banner.maxLevel", { n: maxLv })}</Chip>
+            </div>
+          </div>;
+        })()}
         {campaign ? (
           win
-            ? <Button variant="primary" style={{ width: "100%" }} onClick={onExit}>{t("camp.back")}</Button>
+            ? (unlockId && onArmy
+              ? <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  <Button variant="primary" onClick={onArmy}>{t("banner.toArmy")} ›</Button>
+                  <Button variant="subtle" onClick={onExit}>{t("camp.back")}</Button>
+                </div>
+              : <Button variant="primary" style={{ width: "100%" }} onClick={onExit}>{t("camp.back")}</Button>)
             : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <Button variant="primary" onClick={onNew}>{t("camp.replay")}</Button>
                 <Button variant="subtle" onClick={onExit}>{t("common.back")}</Button>

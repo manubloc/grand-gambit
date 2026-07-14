@@ -18,7 +18,7 @@ export { newSession, applyEvents, summarize, summarizeMatch } from "./session.js
 export {
   campaignLength, clearedCount, clearedIds, nodeStatus, currentNodeId, predsOf, nodeBossSpec, itemRevealed,
   buildStageMatch, advanceCampaign, mapUnlocked, hpUnlocked, stageTimer, effectiveMap,
-  leagueRewardMult, leagueBump, stageGold, tollCost, payToll, bossPieceFor, leagueFinalBossPiece, seaAccessible, nodeInLeague, gateOf, leagueNo,
+  leagueRewardMult, leagueBump, stageGold, tollCost, payToll, bossPieceFor, leagueFinalBossPiece, winsNeeded, bossWinsFor, recruitOnWin, seaAccessible, nodeInLeague, gateOf, leagueNo,
 } from "./campaign.js";
 export { retinueScore, scoreBand } from "./rating.js";
 export { applySnapshot, readSnapshot, listRestorePoints, takeRestorePoint, BK_RECENT, BK_DAILY_DAYS, BK_MIN_GAP_MS } from "./backups.js";

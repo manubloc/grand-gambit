@@ -138,7 +138,7 @@ export function buildStageMatch(id, profile = null) {
     let qi = formation.indexOf("queen");
     if (qi === -1) qi = Math.max(0, Math.floor(formation.length / 2) - 1);
     aiArmy.back = aiArmy.back.map((spec, j) => (j === qi ? boss : spec));
-    bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: bossPieceFor(node, lg),
+    bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: recruitOnWin(node, profile),
       art: boss.art || null, accent: boss.accent, kind: boss.kind };
   }
   const recruitId = bossPieceFor(node, lg);
@@ -157,31 +157,51 @@ export function buildStageMatch(id, profile = null) {
   };
 }
 
-/** Clearing an AVAILABLE node: grants bonus XP (spendable + lifetime) and, for
- *  piece bosses, unlocks that piece. Replays change nothing. */
+/** Clearing an AVAILABLE node grants bonus XP (spendable + lifetime) and moves
+ *  the front line. Every boss victory — replays included — notches the win
+ *  tally of its piece; the piece joins once the tally reaches its `wins`
+ *  demand (default 1: joins on the first victory). Champions who fall short
+ *  of your court flee the map; the tally survives league rollovers. */
 export function advanceCampaign(profile, id) {
   const st = nodeStatus(profile, id);
+  const node = nodeById(id);
+  if (!node) return profile;
+  const league = profile.campaign?.league || 1;
   // Winning the League Keep again still opens the next league — without this,
   // a fully cleared map (e.g. set via the admin progress tool) is a dead end.
   const keepRematch = id === "n22" && st === "cleared";
-  if (st !== "available" && !keepRematch) return profile;
-  const node = nodeById(id);
-  const league = profile.campaign?.league || 1;
+  const firstClear = st === "available";
+  const bossReplay = !!node.boss && st === "cleared";
+  if (!firstClear && !keepRematch && !bossReplay) return profile;
+
+  const unlocked = new Set(profile.campaign?.unlocked || []);
+  const dupes = { ...(profile.campaign?.dupes || {}) };
+  const bossWins = { ...(profile.campaign?.bossWins || {}) };
+  const stats = { ...(profile.stats || {}) };
+  const bossPiece = node.boss ? bossPieceFor(node, league) : null;
+  let joined = false;
+  if (bossPiece) {
+    bossWins[bossPiece] = (bossWins[bossPiece] || 0) + 1;
+    if (unlocked.has(bossPiece)) {
+      if (firstClear) dupes[bossPiece] = Math.min(2, (dupes[bossPiece] || 0) + 1);
+    } else if (bossWins[bossPiece] >= winsNeeded(node)) {
+      unlocked.add(bossPiece);
+      joined = true;
+      stats.recruits = (stats.recruits || 0) + 1;
+    }
+  }
+  if (!firstClear && !keepRematch) {
+    // a pure replay: only the tally (and a possible late recruit) moves
+    return { ...profile, stats,
+      campaign: { ...(profile.campaign || {}), unlocked: [...unlocked], dupes, bossWins } };
+  }
+
   const mult = leagueRewardMult(league);
   const bonus = Math.round((node.reward?.xp || 0) * mult);
   // NOTE (v0.5): stage gold is granted through applyResult (visible in the
   // result banner) — advanceCampaign only handles progress, XP and recruits.
-  const unlocked = new Set(profile.campaign?.unlocked || []);
-  const dupes = { ...(profile.campaign?.dupes || {}) };
-  const bossPiece = node.boss ? bossPieceFor(node, league) : null;
-  if (bossPiece) {
-    if (unlocked.has(bossPiece)) dupes[bossPiece] = Math.min(2, (dupes[bossPiece] || 0) + 1);
-    else unlocked.add(bossPiece);
-  }
-  const stats = { ...(profile.stats || {}) };
   stats.stagesCleared = (stats.stagesCleared || 0) + 1;
   if (node.boss) stats.bossKills = (stats.bossKills || 0) + 1;
-  if (bossPiece) stats.recruits = (stats.recruits || 0) + 1;
   const xpEarned = (profile.xpEarned || 0) + bonus;
   stats.xpEarned = xpEarned;
   const spGain = spForXpJump(profile.xpEarned || 0, xpEarned);
@@ -197,23 +217,29 @@ export function advanceCampaign(profile, id) {
     xpEarned,
     stats,
     campaign: finished
-      ? { league: league + 1, cleared: [], unlocked: [...unlocked], dupes, tolls: [] }
-      : { league, cleared: [...clearedIds(profile), id], unlocked: [...unlocked], dupes, tolls: profile.campaign?.tolls || [] },
+      ? { league: league + 1, cleared: [], unlocked: [...unlocked], dupes, bossWins, tolls: [] }
+      : { league, cleared: keepRematch ? clearedIds(profile) : [...clearedIds(profile), id], unlocked: [...unlocked], dupes, bossWins, tolls: profile.campaign?.tolls || [] },
   };
 }
 
 /** League-specific finale: the Desert league (IX) ends at the Captain, whose
  *  recruitment (plus a boat) is the only way onto the Endless Sea (X). */
 export const leagueFinalBossPiece = (league) => (((league - 1) % 10) + 1 === 9 ? "captain" : null);
-/** The recruit a node yields — respecting fromLeague: early leagues fight the
- *  boss for gold & XP alone; from its league on, victory means he joins. */
-export const bossPieceFor = (node, league) => {
-  const override = node.id === "n22" && leagueFinalBossPiece(league);
-  if (override) return override;
-  const piece = node.boss?.piece || null;
-  if (!piece) return null;
-  return (league || 1) >= (node.boss.fromLeague || 1) ? piece : null;
-};
+export const bossPieceFor = (node, league) =>
+  (node.id === "n22" && leagueFinalBossPiece(league)) || node.boss?.piece || null;
+
+/** Some champions take convincing: `wins` on the boss is how many victories it
+ *  takes before the piece joins (default 1). The tally lives on the profile
+ *  (campaign.bossWins, per piece) and survives league rollovers — every
+ *  victory over that boss counts, replays included. */
+export const winsNeeded = (node) => node?.boss?.wins || 1;
+export const bossWinsFor = (profile, pieceId) => (profile?.campaign?.bossWins || {})[pieceId] || 0;
+/** The recruit THIS victory would seal — null while the champion still resists. */
+export function recruitOnWin(node, profile) {
+  const pieceId = node?.boss ? bossPieceFor(node, profile?.campaign?.league || 1) : null;
+  if (!pieceId || (profile?.campaign?.unlocked || []).includes(pieceId)) return null;
+  return bossWinsFor(profile, pieceId) + 1 >= winsNeeded(node) ? pieceId : null;
+}
 export const seaAccessible = (profile) =>
   (profile?.campaign?.unlocked || []).includes("captain") && hasItem(profile, "boat");
 

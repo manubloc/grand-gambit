@@ -7,7 +7,7 @@
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
@@ -70,6 +70,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const [panelOpen, setPanelOpen] = useState(true);
   const walkT = useRef(null);
   const [stride, setStride] = useState({ angle: 0, dir: 1 }); // last travel heading — feeds tilt & trail
+  // A champion beaten but not recruited FLEES the map to the east — GameScreen
+  // leaves his station id behind; we play the escape once, then only ✓ remains.
+  const [fleeing, setFleeing] = useState(null);
+  useEffect(() => {
+    let fledId = null;
+    try { fledId = sessionStorage.getItem("gg:fled"); if (fledId) sessionStorage.removeItem("gg:fled"); } catch {}
+    if (!fledId || !nodeById(fledId)?.boss) return;
+    setFleeing(fledId);
+    const tm = setTimeout(() => setFleeing(null), 1600);
+    return () => clearTimeout(tm);
+  }, []);
   function walkTo(id) {
     const stT = nodeStatus(profile, id);
     if (id === token.at || stT === "locked" || stT === "hidden") return;
@@ -102,8 +113,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const status = nodeStatus(profile, sel);
   const boss = node?.boss ? nodeBossSpec(node) : null;
   const unlockCh = node?.boss?.piece ? CHARACTERS[node.boss.piece] : null;
-  const recruitFrom = node?.boss?.fromLeague || 1;         // he fights you now — he JOINS you later
-  const canRecruit = !!unlockCh && (profile.campaign?.league || 1) >= recruitFrom;
+  const needWins = winsNeeded(node);                       // stubborn champions demand several victories
+  const haveWins = unlockCh ? Math.min(needWins, bossWinsFor(profile, unlockCh.id)) : 0;
+  const canRecruit = !!unlockCh && haveWins + 1 >= needWins;  // the NEXT win seals it
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
@@ -260,26 +272,26 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   const finale = n.id === "n22";
                   const size = finale ? 68 : 46;
                   const beaten = st === "cleared";
-                  const fill = beaten ? "#c9a45c" : "#242d44";
-                  const rim = beaten ? "#f0dfae" : "#93a0bb";
-                  const detail = beaten ? "#59421a" : "#9aa8c6";
-                  // the detailed painting when the gallery has one — cold steel
-                  // until beaten, warm lacquer once the boss joined the court
+                  const flee = fleeing === n.id;
+                  // beaten champions leave the map: fled if they resisted you,
+                  // joined your court if recruited — only the checkmark stays
+                  if (beaten && !flee) return null;
                   const painting = paintedForPiece({ kind: spec.kind, art: spec.art, bossId: spec.bossId });
                   return <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 12,
-                    transform: "translateX(-50%)", width: size, height: size, zIndex: 0, pointerEvents: "none",
+                    transform: "translateX(-50%)", width: size, height: size, zIndex: flee ? 6 : 0, pointerEvents: "none",
+                    animation: flee ? "bossFlee 1.5s ease-in forwards" : "none",
                     opacity: st === "locked" ? 0.55 : 1, filter: st === "locked"
                       ? "grayscale(.65) drop-shadow(0 2px 3px rgba(40,32,16,.3))"
                       : "drop-shadow(0 3px 4px rgba(40,32,16,.42))" }}>
-                    <div style={{ position: "absolute", left: "50%", bottom: -2, transform: "translateX(-50%)",
+                    {!flee && <div style={{ position: "absolute", left: "50%", bottom: -2, transform: "translateX(-50%)",
                       width: size * 0.62, height: size * 0.16, borderRadius: "50%",
-                      background: "radial-gradient(ellipse at center, rgba(46,42,32,.32), transparent 72%)" }} />
+                      background: "radial-gradient(ellipse at center, rgba(46,42,32,.32), transparent 72%)" }} />}
                     {painting
                       ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
                           objectFit: "contain", objectPosition: "bottom",
-                          filter: beaten ? "none" : ENEMY_FILTER,
+                          filter: ENEMY_FILTER,
                           userSelect: "none", pointerEvents: "none" }} />
-                      : <PieceArt kind={spec.kind} art={spec.art} fill={fill} rim={rim} detail={detail}
+                      : <PieceArt kind={spec.kind} art={spec.art} fill="#242d44" rim="#93a0bb" detail="#9aa8c6"
                           accent={spec.accent || T.gold} size="100%" level={1} />}
                   </div>;
                 })()}
@@ -348,17 +360,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
                       lineHeight: 0.94, textShadow: "0 1px 0 rgba(248,242,226,.9)" }}>{n.place}</span>
                   </span>
-                  <span style={{ display: "block", marginTop: 2 }}>
-                    {(() => {
-                      const base = n.difficulty === "easy" ? 1 : n.difficulty === "normal" ? 2 : 3;
-                      const pips = Math.min(4, base + (n.bump ? 1 : 0) + (league - 1));
-                      const col = pips <= 1 ? "#4d7a45" : pips === 2 ? "#8a6f4d" : pips === 3 ? "#a1512e" : "#8e2f39";
-                      return Array.from({ length: 4 }).map((_, k) => (
-                        <span key={k} style={{ display: "inline-block", width: 4.5, height: 4.5, borderRadius: "50%",
-                          margin: "0 1.5px", background: k < pips ? col : "#c9bfa4" }} />
-                      ));
-                    })()}
-                  </span>
                 </div>
               </div>
             );
@@ -369,7 +370,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             if (!tn) return null;
             return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 48, height: 50, zIndex: 5,
               pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
-              transform: bm ? "translate(-50%,-52%)" : "translate(-98%,-60%)" }}>
+              transform: bm ? "translate(-50%,-60%)" : "translate(-98%,-62%)" }}>
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
                 transformOrigin: "0 50%", transform: `rotate(${stride.angle + 180}deg)`,
@@ -382,8 +383,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
               </div>}
               <div style={{ position: "relative", width: "100%", height: "100%", filter: "drop-shadow(0 2px 3px rgba(46,42,32,.35))",
-                transform: token.moving ? `rotate(${-7 * stride.dir}deg)` : "rotate(0deg)", transition: "transform .3s ease",
-                animation: token.moving ? "none" : "idleBreath 3.2s ease-in-out infinite" }}>
+                transform: token.moving ? `rotate(${-7 * stride.dir}deg)` : "none", transition: "transform .3s ease" }}>
                 {bm && PAINTED.gambit
                   ? <img src={PAINTED.gambit} alt="" draggable={false} style={{ width: "100%", height: "100%",
                       objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
@@ -470,9 +470,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     ? ((node.next || []).length === 0 && !node.gate ? "camp.boss" : "camp.rival")
                     : canRecruit ? "camp.newPiece" : "camp.rival")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
-                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known && canRecruit ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}{unlockCh && !canRecruit ? <> · <span style={{ color: "#8a6f4d", fontStyle: "italic" }}>{t("camp.recruitLater", { r: ROMAN[recruitFrom - 1] || recruitFrom })}</span></> : null}
+                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known && canRecruit ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
                   {!known && <> · {t("camp.unknown")}</>}
                 </div>
+                {unlockCh && !known && needWins > 1 && <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 5 }}>
+                  <span className="gg-serif" style={{ fontSize: 11, color: "#8a6f4d", fontStyle: "italic" }}>{t("camp.winsToJoin")}</span>
+                  {Array.from({ length: needWins }).map((_, k) => (
+                    <span key={k} style={{ display: "inline-grid", placeItems: "center", width: 13, height: 13, transform: "rotate(45deg)",
+                      borderRadius: 3, background: k < haveWins ? "linear-gradient(135deg, #efdc9e, #b98f3f)" : "#d9d0b6",
+                      boxShadow: k < haveWins ? "0 1px 2px rgba(60,48,20,.4)" : "inset 0 0 0 1px #b7ab8a" }}>
+                      {k < haveWins && <span style={{ transform: "rotate(-45deg)", fontSize: 8, fontWeight: 900, color: "#2a2008" }}>✓</span>}
+                    </span>
+                  ))}
+                  <span style={{ fontSize: 11, color: "#8a6f4d", fontWeight: 700 }}>{haveWins}/{needWins}</span>
+                </div>}
                 {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
               </div>
