@@ -31,7 +31,7 @@ export function GoldRule({ margin = "8px 12%" }) {
   </div>;
 }
 
-export function GildedFrame({ children, pad = "14px 16px", center = false, corners = true, style }) {
+export function GildedFrame({ children, pad = "14px 16px", center = false, corners = false, style }) {
   const shineDelay = useShineDelay();
   return (
     <div style={{ position: "relative", borderRadius: T.radius, padding: 1.5,

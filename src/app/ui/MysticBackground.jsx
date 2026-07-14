@@ -49,10 +49,10 @@ export function MysticBackground({ league = 1 }) {
     addEventListener("resize", fit);
 
     const mk = (side) => {                       // side: -1 left corner, +1 right
-      const ex = side < 0 ? W * (0.06 + Math.random() * 0.1) : W * (0.84 + Math.random() * 0.1);
+      const ex = side < 0 ? W * (0.06 + Math.random() * 0.26) : W * (0.68 + Math.random() * 0.26);
       return { side, ex, x: ex + (Math.random() - 0.5) * W * 0.05,
         y: H * (1.0 + Math.random() * 0.14),
-        vy: -(0.45 + Math.random() * 0.75),      // brisk rise — flame, not fog
+        vy: -(0.4 + Math.random() * 0.6),      // brisk rise — flame, not fog
         life: 0, maxLife: 220 + Math.random() * 200,
         size: (26 + Math.random() * 44), seed: Math.random() * 9,
         warm: Math.random() < 0.42 };
@@ -75,7 +75,7 @@ export function MysticBackground({ league = 1 }) {
         p.y += p.vy * (1 - k * 0.55);            // slows with height → reads as distance
         p.x += (W * 0.5 - p.x) * 0.0007 * k;     // a whisper of vanishing-point pull (depth)
         p.life += 1;
-        if (k >= 1 || p.y < H * 0.3) { Object.assign(p, mk(p.side)); continue; }
+        if (k >= 1 || p.y < H * 0.55) { Object.assign(p, mk(p.side)); continue; }
         const size = p.size * (1 - k * 0.62);    // shrinks into the deep
         const fadeIn = Math.min(1, k / 0.12);
         const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;

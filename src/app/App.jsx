@@ -220,7 +220,7 @@ export default function App() {
     return (
       <button key={tb.id} onClick={() => { setTab(tb.id); setView("hub"); }} style={{
         display: "flex", alignItems: "center", gap: wide ? 12 : 0, flexDirection: wide ? "row" : "column",
-        justifyContent: wide ? "flex-start" : "center", width: "100%",
+        justifyContent: wide ? "flex-start" : "center", width: wide ? "auto" : "100%",
         background: on ? `linear-gradient(135deg, ${T.lime}26, ${T.lime}10)` : "none",
         border: on ? `1px solid ${T.lime}55` : "1px solid transparent",
         borderRadius: 14, cursor: "pointer", fontFamily: "inherit",
@@ -246,19 +246,20 @@ export default function App() {
   );
 
   if (wide) return (
-    <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
+    <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
+      padding: "16px 18px 24px",
       ...(immersive ? { height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", paddingBottom: 18 } : {}) }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
-        <aside style={{ width: 224, flex: "0 0 auto", position: "sticky", top: 18, alignSelf: "flex-start",
+        <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
-          borderRadius: 22, boxShadow: T.shadow, padding: "20px 12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ padding: "0 8px 14px" }}><Wordmark scale={0.8} /></div>
-          {railItems}
-          <div style={{ flex: 1 }} />
-          <div style={{ padding: "10px 10px 4px" }}>
+          borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
+          display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ paddingRight: 8, flex: "0 0 auto" }}><Wordmark scale={0.62} /></div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
+          <div style={{ flex: "0 0 auto", width: 168 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.dim, marginBottom: 4 }}>
               <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
             </div>
