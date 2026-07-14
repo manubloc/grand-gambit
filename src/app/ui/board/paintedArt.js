@@ -4,6 +4,10 @@
 // so the set may grow one figure at a time.
 import pPawn from "../assets/painted/painted-pawn.webp";
 import pGambit from "../assets/painted/painted-gambit.webp";
+// the risen hero: tier portraits (Stufe II/III) — currently placeholder copies
+// of the base painting; the user's generated art replaces these files 1:1
+import pGambitT2 from "../assets/painted/painted-gambit-t2.webp";
+import pGambitT3 from "../assets/painted/painted-gambit-t3.webp";
 import pKnight from "../assets/painted/painted-knight.webp";
 import pBishop from "../assets/painted/painted-bishop.webp";
 import pQueen from "../assets/painted/painted-queen.webp";
@@ -61,7 +65,7 @@ import pbb22 from "../assets/painted/painted-boss-b22.webp";
 import pbb24 from "../assets/painted/painted-boss-b24.webp";
 
 export const PAINTED = {
-  pawn: pPawn, gambit: pGambit, knight: pKnight, bishop: pBishop, queen: pQueen,
+  pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
   captain: pCaptain, pathfinder: pPathfinder, sorceress: pSorceress,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,

@@ -8,7 +8,7 @@ import { familyOf } from "../../../core/index.js";
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
@@ -410,10 +410,16 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               {th.sea && hasItem(profile, "boat") && <div style={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", width: 58, height: 29 }}>
                 <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
               </div>}
-              <div style={{ position: "relative", width: "100%", height: "100%", filter: "drop-shadow(0 2px 3px rgba(46,42,32,.35))",
+              <div style={{ position: "relative", width: "100%", height: "100%",
+                // the risen Gambit glows quietly on the road too (Stufe II/III)
+                filter: (() => { const gt = gambitTier(characterLevel(profile, "gambit") || 1);
+                  return gt >= 3 ? "drop-shadow(0 2px 3px rgba(46,42,32,.35)) drop-shadow(0 0 6px rgba(240,214,138,.55)) drop-shadow(0 0 13px rgba(240,214,138,.3))"
+                    : gt === 2 ? "drop-shadow(0 2px 3px rgba(46,42,32,.35)) drop-shadow(0 0 7px rgba(240,214,138,.45))"
+                    : "drop-shadow(0 2px 3px rgba(46,42,32,.35))"; })(),
                 transform: token.moving ? `rotate(${-7 * stride.dir}deg)` : "none", transition: "transform .3s ease" }}>
                 {bm && PAINTED.gambit
-                  ? <img src={PAINTED.gambit} alt="" draggable={false} style={{ width: "100%", height: "100%",
+                  ? <img src={(() => { const gt = gambitTier(characterLevel(profile, "gambit") || 1);
+                      return (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit; })()} alt="" draggable={false} style={{ width: "100%", height: "100%",
                       objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
                   : <WandererArt size="100%" />}
               </div>

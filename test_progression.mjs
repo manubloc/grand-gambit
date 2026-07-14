@@ -1,6 +1,7 @@
 import { createInitialState, status, applyMove, KIND } from "./src/core/index.js";
 import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel } from "./src/meta/index.js";
-import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL, itemRevealed } from "./src/meta/index.js";
+import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL, maxLevelFor, gambitTier, GAMBIT_MAX_LEVEL, resolveCharacter, buildArmyForMap, itemRevealed } from "./src/meta/index.js";
+import { mapById } from "./src/content/index.js";
 import { ITEMS } from "./src/content/index.js";
 import { evaluate as evalAch } from "./src/meta/index.js";
 import { chooseMove } from "./src/ai/index.js";
@@ -77,6 +78,13 @@ ok("abilities gate on level then charge SP", (() => {
   return p2.sp === 10 - abCost(rung.level) && p2.pieces.abilities.rook.includes(rung.ability);
 })());
 ok("levels cap at MAX_PIECE_LEVEL", characterLevel(upgradePiece({ ...eco, sp: 99, pieces: { levels: { rook: MAX_PIECE_LEVEL } } }, "rook"), "rook") === MAX_PIECE_LEVEL);
+
+// ── the hero alone climbs three tiers of ten ─────────────────────────────────
+ok("gambit cap is 30, common pieces stay at 10", maxLevelFor("gambit") === 30 && maxLevelFor("rook") === 10 && GAMBIT_MAX_LEVEL === 30);
+ok("tiers switch at 11 and 21", gambitTier(1) === 1 && gambitTier(10) === 1 && gambitTier(11) === 2 && gambitTier(20) === 2 && gambitTier(21) === 3 && gambitTier(30) === 3);
+ok("the risen gambit banks four more shields on the long road", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6 && resolveCharacter(CHARACTERS.gambit, 10, null).shield === 2);
+ok("the gambit can be upgraded past ten", characterLevel(upgradePiece({ sp: 99, pieces: { levels: { gambit: 10 } } }, "gambit"), "gambit") === 11);
+ok("the hero spec carries his tier onto the board", buildArmyForMap({ pieces: { levels: { gambit: 15 } } }, mapById("arena")).hero.spec.tier === 2);
 
 // ── retinue score: monotonic with progress ──────────────────────────────────
 import { retinueScore, defaultProfile as dp2, advanceCampaign as adv2 } from "./src/meta/index.js";

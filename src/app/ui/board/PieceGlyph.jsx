@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -69,8 +69,15 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     .slice(0, 6)
     .map((ab) => ({ id: ab.id, color: (TAGS[ab.tag] || { color: T.gold }).color, spent: !!(ab.once && piece.used?.[ab.id]) }));
 
-  // Crisp, modern: a short drop shadow for depth — no neon bloom.
-  const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
+  // Crisp, modern: a short drop shadow for depth — no neon bloom. The risen
+  // Gambit (Stufe II/III) carries a quiet golden aura on top — OWN side only;
+  // the opponent always sees the plain hero.
+  const heroTier = piece.hero && white ? Math.min(3, piece.tier || 1) : 1;
+  const glow = heroTier >= 3
+    ? "drop-shadow(0 2px 3px rgba(0,0,0,.65)) drop-shadow(0 0 5px rgba(240,214,138,.5)) drop-shadow(0 0 11px rgba(240,214,138,.28))"
+    : heroTier === 2
+      ? "drop-shadow(0 2px 3px rgba(0,0,0,.65)) drop-shadow(0 0 6px rgba(240,214,138,.38))"
+      : "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
   const pieceSize = hpMode && piece.maxHp > 0 ? "0.8em" : "0.88em";
 
   return (
@@ -80,8 +87,11 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
         {(() => {
-          // the gallery: painted figurines when chosen — enemy turned to steel
-          const painting = artStyle === "painted" ? paintedForPiece(piece) : null;
+          // the gallery: painted figurines when chosen — enemy turned to steel;
+          // the risen Gambit wears his tier portrait (own side only)
+          const painting = artStyle === "painted"
+            ? (heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece)
+            : null;
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
             objectFit: "contain", objectPosition: "center bottom", filter: white ? undefined : ENEMY_FILTER,
             userSelect: "none", pointerEvents: "none" }} />;

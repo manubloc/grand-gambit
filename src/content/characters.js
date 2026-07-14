@@ -33,6 +33,12 @@ flavorDe: "Geboren, geopfert zu werden — entschlossen, es nicht zu bleiben.", 
       { level: 7, shield: 1 },
       { level: 8, ability: "gambit_masquerade" },
       { level: 9, ability: "pawn_early_promo" },
+      // Stufen II & III (the hero alone climbs to 30): quiet, passive gains —
+      // the splendor is the point, the shields are the nod to it
+      { level: 12, shield: 1 },
+      { level: 16, shield: 1 },
+      { level: 21, shield: 1 },
+      { level: 26, shield: 1 },
     ],
   },
   knight: {

@@ -5,7 +5,7 @@ import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
-  characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, MAX_PIECE_LEVEL,
+  characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
   itemRevealed,
@@ -81,7 +81,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   const maxHp = (BASE_HP[char.kind] || 1) + (level - 1) + (isKing ? 0 : shield * SHIELD_HP);
   const atk = (BASE_ATK[char.kind] || 1) + Math.floor((level - 1) / 2);
   const rungs = char.ladder.filter((r) => r.ability).map((r) => ({ level: r.level, id: r.ability }));
-  const maxed = level >= MAX_PIECE_LEVEL;
+  const maxed = level >= maxLevelFor(char.id);
   const cost = upgradeCost(char.id, level);
   const affordable = canUpgrade(profile, char.id);
 
@@ -139,6 +139,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
+          {char.id === "gambit" && <span className="gg-serif" style={{ color: T.goldBright, marginRight: 8, letterSpacing: ".05em" }}>
+            {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III"][gambitTier(level) - 1] })}</span>}
           {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
         </div>
         {!maxed && <GoldShineButton disabled={!affordable} style={{ padding: "8px 14px", fontSize: 13 }}
@@ -147,14 +149,20 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       </div>
     )}
 
-    {open && <div style={{ display: "flex", gap: 4, marginTop: 9 }} aria-label={t("army.lvl") + " " + level}>
-      {Array.from({ length: MAX_PIECE_LEVEL }).map((_, i) => (
-        <span key={i} style={{ flex: 1, height: 5, borderRadius: 3,
-          background: i < level ? `linear-gradient(90deg, ${T.lime}, ${T.gold})` : T.panel2,
-          boxShadow: i < level ? `0 0 6px ${T.gold}66` : "none",
-          border: i < level ? "none" : `1px solid ${T.line}` }} />
-      ))}
-    </div>}
+    {open && (() => {
+      // the Gambit climbs three tiers of ten — the pip row shows the CURRENT
+      // tier's ten steps; every other piece keeps its plain ten.
+      const tier = char.id === "gambit" ? gambitTier(level) : 1;
+      const base = (tier - 1) * 10;
+      return <div style={{ display: "flex", gap: 4, marginTop: 9 }} aria-label={t("army.lvl") + " " + level}>
+        {Array.from({ length: 10 }).map((_, i) => (
+          <span key={i} style={{ flex: 1, height: 5, borderRadius: 3,
+            background: i < level - base ? `linear-gradient(90deg, ${T.lime}, ${T.gold})` : T.panel2,
+            boxShadow: i < level - base ? `0 0 6px ${T.gold}66` : "none",
+            border: i < level - base ? "none" : `1px solid ${T.line}` }} />
+        ))}
+      </div>;
+    })()}
     {open && unlocked && (() => {
       // Every talent is a tile of equal height: owned ones glow in their tag
       // color behind a gold-tinted frame, purchasable ones invite with a gold
@@ -274,7 +282,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     if (!map.classic) mine.hero = { col: heroColFor(profile, map), spec: (() => {
       const lvl = characterLevel(profile, "gambit") || 1;
       const r = resolveCharacter(CHARACTERS.gambit, lvl, chosenAbilities(profile, "gambit"));
-      return { kind: "P", level: lvl, abilities: r.abilities, shield: r.shield };
+      return { kind: "P", level: lvl, abilities: r.abilities, shield: r.shield, tier: gambitTier(lvl) };
     })() };
     const foe = buildAiArmyForMap("easy", map, 0);
     return createGame(mine, foe, { map, rules: "hp", seed: 1 });

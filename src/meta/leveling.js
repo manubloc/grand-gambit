@@ -40,6 +40,12 @@ export const characterLevel = (profile, charId) => profile?.pieces?.levels?.[cha
 
 // ── Upgrade economy: XP is a spendable currency ──────────────────────────────
 export const MAX_PIECE_LEVEL = 10;
+// The hero alone climbs THREE tiers of ten (Stufe I/II/III → level 30). Each
+// tier is earned prestige: own portrait + a quiet aura, visible only to the
+// player and on the map — never to the opponent.
+export const GAMBIT_MAX_LEVEL = 30;
+export const maxLevelFor = (charId) => (charId === "gambit" ? GAMBIT_MAX_LEVEL : MAX_PIECE_LEVEL);
+export const gambitTier = (level) => (level >= 21 ? 3 : level >= 11 ? 2 : 1);
 /** SKILL POINTS are the piece currency: earned per player level (and by
  *  claiming achievements), spent deliberately on levels + abilities.
  *  Cost per level step follows the piece's board value. */
@@ -52,7 +58,7 @@ export const upgradeCost = (charId) => {
 };
 export const canUpgrade = (profile, charId) => {
   const l = characterLevel(profile, charId);
-  return l < MAX_PIECE_LEVEL && skillPoints(profile) >= upgradeCost(charId);
+  return l < maxLevelFor(charId) && skillPoints(profile) >= upgradeCost(charId);
 };
 
 // ── Star shards: bottled skill points, rationed by league ─────────────────
@@ -69,7 +75,7 @@ export function buySpShard(profile) {
 
 export function upgradePiece(profile, charId) {
   const l = characterLevel(profile, charId);
-  if (l >= MAX_PIECE_LEVEL) return profile;
+  if (l >= maxLevelFor(charId)) return profile;
   const cost = upgradeCost(charId);
   if (skillPoints(profile) < cost) return profile;
   const stats = { ...(profile.stats || {}) };
@@ -251,7 +257,7 @@ function heroSpec(profile) {
   const ch = CHARACTERS.gambit;
   const level = Math.max(1, characterLevel(profile, "gambit") || 1);
   const { abilities, shield } = resolveCharacter(ch, level, chosenAbilities(profile, "gambit"));
-  return { kind: ch.kind, level, abilities, shield };
+  return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level) };
 }
 
 export function buildArmyForMap(profile, map, excludeId = null) {
