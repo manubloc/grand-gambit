@@ -13,15 +13,21 @@ import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
 import texWear3 from "../assets/tex-wear-3.webp";
+import texWear4 from "../assets/tex-wear-4.webp";
 
 // The board's material ages with the journey: leagues I–IV play on cared-for
 // wood, V–VII on well-used boards, VIII–X on veterans full of scars. Quick
 // play, hotseat and pvp keep the pristine one.
-const WEAR_TEX = [texWear1, texWear2, texWear3];
-const boardTexture = (campaign, profile) => {
-  if (!campaign) return WEAR_TEX[0];
+const WEAR_TEX = [texWear1, texWear2, texWear3, texWear4];
+const texHash = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+// Every board has lived its own life: each station deals its finish
+// deterministically from a pool that grows rougher with the league — even
+// Liga I mixes fresh wood with the odd scarred veteran table.
+const boardTexture = (match, profile) => {
+  if (!match) return WEAR_TEX[0];
   const lg = profile?.campaign?.league || 1;
-  return WEAR_TEX[lg >= 8 ? 2 : lg >= 5 ? 1 : 0];
+  const pool = lg >= 8 ? [1, 2, 3, 3] : lg >= 5 ? [0, 1, 2, 3] : [0, 0, 1, 2, 3];
+  return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
 };
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 
@@ -347,7 +353,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
-          texture={boardTexture(campaign, profile)} artStyle={profile.pieceArt || "painted"} />
+          texture={boardTexture(match, profile)} artStyle={profile.pieceArt || "painted"} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}

@@ -79,7 +79,8 @@ function loneBoss(boss) {
   ok("boss replaces the enemy queen", m.aiArmy.back.some((sp) => sp.kind === "X") && !m.aiArmy.back.some((sp) => sp.kind === "Q"));
   ok("stage match exposes the boss for the UI", m.boss && m.boss.bossId === "b01");
   const pm = buildStageMatch("a2"); // Attentäter piece boss
-  ok("piece boss fields its own kind with boosted stats", pm.aiArmy.back.some((sp) => sp.kind === "S" && sp.hp >= 8) && pm.boss.unlocks === "assassin");
+  ok("piece boss fields its own kind with boosted stats", pm.aiArmy.back.some((sp) => sp.kind === "S" && sp.hp >= 8) && pm.boss.unlocks === null);
+  ok("from league II the same fight also recruits", buildStageMatch("a2", { campaign: { league: 2 } }).boss.unlocks === "assassin");
 }
 
 // 6) AI plays a boss without crashing; codec roundtrips boss fields

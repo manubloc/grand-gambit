@@ -124,7 +124,9 @@ export function nodeBossSpec(node, league = 1) {
 export function buildStageMatch(id, profile = null) {
   const node = nodeById(id);
   const d = difficultyById(node.difficulty);
-  const map = mapById(node.map);
+  const lgMap = profile?.campaign?.league || 1;
+  const mapId = effectiveMap(node, lgMap);
+  const map = mapById(mapId);
   const base = map.classic ? () => 1 : (cid) => d.levels[cid] || 1;
   const formation = node.formation || map.defaultFormation;
   const aiArmy = buildArmyFromFormation((cid) => base(cid) + (node.bump || 0) + leagueBump(profile?.campaign?.league), formation);
@@ -143,7 +145,7 @@ export function buildStageMatch(id, profile = null) {
   const turncoat = !!(recruitId && profile && (profile.campaign?.unlocked || []).includes(recruitId));
   return {
     nodeId: id, node,
-    map: node.map, rules: node.rules,
+    map: mapId, rules: node.rules,
     boss: bossInfo,
     turncoat, excludeId: turncoat ? recruitId : null,
     depth: node.depth || d.depth,
@@ -203,14 +205,33 @@ export function advanceCampaign(profile, id) {
 /** League-specific finale: the Desert league (IX) ends at the Captain, whose
  *  recruitment (plus a boat) is the only way onto the Endless Sea (X). */
 export const leagueFinalBossPiece = (league) => (((league - 1) % 10) + 1 === 9 ? "captain" : null);
-export const bossPieceFor = (node, league) =>
-  (node.id === "n22" && leagueFinalBossPiece(league)) || node.boss?.piece || null;
+/** The recruit a node yields — respecting fromLeague: early leagues fight the
+ *  boss for gold & XP alone; from its league on, victory means he joins. */
+export const bossPieceFor = (node, league) => {
+  const override = node.id === "n22" && leagueFinalBossPiece(league);
+  if (override) return override;
+  const piece = node.boss?.piece || null;
+  if (!piece) return null;
+  return (league || 1) >= (node.boss.fromLeague || 1) ? piece : null;
+};
 export const seaAccessible = (profile) =>
   (profile?.campaign?.unlocked || []).includes("captain") && hasItem(profile, "boat");
 
 /** Rewards & foes both scale with the league you are climbing. */
 export const leagueRewardMult = (league) => 1 + 0.5 * ((league || 1) - 1);
 export const leagueBump = (league) => 2 * ((league || 1) - 1);
+
+/** Which boards a league fields: Liga I is (almost) pure classic chess — only
+ *  the League Keep keeps its arena. New boards then enter one league at a
+ *  time (II: skirmish · III: courtyard & gauntlet · IV+: everything). */
+export function effectiveMap(node, league = 1) {
+  if (!node) return "classic";
+  if (node.id === "n22" || node.league) return node.map; // finale & combo sites keep their stage
+  const lg = leagueNo(league);
+  if (lg >= 4) return node.map;
+  const allowed = lg === 1 ? ["classic"] : lg === 2 ? ["classic", "skirmish"] : ["classic", "skirmish", "courtyard", "gauntlet"];
+  return allowed.includes(node.map) ? node.map : "classic";
+}
 
 /** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
  *  the monster milestones (pure bosses, incl. the League Keep) grant a total

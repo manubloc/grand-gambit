@@ -102,8 +102,13 @@ ok("paths do not open each other", nodeStatus(advanceCampaign(prof, "a1"), "b2")
 const before = unlockedCharacterIds(prof);
 ok("assassin locked before its boss falls", !before.includes("assassin"));
 let prof2 = advanceCampaign(advanceCampaign(prof, "a1"), "a2");
-ok("slaying the Assassin boss recruits the piece", unlockedCharacterIds(prof2).includes("assassin") && unlockedCharacterIds(prof2).includes("hawk"));
-ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 2);
+ok("the Hawk joins in Liga I; the Assassin fights now but joins later", unlockedCharacterIds(prof2).includes("hawk") && !unlockedCharacterIds(prof2).includes("assassin"));
+ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 1);
+// recruit pacing: the enemy appears from league I, the RECRUIT waits for his league
+import { bossPieceFor, effectiveMap } from "./src/meta/index.js";
+import { nodeById as nbId } from "./src/content/index.js";
+ok("fromLeague gates the recruit, not the fight", bossPieceFor(nbId("a2"), 1) === null && bossPieceFor(nbId("a2"), 2) === "assassin" && bossPieceFor(nbId("a1"), 1) === "hawk");
+ok("Liga I fields classic boards; later leagues open the stages", effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 2) === "skirmish" && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "arena" && effectiveMap(nbId("n22"), 1) === "arena");
 
 // ── League 2 (New Game+): rollover, duplication stars, scaling ───────────────
 import { buildStageMatch as bsm2, dupeCount, leagueBump } from "./src/meta/index.js";
@@ -115,7 +120,8 @@ ok("unlocked pieces survive the rollover, gold is untouched by it", lg.campaign.
 ok("paid tolls reset with the league — every climate has its own gatekeeper", (lg.campaign.tolls || []).length === 0);
 lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
 lg = advanceCampaign(advanceCampaign(lg, "a1"), "a2");
-ok("re-beating a piece boss grants a duplication star", dupeCount(lg, "assassin") === 1);
+ok("in league II the Assassin finally joins the court", unlockedCharacterIds(lg).includes("assassin") && dupeCount(lg, "assassin") === 0);
+ok("re-beating a recruited piece boss grants a duplication star", dupeCount(lg, "hawk") === 1);
 ok("league 2 foes come level-boosted", bsm2("a3", lg).aiArmy.back[0].level === bsm2("a3", prof).aiArmy.back[0].level + leagueBump(2));
 
 // ── Healing draught: a real, guarded core command ─────────────────────────────

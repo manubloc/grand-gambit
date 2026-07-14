@@ -7,7 +7,7 @@
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
@@ -69,10 +69,16 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const [token, setToken] = useState(() => ({ at: currentNodeId(profile), moving: false }));
   const [panelOpen, setPanelOpen] = useState(true);
   const walkT = useRef(null);
+  const [stride, setStride] = useState({ angle: 0, dir: 1 }); // last travel heading — feeds tilt & trail
   function walkTo(id) {
     const stT = nodeStatus(profile, id);
     if (id === token.at || stT === "locked" || stT === "hidden") return;
     clearTimeout(walkT.current);
+    const from = nodeById(token.at), to = nodeById(id);
+    if (from && to) {
+      const dx = nx(to) - nx(from), dy = ny(to) - ny(from);
+      setStride({ angle: Math.atan2(dy, dx) * 180 / Math.PI, dir: dx >= 0 ? 1 : -1 });
+    }
     setToken({ at: id, moving: true });
     walkT.current = setTimeout(() => setToken({ at: id, moving: false }), 760);
   }
@@ -96,6 +102,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const status = nodeStatus(profile, sel);
   const boss = node?.boss ? nodeBossSpec(node) : null;
   const unlockCh = node?.boss?.piece ? CHARACTERS[node.boss.piece] : null;
+  const recruitFrom = node?.boss?.fromLeague || 1;         // he fights you now — he JOINS you later
+  const canRecruit = !!unlockCh && (profile.campaign?.league || 1) >= recruitFrom;
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
@@ -361,14 +369,21 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             if (!tn) return null;
             return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 48, height: 50, zIndex: 5,
               pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
-              transform: bm ? "translate(-50%,-58%)" : "translate(-98%,-66%)",
-              animation: token.moving ? "walkBob .3s ease-in-out infinite" : "idleBob 2.4s ease-in-out infinite" }}>
+              transform: bm ? "translate(-50%,-52%)" : "translate(-98%,-60%)" }}>
+              {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
+              <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
+                transformOrigin: "0 50%", transform: `rotate(${stride.angle + 180}deg)`,
+                background: "linear-gradient(90deg, rgba(240,214,138,.55), rgba(240,214,138,.18) 55%, rgba(240,214,138,0))",
+                borderRadius: 99, filter: "blur(1.6px)", pointerEvents: "none",
+                opacity: token.moving ? 0.8 : 0, transition: token.moving ? "opacity .12s ease" : "opacity .55s ease .05s" }} />
               <div style={{ position: "absolute", left: "50%", bottom: -3, transform: "translateX(-46%)", width: 30, height: 8,
                 borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(46,42,32,.34), transparent 72%)" }} />
               {th.sea && hasItem(profile, "boat") && <div style={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", width: 58, height: 29 }}>
                 <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
               </div>}
-              <div style={{ position: "relative", width: "100%", height: "100%", filter: "drop-shadow(0 2px 3px rgba(46,42,32,.35))" }}>
+              <div style={{ position: "relative", width: "100%", height: "100%", filter: "drop-shadow(0 2px 3px rgba(46,42,32,.35))",
+                transform: token.moving ? `rotate(${-7 * stride.dir}deg)` : "rotate(0deg)", transition: "transform .3s ease",
+                animation: token.moving ? "none" : "idleBreath 3.2s ease-in-out infinite" }}>
                 {bm && PAINTED.gambit
                   ? <img src={PAINTED.gambit} alt="" draggable={false} style={{ width: "100%", height: "100%",
                       objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
@@ -427,7 +442,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {node?.storyDe && <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
             {en ? node.storyEn : node.storyDe}</div>}
           <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 9 }}>
-            <Chip color={PP.chipInk} bg={PP.bg2}>{mapById(node.map)[en ? "nameEn" : "nameDe"]}</Chip>
+            <Chip color={PP.chipInk} bg={PP.bg2}>{mapById(effectiveMap(node, league))[en ? "nameEn" : "nameDe"]}</Chip>
             <Chip color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
             <Chip color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
             <Chip color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
@@ -453,9 +468,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
                   {t(node?.boss?.pure
                     ? ((node.next || []).length === 0 && !node.gate ? "camp.boss" : "camp.rival")
-                    : "camp.newPiece")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
+                    : canRecruit ? "camp.newPiece" : "camp.rival")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
-                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
+                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known && canRecruit ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}{unlockCh && !canRecruit ? <> · <span style={{ color: "#8a6f4d", fontStyle: "italic" }}>{t("camp.recruitLater", { r: ROMAN[recruitFrom - 1] || recruitFrom })}</span></> : null}
                   {!known && <> · {t("camp.unknown")}</>}
                 </div>
                 {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
