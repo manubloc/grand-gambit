@@ -6,6 +6,7 @@ import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { playerXpProgress } from "../meta/index.js";
 import { T } from "./ui/theme.js";
+import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
@@ -329,7 +330,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   const done = clearedCount(profile), total = campaignLength(profile);
   const ch = chapterForRow(cur?.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
-  const Card = ({ title, sub, extra, cta, onGo, art, style }) => (
+  const Card = ({ title, sub, extra, cta, onGo, art, style }) => {
+    const shineDelay = useShineDelay();
+    return (
     <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
       background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
       borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
@@ -344,11 +347,11 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
         <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
           background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
-          animation: "ggShine 3.6s ease-in-out infinite" }} />
+          animation: `ggShine 11s ease-in-out ${shineDelay} infinite` }} />
         <span style={{ position: "relative" }}>{cta} ›</span>
       </div>
     </button>
-  );
+  ); };
   return (
     <div style={{ display: "grid", gap: 12, gridTemplateColumns: hubWide ? "1fr 1fr" : "1fr" }}>
       <Card title={t("camp.title")} sub={t("hub.campSub")} onGo={onCamp} cta={t("hub.continue")}

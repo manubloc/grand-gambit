@@ -35,7 +35,7 @@ export function AchievementsScreen({ profile, dispatch, t }) {
         background: `radial-gradient(130% 100% at 50% 0%, #2b2410 0%, ${T.panel2} 46%, ${T.panel} 100%)` }}>
         <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%", pointerEvents: "none",
           background: "linear-gradient(90deg, transparent, rgba(255,240,190,.09), transparent)",
-          animation: "ggShine 4.6s ease-in-out infinite" }} />
+          animation: "ggShine 11s ease-in-out 1.1s infinite" }} />
         {cornerDiamond({ top: 7, left: 7 })}{cornerDiamond({ top: 7, right: 7 })}
         {cornerDiamond({ bottom: 7, left: 7 })}{cornerDiamond({ bottom: 7, right: 7 })}
         <div className="gg-serif" style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".3em",

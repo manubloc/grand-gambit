@@ -403,7 +403,7 @@ function GearPanel({ profile, dispatch, t, en }) {
             position: "relative", overflow: "hidden" }}>
             <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "40%", pointerEvents: "none",
               background: "linear-gradient(90deg, transparent, rgba(255,240,190,.06), transparent)",
-              animation: "ggShine 6s ease-in-out infinite" }} />
+              animation: "ggShine 12s ease-in-out 3.4s infinite" }} />
             <span style={{ width: 24, display: "grid", placeItems: "center", position: "relative" }}><SkillStar size={22} /></span>
             <div style={{ flex: 1, minWidth: 0, position: "relative" }}>
               <div style={{ fontSize: 13, fontWeight: 800 }}>

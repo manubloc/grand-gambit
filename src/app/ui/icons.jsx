@@ -98,7 +98,7 @@ export function GoldCoin({ size = 18, style, shine = false }) {
       <circle cx="12" cy="12" r="8.2" fill="none" stroke="#6e5423" strokeWidth={fine ? 0.8 : 1.1} opacity=".9" />
       <path d="M4.4 8.2 A8.6 8.6 0 0 1 19.6 8.2" fill="none" stroke="#fff4d2" strokeWidth="1" opacity=".5" strokeLinecap="round" />
       {shine && <ellipse cx="9.5" cy="7.6" rx="4.6" ry="1.8" fill="#fffbe6"
-        transform="rotate(-24 9.5 7.6)" style={{ animation: "ggGlint 5.6s ease-in-out infinite" }} opacity="0" />}
+        transform="rotate(-24 9.5 7.6)" style={{ animation: "ggGlint 9s ease-in-out infinite" }} opacity="0" />}
       {/* crowned coinage — three points, jewelled band */}
       <path d="M7.6 14.6 L7 9.4 L9.8 11.6 L12 8.4 L14.2 11.6 L17 9.4 L16.4 14.6 Z"
         fill={fine ? "#6e5423" : "#6e5423"} stroke={fine ? "#59461e" : "none"} strokeWidth=".5" strokeLinejoin="round" />

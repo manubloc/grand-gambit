@@ -60,7 +60,7 @@ export const GLOBAL_CSS = `
   @keyframes arrowFade { 0% { opacity: 0; } 12% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
   .gg-quill { font-family: "IM Fell English", Georgia, "Times New Roman", serif; font-style: italic; }
-  @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 55%, 100% { transform: translateX(320%) skewX(-18deg); } }
+  @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 12% { transform: translateX(320%) skewX(-18deg); } 100% { transform: translateX(320%) skewX(-18deg); } }
   @keyframes ggPulse { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: .9; transform: scale(1.12); } }
   @keyframes splashRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes splashOut { to { opacity: 0; visibility: hidden; } }

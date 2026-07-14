@@ -12,30 +12,34 @@ const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "prom
 // abilities ⇒ more emblems), plus its exact LEVEL, its ATK (HP mode) and shield
 // pips (chess mode). Player glows cyan, enemy magenta.
 
-// Little glass beads of life, sitting right beneath the figure. Filled ones
-// carry a specular highlight so they read as lacquered — matching the
-// painted figurines above them. Giants (>10 HP) keep a slim bar instead.
+// Little glass orbs of life, resting on the square's lower edge — the figure
+// always stands above them. Deep bottle-green glass with a bright specular
+// window and a shaded floor, so each bead reads as a tiny sphere. Giants
+// (>10 HP) keep a slim glass bar instead.
 function HpDots({ hp, max }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
-  const [col, deep] = ratio > 0.55 ? ["#3ad98a", "#188a52"] : ratio > 0.28 ? ["#ffb454", "#b56f1f"] : ["#ff4d5e", "#a12030"];
+  const [col, deep] = ratio > 0.55 ? ["#1c9457", "#07421f"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
   if (max > 10) {
-    return <span style={{ position: "absolute", bottom: "0.02em", left: "50%", transform: "translateX(-50%)",
-      display: "block", width: "0.56em", height: "max(3px, 0.045em)",
-      background: "rgba(8,12,20,.66)", borderRadius: 99, overflow: "hidden", pointerEvents: "none" }}>
+    return <span style={{ position: "absolute", bottom: "0.006em", left: "50%", transform: "translateX(-50%)",
+      display: "block", width: "0.56em", height: "max(3.5px, 0.05em)",
+      background: "rgba(6,10,16,.7)", borderRadius: 99, overflow: "hidden", pointerEvents: "none",
+      boxShadow: "inset 0 0 0 0.5px rgba(255,255,255,.22), inset 0 1px 1px rgba(0,0,0,.5)" }}>
       <span style={{ display: "block", width: `${ratio * 100}%`, height: "100%", borderRadius: 99,
-        background: `linear-gradient(180deg, ${col}, ${deep})`, transition: "width .2s ease" }} />
+        background: `linear-gradient(180deg, rgba(255,255,255,.4) 0%, ${col} 34%, ${deep} 100%)`, transition: "width .2s ease" }} />
     </span>;
   }
   const d = Math.min(0.066, 0.42 / max);
-  return <span style={{ position: "absolute", bottom: "0.018em", left: "50%", transform: "translateX(-50%)",
+  return <span style={{ position: "absolute", bottom: "0.005em", left: "50%", transform: "translateX(-50%)",
     display: "flex", gap: "0.022em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))" }}>
     {Array.from({ length: max }).map((_, i) => (
       <span key={i} style={{ width: `max(3.5px, ${d}em)`, height: `max(3.5px, ${d}em)`, borderRadius: "50%",
         background: i < hp
-          ? `radial-gradient(circle at 32% 27%, #ffffffd8 0%, ${col} 46%, ${deep} 100%)`
-          : "radial-gradient(circle at 32% 27%, rgba(255,255,255,.16) 0%, rgba(10,14,22,.72) 62%)",
-        boxShadow: i < hp ? `0 0 3px ${col}88` : "inset 0 0 0 1px rgba(255,255,255,.13)",
+          ? `radial-gradient(circle at 32% 26%, #ffffffe8 0%, rgba(255,255,255,.28) 17%, ${col} 50%, ${deep} 100%)`
+          : "radial-gradient(circle at 32% 26%, rgba(255,255,255,.14) 0%, rgba(8,12,18,.78) 60%)",
+        boxShadow: i < hp
+          ? `inset 0 0 0 0.5px rgba(255,255,255,.3), inset 0 -0.6px 1px ${deep}, 0 0 3px ${col}55`
+          : "inset 0 0 0 1px rgba(255,255,255,.12)",
         transition: "background .2s ease" }} />
     ))}
   </span>;
@@ -72,7 +76,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center", animation: "pop .18s ease",
-      paddingBottom: "0.095em", boxSizing: "border-box" }}>
+      paddingBottom: hpMode && piece.maxHp > 0 ? "0.145em" : "0.1em", boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel
@@ -86,13 +90,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {hpMode && piece.maxHp > 0 && <HpDots hp={piece.hp} max={piece.maxHp} />}
 
       {showLevel && lvl > 1 && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.035em", left: "50%", transform: "translateX(-50%)",
-          display: "flex", gap: "0.032em", pointerEvents: "none" }}>
-          {Array.from({ length: Math.min(lvl, 10) }).map((_, i) => (
-            <span key={i} style={{ width: "max(2.5px, 0.058em)", height: "max(2.5px, 0.058em)", transform: "rotate(45deg)",
-              background: "linear-gradient(135deg, #fff3c4, #f0d68a 45%, #b98f3f)",
-              boxShadow: "0 0 4px #ffe9a8cc, 0 0 1.5px #f0d68a" }} />
-          ))}
+        <span aria-hidden style={{ position: "absolute", top: "-0.012em", right: "-0.018em",
+          width: "max(10px, 0.165em)", height: "max(10px, 0.165em)", transform: "rotate(45deg)",
+          borderRadius: "18%", display: "grid", placeItems: "center", pointerEvents: "none",
+          background: "linear-gradient(135deg, #fff3c4 0%, #f0d68a 42%, #b98f3f 100%)",
+          boxShadow: "0 0 5px #ffe9a8aa, inset 0 0 0 0.5px #7a5c26, inset 0 1px 1px #fffbe6aa" }}>
+          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6.5px, 0.095em)", fontWeight: 900,
+            color: "#241a06", lineHeight: 1, letterSpacing: 0 }}>{lvl}</span>
         </span>
       )}
       {hpMode && (

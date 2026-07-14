@@ -101,7 +101,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
                 padding: "10px 12px", fontFamily: "inherit", fontWeight: 800, fontSize: 14, cursor: "pointer" }}>
                 {i === 0 && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.3), transparent)",
-                  animation: "ggShine 4.4s ease-in-out infinite", pointerEvents: "none" }} />}
+                  animation: "ggShine 11s ease-in-out 2.7s infinite", pointerEvents: "none" }} />}
                 ▶ {s.play}
               </button>
               <button onClick={() => { const n = prompt(s.rename, sv.name); if (n != null) renameSave(account.id, sv.id, n).then(refresh); }}

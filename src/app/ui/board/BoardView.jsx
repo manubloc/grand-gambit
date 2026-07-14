@@ -17,7 +17,7 @@ const hexA = (hex, a, lift = 0) => {
   return `rgba(${c((n >> 16) & 255)},${c((n >> 8) & 255)},${c(n & 255)},${a})`;
 };
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted" }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
@@ -117,7 +117,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
-          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={false} pov={pov} artStyle={artStyle} /></div>}
+          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
@@ -201,7 +201,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             <div style={{ position: "absolute", left: `${at.l}%`, top: `${at.t}%`, width: `${100 / W}%`, height: `${100 / H}%`,
               transition: "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",
               display: "grid", placeItems: "center", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
-              <PieceGlyph piece={anim.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+              <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
             </div>
           </div>
         );

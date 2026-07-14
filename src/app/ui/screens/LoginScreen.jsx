@@ -100,7 +100,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
           cursor: "pointer", boxShadow: "0 0 16px rgba(201,164,92,.25)", opacity: busy ? 0.6 : 1 }}>
           <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
             background: "linear-gradient(90deg, transparent, rgba(255,244,210,.3), transparent)",
-            animation: "ggShine 4.4s ease-in-out infinite", pointerEvents: "none" }} />
+            animation: "ggShine 11s ease-in-out 0.6s infinite", pointerEvents: "none" }} />
           {mode === "signup" ? s.signup : s.signin}
         </button>
         <button onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setErr(""); }}

@@ -12,6 +12,7 @@ import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
+import { paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
@@ -249,11 +250,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   const spec = nodeBossSpec(n, league);
                   if (!spec) return null;
                   const finale = n.id === "n22";
-                  const size = finale ? 62 : 42;
+                  const size = finale ? 68 : 46;
                   const beaten = st === "cleared";
                   const fill = beaten ? "#c9a45c" : "#242d44";
                   const rim = beaten ? "#f0dfae" : "#93a0bb";
                   const detail = beaten ? "#59421a" : "#9aa8c6";
+                  // the detailed painting when the gallery has one — cold steel
+                  // until beaten, warm lacquer once the boss joined the court
+                  const painting = paintedForPiece({ kind: spec.kind, art: spec.art, bossId: spec.bossId });
                   return <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 12,
                     transform: "translateX(-50%)", width: size, height: size, zIndex: 0, pointerEvents: "none",
                     opacity: st === "locked" ? 0.55 : 1, filter: st === "locked"
@@ -262,8 +266,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     <div style={{ position: "absolute", left: "50%", bottom: -2, transform: "translateX(-50%)",
                       width: size * 0.62, height: size * 0.16, borderRadius: "50%",
                       background: "radial-gradient(ellipse at center, rgba(46,42,32,.32), transparent 72%)" }} />
-                    <PieceArt kind={spec.kind} art={spec.art} fill={fill} rim={rim} detail={detail}
-                      accent={spec.accent || T.gold} size="100%" level={1} />
+                    {painting
+                      ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
+                          objectFit: "contain", objectPosition: "bottom",
+                          filter: beaten ? "none" : ENEMY_FILTER,
+                          userSelect: "none", pointerEvents: "none" }} />
+                      : <PieceArt kind={spec.kind} art={spec.art} fill={fill} rim={rim} detail={detail}
+                          accent={spec.accent || T.gold} size="100%" level={1} />}
                   </div>;
                 })()}
                 {!bm && <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 24, transform: "translateX(-26%)",
@@ -423,8 +432,16 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
               <div style={{ width: 40, height: 40, flex: "0 0 auto" }}>
-                <PieceArt kind={boss.kind} art={boss.art} fill={unlockCh ? "#c9a45c" : "#242d44"} rim={unlockCh ? "#f0dfae" : "#93a0bb"}
-                  detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />
+                {(() => {
+                  const painting = paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
+                  return painting
+                    ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
+                        objectFit: "contain", objectPosition: "bottom",
+                        filter: unlockCh ? "drop-shadow(0 2px 2px rgba(40,32,16,.35))" : `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(40,32,16,.35))`,
+                        userSelect: "none", pointerEvents: "none" }} />
+                    : <PieceArt kind={boss.kind} art={boss.art} fill={unlockCh ? "#c9a45c" : "#242d44"} rim={unlockCh ? "#f0dfae" : "#93a0bb"}
+                        detail={unlockCh ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />;
+                })()}
               </div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>
@@ -494,7 +511,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     : { background: "#dcd3ba", color: PP.ink }) }}>
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
-                  animation: "ggShine 4.4s ease-in-out infinite", pointerEvents: "none" }} />}
+                  animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
                 <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
