@@ -96,7 +96,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             style={{ width: 62, height: 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={profile.pieceArt || "painted"} size={44} />}
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
@@ -293,7 +293,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
         <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={{ width: "100%", maxWidth: feWide ? "min(700px, calc(100dvh / var(--vhz, 1) - 250px))" : 340 }}>
-            <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={profile.pieceArt || "painted"} />
+            <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={"painted"} />
           </div>
         </div>
         {(() => {
@@ -332,7 +332,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
           {isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
                 style={{ height: "clamp(18px, 7vw, 34px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={profile.pieceArt || "painted"} />}
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={"painted"} />}
         </button>;
       })}
     </div>
@@ -345,7 +345,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             return <button key={c.id} onClick={() => setSlot(pick, c.id)}
               style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", borderRadius: 9, cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13,
                 background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text, border: `1px solid ${on ? T.lime : T.line}` }}>
-              <SlotGlyph kind={c.kind} size={18} art={profile.pieceArt || "painted"} />{en ? c.nameEn : c.nameDe}
+              <SlotGlyph kind={c.kind} size={18} art={"painted"} />{en ? c.nameEn : c.nameDe}
             </button>;
           })}
         </div>
@@ -407,7 +407,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12, alignItems: "center" }}>
       {reqChips.map((r) => (
         <Chip key={r.id} color={r.have === r.need ? T.green : T.danger} bg={T.panel2}>
-          <SlotGlyph kind={CHARACTERS[r.id].kind} size={13} art={profile.pieceArt || "painted"} /> {r.have}/{r.need}
+          <SlotGlyph kind={CHARACTERS[r.id].kind} size={13} art={"painted"} /> {r.have}/{r.need}
         </Chip>
       ))}
       <Chip color={flexCount === flexNeed ? T.green : T.danger} bg={T.panel2}>{t("army.flex")} {flexCount}/{flexNeed}</Chip>

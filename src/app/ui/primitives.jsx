@@ -1,14 +1,20 @@
 import { T } from "./theme.js";
+import mBtnL from "./assets/marble-l3.webp";
+import mBtnD from "./assets/marble-d0.webp";
+
 
 export function Button({ variant = "primary", disabled, style, children, ...p }) {
   const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.45 : 1, transition: "filter .15s", WebkitTapHighlightColor: "transparent" };
   const variants = {
-    // the court's seal: brushed gold with an ivory hairline — one CTA style everywhere
-    primary: { background: "linear-gradient(165deg, #e0b76c, #b78d43)", color: T.limeInk,
-      border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
+    // the court's seal, now cut from the hall's stone: gold-veined marble for
+    // the CTA, dark marble for quiet buttons — a wash keeps every label crisp
+    primary: { background: `linear-gradient(165deg, rgba(232,196,120,.55), rgba(158,118,52,.6)), url(${mBtnL}) center / 130% auto`,
+      color: "#221a08", textShadow: "0 1px 0 rgba(255,240,200,.35)",
+      border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 2px 12px rgba(201,164,92,.24), inset 0 0 0 0.5px rgba(90,68,26,.5)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
-    subtle: { background: T.panel2, color: T.text, border: `1px solid ${T.line}` },
+    subtle: { background: `linear-gradient(172deg, rgba(16,21,34,.78), rgba(10,14,24,.85)), url(${mBtnD}) center / 150% auto`,
+      color: T.text, border: `1px solid ${T.line}`, boxShadow: "inset 0 0 0 0.5px rgba(201,164,92,.14)" },
   };
   return <button disabled={disabled} style={{ ...base, ...variants[variant], ...style }} {...p}>{children}</button>;
 }

@@ -269,7 +269,7 @@ export default function App() {
       )}
       <main style={{ width: "100%", minWidth: 0,
         maxWidth: immersive ? "none" : inMatch ? 1020 : tab === "play" && view === "camp" ? 920 : 720,
-        ...(immersive ? { display: "flex", flexDirection: "column" } : {}),
+        ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh / var(--vhz, 1) - 72px)" } : {}) }}>{screen}</main>
     </div>

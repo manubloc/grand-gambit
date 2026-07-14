@@ -466,24 +466,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 800, color: MP.liga }}>
                   {node?.boss?.pure ? <SkullIc size={13} /> : <BladesIc color={MP.liga} size={13} />}{" "}
-                  {t(node?.boss?.pure
-                    ? ((node.next || []).length === 0 && !node.gate ? "camp.boss" : "camp.rival")
-                    : canRecruit ? "camp.newPiece" : "camp.rival")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
+                  {t("camp.rival")}: <span style={{ color: PP.ink }}>{boss.name[en ? "en" : "de"]}</span></div>
                 <div style={{ fontSize: 12, color: PP.dim, marginTop: 2 }}>
-                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}{unlockCh && !known && canRecruit ? <> · <span style={{ color: "#8a6f4d", fontWeight: 700 }}>{t("camp.recruit")}: {unlockCh[en ? "nameEn" : "nameDe"]}</span></> : null}
+                  <HeartIc color="#4f9d72" size={11} /> {boss.hp} · <BladesIc color="#8a6f4d" size={11} /> {boss.atk}
                   {!known && <> · {t("camp.unknown")}</>}
                 </div>
-                {unlockCh && !known && needWins > 1 && <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 5 }}>
-                  <span className="gg-serif" style={{ fontSize: 11, color: "#8a6f4d", fontStyle: "italic" }}>{t("camp.winsToJoin")}</span>
-                  {Array.from({ length: needWins }).map((_, k) => (
-                    <span key={k} style={{ display: "inline-grid", placeItems: "center", width: 13, height: 13, transform: "rotate(45deg)",
-                      borderRadius: 3, background: k < haveWins ? "linear-gradient(135deg, #efdc9e, #b98f3f)" : "#d9d0b6",
-                      boxShadow: k < haveWins ? "0 1px 2px rgba(60,48,20,.4)" : "inset 0 0 0 1px #b7ab8a" }}>
-                      {k < haveWins && <span style={{ transform: "rotate(-45deg)", fontSize: 8, fontWeight: 900, color: "#2a2008" }}>✓</span>}
-                    </span>
-                  ))}
-                  <span style={{ fontSize: 11, color: "#8a6f4d", fontWeight: 700 }}>{haveWins}/{needWins}</span>
-                </div>}
                 {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
               </div>

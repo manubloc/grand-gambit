@@ -359,7 +359,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
-          texture={boardTexture(match, profile)} artStyle={profile.pieceArt || "painted"} />
+          texture={boardTexture(match, profile)} artStyle={"painted"} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
@@ -368,6 +368,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           onSettings={!campaign && !pvp ? onExit : null}
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
           unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
+          fledName={match?.boss && !match?.boss?.unlocks ? (match.boss.name?.[profile.lang === "en" ? "en" : "de"] || null) : null}
           unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} />}
       </div>
 
@@ -541,13 +542,14 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   );
 }
 
-function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, en = false, onArmy = null, pvpInfo = null }) {
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, fledName = null, en = false, onArmy = null, pvpInfo = null }) {
   const win = banner.result === "win";
   const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : "#b4636c";
   const title = banner.hotseat
     ? (banner.result === "draw" ? t("game.draw") : t(win ? "hs.winWhite" : "hs.winBlack"))
     : win ? t("game.win") : banner.result === "draw" ? t("game.draw") : t("game.lose");
   const sub = campaign && win && unlockName ? t("game.unlocked", { name: unlockName })
+    : campaign && win && fledName ? t("camp.fled", { name: fledName })
     : campaign && win ? t("game.stageCleared")
     : banner.reason === "checkmate" ? t("game.checkmate")
     : banner.reason === "regicide" ? t("game.regicide")

@@ -13,6 +13,17 @@ import { hasItem } from "../../../content/index.js";
 import { serializeSave, parseSave } from "../../../meta/index.js";
 import { useMedia } from "../../App.jsx";
 
+
+// ── the herald's book: roll a name worthy of the halls ────────────────────────
+const TAG_A = { de: ["Eherner", "Goldener", "Stiller", "Kühner", "Dunkler", "Grauer", "Rastloser", "Letzter", "Wandernder", "Eiserner", "Junger", "Listiger"],
+  en: ["Iron", "Gilded", "Silent", "Bold", "Dark", "Grey", "Restless", "Last", "Wandering", "Brazen", "Young", "Cunning"] };
+const TAG_N = { de: ["Turm", "Läufer", "Springer", "Gambit", "Wächter", "Falke", "Drache", "Paladin", "Schatten", "Kanzler", "Bauer", "Stratege"],
+  en: ["Rook", "Bishop", "Knight", "Gambit", "Warden", "Hawk", "Drake", "Paladin", "Shadow", "Chancellor", "Pawn", "Strategist"] };
+const ROMAN = ["", "", " II", " III", " IV", " VII", " IX", " XI", " XIII"];
+const rollTag = (en) => {
+  const L = en ? "en" : "de", r = (a) => a[Math.floor(Math.random() * a.length)];
+  return (r(TAG_A[L]) + (en ? " " : "") + (en ? r(TAG_N[L]) : r(TAG_N[L])) + r(ROMAN)).replace(/^(\S+)(?= )/, en ? "$1" : "$1");
+};
 export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
@@ -22,6 +33,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
 
   const [server, setServer] = useState(SERVER_URL || o.server || "");
   const name = profile.name || "Spieler " + (o.id || "").slice(0, 4);
+  const [tagDraft, setTagDraft] = useState(profile.name || rollTag(en));
   const [conn, setConn] = useState(net.open ? "on" : "off"); // off | busy | on | fail
   const [waitSec, setWaitSec] = useState(0);
   const [onlineN, setOnlineN] = useState(0);
@@ -69,7 +81,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   }, [searching]);
 
   // it should just work: connect automatically the moment this screen opens
-  useEffect(() => { if (conn === "off" && server) connect(); }, []); // eslint-disable-line
+  useEffect(() => { if (conn === "off" && server && o.tagSet) connect(); }, []); // eslint-disable-line
 
   // keep the server informed when score/privacy change while connected
   useEffect(() => { if (net.open) net.send({ t: "set", score }); }, [score]); // eslint-disable-line
@@ -113,7 +125,23 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
           <img src={crest3} alt="" aria-hidden style={{ width: 52, height: 62, objectFit: "contain", flex: "0 0 auto",
             marginTop: -2, filter: "drop-shadow(0 3px 7px rgba(0,0,0,.5))" }} />
         </div>
-        {conn !== "on" ? (
+        {!o.tagSet ? (
+          <div style={{ padding: "12px 13px", background: T.panel2, border: `1.5px solid ${T.gold}88`, borderRadius: T.radiusSm }}>
+            <div style={{ fontSize: 13.5, fontWeight: 800, color: T.gold, marginBottom: 4 }}>{t("online.tagTitle")}</div>
+            <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.5, marginBottom: 10 }}>{t("online.tagBody")}</div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+              <input value={tagDraft} maxLength={24} onChange={(e) => setTagDraft(e.target.value)}
+                style={{ flex: 1, minWidth: 0, background: T.bg2, color: T.text, border: `1px solid ${T.line}`,
+                  borderRadius: 10, padding: "9px 11px", fontFamily: "inherit", fontSize: 14 }} />
+              <Button variant="subtle" title={t("online.tagRoll")} onClick={() => setTagDraft(rollTag(en))}
+                style={{ padding: "7px 13px", fontSize: 16 }}>🎲</Button>
+            </div>
+            <Button variant="primary" disabled={!tagDraft.trim()} onClick={() => {
+              dispatch({ type: "SET_NAME", name: tagDraft.trim() });
+              dispatch({ type: "SET_ONLINE", online: { tagSet: true } });
+            }}>{t("online.tagOk")}</Button>
+          </div>
+        ) : conn !== "on" ? (
           <div style={{ display: "grid", gap: 10 }}>
             {askConsent && (
               <div style={{ padding: "11px 12px", background: T.panel2, border: `1.5px solid ${T.gold}88`, borderRadius: T.radiusSm }}>

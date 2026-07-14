@@ -75,14 +75,15 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", animation: "pop .18s ease",
+      alignItems: "center", justifyContent: hpMode && piece.maxHp > 0 ? "flex-end" : "center",
+      paddingBottom: hpMode && piece.maxHp > 0 ? "0.04em" : 0, animation: "pop .18s ease",
       boxSizing: "border-box" }}>
       <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel
           const painting = artStyle === "painted" ? paintedForPiece(piece) : null;
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
-            objectFit: "contain", objectPosition: "center", filter: white ? undefined : ENEMY_FILTER,
+            objectFit: "contain", objectPosition: "center bottom", filter: white ? undefined : ENEMY_FILTER,
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}
