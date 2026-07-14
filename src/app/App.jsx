@@ -18,6 +18,7 @@ import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
+import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 import crest1 from "./ui/assets/crest-1.webp";
@@ -247,6 +248,7 @@ export default function App() {
   if (wide) return (
     <div style={{ minHeight: "100%", display: "flex", justifyContent: "center", gap: 18, padding: "18px 18px 24px",
       ...(immersive ? { height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", paddingBottom: 18 } : {}) }}>
+      {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
@@ -275,6 +277,7 @@ export default function App() {
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden" } : {}) }}>
+      {!immersive && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
