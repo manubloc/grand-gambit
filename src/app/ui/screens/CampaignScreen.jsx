@@ -517,7 +517,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? t("camp.replay") : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (sel === "n22" ? t("camp.nextLeague", { r: ROMAN[(profile.campaign?.league || 1)] || (profile.campaign?.league || 1) + 1 }) : t("camp.replay")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}

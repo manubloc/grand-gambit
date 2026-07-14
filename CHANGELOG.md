@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.21
+- Liga-Aufstieg sichtbar gemacht: an der geschafften Ligafeste heißt der Knopf jetzt "Ligameister fordern -> Liga II" statt "Nochmal" - ein erneuter Sieg eröffnet die nächste Liga
+- Aufgeräumt: versehentlich committetes Test-Backup entfernt, server/backups/ ignoriert
+
 ## 0.21.20
 - Figuren stehen jetzt mittig in der Feldhöhe statt am unteren Feldrand; die Lebenspunkt-Kugeln bleiben an der Unterkante
 - Liga-Aufstieg entsperrt: Wer die Ligafeste bei voll freigespielter Karte erneut bezwingt, steigt in die nächste Liga auf (vorher Sackgasse bei 100%)

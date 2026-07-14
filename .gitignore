@@ -17,3 +17,4 @@ dist-single
 server/data.json
 gambit-handy.html
 assets/map-export/
+server/backups/
