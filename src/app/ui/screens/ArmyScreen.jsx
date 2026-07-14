@@ -3,7 +3,7 @@ import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST } from "../../../content/index.js";
-import { BASE_HP, BASE_ATK, SHIELD_HP, createGame } from "../../../core/index.js";
+import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, packBonus, circleRifts } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, MAX_PIECE_LEVEL,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap,
@@ -101,6 +101,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
             {en ? char.nameEn : char.nameDe}
+            {(() => { const f = familyOf(char.kind); return f ? <span aria-hidden title={en ? FAMILIES[f].en : FAMILIES[f].de}
+              style={{ width: 8, height: 8, transform: "rotate(45deg)", borderRadius: 2, flex: "0 0 auto",
+                background: FAMILIES[f].color, boxShadow: `0 0 4px ${FAMILIES[f].color}88` }} /> : null; })()}
             {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint,
               transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
           </div>
@@ -293,6 +296,24 @@ function FormationEditor({ profile, dispatch, t, en }) {
             <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={profile.pieceArt || "painted"} />
           </div>
         </div>
+        {(() => {
+          const kin = { blades: 0, magic: 0, order: 0 };
+          for (const p of preview.board) if (p && p.color === "w") { const f = familyOf(p); if (f) kin[f] += 1; }
+          if (!kin.blades && !kin.magic && !kin.order) return null;
+          const hp = packBonus(kin.blades), rifts = circleRifts(kin.magic);
+          const chip = (f, label) => kin[f] > 0 && (
+            <span key={f} style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px",
+              borderRadius: 999, border: `1px solid ${FAMILIES[f].color}66`, background: `${FAMILIES[f].color}1c`,
+              color: FAMILIES[f].color, fontSize: 11.5, fontWeight: 800 }}>
+              <span style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 2, background: FAMILIES[f].color }} />
+              {(en ? FAMILIES[f].en : FAMILIES[f].de)} {kin[f]}{label ? ` · ${label}` : ""}
+            </span>);
+          return <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
+            {chip("blades", hp > 0 ? `+${hp} ♥` : t("army.famNeedTwo"))}
+            {chip("magic", rifts > 0 ? `${rifts} ⧗ ${t("army.famRift")}` : t("army.famNeedTwo"))}
+            {chip("order", kin.order >= 2 ? t("army.famWallOn") : t("army.famNeedTwo"))}
+          </div>;
+        })()}
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}
@@ -486,6 +507,13 @@ function CharLightbox({ char, en, onClose }) {
     </div>
   );
 }
+
+// ── the three HOUSES: colors & names for badges and the muster line ──────────
+const FAMILIES = {
+  blades: { de: "Jagdrudel", en: "Hunting Pack", color: "#b4636c" },
+  magic:  { de: "Zirkel",    en: "Circle",       color: "#8a7ab8" },
+  order:  { de: "Schildwall", en: "Shield Wall", color: "#6e8aa8" },
+};
 
 export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const [zoomChar, setZoomChar] = useState(null);

@@ -98,5 +98,53 @@ kings(gb);
 let gr = reduce(hpState(gb), moveCommand(legalMoves(hpState(gb)).find((m) => m.from === idx(0, 0, 8) && !m.capture)));
 ok("regen heals 1 HP when moving", [...gr.state.board].find((p) => p && p.kind === "R" && p.color === "w").hp === 5);
 
+
+// ── the three HOUSES: pack, wall and rift ────────────────────────────────────
+import { shiftCommand, familyOf, packBonus, circleRifts, encodeState, decodeState } from "./src/core/index.js";
+{
+  // hunting pack: three fielded blades → each +2 max HP (H hawk base 3, atk-file layout kept simple)
+  const blades = { back: ["H", "S", "O", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const g = createGame(blades, a8, { map: classic, rules: "hp" });
+  const hawk = g.board[idx(0, 0, 8)];
+  const gSolo = createGame({ back: ["H", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") }, a8, { map: classic, rules: "hp" });
+  const hawkSolo = gSolo.board[idx(0, 0, 8)];
+  ok("hunting pack: +1 max HP per additional blade (3 fielded → +2)", hawk.maxHp === hawkSolo.maxHp + 2 && hawk.hp === hawk.maxHp);
+  ok("family helpers agree", familyOf(hawk) === "blades" && packBonus(3) === 2 && packBonus(1) === 0 && circleRifts(2) === 1 && circleRifts(4) === 2);
+
+  // magic circle: two mages bank one Time Rift; arming it keeps the turn once
+  const magic = { back: ["E", "L", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const mg = createGame(magic, a8, { map: classic, rules: "hp" });
+  ok("the circle banks one rift for two mages", mg.shifts.w === 1 && mg.shifts.b === 0);
+  const armed = reduce(mg, shiftCommand("w")).state;
+  ok("arming a rift spends it without ending the turn", armed.shifts.w === 0 && armed.shiftArmed === "w" && armed.turn === "w");
+  const afterMove = reduce(armed, moveCommand(legalMoves(armed)[0])).state;
+  ok("the rifted move keeps the turn — exactly once", afterMove.turn === "w" && afterMove.shiftArmed === null);
+  const afterSecond = reduce(afterMove, moveCommand(legalMoves(afterMove)[0])).state;
+  ok("the second move passes the turn as usual", afterSecond.turn === "b");
+  ok("rifts survive the codec", decodeState(encodeState(armed)).shifts.w === 0 && decodeState(encodeState(armed)).shiftArmed === "w");
+  ok("no rift without the circle", createGame(a8, a8, { map: classic, rules: "hp" }).shifts.w === 0);
+
+  // shield wall: two adjacent order guardians soak 1 (min 1 stays)
+  const order = { back: ["G", "U", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const og = createGame(order, a8, { map: classic, rules: "hp" });
+  const st0 = { ...og, board: og.board.slice(), turn: "b" };
+  // teleport a black queen next to the guardian pair for a clean strike
+  const bq = { id: 999, kind: "Q", color: "b", level: 1, abilities: [], shield: 0, used: {}, hasMoved: true, maxHp: 7, hp: 7, atk: 4 };
+  st0.board[idx(0, 1, 8)] = null; st0.board[idx(1, 1, 8)] = null; // clear the pawns in front
+  st0.board[idx(0, 2, 8)] = bq;
+  const strike = legalMoves(st0).find((m) => m.from === idx(0, 2, 8) && m.to === idx(0, 0, 8));
+  const hit = reduce(st0, moveCommand(strike)).state;
+  const guardian = hit.board[idx(0, 0, 8)];
+  ok("shield wall: the flanked guardian soaks 1 (4 atk → 3 dmg)", guardian && guardian.maxHp - guardian.hp === 3);
+  // the same strike against a LONE guardian takes full damage
+  const lone = { back: ["G", "N", "B", "Q", "K", "B", "N", "R"].map(spec), pawn: spec("P") };
+  const lg2 = createGame(lone, a8, { map: classic, rules: "hp" });
+  const st1 = { ...lg2, board: lg2.board.slice(), turn: "b" };
+  st1.board[idx(0, 1, 8)] = null; st1.board[idx(0, 2, 8)] = { ...bq };
+  const strike1 = legalMoves(st1).find((m) => m.from === idx(0, 2, 8) && m.to === idx(0, 0, 8));
+  const lonely = reduce(st1, moveCommand(strike1)).state.board[idx(0, 0, 8)];
+  ok("no wall for the lone guardian: full 4 damage", lonely && lonely.maxHp - lonely.hp === 4);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

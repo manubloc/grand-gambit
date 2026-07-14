@@ -14,6 +14,8 @@ export function encodeState(state) {
     rules: state.rules ?? "chess",
     turn: state.turn,
     potions: state.potions || { w: 0, b: 0 },
+    shifts: state.shifts || { w: 0, b: 0 },
+    shiftArmed: state.shiftArmed ?? null,
     captured: state.captured,
     lastMove: state.lastMove,
     moveCount: state.moveCount,
@@ -32,6 +34,8 @@ export function decodeState(json) {
     turn: o.turn,
     captured: o.captured || { w: [], b: [] },
     potions: o.potions || { w: 0, b: 0 },
+    shifts: o.shifts || { w: 0, b: 0 },
+    shiftArmed: o.shiftArmed ?? null,
     history: [], // fresh; undo starts over after a load
     lastMove: o.lastMove || null,
     moveCount: o.moveCount || 0,

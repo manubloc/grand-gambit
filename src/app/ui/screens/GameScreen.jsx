@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
@@ -384,6 +384,18 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
               fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5,
               display: "inline-flex", alignItems: "center", gap: 5 }}>
             <ItemIcon id="potion" size={14} /> {state.potions.w}
+          </button>
+        )}
+        {!pvp && !hotseat && hpMode && !banner && ((state.shifts?.w || 0) > 0 || state.shiftArmed === WHITE) && (
+          <button onClick={() => { if (state.shiftArmed || !myTurn) return; setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
+            disabled={!myTurn || state.shiftArmed === WHITE} title={t("game.riftHint")}
+            style={{ background: state.shiftArmed === WHITE ? "#8a7ab8" : T.panel,
+              color: state.shiftArmed === WHITE ? "#171125" : "#b3a4e0",
+              border: "1.5px solid #8a7ab8", borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
+              fontWeight: 900, fontSize: 12.5, cursor: myTurn && state.shiftArmed !== WHITE ? "pointer" : "default",
+              opacity: myTurn || state.shiftArmed === WHITE ? 1 : 0.5,
+              display: "inline-flex", alignItems: "center", gap: 5 }}>
+            ⧗ {state.shiftArmed === WHITE ? t("game.riftArmed") : (state.shifts?.w || 0)}
           </button>
         )}
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}

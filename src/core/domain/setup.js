@@ -1,4 +1,5 @@
 import { FILES, RANKS, WHITE, BLACK, KIND, idx, BASE_HP, BASE_ATK, SHIELD_HP } from "./constants.js";
+import { familyOf, packBonus, circleRifts } from "../rules/families.js";
 import { emptyBoard, makePiece } from "./board.js";
 
 // Default 10-wide back rank. Indices 2 and 7 are the "flank" slots that new
@@ -63,6 +64,7 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
 
   // HP ruleset: give every piece hit points + attack power. A progression
   // "shield" charge folds into +max HP, so leveled pieces are simply tankier.
+  const rifts = { w: 0, b: 0 };
   if (rules === "hp") {
     for (const p of board) {
       if (!p) continue;
@@ -72,6 +74,17 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
       p.atk = (p.baseAtk ?? (BASE_ATK[p.kind] || 1)) + Math.floor((lvl - 1) / 2);
       p.shield = 0;
     }
+    // ── family traits: kin that march together fight harder ──────────────────
+    // the hunting pack toughens every fielded blade; the circle banks time rifts
+    for (const color of ["w", "b"]) {
+      const kin = { blades: 0, magic: 0, order: 0 };
+      for (const p of board) if (p && p.color === color) { const f = familyOf(p); if (f) kin[f] += 1; }
+      const bonus = packBonus(kin.blades);
+      if (bonus > 0) for (const p of board) if (p && p.color === color && familyOf(p) === "blades") {
+        p.maxHp += bonus; p.hp += bonus;
+      }
+      rifts[color] = circleRifts(kin.magic);
+    }
   }
 
   return {
@@ -80,6 +93,8 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
     rules,                      // "chess" (instant capture, checkmate) or "hp" (damage, regicide)
     turn: WHITE,
     potions: { w: 0, b: 0 },
+    shifts: rifts,              // Time Rifts (magic circle): spend one to keep the turn after your next move
+    shiftArmed: null,           // color that armed a rift for its upcoming move
     captured: { w: [], b: [] }, // piece kinds captured BY each color
     history: [],                // previous states, for undo
     lastMove: null,

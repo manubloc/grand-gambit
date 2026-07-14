@@ -53,6 +53,20 @@ export function reduce(state, command) {
       return { state: next, events: [Ev.healed(command.color, piece.kind, command.target, healedHp)] };
     }
 
+    case COMMAND.SHIFT: {
+      // Guards: HP rules only, right side to move, rifts left, none armed yet.
+      if (state.rules !== "hp" || state.over) return { state, events: [] };
+      if (command.color !== state.turn) return { state, events: [] };
+      if (state.shiftArmed) return { state, events: [] };
+      const rifts = (state.shifts && state.shifts[command.color]) || 0;
+      if (rifts <= 0) return { state, events: [] };
+      const next = { ...state,
+        shifts: { ...state.shifts, [command.color]: rifts - 1 },
+        shiftArmed: command.color,
+        log: (state.log || []).concat([command]) };
+      return { state: next, events: [] };
+    }
+
     case COMMAND.RESIGN: {
       const winner = other(command.color);
       const next = { ...state, log: (state.log || []).concat([command]), over: { result: "resign", winner } };

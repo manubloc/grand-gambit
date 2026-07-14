@@ -2,6 +2,7 @@ import { other, WHITE, BLACK, BASE_HP, BASE_ATK } from "../domain/constants.js";
 import { cloneBoard, findKing } from "../domain/board.js";
 import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
+import { familyOf } from "../rules/families.js";
 
 export function cloneState(state) {
   return {
@@ -11,6 +12,8 @@ export function cloneState(state) {
     turn: state.turn,
     captured: { w: [...state.captured.w], b: [...state.captured.b] },
     potions: state.potions, // carried through every move; the POTION command replaces it immutably
+    shifts: state.shifts,       // Time Rifts (magic circle) — the SHIFT command replaces it immutably
+    shiftArmed: state.shiftArmed ?? null,
     history: state.history, // shared by reference; only real moves push to it
     lastMove: state.lastMove,
     moveCount: state.moveCount,
@@ -56,7 +59,8 @@ export function applyMove(state, move, opts) {
       b[move.to] = pawn;
       piece.spawnLeft -= 1;
     }
-    ns.turn = other(state.turn);
+    if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
+    else ns.turn = other(state.turn);
     ns.lastMove = { from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
     ns.moveCount = state.moveCount + 1;
     if (record) { ns.history = [...state.history, state]; }
@@ -66,7 +70,14 @@ export function applyMove(state, move, opts) {
   if (hp) {
     const has = (id) => piece.abilities.includes(id);
     if (target) {
-      const soak = target.abilities.includes("bulwark") ? 1 : 0;
+      // the SHIELD WALL: an order piece standing orthogonally beside another
+      // order ally takes 1 less damage — the wall holds (never below 1)
+      const W = state.w || 8, H2 = state.h || 8, ti = move.to, tf = ti % W;
+      const wall = familyOf(target) === "order" && [
+        tf > 0 ? ti - 1 : -1, tf < W - 1 ? ti + 1 : -1, ti - W, ti + W,
+      ].some((n) => { const q = n >= 0 && n < W * H2 ? b[n] : null;
+        return q && q !== target && q.color === target.color && familyOf(q) === "order"; });
+      const soak = (target.abilities.includes("bulwark") ? 1 : 0) + (wall ? 1 : 0);
       dmg = Math.max(1, (piece.atk || 1) - soak);
       target.hp -= dmg;
       if (move.consumes) piece.used[move.consumes] = true;
@@ -102,7 +113,9 @@ export function applyMove(state, move, opts) {
   }
 
   const captured = hp ? lethal : (!!target && !bounced);
-  ns.turn = other(state.turn);
+  // an armed TIME RIFT (magic circle) lets this move keep the turn — once
+  if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
+  else ns.turn = other(state.turn);
   ns.moveCount = state.moveCount + 1;
   ns.lastMove = {
     from: move.from, to: move.to, color: piece.color, kind: move.kind,
