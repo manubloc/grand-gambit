@@ -1,118 +1,118 @@
-# GRAND GAMBIT — Übergabe für neuen Chat (Stand v0.2.1, Juli 2026)
+# GRAND GAMBIT — Übergabe für neuen Chat (Stand v0.21.17, 13.07.2026)
 
 ## Was ist das
 Story-Taktik-Schach-RPG als PWA. React 18 + Vite 5, plain JS ESM, Node 22.
-Kern deterministisch & UI-frei (core/content/meta/ai/app/platform), 235 Tests
-(`npm test`), 115 KB gzip. Alle Grafiken (26 Figuren, 6 Bosse, Wappen,
-27 Landschafts-Bausteine, 12 Item-Icons) sind editierbare SVGs unter assets/
-→ `npm run art` (läuft via pre-Hooks automatisch). Doku: README, assets/README,
-RELEASE-ANLEITUNG, ACCOUNTS-ANLEITUNG, CHANGELOG, **UMBAU-PLAN.md (= nächste Aufgaben!)**.
+Kern deterministisch & UI-frei (core/content/meta/ai/app/platform), 11 Test-Suiten
+(`npm test`, MUSS grün sein vor jedem Push). Figuren-Optik: 33 gemalte WebP-Figuren
+(26 Hofstaat + 7 Boss-Familien) unter src/app/ui/assets/painted/, Vektor-SVGs als
+Fallback/„Simpel"-Stil. Doku: README, CHANGELOG, RELEASE-ANLEITUNG,
+ACCOUNTS-ANLEITUNG, DEPLOY-WORKER.md, UMBAU-PLAN.md.
 
 ## Live & Infrastruktur
-- **https://grandgambit.win** (+ grand-gambit.pages.dev), HTTPS, PWA mit Service Worker.
-- GitHub: **manubloc/grand-gambit** (privat, main, HEAD 15db7f2). CI grün
-  (Tests+Builds+Sandbox-Boot). itch-Workflow liegt bereit (Secrets fehlen noch).
-- Cloudflare Pages "grand-gambit": Auto-Deploy bei Push auf main
-  (Build `npm run build`, Output `dist`, NODE_VERSION=22). Konto Frey.manu@gmail.com.
+- **https://grandgambit.win** (Cloudflare Pages "grand-gambit", Auto-Deploy bei
+  Push auf main; Build `npm run build`, Output `dist`, NODE_VERSION=22).
+- GitHub: **manubloc/grand-gambit** (privat, main, HEAD **a622769** = v0.21.17).
+- **Online-Duell:** Cloudflare Worker **gg-hall** (Durable Object "Hall", SQLite,
+  hibernatable WebSockets). Neutrale Domain **wss://duell.grandgambit.win/ws**
+  (Custom Domain aktiv, Zertifikat läuft). Alte URL gg-hall.frey-manu.workers.dev
+  ist bewusst noch aktiv (fängt alte PWA-Caches), taucht aber nirgends mehr im
+  Quellcode auf. Cloudflare-Konto Frey.manu@gmail.com, Account-ID 73af6b7e9469b4f0ac2577e7c9e5ac18.
+- **Supabase** kuhriectbryhezhbnsrq (EU): Konten/Google-OAuth. Admin-Login lokal:
+  Benutzer `admin`, Passwort `gambit-admin` (Saves-Screen → „⚙ Admin · Spielfortschritt"
+  setzt beliebigen Fortschritt, z. B. 100%-Save für Tests).
 
 ## Deploy aus dem Chat (bewährter Ablauf)
-1. Nutzer gibt Fine-grained-Token "gambit-deploy" (Contents RW + Workflows RW,
-   nur dieses Repo) in den Chat — Token NIE in Dateien/Ausgaben schreiben.
-2. Sandbox: clone nach /tmp mit `https://x-access-token:${GH_TOKEN}@github.com/...`,
+1. Nutzer gibt Fine-grained-Token "gambit-deploy" (Contents RW, nur dieses Repo)
+   in den Chat — Token NIE in Dateien/Ausgaben schreiben, danach widerrufen lassen.
+2. Sandbox: clone nach /tmp/gg-deploy mit `https://x-access-token:${GH_TOKEN}@github.com/...`,
    Projekt per **tar-Pipe** überlagern (rsync existiert nicht!), Excludes:
-   node_modules dist dist-single .git server/data.json server/backups assets/map-export.
-3. `npm test` vorher (235 erwartet), commit, push → Cloudflare baut selbst.
-4. Verifizieren: Service Worker cached! Neue Version am besten über die
-   frische Deployment-Preview-URL (hash.grand-gambit.pages.dev) prüfen oder
-   Seite zweimal laden. Versions-Anzeige: Profil unten "v0.2.x".
+   node_modules dist dist-single .git server/data.json server/backups
+   assets/map-export layout_harness* .harness.js.
+3. Vor jedem Push: Version-Bump in package.json + CHANGELOG-Eintrag,
+   `npm test` (11 Suiten) + `npm run build` in Quelle UND /tmp/gg-deploy.
+4. Push → Cloudflare baut selbst (~2 Min). Service Worker cached: live prüfen
+   per Hard-Reload / zweimal laden.
 
-## Offene Punkte
-- **privacy.html: rote Platzhalter [NAME/ADRESSE/E-MAIL/DATUM] ausfüllen (Pflicht!).**
-- LICENSE: [NAME]-Platzhalter.
-- **UMBAU-PLAN.md abarbeiten**: (A) Map-Immersion (Vollbild-Viewport, kleinere
-  Medaillons, größerer Wanderer, eingebettetes Node-Panel — Nutzer liefert
-  Referenzbild), (B) Gefolge → 3 Reiter, (C) Währungs-SVGs + Ressourcen-Leiste,
-  (D) Schwierigkeitsgrad (Elo-Ranges 600–900/1000–1300/1400–1700),
-  (E) Konten via Supabase Auth (E-Mail=Identität, Gamertag-Würfel, unique) + Online.
-- Multiplayer-Server noch nicht gehostet (SERVER_URL leer; server/ ist fertig
-  inkl. Backups alle 10 Min, Admin via ADMIN_TOKEN ≥24 Zeichen + scripts/admin.mjs).
+## Worker-Deploy ohne Wrangler (bewährt, über Chrome-Fernsteuerung)
+1. Bundle lokal: `npx esbuild worker/src/index.mjs --bundle --format=esm
+   --external:cloudflare:workers --outfile=/tmp/worker-bundle.js`
+2. Bundle temporär als public/gg-hall-fix.js + CORS-Zeile in public/_headers
+   pushen (wird über grandgambit.win gehostet).
+3. Im Dashboard-Editor (workers/services/edit/gg-hall/production, VS-Code-Web
+   in iframes — Monaco NICHT vom Top-Frame erreichbar): per javascript_tool
+   Bundle fetchen → navigator.clipboard.writeText (braucht vorherigen Klick
+   für Fokus!) → Klick in Editor, Ctrl+A, Ctrl+V → Deploy → Toast "Version saved".
+4. Roundtrip-Test per WebSocket: hello {id:'testxx', secret:'testsecret1234567',
+   name:'DiagTest', score:100, privacy:'public'} → erwarte {t:"welcome"}.
+5. Bundle + CORS-Zeile wieder aus dem Repo entfernen und pushen.
+WICHTIG Worker-Eigenheit: hibernatable WS — Zustellung läuft über Attachment-IDs;
+beim hello wird die ID per preSeat VOR handle() gesetzt (Rollback bei Fehler),
+sonst verpufft das welcome (war ein Live-Bug, gefixt in d722653).
 
-## Arbeitsweise des Nutzers
-Deutsch, knappe Mobile-Nachrichten, Deliverables statt Rückfragen, am Ende
-jeweils Deploy. Nach jedem Feature: npm test + Smoke, dann push.
+## Zustand v0.21.x (seit v0.20.1 passiert)
+- **Galerie komplett:** 33 gemalte Figuren; paintedArt.js (PAINTED-Map, KIND2ID,
+  ENEMY_FILTER hue-rotate(185deg)). Boss-Lookup: eigenes Porträt
+  (painted-boss-<id>.webp) → b23/archenemy, b25/leaguemaster → Familie (piece.art).
+- **Design-Sprache:** Nachtblau #0c111e + Antikgold #c9a45c, KEINE Signalfarben.
+  Gilded.jsx = geteilte Bausteine (GildedFrame, goldText, GoldRule, Diamond,
+  GoldShineButton). Glanz (ggShine-Sweep) NUR auf Haupt-CTAs: Fortsetzen/Spielen/
+  Verbinden (Hub), Verbessern/Erwerben (Figuren), Partie starten (Schnelles Spiel),
+  Einfordern (Schatzkammer). Segmented-Reiter: Gold ohne Sweep.
+- **Figuren-Overlays (PieceGlyph):** Level = Gold-Rauten oben mittig; HP = Glanz-
+  Bubbles (HpDots, radial-gradient Lichtpunkt) ganz unten am Feld, >10 HP schmaler
+  Balken; ATK = BladesIc ÜBER Zahl links; Fähigkeits-Punktspalte rechts
+  (TAG_ORDER, once+used ergraut). Figur mittig, paddingBottom 0.095em.
+- **Desktop:** eingebaute Vergrößerung zoom 1.15 ab 1440px / 1.3 ab 1760px;
+  --vhz-Variable kompensiert dvh (sonst scrollt es!). Match zweispaltig ab 940px
+  (Brett maximal, Seitenleiste 272px). Aufstellung ein Bildschirm (Brett links
+  min(700px, 100dvh/var(--vhz)-250px), Regie rechts). Hub + Saves vertikal mittig.
+- **Figuren-Tab:** Akkordeon (eine Karte offen, ganze Kachel klickt, offen =
+  volle Breite via gridColumn 1/-1); AbilityTiles gleich hoch, Beschreibungen
+  IMMER sichtbar (Felder heißen descDe/descEn — NICHT textDe!); TAGS enthält
+  "trick" (Held-Fähigkeiten, war Crash-Ursache).
+- **Ökonomie:** upgradeCost wertgewichtet (Bauer 1★ … Dame/König 4★).
+  Sternensplitter (Ausrüstung): 1 Skillpunkt für 45 Gold, Cap 2×Liga
+  (leveling.js buySpShard/spShardCap, Reducer BUY_SP_SHARD, profile.spShards).
+- **Karten-Wording:** piece-Stationen "Neue Figur", pure "Konkurrent",
+  nur Ligafeste (pure && next leer && kein Gate) = "Endboss".
+- **Profil:** Gold-Kopf (GildedFrame), "Spielstand wechseln" (setSlot(null)) +
+  "Abmelden" (clearSession+signOutCloud). Erst-Start-Intro → Hub statt Karte.
+- **Online:** Cloud-Vault-UI nur account.isAdmin; App reicht account durch.
+  SERVER_URL = wss://duell.grandgambit.win/ws (config.js), kein Fallback mehr.
+- **SEO:** index.html sauber (canonical 1×, OG inkl. url/width/height/alt,
+  twitter, JSON-LD), public/og.jpg 1200×630, robots.txt + sitemap.xml.
+- Strings: typografische Anführungszeichen in strings.js brechen die Datei — nur gerade "…" verwenden!
 
-## Login & Admin (v0.16)
+## OFFENE PUNKTE (Prio oben)
+1. ~~Worker-Deploy Rangliste~~ **ERLEDIGT 14.07.2026:** Gefiltertes Leaderboard
+   deployed & verifiziert (Bindings/compat intakt, WS-Roundtrip auf beiden
+   Endpunkten grün). Bundle + CORS-Zeile aus dem Repo entfernt.
+   NEUER BEWÄHRTER WEG (statt Monaco-Paste, der an Cross-Origin-Clipboard
+   scheitert): im eingeloggten Dashboard-Tab per javascript_tool die interne
+   API nutzen — PUT /api/v4/accounts/<acct>/workers/scripts/gg-hall als
+   multipart (metadata: main_module index.js, compatibility_date aus
+   GET …/settings übernehmen, keep_bindings: [alle Typen]; index.js als
+   Blob application/javascript+module). Session-Cookies reichen, kein Wrangler.
+2. **Boss-Gemälde:** Nutzer generiert mit BOSS-PROMPTS.md (liegt im Zip unter
+   docs-handover/) 23 Unikat-Porträts, schickt sie nummeriert mit Zuordnung →
+   freistellen (strip_checker gegen Fake-Transparenz!), als
+   painted-boss-<id>.webp einbinden, PAINTED erweitern.
+3. **Figuren-Entzerrung über Ligen:** alle 18 Stations-Rekruten hängen am
+   Kernpfad (= Liga I). Hebel: `league:`-Feld an Kernpfad-Knoten (Mechanik
+   existiert, siehe g4–g9). Nutzer nennt Zielverteilung → umsetzen.
+   Analyse: docs-handover/GAME-SITEMAP.md.
+4. **Liga-Hintergründe:** 10 Bilder bg-fruehling…bg-meer vom Nutzer ausstehend
+   (Prompts wurden früher geliefert) → hinter Brett abgedunkelt einbauen.
+5. Zuordnungs-Review 4 Deutungsfälle der Galerie (Kanzler/Flaggenträger/
+   Stratege/Kundschafter) via Admin-100%-Save.
+6. Discord-Provider in Supabase (Anleitung zugesagt); Apple-OAuth kostet 99$/Jahr.
+7. GameScreen-HUD gilt weiter als Design-Kandidat; Balance-Idee "steilere
+   Levelkurve für starke Figuren" nur auf Nutzerwunsch (kostet Save-Kompatibilität).
 
-- Eingebauter Admin: **admin / gambit-admin** — nach erstem Login ändern! Admin sieht je Spielstand den Fortschrittsregler (0–100 %).
-- Online-Anmeldung (Google/E-Mail als Cloud-Konten): SUPABASE-SETUP.md befolgen (2 Env-Variablen), Code ist fertig.
-
-## Multiplayer (v0.18)
-
-- Server = Cloudflare Worker + Durable Object: `cd worker && npx wrangler deploy`, dann SERVER_URL in src/app/config.js (DEPLOY-WORKER.md). Free Plan reicht. Admin optional via `wrangler secret put ADMIN_TOKEN` (≥24 Zeichen).
-
-## ── LIVE-STAND (Session 10.07.2026 — Cloud komplett eingerichtet) ──
-
-Alles Folgende ist LIVE und verifiziert. Repo-Stand = Commit 24cf9d7 auf main.
-
-### Supabase (Login, Cloud-Konten, Online-Bestenlisten)
-- Projekt: **grand-gambit**, Org "manubloc's Org" (Free), Region Europe
-- Projekt-Ref: **kuhriectbryhezhbnsrq** → Dashboard: supabase.com/dashboard/project/kuhriectbryhezhbnsrq
-- URL: `https://kuhriectbryhezhbnsrq.supabase.co`
-- Publishable Key (öffentlich ok): `sb_publishable_ASusbTX5wkBnGvrQvjNRFA_Oy5Ph_kg`
-- Tabelle `gambit_store` (key/value/updated_at) + RLS-Policy "gambit rw" (offen) angelegt
-- Auth: Site URL = https://grandgambit.win · E-Mail-Login aktiv (Confirm email an)
-- Google-Provider AKTIV: Client-ID `565450682520-p1mm2mi18iojictjs578ss5q9hom0hit.apps.googleusercontent.com`
-  (Secret liegt NUR in Supabase + Google Console; bei Verlust: Google Console → Client → "Add secret")
-- DB-Passwort wurde generiert und nicht notiert → bei Bedarf im Dashboard resetten (wird i.d.R. nicht gebraucht)
-
-### Google Cloud (OAuth)
-- Projekt "My First Project" (project-41d010ca-6649-414c-8cb), Konto frey.manu@gmail.com
-- Google Auth Platform: App "Grand Gambit", Extern, **Status: In Produktion** (alle Google-Konten)
-- OAuth-Client "Grand Gambit Web": Redirect `https://kuhriectbryhezhbnsrq.supabase.co/auth/v1/callback`,
-  JS-Origin `https://grandgambit.win`
-
-### Cloudflare (Account 73af6b7e9469b4f0ac2577e7c9e5ac18, Frey.manu@gmail.com)
-- Pages "grand-gambit": Auto-Deploy von manubloc/grand-gambit main; Env (Production):
-  `VITE_SUPABASE_URL`, `VITE_SUPABASE_KEY`, `NODE_VERSION=22`
-- Worker **gg-hall** (Multiplayer, Durable Objects): via "Import repository", Root `/worker`,
-  Deploy `npx wrangler deploy`, baut bei jedem Push automatisch mit
-- Worker-URL: `https://gg-hall.frey-manu.workers.dev` (workers.dev Production-Toggle: AN)
-- Health: /health → {"ok":true,...} ✓ · SERVER_URL im Client: `wss://gg-hall.frey-manu.workers.dev/ws`
-- Optional offen: Custom Domain pvp.grandgambit.win · ADMIN_TOKEN-Secret für Server-Admin-Kommandos
-
-### Verifiziert am Ende der Session
-- grandgambit.win zeigt nach Hard-Reload den neuen Login (Logo, E-Mail, Google/Apple/Discord, Gast)
-- Google-OAuth-Flow bis zur Kontoauswahl fehlerfrei (Consent "Grand Gambit" → Supabase-Callback)
-- Alte Clients laden die neue Version nach Service-Worker-Update (ggf. Hard-Reload)
-
-### Offene Punkte für die nächste Session
-1. GitHub-Token widerrufen (falls noch nicht geschehen) — der genutzte Token ist verbraucht zu behandeln.
-2. Lokal geändert, NOCH NICHT gepusht: index.html theme-color #0f1115 → **#0c111e** (an T.bg angeglichen).
-3. Apple/Discord-Login: Buttons live, Provider in Supabase noch nicht konfiguriert (analog Google).
-4. privacy.html ist Platzhalter (Pflicht!), LICENSE [NAME] eintragen.
-5. Erster echter Live-Test: E-Mail-Registrierung + Google-Login + PvP-Duell zu zweit.
-6. Admin-Spielkonto admin/gambit-admin nach erstem Login ändern (App erinnert daran).
-
-
----
-
-## Nachtrag Session 11.07.2026 (v0.18.1 → v0.20.1)
-
-Deploys auf main: 9c2935f, 34b6e84, 085d293, 03265ae, 6fc4a3b, 19045ea, + Install-Banner.
-Highlights: neues Logo ohne Schimmer + Splash entfernt; Bosse/Herausforderer stehen auf der Karte;
-heraldischer Design-Pass (PanelTitle, Gold-CTAs, Serif-Nav); iOS-Input-Zoom-Fix (Inputs ≥16px);
-Aufgeben = 0 Punkte; Zeitenwender-Gadget statt Gratis-Undo; progressive Vorratstruhe (itemRevealed);
-Emoji→gezeichnete Icons; Match-Pause&Fortsetzen (profile.pausedMatch, Codec); cloneState-Potion-Bugfix;
-Abtrünnige (excludeId in buildStageMatch/buildArmy); Hotseat „Zu zweit · ein Gerät" (Brett dreht zum
-Ziehenden); Akademie-Tutorial (7 Lektionen, überspringbar); PWA-Install-Banner (nur im Browser,
-beforeinstallprompt + iOS-Hinweis, localStorage gg-install-dismissed).
-Login: Apple/Discord hinter SHOW_EXTRA_PROVIDERS=false (LoginScreen.jsx) bis Provider konfiguriert.
-
-## Geplant (noch NICHT gebaut): zwei Editionen
-
-Free-Edition bis Liga II, Vollversion bis Liga X (Kampagne kostenpflichtig), Launch als zwei
-getrennte Apps. Vorgesehene Umsetzung, wenn es so weit ist: Build-Flag `EDITION` ('free'|'full')
-in src/app/config.js + `MAX_LEAGUE` (2 bzw. 10); advanceLeague deckelt auf MAX_LEAGUE und zeigt
-statt Liga-III-Aufstieg einen Upgrade-Hinweis; zwei Cloudflare-Pages-Projekte aus demselben Repo
-mit ENV VITE_GG_EDITION. Der Install-Banner ist bereits Web-only (display-mode standalone wird
-erkannt) und stört eine spätere Store-Variante nicht.
+## Arbeitsweise mit dem Nutzer
+Knappe deutsche (Sprach-)Nachrichten, viele Punkte pro Nachricht. Deliverables
+statt Rückfragen; Screenshots selbst ansehen (Headless-Harness: esbuild-Bundle
+aus Harness-JSX + puppeteer-core@23 + @sparticuz/chromium, 1280×800; Muster:
+GLOBAL_CSS injizieren, defaultProfile()+upgradePiece, makeT, ArmyScreen initialTab).
+Chrome-Fernsteuerung für Cloudflare/Live-Checks etabliert (browser_batch nutzen;
+Fehlerseiten nicht screenshotbar; Login IMMER der Nutzer selbst).
