@@ -17,6 +17,18 @@ const hexA = (hex, a, lift = 0) => {
   return `rgba(${c((n >> 16) & 255)},${c((n >> 8) & 255)},${c(n & 255)},${a})`;
 };
 
+import mL0 from "../assets/marble-l0.webp"; import mL1 from "../assets/marble-l1.webp"; import mL2 from "../assets/marble-l2.webp";
+import mL3 from "../assets/marble-l3.webp"; import mL4 from "../assets/marble-l4.webp"; import mL5 from "../assets/marble-l5.webp";
+import mD0 from "../assets/marble-d0.webp"; import mD1 from "../assets/marble-d1.webp"; import mD2 from "../assets/marble-d2.webp";
+import mD3 from "../assets/marble-d3.webp"; import mD4 from "../assets/marble-d4.webp"; import mD5 from "../assets/marble-d5.webp";
+// ── dark marble & gold: every square is a real slab cut from the reference
+// image; a deterministic hash deals the variants so no two boards feel cloned,
+// yet the same match always shows the same stone. ──
+const MARBLE_L = [mL0, mL1, mL2, mL3, mL4, mL5];
+const MARBLE_D = [mD0, mD1, mD2, mD3, mD4, mD5];
+const slab = (i, dark) => (dark ? MARBLE_D : MARBLE_L)[((i * 2654435761) >>> 8) % 6];
+const REDUCED = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
@@ -102,8 +114,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
-          background: `linear-gradient(148deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.14) 100%), ${dark ? sqD : sqL}`,
-          boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.22)",
+          background: `linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
+          boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,.3)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
@@ -160,10 +172,17 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
         display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
-        background: texture ? `url(${texture}) ${T.grid}` : T.grid,
-        backgroundSize: texture ? "280px 280px" : undefined, backgroundRepeat: "repeat",
+        background: "linear-gradient(120deg, #5c4620, #c9a45c 45%, #8a6d35 70%, #5c4620)",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
+        {/* the hall's light: a warm heart, night pressing in from the rim */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+          background: `radial-gradient(62% 54% at 50% 42%, rgba(255,208,110,.10), transparent 68%),
+            radial-gradient(125% 108% at 50% 40%, transparent 42%, rgba(2,3,6,.52) 100%)` }} />
+        {/* the veins breathe: a slow golden sheen pulses over the stone */}
+        {!REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+          mixBlendMode: "overlay", animation: "marblePulse 6s ease-in-out infinite",
+          background: "radial-gradient(75% 65% at 50% 45%, rgba(255,196,92,.55), rgba(255,196,92,.08) 70%, transparent 100%)" }} />}
         {/* the material rides on top too: a soft-light wash of the same wood, so
             scratches and grain read across light and dark squares alike */}
         {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
