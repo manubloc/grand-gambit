@@ -33,12 +33,42 @@ const slabIx = (i) => ((i * 2654435761) >>> 8) % 6;
 const slab = (i, dark) => (dark ? MARBLE_D : MARBLE_L)[slabIx(i)];
 const REDUCED = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// ── preload: every slab is fetched once BEFORE the board shows itself — tiles
+// popping in one by one looked cheap. A small gold rune breathes while the
+// stone is carried in, then the finished board fades up in one piece. ──
+const BOARD_ART = [...MARBLE_L, ...MARBLE_D, ...MARBLE_G];
+let artDone = false, artPromise = null;
+export function preloadBoardArt() {
+  if (artPromise) return artPromise;
+  if (typeof Image === "undefined") { artDone = true; return (artPromise = Promise.resolve()); }
+  artPromise = Promise.race([
+    Promise.all(BOARD_ART.map((src) => new Promise((res) => {
+      const im = new Image();
+      im.onload = im.onerror = () => res();
+      im.src = src;
+    }))),
+    new Promise((res) => setTimeout(res, 2500)), // never gate the game on a slow cache
+  ]).then(() => { artDone = true; });
+  return artPromise;
+}
+if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
+
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
+
+  // all slabs loaded? until then a mini animation holds the frame — no popping tiles
+  const [artReady, setArtReady] = useState(artDone);
+  const bootRef = useRef(!artDone); // true only if THIS mount had to wait → fade the reveal
+  useEffect(() => {
+    if (artReady) return;
+    let on = true;
+    preloadBoardArt().then(() => { if (on) setArtReady(true); });
+    return () => { on = false; };
+  }, []); // eslint-disable-line
 
   // Integer-pixel sizing: fr-tracks round to different pixel widths per column
   // (tiles visibly unequal on some screens), so we measure the available box
@@ -118,9 +148,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
-          // a veil sits on the stone (structure ~50% back — pieces lead, the board recedes),
-          // then a soft diagonal light, then the slab itself
-          background: `linear-gradient(rgba(10,13,20,.35), rgba(10,13,20,.35)), linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
+          // a veil in the square's own colour sits on the stone (structure down
+          // to a whisper — the marble hints, the pieces speak), then a soft
+          // diagonal light, then the slab itself
+          background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68)}), linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
           boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.45)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           {dark && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
@@ -183,7 +214,14 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
-        {cells}
+        {artReady ? cells : (
+          <div aria-hidden style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+            <div style={{ width: 26, height: 26, border: `2px solid ${T.gold}`, transform: "rotate(45deg)",
+              boxShadow: `0 0 16px ${T.gold}55`, animation: REDUCED ? "none" : "ggLoad 1.2s ease-in-out infinite" }} />
+          </div>
+        )}
+        {artReady && bootRef.current && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 3,
+          background: "#05070c", pointerEvents: "none", animation: "ggVeilOut .55s ease both" }} />}
         {/* the hall's light: a warm heart, night pressing in from the rim */}
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
           background: `radial-gradient(62% 54% at 50% 42%, rgba(255,208,110,.10), transparent 68%),
