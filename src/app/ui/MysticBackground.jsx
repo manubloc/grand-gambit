@@ -59,7 +59,7 @@ export function MysticBackground({ league = 1 }) {
       t += 0.016;
       // fading memory: yesterday's smoke thins, the trails stay a while
       ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillStyle = "rgba(0,0,0,0.03)";
       ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
       const tint = tintRef.current;
@@ -67,8 +67,8 @@ export function MysticBackground({ league = 1 }) {
         // the flow field: two slow waves bend every path into a ribbon
         const ang = Math.sin(p.x * 0.004 + t * 0.3 + p.seed) * 1.7
                   + Math.cos(p.y * 0.005 - t * 0.22 + p.seed * 0.6) * 1.4;
-        p.vx = (p.vx + Math.cos(ang) * 0.032) * 0.984;
-        p.vy = (p.vy + Math.sin(ang) * 0.022 - 0.013) * 0.984;
+        p.vx = (p.vx + Math.cos(ang) * 0.042) * 0.985;
+        p.vy = (p.vy + Math.sin(ang) * 0.03 - 0.016) * 0.985;
         p.x += p.vx; p.y += p.vy; p.life += 1;
         const k = p.life / p.maxLife;
         const alpha = (k < 0.2 ? k / 0.2 : k > 0.75 ? (1 - k) / 0.25 : 1)
