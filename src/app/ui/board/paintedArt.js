@@ -35,6 +35,30 @@ import bWraith from "../assets/painted/painted-boss-wraith.webp";
 import bTyrant from "../assets/painted/painted-boss-tyrant.webp";
 import bArchenemy from "../assets/painted/painted-boss-archenemy.webp";
 import bLeaguemaster from "../assets/painted/painted-boss-leaguemaster.webp";
+// every named monster of the road now sits for his own portrait (b01–b22, b24)
+import pbb01 from "../assets/painted/painted-boss-b01.webp";
+import pbb02 from "../assets/painted/painted-boss-b02.webp";
+import pbb03 from "../assets/painted/painted-boss-b03.webp";
+import pbb04 from "../assets/painted/painted-boss-b04.webp";
+import pbb05 from "../assets/painted/painted-boss-b05.webp";
+import pbb06 from "../assets/painted/painted-boss-b06.webp";
+import pbb07 from "../assets/painted/painted-boss-b07.webp";
+import pbb08 from "../assets/painted/painted-boss-b08.webp";
+import pbb09 from "../assets/painted/painted-boss-b09.webp";
+import pbb10 from "../assets/painted/painted-boss-b10.webp";
+import pbb11 from "../assets/painted/painted-boss-b11.webp";
+import pbb12 from "../assets/painted/painted-boss-b12.webp";
+import pbb13 from "../assets/painted/painted-boss-b13.webp";
+import pbb14 from "../assets/painted/painted-boss-b14.webp";
+import pbb15 from "../assets/painted/painted-boss-b15.webp";
+import pbb16 from "../assets/painted/painted-boss-b16.webp";
+import pbb17 from "../assets/painted/painted-boss-b17.webp";
+import pbb18 from "../assets/painted/painted-boss-b18.webp";
+import pbb19 from "../assets/painted/painted-boss-b19.webp";
+import pbb20 from "../assets/painted/painted-boss-b20.webp";
+import pbb21 from "../assets/painted/painted-boss-b21.webp";
+import pbb22 from "../assets/painted/painted-boss-b22.webp";
+import pbb24 from "../assets/painted/painted-boss-b24.webp";
 
 export const PAINTED = {
   pawn: pPawn, gambit: pGambit, knight: pKnight, bishop: pBishop, queen: pQueen,
@@ -45,6 +69,9 @@ export const PAINTED = {
   bard: pBard, engineer: pEngineer, standard: pStandard, strategist: pStrategist,
   "boss-golem": bGolem, "boss-beast": bBeast, "boss-serpent": bSerpent, "boss-wraith": bWraith,
   "boss-tyrant": bTyrant, "boss-archenemy": bArchenemy, "boss-leaguemaster": bLeaguemaster,
+  "boss-b01": pbb01, "boss-b02": pbb02, "boss-b03": pbb03, "boss-b04": pbb04, "boss-b05": pbb05, "boss-b06": pbb06, "boss-b07": pbb07, "boss-b08": pbb08,
+  "boss-b09": pbb09, "boss-b10": pbb10, "boss-b11": pbb11, "boss-b12": pbb12, "boss-b13": pbb13, "boss-b14": pbb14, "boss-b15": pbb15, "boss-b16": pbb16,
+  "boss-b17": pbb17, "boss-b18": pbb18, "boss-b19": pbb19, "boss-b20": pbb20, "boss-b21": pbb21, "boss-b22": pbb22, "boss-b24": pbb24,
 };
 
 // kind letter -> character id (pawn wins the shared "P"; the hero flag decides gambit)
