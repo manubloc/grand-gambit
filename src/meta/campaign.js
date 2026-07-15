@@ -164,6 +164,10 @@ export function buildStageMatch(id, profile = null) {
     timer: stageTimer(node, lg),
     gold: stageGold(node, lg),
     firstClear: profile ? nodeStatus(profile, id) === "available" : true,
+    // a FRIENDLY: the station is cleared and one of your own holds the post —
+    // a recruited champion, or the fallen League Master in his keep
+    friendly: !!profile && nodeStatus(profile, id) === "cleared"
+      && (id === "n22" || (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg)))),
     reward: node.reward || { xp: 0 },
   };
 }

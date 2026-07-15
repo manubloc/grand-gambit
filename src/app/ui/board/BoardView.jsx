@@ -53,7 +53,7 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4 }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
@@ -177,8 +177,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), ${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}), url(${slab(i, dark)}) center / cover`,
-            opacity: artReady ? 1 : 0, transition: "opacity .6s ease" }} />
+            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
+            opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />
           {dark && !REDUCED && artReady && wave && (() => {
@@ -261,6 +261,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${texture})`, backgroundSize: "280px 280px", backgroundRepeat: "repeat",
           mixBlendMode: "soft-light", opacity: 0.7 }} />}
+        {/* a FRIENDLY table wears its welcome: a warm golden wash, and on each
+            vein wave a soft sheen band glides across the polished stone */}
+        {friendly && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          background: "linear-gradient(180deg, rgba(242,217,140,.05), rgba(242,217,140,.11))" }} />}
+        {friendly && wave && !REDUCED && artReady && (() => {
+          const g = Math.atan2(wave.dx, wave.dy) * 180 / Math.PI;
+          return <div key={"fw" + wave.id} aria-hidden style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", overflow: "hidden", mixBlendMode: "screen" }}>
+            <div style={{ position: "absolute", left: "-60%", top: "-60%", width: "220%", height: "220%",
+              "--sx0": `${(-wave.dx * 55).toFixed(1)}%`, "--sy0": `${(wave.dy * 55).toFixed(1)}%`,
+              "--sx1": `${(wave.dx * 55).toFixed(1)}%`, "--sy1": `${(-wave.dy * 55).toFixed(1)}%`,
+              background: `linear-gradient(${g.toFixed(0)}deg, transparent 42%, rgba(242,217,140,.04) 47%, rgba(242,217,140,.10) 50%, rgba(242,217,140,.04) 53%, transparent 58%)`,
+              animation: "ggSweep 3.6s ease-in-out both" }} />
+          </div>;
+        })()}
       </div>
       {lastMove && !anim && lastMove.from !== lastMove.to && (() => {
         const a = disp(lastMove.from), b = disp(lastMove.to);

@@ -26,6 +26,7 @@ const texHash = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.c
 // Liga I mixes fresh wood with the odd scarred veteran table.
 const boardTexture = (match, profile) => {
   if (!match) return WEAR_TEX[0];
+  if (match.friendly) return WEAR_TEX[0];   // friendlies play on the freshest table in the house
   const lg = profile?.campaign?.league || 1;
   const pool = lg >= 8 ? [1, 2, 3, 3] : lg >= 5 ? [0, 1, 2, 3] : [0, 0, 1, 2, 3];
   return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
@@ -359,7 +360,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
-          texture={boardTexture(match, profile)} artStyle={"painted"}
+          texture={boardTexture(match, profile)} artStyle={"painted"} friendly={!!match?.friendly}
           pulse={match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />

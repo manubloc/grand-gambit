@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.50
+- FREUNDSCHAFTS-BRETT: Duelle gegen den eigenen Hofstaat (rekrutierte Champions, gefallener Ligameister) spielen auf einem sichtbar freundlicheren Tisch - Marmor-Struktur auf 40% gedaempft, waermerer hellerer Schleier (Elfenbein-Lift .26), ein leiser goldener Hauch ueber dem ganzen Brett, und die frischeste Abnutzungs-Textur des Hauses statt der liga-rauen
+- GLANZ-SWEEP RECYCELT: das weiche Gold-Band gleitet jetzt NUR im Freundschaftskampf mit jeder Adern-Welle uebers polierte Brett - dort passt der Glanz; ernste Duelle behalten den nuechternen Stein
+- match.friendly kommt aus buildStageMatch (Test: Champion-Station liefert den Freundschafts-Tisch, normale Stationen nicht)
+
 ## 0.21.49
 - FERNWIRKUNG HALBIERT: Spruenge (longleap u.a.) und Fernschuesse (ranged) treffen in HP-Partien nur noch mit HALBER Wucht (aufgerundet) - Nahkampf behaelt den vollen Biss. Sniper-Burst ist Geschichte
 - DER KOENIG HAERTET SCHNELLER: +2 HP pro Level statt +1 (alle anderen +1) - ein gelevelter Hofstaat muss den Koenig belagern, nicht bersten. Level-5-Koenig: 18 HP, Dame daneben: 11
