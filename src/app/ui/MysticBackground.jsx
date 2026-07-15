@@ -55,7 +55,7 @@ export function MysticBackground({ league = 1 }) {
         vy: shadow ? -(0.22 + Math.random() * 0.38)   // shadows crawl — long smears
                    : -(0.4 + Math.random() * 0.6),    // brisk rise — flame, not fog
         life: 0, maxLife: shadow ? 280 + Math.random() * 240 : 220 + Math.random() * 200,
-        size: shadow ? (28 + Math.random() * 40) : (15 + Math.random() * 26),
+        size: shadow ? (28 + Math.random() * 40) : (19 + Math.random() * 32),
         seed: Math.random() * 9,
         warm: !shadow && Math.random() < 0.42 };
     };
@@ -70,11 +70,11 @@ export function MysticBackground({ league = 1 }) {
     // 9–17s swells in, dies away, then the hall stands clear for 10–32s.
     // Each episode has a MOOD: sometimes amber-gold, sometimes blue-dark.
     // env eases toward its target, so nothing ever pops on or off. ──
-    let env = 0, envTarget = 1, envTm = 0, envAlive = true, emode = 1; // 1 gold, 0 dark
+    let env = 0.55, envTarget = 1, envTm = 0, envAlive = true, emode = 1; // 1 gold, 0 dark
     const envLoop = (on) => {
       envTarget = on ? 1 : 0;
       if (on) emode = Math.random() < 0.45 ? 1 : 0;
-      const dur = on ? 9000 + Math.random() * 8000 : 10000 + Math.random() * 22000;
+      const dur = on ? 10000 + Math.random() * 9000 : 7000 + Math.random() * 13000;
       envTm = setTimeout(() => envAlive && envLoop(!on), dur);
     };
     envLoop(true);
@@ -100,7 +100,7 @@ export function MysticBackground({ league = 1 }) {
         const size = p.size * (1 - k * 0.62);    // shrinks into the deep
         const fadeIn = Math.min(1, k / 0.12);
         const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
-        const a = fadeIn * fadeOut * fadeOut * (p.warm ? 0.055 : 0.045) * env * (emode ? 1 : 0.55);
+        const a = fadeIn * fadeOut * fadeOut * (p.warm ? 0.09 : 0.075) * env * (emode ? 1 : 0.7);
         if (a <= 0.004) continue;
         // warm at the root, smoke-cool as it climbs away
         const cw = (p.warm || emode) ? tint.a : tint.s, cs = tint.s; // gold mood leans amber
@@ -108,7 +108,7 @@ export function MysticBackground({ league = 1 }) {
         ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
         ctx.beginPath();
         // stretched, slowly tilting ellipse: a streak, not a bubble
-        ctx.ellipse(p.x, p.y, Math.max(2, size * 0.42), Math.max(3, size * 1.9),
+        ctx.ellipse(p.x, p.y, Math.max(2, size * 0.5), Math.max(3, size * 1.9),
           Math.sin(t * 0.7 + p.seed) * 0.45, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -127,7 +127,7 @@ export function MysticBackground({ league = 1 }) {
         const size = p.size * (1 - k * 0.5);
         const fadeIn = Math.min(1, k / 0.16);
         const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
-        const a = fadeIn * fadeOut * fadeOut * 0.10 * env * (emode ? 0.85 : 1.35);
+        const a = fadeIn * fadeOut * fadeOut * 0.12 * env * (emode ? 0.85 : 1.35);
         if (a <= 0.004) continue;
         // blue-black of the shadow being: a hint of night-blue at the root,
         // swallowing into near-black as it climbs
