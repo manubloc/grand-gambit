@@ -24,6 +24,12 @@ export const GLOBAL_CSS = `
   @media (min-width: 1440px) { #root { zoom: 1.15; } :root { --vhz: 1.15; } }
   @media (min-width: 1760px) { #root { zoom: 1.3; } :root { --vhz: 1.3; } }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* pull-to-refresh is retired — the app updates itself (v0.21.42); the
+     gesture only ever fought the map pan and the board */
+  html, body { overscroll-behavior: none; overscroll-behavior-y: none; }
+  /* nothing in the app is downloadable: no long-press save sheet on phones,
+     no drag-out of the paintings, no image context menu */
+  img, svg, canvas { -webkit-touch-callout: none; -webkit-user-drag: none; user-drag: none; user-select: none; }
   html, body, #root { height: 100%; }
   button, a { -webkit-tap-highlight-color: transparent; }
   button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }

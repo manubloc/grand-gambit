@@ -10,6 +10,13 @@ import { registerSW } from "virtual:pwa-register";
 // app opens, whenever the tab regains focus, and every 60s. registerType
 // "autoUpdate" then swaps the service worker in and reloads the page ONCE —
 // a fresh deploy reaches every phone the next time the game is looked at. ──
+// no image context menu (right-click / long-press "save image") — the
+// gallery stays in the hall. Inputs and text keep their normal menus.
+document.addEventListener("contextmenu", (e) => {
+  const t = e.target;
+  if (t && (t.tagName === "IMG" || t.tagName === "CANVAS" || t.closest?.("svg"))) e.preventDefault();
+});
+
 registerSW({
   immediate: true,
   onRegisteredSW(_url, r) {
