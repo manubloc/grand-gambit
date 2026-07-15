@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "script-defer",
+      injectRegister: false, // registration lives in main.jsx (update loop + auto-reload)
       includeAssets: ["favicon.svg", "og.png", "privacy.html", "robots.txt"],
       manifest: {
         name: "Grand Gambit",

@@ -4,6 +4,21 @@ import { StrictMode, Component } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { GLOBAL_CSS } from "./ui/theme.js";
+import { registerSW } from "virtual:pwa-register";
+
+// ── stay fresh without manual cache-clearing: check for a new build when the
+// app opens, whenever the tab regains focus, and every 60s. registerType
+// "autoUpdate" then swaps the service worker in and reloads the page ONCE —
+// a fresh deploy reaches every phone the next time the game is looked at. ──
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, r) {
+    if (!r) return;
+    const check = () => r.update().catch(() => {});
+    setInterval(check, 60_000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
+  },
+});
 
 const style = document.createElement("style");
 style.textContent = GLOBAL_CSS;
