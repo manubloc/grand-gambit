@@ -8,7 +8,7 @@ import { familyOf } from "../../../core/index.js";
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
+import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
@@ -64,7 +64,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const [viewLeague, setViewLeague] = useState(league);
   useEffect(() => { setViewLeague(league); }, [league]);
   const viewing = viewLeague !== league;
-  const [lgOpen, setLgOpen] = useState(false);
   const th = themeForLeague(viewLeague);
   const bmDef = th.bitmap ? MAP_BITMAPS[th.bitmap] : null; // painted league worlds
   const bm = !!bmDef;
@@ -136,8 +135,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // duel is yet to be won, or your OWN recruited champion holds the post —
   // then every rematch is a friendly (a little gold & XP). Fled champions
   // and slain monsters close their station for this league.
-  const friendly = status === "cleared" && !!unlockCh && known;
-  const closed = status === "cleared" && sel !== "n22" && !friendly && profile.pausedMatch?.nodeId !== sel;
+  const friendly = status === "cleared" && ((!!unlockCh && known) || sel === "n22");
+  const closed = status === "cleared" && !friendly && profile.pausedMatch?.nodeId !== sel;
   const unlockedSet = useMemo(() => new Set(profile.campaign?.unlocked || []), [profile]);
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
@@ -310,7 +309,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   // beaten figures leave the map — UNLESS the champion joined
                   // your court: a recruit keeps his post in gold, ready for a
                   // friendly duel; the fled and the slain are gone
-                  const joinedHere = !!n.boss.piece && unlockedSet.has(n.boss.piece);
+                  const joinedHere = n.id === "n22" || (!!n.boss.piece && unlockedSet.has(n.boss.piece));
                   if (beaten && !flee && !joinedHere) return null;
                   const painting = paintedForPiece({ kind: spec.kind, art: spec.art, bossId: spec.bossId });
                   return <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 12,
@@ -325,7 +324,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                     {painting
                       ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
                           objectFit: "contain", objectPosition: "bottom",
-                          filter: unlockedSet.has(n.boss.piece) ? undefined : ENEMY_FILTER,
+                          filter: (n.boss.piece ? unlockedSet.has(n.boss.piece) : beaten) ? undefined : ENEMY_FILTER,
                           userSelect: "none", pointerEvents: "none" }} />
                       : <PieceArt kind={spec.kind} art={spec.art} fill="#242d44" rim="#93a0bb" detail="#9aa8c6"
                           accent={spec.accent || T.gold} size="100%" level={1} />}
@@ -449,49 +448,44 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           always INSIDE the rounded map frame, padded off its edge */}
       <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
-        {onBack && (
-          <button onClick={onBack} className="gg-serif" style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+        {/* league navigation: ‹ back through mastered worlds, › forward again —
+            and once the League Master has fallen, the golden gate: Onward. */}
+        {viewLeague > 1 && (
+          <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
+            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
             cursor: "pointer", background: "rgba(8, 11, 20, .42)",
             border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
             padding: "8px 16px 8px 12px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
             boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
             backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {t("common.back")}
+            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {ROMAN[viewLeague - 2] || viewLeague - 1}
           </button>
         )}
-        {/* the atlas of conquered worlds: pick any mastered league and look back */}
-        {league > 1 && (
-          <div style={{ position: "relative", pointerEvents: "auto" }}>
-            <button onClick={() => setLgOpen((o) => !o)} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6,
-              cursor: "pointer", background: viewing ? "rgba(92, 62, 18, .55)" : "rgba(8, 11, 20, .42)",
-              border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
-              padding: "8px 14px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
-              boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
-              backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-              ❖ {ROMAN[viewLeague - 1] || viewLeague} <span style={{ fontSize: 9, opacity: .8 }}>▼</span>
-            </button>
-            {lgOpen && (
-              <div style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, width: 216, padding: "10px 11px 11px",
-                background: "rgba(8, 11, 20, .86)", border: "1px solid rgba(233, 210, 150, .3)", borderRadius: 14,
-                boxShadow: "0 10px 30px rgba(0,0,0,.5)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-                <div className="gg-serif" style={{ fontSize: 11, color: "#bba873", letterSpacing: ".1em", marginBottom: 8 }}>{t("camp.viewPast")}</div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {Array.from({ length: league }, (_, i) => i + 1).map((r) => (
-                    <button key={r} className="gg-serif" onClick={() => { setViewLeague(r); setLgOpen(false); setPanOff({ x: 0, y: 0 }); }}
-                      style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13, padding: "7px 0", width: 40,
-                        borderRadius: 9, border: r === viewLeague ? "1px solid rgba(255,240,200,.55)" : `1px solid ${T.line}`,
-                        background: r === viewLeague ? "linear-gradient(160deg, #f0d68a, #b08c44)" : "rgba(16,21,34,.7)",
-                        color: r === viewLeague ? "#17110a" : r === league ? T.goldBright : T.dim }}>
-                      {ROMAN[r - 1] || r}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
         <div style={{ flex: 1 }} />
+        {viewLeague < league && (
+          <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
+            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+            cursor: "pointer", background: "rgba(8, 11, 20, .42)",
+            border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
+            padding: "8px 12px 8px 16px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
+            boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
+            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            {ROMAN[viewLeague] || viewLeague + 1} <span style={{ fontSize: 16, lineHeight: 1 }}>›</span>
+          </button>
+        )}
+        {!viewing && nodeStatus(profile, "n22") === "cleared" && (
+          <button onClick={() => dispatch({ type: "REPLACE", profile: advanceLeague(profile) })} className="gg-serif"
+            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+            cursor: "pointer", background: "linear-gradient(160deg, rgba(240,214,138,.92), rgba(176,140,68,.92))",
+            border: "1px solid rgba(255,240,200,.7)", color: "#17110a", borderRadius: 999,
+            padding: "8px 14px 8px 16px", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, letterSpacing: ".08em",
+            boxShadow: "0 2px 14px rgba(201,164,92,.45)",
+            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            {t("camp.advance", { r: ROMAN[league] || league + 1 })} <span style={{ fontSize: 16, lineHeight: 1 }}>›</span>
+          </button>
+        )}
       </div>
+
 
       {/* embedded node panel — parchment overlay near the medallion; arrival is
           part of the world, not a card below the map */}
@@ -551,7 +545,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {/* the aftermath, told on the spot: joined the retinue, fled again (with tally), or simply done */}
           {status === "cleared" && (() => {
             const nm = unlockCh ? unlockCh[en ? "nameEn" : "nameDe"] : null;
-            const txt = unlockCh
+            const txt = node.id === "n22" ? t("camp.stKeepFriendly")
+              : unlockCh
               ? (known ? t("camp.stFriendly", { name: nm })
                        : t("camp.stFled", { n: bossWinsFor(profile, unlockCh.id), name: nm }))
               : t("camp.stDone");
@@ -612,7 +607,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (sel === "n22" ? t("camp.nextLeague", { r: ROMAN[(profile.campaign?.league || 1)] || (profile.campaign?.league || 1) + 1 }) : friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}

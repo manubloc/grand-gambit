@@ -1,7 +1,7 @@
 import { pieceMoves, NUM_SQUARES, KIND, idx } from "./src/core/index.js";
 import {
   defaultFormation, formationLegal, buildArmyFromFormation, buildArmy,
-  buildStageMatch, advanceCampaign, nodeStatus, clearedCount, unlockedCharacterIds, mapUnlocked, hpUnlocked, isUnlocked,
+  buildStageMatch, advanceCampaign, advanceLeague, nodeStatus, clearedCount, unlockedCharacterIds, mapUnlocked, hpUnlocked, isUnlocked,
 } from "./src/meta/index.js";
 import { CAMPAIGN } from "./src/content/index.js";
 
@@ -148,7 +148,10 @@ import { buildStageMatch as bsm2, dupeCount, leagueBump } from "./src/meta/index
 import { potionCommand, reduce as red2, createGame as cg2, WHITE as W2 } from "./src/core/index.js";
 let lg = prof2;
 for (const id of ["a3", "a4", "a5", "n16", "n17", "d1", "d2", "n20", "n21", "n22"]) lg = advanceCampaign(lg, id);
-ok("finishing the League Keep rolls into league 2 with clears reset", lg.campaign.league === 2 && lg.campaign.cleared.length === 0);
+ok("the fallen Keep stays on the map — no auto-jump into league 2", lg.campaign.league === 1 && lg.campaign.cleared.includes("n22"));
+ok("the gate refuses while the Master still stands", advanceLeague(prof2).campaign?.league !== 2);
+lg = advanceLeague(lg);
+ok("stepping through the gate rolls into league 2 with clears reset", lg.campaign.league === 2 && lg.campaign.cleared.length === 0);
 ok("unlocked pieces survive the rollover, gold is untouched by it", lg.campaign.unlocked.length >= 2 && (lg.gold || 0) === (typeof lg.gold === "number" ? lg.gold : 0));
 ok("paid tolls reset with the league — every climate has its own gatekeeper", (lg.campaign.tolls || []).length === 0);
 lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
@@ -185,7 +188,7 @@ const lg9 = { v: 2, sp: 0, gold: 0, xp: 0, xpEarned: 0, stats: {}, pieces: { lev
   loadout: { flank: ["knight", "knight"], formations: {} },
   campaign: { league: 9, cleared: ["n01","n02","n03","a1","a2","a3","a4","a5","n16","n17","d1","d2","n20","n21"], unlocked: [], dupes: {} } };
 ok("league IX finale is the Captain", bsm2("n22", lg9).boss.unlocks === "captain");
-const sailed = advanceCampaign(lg9, "n22");
+const sailed = advanceLeague(advanceCampaign(lg9, "n22"));
 ok("beating him recruits the Captain and opens league X", sailed.campaign.unlocked.includes("captain") && sailed.campaign.league === 10);
 ok("but the sea still wants a boat", !seaAccessible(sailed) && seaAccessible(buyItem({ ...sailed, gold: 200 }, "boat")));
 

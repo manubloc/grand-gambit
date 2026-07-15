@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.46
+- KEIN LIGAMEISTER-REMATCH MEHR: faellt die Burg, BLEIBT die Karte stehen (bisher sprang die Liga sofort um). Der Meister tritt in deinen Hofstaat ueber und haelt seine Burg golden besetzt - jedes Rematch ist ein Freundschaftskampf (25% XP, halbes Gold)
+- WEITER-KNOPF: oben rechts oeffnet sich ein goldenes Tor "Weiter - Liga {r}", sobald der Meister gefallen ist - EIN Tipp und die naechste Liga beginnt (advanceLeague: Hofstaat, Zaehler und Dupes reisen mit, Clears und Zoelle setzen zurueck)
+- LIGA-NAVIGATION MIT PFEILEN: links "< IX" blaettert in gemeisterte Welten zurueck, rechts "X >" wieder vor (ab Liga II) - der alte Dropdown ist raus, Liga I hat kein Zurueck
+- ZURUECK-KNOPF ENTFERNT + HAUPTMENUE AUF DER KARTE: die Tab-Leiste (Hof, Spielen, ...) bleibt auch in der Kampagne sichtbar (mobil unten, Desktop oben) - ein Tipp und man ist am Hof; die Karte misst sich automatisch den Platz darueber ab
+- Tests: 356 Pruefungen (Tor verweigert solange der Meister steht, Rollover erst durchs Tor, Kapitaen + See ueber das Tor)
+
 ## 0.21.45
 - STATIONEN ERZAEHLEN NACH DEM SIEG NEU: eine Station bleibt nur offen, solange dort eine Figur steht
 - FREUNDSCHAFTSKAMPF: rekrutierte Champions halten ihren Posten (goldene Figur bleibt auf der Karte) - jedes Rematch gegen den eigenen Gefolgsmann ist ein Freundschaftskampf mit 25% XP und halbem Gold (Chips zeigen die reduzierten Werte, eigener Button-Text, neue Panel-Meldung)

@@ -215,6 +215,9 @@ export default function App() {
   // map & match immersion (v0.3/v0.4): the campaign map and every running
   // match fill the screen — the shell locks to 100dvh, UI floats above
   const immersive = inMatch || (tab === "play" && view === "camp");
+  // the campaign map stays fullscreen, but the MAIN MENU stays with it — the
+  // court is always one tap away, and leaving the map needs no back button
+  const mapView = tab === "play" && view === "camp" && !inMatch;
   const railItems = TABS.map((tb) => {
     const on = tab === tb.id;
     return (
@@ -252,7 +255,7 @@ export default function App() {
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
-      {!immersive && (
+      {(!immersive || mapView) && (
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
@@ -287,13 +290,13 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, padding: immersive ? "0 6px" : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+      <main style={{ flex: 1, minHeight: 0, padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "14px 14px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
-      {!immersive && (
-        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 7,
+      {(!immersive || mapView) && (
+        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
           padding: "0 12px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
           <div style={{ maxWidth: 536, margin: "0 auto", pointerEvents: "auto",
             background: `${T.panel}ec`, backdropFilter: "blur(12px)", border: `1px solid ${T.line}`,

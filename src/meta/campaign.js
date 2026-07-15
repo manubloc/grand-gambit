@@ -174,12 +174,9 @@ export function advanceCampaign(profile, id) {
   const node = nodeById(id);
   if (!node) return profile;
   const league = profile.campaign?.league || 1;
-  // Winning the League Keep again still opens the next league — without this,
-  // a fully cleared map (e.g. set via the admin progress tool) is a dead end.
-  const keepRematch = id === "n22" && st === "cleared";
   const firstClear = st === "available";
   const bossReplay = !!node.boss && st === "cleared";
-  if (!firstClear && !keepRematch && !bossReplay) return profile;
+  if (!firstClear && !bossReplay) return profile;
 
   const unlocked = new Set(profile.campaign?.unlocked || []);
   const dupes = { ...(profile.campaign?.dupes || {}) };
@@ -197,11 +194,12 @@ export function advanceCampaign(profile, id) {
       stats.recruits = (stats.recruits || 0) + 1;
     }
   }
-  if (!firstClear && !keepRematch) {
+  if (!firstClear) {
     // a pure replay: only the tally (and a possible late recruit) moves —
-    // EXCEPT a friendly match against your own recruited champion, which
-    // still pays a quarter of the station's XP (gold is halved in applyResult)
-    const friendlyXp = bossPiece && unlocked.has(bossPiece) && !joined
+    // EXCEPT a friendly match against one of your OWN (a recruited champion,
+    // or the fallen League Master holding his keep), which still pays a
+    // quarter of the station's XP (gold is halved in applyResult)
+    const friendlyXp = ((bossPiece && unlocked.has(bossPiece) && !joined) || id === "n22")
       ? Math.round((node.reward?.xp || 0) * leagueRewardMult(league) * 0.25) : 0;
     return { ...profile, stats, xpEarned: (profile.xpEarned || 0) + friendlyXp,
       campaign: { ...(profile.campaign || {}), unlocked: [...unlocked], dupes, bossWins } };
@@ -218,7 +216,8 @@ export function advanceCampaign(profile, id) {
   const spGain = spForXpJump(profile.xpEarned || 0, xpEarned);
   let items = profile.items;
   if (node.grant === "potion") items = { ...(items || {}), potion: Math.min(3, ((items || {}).potion || 0) + 1) };
-  const finished = id === "n22"; // the League Keep falls → next league begins
+  const finished = id === "n22"; // the League Keep falls — the MAP STAYS; the
+  // gate to the next league opens up in the corner (advanceLeague), no rematch
   if (finished) stats.leaguesWon = (stats.leaguesWon || 0) + 1;
   return {
     ...profile,
@@ -227,10 +226,19 @@ export function advanceCampaign(profile, id) {
     sp: (profile.sp || 0) + spGain,
     xpEarned,
     stats,
-    campaign: finished
-      ? { league: league + 1, cleared: [], unlocked: [...unlocked], dupes, bossWins, tolls: [] }
-      : { league, cleared: keepRematch ? clearedIds(profile) : [...clearedIds(profile), id], unlocked: [...unlocked], dupes, bossWins, tolls: profile.campaign?.tolls || [] },
+    campaign: { league, cleared: [...clearedIds(profile), id], unlocked: [...unlocked], dupes, bossWins, tolls: profile.campaign?.tolls || [] },
   };
+}
+
+/** Step through the gate: the League Master already yielded, so the next
+ *  league begins WITHOUT a rematch — court, tallies and dupes travel along,
+ *  clears and paid tolls reset with the new climate. */
+export function advanceLeague(profile) {
+  if (nodeStatus(profile, "n22") !== "cleared") return profile;
+  const league = profile.campaign?.league || 1;
+  return { ...profile, campaign: { league: league + 1, cleared: [],
+    unlocked: [...(profile.campaign?.unlocked || [])], dupes: { ...(profile.campaign?.dupes || {}) },
+    bossWins: { ...(profile.campaign?.bossWins || {}) }, tolls: [] } };
 }
 
 /** League-specific finale: the Desert league (IX) ends at the Captain, whose
