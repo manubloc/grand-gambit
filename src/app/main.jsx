@@ -17,13 +17,26 @@ document.addEventListener("contextmenu", (e) => {
   if (t && (t.tagName === "IMG" || t.tagName === "CANVAS" || t.closest?.("svg"))) e.preventDefault();
 });
 
+// belt and braces for INSTALLED apps: the moment a new service worker takes
+// control, reload exactly once — even if the plugin's own hook were missed
+if ("serviceWorker" in navigator) {
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloaded) return; reloaded = true; window.location.reload();
+  });
+}
 registerSW({
   immediate: true,
   onRegisteredSW(_url, r) {
     if (!r) return;
     const check = () => r.update().catch(() => {});
+    check();                                   // once right away
     setInterval(check, 60_000);
     document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
+    // installed PWAs often resume from the back-forward cache — visibility
+    // events can be swallowed there, pageshow is the reliable hook
+    window.addEventListener("pageshow", (e) => { if (e.persisted) check(); });
+    window.addEventListener("focus", check);
   },
 });
 

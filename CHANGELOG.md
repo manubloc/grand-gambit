@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.58
+- SCHNELLES SPIEL UMSORTIERT: der Modus steht jetzt GANZ OBEN, Klassisch als erste Option (Klassisch | Klassik-Schach... | Duell-Modi), Karte/Gegner/Staerke folgen darunter; Partie-starten-Knopf mit Abstand zum Text darueber
+- ELO-FELD SAUBER: native Spinner entfernt (WebKit/Firefox), neutrales Appearance, hellere Goldschrift, Hinweistext gekuerzt ("Die Elo steuert die Staerke der KI.")
+- UPDATE-HAERTUNG FUER INSTALLIERTE APPS: Sofort-Check beim Start, controllerchange loest garantiert genau EINEN Reload aus (Gurt und Hosentraeger neben dem Plugin-Hook), pageshow faengt Rueckkehr aus dem Back-Forward-Cache ab (typisches iOS-PWA-Loch), focus-Check zusaetzlich
+
 ## 0.21.57
 - FUNKEN UND RAUCH KOMPLETT ENTFERNT: der Partikel-Canvas ist raus - die Halle steht still und klar (Hintergrundbild + Licht bleiben)
 - HELLSICHT ONLINE: fuehrt ein Spieler Hexerin oder Pfadfinder aktiv im Heer, oeffnet sich vor dem ersten Zug der Spaeher-Moment - und online darf der Seher dabei ZWEI EIGENE Figuren antippen und ihre Plaetze TAUSCHEN (beliebig oft), waehrend der Gegner hinter einem Hinweis wartet: "Der Gegner liest deine Aufstellung und ordnet die eigenen Reihen neu". Beim Beginnen reist die Tauschliste als scoutDone-Nachricht mit (Worker-Relay), der Gegner spiegelt die Tausche - beide Bretter bleiben identisch, die Zug-Hashes stimmen weiter

@@ -30,6 +30,8 @@ export const GLOBAL_CSS = `
   /* nothing in the app is downloadable: no long-press save sheet on phones,
      no drag-out of the paintings, no image context menu */
   img, svg, canvas { -webkit-touch-callout: none; -webkit-user-drag: none; user-drag: none; user-select: none; }
+  /* number fields render as plain gold boxes — no native spinners */
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   html, body, #root { height: 100%; }
   button, a { -webkit-tap-highlight-color: transparent; }
   button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }

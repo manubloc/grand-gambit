@@ -550,6 +550,16 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   return (
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
+      <FieldLabel>{t("game.mode")}</FieldLabel>
+      <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
+        options={[
+          { value: "classic", label: t("mode.classic") },
+          { value: "chess", label: t("mode.chess") },
+          { value: "hp", label: hpOpen ? t("mode.hp") : <><LockIc size={11} /> {t("mode.hp")}</>, disabled: !hpOpen },
+        ]} />
+      {mode === "classic" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.classicHint")}</div>}
+      <div style={{ height: 12 }} />
+
       {mode !== "classic" && <><FieldLabel>{t("game.map")}</FieldLabel></>}
       {mode !== "classic" && <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", paddingBottom: 10,
         WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
@@ -562,14 +572,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
         })}
       </div>}
       {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}><LockIc color={T.gold} size={11} /> {t("game.unlockHint")}</div>}
-      <FieldLabel>{t("game.mode")}</FieldLabel>
-      <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
-        options={[
-          { value: "chess", label: t("mode.chess") },
-          { value: "hp", label: hpOpen ? t("mode.hp") : <><LockIc size={11} /> {t("mode.hp")}</>, disabled: !hpOpen },
-          { value: "classic", label: t("mode.classic") },
-        ]} />
-      {mode === "classic" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.classicHint")}</div>}
+
       {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
       <div style={{ height: 12 }} />
       <FieldLabel>{t("quick.opponent")}</FieldLabel>
@@ -596,12 +599,13 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
             style={{ flex: 1, accentColor: T.gold }} aria-label={t("quick.elo")} />
           <input type="number" min={600} max={2200} step={50} value={elo}
             onChange={(e) => setElo(Math.max(600, Math.min(2200, +e.target.value || 1000)))}
-            style={{ width: 82, background: T.bg2, border: `1px solid rgba(233,210,150,.4)`, borderRadius: 8,
-              color: T.gold, fontWeight: 800, textAlign: "center", padding: "8px 8px", fontFamily: "inherit", fontSize: 15 }} />
+            style={{ width: 84, background: T.bg2, border: `1px solid rgba(233,210,150,.5)`, borderRadius: 8,
+              color: "#f0d68a", fontWeight: 800, textAlign: "center", padding: "9px 6px", fontFamily: "inherit", fontSize: 15.5,
+              WebkitAppearance: "none", MozAppearance: "textfield", appearance: "textfield", outline: "none" }} />
         </div>
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("quick.eloHint")}</div>
       </>}
-      <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12 }}
+      <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12, marginTop: 16 }}
         onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); if (mode === "classic") dispatch({ type: "SET_CLASSIC_ELO", elo });
           onStart({ mapId: mode === "classic" ? "classic" : mapId, mode, difficulty, elo, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
         <BladesIc color="#17110a" size={15} /> {t("quick.start")}
