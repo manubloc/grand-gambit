@@ -175,11 +175,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           // state at all; the marble whisper fades in per square once every slab
           // is preloaded, so nothing ever pops
           background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), ${dark ? sqD : sqL}`,
-          boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.36)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? 1 : 0, transition: "opacity .6s ease" }} />
+          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />
           {dark && !REDUCED && artReady && wave && (() => {
             // one wave, one direction: the tile's delay is its position along
             // the wave's travel — the glow rolls across the board in ~1.2s
@@ -250,19 +251,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
-        {/* the WAVE as a true gradient: one soft gold band, perpendicular to
-            the direction of travel, sweeps across the whole board while the
-            vein glow of each slab rises beneath it */}
-        {wave && !REDUCED && artReady && (() => {
-          const g = Math.atan2(wave.dx, wave.dy) * 180 / Math.PI;
-          return <div key={"wv" + wave.id} aria-hidden style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", overflow: "hidden", mixBlendMode: "screen" }}>
-            <div style={{ position: "absolute", left: "-60%", top: "-60%", width: "220%", height: "220%",
-              "--sx0": `${(-wave.dx * 55).toFixed(1)}%`, "--sy0": `${(wave.dy * 55).toFixed(1)}%`,
-              "--sx1": `${(wave.dx * 55).toFixed(1)}%`, "--sy1": `${(-wave.dy * 55).toFixed(1)}%`,
-              background: `linear-gradient(${g.toFixed(0)}deg, transparent 40%, rgba(240,214,138,.05) 46%, rgba(240,214,138,.13) 50%, rgba(240,214,138,.05) 54%, transparent 60%)`,
-              animation: "ggSweep 3.6s ease-in-out both" }} />
-          </div>;
-        })()}
         {/* the hall's light: a warm heart, night pressing in from the rim */}
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
           background: `radial-gradient(62% 54% at 50% 42%, rgba(255,214,120,.12), transparent 68%),

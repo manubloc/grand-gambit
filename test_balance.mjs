@@ -70,5 +70,59 @@ ok(`mirrored armies fight a full game — shortest ${floorOver(g5)} plies (>= 20
 // 6) the hero spec really scales: level 30 gambit carries 6 shields into battle
 ok("the level-30 gambit walks in with six shields", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6);
 
+// ── strikes from afar & the crowned head ─────────────────────────────────────
+import { legalMovesFrom, idx } from "./src/core/index.js";
+const Wp = (k, x = {}) => ({ id: Math.random(), kind: k, color: "w", level: 1, abilities: [], used: {}, shield: 0, ...x });
+const Bp = (k, x = {}) => ({ id: Math.random(), kind: k, color: "b", level: 1, abilities: [], used: {}, shield: 0, ...x });
+const hpState = (board) => ({ board, w: 8, h: 8, holes: new Set(), rules: "hp", turn: "w",
+  captured: { w: [], b: [] }, history: [], lastMove: null, moveCount: 0, log: [], seed: 1 });
+
+// a long-leap knight (atk 4) strikes a rook (hp 5) from afar: HALF force -> 2
+{
+  const board = new Array(64).fill(null);
+  board[idx(0, 0, 8)] = Wp("N", { hp: 3, maxHp: 3, atk: 4, abilities: ["knight_longleap"] });
+  board[idx(1, 3, 8)] = Bp("R", { hp: 5, maxHp: 5, atk: 3 });
+  board[idx(7, 7, 8)] = Bp("K", { hp: 10, maxHp: 10, atk: 3 });
+  board[idx(7, 0, 8)] = Wp("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(board);
+  const leap = legalMovesFrom(st, idx(0, 0, 8)).find((m) => m.to === idx(1, 3, 8) && m.special === "leap");
+  ok("the long leap exists and reaches its mark", !!leap);
+  const after = applyMove(st, leap);
+  ok("a leap lands at half force (atk 4 -> 2 damage)", after.board[idx(1, 3, 8)].hp === 3);
+}
+// the same knight up close (normal jump) keeps its full bite: 4 damage -> kill
+{
+  const board = new Array(64).fill(null);
+  board[idx(0, 0, 8)] = Wp("N", { hp: 3, maxHp: 3, atk: 4, abilities: [] });
+  board[idx(1, 2, 8)] = Bp("N", { hp: 3, maxHp: 3, atk: 2 });
+  board[idx(7, 7, 8)] = Bp("K", { hp: 10, maxHp: 10, atk: 3 });
+  board[idx(7, 0, 8)] = Wp("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(board);
+  const jump = legalMovesFrom(st, idx(0, 0, 8)).find((m) => m.to === idx(1, 2, 8));
+  const after = applyMove(st, jump);
+  ok("melee keeps its full bite (atk 4 kills hp 3)", after.board[idx(1, 2, 8)]?.color === "w");
+}
+// a ranged volley also strikes at half force and the shooter stays put
+{
+  const board = new Array(64).fill(null);
+  board[idx(0, 0, 8)] = Wp("A", { hp: 5, maxHp: 5, atk: 4, abilities: ["ranged_volley"] });
+  board[idx(0, 4, 8)] = Bp("R", { hp: 5, maxHp: 5, atk: 3 });
+  board[idx(7, 7, 8)] = Bp("K", { hp: 10, maxHp: 10, atk: 3 });
+  board[idx(7, 0, 8)] = Wp("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(board);
+  const shot = legalMovesFrom(st, idx(0, 0, 8)).find((m) => m.special === "shot" && m.to === idx(0, 4, 8));
+  ok("the volley finds its line", !!shot);
+  const after = applyMove(st, shot);
+  ok("a shot lands at half force and the shooter stays", after.board[idx(0, 4, 8)].hp === 3 && after.board[idx(0, 0, 8)]?.kind === "A");
+}
+// the crowned head hardens faster: +2 HP per level (queen only +1)
+{
+  const lv = (k, level) => ({ kind: k, level, abilities: [], shield: 0 });
+  const army = { back: [lv("R", 5), lv("N", 5), lv("B", 5), lv("Q", 5), lv("K", 5), lv("B", 5), lv("N", 5), lv("R", 5)], pawn: lv("P", 5) };
+  const g = createGame(army, army, { map: mapById("classic"), rules: "hp", seed: 1 });
+  const king = g.board[idx(4, 0, 8)], queen = g.board[idx(3, 0, 8)];
+  ok(`a level-5 king carries ${king.maxHp} HP (10 + 4x2), the queen ${queen.maxHp} (7 + 4)`, king.maxHp === 18 && queen.maxHp === 11);
+}
+
 console.log(`\nRESULT: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

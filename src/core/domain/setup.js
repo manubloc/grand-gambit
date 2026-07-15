@@ -69,7 +69,10 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
     for (const p of board) {
       if (!p) continue;
       const lvl = p.level || 1;
-      p.maxHp = (p.baseHp ?? (BASE_HP[p.kind] || 1)) + (lvl - 1) + (p.shield || 0) * SHIELD_HP;
+      // the crowned head hardens FASTER: +2 HP per level (others +1) — a
+      // leveled court must besiege the king, not burst him
+      const perLvl = p.kind === KIND.KING ? 2 : 1;
+      p.maxHp = (p.baseHp ?? (BASE_HP[p.kind] || 1)) + (lvl - 1) * perLvl + (p.shield || 0) * SHIELD_HP;
       p.hp = p.maxHp;
       p.atk = (p.baseAtk ?? (BASE_ATK[p.kind] || 1)) + Math.floor((lvl - 1) / 2);
       p.shield = 0;

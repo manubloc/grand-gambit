@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.49
+- FERNWIRKUNG HALBIERT: Spruenge (longleap u.a.) und Fernschuesse (ranged) treffen in HP-Partien nur noch mit HALBER Wucht (aufgerundet) - Nahkampf behaelt den vollen Biss. Sniper-Burst ist Geschichte
+- DER KOENIG HAERTET SCHNELLER: +2 HP pro Level statt +1 (alle anderen +1) - ein gelevelter Hofstaat muss den Koenig belagern, nicht bersten. Level-5-Koenig: 18 HP, Dame daneben: 11
+- BRETT-OPTIK KORRIGIERT: das wandernde Glanz-Band (Sweep) ist raus - geblieben ist der Adern-Impuls pro Feld, der versetzt als Welle durchlaeuft (der war fast richtig). NEU: jede Platte traegt wieder ihre 3D-Fase - Lichtkante oben links, Schattenkante unten rechts, als EIGENE Ebene UEBER dem Marmor (die alte Fase lag unter der Marmor-Ebene und war unsichtbar)
+- 6 neue Balance-Tests (Sprung halbe Wucht, Nahkampf voll, Schuss halbe Wucht + Schuetze bleibt, Koenig-Skalierung) - 370 Pruefungen gesamt
+
 ## 0.21.48
 - BALANCE-TESTSUITE: die KI spielt jetzt selbst komplette Partien auf echten Stationen (test_balance.mjs, deterministisch geseedet) und misst die Zuganzahl - Mindestlaengen sind festgeschrieben: kein Blitz-Ende in 2 Zuegen, Burg >= 16 Halbzuege und entscheidend, Spiegel-Armeen >= 20
 - ZWEI ECHTE BALANCE-BUGS GEFUNDEN UND GEFIXT: (1) auf KLASSIK-Brettern bekam die KI trotzdem den Liga-Bonus - Level-9-Blink-Laeufer gegen die Level-1-Klassikarmee des Spielers, Matt in 3 Zuegen. Klassik ist jetzt fuer BEIDE Seiten reines Schach (Level 1), die Schwierigkeit kommt ab Liga 3 stattdessen ueber +1 Suchtiefe. (2) der WEITE SPRUNG (knight_longleap u.a.) konnte den eingeklemmten Start-Koenig in Matt-Partien in 2-3 Zuegen ersticken - in Matt-Regeln trifft ein Sprung nie den Koenig (kein Schach aus dem Sprung); HP-Partien unveraendert. Liga-V-Duelle: von 6 auf 101 Halbzuege

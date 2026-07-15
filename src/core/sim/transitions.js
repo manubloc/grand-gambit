@@ -84,7 +84,11 @@ export function applyMove(state, move, opts) {
         .some((n) => { const q = n >= 0 && n < W * H2 ? b[n] : null;
           return q && q.color === target.color && q.aura && q.aura.type === "wardAdj"; });
       const soak = (target.abilities.includes("bulwark") ? 1 : 0) + wall + (warded ? 1 : 0);
-      dmg = Math.max(1, (piece.atk || 1) - soak);
+      // BALANCE: strikes from afar carry less weight — a leap or a ranged
+      // shot lands at HALF force (rounded up); melee keeps its full bite.
+      const afar = move.special === "leap" || move.special === "shot" || move.noAdvance;
+      const force = afar ? Math.ceil((piece.atk || 1) / 2) : (piece.atk || 1);
+      dmg = Math.max(1, force - soak);
       target.hp -= dmg;
       if (move.consumes) piece.used[move.consumes] = true;
       if (has("lifesteal")) piece.hp = Math.min(piece.maxHp, piece.hp + Math.ceil(dmg / 2));
