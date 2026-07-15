@@ -298,12 +298,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ minWidth: 0 }}>
     {preview && (
       <div style={{ marginBottom: feWide ? 0 : 12 }}>
-        <div style={{ fontSize: 12, color: T.dim, fontWeight: 700, marginBottom: 6 }}>{t("army.preview")}</div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ width: "100%", maxWidth: feWide ? "min(700px, calc(100dvh / var(--vhz, 1) - 250px))" : 340 }}>
-            <BoardView state={preview} interactive={false} theme={map.theme} maxPx={700} artStyle={"painted"} />
-          </div>
-        </div>
+        {/* the preview BOARD is retired here — before a match you cannot know
+            the foe anyway; the board view returns as the Seeress's scout,
+            right before the horn, where it actually informs a decision */}
         {(() => {
           const kin = { crown: 0, shadow: 0 };
           for (const p of preview.board) if (p && p.color === "w") { const f = familyOf(p); if (f) kin[f] += 1; }

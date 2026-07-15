@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.54
+- BLICK DER HELLSEHERIN: steht die HEXERIN aktiv in der Aufstellung (nur bewusst gesetzt - Standard-Formationen zaehlen nie), liegt in Kampagnen-Partien nach dem Vorspann die komplette Gegner-Aufstellung offen: das Brett ist sichtbar, Uhr und Aufgeben pausieren, unten eine goldene Leiste mit Kampf beginnen und Zur Aufstellung (zurueck zum Neuordnen). Sie wird gegen Ende von Liga I rekrutiert (2 Siege)
+- DER LIGAMEISTER STELLT JEDES MAL NEU AUF: die Burg (n22) mischt ihre hintere Reihe pro Anlauf (seed-basiert) - wer verliert, trifft eine NEUE Formation; nur die Hellsicht verraet sie vorab
+- AUFSTELLUNG OHNE VORSCHAU-BRETT: das Brett in der Aufstellung ist raus (vor dem Match kennt man den Gegner ohnehin nicht) - uebrig bleiben die Auswahl-Slots und die Familien-Chips; die Brett-Ansicht lebt jetzt genau dort, wo sie eine Entscheidung informiert: im Spaeher-Moment
+- Rauch-Thema ruht wie gewuenscht (Funken/Rauch von 0.21.53 bleiben unangetastet)
+
 ## 0.21.53
 - ALS WUERDE DIE WELT BRENNEN: die Flammenzungen sind FUNKEN gewichen - kleine gluehende Ausleufer (2-6px), amber geboren, in tiefes Glutrot kuehlend, nervoes flackernd, kurzlebig (1.5-3.5s), aus den untersten Ecken. Kein flaechiges Feuer mehr
 - RAUCH VERBLASST UND VERSCHWINDET: die dunklen Schleier verloeschen jetzt hart (fadeOut^2.6), weniger (16 statt 22), alles lebt noch tiefer (Handy stirbt bei 86%, Desktop 74%)

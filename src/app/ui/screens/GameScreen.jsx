@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
-import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
+import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { GoldShineButton } from "../Gilded.jsx";
@@ -106,7 +106,18 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       const ai = buildArmyFromFormation(() => 1, map.defaultFormation);
       return createGame(side(), ai, { map, rules, seed });
     }
-    const ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
+    let ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
+    // THE LEAGUE MASTER REDEPLOYS: every attempt at the Keep meets a freshly
+    // shuffled back rank — losing means facing a NEW array, and only the
+    // Seeress's gaze reveals it before the first horn.
+    if (campaign && match.nodeId === "n22" && ai?.back?.length) {
+      const arr = [...ai.back]; let sh = seed >>> 0;
+      for (let i = arr.length - 1; i > 0; i--) {
+        sh = (Math.imul(sh, 1664525) + 1013904223) >>> 0;
+        const j = sh % (i + 1); [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      ai = { ...ai, back: arr };
+    }
     return createGame(playerArmy, ai, { map, rules, seed, potions: rules === "hp" ? { w: profile.items?.potion || 0, b: 0 } : undefined });
   });
   const [desync, setDesync] = useState(false);
@@ -125,6 +136,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [rematch, setRematch] = useState("");        // "" | "wait" | "offer"
   const [banner, setBanner] = useState(null);
   const [intro, setIntro] = useState(() => !resume && !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
+  // THE SEERESS'S GAZE: with the sorceress actively fielded, the enemy array
+  // lies open BEFORE the first horn — study it, or step back to rearrange.
+  const foresight = !!campaign && !resume && !pvp && hasForesight(profile, map);
+  const [scout, setScout] = useState(() => foresight && !(match && match.node && (match.node.storyDe || match.node.storyEn)));
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
 
@@ -138,10 +153,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (timer?.type === "move" && state.turn === myColor) setClock(timer.seconds);
   }, [state, timer, myColor]);
   useEffect(() => {
-    if (!timer || clock == null || banner || intro || state.turn !== myColor) return;
+    if (!timer || clock == null || banner || intro || scout || state.turn !== myColor) return;
     const id = setInterval(() => setClock((c) => (c == null ? c : c - 1)), 1000);
     return () => clearInterval(id);
-  }, [timer, state.turn, myColor, banner, intro]); // eslint-disable-line
+  }, [timer, state.turn, myColor, banner, intro, scout]); // eslint-disable-line
   useEffect(() => {
     if (timer && clock != null && clock <= 0 && !finished.current) finish("loss", "time");
   }, [clock]); // eslint-disable-line
@@ -345,9 +360,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <span onClick={() => setArmResign(false)} style={{ cursor: "pointer", opacity: 0.75, padding: "0 2px" }}>✕</span>
           </span>
         ) : (
-          <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro}
-            style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro ? 0.5 : 1,
-              cursor: banner || intro ? "default" : "pointer" })}>
+          <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro || scout}
+            style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro || scout ? 0.5 : 1,
+              cursor: banner || intro || scout ? "default" : "pointer" })}>
             <FlagIc size={13} /> {t("game.resign")}
           </button>
         )}
@@ -375,7 +390,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
-        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => setIntro(false)} timer={timer} />}
+        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => { setIntro(false); if (foresight) setScout(true); }} timer={timer} />}
+        {scout && !intro && !banner && (
+          <div style={{ position: "absolute", left: 10, right: 10, bottom: 12, zIndex: 5,
+            background: "rgba(10,13,20,.82)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+            border: "1px solid rgba(233,210,150,.45)", borderRadius: 14, padding: "12px 14px",
+            boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
+            <div className="gg-serif" style={{ color: "#e9d296", fontSize: 14, letterSpacing: ".08em", marginBottom: 3 }}>
+              🔮 {t("scout.title")}</div>
+            <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5, marginBottom: 10 }}>{t("scout.hint")}</div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <GoldShineButton style={{ flex: 1, padding: "10px 12px", fontSize: 13.5, borderRadius: 10 }}
+                onClick={() => setScout(false)}>
+                <BladesIc color="#17110a" size={13} /> {t("story.begin")}
+              </GoldShineButton>
+              {onArmy && <Button variant="subtle" onClick={onArmy} style={{ padding: "10px 12px", fontSize: 12.5 }}>{t("scout.army")}</Button>}
+            </div>
+          </div>
+        )}
         {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
           onSettings={!campaign && !pvp ? onExit : null}
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
