@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.55
+- ZWEITER SEHER: auch der PFADFINDER (der Spaeher) traegt jetzt die Hellsicht - aktiv aufgestellt liegt die Gegner-Aufstellung vor dem Horn offen (gleiche Regel wie bei der Hexerin, Texte figurneutral auf Seher umgestellt)
+- Prompts fuer die kommende HELLSEHERIN (eigene Figur, silbernes Mondlicht #c9d8f2) und die grosse WELTKARTE (hochkant 1024x2304, zehn Klimazonen von Fruehling bis Endloses Meer, ohne Beschriftung) als Dokument uebergeben
+
 ## 0.21.54
 - BLICK DER HELLSEHERIN: steht die HEXERIN aktiv in der Aufstellung (nur bewusst gesetzt - Standard-Formationen zaehlen nie), liegt in Kampagnen-Partien nach dem Vorspann die komplette Gegner-Aufstellung offen: das Brett ist sichtbar, Uhr und Aufgeben pausieren, unten eine goldene Leiste mit Kampf beginnen und Zur Aufstellung (zurueck zum Neuordnen). Sie wird gegen Ende von Liga I rekrutiert (2 Siege)
 - DER LIGAMEISTER STELLT JEDES MAL NEU AUF: die Burg (n22) mischt ihre hintere Reihe pro Anlauf (seed-basiert) - wer verliert, trifft eine NEUE Formation; nur die Hellsicht verraet sie vorab

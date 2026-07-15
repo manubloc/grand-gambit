@@ -260,16 +260,18 @@ function heroSpec(profile) {
   return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level) };
 }
 
-/** The Seeress's gift: if the army that will take the field carries the
- *  sorceress, her foresight reveals the enemy's array before the first horn.
- *  Only an ACTIVELY fielded seeress counts — the default ranks never do. */
+/** Foresight: if the army that will take the field carries a SEER — the
+ *  sorceress or the pathfinder (the scout) — the enemy's array lies open
+ *  before the first horn. Only ACTIVELY fielded seers count; the default
+ *  ranks never do. */
+const SEERS = ["sorceress", "pathfinder"];
 export function hasForesight(profile, map) {
   if (!profile || !map || map.classic) return false;
-  if (!unlockedCharacterIds(profile).includes("sorceress")) return false;
+  const owned = unlockedCharacterIds(profile);
   const saved = profile?.loadout?.formations?.[map.id];
-  const ok = saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
+  const ok = saved && formationLegalOn(saved, owned, map, ownedLeagueBosses(profile));
   const formation = ok ? saved : map.defaultFormation;
-  return formation.includes("sorceress");
+  return SEERS.some((id) => owned.includes(id) && formation.includes(id));
 }
 
 export function buildArmyForMap(profile, map, excludeId = null) {
