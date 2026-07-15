@@ -128,6 +128,149 @@ export const VOICES = {
     afterEn: "The banner knows its bearer on sight. Pick it up, Wanderer.",
   },
 
+  // ── what came THROUGH: the rift's own ─────────────────────────────────────
+  // Sentinels the other side forgot, strays of a foreign fauna (the rift
+  // itself murmurs through the beasts), and renegades of the old court who
+  // walked in willingly. Ten of them hold league gates — and pay the rent.
+  b01: {
+    heraldDe: "Der Wächter stand auf der anderen Seite des Risses Wache — bis eines Tages niemand mehr kam, um ihn abzulösen.",
+    heraldEn: "The Warden stood guard on the far side of the rift — until one day no one came to relieve him.",
+    afterDe: "Ablösung … endlich. Halte du die Laterne, Wanderer. Ich habe lange genug gestanden.",
+    afterEn: "Relief … at last. You hold the lantern now, Wanderer. I have stood long enough.",
+  },
+  b02: {
+    heraldDe: "Der Springbock sprang durch den Riss, weil drüben etwas hinter ihm her war — es ist ihm gefolgt.",
+    heraldEn: "The Springbok leapt through the rift because something over there was chasing it — and it followed.",
+    afterDe: "…es rennt noch… lauf, Wanderer… es rennt IMMER noch…",
+    afterEn: "…it still runs… run, Wanderer… it is STILL running…",
+  },
+  b03: {
+    heraldDe: "Die Brutmutter legt ihre Gelege dorthin, wo der Riss am wärmsten flüstert.",
+    heraldEn: "The Broodmother lays her clutches wherever the rift whispers warmest.",
+    afterDe: "…meine Kinder… sie sollen nicht hören, was ich hören musste. Nimm die Wärme fort, Wanderer.",
+    afterEn: "…my children… they must not hear what I had to hear. Take the warmth away, Wanderer.",
+  },
+  b04: {
+    heraldDe: "Der Schleicher war einmal jemandes Schatten; wessen, das weiß er selbst nicht mehr.",
+    heraldEn: "The Prowler was once somebody's shadow; whose, it no longer remembers.",
+    afterDe: "Dein Schatten sitzt fest an deinen Fersen, Wanderer. Beneidenswert. Halt ihn gut fest.",
+    afterEn: "Your shadow sits tight at your heels, Wanderer. Enviable. Hold on to it.",
+  },
+  b05: {
+    heraldDe: "Das Zebra trägt die Streifen beider Welten — und findet in keiner mehr eine Herde.",
+    heraldEn: "The Zebra wears the stripes of both worlds — and finds a herd in neither.",
+    afterDe: "…Herde…? …du riechst nicht nach Riss, Wanderer… gut… gut…",
+    afterEn: "…herd…? …you do not smell of rift, Wanderer… good… good…",
+  },
+  b06: {
+    heraldDe: "Das Bollwerk wurde gebaut, um etwas drinnen zu halten; niemand sagte ihm je, was.",
+    heraldEn: "The Bulwark was built to keep something in; no one ever told it what.",
+    afterDe: "Wenn du das Tor öffnest, Wanderer — schau nicht, was ich all die Jahre gehalten habe.",
+    afterEn: "If you open the gate, Wanderer — do not look at what I held all those years.",
+  },
+  b07: {
+    heraldDe: "Der Geist erinnert sich an den Tag, an dem der Riss aufging — er stand zu nah.",
+    heraldEn: "The Ghost remembers the day the rift opened — it stood too close.",
+    afterDe: "Endlich sieht mich jemand an, statt hindurch. Danke, Wanderer. Mehr wollte ich nie.",
+    afterEn: "At last someone looks AT me instead of through me. Thank you, Wanderer. That is all I ever wanted.",
+  },
+  b08: {
+    heraldDe: "Der Kanonier hütet das Tor der neunten Liga und zahlt die Miete pünktlich — er hat gelernt, wohin man besser nicht zielt.",
+    heraldEn: "The Cannoneer keeps the ninth league's gate and pays his rent on time — he has learned where one had better not aim.",
+    afterDe: "Nimm die Lunte, Wanderer. Und wenn du je ans Meer kommst: ziele auf gar nichts.",
+    afterEn: "Take the fuse, Wanderer. And should you ever reach the sea: aim at nothing at all.",
+  },
+  b09: {
+    heraldDe: "Der Skorpion nistete im ersten Spalt, als er noch handbreit war; er wuchs mit ihm.",
+    heraldEn: "The Scorpion nested in the first crack when it was but a hand's width; it grew as the crack grew.",
+    afterDe: "…der Spalt war einmal mein Zuhause, Wanderer… jetzt ist er nur noch hungrig…",
+    afterEn: "…the crack was my home once, Wanderer… now it is merely hungry…",
+  },
+  b10: {
+    heraldDe: "Der Doppelritter hütet das Tor der dritten Liga — zwei Leiber, ein Eid, und keiner von beiden erinnert sich, wem er galt.",
+    heraldEn: "The Twin Knight keeps the third league's gate — two bodies, one oath, and neither remembers to whom it was sworn.",
+    afterDe: "Wir erinnern uns jetzt, Wanderer: Der Eid galt dem, der uns schlägt. Er galt dir.",
+    afterEn: "We remember now, Wanderer: the oath was to whoever bests us. It was to you.",
+  },
+  b11: {
+    heraldDe: "Die Flüsterin übersetzt, was der Riss murmelt — und lässt bei jedem Satz ein Wort aus.",
+    heraldEn: "The Whisperer translates what the rift murmurs — and leaves one word out of every sentence.",
+    afterDe: "Das ausgelassene Wort, Wanderer? Es ist immer dasselbe: dein Name.",
+    afterEn: "The word I leave out, Wanderer? It is always the same one: your name.",
+  },
+  b12: {
+    heraldDe: "Der Richter hütet das Tor der zweiten Liga und spricht Recht im Namen eines Hofes, den es nicht mehr gibt.",
+    heraldEn: "The Judge keeps the second league's gate, passing sentence in the name of a court that no longer exists.",
+    afterDe: "Das Urteil lautet: schuldig — ich, des Wartens. Die Waage gehört dir, Wanderer.",
+    afterEn: "The verdict: guilty — I, of waiting. The scales are yours, Wanderer.",
+  },
+  b13: {
+    heraldDe: "Der Brandstifter glaubt, man könne den Riss ausbrennen; bisher brannte nur alles andere.",
+    heraldEn: "The Firestarter believes the rift can be burned out; so far only everything else has burned.",
+    afterDe: "Feuer war die falsche Antwort, Wanderer. Aber sag selbst: Es war eine SCHÖNE falsche Antwort.",
+    afterEn: "Fire was the wrong answer, Wanderer. But admit it: it was a BEAUTIFUL wrong answer.",
+  },
+  b14: {
+    heraldDe: "Der Koloss hütet das Tor der zehnten Liga — er ist der Deckel auf dem Brunnen, und der Brunnen ist das Meer.",
+    heraldEn: "The Colossus keeps the tenth league's gate — he is the lid upon the well, and the well is the sea.",
+    afterDe: "Ich hebe mich beiseite, Wanderer. Was im Brunnen wohnt, gehört jetzt zu deiner Wache.",
+    afterEn: "I move aside, Wanderer. What lives in the well is your watch now.",
+  },
+  b15: {
+    heraldDe: "Die Sturmkrähe nistet im Gewitter über dem Riss und trägt Nachrichten, die niemand abgeschickt hat.",
+    heraldEn: "The Stormcrow nests in the thunder above the rift, carrying messages no one ever sent.",
+    afterDe: "Eine Nachricht für dich, Wanderer — ungezeichnet, wie immer: ‚Komm nicht ans Meer.'",
+    afterEn: "A message for you, Wanderer — unsigned, as always: 'Do not come to the sea.'",
+  },
+  b16: {
+    heraldDe: "Die Blutmagd hütet das Tor der sechsten Liga; sie schenkt aus einem Kelch, der nie geleert und nie gefüllt wird.",
+    heraldEn: "The Bloodmaid keeps the sixth league's gate, pouring from a chalice never emptied and never filled.",
+    afterDe: "Der Kelch bleibt hier, Wanderer. Manche Gaben soll man verlieren dürfen.",
+    afterEn: "The chalice stays here, Wanderer. Some gifts one should be allowed to lose.",
+  },
+  b17: {
+    heraldDe: "Der Lanzenmeister hütet das Tor der siebten Liga und reitet Turnier um Turnier gegen einen Gegner, den nur er sieht.",
+    heraldEn: "The Lancemaster keeps the seventh league's gate, riding tilt after tilt against a foe only he can see.",
+    afterDe: "Du hast ihn auch gesehen, im letzten Gang — nicht wahr, Wanderer? Dann war es kein Wahn.",
+    afterEn: "You saw him too, in the final pass — didn't you, Wanderer? Then it was no madness.",
+  },
+  b18: {
+    heraldDe: "Eisenfaust hütet das Tor der achten Liga; die Faust ballte sich am Tag des Risses und ging nie wieder auf.",
+    heraldEn: "Ironfist keeps the eighth league's gate; the fist clenched on the day of the rift and never opened again.",
+    afterDe: "Sieh, Wanderer … sie öffnet sich. Was Jahre in ihr lag, gebe ich dir: einen Schlüssel.",
+    afterEn: "Look, Wanderer … it opens. What lay inside for years, I give to you: a key.",
+  },
+  b19: {
+    heraldDe: "Der Schattenfürst hütet das Tor der vierten Liga — halb Mensch, halb das, was der Riss aus Menschen macht.",
+    heraldEn: "The Shadowlord keeps the fourth league's gate — half a man, half what the rift makes of men.",
+    afterDe: "Merke dir meine Hälften gut, Wanderer. Der Riss zeigt dir gerade deine eigene Wahl.",
+    afterEn: "Mark my halves well, Wanderer. The rift is showing you your own choice.",
+  },
+  b20: {
+    heraldDe: "Der Hüter hütet das Tor der fünften Liga und trägt Schlüssel zu Türen, die längst niemand mehr findet.",
+    heraldEn: "The Keeper keeps the fifth league's gate, carrying keys to doors no one can find anymore.",
+    afterDe: "Nimm den Ring, Wanderer. Ein Schlüssel darunter passt ans Meer — ich habe nie gewagt, ihn zu prüfen.",
+    afterEn: "Take the ring, Wanderer. One key on it fits the sea — I never dared to try it.",
+  },
+  b21: {
+    heraldDe: "Die Wandlerin kam als etwas anderes durch den Riss und probiert seither Gestalten an wie Gewänder.",
+    heraldEn: "The Shifter came through the rift as something else and has been trying on shapes like garments ever since.",
+    afterDe: "Deine Gestalt behalte ich nicht, Wanderer — sie sitzt zu schwer. Wie trägst du das nur?",
+    afterEn: "I shall not keep your shape, Wanderer — it sits too heavy. How do you carry it?",
+  },
+  b22: {
+    heraldDe: "Der Zerreißer riss sich als Erstes von der Kette los, die der Riss ihm anlegte — das Reißen hat er behalten.",
+    heraldEn: "The Render first tore free of the chain the rift had laid on him — the tearing, he kept.",
+    afterDe: "…keine Kette mehr… deine Hand riecht nicht nach Kette, Wanderer… gut. Dann geh voran.",
+    afterEn: "…no more chain… your hand does not smell of chains, Wanderer… good. Then walk ahead.",
+  },
+  b24: {
+    heraldDe: "Der Seuchenkönig ist der Atem des Meeres, der zu früh an Land ging — was er berührt, erinnert sich an den Riss.",
+    heraldEn: "The Plaguelord is the sea's breath come ashore too soon — whatever he touches remembers the rift.",
+    afterDe: "Huste mich aus, Wanderer, und merke dir den Geschmack: So schmeckt das Meer, das dich erwartet.",
+    afterEn: "Cough me out, Wanderer, and remember the taste: this is how the sea that awaits you tastes.",
+  },
+
   // ── the two who hold the tale together ─────────────────────────────────────
   b23: {
     heraldDe: "Sie war die erste Klinge der Krone, ehe der Riss ihren Namen flüsterte — jetzt flüstert sie ihn zurück.",
