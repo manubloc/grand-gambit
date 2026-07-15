@@ -198,8 +198,12 @@ export function advanceCampaign(profile, id) {
     }
   }
   if (!firstClear && !keepRematch) {
-    // a pure replay: only the tally (and a possible late recruit) moves
-    return { ...profile, stats,
+    // a pure replay: only the tally (and a possible late recruit) moves —
+    // EXCEPT a friendly match against your own recruited champion, which
+    // still pays a quarter of the station's XP (gold is halved in applyResult)
+    const friendlyXp = bossPiece && unlocked.has(bossPiece) && !joined
+      ? Math.round((node.reward?.xp || 0) * leagueRewardMult(league) * 0.25) : 0;
+    return { ...profile, stats, xpEarned: (profile.xpEarned || 0) + friendlyXp,
       campaign: { ...(profile.campaign || {}), unlocked: [...unlocked], dupes, bossWins } };
   }
 

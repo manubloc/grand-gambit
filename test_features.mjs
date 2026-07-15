@@ -106,6 +106,11 @@ ok("hawk & assassin resist the first blow — the blades demand two wins", !unlo
 prof2 = advanceCampaign(advanceCampaign(prof2, "a1"), "a2"); // replay both duels once
 ok("the second victory recruits them both", unlockedCharacterIds(prof2).includes("hawk") && unlockedCharacterIds(prof2).includes("assassin"));
 ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 2);
+// friendly matches: replaying your OWN champion's station pays a little XP
+ok("a friendly against a recruited champion pays a quarter XP", (() => {
+  const xp = prof2.xpEarned || 0;
+  return (advanceCampaign(prof2, "a1").xpEarned || 0) === xp + Math.round(65 * 0.25);
+})());
 // recruit pacing: the enemy appears from league I, the RECRUIT waits for his league
 import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } from "./src/meta/index.js";
 import { nodeById as nbId } from "./src/content/index.js";

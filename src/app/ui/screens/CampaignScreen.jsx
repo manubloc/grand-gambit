@@ -132,6 +132,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const canRecruit = !!unlockCh && haveWins + 1 >= needWins;  // the NEXT win seals it
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
   const golden = !!unlockCh && known;                      // redeemed: only a recruited champion wears gold
+  // a station stays OPEN only while a figure still stands there: either the
+  // duel is yet to be won, or your OWN recruited champion holds the post —
+  // then every rematch is a friendly (a little gold & XP). Fled champions
+  // and slain monsters close their station for this league.
+  const friendly = status === "cleared" && !!unlockCh && known;
+  const closed = status === "cleared" && sel !== "n22" && !friendly && profile.pausedMatch?.nodeId !== sel;
   const unlockedSet = useMemo(() => new Set(profile.campaign?.unlocked || []), [profile]);
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
@@ -301,9 +307,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   const size = finale ? 68 : 46;
                   const beaten = st === "cleared";
                   const flee = !viewing && fleeing === n.id;
-                  // beaten champions leave the map: fled if they resisted you,
-                  // joined your court if recruited — only the checkmark stays
-                  if (beaten && !flee) return null;
+                  // beaten figures leave the map — UNLESS the champion joined
+                  // your court: a recruit keeps his post in gold, ready for a
+                  // friendly duel; the fled and the slain are gone
+                  const joinedHere = !!n.boss.piece && unlockedSet.has(n.boss.piece);
+                  if (beaten && !flee && !joinedHere) return null;
                   const painting = paintedForPiece({ kind: spec.kind, art: spec.art, bossId: spec.bossId });
                   return <div aria-hidden style={{ position: "absolute", left: "50%", bottom: 12,
                     transform: "translateX(-50%)", width: size, height: size, zIndex: flee ? 6 : 0, pointerEvents: "none",
@@ -510,8 +518,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{mapById(effectiveMap(node, league))[en ? "nameEn" : "nameDe"]}</Chip>
             <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
             <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{t("diff." + node.difficulty)}{node.bump ? ` +${node.bump}` : ""}</Chip>
-            <Chip className="gg-serif" color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult)} XP</Chip>
-            <Chip className="gg-serif" color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult)}</Chip>
+            <Chip className="gg-serif" color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult * (friendly ? 0.25 : 1))} XP</Chip>
+            <Chip className="gg-serif" color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult / (friendly ? 2 : 1))}</Chip>
           </div>
           {boss && (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
@@ -544,7 +552,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {status === "cleared" && (() => {
             const nm = unlockCh ? unlockCh[en ? "nameEn" : "nameDe"] : null;
             const txt = unlockCh
-              ? (known ? t("camp.stJoined", { name: nm })
+              ? (known ? t("camp.stFriendly", { name: nm })
                        : t("camp.stFled", { n: bossWinsFor(profile, unlockCh.id), name: nm }))
               : t("camp.stDone");
             return <div className="gg-serif" style={{ marginTop: 9, fontSize: 12, fontStyle: "italic", lineHeight: 1.4,
@@ -595,16 +603,16 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             </div>;
           })() : (
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-              <Button variant={status === "available" ? "primary" : "subtle"} disabled={status === "locked"}
+              <Button variant={status === "available" || friendly ? "primary" : "subtle"} disabled={status === "locked" || closed}
                 onClick={() => onStart(sel)} style={{ flex: 1, position: "relative", overflow: "hidden",
-                  ...(status === "available"
+                  ...(status === "available" || friendly
                     ? { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
                         border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)" }
                     : { background: "#dcd3ba", color: PP.ink }) }}>
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (sel === "n22" ? t("camp.nextLeague", { r: ROMAN[(profile.campaign?.league || 1)] || (profile.campaign?.league || 1) + 1 }) : t("camp.replay")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (sel === "n22" ? t("camp.nextLeague", { r: ROMAN[(profile.campaign?.league || 1)] || (profile.campaign?.league || 1) + 1 }) : friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}
