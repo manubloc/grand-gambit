@@ -134,9 +134,12 @@ export function buildStageMatch(id, profile = null) {
   const lgMap = profile?.campaign?.league || 1;
   const mapId = effectiveMap(node, lgMap);
   const map = mapById(mapId);
+  // CLASSIC boards mean classic chess: NO level bumps for the AI either —
+  // the league bump used to sneak level-9 blink bishops onto pure boards
+  // against a vanilla player army. Their difficulty scales via depth instead.
   const base = map.classic ? () => 1 : (cid) => d.levels[cid] || 1;
   const formation = node.formation || map.defaultFormation;
-  const aiArmy = buildArmyFromFormation((cid) => base(cid) + (node.bump || 0) + leagueBump(profile?.campaign?.league), formation);
+  const aiArmy = buildArmyFromFormation((cid) => map.classic ? 1 : base(cid) + (node.bump || 0) + leagueBump(profile?.campaign?.league), formation);
   const lg = profile?.campaign?.league || 1;
   const boss0 = nodeBossSpec(node, lg);
   const boss = boss0 && lg > 1 ? { ...boss0, hp: boss0.hp + 2 * (lg - 1), atk: boss0.atk + (lg - 1) } : boss0;
@@ -155,7 +158,8 @@ export function buildStageMatch(id, profile = null) {
     map: mapId, rules: node.rules,
     boss: bossInfo,
     turncoat, excludeId: turncoat ? recruitId : null,
-    depth: node.depth || d.depth,
+    // classic boards trade level bumps for a sharper mind in later leagues
+    depth: Math.min(3, (node.depth || d.depth) + (map.classic && (profile?.campaign?.league || 1) >= 3 ? 1 : 0)),
     aiArmy,
     timer: stageTimer(node, lg),
     gold: stageGold(node, lg),

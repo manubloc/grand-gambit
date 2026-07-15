@@ -240,11 +240,20 @@ export function pieceMoves(state, sqIndex) {
 /** All pseudo-legal moves for a color. */
 export function pseudoMoves(state, color) {
   const out = [], b = state.board;
+  const mateRules = state.rules !== "hp";
   for (let i = 0; i < b.length; i++) {
     const p = b[i];
     if (p && p.color === color) {
       const m = pieceMoves(state, i);
-      for (let j = 0; j < m.length; j++) out.push(m[j]);
+      for (let j = 0; j < m.length; j++) {
+        // BALANCE (mate rules only): the long leap cannot strike a crowned
+        // head. Extended-leap abilities kept smother-mating the boxed-in
+        // starting king in 2-3 moves; movement and normal captures stay,
+        // but a leap never targets the king and thus never gives check.
+        // HP duels are untouched — there the king has hit points and shields.
+        if (mateRules && m[j].special === "leap" && b[m[j].to]?.kind === KIND.KING) continue;
+        out.push(m[j]);
+      }
     }
   }
   return out;

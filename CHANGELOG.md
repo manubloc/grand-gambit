@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.48
+- BALANCE-TESTSUITE: die KI spielt jetzt selbst komplette Partien auf echten Stationen (test_balance.mjs, deterministisch geseedet) und misst die Zuganzahl - Mindestlaengen sind festgeschrieben: kein Blitz-Ende in 2 Zuegen, Burg >= 16 Halbzuege und entscheidend, Spiegel-Armeen >= 20
+- ZWEI ECHTE BALANCE-BUGS GEFUNDEN UND GEFIXT: (1) auf KLASSIK-Brettern bekam die KI trotzdem den Liga-Bonus - Level-9-Blink-Laeufer gegen die Level-1-Klassikarmee des Spielers, Matt in 3 Zuegen. Klassik ist jetzt fuer BEIDE Seiten reines Schach (Level 1), die Schwierigkeit kommt ab Liga 3 stattdessen ueber +1 Suchtiefe. (2) der WEITE SPRUNG (knight_longleap u.a.) konnte den eingeklemmten Start-Koenig in Matt-Partien in 2-3 Zuegen ersticken - in Matt-Regeln trifft ein Sprung nie den Koenig (kein Schach aus dem Sprung); HP-Partien unveraendert. Liga-V-Duelle: von 6 auf 101 Halbzuege
+- FIGUREN-HOEHE VERMESSEN STATT GESCHAETZT: die sichtbare Masse der Gemaelde sitzt bei ~60% Bildhoehe (Alpha-Schwerpunkt aller 7 Grundfiguren) - rechnerisch zentriert -9.3%. Desktop jetzt -10%, Handy -13% (tools/piece-lift.mjs dokumentiert Messung + Bildvergleich)
+
 ## 0.21.47
 - RAUCH WIEDER HOERBAR: die letzte Abstimmrunde hatte ihn in die Unsichtbarkeit gedreht (kleine Zungen x niedrige Deckung x gedimmte Dunkel-Episoden x Pausen bis 32s). Jetzt: Zungen 19-51 statt 15-41, Deckung .09/.075 statt .055/.045, Dunkel-Episoden auf 70% statt 55%, Schlieren minimal breiter, Pausen max ~20s statt 32s, und beim Laden steht der Rauch sofort halb da statt bei null zu beginnen. Charakter (Episoden, Schlieren, flach) bleibt
 

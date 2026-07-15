@@ -158,7 +158,7 @@ lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
 lg = advanceCampaign(advanceCampaign(lg, "a1"), "a2");
 ok("re-beating recruited piece bosses in league II grants duplication stars", dupeCount(lg, "hawk") === 1 && dupeCount(lg, "assassin") === 1);
 ok("the win tally survives the league rollover", bossWinsFor(lg, "hawk") >= 2);
-ok("league 2 foes come level-boosted", bsm2("a3", lg).aiArmy.back[0].level === bsm2("a3", prof).aiArmy.back[0].level + leagueBump(2));
+ok("league 2 foes on opened stages come level-boosted — classic boards stay pure chess", bsm2("a1", lg).aiArmy.back[0].level > 1 && bsm2("n01", lg).aiArmy.back[0].level === 1);
 
 // ── Healing draught: a real, guarded core command ─────────────────────────────
 const hg = cg2(undefined, undefined, { rules: "hp", seed: 3, potions: { w: 1, b: 0 } });
