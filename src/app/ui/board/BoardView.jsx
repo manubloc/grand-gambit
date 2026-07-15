@@ -53,12 +53,35 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4 }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
+
+  // ── the board breathes as ONE: every now and then a golden wave rolls
+  // across the dark slabs (never per-tile flicker). The interval is a skewed
+  // draw from 2–60s — the stronger the foe (pulse 0..1), the more the draw
+  // leans toward the short end; an endboss makes the stone restless. ──
+  const [wave, setWave] = useState(null);
+  useEffect(() => {
+    if (REDUCED) return;
+    let alive = true, tm = 0, off = 0;
+    const loop = () => {
+      const skew = 1 + pulse * 2.6;                       // 1 (uniform) … 3.6 (leans short)
+      const iv = (2 + 58 * Math.pow(Math.random(), skew)) * 1000;
+      tm = setTimeout(() => {
+        if (!alive) return;
+        const ang = Math.random() * Math.PI * 2;
+        setWave({ id: Date.now(), dx: Math.cos(ang), dy: Math.sin(ang) });
+        off = setTimeout(() => alive && setWave(null), 3600); // wave passed — drop the layers
+        loop();
+      }, iv);
+    };
+    loop();
+    return () => { alive = false; clearTimeout(tm); clearTimeout(off); };
+  }, [pulse]); // eslint-disable-line
 
   // all slabs loaded? until then every square shows its flat colour — the
   // marble layer fades in per square once the preload finishes
@@ -157,9 +180,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? 1 : 0, transition: "opacity .6s ease" }} />
-          {dark && !REDUCED && artReady && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen", opacity: 0.03,
-            animation: `marblePulse 14s ease-in-out ${((i * 37) % 140) / 10}s infinite backwards` }} />}
+          {dark && !REDUCED && artReady && wave && (() => {
+            // one wave, one direction: the tile's delay is its position along
+            // the wave's travel — the glow rolls across the board in ~1.2s
+            const minP = Math.min(0, wave.dx * (W - 1)) + Math.min(0, wave.dy * (H - 1));
+            const span = Math.abs(wave.dx) * (W - 1) + Math.abs(wave.dy) * (H - 1) || 1;
+            const norm = (f * wave.dx + r * wave.dy - minP) / span;
+            return <div key={wave.id} aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+              background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen", opacity: 0,
+              animation: `marbleWave 1.7s ease-in-out ${(norm * 1.2).toFixed(2)}s 1 both` }} />;
+          })()}
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
@@ -172,7 +202,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
-          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
+            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-6%)" : "none", // desktop: pieces sat too deep in the square
+            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
