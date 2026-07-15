@@ -289,6 +289,14 @@ export class HallCore {
       this.send(opp, { t: "cmd", matchId: msg.matchId, cmd: msg.cmd, n: msg.n, hash: msg.hash });
       return me;
     }
+    if (msg.t === "scoutDone") {
+      // the seer finished reading the board — forward the final swaps so both
+      // clients hold the identical position before the first move
+      const m = this.matches[msg.matchId]; if (!m) return me;
+      const opp = m.w === me ? m.b : m.w;
+      this.send(opp, { t: "scoutDone", matchId: msg.matchId, swaps: Array.isArray(msg.swaps) ? msg.swaps.slice(0, 32) : [] });
+      return me;
+    }
     if (msg.t === "resign") { this.endMatchFor(me, "oppResign"); return me; }
     if (msg.t === "result") {
       const m = this.matches[msg.matchId];

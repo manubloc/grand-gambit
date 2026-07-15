@@ -136,10 +136,32 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [rematch, setRematch] = useState("");        // "" | "wait" | "offer"
   const [banner, setBanner] = useState(null);
   const [intro, setIntro] = useState(() => !resume && !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
-  // THE SEERESS'S GAZE: with the sorceress actively fielded, the enemy array
-  // lies open BEFORE the first horn — study it, or step back to rearrange.
-  const foresight = !!campaign && !resume && !pvp && hasForesight(profile, map);
-  const [scout, setScout] = useState(() => foresight && !(match && match.node && (match.node.storyDe || match.node.storyEn)));
+  // THE SEERESS'S GAZE: with a seer actively fielded, the enemy array lies
+  // open BEFORE the first horn — study it, or step back to rearrange.
+  // ONLINE the gaze does more: the seer may SWAP own pieces on the spot,
+  // while the foe waits behind a notice; the swaps travel with scoutDone so
+  // both boards stay identical.
+  const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "Z" || sp.kind === "O");
+  const mySeerOnline = !!pvp && !classic && armyHasSeer(playerArmy);
+  const oppSeerOnline = !!pvp && !classic && armyHasSeer(pvp?.oppArmy);
+  const foresight = (!!campaign && !resume && !pvp && hasForesight(profile, map)) || mySeerOnline;
+  const [scout, setScout] = useState(() => foresight && (!!pvp || !(match && match.node && (match.node.storyDe || match.node.storyEn))));
+  const [scoutWaitOpp, setScoutWaitOpp] = useState(() => oppSeerOnline); // the foe reads — we wait
+  const scoutSwapsRef = useRef([]);      // [fromIdx, toIdx] pairs the seer performed
+  const [scoutSel, setScoutSel] = useState(null);
+  function scoutTap(i) {                 // swap two OWN pieces during the online scout
+    const pc = state.board[i];
+    if (scoutSel == null) { if (pc && pc.color === myColor) setScoutSel(i); return; }
+    if (i === scoutSel) { setScoutSel(null); return; }
+    if (!pc || pc.color !== myColor) { setScoutSel(null); return; }
+    const a = scoutSel; setScoutSel(null);
+    scoutSwapsRef.current.push([a, i]);
+    setState((s) => { const b = [...s.board]; [b[a], b[i]] = [b[i], b[a]]; return { ...s, board: b }; });
+  }
+  function endScout() {
+    setScout(false);
+    if (pvp) pvp.net.send({ t: "scoutDone", matchId: pvp.matchId, swaps: scoutSwapsRef.current });
+  }
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
 
@@ -153,10 +175,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (timer?.type === "move" && state.turn === myColor) setClock(timer.seconds);
   }, [state, timer, myColor]);
   useEffect(() => {
-    if (!timer || clock == null || banner || intro || scout || state.turn !== myColor) return;
+    if (!timer || clock == null || banner || intro || scout || scoutWaitOpp || state.turn !== myColor) return;
     const id = setInterval(() => setClock((c) => (c == null ? c : c - 1)), 1000);
     return () => clearInterval(id);
-  }, [timer, state.turn, myColor, banner, intro, scout]); // eslint-disable-line
+  }, [timer, state.turn, myColor, banner, intro, scout, scoutWaitOpp]); // eslint-disable-line
   useEffect(() => {
     if (timer && clock != null && clock <= 0 && !finished.current) finish("loss", "time");
   }, [clock]); // eslint-disable-line
@@ -248,6 +270,18 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     }
   }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // PvP: the foe's seer finished — mirror their swaps, then play begins.
+  useEffect(() => {
+    if (!pvp) return;
+    return pvp.net.on("scoutDone", (m) => {
+      const swaps = Array.isArray(m.swaps) ? m.swaps : [];
+      setState((s) => { const b = [...s.board];
+        for (const [a, c] of swaps) if (b[a] !== undefined && b[c] !== undefined) [b[a], b[c]] = [b[c], b[a]];
+        return { ...s, board: b }; });
+      setScoutWaitOpp(false);
+    });
+  }, [pvp]); // eslint-disable-line
+
   // PvP: apply the opponent's relayed commands; verify determinism via hashes.
   useEffect(() => {
     if (!pvp) return;
@@ -309,7 +343,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   const hsFlip = quick?.hotseatFlip !== false;        // optional: keep the board fixed (phone stays in hand)
   const viewColor = hotseat ? (hsFlip ? state.turn : WHITE) : myColor; // the board faces whoever moves
-  const myTurn = (hotseat ? true : state.turn === myColor) && !banner;
+  const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp;
   const st = status(state);
   const hpMode = state.rules === "hp";
   const F = hpMode ? forces(state.board) : null;
@@ -382,7 +416,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
-          flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
+          flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
+          onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           texture={boardTexture(match, profile)} artStyle={classic ? "classic" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
@@ -398,14 +433,25 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
             <div className="gg-serif" style={{ color: "#e9d296", fontSize: 14, letterSpacing: ".08em", marginBottom: 3 }}>
               🔮 {t("scout.title")}</div>
-            <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5, marginBottom: 10 }}>{t("scout.hint")}</div>
+            <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5, marginBottom: 10 }}>
+              {pvp ? t("scout.swapHint") : t("scout.hint")}</div>
             <div style={{ display: "flex", gap: 8 }}>
               <GoldShineButton style={{ flex: 1, padding: "10px 12px", fontSize: 13.5, borderRadius: 10 }}
-                onClick={() => setScout(false)}>
+                onClick={endScout}>
                 <BladesIc color="#17110a" size={13} /> {t("story.begin")}
               </GoldShineButton>
-              {onArmy && <Button variant="subtle" onClick={onArmy} style={{ padding: "10px 12px", fontSize: 12.5 }}>{t("scout.army")}</Button>}
+              {!pvp && onArmy && <Button variant="subtle" onClick={onArmy} style={{ padding: "10px 12px", fontSize: 12.5 }}>{t("scout.army")}</Button>}
             </div>
+          </div>
+        )}
+        {!scout && scoutWaitOpp && !banner && (
+          <div style={{ position: "absolute", left: 10, right: 10, bottom: 12, zIndex: 5,
+            background: "rgba(10,13,20,.82)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+            border: "1px solid rgba(233,210,150,.35)", borderRadius: 14, padding: "12px 14px", textAlign: "center",
+            boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
+            <div className="gg-serif" style={{ color: "#e9d296", fontSize: 13.5, letterSpacing: ".08em", marginBottom: 3 }}>
+              🔮 {t("scout.oppTitle")}</div>
+            <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5 }}>{t("scout.oppHint")}</div>
           </div>
         )}
         {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.57
+- FUNKEN UND RAUCH KOMPLETT ENTFERNT: der Partikel-Canvas ist raus - die Halle steht still und klar (Hintergrundbild + Licht bleiben)
+- HELLSICHT ONLINE: fuehrt ein Spieler Hexerin oder Pfadfinder aktiv im Heer, oeffnet sich vor dem ersten Zug der Spaeher-Moment - und online darf der Seher dabei ZWEI EIGENE Figuren antippen und ihre Plaetze TAUSCHEN (beliebig oft), waehrend der Gegner hinter einem Hinweis wartet: "Der Gegner liest deine Aufstellung und ordnet die eigenen Reihen neu". Beim Beginnen reist die Tauschliste als scoutDone-Nachricht mit (Worker-Relay), der Gegner spiegelt die Tausche - beide Bretter bleiben identisch, die Zug-Hashes stimmen weiter
+- Fuehren BEIDE einen Seher, spaehen beide gleichzeitig und das Duell beginnt, sobald beide fertig sind; Uhr und Zuege pausieren waehrend jeder Spaeh-Phase
+- WICHTIG: Worker (gg-hall) erneut deployen (wrangler) - das scoutDone-Relay ist neu
+
 ## 0.21.56
 - NICHTS IST RUNTERLADBAR: Bilder/Canvas/SVG ohne Long-Press-Speichern-Sheet (iOS touch-callout aus), ohne Drag-out, ohne Rechtsklick-Kontextmenue - Eingabefelder und Text behalten ihre normalen Menues
 - PULL-TO-REFRESH AUS: das Runterziehen zum Aktualisieren ist abgeschaltet (overscroll-behavior none) - die App haelt sich seit 0.21.42 selbst frisch, die Geste stoerte nur Karten-Pan und Brett

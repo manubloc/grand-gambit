@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+// (hooks no longer needed — the hall stands still)
 import bgHall from "./assets/bg-hall.webp";
 
 // ── The hall behind everything ────────────────────────────────────────────────
@@ -24,124 +24,7 @@ const LEAGUE_TINTS = [
 const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 10)];
 
 export function MysticBackground({ league = 1 }) {
-  const canvasRef = useRef(null);
-  const tintRef = useRef(tintFor(league));
-  useEffect(() => { tintRef.current = tintFor(league); }, [league]);
-
-  useEffect(() => {
-    const cv = canvasRef.current;
-    if (!cv) return;
-    const reduced = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return; // the hall stands still; no smoke
-    const ctx = cv.getContext && cv.getContext("2d");
-    if (!ctx || typeof innerWidth === "undefined") return; // headless / test envs
-
-    // Rendered at HALF resolution and blurred by the GPU (CSS filter on the
-    // canvas): soft as fog, never pixelated, and cheap enough for plain
-    // circles instead of gradients. No trail buffer — every frame is cleared,
-    // so nothing lingers. The flame look comes from OVERLAP: dozens of small
-    // tongues rise from each lower corner, flicker sideways, shrink and dim
-    // as they climb — as if vanishing into the depth of the hall.
-    const S = 0.5;
-    let W = 0, H = 0, raf = 0, running = true, t = 0;
-    const fit = () => { W = cv.width = Math.round(innerWidth * S); H = cv.height = Math.round(innerHeight * S); };
-    fit();
-    addEventListener("resize", fit);
-
-    const mk = (side, shadow = false) => {       // side: -1 left corner, +1 right
-      const ex = side < 0 ? W * (0.08 + Math.random() * 0.17) : W * (0.75 + Math.random() * 0.17);
-      return { side, ex, x: ex + (Math.random() - 0.5) * W * 0.05,
-        y: H * (1.0 + Math.random() * 0.14),
-        vy: shadow ? -(0.22 + Math.random() * 0.38)   // smoke crawls — a slow dark smear
-                   : -(0.7 + Math.random() * 1.0),    // SPARKS dart upward and die
-        life: 0, maxLife: shadow ? 220 + Math.random() * 180 : 90 + Math.random() * 120,
-        size: shadow ? (24 + Math.random() * 34) : (2.2 + Math.random() * 3.4),
-        seed: Math.random() * 9,
-        warm: !shadow && Math.random() < 0.3 };       // warm = a brighter ember pop
-    };
-    const N = 44;                                 // embers — small, quick, cheap
-    const ps = [];
-    for (let i = 0; i < N; i++) { const p = mk(i % 2 ? 1 : -1); p.life = Math.random() * p.maxLife; ps.push(p); }
-    const NS = 16;                                // dark smoke smears, fading fast
-    const ss = [];
-    for (let i = 0; i < NS; i++) { const p = mk(i % 2 ? 1 : -1, true); p.life = Math.random() * p.maxLife; ss.push(p); }
-
-    // ── the smoke comes in EPISODES, not as a constant curtain: a phase of
-    // 9–17s swells in, dies away, then the hall stands clear for 10–32s.
-    // Each episode has a MOOD: sometimes amber-gold, sometimes blue-dark.
-    // env eases toward its target, so nothing ever pops on or off. ──
-    let env = 0.55, envTarget = 1, envTm = 0, envAlive = true, emode = 1; // 1 gold, 0 dark
-    const envLoop = (on) => {
-      envTarget = on ? 1 : 0;
-      if (on) emode = Math.random() < 0.45 ? 1 : 0;
-      const dur = on ? 10000 + Math.random() * 9000 : 7000 + Math.random() * 13000;
-      envTm = setTimeout(() => envAlive && envLoop(!on), dur);
-    };
-    envLoop(true);
-
-    const step = () => {
-      if (!running) return;
-      t += 0.016;
-      ctx.clearRect(0, 0, W, H);                 // NO lingering trails
-      env += (envTarget - env) * 0.012;          // slow swell / slow decay (~3-4s)
-      const dieY = H * (innerWidth < 640 ? 0.86 : 0.74); // fire lives at the very floor
-      ctx.globalCompositeOperation = "lighter";
-      const tint = tintRef.current;
-      for (const p of ps) {
-        const k = p.life / p.maxLife;
-        // flicker like a tongue of flame; a soft homing pull keeps every wisp
-        // near its corner — the middle of the screen stays untouched
-        p.x += Math.sin(t * 2.2 + p.seed * 7 + p.y * 0.03) * 0.8 + (p.ex - p.x) * 0.004;
-        p.y += p.vy * (1 - k * 0.35);            // sparks barely slow — they just die
-        p.x += (W * 0.5 - p.x) * 0.0007 * k;     // a whisper of vanishing-point pull (depth)
-        p.life += 1;
-        if (k >= 1 || p.y < dieY) { Object.assign(p, mk(p.side)); continue; }
-        if (env < 0.015) continue;               // the hall stands clear between episodes
-        // SPARKS over a burning world: born bright amber, cooling into deep
-        // ember-red, flickering as they climb — then gone. No sheets of flame.
-        const flick = 0.72 + 0.28 * Math.sin(t * 6 + p.seed * 9);
-        const a = Math.pow(1 - k, 1.6) * (p.warm ? 0.5 : 0.34) * flick * env * (emode ? 1 : 0.75);
-        if (a <= 0.006) continue;
-        const cw = tint.a;                        // amber root
-        const r = cw[0] + (150 - cw[0]) * k, g2 = cw[1] + (52 - cw[1]) * k, b = cw[2] + (34 - cw[2]) * k;
-        ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y, p.size, p.size * 1.45, Math.sin(t * 0.9 + p.seed) * 0.4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // ── the shadow-being: blue-black smears drawn OVER the glow ──
-      // "lighter" can never darken, so this second pass paints with normal
-      // compositing — stretched, slowly tilting ellipses that drag dark
-      // streaks through the bright smoke, like something moving inside it.
-      ctx.globalCompositeOperation = "source-over";
-      for (const p of ss) {
-        const k = p.life / p.maxLife;
-        p.x += Math.sin(t * 0.9 + p.seed * 7 + p.y * 0.015) * 0.5 + (p.ex - p.x) * 0.003;
-        p.y += p.vy * (1 - k * 0.55);
-        p.life += 1;
-        if (k >= 1 || p.y < dieY) { Object.assign(p, mk(p.side, true)); continue; }
-        if (env < 0.015) continue;
-        const size = p.size * (1 - k * 0.5);
-        const fadeIn = Math.min(1, k / 0.16);
-        const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
-        const a = fadeIn * Math.pow(fadeOut, 2.6) * 0.1 * env * (emode ? 0.85 : 1.3); // the smoke pales and is gone
-        if (a <= 0.004) continue;
-        // blue-black of the shadow being: a hint of night-blue at the root,
-        // swallowing into near-black as it climbs
-        const r = 14 + (6 - 14) * k, g2 = 18 + (8 - 18) * k, b = 34 + (16 - 34) * k;
-        ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y, Math.max(2, size * 0.6), Math.max(3, size * 1.45),
-          Math.sin(t * 0.6 + p.seed) * 0.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    const vis = () => { running = !document.hidden; if (running) raf = requestAnimationFrame(step); };
-    document.addEventListener("visibilitychange", vis);
-    return () => { running = false; envAlive = false; clearTimeout(envTm); cancelAnimationFrame(raf); removeEventListener("resize", fit); document.removeEventListener("visibilitychange", vis); };
-  }, []);
+  // the ember/smoke canvas is retired — the hall stands still and clear
 
   const mask = "radial-gradient(ellipse 78% 72% at 50% 66%, #000 38%, rgba(0,0,0,.5) 64%, transparent 92%)";
   const mob = typeof innerWidth !== "undefined" && innerWidth < 640;
@@ -156,7 +39,6 @@ export function MysticBackground({ league = 1 }) {
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", filter: "blur(9px) saturate(1.15)" }} />
     </div>
   );
 }
