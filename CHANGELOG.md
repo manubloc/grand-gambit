@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.53
+- ALS WUERDE DIE WELT BRENNEN: die Flammenzungen sind FUNKEN gewichen - kleine gluehende Ausleufer (2-6px), amber geboren, in tiefes Glutrot kuehlend, nervoes flackernd, kurzlebig (1.5-3.5s), aus den untersten Ecken. Kein flaechiges Feuer mehr
+- RAUCH VERBLASST UND VERSCHWINDET: die dunklen Schleier verloeschen jetzt hart (fadeOut^2.6), weniger (16 statt 22), alles lebt noch tiefer (Handy stirbt bei 86%, Desktop 74%)
+- GPU-Blur 16 -> 9px, damit die Funken ihren Punkt behalten und nicht zu Nebel verschwimmen; Episoden-Rhythmus (mal golden, mal dunkel) bleibt
+
 ## 0.21.52
 - WELTKARTE: neuer ❖-Knopf oben links auf der Kampagnen-Karte oeffnet die Reise durch alle 10 Ligen - vertikal von Fruehling (unten) bis zum Endlosen Meer (oben), jede Welt als runde Vignette aus ihrer echten gemalten Karte, gemeisterte Welten antippbar (reist dorthin), kommende im Nebel mit Schloss, aktuelle golden markiert
 - KAMPAGNE IM HALLEN-LICHT: die Halle mit dem Marmorbrett liegt jetzt wie in allen anderen Menues auch hinter der Kampagnen-Karte; die Karte dockt GANZ OBEN an (kein schwebender Zwischenrahmen mehr) - darunter atmet die Halle

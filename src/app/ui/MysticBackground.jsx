@@ -52,17 +52,17 @@ export function MysticBackground({ league = 1 }) {
       const ex = side < 0 ? W * (0.08 + Math.random() * 0.17) : W * (0.75 + Math.random() * 0.17);
       return { side, ex, x: ex + (Math.random() - 0.5) * W * 0.05,
         y: H * (1.0 + Math.random() * 0.14),
-        vy: shadow ? -(0.22 + Math.random() * 0.38)   // shadows crawl — long smears
-                   : -(0.4 + Math.random() * 0.6),    // brisk rise — flame, not fog
-        life: 0, maxLife: shadow ? 280 + Math.random() * 240 : 220 + Math.random() * 200,
-        size: shadow ? (28 + Math.random() * 40) : (19 + Math.random() * 32),
+        vy: shadow ? -(0.22 + Math.random() * 0.38)   // smoke crawls — a slow dark smear
+                   : -(0.7 + Math.random() * 1.0),    // SPARKS dart upward and die
+        life: 0, maxLife: shadow ? 220 + Math.random() * 180 : 90 + Math.random() * 120,
+        size: shadow ? (24 + Math.random() * 34) : (2.2 + Math.random() * 3.4),
         seed: Math.random() * 9,
-        warm: !shadow && Math.random() < 0.42 };
+        warm: !shadow && Math.random() < 0.3 };       // warm = a brighter ember pop
     };
-    const N = 72;                                 // tongues → dense overlap (leaner than before)
+    const N = 44;                                 // embers — small, quick, cheap
     const ps = [];
     for (let i = 0; i < N; i++) { const p = mk(i % 2 ? 1 : -1); p.life = Math.random() * p.maxLife; ps.push(p); }
-    const NS = 22;                                // shadow-being smears woven INTO the smoke
+    const NS = 16;                                // dark smoke smears, fading fast
     const ss = [];
     for (let i = 0; i < NS; i++) { const p = mk(i % 2 ? 1 : -1, true); p.life = Math.random() * p.maxLife; ss.push(p); }
 
@@ -84,32 +84,29 @@ export function MysticBackground({ league = 1 }) {
       t += 0.016;
       ctx.clearRect(0, 0, W, H);                 // NO lingering trails
       env += (envTarget - env) * 0.012;          // slow swell / slow decay (~3-4s)
-      const dieY = H * (innerWidth < 640 ? 0.84 : 0.68); // smoke hugs the ground (phones even more)
+      const dieY = H * (innerWidth < 640 ? 0.86 : 0.74); // fire lives at the very floor
       ctx.globalCompositeOperation = "lighter";
       const tint = tintRef.current;
       for (const p of ps) {
         const k = p.life / p.maxLife;
         // flicker like a tongue of flame; a soft homing pull keeps every wisp
         // near its corner — the middle of the screen stays untouched
-        p.x += Math.sin(t * 1.5 + p.seed * 7 + p.y * 0.02) * 0.55 + (p.ex - p.x) * 0.004;
-        p.y += p.vy * (1 - k * 0.55);            // slows with height → reads as distance
+        p.x += Math.sin(t * 2.2 + p.seed * 7 + p.y * 0.03) * 0.8 + (p.ex - p.x) * 0.004;
+        p.y += p.vy * (1 - k * 0.35);            // sparks barely slow — they just die
         p.x += (W * 0.5 - p.x) * 0.0007 * k;     // a whisper of vanishing-point pull (depth)
         p.life += 1;
         if (k >= 1 || p.y < dieY) { Object.assign(p, mk(p.side)); continue; }
         if (env < 0.015) continue;               // the hall stands clear between episodes
-        const size = p.size * (1 - k * 0.62);    // shrinks into the deep
-        const fadeIn = Math.min(1, k / 0.12);
-        const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
-        const a = fadeIn * fadeOut * fadeOut * (p.warm ? 0.09 : 0.075) * env * (emode ? 1 : 0.7);
-        if (a <= 0.004) continue;
-        // warm at the root, smoke-cool as it climbs away
-        const cw = (p.warm || emode) ? tint.a : tint.s, cs = tint.s; // gold mood leans amber
-        const r = cw[0] + (cs[0] - cw[0]) * k, g2 = cw[1] + (cs[1] - cw[1]) * k, b = cw[2] + (cs[2] - cw[2]) * k;
+        // SPARKS over a burning world: born bright amber, cooling into deep
+        // ember-red, flickering as they climb — then gone. No sheets of flame.
+        const flick = 0.72 + 0.28 * Math.sin(t * 6 + p.seed * 9);
+        const a = Math.pow(1 - k, 1.6) * (p.warm ? 0.5 : 0.34) * flick * env * (emode ? 1 : 0.75);
+        if (a <= 0.006) continue;
+        const cw = tint.a;                        // amber root
+        const r = cw[0] + (150 - cw[0]) * k, g2 = cw[1] + (52 - cw[1]) * k, b = cw[2] + (34 - cw[2]) * k;
         ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
         ctx.beginPath();
-        // stretched, slowly tilting ellipse: a streak, not a bubble
-        ctx.ellipse(p.x, p.y, Math.max(2, size * 0.5), Math.max(3, size * 1.9),
-          Math.sin(t * 0.7 + p.seed) * 0.45, 0, Math.PI * 2);
+        ctx.ellipse(p.x, p.y, p.size, p.size * 1.45, Math.sin(t * 0.9 + p.seed) * 0.4, 0, Math.PI * 2);
         ctx.fill();
       }
       // ── the shadow-being: blue-black smears drawn OVER the glow ──
@@ -127,7 +124,7 @@ export function MysticBackground({ league = 1 }) {
         const size = p.size * (1 - k * 0.5);
         const fadeIn = Math.min(1, k / 0.16);
         const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
-        const a = fadeIn * fadeOut * fadeOut * 0.12 * env * (emode ? 0.85 : 1.35);
+        const a = fadeIn * Math.pow(fadeOut, 2.6) * 0.1 * env * (emode ? 0.85 : 1.3); // the smoke pales and is gone
         if (a <= 0.004) continue;
         // blue-black of the shadow being: a hint of night-blue at the root,
         // swallowing into near-black as it climbs
@@ -159,7 +156,7 @@ export function MysticBackground({ league = 1 }) {
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", filter: "blur(16px) saturate(1.15)" }} />
+      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", filter: "blur(9px) saturate(1.15)" }} />
     </div>
   );
 }
