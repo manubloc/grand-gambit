@@ -62,6 +62,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
+  const [world, setWorld] = useState(false); // the overworld: travel between leagues
   useEffect(() => { setViewLeague(league); }, [league]);
   const viewing = viewLeague !== league;
   const th = themeForLeague(viewLeague);
@@ -149,7 +150,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const z = fit * (wide ? 0.8 : 0.85);
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.min(vp.h, HM * z);
-  const frameX = Math.round((vp.w - frameW) / 2), frameY = Math.round((vp.h - frameH) / 2);
+  const frameX = Math.round((vp.w - frameW) / 2);
+  const frameY = Math.min(10, Math.max(0, Math.round((vp.h - frameH) / 2))); // dock at the top — the hall breathes below
   const camMaxX = Math.max(0, WMAP * z - frameW), camMaxY = Math.max(0, HM * z - frameH);
   const camX = clamp((viewing ? 0 : nx(camNode) * z - frameW * 0.46) + panOff.x, 0, camMaxX);
   const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * z - frameH * 0.5) + panOff.y, 0, camMaxY);
@@ -173,7 +175,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 
   return (
-    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%", background: T.bg }}>
+    <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%" }}>
       {/* the wanderer's window onto the world — a rounded frame; whatever the
           screen shape, chrome stays dark and every control lives INSIDE */}
       <div ref={vpRef} style={{ position: "absolute", inset: 0 }}>
@@ -450,6 +452,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
             and once the League Master has fallen, the golden gate: Onward. */}
+        <button onClick={() => setWorld(true)} className="gg-serif"
+          style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
+          cursor: "pointer", background: "rgba(8, 11, 20, .42)",
+          border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
+          padding: "8px 14px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
+          boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
+          backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+          ❖ {t("camp.world")}
+        </button>
         {viewLeague > 1 && (
           <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
             style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
@@ -485,6 +496,58 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           </button>
         )}
       </div>
+
+      {/* ── THE OVERWORLD: a vertical journey through every league — the road
+          climbs from spring at the bottom to the endless sea at the top. Each
+          world wears its own painted map as a vignette; locked worlds wait in
+          the mist. Tap a mastered world to travel there. ── */}
+      {world && (
+        <div onClick={() => setWorld(false)} style={{ position: "absolute", inset: 0, zIndex: 12,
+          background: "rgba(4,6,10,.78)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
+          overflowY: "auto", padding: "26px 14px calc(30px + env(safe-area-inset-bottom))" }}>
+          <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
+            fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
+          <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 18 }}>{t("camp.worldHint")}</div>
+          <div style={{ position: "relative", maxWidth: 420, margin: "0 auto" }}>
+            <div aria-hidden style={{ position: "absolute", top: 26, bottom: 26, left: "50%", width: 0,
+              borderLeft: "2px dashed rgba(233,210,150,.35)", transform: "translateX(-1px)" }} />
+            {Array.from({ length: 10 }, (_, i) => 10 - i).map((lg) => {
+              const wt = themeForLeague(lg);
+              const bmp = wt.bitmap ? MAP_BITMAPS[wt.bitmap] : null;
+              const reachable = lg <= league;
+              const here = lg === viewLeague;
+              return (
+                <div key={lg} onClick={(e) => { e.stopPropagation(); if (!reachable) return;
+                    setViewLeague(lg); setPanOff({ x: 0, y: 0 }); setWorld(false); }}
+                  style={{ position: "relative", display: "flex", alignItems: "center", gap: 12,
+                    flexDirection: lg % 2 ? "row" : "row-reverse", margin: "0 0 18px",
+                    cursor: reachable ? "pointer" : "default" }}>
+                  <div style={{ flex: 1, textAlign: lg % 2 ? "right" : "left" }}>
+                    <div className="gg-serif" style={{ color: reachable ? "#e9d296" : "rgba(233,210,150,.35)",
+                      fontSize: 15, letterSpacing: ".1em" }}>{ROMAN[lg - 1] || lg}</div>
+                    <div style={{ color: reachable ? "rgba(240,233,216,.85)" : "rgba(240,233,216,.3)", fontSize: 12.5 }}>
+                      {reachable ? wt.nameDe : "???"}</div>
+                  </div>
+                  <div style={{ width: 84, height: 84, borderRadius: "50%", flex: "0 0 auto", position: "relative",
+                    border: here ? "2.5px solid #f0d68a" : reachable ? "2px solid rgba(233,210,150,.5)" : "2px solid rgba(120,120,130,.35)",
+                    boxShadow: here ? "0 0 20px rgba(240,214,138,.45)" : "0 4px 14px rgba(0,0,0,.5)",
+                    overflow: "hidden", background: "#10141f" }}>
+                    {bmp && <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${bmp.url})`,
+                      backgroundSize: "cover", backgroundPosition: "center",
+                      filter: reachable ? "saturate(1.05)" : "grayscale(.9) brightness(.45)" }} />}
+                    {!reachable && <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+                      color: "rgba(233,210,150,.6)", fontSize: 20 }}>🔒</div>}
+                    {lg === league && <div className="gg-serif" style={{ position: "absolute", left: 0, right: 0, bottom: 2,
+                      textAlign: "center", fontSize: 9, letterSpacing: ".14em", color: "#f0d68a",
+                      textShadow: "0 1px 3px rgba(0,0,0,.9)" }}>{t("hub.at").toUpperCase()}</div>}
+                  </div>
+                  <div style={{ flex: 1 }} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
 
       {/* embedded node panel — parchment overlay near the medallion; arrival is

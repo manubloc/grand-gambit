@@ -518,8 +518,8 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
             style={{ flex: 1, accentColor: T.gold }} aria-label={t("quick.elo")} />
           <input type="number" min={600} max={2200} step={50} value={elo}
             onChange={(e) => setElo(Math.max(600, Math.min(2200, +e.target.value || 1000)))}
-            style={{ width: 76, background: "rgba(255,255,255,.06)", border: `1px solid ${T.line}`, borderRadius: 8,
-              color: T.ink, padding: "7px 8px", fontFamily: "inherit", fontSize: 13.5 }} />
+            style={{ width: 82, background: T.bg2, border: `1px solid rgba(233,210,150,.4)`, borderRadius: 8,
+              color: T.gold, fontWeight: 800, textAlign: "center", padding: "8px 8px", fontFamily: "inherit", fontSize: 15 }} />
         </div>
         <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("quick.eloHint")}</div>
       </>}

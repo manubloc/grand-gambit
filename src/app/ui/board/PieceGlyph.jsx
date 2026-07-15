@@ -95,7 +95,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
             ? (heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece)
             : null;
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
-            objectFit: "contain", objectPosition: "center bottom", filter: white ? undefined : ENEMY_FILTER,
+            // the gallery hangs in a dim hall — lift the paintings a step:
+            // your golden court shines brighter, the steel foe a touch too
+            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.16) saturate(1.05)" : ENEMY_FILTER + " brightness(1.07)",
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}

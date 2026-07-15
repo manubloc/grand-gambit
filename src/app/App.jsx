@@ -282,7 +282,7 @@ export default function App() {
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden" } : {}) }}>
-      {!immersive && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
+      {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {!immersive && (
