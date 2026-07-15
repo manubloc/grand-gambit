@@ -17,7 +17,7 @@ export const playableCount = (map) => map.w * map.h - (map.holes ? map.holes.len
 // Standard chess back rank (used by the 8-wide maps).
 // One board look for EVERY map (v0.4): the Klassik palette is the reference —
 // maps differ by size and holes, never by square colors.
-export const CLASSIC_SQ = { sqLight: "#6f6a5f", sqDark: "#26282d" };
+export const CLASSIC_SQ = { sqLight: "#8a8371", sqDark: "#3a3e49" };
 
 const CHESS_BACK = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"];
 // Full 10-wide GAMBIT back rank (matches DEFAULT_BACK_RANK in core).

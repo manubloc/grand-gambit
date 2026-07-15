@@ -155,11 +155,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.36)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68, 0.05)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68, 0.05)}), url(${slab(i, dark)}) center / cover`,
+            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? 1 : 0, transition: "opacity .6s ease" }} />
-          {dark && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen",
-            animation: `marblePulse 14s ease-in-out ${((i * 37) % 140) / 10}s infinite` }} />}
+          {dark && !REDUCED && artReady && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen", opacity: 0.03,
+            animation: `marblePulse 14s ease-in-out ${((i * 37) % 140) / 10}s infinite backwards` }} />}
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
