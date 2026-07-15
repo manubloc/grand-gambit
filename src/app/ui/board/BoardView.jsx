@@ -203,7 +203,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
-            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-6%)" : "none", // desktop: pieces sat too deep in the square
+            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-6%)" : "translateY(-9%)", // pieces sat too deep in the square (phones a touch more)
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
