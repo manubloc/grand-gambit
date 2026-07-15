@@ -48,23 +48,29 @@ export function MysticBackground({ league = 1 }) {
     fit();
     addEventListener("resize", fit);
 
-    const mk = (side) => {                       // side: -1 left corner, +1 right
+    const mk = (side, shadow = false) => {       // side: -1 left corner, +1 right
       const ex = side < 0 ? W * (0.06 + Math.random() * 0.26) : W * (0.68 + Math.random() * 0.26);
       return { side, ex, x: ex + (Math.random() - 0.5) * W * 0.05,
         y: H * (1.0 + Math.random() * 0.14),
-        vy: -(0.4 + Math.random() * 0.6),      // brisk rise — flame, not fog
-        life: 0, maxLife: 220 + Math.random() * 200,
-        size: (26 + Math.random() * 44), seed: Math.random() * 9,
-        warm: Math.random() < 0.42 };
+        vy: shadow ? -(0.22 + Math.random() * 0.38)   // shadows crawl — long smears
+                   : -(0.4 + Math.random() * 0.6),    // brisk rise — flame, not fog
+        life: 0, maxLife: shadow ? 280 + Math.random() * 240 : 220 + Math.random() * 200,
+        size: shadow ? (34 + Math.random() * 52) : (26 + Math.random() * 44),
+        seed: Math.random() * 9,
+        warm: !shadow && Math.random() < 0.42 };
     };
     const N = 96;                                 // many tongues → dense overlap
     const ps = [];
     for (let i = 0; i < N; i++) { const p = mk(i % 2 ? 1 : -1); p.life = Math.random() * p.maxLife; ps.push(p); }
+    const NS = 30;                                // shadow-being smears woven INTO the smoke
+    const ss = [];
+    for (let i = 0; i < NS; i++) { const p = mk(i % 2 ? 1 : -1, true); p.life = Math.random() * p.maxLife; ss.push(p); }
 
     const step = () => {
       if (!running) return;
       t += 0.016;
       ctx.clearRect(0, 0, W, H);                 // NO lingering trails
+      const dieY = H * (innerWidth < 640 ? 0.76 : 0.55); // phones: die even lower — flat smoke
       ctx.globalCompositeOperation = "lighter";
       const tint = tintRef.current;
       for (const p of ps) {
@@ -75,7 +81,7 @@ export function MysticBackground({ league = 1 }) {
         p.y += p.vy * (1 - k * 0.55);            // slows with height → reads as distance
         p.x += (W * 0.5 - p.x) * 0.0007 * k;     // a whisper of vanishing-point pull (depth)
         p.life += 1;
-        if (k >= 1 || p.y < H * (innerWidth < 640 ? 0.68 : 0.55)) { Object.assign(p, mk(p.side)); continue; } // phones: die lower — flatter smoke
+        if (k >= 1 || p.y < dieY) { Object.assign(p, mk(p.side)); continue; }
         const size = p.size * (1 - k * 0.62);    // shrinks into the deep
         const fadeIn = Math.min(1, k / 0.12);
         const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
@@ -87,6 +93,31 @@ export function MysticBackground({ league = 1 }) {
         ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, Math.max(2, size), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // ── the shadow-being: blue-black smears drawn OVER the glow ──
+      // "lighter" can never darken, so this second pass paints with normal
+      // compositing — stretched, slowly tilting ellipses that drag dark
+      // streaks through the bright smoke, like something moving inside it.
+      ctx.globalCompositeOperation = "source-over";
+      for (const p of ss) {
+        const k = p.life / p.maxLife;
+        p.x += Math.sin(t * 0.9 + p.seed * 7 + p.y * 0.015) * 0.5 + (p.ex - p.x) * 0.003;
+        p.y += p.vy * (1 - k * 0.55);
+        p.life += 1;
+        if (k >= 1 || p.y < dieY) { Object.assign(p, mk(p.side, true)); continue; }
+        const size = p.size * (1 - k * 0.5);
+        const fadeIn = Math.min(1, k / 0.16);
+        const fadeOut = k > 0.5 ? Math.max(0, 1 - (k - 0.5) / 0.5) : 1;
+        const a = fadeIn * fadeOut * fadeOut * 0.13;
+        if (a <= 0.004) continue;
+        // blue-black of the shadow being: a hint of night-blue at the root,
+        // swallowing into near-black as it climbs
+        const r = 14 + (6 - 14) * k, g2 = 18 + (8 - 18) * k, b = 34 + (16 - 34) * k;
+        ctx.fillStyle = `rgba(${r | 0},${g2 | 0},${b | 0},${a})`;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, Math.max(2, size * 0.6), Math.max(3, size * 1.45),
+          Math.sin(t * 0.6 + p.seed) * 0.5, 0, Math.PI * 2);
         ctx.fill();
       }
       raf = requestAnimationFrame(step);
