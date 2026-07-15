@@ -39,6 +39,15 @@ flavorDe: "Geboren, geopfert zu werden — entschlossen, es nicht zu bleiben.", 
       { level: 16, shield: 1 },
       { level: 21, shield: 1 },
       { level: 26, shield: 1 },
+      // Stufen IV-VI: the long road (31-60). Every ten levels the armor grows
+      // another plate — with +1 HP per level and +1 ATK every other level
+      // coming for free, the shields keep the WALL feeling without breaking
+      // the sums: the price does the balancing (2/3/4/6/8/10 SP per step).
+      { level: 34, shield: 1 },
+      { level: 40, shield: 1 },
+      { level: 46, shield: 1 },
+      { level: 52, shield: 1 },
+      { level: 58, shield: 1 },
     ],
   },
   knight: {

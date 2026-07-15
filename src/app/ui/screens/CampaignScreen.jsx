@@ -12,12 +12,14 @@ import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeagu
 import { ITEMS, hasItem } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
+import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
+import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse, SiteGlyph, siteTypeFor, WandererArt } from "../mapArt.jsx";
 
 // ── geometry (pixels; shared with previews via mapArt.GEO) ───────────────────
@@ -63,6 +65,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
   const [world, setWorld] = useState(false); // the overworld: travel between leagues
+  const [worldSel, setWorldSel] = useState(null); // tapped league on the painting
   useEffect(() => { setViewLeague(league); }, [league]);
   const viewing = viewLeague !== league;
   const th = themeForLeague(viewLeague);
@@ -497,57 +500,83 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         )}
       </div>
 
-      {/* ── THE OVERWORLD: a vertical journey through every league — the road
-          climbs from spring at the bottom to the endless sea at the top. Each
-          world wears its own painted map as a vignette; locked worlds wait in
-          the mist. Tap a mastered world to travel there. ── */}
-      {world && (
-        <div onClick={() => setWorld(false)} style={{ position: "absolute", inset: 0, zIndex: 12,
-          background: "rgba(4,6,10,.78)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
-          overflowY: "auto", padding: "26px 14px calc(30px + env(safe-area-inset-bottom))" }}>
-          <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
-            fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
-          <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 18 }}>{t("camp.worldHint")}</div>
-          <div style={{ position: "relative", maxWidth: 420, margin: "0 auto" }}>
-            <div aria-hidden style={{ position: "absolute", top: 26, bottom: 26, left: "50%", width: 0,
-              borderLeft: "2px dashed rgba(233,210,150,.35)", transform: "translateX(-1px)" }} />
-            {Array.from({ length: 10 }, (_, i) => 10 - i).map((lg) => {
-              const wt = themeForLeague(lg);
-              const bmp = wt.bitmap ? MAP_BITMAPS[wt.bitmap] : null;
-              const reachable = lg <= league;
-              const here = lg === viewLeague;
+      {/* ── THE OVERWORLD PAINTING: the whole journey on one canvas — the
+          measured corridor carries ten anchors, spring at the foot, the
+          Endless Sea and its lighthouse at the crown. Reached leagues glow
+          with a pale halo on the road (the "brighter gradients"); what lies
+          ahead sleeps under mist and lock. Tapping an anchor opens its lore. ── */}
+      {world && (() => {
+        const ratio = WORLD_MAP.h / WORLD_MAP.w;
+        return (
+          <div onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "absolute", inset: 0, zIndex: 12,
+            background: "rgba(4,6,10,.82)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
+            overflowY: "auto", padding: "22px 12px calc(30px + env(safe-area-inset-bottom))" }}>
+            <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
+              fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
+            <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 12 }}>{t("camp.worldHint")}</div>
+            <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 430, margin: "0 auto",
+              borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
+              boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
+              <img src={WORLD_MAP.url} alt="" draggable={false} style={{ display: "block", width: "100%",
+                aspectRatio: `${WORLD_MAP.w} / ${WORLD_MAP.h}`, userSelect: "none" }} />
+              {/* mist over what lies ahead: from just above the current league to the crown */}
+              {league < 10 && (() => {
+                const cutY = Math.max(0, WORLD_MAP.anchors[Math.min(10, league + 1)][1] - 4);
+                return <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${cutY + 5}%`,
+                  background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)" }} />;
+              })()}
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((lg) => {
+                const [ax, ay] = WORLD_MAP.anchors[lg];
+                const reachable = lg <= league;
+                const here = lg === league;
+                return (
+                  <div key={lg} onClick={(e) => { e.stopPropagation(); if (reachable) setWorldSel(worldSel === lg ? null : lg); }}
+                    style={{ position: "absolute", left: `${ax}%`, top: `${ay}%`, transform: "translate(-50%, -50%)",
+                      cursor: reachable ? "pointer" : "default" }}>
+                    {/* the brighter gradient: a pale halo where the road passes a mastered world */}
+                    {reachable && <div aria-hidden style={{ position: "absolute", left: "50%", top: "50%",
+                      width: 96, height: 96, transform: "translate(-50%, -50%)", pointerEvents: "none",
+                      background: `radial-gradient(circle, rgba(255,243,196,${here ? ".34" : ".22"}) 0%, rgba(255,243,196,${here ? ".14" : ".08"}) 45%, transparent 70%)` }} />}
+                    <div style={{ position: "relative", width: here ? 34 : 28, height: here ? 34 : 28, borderRadius: "50%",
+                      display: "grid", placeItems: "center",
+                      background: reachable ? "rgba(20,16,8,.72)" : "rgba(10,12,18,.7)",
+                      border: here ? "2px solid #f0d68a" : reachable ? "1.5px solid rgba(233,210,150,.75)" : "1.5px solid rgba(150,150,160,.4)",
+                      boxShadow: here ? "0 0 14px rgba(240,214,138,.55)" : "0 2px 8px rgba(0,0,0,.5)" }}>
+                      <span className="gg-serif" style={{ fontSize: reachable ? 12 : 11, fontWeight: 700,
+                        color: reachable ? "#e9d296" : "rgba(200,200,210,.55)" }}>
+                        {reachable ? (ROMAN[lg - 1] || lg) : "🔒"}</span>
+                    </div>
+                    {here && <div className="gg-serif" style={{ position: "absolute", left: "50%", top: "100%",
+                      transform: "translateX(-50%)", marginTop: 3, fontSize: 8.5, letterSpacing: ".14em",
+                      color: "#f0d68a", textShadow: "0 1px 3px rgba(0,0,0,.9)", whiteSpace: "nowrap" }}>{t("hub.at").toUpperCase()}</div>}
+                  </div>
+                );
+              })}
+            </div>
+            {/* the lore sheet: name, tale, travel */}
+            {worldSel && (() => {
+              const wt = themeForLeague(worldSel);
+              const lore = LEAGUE_LORE[worldSel];
               return (
-                <div key={lg} onClick={(e) => { e.stopPropagation(); if (!reachable) return;
-                    setViewLeague(lg); setPanOff({ x: 0, y: 0 }); setWorld(false); }}
-                  style={{ position: "relative", display: "flex", alignItems: "center", gap: 12,
-                    flexDirection: lg % 2 ? "row" : "row-reverse", margin: "0 0 18px",
-                    cursor: reachable ? "pointer" : "default" }}>
-                  <div style={{ flex: 1, textAlign: lg % 2 ? "right" : "left" }}>
-                    <div className="gg-serif" style={{ color: reachable ? "#e9d296" : "rgba(233,210,150,.35)",
-                      fontSize: 15, letterSpacing: ".1em" }}>{ROMAN[lg - 1] || lg}</div>
-                    <div style={{ color: reachable ? "rgba(240,233,216,.85)" : "rgba(240,233,216,.3)", fontSize: 12.5 }}>
-                      {reachable ? wt.nameDe : "???"}</div>
+                <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 430, margin: "10px auto 0", borderRadius: 14,
+                  border: "1px solid rgba(233,210,150,.4)", background: "rgba(12,15,22,.92)", padding: "13px 14px",
+                  animation: "rise .25s ease" }}>
+                  <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
+                    {ROMAN[worldSel - 1]} · {wt.nameDe}</div>
+                  <div className="gg-serif" style={{ color: "rgba(240,233,216,.85)", fontSize: 12.5, fontStyle: "italic",
+                    lineHeight: 1.6, marginTop: 6 }}>{lore ? (profile.lang === "en" ? lore.en : lore.de) : ""}</div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 11 }}>
+                    <GoldShineButton style={{ flex: 1, padding: "9px 12px", fontSize: 13, borderRadius: 10 }}
+                      onClick={() => { setViewLeague(worldSel); setPanOff({ x: 0, y: 0 }); setWorldSel(null); setWorld(false); }}>
+                      {worldSel === viewLeague ? t("camp.worldHere") : t("camp.worldTravel")}
+                    </GoldShineButton>
                   </div>
-                  <div style={{ width: 84, height: 84, borderRadius: "50%", flex: "0 0 auto", position: "relative",
-                    border: here ? "2.5px solid #f0d68a" : reachable ? "2px solid rgba(233,210,150,.5)" : "2px solid rgba(120,120,130,.35)",
-                    boxShadow: here ? "0 0 20px rgba(240,214,138,.45)" : "0 4px 14px rgba(0,0,0,.5)",
-                    overflow: "hidden", background: "#10141f" }}>
-                    {bmp && <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${bmp.url})`,
-                      backgroundSize: "cover", backgroundPosition: "center",
-                      filter: reachable ? "saturate(1.05)" : "grayscale(.9) brightness(.45)" }} />}
-                    {!reachable && <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
-                      color: "rgba(233,210,150,.6)", fontSize: 20 }}>🔒</div>}
-                    {lg === league && <div className="gg-serif" style={{ position: "absolute", left: 0, right: 0, bottom: 2,
-                      textAlign: "center", fontSize: 9, letterSpacing: ".14em", color: "#f0d68a",
-                      textShadow: "0 1px 3px rgba(0,0,0,.9)" }}>{t("hub.at").toUpperCase()}</div>}
-                  </div>
-                  <div style={{ flex: 1 }} />
                 </div>
               );
-            })}
+            })()}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
 
       {/* embedded node panel — parchment overlay near the medallion; arrival is

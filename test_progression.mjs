@@ -80,9 +80,11 @@ ok("abilities gate on level then charge SP", (() => {
 ok("levels cap at MAX_PIECE_LEVEL", characterLevel(upgradePiece({ ...eco, sp: 99, pieces: { levels: { rook: MAX_PIECE_LEVEL } } }, "rook"), "rook") === MAX_PIECE_LEVEL);
 
 // ── the hero alone climbs three tiers of ten ─────────────────────────────────
-ok("gambit cap is 30, common pieces stay at 10", maxLevelFor("gambit") === 30 && maxLevelFor("rook") === 10 && GAMBIT_MAX_LEVEL === 30);
-ok("tiers switch at 11 and 21", gambitTier(1) === 1 && gambitTier(10) === 1 && gambitTier(11) === 2 && gambitTier(20) === 2 && gambitTier(21) === 3 && gambitTier(30) === 3);
-ok("the risen gambit banks four more shields on the long road", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6 && resolveCharacter(CHARACTERS.gambit, 10, null).shield === 2);
+ok("gambit cap is 60, common pieces stay at 10", maxLevelFor("gambit") === 60 && maxLevelFor("rook") === 10 && GAMBIT_MAX_LEVEL === 60);
+ok("six tiers, switching every ten levels", gambitTier(1) === 1 && gambitTier(10) === 1 && gambitTier(11) === 2 && gambitTier(21) === 3 && gambitTier(31) === 4 && gambitTier(41) === 5 && gambitTier(51) === 6 && gambitTier(60) === 6);
+ok("the climb grows steep: 2/3/4/6/8/10 SP by tier", upgradeCost("gambit", 1) === 2 && upgradeCost("gambit", 10) === 3 && upgradeCost("gambit", 15) === 3 && upgradeCost("gambit", 30) === 6 && upgradeCost("gambit", 45) === 8 && upgradeCost("gambit", 59) === 10);
+ok("the full road to 60 costs 328 SP", Array.from({ length: 59 }, (_, i) => upgradeCost("gambit", i + 1)).reduce((a, b) => a + b, 0) === 328);
+ok("the risen gambit banks shields all the way: 6 at L30, 11 at L60", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6 && resolveCharacter(CHARACTERS.gambit, 60, null).shield === 11 && resolveCharacter(CHARACTERS.gambit, 10, null).shield === 2);
 ok("the gambit can be upgraded past ten", characterLevel(upgradePiece({ sp: 99, pieces: { levels: { gambit: 10 } } }, "gambit"), "gambit") === 11);
 ok("the hero spec carries his tier onto the board", buildArmyForMap({ pieces: { levels: { gambit: 15 } } }, mapById("arena")).hero.spec.tier === 2);
 

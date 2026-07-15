@@ -70,14 +70,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     .map((ab) => ({ id: ab.id, color: (TAGS[ab.tag] || { color: T.gold }).color, spent: !!(ab.once && piece.used?.[ab.id]) }));
 
   // Crisp, modern: a short drop shadow for depth — no neon bloom. The risen
-  // Gambit (Stufe II/III) carries a quiet golden aura on top — OWN side only;
-  // the opponent always sees the plain hero.
-  const heroTier = piece.hero && white ? Math.min(3, piece.tier || 1) : 1;
-  const glow = heroTier >= 3
-    ? "drop-shadow(0 2px 3px rgba(0,0,0,.65)) drop-shadow(0 0 5px rgba(240,214,138,.5)) drop-shadow(0 0 11px rgba(240,214,138,.28))"
-    : heroTier === 2
-      ? "drop-shadow(0 2px 3px rgba(0,0,0,.65)) drop-shadow(0 0 6px rgba(240,214,138,.38))"
-      : "drop-shadow(0 2px 3px rgba(0,0,0,.65))";
+  // Gambit (Stufe II-VI) carries a quiet golden aura on top — OWN side only;
+  // the opponent always sees the plain hero. The glow deepens per tier.
+  const heroTier = piece.hero && white ? Math.min(6, piece.tier || 1) : 1;
+  const AURA = [
+    "", // tier 1: plain
+    "drop-shadow(0 0 6px rgba(240,214,138,.38))",
+    "drop-shadow(0 0 5px rgba(240,214,138,.5)) drop-shadow(0 0 11px rgba(240,214,138,.28))",
+    "drop-shadow(0 0 6px rgba(240,214,138,.58)) drop-shadow(0 0 13px rgba(240,214,138,.34))",
+    "drop-shadow(0 0 7px rgba(240,214,138,.66)) drop-shadow(0 0 15px rgba(240,214,138,.4))",
+    "drop-shadow(0 0 8px rgba(246,224,150,.74)) drop-shadow(0 0 18px rgba(240,214,138,.46))",
+  ];
+  const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))" + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "");
   const pieceSize = hpMode && piece.maxHp > 0 ? "0.8em" : "0.88em";
 
   return (

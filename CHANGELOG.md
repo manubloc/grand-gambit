@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.61
+- NEUE FIGUREN-GALERIE: alle 25 Figuren aus dem Menschen-Setting eingebunden (Standard-Sechs + 19 Champions), plus ALLE SECHS Gambit-Stufenbilder und die HELLSEHERIN (painted-seeress.webp, wartet auf ihren Spielauftritt). Opake Lieferungen wurden per Rand-Flood-Fill freigestellt (weiche Weiss-Schleier, eingeschlossene Taschen und die Barden-Feder alle sauber), Klassik-Modus behaelt die alten classic-*.webp unangetastet
+- GAMBIT 6x10: der Held steigt jetzt bis LEVEL 60 (sechs Stufen a zehn Level). Jede Stufe traegt ihr eigenes Portraet und eine tiefere Gold-Aura (nur fuer die eigene Seite sichtbar). Der Aufstieg wird STEIL teurer: 2/3/4/6/8/10 SP pro Level nach Stufe - der ganze Weg kostet 328 SP. Fuenf weitere Schilde auf der langen Strasse (L34/40/46/52/58, gesamt 11); Staerke kommt weiter ueber +1 HP je Level
+- WELTKARTE ALS GEMAELDE: das Overlay zeigt jetzt das hochkant gemalte Reich (Fruehling unten bis Endloses Meer mit Leuchtturm oben). Die 10 Liga-Anker wurden auf der Schneise VERMESSEN (Zeilen-Farbanalyse + hellste-Spalte), erreichte Welten tragen einen hellen Halo auf dem Weg, Kommendes schlaeft unter Nebel und Schloss. Jeder Anker oeffnet seine LIGA-LORE: zwei Saetze je Liga (de+en), verknuepft mit dem jeweiligen Tor-Hueter und der Riss-Sage, plus Reise-Knopf
+- DRACHE 2x2 GEPLANT: vollstaendige Spezifikation in DRACHE-2x2-PLAN.md festgehalten (Platzierung aussen, 4-Slot-Verbrauch mit Bestaetigung, Gambit-Auto-Shift, Blockzug, Flug mit Rueckfall-Regel) - Umsetzung folgt als eigenes Versions-Paket
+
 ## 0.21.60
 - DIE SAGE WAECHST: alle 23 Monster (b01-b22, b24) haben jetzt ihre Stimmen - 44 Figuren insgesamt, jede mit Herold-Satz (3. Person, vor dem Kampf) und direkter Antwort (nach dem Sieg), de+en. Drei neue Schichten der Geschichte: die WACHEN der anderen Seite (Waechter ohne Abloesung, Bollwerk das nie erfuhr was es haelt), die GESCHOEPFE durch die der Riss selbst murmelt (Springbock, Zebra, Zerreisser - abgehackte, unheimliche Stimmen), und die ABTRUENNIGEN des alten Hofes (Richter, Lanzenmeister, Schattenfuerst). Alle 10 Liga-Tor-Hueter tragen das Miete-Motiv weiter, und die Spur zum Endlosen Meer verdichtet sich (Sturmkraehe: "Komm nicht ans Meer", Hueter: ein ungeprobter Schluessel, Koloss: der Deckel auf dem Brunnen)
 

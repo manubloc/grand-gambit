@@ -140,7 +140,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
           {char.id === "gambit" && <span className="gg-serif" style={{ color: T.goldBright, marginRight: 8, letterSpacing: ".05em" }}>
-            {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III"][gambitTier(level) - 1] })}</span>}
+            {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III", "IV", "V", "VI"][gambitTier(level) - 1] })}</span>}
           {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
         </div>
         {!maxed && <GoldShineButton disabled={!affordable} style={{ padding: "8px 14px", fontSize: 13 }}

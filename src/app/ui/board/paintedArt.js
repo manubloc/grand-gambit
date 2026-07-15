@@ -8,6 +8,10 @@ import pGambit from "../assets/painted/painted-gambit.webp";
 // of the base painting; the user's generated art replaces these files 1:1
 import pGambitT2 from "../assets/painted/painted-gambit-t2.webp";
 import pGambitT3 from "../assets/painted/painted-gambit-t3.webp";
+import pGambitT4 from "../assets/painted/painted-gambit-t4.webp";
+import pGambitT5 from "../assets/painted/painted-gambit-t5.webp";
+import pGambitT6 from "../assets/painted/painted-gambit-t6.webp";
+import pSeeress from "../assets/painted/painted-seeress.webp";
 import pKnight from "../assets/painted/painted-knight.webp";
 import pBishop from "../assets/painted/painted-bishop.webp";
 import pQueen from "../assets/painted/painted-queen.webp";
@@ -76,7 +80,7 @@ import cKing from "../assets/painted/classic-king.webp";
 export const CLASSIC_PAINTED = { P: cPawn, N: cKnight, B: cBishop, R: cRook, Q: cQueen, K: cKing };
 
 export const PAINTED = {
-  pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, knight: pKnight, bishop: pBishop, queen: pQueen,
+  pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
   captain: pCaptain, pathfinder: pPathfinder, sorceress: pSorceress,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,

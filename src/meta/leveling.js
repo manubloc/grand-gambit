@@ -43,22 +43,26 @@ export const MAX_PIECE_LEVEL = 10;
 // The hero alone climbs THREE tiers of ten (Stufe I/II/III → level 30). Each
 // tier is earned prestige: own portrait + a quiet aura, visible only to the
 // player and on the map — never to the opponent.
-export const GAMBIT_MAX_LEVEL = 30;
+export const GAMBIT_MAX_LEVEL = 60;                    // six tiers, ten levels each
 export const maxLevelFor = (charId) => (charId === "gambit" ? GAMBIT_MAX_LEVEL : MAX_PIECE_LEVEL);
-export const gambitTier = (level) => (level >= 21 ? 3 : level >= 11 ? 2 : 1);
+export const gambitTier = (level) => Math.min(6, Math.floor((Math.max(1, level) - 1) / 10) + 1);
+// the hero's climb grows steep: SP per level step, by the tier being entered
+export const GAMBIT_STEP_COST = [2, 3, 4, 6, 8, 10];
 /** SKILL POINTS are the piece currency: earned per player level (and by
  *  claiming achievements), spent deliberately on levels + abilities.
  *  Cost per level step follows the piece's board value. */
 export const SP_PER_PLAYER_LEVEL = 3;
 export const skillPoints = (profile) => profile?.sp || 0;
-export const upgradeCost = (charId) => {
+export const upgradeCost = (charId, level = null) => {
+  if (charId === "gambit" && level != null)
+    return GAMBIT_STEP_COST[gambitTier(level + 1) - 1]; // the NEXT step's tier sets the price
   const ch = CHARACTERS[charId];
   const v = Math.min(ch?.costValue ?? (VALUE[ch?.kind] || 100), 1000);
   return v <= 150 ? 1 : v <= 450 ? 2 : v <= 700 ? 3 : 4; // pawn 1 · minor 2 · rook 3 · queen/king 4
 };
 export const canUpgrade = (profile, charId) => {
   const l = characterLevel(profile, charId);
-  return l < maxLevelFor(charId) && skillPoints(profile) >= upgradeCost(charId);
+  return l < maxLevelFor(charId) && skillPoints(profile) >= upgradeCost(charId, l);
 };
 
 // ── Star shards: bottled skill points, rationed by league ─────────────────
@@ -76,7 +80,7 @@ export function buySpShard(profile) {
 export function upgradePiece(profile, charId) {
   const l = characterLevel(profile, charId);
   if (l >= maxLevelFor(charId)) return profile;
-  const cost = upgradeCost(charId);
+  const cost = upgradeCost(charId, l);
   if (skillPoints(profile) < cost) return profile;
   const stats = { ...(profile.stats || {}) };
   stats.upgrades = (stats.upgrades || 0) + 1;
