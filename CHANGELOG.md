@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.59
+- DIE SAGE VOM RISS: jede der 19 Champions plus Erzfeindin und Ligameister traegt jetzt ihre Zeile einer uebergeordneten Geschichte (content/voices.js, de+en). VOR dem Kampf steht der HEROLD-Satz in dritter Person neben der Figur im Vorspann (episch, kursiv); NACH dem Sieg antwortet die Figur im Siegesbanner in DIREKTER ANSPRACHE an den Wanderer (Zitatkarte mit Namenszeile). In Summe erzaehlen die Herold-Zeilen die Sage: der erste Ligameister oeffnete den Riss, der Hof zerbrach, manche fluechteten mit Fragmenten, manche hoerten den Sog gern - und das Endlose Meer verbirgt die Quelle
+- SEHER-KORREKTUR: der "Spaeher" ist der FALKE (nameDe) - die Hellsicht liegt jetzt auf Hexerin + Falke (statt Pfadfinder)
+
 ## 0.21.58
 - SCHNELLES SPIEL UMSORTIERT: der Modus steht jetzt GANZ OBEN, Klassisch als erste Option (Klassisch | Klassik-Schach... | Duell-Modi), Karte/Gegner/Staerke folgen darunter; Partie-starten-Knopf mit Abstand zum Text darueber
 - ELO-FELD SAUBER: native Spinner entfernt (WebKit/Firefox), neutrales Appearance, hellere Goldschrift, Hinweistext gekuerzt ("Die Elo steuert die Staerke der KI.")

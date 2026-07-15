@@ -261,10 +261,10 @@ function heroSpec(profile) {
 }
 
 /** Foresight: if the army that will take the field carries a SEER — the
- *  sorceress or the pathfinder (the scout) — the enemy's array lies open
+ *  sorceress or the hawk (the scout, "Spaeher") — the enemy's array lies open
  *  before the first horn. Only ACTIVELY fielded seers count; the default
  *  ranks never do. */
-const SEERS = ["sorceress", "pathfinder"];
+const SEERS = ["sorceress", "hawk"]; // Hexerin + Spaeher (the hawk)
 export function hasForesight(profile, map) {
   if (!profile || !map || map.classic) return false;
   const owned = unlockedCharacterIds(profile);

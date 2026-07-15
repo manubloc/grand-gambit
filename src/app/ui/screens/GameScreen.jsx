@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
-import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID } from "../../../content/index.js";
+import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
@@ -141,7 +141,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // ONLINE the gaze does more: the seer may SWAP own pieces on the spot,
   // while the foe waits behind a notice; the swaps travel with scoutDone so
   // both boards stay identical.
-  const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "Z" || sp.kind === "O");
+  const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "Z" || sp.kind === "H"); // sorceress Z, hawk (Spaeher) H
   const mySeerOnline = !!pvp && !classic && armyHasSeer(playerArmy);
   const oppSeerOnline = !!pvp && !classic && armyHasSeer(pvp?.oppArmy);
   const foresight = (!!campaign && !resume && !pvp && hasForesight(profile, map)) || mySeerOnline;
@@ -454,7 +454,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5 }}>{t("scout.oppHint")}</div>
           </div>
         )}
-        {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit}
+        {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit} boss={match?.boss || null}
           onSettings={!campaign && !pvp ? onExit : null}
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
           unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
@@ -640,6 +640,10 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
         {boss && <div style={{ marginTop: 12, fontSize: 12.5, fontWeight: 800, color: "#8e2f39" }}>
           {boss.bossId?.startsWith("pb_") ? <BladesIc color="#8e2f39" size={12} /> : <SkullIc size={12} />} {boss.name[en ? "en" : "de"]}
         </div>}
+        {boss && voiceFor(boss) && <div className="gg-serif" style={{ marginTop: 7, fontSize: 12.5, fontStyle: "italic",
+          lineHeight: 1.55, color: "#5c5140" }}>
+          {voiceFor(boss)[en ? "heraldEn" : "heraldDe"]}
+        </div>}
         {timer && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: "#8a6f4d" }}>
           <HourglassIc size={13} color="#8a6f4d" /> {timer.type === "total"
             ? `${Math.round(timer.seconds / 60)} min`
@@ -653,7 +657,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   );
 }
 
-function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, fledName = null, en = false, onArmy = null, pvpInfo = null }) {
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, fledName = null, en = false, onArmy = null, pvpInfo = null, boss = null }) {
   const win = banner.result === "win";
   const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : "#b4636c";
   const title = banner.hotseat
@@ -681,6 +685,15 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
         </div>}
         {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
+        {campaign && win && boss && voiceFor(boss) && (
+          <div className="gg-serif" style={{ margin: "2px 0 10px", padding: "10px 12px", borderRadius: 12,
+            border: "1px solid rgba(233,210,150,.3)", background: "rgba(10,13,20,.55)",
+            fontStyle: "italic", fontSize: 12.5, lineHeight: 1.55, color: "rgba(240,233,216,.9)" }}>
+            „{voiceFor(boss)[en ? "afterEn" : "afterDe"]}"
+            <div style={{ fontStyle: "normal", fontSize: 10.5, letterSpacing: ".14em", color: "#c9a45c", marginTop: 5 }}>
+              — {boss.name[en ? "en" : "de"].toUpperCase()}</div>
+          </div>
+        )}
         {campaign && win && unlockId && (() => {
           const ch = CHARACTERS_BY_ID[unlockId];
           if (!ch) return null;

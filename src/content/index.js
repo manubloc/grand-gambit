@@ -9,3 +9,4 @@ export { MAPS, mapById, validateMap, inMap, isHole, holeSet, mapIdx, playableCou
 export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } from "./bosses.js";
 
 export { ITEMS, ITEM_LIST, hasItem, buyItem } from "./items.js";
+export { VOICES, voiceFor } from "./voices.js";
