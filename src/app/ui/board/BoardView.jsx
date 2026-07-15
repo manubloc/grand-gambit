@@ -60,9 +60,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const [sel, setSel] = useState(null);
   useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
 
-  // all slabs loaded? until then a mini animation holds the frame — no popping tiles
+  // all slabs loaded? until then every square shows its flat colour — the
+  // marble layer fades in per square once the preload finishes
   const [artReady, setArtReady] = useState(artDone);
-  const bootRef = useRef(!artDone); // true only if THIS mount had to wait → fade the reveal
   useEffect(() => {
     if (artReady) return;
     let on = true;
@@ -148,12 +148,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
-          // a veil in the square's own colour sits on the stone (structure down
-          // to a whisper — the marble hints, the pieces speak), then a soft
-          // diagonal light, then the slab itself
-          background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68)}), linear-gradient(148deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.16) 100%), url(${slab(i, dark)}) center / cover, ${dark ? sqD : sqL}`,
-          boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.45)",
+          // the flat colour + a soft diagonal light stand INSTANTLY — no loading
+          // state at all; the marble whisper fades in per square once every slab
+          // is preloaded, so nothing ever pops
+          background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), ${dark ? sqD : sqL}`,
+          boxShadow: "inset 1px 1px 0 rgba(255,235,190,.10), inset -1.5px -1.5px 2px rgba(0,0,0,.36)",
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
+          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68, 0.05)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.72 : 0.68, 0.05)}), url(${slab(i, dark)}) center / cover`,
+            opacity: artReady ? 1 : 0, transition: "opacity .6s ease" }} />
           {dark && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen",
             animation: `marblePulse 14s ease-in-out ${((i * 37) % 140) / 10}s infinite` }} />}
@@ -196,7 +199,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const bw = cell ? cell * W + (W - 1) * GAP : null;
   const bh = cell ? cell * H + (H - 1) * GAP : null;
   // Smaller boards → larger cells; glyph stays ~85% of a cell.
-  const glyph = cell ? `${Math.round(cell * 0.85)}px` : `min(${(0.85 * 88 / W).toFixed(1)}vw, ${Math.round(0.85 * maxPx / W)}px)`;
+  const glyph = cell ? `${Math.round(cell * 0.9)}px` : `min(${(0.9 * 88 / W).toFixed(1)}vw, ${Math.round(0.9 * maxPx / W)}px)`;
 
   // display coords for the overlay (respect flip)
   const disp = (i) => {
@@ -214,18 +217,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
-        {artReady ? cells : (
-          <div aria-hidden style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-            <div style={{ width: 26, height: 26, border: `2px solid ${T.gold}`, transform: "rotate(45deg)",
-              boxShadow: `0 0 16px ${T.gold}55`, animation: REDUCED ? "none" : "ggLoad 1.2s ease-in-out infinite" }} />
-          </div>
-        )}
-        {artReady && bootRef.current && !REDUCED && <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 3,
-          background: "#05070c", pointerEvents: "none", animation: "ggVeilOut .55s ease both" }} />}
+        {cells}
         {/* the hall's light: a warm heart, night pressing in from the rim */}
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-          background: `radial-gradient(62% 54% at 50% 42%, rgba(255,208,110,.10), transparent 68%),
-            radial-gradient(125% 108% at 50% 40%, transparent 42%, rgba(2,3,6,.52) 100%)` }} />
+          background: `radial-gradient(62% 54% at 50% 42%, rgba(255,214,120,.12), transparent 68%),
+            radial-gradient(125% 108% at 50% 40%, transparent 46%, rgba(2,3,6,.34) 100%)` }} />
 
         {/* the material rides on top too: a soft-light wash of the same wood, so
             scratches and grain read across light and dark squares alike */}

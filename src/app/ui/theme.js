@@ -12,7 +12,7 @@ export const T = {
   goldBright: "#f0dfae",
   shadow: "0 10px 28px rgba(0,0,0,.55)",
   radius: 14, radiusSm: 10,
-  sqLight: "#232c44", sqDark: "#141b2e", grid: "#0a0e18",
+  sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
 };
 
@@ -53,8 +53,6 @@ export const GLOBAL_CSS = `
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
   @keyframes splashText { from { letter-spacing: .55em; opacity: 0; } to { letter-spacing: .18em; opacity: 1; } }
   @keyframes marblePulse { 0%, 80%, 100% { opacity: .03; } 88% { opacity: .14; } }
-  @keyframes ggLoad { 0%, 100% { transform: rotate(45deg) scale(.8); opacity: .45; } 50% { transform: rotate(45deg) scale(1.08); opacity: 1; } }
-  @keyframes ggVeilOut { from { opacity: 1; } to { opacity: 0; } }
   @keyframes ggRedeem { from { filter: hue-rotate(185deg) saturate(.5) brightness(.9) drop-shadow(0 3px 6px rgba(0,0,0,.5)); } to { filter: hue-rotate(0deg) saturate(1) brightness(1) drop-shadow(0 3px 6px rgba(0,0,0,.5)); } }
   @keyframes bossFlee { 0% { transform: translateX(-50%) rotate(0deg); opacity: 1; } 18% { transform: translateX(calc(-50% + 14px)) rotate(9deg); opacity: 1; } 100% { transform: translateX(calc(-50% + 340px)) rotate(6deg); opacity: 0; } }
   @keyframes ctaPop { from { opacity: 0; transform: translate(-50%,4px) scale(.92); } to { opacity: 1; transform: translate(-50%,0) scale(1); } }

@@ -102,13 +102,15 @@ ok("paths do not open each other", nodeStatus(advanceCampaign(prof, "a1"), "b2")
 const before = unlockedCharacterIds(prof);
 ok("assassin locked before its boss falls", !before.includes("assassin"));
 let prof2 = advanceCampaign(advanceCampaign(prof, "a1"), "a2");
-ok("slaying Hawk & Assassin recruits both — their bosses demand a single win", unlockedCharacterIds(prof2).includes("hawk") && unlockedCharacterIds(prof2).includes("assassin"));
+ok("hawk & assassin resist the first blow — the blades demand two wins", !unlockedCharacterIds(prof2).includes("hawk") && !unlockedCharacterIds(prof2).includes("assassin"));
+prof2 = advanceCampaign(advanceCampaign(prof2, "a1"), "a2"); // replay both duels once
+ok("the second victory recruits them both", unlockedCharacterIds(prof2).includes("hawk") && unlockedCharacterIds(prof2).includes("assassin"));
 ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 2);
 // recruit pacing: the enemy appears from league I, the RECRUIT waits for his league
 import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } from "./src/meta/index.js";
 import { nodeById as nbId } from "./src/content/index.js";
 // stubborn champions: the Dragon demands three victories, tallied across replays & leagues
-ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNeeded(nbId("a2")) === 1 && winsNeeded(nbId("b4")) === 2);
+ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNeeded(nbId("a2")) === 2 && winsNeeded(nbId("b4")) === 2);
 // family pacing: the Crown yields fast (1-2 wins), the Shadows resist (2-3)
 ok("the standard falls in one win, moonlit adepts demand two", winsNeeded(nbId("d2")) === 1 && winsNeeded(nbId("b2")) === 2 && winsNeeded(nbId("b3")) === 2);
 {
