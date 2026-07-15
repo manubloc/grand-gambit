@@ -75,7 +75,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         if (!alive) return;
         const ang = Math.random() * Math.PI * 2;
         setWave({ id: Date.now(), dx: Math.cos(ang), dy: Math.sin(ang) });
-        off = setTimeout(() => alive && setWave(null), 3600); // wave passed — drop the layers
+        off = setTimeout(() => alive && setWave(null), 5200); // wave passed — drop the layers
         loop();
       }, iv);
     };
@@ -188,7 +188,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             const norm = (f * wave.dx + r * wave.dy - minP) / span;
             return <div key={wave.id} aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
               background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen", opacity: 0,
-              animation: `marbleWave 1.7s ease-in-out ${(norm * 1.2).toFixed(2)}s 1 both` }} />;
+              animation: `marbleWave 2.6s ease-in-out ${(norm * 2).toFixed(2)}s 1 both` }} />;
           })()}
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
@@ -203,7 +203,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
-            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-6%)" : "translateY(-9%)", // pieces sat too deep in the square (phones a touch more)
+            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-8%)" : "translateY(-12%)", // pieces sat too deep in the square (phones a touch more)
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
@@ -250,6 +250,19 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
+        {/* the WAVE as a true gradient: one soft gold band, perpendicular to
+            the direction of travel, sweeps across the whole board while the
+            vein glow of each slab rises beneath it */}
+        {wave && !REDUCED && artReady && (() => {
+          const g = Math.atan2(wave.dx, wave.dy) * 180 / Math.PI;
+          return <div key={"wv" + wave.id} aria-hidden style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", overflow: "hidden", mixBlendMode: "screen" }}>
+            <div style={{ position: "absolute", left: "-60%", top: "-60%", width: "220%", height: "220%",
+              "--sx0": `${(-wave.dx * 55).toFixed(1)}%`, "--sy0": `${(wave.dy * 55).toFixed(1)}%`,
+              "--sx1": `${(wave.dx * 55).toFixed(1)}%`, "--sy1": `${(-wave.dy * 55).toFixed(1)}%`,
+              background: `linear-gradient(${g.toFixed(0)}deg, transparent 40%, rgba(240,214,138,.05) 46%, rgba(240,214,138,.13) 50%, rgba(240,214,138,.05) 54%, transparent 60%)`,
+              animation: "ggSweep 3.6s ease-in-out both" }} />
+          </div>;
+        })()}
         {/* the hall's light: a warm heart, night pressing in from the rim */}
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
           background: `radial-gradient(62% 54% at 50% 42%, rgba(255,214,120,.12), transparent 68%),
