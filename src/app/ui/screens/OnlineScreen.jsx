@@ -6,7 +6,7 @@ import { T } from "../theme.js";
 import crest3 from "../assets/crest-3.webp";
 import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
-import { retinueScore, mapUnlocked, buildArmy } from "../../../meta/index.js";
+import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
 import { SERVER_URL } from "../../config.js";
 import { hasItem } from "../../../content/index.js";
@@ -30,6 +30,11 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const score = useMemo(() => retinueScore(profile), [profile]);
   const myMaps = useMemo(() => MAPS.filter((m) => mapUnlocked(profile, m.id)).map((m) => m.id), [profile]);
   const armyFor = (mapId) => buildArmy(profile, mapById(mapId));
+  // classic online: pure standard chess — the plain level-1 side, mate rules
+  const [duelMode, setDuelMode] = useState("duel"); // duel | classic
+  const classicSide = () => buildArmyFromFormation(() => 1, mapById("classic").defaultFormation);
+  const queueMaps = () => duelMode === "classic" ? ["classic"] : myMaps;
+  const queueArmy = () => duelMode === "classic" ? classicSide() : armyFor(myMaps.includes("arena") ? "arena" : myMaps[0]);
 
   const [server, setServer] = useState(SERVER_URL || o.server || "");
   const name = profile.name || "Spieler " + (o.id || "").slice(0, 4);
@@ -103,10 +108,10 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   }
   function findRandom() {
     if (searching) { net.send({ t: "dequeue" }); setSearching(false); return; }
-    net.send({ t: "queue", maps: myMaps, army: armyFor(myMaps.includes("arena") ? "arena" : myMaps[0]) });
+    net.send({ t: "queue", maps: queueMaps(), army: queueArmy(), mode: duelMode });
     setSearching(true);
   }
-  const challengeFriend = (f) => net.send({ t: "challenge", targetId: f.id, maps: myMaps, army: armyFor(myMaps[0]) });
+  const challengeFriend = (f) => net.send({ t: "challenge", targetId: f.id, maps: queueMaps(), army: duelMode === "classic" ? classicSide() : armyFor(myMaps[0]), mode: duelMode });
 
   const Line = ({ children }) => <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>{children}</div>;
   const input = { flex: 1, minWidth: 120, background: T.bg2, border: `1px solid ${T.line}`, color: T.text,
@@ -185,11 +190,14 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
               <Segmented value={o.privacy || "public"} onChange={setPrivacy}
                 options={[{ id: "public", label: t("online.public") }, { id: "friends", label: t("online.friendsOnly") }]} />
             </Line>
-            {!searching ? (
+            {!searching ? (<>
+              <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
+                options={[{ value: "duel", label: t("online.duel") }, { value: "classic", label: t("mode.classic") }]} />
+              <div style={{ height: 8 }} />
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>
                 <BladesIc color={T.limeInk} size={13} /> {t("online.random")}
               </Button>
-            ) : (
+            </>) : (
               <div style={{ display: "grid", placeItems: "center", gap: 10, padding: "18px 10px 14px",
                 background: T.panel2, borderRadius: T.radius, border: `1px solid ${T.gold}44` }}>
                 <div style={{ position: "relative", width: 74, height: 74, display: "grid", placeItems: "center" }}>
@@ -318,7 +326,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
             <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 12 }}>{t("online.score")}: {challenge.from.score}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <Button variant="primary" onClick={() => {
-                net.send({ t: "challengeRespond", challengeId: challenge.challengeId, accept: true, maps: myMaps, army: armyFor(myMaps[0]) });
+                net.send({ t: "challengeRespond", challengeId: challenge.challengeId, accept: true, maps: myMaps, army: challenge.mode === "classic" ? classicSide() : armyFor(myMaps[0]) });
                 setChallenge(null);
               }}>{t("online.accept")}</Button>
               <Button variant="subtle" onClick={() => {

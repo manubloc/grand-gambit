@@ -165,5 +165,23 @@ function mkHall(t0 = 1000) {
   ok("five failures lock the source out", threw === "locked");
 }
 
+
+// ── classic mode: classic meets classic, duel meets duel ─────────────────────
+{
+  const { hall, last } = mkHall();
+  const c1 = hall.handle(null, { t: "hello", id: "c1", secret: "s1", name: "C1", score: 100 });
+  const c2 = hall.handle(null, { t: "hello", id: "c2", secret: "s2", name: "C2", score: 100 });
+  const d1 = hall.handle(null, { t: "hello", id: "d1", secret: "s3", name: "D1", score: 100 });
+  hall.handle(c1, { t: "queue", maps: ["classic"], army: ["k"], mode: "classic" });
+  hall.handle(d1, { t: "queue", maps: ["classic"], army: ["k"] });
+  ok("a classic seeker never pairs with a duelist", Object.keys(hall.matches).length === 0);
+  hall.handle(c2, { t: "queue", maps: ["classic"], army: ["k"], mode: "classic" });
+  const mids = Object.keys(hall.matches);
+  ok("two classic seekers pair up", mids.length === 1 && hall.matches[mids[0]].mode === "classic");
+  const m = last("match");
+  ok("a classic room plays mate rules", !!m && m.rules === "chess" && m.mode === "classic");
+}
+
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

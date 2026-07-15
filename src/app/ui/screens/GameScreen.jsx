@@ -24,6 +24,9 @@ const texHash = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.c
 // Every board has lived its own life: each station deals its finish
 // deterministically from a pool that grows rougher with the league — even
 // Liga I mixes fresh wood with the odd scarred veteran table.
+// classic chess: the chosen Elo sets the bot's search depth
+const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 3;
+
 const boardTexture = (match, profile) => {
   if (!match) return WEAR_TEX[0];
   if (match.friendly) return WEAR_TEX[0];   // friendlies play on the freshest table in the house
@@ -75,9 +78,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const difficulty = quick?.difficulty || profile.difficulty || "easy";
   const mapId = quick?.mapId || "classic";
   const mode = quick?.mode || "chess";
-  const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(mapId);
-  const rules = pvp ? "hp" : campaign ? match.rules : mode;
-  const depth = campaign ? match.depth : difficultyById(difficulty).depth;
+  // CLASSIC: pure standard chess — plain level-1 armies, classic art, Elo bot
+  const classic = mode === "classic" || (pvp && pvp.rules === "chess");
+  const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
+  const rules = pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
+  const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
   const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null), [profile, map]); // eslint-disable-line
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
 
@@ -89,14 +94,17 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [state, setState] = useState(() => {
     if (resume) { try { return decodeState(resume.enc); } catch { /* corrupt → fresh */ } }
     if (pvp) {
-      const white = myColor === WHITE ? playerArmy : pvp.oppArmy;
-      const black = myColor === WHITE ? pvp.oppArmy : playerArmy;
+      const mine = classic ? buildArmyFromFormation(() => 1, mapById("classic").defaultFormation) : playerArmy;
+      const white = myColor === WHITE ? mine : pvp.oppArmy;
+      const black = myColor === WHITE ? pvp.oppArmy : mine;
       return createGame(white, black, { map, rules, seed: pvp.seed >>> 0 });
     }
     const seed = freshSeed();
-    if (hotseat) {
+    if (hotseat || classic) {
       const side = () => buildArmyFromFormation(() => 1, map.defaultFormation);
-      return createGame(side(), side(), { map, rules, seed });
+      if (hotseat) return createGame(side(), side(), { map, rules, seed });
+      const ai = buildArmyFromFormation(() => 1, map.defaultFormation);
+      return createGame(side(), ai, { map, rules, seed });
     }
     const ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
     return createGame(playerArmy, ai, { map, rules, seed, potions: rules === "hp" ? { w: profile.items?.potion || 0, b: 0 } : undefined });
@@ -360,8 +368,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={potionArm ? WHITE : null} onPick={usePotion} pov={viewColor}
-          texture={boardTexture(match, profile)} artStyle={"painted"} friendly={!!match?.friendly}
-          pulse={match?.boss
+          texture={boardTexture(match, profile)} artStyle={classic ? "classic" : "painted"} friendly={!!match?.friendly}
+          pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
@@ -450,7 +458,8 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   const en = profile.lang === "en";
   const hpOpen = hpUnlocked(profile);
   const [mapId, setMapId] = useState(initial?.mapId && mapUnlocked(profile, initial.mapId) ? initial.mapId : "classic");
-  const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : "chess");
+  const [mode, setMode] = useState(initial?.mode === "hp" && hpOpen ? "hp" : initial?.mode === "classic" ? "classic" : "chess");
+  const [elo, setElo] = useState(initial?.elo || profile.classicElo || 1000);
   const [difficulty, setDifficulty] = useState(initial?.difficulty || profile.difficulty || "easy");
   const [foe, setFoe] = useState(initial?.hotseat ? "hotseat" : "ai");
   const [hsTurn, setHsTurn] = useState(initial?.hotseatFlip === false ? "fixed" : "turn");
@@ -463,8 +472,8 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
   return (
     <Panel>
       <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 14, lineHeight: 1.5 }}>{t("quick.hint")}</div>
-      <FieldLabel>{t("game.map")}</FieldLabel>
-      <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", paddingBottom: 10,
+      {mode !== "classic" && <><FieldLabel>{t("game.map")}</FieldLabel></>}
+      {mode !== "classic" && <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, marginBottom: 14, overflowX: "auto", paddingBottom: 10,
         WebkitOverflowScrolling: "touch", paddingBottom: 4, scrollbarWidth: "thin", minWidth: 0, maxWidth: "100%" }}>
         {MAPS.map((m) => {
           const open = mapUnlocked(profile, m.id);
@@ -473,14 +482,16 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
             onClick={() => open ? setMapId(m.id) : setLockHint(true)}
             label={<>{open ? null : <LockIc size={11} />}{(en ? m.nameEn : m.nameDe)} · {m.w}×{m.h}</>} />;
         })}
-      </div>
+      </div>}
       {lockHint && <div style={{ fontSize: 11.5, color: T.gold, margin: "-8px 0 12px" }}><LockIc color={T.gold} size={11} /> {t("game.unlockHint")}</div>}
       <FieldLabel>{t("game.mode")}</FieldLabel>
       <Segmented value={mode} onChange={(m) => (m !== "hp" || hpOpen) && setMode(m)}
         options={[
           { value: "chess", label: t("mode.chess") },
           { value: "hp", label: hpOpen ? t("mode.hp") : <><LockIc size={11} /> {t("mode.hp")}</>, disabled: !hpOpen },
+          { value: "classic", label: t("mode.classic") },
         ]} />
+      {mode === "classic" && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("quick.classicHint")}</div>}
       {!hpOpen && <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("game.unlockHint")}</div>}
       <div style={{ height: 12 }} />
       <FieldLabel>{t("quick.opponent")}</FieldLabel>
@@ -493,14 +504,28 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
         <Segmented value={hsTurn} onChange={setHsTurn}
           options={[{ value: "turn", label: t("quick.boardTurns") }, { value: "fixed", label: t("quick.boardFixed") }]} />
       </>}
-      {foe === "ai" && <>
+      {foe === "ai" && mode !== "classic" && <>
         <div style={{ height: 12 }} />
         <FieldLabel>{t("game.difficulty")}</FieldLabel>
         <Segmented value={difficulty} onChange={setDifficulty}
           options={[{ value: "easy", label: t("diff.easy") }, { value: "normal", label: t("diff.normal") }, { value: "hard", label: t("diff.hard") }]} />
       </>}
+      {foe === "ai" && mode === "classic" && <>
+        <div style={{ height: 12 }} />
+        <FieldLabel>{t("quick.elo")}</FieldLabel>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <input type="range" min={600} max={2200} step={50} value={elo} onChange={(e) => setElo(+e.target.value)}
+            style={{ flex: 1, accentColor: T.gold }} aria-label={t("quick.elo")} />
+          <input type="number" min={600} max={2200} step={50} value={elo}
+            onChange={(e) => setElo(Math.max(600, Math.min(2200, +e.target.value || 1000)))}
+            style={{ width: 76, background: "rgba(255,255,255,.06)", border: `1px solid ${T.line}`, borderRadius: 8,
+              color: T.ink, padding: "7px 8px", fontFamily: "inherit", fontSize: 13.5 }} />
+        </div>
+        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5 }}>{t("quick.eloHint")}</div>
+      </>}
       <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12 }}
-        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); onStart({ mapId, mode, difficulty, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
+        onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); if (mode === "classic") dispatch({ type: "SET_CLASSIC_ELO", elo });
+          onStart({ mapId: mode === "classic" ? "classic" : mapId, mode, difficulty, elo, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
         <BladesIc color="#17110a" size={15} /> {t("quick.start")}
       </GoldShineButton>
     </Panel>

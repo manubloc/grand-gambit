@@ -102,6 +102,7 @@ export class HallCore {
       const a = q[i], b = q[j];
       const waited = this.now() - Math.min(a.since, b.since);
       if (Math.abs(a.score - b.score) > BAND(waited)) continue;
+      if ((a.mode || "duel") !== (b.mode || "duel")) continue; // classic meets classic, duel meets duel
       const maps = a.maps.filter((m) => b.maps.includes(m));
       if (!maps.length) continue;
       q.splice(j, 1); q.splice(i, 1); this.queue = q;
@@ -115,9 +116,11 @@ export class HallCore {
     const flip = forceSeats ? false : Math.random() < 0.5;
     const [w, bl] = flip ? [b, a] : [a, b];
     const ms = this.matches;
-    ms[matchId] = { w: w.id, b: bl.id, armyW: w.army, armyB: bl.army, map, n: 0 };
+    const mode = a.mode || "duel";
+    ms[matchId] = { w: w.id, b: bl.id, armyW: w.army, armyB: bl.army, map, n: 0, mode };
     this.matches = ms;
-    const base = { t: "match", matchId, seed, map, rules: "hp" };
+    // classic rooms play pure mate chess; duels keep the HP arena
+    const base = { t: "match", matchId, seed, map, rules: mode === "classic" ? "chess" : "hp", mode };
     this.send(w.id, { ...base, youAre: "w", opp: { name: this.player(bl.id).name, score: bl.score }, oppArmy: bl.army });
     this.send(bl.id, { ...base, youAre: "b", opp: { name: this.player(w.id).name, score: w.score }, oppArmy: w.army });
     return matchId;
@@ -225,7 +228,7 @@ export class HallCore {
     if (msg.t === "queue") {
       this.dropFromQueue(me);
       const q = this.queue;
-      q.push({ id: me, since: this.now(), maps: msg.maps || ["classic"], army: msg.army, score: p.score });
+      q.push({ id: me, since: this.now(), maps: msg.maps || ["classic"], army: msg.army, score: p.score, mode: msg.mode || "duel" });
       this.queue = q;
       this.tryMatch(); return me;
     }
@@ -260,9 +263,9 @@ export class HallCore {
       if (target.privacy === "friends" && !isFriend) throw new Error("friends only");
       const challengeId = this.nextId("c");
       const cs = this.challenges;
-      cs[challengeId] = { from: me, to: msg.targetId, maps: msg.maps || ["classic"], army: msg.army };
+      cs[challengeId] = { from: me, to: msg.targetId, maps: msg.maps || ["classic"], army: msg.army, mode: msg.mode || "duel" };
       this.challenges = cs;
-      this.send(msg.targetId, { t: "challenge", challengeId, from: { id: me, name: p.name, score: p.score } });
+      this.send(msg.targetId, { t: "challenge", challengeId, mode: msg.mode || "duel", from: { id: me, name: p.name, score: p.score } });
       this.send(me, { t: "info", info: "challengeSent" });
       return me;
     }
@@ -273,8 +276,8 @@ export class HallCore {
       if (!c || c.to !== me) return me;
       if (!msg.accept) { this.send(c.from, { t: "challengeDeclined" }); return me; }
       const maps = c.maps.filter((m) => (msg.maps || ["classic"]).includes(m));
-      this.startMatch({ id: c.from, army: c.army, score: this.player(c.from).score },
-                      { id: me, army: msg.army, score: p.score },
+      this.startMatch({ id: c.from, army: c.army, score: this.player(c.from).score, mode: c.mode },
+                      { id: me, army: msg.army, score: p.score, mode: c.mode },
                       maps[0] || "classic");
       return me;
     }
@@ -301,8 +304,8 @@ export class HallCore {
       const other = f.w === me ? f.b : f.w;
       if (f.want.includes(other)) {
         delete fin[msg.matchId]; this.finished = fin;
-        this.startMatch({ id: f.b, army: f.armyB, score: this.player(f.b).score },
-                        { id: f.w, army: f.armyW, score: this.player(f.w).score }, f.map, true);
+        this.startMatch({ id: f.b, army: f.armyB, score: this.player(f.b).score, mode: f.mode },
+                        { id: f.w, army: f.armyW, score: this.player(f.w).score, mode: f.mode }, f.map, true);
       } else {
         this.finished = fin;
         if (this.isOnline(other)) this.send(other, { t: "rematchOffer", matchId: msg.matchId });

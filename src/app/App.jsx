@@ -68,6 +68,7 @@ function reducer(state, a) {
     case "SET_LANG": return { ...state, lang: a.lang };
     case "SET_PIN": return { ...state, pin: a.pin };
     case "SET_DIFFICULTY": return { ...state, difficulty: a.difficulty };
+    case "SET_CLASSIC_ELO": return { ...state, classicElo: a.elo };
     case "SET_HERO_COL": return { ...state, loadout: { ...state.loadout, heroCols: { ...(state.loadout.heroCols || {}), [a.mapId]: a.col } } };
     case "SET_FORMATION": return { ...state, loadout: { ...state.loadout, formations: { ...(state.loadout.formations || {}), [a.mapId]: a.formation } } };
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);

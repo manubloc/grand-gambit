@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -89,7 +89,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel;
           // the risen Gambit wears his tier portrait (own side only)
-          const painting = artStyle === "painted"
+          const painting = artStyle === "classic"
+            ? (CLASSIC_PAINTED[piece.kind] || paintedForPiece(piece))
+            : artStyle === "painted"
             ? (heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece)
             : null;
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",

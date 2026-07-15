@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.51
+- KLASSISCH SCHACH ALS SPIELMODUS: dritter Modus im Schnellen Spiel - reines Standardschach (8x8, Matt-Regeln, keine Faehigkeiten, keine Level, beide Seiten die blanke Grundaufstellung)
+- ELO-WAHL: statt Leicht/Normal/Schwer gibt es im Klassik-Modus einen Elo-Regler + Zahlenfeld (600-2200, gemerkt im Profil) - die Elo steuert die Suchtiefe der KI (unter 1000: 1, unter 1600: 2, darueber: 3)
+- KLASSISCHE FIGUREN EINGEFROREN: die bisherigen Standard-Gemaelde sind als classic-*.webp fest kopiert und haengen NUR am Klassik-Modus - wenn die Kampagnen-Standardfiguren neu (menschlich) bebildert werden, behaelt Klassik die alten Figuren fuer immer
+- KLASSISCH ONLINE: eigener Umschalter Duell/Klassisch in der Online-Lobby; der Worker paart Klassik nur mit Klassik (getrennte Warteschlange), Raum spielt Matt-Regeln, Challenges und Rematches tragen den Modus mit (3 neue Worker-Tests)
+- WICHTIG: der Worker (gg-hall) muss einmal neu deployt werden (wrangler, siehe DEPLOY-WORKER.md), damit Klassik online greift
+
 ## 0.21.50
 - FREUNDSCHAFTS-BRETT: Duelle gegen den eigenen Hofstaat (rekrutierte Champions, gefallener Ligameister) spielen auf einem sichtbar freundlicheren Tisch - Marmor-Struktur auf 40% gedaempft, waermerer hellerer Schleier (Elfenbein-Lift .26), ein leiser goldener Hauch ueber dem ganzen Brett, und die frischeste Abnutzungs-Textur des Hauses statt der liga-rauen
 - GLANZ-SWEEP RECYCELT: das weiche Gold-Band gleitet jetzt NUR im Freundschaftskampf mit jeder Adern-Welle uebers polierte Brett - dort passt der Glanz; ernste Duelle behalten den nuechternen Stein

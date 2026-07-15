@@ -64,6 +64,17 @@ import pbb21 from "../assets/painted/painted-boss-b21.webp";
 import pbb22 from "../assets/painted/painted-boss-b22.webp";
 import pbb24 from "../assets/painted/painted-boss-b24.webp";
 
+// ── the CLASSIC set: frozen copies of the original standard pieces. The
+// campaign's standard figures may be repainted (human setting), but classic
+// chess mode keeps these forever. ──
+import cPawn from "../assets/painted/classic-pawn.webp";
+import cKnight from "../assets/painted/classic-knight.webp";
+import cBishop from "../assets/painted/classic-bishop.webp";
+import cRook from "../assets/painted/classic-rook.webp";
+import cQueen from "../assets/painted/classic-queen.webp";
+import cKing from "../assets/painted/classic-king.webp";
+export const CLASSIC_PAINTED = { P: cPawn, N: cKnight, B: cBishop, R: cRook, Q: cQueen, K: cKing };
+
 export const PAINTED = {
   pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
