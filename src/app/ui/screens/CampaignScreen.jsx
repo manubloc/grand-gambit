@@ -61,17 +61,19 @@ const CAM_EASE = "cubic-bezier(.45,.05,.35,1)";
 
 // the name-plate halo borrows each land's own light: spring green, desert
 // gold, sea blue ... (indexed by biome 1..10, dark ink stays readable)
+// SAMPLED from each painting's open ground (top-luminance band, highlights
+// skipped), lifted +12% so the dark ink stays readable on a sheer halo.
 const LABEL_TINT = {
-  1: "212,232,196",   // Fruehling - Wiesengruen
-  2: "244,232,178",   // Sommer - Sonnengold
-  3: "240,214,176",   // Herbst - Bernstein
-  4: "224,236,244",   // Winter - Eisblau-Weiss
-  5: "216,226,232",   // Hochgebirge - Felsgrau-Blau
-  6: "216,208,188",   // Oedland - Aschebeige
-  7: "228,222,178",   // Steppe - Grasgelb
-  8: "240,204,176",   // Roter Canyon - Terrakotta
-  9: "246,228,164",   // Wueste - Sandgelb
-  10: "196,222,238",  // Endloses Meer - Meerblau
+  1: "224,208,164",   // Fruehling - Wiesen-Pergament
+  2: "178,152,83",    // Sommer - Olivgold der Felder
+  3: "211,155,82",    // Herbst - Ocker
+  4: "220,229,243",   // Winter - Eisgrau
+  5: "199,198,194",   // Hochgebirge - Felsgrau
+  6: "179,146,104",   // Oedland - Erdbraun
+  7: "236,196,127",   // Steppe - Grassand
+  8: "241,155,91",    // Roter Canyon - Terrakotta
+  9: "255,212,127",   // Wueste - Sandgold
+  10: "157,174,176",  // Endloses Meer - Graublau der See
 };
 const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 10) + 1] || "248,242,226";
 
@@ -82,7 +84,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
-  const [world, setWorld] = useState(() => !profile?.notices?.worldSeen); // the first visit opens on the WHOLE world
+  const [world, setWorld] = useState(() => !profile?.notices?.worldSeen);
+  const [gambitInfo, setGambitInfo] = useState(false); // tap the wanderer: he steps forward and shows his rank // the first visit opens on the WHOLE world
   useEffect(() => { if (world && !profile?.notices?.worldSeen) dispatch({ type: "SET_NOTICE", key: "worldSeen" }); }, [world]); // the overworld: travel between leagues
   const [worldSel, setWorldSel] = useState(null); // tapped league on the painting
   useEffect(() => { setViewLeague(league); }, [league]);
@@ -423,10 +426,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
                     <span aria-hidden style={{ position: "absolute", inset: "-7px -16px", borderRadius: "50%",
-                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.95) 0%, rgba(${labelTint(league)},.78) 52%, transparent 76%)`,
+                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.58) 0%, rgba(${labelTint(league)},.38) 52%, transparent 76%)`,
                       filter: "blur(3px)", pointerEvents: "none" }} />
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: `0 1px 0 rgba(${labelTint(league)},.9)` }}>{placeFor(n, league)}</span>
+                      lineHeight: 0.94, textShadow: `0 1px 0 rgba(${labelTint(league)},.55)` }}>{placeFor(n, league)}</span>
                   </span>
                 </div>
               </div>
@@ -436,9 +439,24 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {!viewing && (() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
-            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: 5,
-              pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
-              transform: bm ? "translate(-50%,-84%)" : "translate(-98%,-70%)" }}>
+            return <div onClick={(e) => { e.stopPropagation(); setGambitInfo((g) => !g); }}
+              title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: gambitInfo ? 9 : 5,
+              pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,
+              ...(gambitInfo ? { filter: "drop-shadow(0 0 12px rgba(240,206,122,.55))" } : {}),
+              transform: (bm ? "translate(-50%,-102%)" : "translate(-98%,-70%)") + (gambitInfo ? " scale(1.32)" : ""), transformOrigin: "50% 96%" }}>
+              {gambitInfo && (() => {
+                const lvl = characterLevel(profile, "gambit") || 1;
+                const gt = gambitTier(lvl);
+                return <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", bottom: "108%",
+                  transform: "translateX(-50%)", width: 196, zIndex: 12, borderRadius: 12, padding: "9px 11px",
+                  background: "rgba(12,15,22,.93)", border: "1px solid rgba(233,210,150,.45)",
+                  boxShadow: "0 8px 26px rgba(0,0,0,.55)", textAlign: "center", animation: "rise .2s ease", pointerEvents: "auto" }}>
+                  <div className="gg-serif" style={{ fontSize: 13.5, color: "#f6e9a4", letterSpacing: ".06em" }}>{t("camp.gambitTitle")}</div>
+                  <div className="gg-serif" style={{ fontSize: 12, color: "#e9d296", marginTop: 3 }}>
+                    {t("camp.gambitLine", { lvl, tier: ["I","II","III","IV","V","VI"][gt - 1] || gt })}</div>
+                  <div style={{ fontSize: 11, color: "#c9b98f", letterSpacing: ".2em", marginTop: 2 }}>{"✦".repeat(gt)}</div>
+                </div>;
+              })()}
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
                 transformOrigin: "0 50%", transform: `rotate(${stride.angle + 180}deg)`,

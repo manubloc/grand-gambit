@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.89
+- STATIONSNAMEN-TOENE JETZT AUS DEN KARTEN SELBST: der Schein hinter jedem Namen wurde pro Liga aus den FREIEN FLAECHEN des jeweiligen Gemaeldes GESAMPELT (hellstes Luminanz-Band, Glanzlichter uebersprungen, +12% Licht fuer die Tinte) - Fruehling Wiesen-Pergament, Sommer Olivgold, Wueste Sandgold, Meer Graublau der See usw.; dazu DEUTLICH TRANSPARENTER (Halo .58/.38 statt .95/.78, Textschatten .55)
+- GAMBIT STEHT HOEHER auf der Karte (Fuesse ueber dem Ankerpunkt, -102%) - er verdeckt keine Stationsnamen mehr
+- GAMBIT IST ANTIPPBAR: ein Tipp laesst ihn auf 132% vortreten (goldener Schein) und oeffnet ueber seinem Kopf ein kleines Rang-Blatt - Level, Stufe (I-VI) und die Funken-Kette; zweiter Tipp schliesst
+
 ## 0.21.88
 - DAS BOOT IST JETZT EIN LEBENSWERK: 2400 Gold statt 140 - die Passage aufs Endlose Meer will ueber die ganze Reise ERSPART sein (neue Test-Invarianten: Boot >= 2000, Einkommen der Ligen 1-9 deckt es locker; Liga-1-Invariante zaehlt nur noch Liga-1-Schluessel)
 - NAHANSICHT RICHTIG GEBAUT: freies PINCH-ZOOM bis 200% (zwei Finger), Ein-Finger-Ziehen verschiebt den Ausschnitt (Tippen bleibt Zug - nach einem Zieh-Manoever wird der versehentliche Tap geschluckt), am Desktop zoomt das Mausrad; KEIN Scrollbalken mehr (Transform statt Scroll). Der LUPEN-KNOPF sitzt jetzt UNTEN RECHTS im Brettfenster - weit weg vom Aufgeben-Knopf; Ausschalten setzt die Ansicht zurueck
