@@ -18,6 +18,7 @@ export function makePiece(spec) {
     abilities: spec.abilities ? [...spec.abilities] : [],
     shield: spec.shield ?? 0,
     ...(spec.hero ? { hero: true } : {}),
+    ...(spec.big ? { big: true } : {}),   // the 2x2 dragon
     used: {},
     hasMoved: false,
     // Optional extensions (bosses & special units) — copied verbatim when given.
@@ -37,7 +38,7 @@ export function makePiece(spec) {
 export const emptyBoard = (n = NUM_SQUARES) => new Array(n).fill(null);
 
 export function clonePiece(p) {
-  return p && { ...p, abilities: [...p.abilities], used: { ...p.used } };
+  return p && { ...p, abilities: [...(p.abilities || [])], used: { ...(p.used || {}) } }; // wing markers travel lean
 }
 export function cloneBoard(board) {
   return board.map(clonePiece);

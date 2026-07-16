@@ -143,7 +143,7 @@ export function buildArmyFrom(levelOf, flank = ["knight", "knight"], chosenOf = 
     const char = CHARACTERS[charId];
     const level = Math.max(1, levelOf(charId) || 1);
     const { abilities, shield } = resolveCharacter(char, level, chosenOf ? chosenOf(charId) : null);
-    return { kind: char.kind, level, abilities, shield, ...boostSpec(char, boostOf && boostOf(charId)), ...(char.moveSpec ? { moveSpec: char.moveSpec } : {}) };
+    return { kind: char.kind, level, abilities, shield, ...boostSpec(char, boostOf && boostOf(charId)), ...(char.moveSpec ? { moveSpec: char.moveSpec } : {}), ...(char.big ? { big: true } : {}) };
   });
   const pl = Math.max(1, levelOf("pawn") || 1);
   const pr = resolveCharacter(CHARACTERS.pawn, pl, chosenOf ? chosenOf("pawn") : null);
@@ -172,7 +172,7 @@ export const defaultFormation = () => DEFAULT_BACK_RANK.map((k) => KIND_TO_CHAR[
 
 export function formationCounts(formation) {
   const c = {};
-  for (const id of formation || []) c[id] = (c[id] || 0) + 1;
+  for (const id of formation || []) if (id != null) c[id] = (c[id] || 0) + 1;
   return c;
 }
 
@@ -181,8 +181,16 @@ export function formationCounts(formation) {
 export function formationLegal(formation, unlockedIds) {
   if (!Array.isArray(formation) || formation.length !== BACK_SIZE) return false;
   const unlocked = new Set(unlockedIds);
+  // THE BIG DRAGON: only at the very edge; the slot beside him stays EMPTY
+  // (null) — his wing claims it. One dragon per army.
+  const dLeft = formation[0] === "dragon", dRight = formation[BACK_SIZE - 1] === "dragon";
+  const wingIdx = dLeft ? 1 : dRight ? BACK_SIZE - 2 : -1;
+  if (formation.includes("dragon") && !dLeft && !dRight) return false;
+  if (dLeft && dRight) return false;
   let flex = 0;
-  for (const id of formation) {
+  for (let i = 0; i < formation.length; i++) {
+    const id = formation[i];
+    if (id == null) { if (i !== wingIdx) return false; continue; }  // only the wing slot may be empty
     const ch = CHARACTERS[id];
     if (!ch || ch.kind === KIND.PAWN || !unlocked.has(id)) return false;
     if (FORMATION_REQUIRED[id] === undefined) {
@@ -190,9 +198,10 @@ export function formationLegal(formation, unlockedIds) {
       flex++;
     }
   }
+  if (wingIdx >= 0 && formation[wingIdx] != null) return false;
   const c = formationCounts(formation);
   for (const [id, n] of Object.entries(FORMATION_REQUIRED)) if ((c[id] || 0) !== n) return false;
-  return flex === FORMATION_FLEX_COUNT;
+  return flex === FORMATION_FLEX_COUNT - (wingIdx >= 0 ? 1 : 0);
 }
 
 /** Build an army from an explicit back-rank formation (array of character ids). */
@@ -205,7 +214,9 @@ export const isBossEntry = (id) => typeof id === "string" && id.startsWith("boss
 export const bossEntryId = (id) => (isBossEntry(id) ? id.slice(5) : null);
 
 export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boostOf = null) {
+  // (null slots — the dragon's wing — become empty back-rank squares)
   const back = formation.map((id) => {
+    if (id == null) return null;                   // the dragon's wing: an open square
     if (isBossEntry(id)) {
       const b = bossById(bossEntryId(id));
       if (b) return { ...bossSpec(b) };            // the boss marches: stats, moves & aura
@@ -213,7 +224,7 @@ export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boos
     const ch = CHARACTERS[id];
     const level = Math.max(1, levelOf(id) || 1);
     const { abilities, shield } = resolveCharacter(ch, level, chosenOf ? chosenOf(id) : null);
-    return { kind: ch.kind, level, abilities, shield, ...boostSpec(ch, boostOf && boostOf(id)), ...(ch.moveSpec ? { moveSpec: ch.moveSpec } : {}) };
+    return { kind: ch.kind, level, abilities, shield, ...boostSpec(ch, boostOf && boostOf(id)), ...(ch.moveSpec ? { moveSpec: ch.moveSpec } : {}), ...(ch.big ? { big: true } : {}) };
   });
   const pl = Math.max(1, levelOf("pawn") || 1);
   const pr = resolveCharacter(CHARACTERS.pawn, pl, chosenOf ? chosenOf("pawn") : null);
@@ -261,7 +272,7 @@ function heroSpec(profile) {
   const ch = CHARACTERS.gambit;
   const level = Math.max(1, characterLevel(profile, "gambit") || 1);
   const { abilities, shield } = resolveCharacter(ch, level, chosenAbilities(profile, "gambit"));
-  return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level) };
+  return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level), ...(ch.big ? { big: true } : {}) };
 }
 
 /** Foresight: if the army that will take the field carries a SEER — the

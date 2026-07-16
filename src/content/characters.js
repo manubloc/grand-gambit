@@ -227,13 +227,18 @@ flavorDe: "Sein Schild hat mehr Schlachten gesehen als mancher General.", flavor
   dragon: {
     id: "dragon", kind: KIND.DRAGON, glyph: "🐉", nameDe: "Drache", nameEn: "Dragon",
 flavorDe: "Jung, gierig und fest überzeugt, dass alles Gold ihm gehört.", flavorEn: "Young, greedy, and firmly convinced all gold is his.",
-    unlock: { type: "boss" }, flank: true,
-    moveSpec: { leaps: [[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1],[2,2],[2,-2],[-2,2],[-2,-2]] },
+    // THE BIG ONE: he claims a 2x2 block on the board. Deploying him costs
+    // the neighbouring piece and both pawns in front. On foot he is slow
+    // (one square), but his weight bruises everything pressed against the
+    // block — and once per game, the wings carry him.
+    unlock: { type: "boss" }, flank: true, big: true, costValue: 860,
     ladder: [
       { level: 2, shield: 1 },
-      { level: 4, ability: "ranged_shot" },
-      { level: 7, ability: "lifesteal" },
-      { level: 9, ability: "ranged_volley" },
+      { level: 3, ability: "dragon_flight" },
+      { level: 5, shield: 1 },
+      { level: 6, ability: "dragon_flight2" },
+      { level: 8, shield: 1 },
+      { level: 9, ability: "dragon_flight3" },
     ],
   },
   mage: {

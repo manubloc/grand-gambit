@@ -151,6 +151,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [scoutSel, setScoutSel] = useState(null);
   function scoutTap(i) {                 // swap two OWN pieces during the online scout
     const pc = state.board[i];
+    if (pc && (pc.kind === "D+" || (pc.big && pc.kind === "D"))) { setScoutSel(null); return; } // the block stays put
     if (scoutSel == null) { if (pc && pc.color === myColor) setScoutSel(i); return; }
     if (i === scoutSel) { setScoutSel(null); return; }
     if (!pc || pc.color !== myColor) { setScoutSel(null); return; }

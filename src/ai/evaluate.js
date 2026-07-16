@@ -9,7 +9,7 @@ export function evaluate(state, color) {
   const W = state.w ?? FILES, H = state.h ?? RANKS;
   for (let i = 0; i < b.length; i++) {
     const p = b[i];
-    if (!p) continue;
+    if (!p || p.kind === "D+") continue;   // dragon wing markers carry no worth of their own
     let v = (VALUE[p.kind] || 0) + (p.hero ? 140 : 0);
     if (hp) v *= p.maxHp ? p.hp / p.maxHp : 1;
     else if (p.kind !== "K") v += p.shield * SHIELD_VALUE;

@@ -27,7 +27,7 @@ export const DEFAULT_MAP = {
 function placeBack(board, rank, color, specs, w, holes) {
   for (let f = 0; f < w; f++) {
     const i = idx(f, rank, w);
-    if (holes.has(i)) continue;
+    if (holes.has(i) || !specs[f]) continue;       // null spec = the dragon's wing slot
     board[i] = makePiece({ ...specs[f], color });
   }
 }
@@ -62,12 +62,34 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
   placePawns(board, map.back.blackPawn, BLACK, blackArmy.pawn, w, holes, blackArmy.hero || null);
   placeBack(board, map.back.blackBack, BLACK, blackArmy.back, w, holes);
 
+  // ── THE BIG DRAGON unfolds: a spec with `big` claims a 2x2 block. The
+  // anchor sits on the lower-left of the block; the neighbouring column's
+  // piece and BOTH pawns in front make way (that is his price). If terrain
+  // (holes/edges) forbids the block, he stays a humble 1x1 legacy dragon. ──
+  for (let i = 0; i < board.length; i++) {
+    const pc = board[i];
+    if (!pc || pc.kind !== "D" || !pc.big || pc._unfolded) continue;
+    const f = i % w, r = (i / w) | 0;
+    const fn = f < w - 1 ? f + 1 : f - 1;                       // neighbour column, inward
+    const rp = pc.color === WHITE ? r + 1 : r - 1;              // pawn rank in front
+    const fa = Math.min(f, fn), ra = Math.min(r, rp);
+    const a = idx(fa, ra, w);
+    const cells = [a, a + 1, a + w, a + w + 1];
+    const ok = fa >= 0 && fa <= w - 2 && ra >= 0 && ra <= h - 2 && cells.every((c) => !holes.has(c));
+    if (!ok) { pc.big = false; continue; }
+    for (const c of cells) if (c !== i) board[c] = null;        // the price: neighbour + two pawns
+    board[i] = null;
+    pc._unfolded = true;
+    board[a] = pc;
+    for (const c of cells) if (c !== a) board[c] = { kind: "D+", color: pc.color, ref: a };
+  }
+
   // HP ruleset: give every piece hit points + attack power. A progression
   // "shield" charge folds into +max HP, so leveled pieces are simply tankier.
   const rifts = { w: 0, b: 0 };
   if (rules === "hp") {
     for (const p of board) {
-      if (!p) continue;
+      if (!p || p.kind === "D+") continue;  // wing markers share the dragon's life, not their own
       const lvl = p.level || 1;
       // the crowned head hardens FASTER: +2 HP per level (others +1) — a
       // leveled court must besiege the king, not burst him

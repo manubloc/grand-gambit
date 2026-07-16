@@ -268,9 +268,49 @@ function FormationEditor({ profile, dispatch, t, en }) {
   const legal = formationLegalOn(draft, unlockedIds, map, ownedLeagueBosses(profile));
   const changed = JSON.stringify(draft) !== JSON.stringify(saved);
   const counts = formationCounts(draft);
-  const flexCount = draft.filter((id) => required[id] === undefined).length;
+  const dragonFielded = draft[0] === "dragon" || draft[draft.length - 1] === "dragon";
+  const flexCount = draft.filter((id) => id != null && required[id] === undefined).length;
+  // the wing eats one flex slot: show the reduced requirement so the chip stays honest
 
-  const setSlot = (i, id) => { setDraft((d) => { const n = [...d]; n[i] = id; return n; }); setPick(null); };
+  const [dragonAsk, setDragonAsk] = useState(null); // { slot, wing } awaiting consent
+  const setSlot = (i, id) => {
+    if (id === "dragon") {
+      const last = draft.length - 1;
+      if (i !== 0 && i !== last) { setDragonAsk({ slot: -1 }); return; }   // -1 = "edge only" notice
+      setDragonAsk({ slot: i, wing: i === 0 ? 1 : last - 1 });
+      return;
+    }
+    setDraft((d) => {
+      const n = [...d]; n[i] = id;
+      // the dragon left this slot (or his wing got filled): restore the wing
+      const last = n.length - 1;
+      if (n[0] !== "dragon" && n[1] == null) n[1] = "knight";
+      if (n[last] !== "dragon" && n[last - 1] == null) n[last - 1] = "knight";
+      return n;
+    });
+    setPick(null);
+  };
+  const confirmDragon = () => {
+    const { slot, wing } = dragonAsk;
+    setDraft((d) => {
+      const n = [...d];
+      // clear a previous dragon elsewhere
+      const last = n.length - 1;
+      if (n[0] === "dragon" && slot !== 0) { n[0] = "knight"; if (n[1] == null) n[1] = "knight"; }
+      if (n[last] === "dragon" && slot !== last) { n[last] = "knight"; if (n[last - 1] == null) n[last - 1] = "knight"; }
+      n[slot] = "dragon"; n[wing] = null;
+      return n;
+    });
+    // the Grand Gambit never falls to the wing: if his file lies under the
+    // block, he steps one column aside (inward)
+    const hc = heroColFor(profile, map);
+    const covered = slot === 0 ? [0, 1] : [draft.length - 2, draft.length - 1];
+    if (covered.includes(hc)) {
+      const safe = slot === 0 ? 2 : draft.length - 3;
+      dispatch({ type: "SET_HERO_COL", mapId: map.id, col: safe });
+    }
+    setDragonAsk(null); setPick(null);
+  };
   const reqChips = Object.entries(required).map(([id, need]) => ({ id, need, have: counts[id] || 0 }));
 
   // Full-board live preview: exactly the starting position this formation
@@ -334,7 +374,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
           style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
             display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0,
             background: open ? T.lime : T.bg2, border: `2px solid ${open ? T.lime : T.line}` }}>
-          {isBossEntry(id)
+          {id == null
+            ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
+            : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
                 style={{ height: "clamp(18px, 7vw, 34px)", objectFit: "contain", pointerEvents: "none" }} />
             : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={"painted"} />}
@@ -342,6 +384,26 @@ function FormationEditor({ profile, dispatch, t, en }) {
       })}
     </div>
 
+    {dragonAsk && (
+      <div style={{ background: T.bg2, border: `1.5px solid ${T.gold}66`, borderRadius: 10, padding: "11px 12px", marginBottom: 10 }}>
+        {dragonAsk.slot === -1 ? (
+          <>
+            <div style={{ fontSize: 12.5, lineHeight: 1.55, color: T.text }}>{t("army.dragonEdgeOnly")}</div>
+            <div style={{ marginTop: 9 }}><Button variant="subtle" onClick={() => setDragonAsk(null)}>{t("common.ok")}</Button></div>
+          </>
+        ) : (
+          <>
+            <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".08em", color: T.gold, marginBottom: 4 }}>🐉 {t("army.dragonAskTitle")}</div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.55, color: T.text }}>
+              {t("army.dragonAsk", { p: (() => { const w = draft[dragonAsk.wing]; const nm = w && !isBossEntry(w) ? (en ? CHARACTERS[w].nameEn : CHARACTERS[w].nameDe) : "—"; return nm; })() })}</div>
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <Button variant="primary" onClick={confirmDragon}>{t("army.dragonYes")}</Button>
+              <Button variant="subtle" onClick={() => setDragonAsk(null)}>{t("common.cancel")}</Button>
+            </div>
+          </>
+        )}
+      </div>
+    )}
     {pick !== null && (
       <div style={{ background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, padding: 8, marginBottom: 10 }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -415,7 +477,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
           <SlotGlyph kind={CHARACTERS[r.id].kind} size={13} art={"painted"} /> {r.have}/{r.need}
         </Chip>
       ))}
-      <Chip color={flexCount === flexNeed ? T.green : T.danger} bg={T.panel2}>{t("army.flex")} {flexCount}/{flexNeed}</Chip>
+      <Chip color={flexCount === flexNeed - (dragonFielded ? 1 : 0) ? T.green : T.danger} bg={T.panel2}>{t("army.flex")} {flexCount}/{flexNeed - (dragonFielded ? 1 : 0)}</Chip>
     </div>
 
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>

@@ -1,5 +1,7 @@
 # DER DRACHE (2×2) — Umbauplan
 
+> **STATUS: UMGESETZT in v0.21.63** (Pakete 1+2 komplett, Paket 3 via test_dragon.mjs + KI-Vollpartie abgedeckt). Offene Autor-Punkte unten sind entschieden: Flug L3: 2 / L6: 3 / L9: 4 Felder; Mehrfeld-Attacke AUTOMATISCH (Gewichts-Aura ceil(atk/2) auf alle angrenzenden Feinde nach jedem Setzen).
+
 Der Drache wird die erste GROSSE Figur des Spiels: er belegt dauerhaft 2×2
 Felder. Das greift in fast jede Schicht der Engine — dieser Plan hält die vom
 Autor festgelegte Spezifikation fest und staffelt die Umsetzung.

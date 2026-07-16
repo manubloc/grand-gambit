@@ -141,6 +141,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
 
   function tap(i) {
     if (!interactive) return;
+    const w0 = state.board[i];
+    if (w0 && w0.kind === "D+") i = w0.ref;        // a wing tap is a dragon tap
     if (pick && onPick) { const pc = state.board[i]; if (pc && pc.color === pick) onPick(i); return; }
     if (sel != null && targets.has(i)) { onMove(targets.get(i)); setSel(null); return; }
     const piece = state.board[i];
@@ -158,7 +160,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         cells.push(<div key={i} style={{ background: "#07090d", boxShadow: "inset 0 1px 6px rgba(0,0,0,.8)" }} />);
         continue;
       }
-      const piece = state.board[i];
+      let piece = state.board[i];
+      const isWing = piece && piece.kind === "D+";
+      const isBigAnchor = piece && piece.big && piece.kind === "D";
+      if (isWing || isBigAnchor) piece = null;     // drawn by the 2x2 overlay instead
       const dark = (f + r) % 2 === 1;
       const tgt = targets.get(i);
       const isSel = sel === i;
@@ -251,6 +256,25 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}
+        {/* ── THE BIG DRAGON: one sprite over four squares ── */}
+        {state.board.map((pc, a) => {
+          if (!pc || !pc.big || pc.kind !== "D") return null;
+          const f0 = a % W, r0 = (a / W) | 0;
+          const dc = flip ? W - 2 - f0 : f0;
+          const dr = flip ? r0 : H - 2 - r0;
+          const selHere = sel === a;
+          return (
+            <div key={"drg" + a} onClick={() => tap(a)} style={{ position: "absolute", zIndex: 2,
+              left: `calc(${(dc / W) * 100}% )`, top: `calc(${(dr / H) * 100}% )`,
+              width: `${(2 / W) * 100}%`, height: `${(2 / H) * 100}%`,
+              display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default",
+              borderRadius: 10,
+              boxShadow: selHere ? "inset 0 0 0 3px rgba(240,214,138,.85), 0 0 18px rgba(240,214,138,.35)" : "none",
+              fontSize: `calc(${typeof glyph === "string" ? glyph : glyph + "px"} * 1.88)` }}>
+              <PieceGlyph piece={pc} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+            </div>
+          );
+        })}
         {/* the hall's light: a warm heart, night pressing in from the rim */}
         <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
           background: `radial-gradient(62% 54% at 50% 42%, rgba(255,214,120,.12), transparent 68%),

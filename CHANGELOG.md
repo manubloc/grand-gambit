@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.63
+- DER DRACHE IST GROSS (2x2): er belegt jetzt echte vier Felder. AUFSTELLUNG nur ganz aussen; sein Preis: der Nachbarplatz wird zur Drachenschwinge (leer) und die beiden Bauern davor weichen - mit Bestaetigungs-Abfrage im Editor ("Platz machen?"), der Grand Gambit tritt automatisch zur Seite, Rueckbau fuellt die Schwinge wieder
+- ZU FUSS langsam (der ganze Block schiebt sich 1 Feld, nie auf Figuren), dafuer GEWICHTS-AURA: nach jedem Setzen nehmen ALLE an den Block gedraengten Feinde ceil(atk/2) Schaden (automatisch, wie besprochen)
+- FLIEGEN einmal pro Partie (Faehigkeit L3, Reichweite 2; Weite Schwingen L6: 3; Sturmschwingen L9: 4): der Block springt, Landung auf Gegnern trifft JEDES bedeckte Feld direkt - ueberleben nicht alle, faellt er auf sein Ursprungsfeld zurueck (der Schlag zaehlt trotzdem; steht woertlich in der Faehigkeits-Beschreibung). Im Klassik-Regelwerk darf er den Koenig nie ersticken
+- TECHNIK: Schwingen-Marker (D+) leiten Treffer auf den Drachen um, sein Tod raeumt alle vier Zellen, Marker blocken Linien, tragen keine eigenen HP und zaehlen der KI nichts; Zuege/Hash/Speicherstaende bleiben deterministisch. ALTE Spielstaende mit 1x1-Drachen laufen unveraendert weiter (big-Flag nur auf neu gebauten Armeen)
+- 19 neue Drachen-Tests inkl. KI-Vollpartie (395 gesamt)
+
 ## 0.21.62
 - DIE HELLSEHERIN IST DA: eigene Championfigur (Kind SE, sanfte Mystikerin: Damen-Linien mit 2 Feldern Reichweite, HP 3 / ATK 2, Leiter mit Teleport + Fernschuss). Neue Station MONDWARTE (e3) im Wisdom-Zweig direkt hinter der Sturmfeste, spaet in Liga I, 2 Siege - Position auf allen 10 gemalten Ligakarten gesetzt, eigene Vektor-Silhouette, gemaltes Portraet, Sage-Stimme (Herold + Antwort)
 - HELLSICHT PRO FAMILIE: die Gabe liegt jetzt bei EINEM Seher je Haus - KRONE: Hellseherin, SCHATTEN: Spaeher (Falke). Die Hexerin gibt die Gabe ab; online zaehlen die Kinds SE und H

@@ -177,6 +177,9 @@ export function pieceMoves(state, sqIndex) {
   if ((piece.kind === KIND.BISHOP || piece.kind === KIND.ARCHBISHOP) && hasAbility(piece, "bishop_ortho_step"))
     for (const [df, dr] of ORTHO) step(moves, from, f + df, r + dr, piece, board, D, { special: "step", consumes: "bishop_ortho_step" });
 
+  if (piece.big && piece.kind === "D") { bigDragonMoves(moves, from, piece, board, { ...D, rules: state.rules }); return moves; }
+  if (piece.kind === "D+") return moves; // wing markers never move themselves
+
   // ── data-driven movement (bosses / special units): a moveSpec on the piece
   // REPLACES its normal movement. Leaps are single jumps; slides are rays with
   // an optional max range; `spawn` lets the piece create a pawn on an empty
@@ -257,4 +260,55 @@ export function pseudoMoves(state, color) {
     }
   }
   return out;
+}
+
+// ── THE BIG DRAGON (2x2): one piece, four squares ────────────────────────────
+// The anchor is the block's lower-left index; the other three cells carry
+// markers { kind: "D+", color, ref: anchor }. Legacy 1x1 dragons (no `big`
+// flag) keep their old leap moveSpec untouched.
+export const dragonBlock = (a, w) => [a, a + 1, a + w, a + w + 1];
+export const dragonAnchorOf = (board, i) => {
+  const pc = board[i];
+  if (!pc) return -1;
+  if (pc.kind === "D+") return pc.ref;
+  return pc.big && pc.kind === "D" ? i : -1;
+};
+function dragonBlockFree(board, holes, w, h, a, self, forColor, allowEnemies, noKing) {
+  const f = a % w, r = (a / w) | 0;
+  if (f < 0 || f > w - 2 || r < 0 || r > h - 2) return false;
+  for (const c of dragonBlock(a, w)) {
+    if (holes && holes.has(c)) return false;
+    const oc = board[c];
+    if (!oc) continue;
+    if (oc === self || (oc.kind === "D+" && oc.ref !== undefined && board[oc.ref] === self)) continue;
+    if (!allowEnemies) return false;
+    if (oc.color === self.color) return false;
+    if (noKing && oc.kind === "K") return false; // may never smother the king
+  }
+  return true;
+}
+function bigDragonMoves(moves, from, piece, board, D) {
+  const { w, h, holes, rules } = D;
+  // ON FOOT: painfully slow — the whole block shifts one square, never onto
+  // anyone. His weight does the fighting (the aura), not the walking.
+  for (const d of [-1, 1, -w, w]) {
+    const a2 = from + d;
+    if (dragonBlockFree(board, holes, w, h, a2, piece, piece.color, false, false))
+      moves.push({ from, to: a2, special: "dragonStep" });
+  }
+  // FLIGHT: once per game, range grows with the unlocked wing. Landing on foes
+  // is a direct strike on every covered square — survivors throw him back.
+  const abil = piece.abilities || [];
+  if (abil.includes("dragon_flight") && !(piece.used || {}).dragon_flight) {
+    const range = 2 + (abil.includes("dragon_flight2") ? 1 : 0) + (abil.includes("dragon_flight3") ? 1 : 0);
+    const f0 = from % w, r0 = (from / w) | 0;
+    for (let df = -range; df <= range; df++) for (let dr = -range; dr <= range; dr++) {
+      if (!df && !dr) continue;
+      const a2 = from + df + dr * w;
+      const f2 = f0 + df, r2 = r0 + dr;
+      if (f2 < 0 || f2 > w - 2 || r2 < 0 || r2 > h - 2) continue;
+      if (dragonBlockFree(board, holes, w, h, a2, piece, piece.color, true, rules !== "hp"))
+        moves.push({ from, to: a2, special: "dragonFly" });
+    }
+  }
 }
