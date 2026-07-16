@@ -6,7 +6,7 @@ import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
 import logoUrl from "../assets/logo.webp";
 import { LeagueShield } from "../LeagueShield.jsx";
-import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave, withProgressPct,
+import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
 
 const STR = {
@@ -28,7 +28,6 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
   const [lang, setLang] = useState(initialLang);
   const [saves, setSaves] = useState(__testSaves);
   const [confirmDel, setConfirmDel] = useState(null);
-  const [adminSlot, setAdminSlot] = useState(null);
   const [adminPct, setAdminPct] = useState(100);
   const s = STR[lang];
 
@@ -41,12 +40,6 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
 
   const open = async (slot) => { const p = await loadSave(account.id, slot.id); if (p) onOpen(slot, p); };
   const create = async () => { const e = await createSave(account.id, null); const p = await loadSave(account.id, e.id); onOpen(e, p); };
-  const applyAdmin = async (slot, pct) => {
-    const prof = await loadSave(account.id, slot.id);
-    if (!prof) return;
-    await writeSave(account.id, slot.id, withProgressPct(prof, pct));
-    setAdminSlot(null); await refresh();
-  };
 
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
@@ -108,25 +101,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
                 {confirmDel === sv.id ? s.delSure : <TrashIc size={15} />}
               </button>
             </div>
-            {account.isAdmin && (
-              adminSlot === sv.id
-                ? <div style={{ marginTop: 10, borderTop: `1px dashed ${T.line}`, paddingTop: 9 }}>
-                    <div style={{ color: T.gold, fontSize: 12.5, fontWeight: 800, marginBottom: 2 }}>{s.admin}</div>
-                    <div style={{ color: T.dim, fontSize: 11.5, marginBottom: 7 }}>{s.adminHint}</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                      <button onClick={() => setAdminPct(0)} style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 9, padding: "6px 10px", fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{s.zero}</button>
-                      <input type="range" min="0" max="100" step="5" value={adminPct} onChange={(e) => setAdminPct(+e.target.value)} style={{ flex: 1, accentColor: T.gold }} />
-                      <button onClick={() => setAdminPct(100)} style={{ background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 9, padding: "6px 10px", fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{s.full}</button>
-                      <div style={{ color: T.text, fontWeight: 800, width: 44, textAlign: "right" }}>{adminPct}%</div>
-                    </div>
-                    <button onClick={() => applyAdmin(sv, adminPct)} style={{ marginTop: 8, width: "100%", background: "rgba(201,164,92,.7)",
-                      border: "1px solid rgba(255,240,200,.5)", color: "#17110a", borderRadius: 10, padding: "9px 12px",
-                      fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, cursor: "pointer" }}>{s.apply}</button>
-                  </div>
-                : <button onClick={() => { setAdminSlot(sv.id); setAdminPct(sv.pct ?? 0); }}
-                    style={{ marginTop: 9, background: "none", border: "none", color: T.gold, fontFamily: "inherit",
-                      fontSize: 12, cursor: "pointer", padding: 0, textDecoration: "underline" }}>⚙ {s.admin}</button>
-            )}
+
           </div>
         ))}
         <button onClick={create} style={{ background: "none", border: `1.5px dashed ${T.gold}66`, color: T.gold,

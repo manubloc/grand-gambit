@@ -36,20 +36,26 @@ export function leagueOrder(league = 1) {
  * the league and unlocks generously; anything between clears the first k
  * sites in journey order with proportional purse.
  */
-export function withProgressPct(profile, pct) {
+export function withProgressPct(profile, pct, league = 1) {
   const p = Math.max(0, Math.min(100, Math.round(pct)));
+  const lg = Math.max(1, Math.round(league));
+  const biome = ((lg - 1) % 10) + 1;
   const base = defaultProfile();
   const keep = { name: profile.name, lang: profile.lang, online: profile.online, notices: profile.notices, difficulty: profile.difficulty };
-  if (p === 0) return { ...base, ...keep };
-  const order = leagueOrder(1);
+  // the Endless Sea (X) sits behind its toll: captain + boat travel along
+  const seaKit = biome === 10 ? { unlocked: ["captain"], items: { boat: 1 } } : { unlocked: [], items: {} };
+  if (p === 0) return { ...base, ...keep,
+    items: { ...seaKit.items },
+    campaign: { ...base.campaign, league: lg, unlocked: [...new Set([...(base.campaign?.unlocked || []), ...seaKit.unlocked])] } };
+  const order = leagueOrder(lg);
   const k = Math.round((p / 100) * order.length);
   const cleared = order.slice(0, k);
   const bosses = CAMPAIGN.filter((n) => cleared.includes(n.id) && n.boss?.piece).map((n) => n.boss.piece);
   return {
     ...base, ...keep,
-    gold: 90 * k, sp: 3 * k, xp: 130 * k, xpEarned: 130 * k,
-    items: { potion: p === 100 ? 5 : Math.floor(k / 8) },
-    campaign: { league: 1, cleared, unlocked: [...new Set(bosses)], dupes: {} },
+    gold: 90 * k + (lg - 1) * 300, sp: 3 * k + (lg - 1) * 10, xp: 130 * k * lg, xpEarned: 130 * k * lg,
+    items: { potion: p === 100 ? 5 : Math.floor(k / 8), ...seaKit.items },
+    campaign: { league: lg, cleared, unlocked: [...new Set([...bosses, ...seaKit.unlocked])], dupes: {} },
   };
 }
 

@@ -493,26 +493,22 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           <MapPinIc size={21} />
         </button>
         {viewLeague > 1 && (
-          <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
-            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-            cursor: "pointer", background: "rgba(8, 11, 20, .42)",
-            border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
-            padding: "8px 16px 8px 12px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
-            boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
-            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            <span style={{ fontSize: 16, lineHeight: 1 }}>‹</span> {ROMAN[viewLeague - 2] || viewLeague - 1}
+          <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague - 2] || viewLeague - 1}
+            style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
+              display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            <BackIc size={19} />
           </button>
         )}
         <div style={{ flex: 1 }} />
         {viewLeague < league && (
-          <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
-            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-            cursor: "pointer", background: "rgba(8, 11, 20, .42)",
-            border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
-            padding: "8px 12px 8px 16px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
-            boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
-            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            {ROMAN[viewLeague] || viewLeague + 1} <span style={{ fontSize: 16, lineHeight: 1 }}>›</span>
+          <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague] || viewLeague + 1}
+            style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
+              display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            <span style={{ transform: "scaleX(-1)", display: "grid" }}><BackIc size={19} /></span>
           </button>
         )}
         {!viewing && nodeStatus(profile, "n22") === "cleared" && (

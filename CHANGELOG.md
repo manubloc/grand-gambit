@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.86
+- KARTE: das Liga-Blaettern sind jetzt runde GOLD-PFEILE (links/rechts, gleicher Siegel-Stil) - der Karten-Nadel-Knopf bleibt ganz links
+- WERKBANK: der SPIELFORTSCHRITT-REGLER ist von der Spielstand-Karte in die Werkbank umgezogen (alte Stelle entfernt) und wirkt jetzt auf die GEWAEHLTE LIGA statt stur auf Liga 1
+- LIGA-10-BUG BEHOBEN: der Liga-Sprung setzt die Reise sauber auf (frisches cleared, Tore geleert) - und das ENDLOSE MEER kommt automatisch mit Kapitaen + Boot ausgestattet, sonst sperrte die Meer-Maut die komplette Karte ("bei 10 kann man nichts spielen")
+
 ## 0.21.85
 - GROSSE EMOJI-JAGD: die komplette App wurde nach Emoji-Symbolen durchkaemmt - alles jetzt handgezeichnet im Haus-Gold. NEU GEZEICHNET: gekreuzte Klingen, Seherkugel, Anker, Ruderboot, Wellen-Siegel, Wachs-Haken + Pflicht-Kaestchen, Gold-Sanduhr, vergoldeter Schaedel
 - AKADEMIE: alle Lektions-Icons auf Schatz-Gold umgestellt (Gold-Herz + Klingen, Sanduhr, Schaedel, Funke + Wimpel, Muenze); Stern-Emoji in den Texten durch den Funken ersetzt
