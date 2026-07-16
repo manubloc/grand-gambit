@@ -206,6 +206,20 @@ export default function App() {
   }, [account, slot]);
 
   if (!authReady) return null;
+  // ANDROID/PWA BACK: inside a match the back gesture must fall back to the
+  // hall, never kill the app. This hook lives ABOVE the login early-returns —
+  // hooks must run in the same order on every render (React #310).
+  const inMatchNow = !!match || !!pvp || !!quick;
+  useEffect(() => {
+    if (!inMatchNow) return;
+    try { window.history.pushState({ gg: "match" }, ""); } catch {}
+    const onPop = () => {
+      if (pvp) setPvp(null); else if (match) setMatch(null); else if (quick) setQuick(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [inMatchNow]);
+
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
     onLogout={async () => { await clearSession(); await signOutCloud(); setAccount(null); }}
@@ -251,17 +265,6 @@ export default function App() {
               onLogout={async () => { await clearSession(); await signOutCloud(); setSlot(null); setAccount(null); }} />;
 
   const inMatch = !!match || !!pvp || !!quick;
-  // ANDROID/PWA BACK: inside a match the back gesture must fall back to the
-  // hall, never kill the app — we park one history entry and catch the pop.
-  useEffect(() => {
-    if (!inMatch) return;
-    try { window.history.pushState({ gg: "match" }, ""); } catch {}
-    const onPop = () => {
-      if (pvp) setPvp(null); else if (match) setMatch(null); else if (quick) setQuick(null);
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, [inMatch]);
   // map & match immersion (v0.3/v0.4): the campaign map and every running
   // match fill the screen — the shell locks to 100dvh, UI floats above
   const immersive = inMatch || (tab === "play" && view === "camp");
