@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.94
+- DER HOFSTAAT (vormals Chronik) IST JETZT REITER 1 im Hofstaat-Bereich und der Standard-Einstieg; danach Aufstellung, Figuren, Ausruestung
+- KACHELN AUFGERAEUMT: die zweite Zeile unter dem Figurennamen ist weg, die Figuren dafuer deutlich groesser (68px statt 52px); Status wie "Gesichtet"/"Verbuendet" und die Herkunft stehen als kleines Eck-Kuerzel oben rechts
+- VOLLE FIGUREN-FUNKTIONEN IM HOFSTAAT: ein Tipp auf eine Figur oeffnet ihre komplette Karte als Overlay (Level, Fahigkeitsleiter, Aufwerten, Zoom) - fuer rekrutierte UND begegnete Figuren; der Bestechen-Knopf bleibt direkt auf der Kachel
+- BEITRITTS-LOGIK: rekrutierte Kronen- und Schattenfiguren RUTSCHEN HOCH in die Hofstaat-Sektion (mit Herkunfts-Vermerk "Krone"/"Schatten"), verbuendete Monster ebenso ("Verbuendet") - die Ursprungs-Sektionen zeigen nur noch die Unerreichten
+
 ## 0.21.93
 - BRETT-EBENEN STRIKT: auch die gewaehlte/vergroesserte Figur bleibt in ihrer Reihen-Ebene - eine grosse Figur in Reihe b verdeckt NIE eine Figur in Reihe a (naeher = hoeher, ausnahmslos)
 - KLICK-DURCHLASS: Figuren fangen keine Klicks mehr - das Feld direkt hinter einer vergroesserten Figur bleibt anklickbar (Klicks treffen immer die Zelle unterm Finger)

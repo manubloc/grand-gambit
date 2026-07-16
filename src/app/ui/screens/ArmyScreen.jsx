@@ -644,7 +644,7 @@ const CROWN_IDS = ["mage","guardian","bard","paladin","inquisitor","archbishop",
 const SHADOW_IDS = ["hawk","assassin","pathfinder","dragon","sorceress","alchemist","warlock","amazon","strategist","captain"];
 const COURT_IDS = ["gambit","pawn","knight","bishop","rook","queen","king"];
 const FAM_LABEL = { golem: ["Golems","Golems"], beast: ["Bestien","Beasts"], serpent: ["Schlangen","Serpents"], wraith: ["Schemen","Wraiths"], tyrant: ["Tyrannen","Tyrants"] };
-function CodexTree({ profile, dispatch, t, en }) {
+function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const met = new Set(profile.codex?.met || []);
   const unlocked = new Set(profile.campaign?.unlocked || []);
   const league = profile.campaign?.league || 1;
@@ -684,32 +684,33 @@ function CodexTree({ profile, dispatch, t, en }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, sub, dim, dark, action, glow }) => (
-    <div style={{ background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`, borderRadius: 11,
-      padding: "9px 7px 8px", textAlign: "center", minWidth: 0,
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen }) => (
+    <div onClick={onOpen} style={{ position: "relative", background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`,
+      borderRadius: 11, padding: "10px 7px 9px", textAlign: "center", minWidth: 0, cursor: onOpen ? "pointer" : "default",
       boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : undefined }}>
-      {img ? <img src={img} alt="" style={{ width: 52, height: 52, objectFit: "contain", display: "block", margin: "0 auto",
+      {origin && <span className="gg-serif" style={{ position: "absolute", top: 4, right: 6, fontSize: 8.5,
+        letterSpacing: ".08em", color: T.dim }}>{origin}</span>}
+      {img ? <img src={img} alt="" style={{ width: 68, height: 68, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
-        : <div style={{ width: 52, height: 52, display: "grid", placeItems: "center", margin: "0 auto", fontSize: 26, color: T.faint }}>?</div>}
+        : <div style={{ width: 68, height: 68, display: "grid", placeItems: "center", margin: "0 auto", fontSize: 30, color: T.faint }}>?</div>}
       <div className="gg-serif" style={{ fontSize: 11.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
-      {sub && <div style={{ fontSize: 10, color: T.dim, marginTop: 2, lineHeight: 1.3 }}>{sub}</div>}
       {action}
     </div>
   );
-  const champTile = (cid) => {
+  const [detail, setDetail] = useState(null); // a tapped figure opens its FULL card (level, ladder, upgrades)
+  const champTile = (cid, origin) => {
     const ch = CHARACTERS[cid]; if (!ch) return null;
     const img = paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: characterLevel(profile, cid) || 1 });
     const own = unlocked.has(cid) || COURT_IDS.includes(cid);
     const seen = met.has(ch.kind);
     const wins = bossWinsFor(profile, cid) || 0;
-    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow sub={t("tree.inCourt")} />;
+    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
-      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe}
-        sub={t("tree.winsSoFar", { n: wins })}
-        action={wins >= 1 ? <button onClick={() => bribe(ch)} disabled={gold < price}
+      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} onOpen={() => setDetail(cid)}
+        action={wins >= 1 ? <button onClick={(e) => { e.stopPropagation(); bribe(ch); }} disabled={gold < price}
           title={t("tree.bribeHint")}
           style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
             fontSize: 10, cursor: gold >= price ? "pointer" : "default", opacity: gold >= price ? 1 : 0.45,
@@ -721,11 +722,10 @@ function CodexTree({ profile, dispatch, t, en }) {
   const monsterTile = (b) => {
     const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
     const k = "X:" + b.id;
-    if (bribedSet.has(b.id)) return <Tile key={b.id} img={img} glow name={en ? b.nameEn : b.nameDe} sub={t("tree.allied")} />;
+    if (bribedSet.has(b.id)) return <Tile key={b.id} img={img} glow name={en ? b.nameEn : b.nameDe} origin={t("tree.allied")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);
       return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe}
-        sub={FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : ""}
         action={can ? (sacrificeFor === b.id
           ? <div style={{ marginTop: 5 }}>
               <div style={{ fontSize: 9.5, color: T.gold, marginBottom: 3 }}>{t("tree.pickSacrifice")}</div>
@@ -746,19 +746,38 @@ function CodexTree({ profile, dispatch, t, en }) {
                 background: "linear-gradient(165deg, #b78de0, #7a5ab0)", border: "1px solid rgba(226,205,255,.5)", color: "#17110a" }}>
               {t("tree.bribe", { g: MONSTER_BRIBE_GOLD })}</button>) : null} />;
     }
-    if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark name={en ? b.nameEn : b.nameDe} sub={t("tree.sighted")} />;
+    if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark name={en ? b.nameEn : b.nameDe} origin={t("tree.sighted")} />;
     return <Tile key={b.id} img={img} dark name={"???"} />;
   };
   const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))", gap: 7 };
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, margin: "14px 0 7px" }}>{children}</div>;
   const fams = ["golem", "beast", "serpent", "wraith", "tyrant"];
+  // recruits RISE into the court — each keeps a small note of where it came from
+  const crownIn = CROWN_IDS.filter((c) => unlocked.has(c));
+  const shadowIn = SHADOW_IDS.filter((c) => unlocked.has(c));
+  const alliedIn = BOSSES.filter((b) => bribedSet.has(b.id));
   return <div>
     <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
-    <H>{t("tree.court")}</H><div style={grid}>{COURT_IDS.map(champTile)}</div>
-    <H>{t("tree.crown")}</H><div style={grid}>{CROWN_IDS.map(champTile)}</div>
-    <H>{t("tree.shadow")}</H><div style={grid}>{SHADOW_IDS.map(champTile)}</div>
-    {fams.map((f) => { const list = BOSSES.filter((b) => b.art === f); return list.length
+    <H>{t("tree.court")}</H><div style={grid}>
+      {COURT_IDS.map((c) => champTile(c))}
+      {crownIn.map((c) => champTile(c, t("tree.fromCrown")))}
+      {shadowIn.map((c) => champTile(c, t("tree.fromShadow")))}
+      {alliedIn.map(monsterTile)}
+    </div>
+    <H>{t("tree.crown")}</H><div style={grid}>{CROWN_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
+    <H>{t("tree.shadow")}</H><div style={grid}>{SHADOW_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
+    {fams.map((f) => { const list = BOSSES.filter((b) => b.art === f && !bribedSet.has(b.id)); return list.length
       ? <div key={f}><H>{en ? FAM_LABEL[f][1] : FAM_LABEL[f][0]}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null; })}
+    {detail && CHARACTERS[detail] && (
+      <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
+        display: "grid", placeItems: "center", padding: 14, animation: "fade .18s ease" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: "min(94vw, 440px)", maxHeight: "86vh", overflowY: "auto",
+          borderRadius: 14, animation: "rise .22s ease" }}>
+          <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
+            onZoom={onZoom} open onToggle={() => setDetail(null)} />
+        </div>
+      </div>
+    )}
   </div>;
 }
 
@@ -767,7 +786,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
-  const [tab, setTab] = useState(initialTab || "formation"); // formation | gear | chars
+  const [tab, setTab] = useState(initialTab || "tree"); // tree (the court) first | formation | chars | gear
   // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
   const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
@@ -788,13 +807,13 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     </GildedFrame>
     {/* three rooms instead of one endless scroll */}
     <Segmented value={tab} onChange={setTab} options={[
+      { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
       { value: "chars", label: t("army.tabChars") },
-      { value: "tree", label: t("army.tabTree") },
       { value: "gear", label: t("army.tabGear") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
-    {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chars" && (
       <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>
