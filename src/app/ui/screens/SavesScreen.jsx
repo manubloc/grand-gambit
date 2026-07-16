@@ -30,7 +30,6 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
   const [confirmDel, setConfirmDel] = useState(null);
   const [adminSlot, setAdminSlot] = useState(null);
   const [adminPct, setAdminPct] = useState(100);
-  const [passNote, setPassNote] = useState(false);
   const s = STR[lang];
 
   const refresh = async () => setSaves(await listSaves(account.id));
@@ -38,7 +37,6 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
     if (__testSaves) return;   // harness: keep injected slots
     await migrateLegacyInto(account.id);
     await refresh();
-    if (account.isAdmin) setPassNote(await adminHasDefaultPass());
   })(); }, [account.id]);
 
   const open = async (slot) => { const p = await loadSave(account.id, slot.id); if (p) onOpen(slot, p); };
@@ -56,23 +54,22 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
-      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(90vw, 520px)", maxHeight: "22vh", objectFit: "contain", display: "block", marginTop: -4 }} />
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(94vw, 620px)", maxHeight: "32vh", objectFit: "contain", display: "block", marginTop: 0 }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" && <span style={{ color: T.gold }}> · Admin</span>}
         <button onClick={onLogout} className="gg-serif" style={{ background: "none", border: "none", color: T.faint,
           textDecoration: "underline", fontSize: 12.5, letterSpacing: ".05em", cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>
-      <div className="gg-serif" style={{ color: T.goldBright, fontSize: 19, letterSpacing: ".07em", margin: "10px 0 14px",
+      <div className="gg-serif" style={{ color: T.goldBright, fontSize: 14.5, letterSpacing: ".08em", margin: "8px 0 12px",
         display: "flex", alignItems: "center", gap: 8 }}>
         <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />
         {s.pick}
         <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />
       </div>
-      {passNote && <div style={{ maxWidth: 430, color: "#e0c98f", fontSize: 12.5, lineHeight: 1.5, marginBottom: 12,
-        border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}></div>}
+      
 
       <div style={{ width: "100%", maxWidth: 430, display: "flex", flexDirection: "column", gap: 10 }}>
         {saves && saves.length === 0 && <div style={{ color: T.dim, fontSize: 14, textAlign: "center", padding: "12px 0" }}>{s.empty}</div>}

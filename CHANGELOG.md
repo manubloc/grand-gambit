@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.75
+- LOGIN + SPIELSTAND final aufgeraeumt: Inhalt beginnt GANZ OBEN (kein Riesen-Abstand mehr auf Desktop - die vertikale Zentrierung ist raus), das Ritter-Bild ist GROESSER (Login 36vh/720px, Spielstand 32vh/620px) und steht als Erstes; "Waehle deinen Spielstand" kleiner (14.5 statt 19); die GEISTER-PILL unter dem Absatz ist entfernt (leere Huelle des alten Admin-Hinweises, auf beiden Schirmen geprueft); Eingabefelder und Knoepfe kompakter - und gescrollt wird ganz normal, wenn die Bildschirmhoehe nicht reicht
+
 ## 0.21.74
 - KARTE: statt "Weltkarte"-Pill jetzt ein +/- UNTEREINANDER (minus = raus zur Weltkarte, plus = zurueck in die Liga; inaktive Richtung gedimmt) - die Kapitel-Pille steht damit frei; die Kopfzeile sitzt 8px tiefer. NEBEL deutlich praesenter (Kartenfenster 0.28, Weltkarten-Schleier 0.72/0.55, groessere Schwaden)
 - BRETT: das Gluehen/Vignette des Schachbretts ist KOMPLETT entfernt; Figuren nochmal minimal groesser (0.99em) und heller (1.36), eigene Figuren weniger orange/mehr gelb (hue +8); FEINDE weisser statt blau (Saettigung 0.32, Helligkeit 1.02/1.2) - und hinter JEDER feindlichen Figur steigt ganz leiser RAUCH auf (geblurte Schwade, 5.5s-Zyklus)

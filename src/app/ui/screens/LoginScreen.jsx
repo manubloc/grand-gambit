@@ -37,7 +37,7 @@ const SHOW_EXTRA_PROVIDERS = false;
 
 const field = {
   width: "100%", boxSizing: "border-box", background: "#0d1017", border: `1px solid ${T.line}`,
-  color: T.text, borderRadius: 12, padding: "13px 14px", fontSize: 16, fontFamily: "inherit", outline: "none",
+  color: T.text, borderRadius: 12, padding: "10px 13px", fontSize: 15, fontFamily: "inherit", outline: "none",
 };
 
 function GoogleG() {
@@ -81,12 +81,12 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
-      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
       {/* the artwork carries its own night sky — no vignette, no glow, nothing
           between the eye and the wordmark at its base */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(98vw, 700px)", maxHeight: "30vh", objectFit: "contain", display: "block", marginTop: -6 }} />
-      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "12px 0 18px" }}>{s.tag}</div>
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(98vw, 720px)", maxHeight: "36vh", objectFit: "contain", display: "block", marginTop: 0 }} />
+      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 14px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>
         <input style={field} type="email" placeholder={s.email} value={email} autoComplete="username"
@@ -97,7 +97,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
         <button disabled={busy} onClick={submit} style={{ position: "relative", overflow: "hidden",
           background: "rgba(201,164,92,.8)", border: "1px solid rgba(255,240,200,.55)", color: "#17110a",
-          borderRadius: 12, padding: "13px 14px", fontFamily: "inherit", fontWeight: 800, fontSize: 15,
+          borderRadius: 12, padding: "11px 14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5,
           cursor: "pointer", boxShadow: "0 0 16px rgba(201,164,92,.25)", opacity: busy ? 0.6 : 1 }}>
           <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
             background: "linear-gradient(90deg, transparent, rgba(255,244,210,.3), transparent)",
@@ -116,7 +116,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
         <button disabled={busy} onClick={() => (cloud ? run(() => signInWithProvider("google")) : setCloudNote(true))}
           style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
             background: "#fff", border: "1px solid #dadce0", color: "#3c4043", borderRadius: 12,
-            padding: "12px 14px", fontFamily: "inherit", fontWeight: 700, fontSize: 14.5, cursor: "pointer",
+            padding: "10px 14px", fontFamily: "inherit", fontWeight: 700, fontSize: 14, cursor: "pointer",
             opacity: cloud ? 1 : 0.75 }}>
           <GoogleG /> {s.google}
         </button>
@@ -140,7 +140,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
         <button disabled={busy} onClick={() => run(() => loginGuest())}
           style={{ background: "none", border: `1px dashed ${T.line}`, color: T.dim, borderRadius: 12,
-            padding: "11px 14px", fontFamily: "inherit", fontSize: 13.5, cursor: "pointer", marginTop: 2 }}>
+            padding: "9px 14px", fontFamily: "inherit", fontSize: 13, cursor: "pointer", marginTop: 2 }}>
           {s.guest}
         </button>
       </div>
