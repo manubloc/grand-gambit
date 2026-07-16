@@ -172,5 +172,16 @@ ok("league 1 income covers all keys plus tolls with room to breathe (" + l1Incom
   ok("time-turner revealed after 2 stages", itemRevealed({ campaign: { league: 1, cleared: ["n01","n02"] } }, ITEMS.hourglass));
 }
 
+
+// ── every station name is spoken once across all ten leagues ─────────────────
+import { placeFor as _pf } from "./src/meta/index.js";
+import { CAMPAIGN as _cg } from "./src/content/index.js";
+{
+  const seen = new Set(); let dups = 0;
+  for (let lg = 1; lg <= 10; lg++) for (const n of _cg) { const nm = _pf(n, lg); if (seen.has(nm)) dups++; seen.add(nm); }
+  ok("510 station names, none spoken twice", seen.size === 510 && dups === 0);
+  ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "a1"), 1) === "Nordwacht");
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.65
+- NEUE LOGOS ueberall: Login zeigt den goldenen Ritter (Schachboden aus dem Bild entfernt - Luminanz-Freistellung, das App-Brett uebernimmt), Kopfleiste (Desktop + Mobil) traegt die goldene GRAND-GAMBIT-Wortmarke, App-Symbol/PWA-Icons/Favicon sind das GG-Emblem auf Navy (192/512/maskable/apple-touch neu gebaut)
+- WAEHRUNGEN IMMER IM BLICK: Kopfleiste zeigt Gold und Skillpunkte als Chips (Desktop und Mobil), XP-Balken wie gehabt; OFFENE BELOHNUNGEN erscheinen als goldene Zaehler-Plakette am Schatzkammer-Reiter
+- STATIONSNAMEN EINMALIG: alle 51 Orte tragen in jeder Liga einen eigenen Namen (510 Namen, keiner doppelt) - Liga I behaelt die Gruendungsnamen, spaetere Ligen benennen nach ihrem Land (Sonnenklippe, Frosthort, Oasenfeste, Moewenwacht ...), der markante Namenskern bleibt erhalten
+- MARMOR-SCHALTFLAECHEN ENTFERNT: Buttons (auch im Profil) sind wieder klare Gold-/Panel-Verlaeufe ohne Steintextur
+- MOBIL: Figuren-Kacheln in der Aufstellung nochmals groesser skaliert (8vw-Anteil, Roster-Glyphen 50px)
+
 ## 0.21.64
 - DESKTOP-BREITE: alle Menues laufen jetzt so breit wie die Kopfleiste (1020px statt 720); in der Aufstellung nutzen Auswahlmenue und Slots die volle Breite, Figuren-Kacheln deutlich groesser (Slots bis 46px, Auswahl-Buttons 30px-Bilder, Roster-Glyphen 44px)
 - ABTRUENNIG NUR VOR DEM SIEG: die rote "hat sich gegen dich gewandt"-Zeile erscheint nur noch, solange die Station offen ist - nach dem Sieg bleibt allein die Freundschaftskampf-Info

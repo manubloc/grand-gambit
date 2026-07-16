@@ -1,17 +1,15 @@
 import { T } from "./theme.js";
-import mBtn from "./assets/marble-btn.webp";
 
 
 export function Button({ variant = "primary", disabled, style, children, ...p }) {
   const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.45 : 1, transition: "filter .15s", WebkitTapHighlightColor: "transparent" };
   const variants = {
-    // the court's seal, now cut from the hall's stone: gold-veined marble for
-    // the CTA, dark marble for quiet buttons — a wash keeps every label crisp
-    primary: { background: `linear-gradient(165deg, rgba(224,183,108,.83), rgba(183,141,67,.83)), url(${mBtn}) center / 200px`,
+    // clean gold for the CTA, quiet dark for the rest — the marble wash is gone
+    primary: { background: "linear-gradient(165deg, #e0b76c, #b78d43)",
       color: T.limeInk, border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
-    subtle: { background: `linear-gradient(172deg, rgba(16,21,34,.9), rgba(10,14,24,.93)), url(${mBtn}) center / 200px`,
+    subtle: { background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
       color: T.text, border: `1px solid ${T.line}`, boxShadow: "inset 0 0 0 0.5px rgba(201,164,92,.12)" },
   };
   return <button disabled={disabled} style={{ ...base, ...variants[variant], ...style }} {...p}>{children}</button>;

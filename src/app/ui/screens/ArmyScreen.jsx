@@ -22,7 +22,7 @@ import { BoardView } from "../board/BoardView.jsx";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
-function Glyph({ kind, level, abilities, shield, size = 44, hero = false, art = "painted" }) {
+function Glyph({ kind, level, abilities, shield, size = 50, hero = false, art = "painted" }) {
   return <div style={{ fontSize: size, width: "1.3em", height: "1.3em", display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
     <PieceGlyph piece={{ kind, color: "w", level, abilities, shield, used: {}, hero }} artStyle={art} />
   </div>;
@@ -378,8 +378,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
             ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
             : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                style={{ height: "clamp(18px, 7vw, 50px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 46px)"} art={"painted"} />}
+                style={{ height: "clamp(20px, 8.6vw, 50px)", objectFit: "contain", pointerEvents: "none" }} />
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(17px, 8vw, 46px)"} art={"painted"} />}
         </button>;
       })}
     </div>

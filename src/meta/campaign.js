@@ -132,6 +132,62 @@ export function nodeBossSpec(node, league = 1) {
 /** THE DRAGON COMES LATER: his 2x2 form is a new machine, so the Hoard only
  *  holds him from League II on. In League I the warm nest belongs to the
  *  BROODMOTHER — the ancient heart has not hatched yet. */
+
+// ── EVERY STATION NAME IS SPOKEN ONCE ────────────────────────────────────────
+// League I keeps the founding names; every later league renames its stations
+// after its own land (summer, autumn, winter ... the sea). The distinctive
+// tail of each site survives (…wacht, …klippe, …hort), the land lends the
+// head — and a per-suffix counter guarantees no name is ever used twice.
+const PLACE_TAIL = {
+  n01: "wacht", n02: "muehle", n03: "schrein", a1: "wacht", a2: "klippe", a3: "pass",
+  a4: "hort", a5: "schlucht", b1: "heiligtum", b2: "warte", b3: "moor", b4: "moor",
+  b5: "feld", c1: "feste", c2: "hain", c3: "stadt", c4: "bollwerk", c5: "wall",
+  n16: "heiligtum", n17: "halle", d1: "grund", d2: "hoehe", e1: "ruinen", e2: "feste",
+  e3: "warte", n20: "steig", n21: "pass", n22: "feste", g1: "steig", g2: "kluft",
+  g3: "grotte", g4: "station", g5: "tor", g6: "rast", g7: "pass", g8: "schrein",
+  g9: "bucht", z1: "faehre", z2: "bruecke", w1: "lager", w2: "garten", w3: "hain",
+  s1: "wacht", s2: "turm", u1: "duene", u2: "grab", u3: "nest",
+  o1: "quelle", o2: "acker", o3: "feld", r1: "schlucht",
+};
+const UML = { muehle: "mühle", hoehe: "höhe", faehre: "fähre", bruecke: "brücke", duene: "düne" };
+const LEAGUE_HEADS = {
+  2: ["Sonnen", "Gold", "Ähren", "Honig", "Mittsommer", "Lerchen"],
+  3: ["Laub", "Bernstein", "Rost", "Ernte", "Drossel", "Kastanien"],
+  4: ["Frost", "Eis", "Schnee", "Winter", "Raureif", "Nordlicht"],
+  5: ["Grat", "Firn", "Gipfel", "Adler", "Steinbock", "Lawinen"],
+  6: ["Aschen", "Dorn", "Raben", "Öd", "Galgen", "Wund"],
+  7: ["Gras", "Wind", "Falken", "Steppen", "Hufen", "Fernen"],
+  8: ["Rot", "Fels", "Kupfer", "Staub", "Geier", "Glut"],
+  9: ["Sand", "Dünen", "Oasen", "Sichel", "Palmen", "Dürre"],
+  10: ["Salz", "Gischt", "Möwen", "Tide", "Perlen", "Brandungs"],
+};
+const PLACE_BY_LEAGUE = (() => {
+  const all = { 1: {} };
+  const taken = new Set();
+  for (const n of CAMPAIGN) { all[1][n.id] = n.place; taken.add(n.place); }
+  for (let lg = 2; lg <= 10; lg++) {
+    const heads = LEAGUE_HEADS[lg], used = {}, names = {};
+    for (const n of CAMPAIGN) {
+      const tailRaw = PLACE_TAIL[n.id] || "wacht";
+      const tail = UML[tailRaw] || tailRaw;
+      let k = used[tailRaw] || 0;
+      // never stutter (Duenen + duene) and never repeat ANY name ever spoken
+      while (heads[k % heads.length].toLowerCase().startsWith(tail.slice(0, 4))
+        || taken.has(heads[k % heads.length] + tail)) k++;
+      used[tailRaw] = k + 1;
+      const nm = heads[k % heads.length] + tail;
+      names[n.id] = nm; taken.add(nm);
+    }
+    all[lg] = names;
+  }
+  return all;
+})();
+/** The station's name in the given league — unique across the whole journey. */
+export function placeFor(node, league = 1) {
+  const lg = Math.max(1, Math.min(10, leagueNo(league)));
+  return (PLACE_BY_LEAGUE[lg] && PLACE_BY_LEAGUE[lg][node?.id]) || node?.place || "";
+}
+
 export function effectiveNodeBoss(node, lg) {
   if (node?.id === "a4" && (lg || 1) < 2) return { pure: "b03" };
   return node?.boss;

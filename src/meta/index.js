@@ -12,6 +12,7 @@ export {
   FORMATION_REQUIRED, FORMATION_FLEX, FORMATION_FLEX_COUNT,
 } from "./leveling.js";
 export { ACHIEVEMENTS, evaluate, completedSet, claimedTiers, claimReward, claimableCount, claimAchievement } from "./achievements.js";
+export { placeFor } from "./campaign.js";
 export { applyResult, winGold } from "./rewards.js";
 export { emptyStats, defaultProfile, loadProfile, saveProfile, serializeSave, parseSave } from "./profile.js";
 export { newSession, applyEvents, summarize, summarizeMatch } from "./session.js";

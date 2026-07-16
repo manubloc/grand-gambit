@@ -21,6 +21,7 @@ import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
 import { voiceFor } from "../../../content/index.js";
+import { placeFor } from "../../../meta/index.js";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse, SiteGlyph, siteTypeFor, WandererArt } from "../mapArt.jsx";
 
 // ── geometry (pixels; shared with previews via mapArt.GEO) ───────────────────
@@ -399,7 +400,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                       background: "radial-gradient(ellipse at center, rgba(248,242,226,.95) 0%, rgba(248,242,226,.78) 52%, transparent 76%)",
                       filter: "blur(3px)", pointerEvents: "none" }} />
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: "0 1px 0 rgba(248,242,226,.9)" }}>{n.place}</span>
+                      lineHeight: 0.94, textShadow: "0 1px 0 rgba(248,242,226,.9)" }}>{placeFor(n, league)}</span>
                   </span>
                 </div>
               </div>
@@ -613,7 +614,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               {BRANCHES[br][en ? "nameEn" : "nameDe"]}</div> : null;
           })()}
           <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
-            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.05 }}>{node?.place}</div>
+            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.05 }}>{node ? placeFor(node, league) : ""}</div>
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
               color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>
           </div>

@@ -4,7 +4,8 @@ import { nodeById, chapterForRow, buyItem } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
-import { playerXpProgress } from "../meta/index.js";
+import { playerXpProgress, skillPoints, claimableCount } from "../meta/index.js";
+import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -219,10 +220,12 @@ export default function App() {
   // the campaign map stays fullscreen, but the MAIN MENU stays with it — the
   // court is always one tap away, and leaving the map needs no back button
   const mapView = tab === "play" && view === "camp" && !inMatch;
+  const claimable = claimableCount(profile);
   const railItems = TABS.map((tb) => {
     const on = tab === tb.id;
+    const badge = tb.id === "ach" && claimable > 0;
     return (
-      <button key={tb.id} onClick={() => { setTab(tb.id); setView("hub"); }} style={{
+      <button key={tb.id} onClick={() => { setTab(tb.id); setView("hub"); }} style={{ position: "relative",
         display: "flex", alignItems: "center", gap: wide ? 12 : 0, flexDirection: wide ? "row" : "column",
         justifyContent: wide ? "flex-start" : "center", width: wide ? "auto" : "100%",
         background: on ? `linear-gradient(135deg, ${T.lime}26, ${T.lime}10)` : "none",
@@ -233,13 +236,29 @@ export default function App() {
         <NavIcon id={tb.id} color={on ? T.gold : T.faint} size={wide ? 21 : 22} />
         <span className="gg-serif" style={{ fontSize: wide ? 13 : 9.5, fontWeight: 700, marginTop: wide ? 0 : 3,
           letterSpacing: ".09em", textTransform: "uppercase" }}>{t(tb.key)}</span>
+        {badge && <span style={{ position: "absolute", top: wide ? 7 : 4, right: wide ? 8 : "calc(50% - 17px)",
+          minWidth: 15, height: 15, padding: "0 3px", borderRadius: 9, background: T.gold, color: "#241a08",
+          fontSize: 9.5, fontWeight: 900, display: "grid", placeItems: "center",
+          boxShadow: "0 0 8px rgba(240,200,110,.7)" }}>{claimable}</span>}
       </button>
     );
   });
 
+  const coinChip = (icon, val, color) => (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 9,
+      background: "rgba(240,200,110,.08)", border: `1px solid ${color}44`, color, fontSize: 11.5, fontWeight: 800,
+      whiteSpace: "nowrap" }}>{icon} {val}</span>
+  );
+  const currencyRow = (
+    <div style={{ display: "flex", gap: 6, alignItems: "center", flex: "0 0 auto" }}>
+      {coinChip("🪙", profile.gold || 0, T.gold)}
+      {coinChip("✦", skillPoints(profile), "#9ecb7a")}
+    </div>
+  );
   const headerBar = (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-      <div style={{ width: 112 }}><Wordmark scale={0.68} /></div>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+      <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 30, display: "block", flex: "0 0 auto" }} />
+      {currencyRow}
       <div style={{ flex: 1, maxWidth: 220 }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: T.dim, marginBottom: 3 }}>
           <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
@@ -261,8 +280,9 @@ export default function App() {
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ paddingRight: 8, flex: "0 0 auto" }}><Wordmark scale={0.62} /></div>
+          <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto", paddingRight: 6 }} />
           <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
+          {currencyRow}
           <div style={{ flex: "0 0 auto", width: 168 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.dim, marginBottom: 4 }}>
               <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
