@@ -20,17 +20,19 @@ function HpDots({ hp, max }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
   const [col, deep] = ratio > 0.55 ? ["#22a763", "#0a5229"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
   if (max > 10) {
-    return <span style={{ position: "absolute", bottom: "0.006em", left: "50%", transform: "translateX(-50%)",
-      display: "block", width: "0.56em", height: "max(3.5px, 0.05em)",
+    // heavyweights: a vertical life column on the LEFT flank, filling bottom-up
+    return <span style={{ position: "absolute", bottom: "0.07em", left: "-0.012em",
+      display: "flex", alignItems: "flex-end", width: "max(3.5px, 0.05em)", height: "0.52em",
       background: "rgba(6,10,16,.7)", borderRadius: 99, overflow: "hidden", pointerEvents: "none",
       boxShadow: "inset 0 0 0 0.5px rgba(255,255,255,.22), inset 0 1px 1px rgba(0,0,0,.5)" }}>
-      <span style={{ display: "block", width: `${ratio * 100}%`, height: "100%", borderRadius: 99,
-        background: `linear-gradient(180deg, rgba(255,255,255,.4) 0%, ${col} 34%, ${deep} 100%)`, transition: "width .2s ease" }} />
+      <span style={{ display: "block", width: "100%", height: `${ratio * 100}%`, borderRadius: 99,
+        background: `linear-gradient(0deg, ${deep} 0%, ${col} 66%, rgba(255,255,255,.4) 100%)`, transition: "height .2s ease" }} />
     </span>;
   }
-  const d = Math.min(0.066, 0.42 / max);
-  return <span style={{ position: "absolute", bottom: "0.005em", left: "50%", transform: "translateX(-50%)",
-    display: "flex", gap: "0.022em", pointerEvents: "none",
+  const d = Math.min(0.075, 0.5 / Math.ceil(max / 2));
+  return <span style={{ position: "absolute", bottom: "0.07em", left: "-0.028em",
+    display: "grid", gridAutoFlow: "column", gridTemplateRows: `repeat(${Math.ceil(max / 2)}, auto)`,
+    gap: "0.024em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))" }}>
     {Array.from({ length: max }).map((_, i) => (
       <span key={i} style={{ width: `max(3.5px, ${d}em)`, height: `max(3.5px, ${d}em)`, borderRadius: "50%",
@@ -82,14 +84,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     "drop-shadow(0 0 8px rgba(246,224,150,.74)) drop-shadow(0 0 18px rgba(240,214,138,.46))",
   ];
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))" + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "");
-  const pieceSize = hpMode && piece.maxHp > 0 ? "0.8em" : "0.88em";
+  const pieceSize = hpMode && piece.maxHp > 0 ? "0.95em" : "0.97em"; // the figures own the square now
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: hpMode && piece.maxHp > 0 ? "flex-end" : "center",
-      paddingBottom: hpMode && piece.maxHp > 0 ? "0.04em" : 0, animation: "pop .18s ease",
+      alignItems: "center", justifyContent: "flex-end",
+      paddingBottom: "0.015em", animation: "pop .18s ease",
       boxSizing: "border-box" }}>
-      <div style={{ width: pieceSize, height: pieceSize, filter: glow, flex: "0 0 auto" }}>
+      {/* the head may rise above the square: the art gets MORE than the tile */}
+      <div style={{ width: pieceSize, height: "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
+        marginTop: "-0.16em" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel;
           // the risen Gambit wears his tier portrait (own side only)
@@ -101,7 +105,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
             // the gallery hangs in a dim hall — lift the paintings a step:
             // your golden court shines brighter, the steel foe a touch too
-            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.16) saturate(1.05)" : ENEMY_FILTER + " brightness(1.07)",
+            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.3) saturate(1.1)" : ENEMY_FILTER + " brightness(1.18)",
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}
@@ -119,17 +123,19 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         </span>
       )}
       {hpMode && (
-        <span style={{ position: "absolute", left: "-0.035em", top: "50%", transform: "translateY(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: "0.006em", pointerEvents: "none",
-          filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.6))", opacity: 0.94 }}>
-          <BladesIc color={white ? "#cbae6d" : "#93a2be"} size={"0.14em"} />
-          <span style={{ fontSize: "0.17em", fontWeight: 800, color: white ? "#ecdfb4" : "#ccd6e8", lineHeight: 1,
-            textShadow: "0 1px 1.5px rgba(0,0,0,.7)" }}>{piece.atk}</span>
+        <span aria-hidden style={{ position: "absolute", top: "-0.008em", left: "-0.012em",
+          width: "max(9.5px, 0.15em)", height: "max(9.5px, 0.15em)", transform: "rotate(45deg)",
+          borderRadius: "20%", display: "grid", placeItems: "center", pointerEvents: "none",
+          background: "linear-gradient(135deg, #efdc9e 0%, #d9b565 46%, #a5813c 100%)",
+          boxShadow: "0 1px 2px rgba(0,0,0,.5), inset 0 0 0 0.5px #6f5526, inset 0 0.5px 0.5px #fff3c488" }}>
+          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6px, 0.088em)", fontWeight: 800,
+            color: "#7c1622", lineHeight: 1 }}>{piece.atk}</span>
         </span>
       )}
       {abilityDots.length > 0 && (
-        <span aria-hidden style={{ position: "absolute", right: "-0.035em", top: "50%", transform: "translateY(-50%)",
-          display: "flex", flexDirection: "column", gap: "0.04em", pointerEvents: "none" }}>
+        <span aria-hidden style={{ position: "absolute", right: "-0.028em", bottom: "0.07em",
+          display: "grid", gridAutoFlow: "column", gridTemplateRows: "repeat(3, auto)",
+          gap: "0.028em", pointerEvents: "none" }}>
           {isBoss && <span style={{ width: "max(3px, 0.075em)", height: "max(3px, 0.075em)", transform: "rotate(45deg)",
             background: T.danger, boxShadow: `0 0 4px ${T.danger}88` }} />}
           {abilityDots.map((d) => (

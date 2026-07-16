@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.72
+- FIGUREN AUF DEM BRETT: deutlich heller (eigene brightness 1.3, Feind 1.18) und GROESSER - die Kunst bekommt 16% mehr Hoehe als die Kachel, der Kopf ragt bewusst leicht ueber das Feld hinaus (Figur sitzt unten auf)
+- NEUE WERTE-ANORDNUNG UM DIE FIGUR: LINKS die Lebenspunkte zweireihig vertikal (Schwergewichte: vertikale Lebenssaeule), RECHTS die Faehigkeiten zweireihig vertikal (aktiv bunt, verbraucht grau), OBEN LINKS der Angriffswert als Gold-Raute, OBEN RECHTS wie gehabt das Level - die Figur selbst bleibt frei
+- GOLD APP-WEIT EINEN HAUCH GELBER (lime/gold/goldBright verschoben), auch das GRAND-GAMBIT-Startbild minimal gelber gesaettigt (Hue +6, Saettigung 1.12) - Rand-Feder bleibt
+
 ## 0.21.71
 - LOGIN/SPIELSTAND: Ritter-Artwork groesser (bis 700px / 42vh) mit mehr Luft zum Text; RAND-FEDER statt harter Kante - innen 100% Original, nur die Raender schmelzen ins Schwarze (oben kraeftig), kein Rechteck-Hintergrund mehr; beide Schirme sind jetzt BILDSCHIRMFUELLEND OHNE SCROLLEN (Inhalt zentriert, gescrollt wird nur falls er wirklich nicht passt)
 - KOPFLEISTE: nur noch das GG-EMBLEM (groesser, heller, goldener Glanz-Schein) - die Wortmarke ist raus; rechts ein sauberes 2x2-SCHATZGRID: Gold, Skillpunkte, Level (XP im Tooltip), Hofwert - ALLE Icons handgezeichnet im einen Haus-Goldton (der gruene Funke ist jetzt gold)

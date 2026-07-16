@@ -6,10 +6,10 @@
 export const T = {
   bg: "#0c111e", bg2: "#101828", panel: "#131b2d", panel2: "#1a2338", line: "#28324e",
   text: "#f0e9d8", dim: "#a9a48e", faint: "#6f6b5e",
-  lime: "#c9a45c", limeDim: "#a8863f", limeInk: "#17110a",          // player / primary accent (gold)
+  lime: "#d1ad55", limeDim: "#b08f3a", limeInk: "#17110a",          // player / primary accent (gold)
   magenta: "#8fa0c0", magentaDim: "#66748f", magentaInk: "#10141d", // enemy accent (steel navy)
-  gold: "#e3c07a", danger: "#d5495a", green: "#58c98b", blue: "#8fa0c0",
-  goldBright: "#f0dfae",
+  gold: "#eac96b", danger: "#d5495a", green: "#58c98b", blue: "#8fa0c0",
+  goldBright: "#f6e9a4",
   shadow: "0 10px 28px rgba(0,0,0,.55)",
   radius: 14, radiusSm: 10,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
