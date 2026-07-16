@@ -4,8 +4,9 @@ import { nodeById, chapterForRow, buyItem } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
-import { playerXpProgress, skillPoints, claimableCount } from "../meta/index.js";
+import { playerXpProgress, skillPoints, claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
+import emblemUrl from "./ui/assets/emblem.webp";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -93,6 +94,42 @@ function reducer(state, a) {
     case "RESET": return { ...defaultProfile(), name: state.name, lang: state.lang };
     default: return state;
   }
+}
+
+
+/** Clean gold coinage for the header — drawn, not emoji. */
+function CoinIc({ size = 13 }) {
+  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
+    <defs><linearGradient id="ggCoinG" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stopColor="#f6e096" /><stop offset=".5" stopColor="#d9b264" /><stop offset="1" stopColor="#a97e3c" />
+    </linearGradient></defs>
+    <circle cx="10" cy="10" r="8.6" fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="1" />
+    <circle cx="10" cy="10" r="5.9" fill="none" stroke="#8a6830" strokeWidth="0.9" opacity=".85" />
+    <path d="M10 6.4 L11 9.2 L13.8 9.2 L11.6 11 L12.5 13.8 L10 12.1 L7.5 13.8 L8.4 11 L6.2 9.2 L9 9.2 Z"
+      fill="#7a5c26" opacity=".9" />
+    <path d="M4.4 6.4 A8.6 8.6 0 0 1 10 1.4" fill="none" stroke="#fff6d8" strokeWidth="1.3" strokeLinecap="round" opacity=".8" />
+  </svg>;
+}
+function SkillIc({ size = 13 }) {
+  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
+    <defs><linearGradient id="ggSkillG" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stopColor="#d8f0b2" /><stop offset=".5" stopColor="#9ecb7a" /><stop offset="1" stopColor="#5f8c48" />
+    </linearGradient></defs>
+    <path d="M10 1.6 L12.2 7.8 L18.4 10 L12.2 12.2 L10 18.4 L7.8 12.2 L1.6 10 L7.8 7.8 Z"
+      fill="url(#ggSkillG)" stroke="#476a35" strokeWidth="0.9" strokeLinejoin="round" />
+    <path d="M10 4.6 L8.6 8.6 L4.6 10" fill="none" stroke="#eef8da" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
+  </svg>;
+}
+function CrestIc({ size = 13 }) {
+  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
+    <defs><linearGradient id="ggCrestG" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stopColor="#f6e096" /><stop offset=".5" stopColor="#d9b264" /><stop offset="1" stopColor="#a97e3c" />
+    </linearGradient></defs>
+    <path d="M10 2.2 L16.6 4.4 L16.6 10 C16.6 14 13.9 16.7 10 18 C6.1 16.7 3.4 14 3.4 10 L3.4 4.4 Z"
+      fill="url(#ggCrestG)" stroke="#7a5c26" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M10 5.4 L11 8 L13.6 8 L11.5 9.7 L12.3 12.3 L10 10.8 L7.7 12.3 L8.5 9.7 L6.4 8 L9 8 Z" fill="#7a5c26" opacity=".9" />
+    <path d="M4.6 5 L10 3.2" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".8" />
+  </svg>;
 }
 
 const TABS = [
@@ -214,6 +251,17 @@ export default function App() {
               onLogout={async () => { await clearSession(); await signOutCloud(); setSlot(null); setAccount(null); }} />;
 
   const inMatch = !!match || !!pvp || !!quick;
+  // ANDROID/PWA BACK: inside a match the back gesture must fall back to the
+  // hall, never kill the app — we park one history entry and catch the pop.
+  useEffect(() => {
+    if (!inMatch) return;
+    try { window.history.pushState({ gg: "match" }, ""); } catch {}
+    const onPop = () => {
+      if (pvp) setPvp(null); else if (match) setMatch(null); else if (quick) setQuick(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [inMatch]);
   // map & match immersion (v0.3/v0.4): the campaign map and every running
   // match fill the screen — the shell locks to 100dvh, UI floats above
   const immersive = inMatch || (tab === "play" && view === "camp");
@@ -244,20 +292,24 @@ export default function App() {
     );
   });
 
-  const coinChip = (icon, val, color) => (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 9,
+  const coinChip = (icon, val, color, title) => (
+    <span title={title} style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 8px", borderRadius: 9,
       background: "rgba(240,200,110,.08)", border: `1px solid ${color}44`, color, fontSize: 11.5, fontWeight: 800,
       whiteSpace: "nowrap" }}>{icon} {val}</span>
   );
   const currencyRow = (
     <div style={{ display: "flex", gap: 6, alignItems: "center", flex: "0 0 auto" }}>
-      {coinChip("🪙", profile.gold || 0, T.gold)}
-      {coinChip("✦", skillPoints(profile), "#9ecb7a")}
+      {coinChip(<CoinIc />, profile.gold || 0, T.gold, t("army.balance"))}
+      {coinChip(<SkillIc />, skillPoints(profile), "#9ecb7a", "Skillpunkte")}
+      {coinChip(<CrestIc />, retinueScore(profile), "#e9d296", t("online.score"))}
     </div>
   );
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-      <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 30, display: "block", flex: "0 0 auto" }} />
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 7, flex: "0 0 auto" }}>
+        <img src={emblemUrl} alt="" style={{ height: 30, display: "block" }} />
+        <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 26, display: "block" }} />
+      </span>
       {currencyRow}
       <div style={{ flex: 1, maxWidth: 220 }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: T.dim, marginBottom: 3 }}>
@@ -280,7 +332,10 @@ export default function App() {
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
-          <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto", paddingRight: 6 }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, flex: "0 0 auto", paddingRight: 6 }}>
+            <img src={emblemUrl} alt="" style={{ height: 36, display: "block" }} />
+            <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 30, display: "block" }} />
+          </span>
           <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
           <div style={{ flex: "0 0 auto", width: 168 }}>

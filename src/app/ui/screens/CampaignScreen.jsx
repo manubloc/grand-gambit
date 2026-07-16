@@ -152,7 +152,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const fit = Math.max(vp.h / HM, vp.w / WMAP);       // cover the viewport
   // the painted worlds are 1796px wide — rendered any larger they go soft on
   // hi-DPI screens, so the window sits a step back from full bleed
-  const z = fit * (wide ? 0.8 : 0.85);
+  const z = fit * (wide ? 0.8 : 1.0); // phones: full bleed to the menu, even padding at the rim
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.min(vp.h, HM * z);
   const frameX = Math.round((vp.w - frameW) / 2);
@@ -198,6 +198,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: th.paper,
         boxShadow: "0 0 34px rgba(0,0,0,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
+        {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
+        <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
+          filter: "blur(16px)", opacity: 0.16, mixBlendMode: "screen",
+          background: "radial-gradient(44% 34% at 86% 30%, rgba(216,206,188,.5), transparent 70%), radial-gradient(38% 30% at 78% 72%, rgba(196,186,168,.4), transparent 70%)",
+          animation: "ggFogR 52s ease-in-out infinite alternate" }} />
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
           transform: `translate(${-camX}px, ${-camY}px) scale(${z})`,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
@@ -285,12 +290,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <div key={"ch" + c.n} className="gg-quill" style={{ position: "absolute", top: 12,
               left: LEFT + ((c.fromRow + c.toRow) / 2) * STEP, transform: "translateX(-50%)",
               background: "rgba(239,233,218,.42)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(201,191,164,.6)", borderRadius: 999, padding: "3px 14px",
+              border: "1px solid rgba(201,191,164,.6)", borderRadius: 999, padding: "8px 15px",
               fontSize: 12.5, color: MP.ink, whiteSpace: "nowrap", boxShadow: "0 0 18px rgba(30,25,15,.14)" }}>
               {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][c.n - 1]} · {(en ? c.titleEn : c.titleDe).toUpperCase()}
             </div>
           ))}
-          <div className="gg-serif" style={{ position: "absolute", top: ny({ col: 2 }) - 74, left: WMAP - 84, transform: "translateX(-50%)",
+          <div className="gg-serif" style={{ position: "absolute", top: Math.max(14, ny({ col: 2 }) - 74), left: Math.min(WMAP - 84, WMAP - 14), transform: "translateX(-50%)",
             color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ LIGA {ROMAN[viewLeague - 1] || viewLeague} ❖</div>
           {/* medallions + labels — small waypoints now; the wanderer is the star */}
           {CAMPAIGN.map((n) => {
@@ -410,9 +415,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {!viewing && (() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
-            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 48, height: 50, zIndex: 5,
+            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 56, height: 58, zIndex: 5,
               pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
-              transform: bm ? "translate(-50%,-60%)" : "translate(-98%,-62%)" }}>
+              transform: bm ? "translate(-50%,-84%)" : "translate(-98%,-70%)" }}>
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
                 transformOrigin: "0 50%", transform: `rotate(${stride.angle + 180}deg)`,
@@ -537,12 +542,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 return <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${cutY + 5}%`,
                   background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)",
                   overflow: "hidden" }}>
-                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.5,
-                    background: "radial-gradient(42% 30% at 24% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
-                    animation: "ggFogA 44s ease-in-out infinite alternate" }} />
+                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.55,
+                    background: "radial-gradient(42% 30% at 78% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
+                    animation: "ggFogR 44s ease-in-out infinite alternate" }} />
                   <div style={{ position: "absolute", inset: "-12%", filter: "blur(18px)", opacity: 0.38,
-                    background: "radial-gradient(46% 30% at 60% 22%, rgba(206,196,178,.3), transparent 70%), radial-gradient(40% 26% at 30% 76%, rgba(170,162,148,.24), transparent 70%)",
-                    animation: "ggFogB 58s ease-in-out infinite alternate" }} />
+                    background: "radial-gradient(46% 30% at 84% 22%, rgba(206,196,178,.3), transparent 70%), radial-gradient(40% 26% at 30% 76%, rgba(170,162,148,.24), transparent 70%)",
+                    animation: "ggFogR2 58s ease-in-out infinite alternate" }} />
                 </div>;
               })()}
               {Array.from({ length: 10 }, (_, i) => i + 1).map((lg) => {
@@ -564,7 +569,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                       boxShadow: here ? "0 0 14px rgba(240,214,138,.55)" : "0 2px 8px rgba(0,0,0,.5)" }}>
                       <span className="gg-serif" style={{ fontSize: reachable ? 12 : 11, fontWeight: 700,
                         color: reachable ? "#e9d296" : "rgba(200,200,210,.55)" }}>
-                        {reachable ? (ROMAN[lg - 1] || lg) : "🔒"}</span>
+                        {reachable ? (ROMAN[lg - 1] || lg) : <svg width="11" height="12" viewBox="0 0 14 16" aria-hidden style={{ display: "block" }}>
+                          <defs><linearGradient id="ggLockG" x1="0" y1="0" x2="0.6" y2="1">
+                            <stop offset="0" stopColor="#f6e096" /><stop offset=".5" stopColor="#d9b264" /><stop offset="1" stopColor="#a97e3c" />
+                          </linearGradient></defs>
+                          <path d="M4 7 L4 4.6 A3 3 0 0 1 10 4.6 L10 7" fill="none" stroke="url(#ggLockG)" strokeWidth="1.7" strokeLinecap="round" />
+                          <rect x="2.4" y="6.8" width="9.2" height="7.6" rx="1.8" fill="url(#ggLockG)" stroke="#7a5c26" strokeWidth="0.9" />
+                          <circle cx="7" cy="10.2" r="1.15" fill="#5c4318" />
+                          <path d="M7 10.8 L7 12.4" stroke="#5c4318" strokeWidth="1.1" strokeLinecap="round" />
+                        </svg>}</span>
                     </div>
                     {here && <div className="gg-serif" style={{ position: "absolute", left: "50%", top: "100%",
                       transform: "translateX(-50%)", marginTop: 3, fontSize: 8.5, letterSpacing: ".14em",

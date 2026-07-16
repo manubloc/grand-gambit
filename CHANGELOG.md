@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.21.67
+- LOGIN-BILD: sanfter Verlauf oben ins Schwarze (kein harter Rand am Lichtschein mehr)
+- KOPFLEISTE: das runde GG-EMBLEM steht jetzt vor der Wortmarke (Desktop + Mobil); Gold, Skillpunkte und neu der HOFWERT als sauber GEZEICHNETE Gold-Icons (Muenze, Funke, Wappen - keine Emojis mehr); Level-/XP-Balken bleibt
+- WELTKARTE: Schloesser der verhuellten Ligen sind handgezeichnete GOLD-SCHLOESSER; der Nebel schweift jetzt VON RECHTS herueber (zwei Schichten, im Fenster gehalten)
+- LIGAKARTE: fuellt auf dem Handy den kompletten Schirm bis zum Menue (Vollbild-Zoom, gleichmaessiges Randpadding); ganz sanfter Nebel zieht von rechts durchs Kartenfenster; das LIGA-Schild bleibt mit kleinem Abstand innerhalb der Karte; KAPITEL-Pill und Weltkarte-Pill sitzen vertikal mittig zueinander
+- DER WANDERER steht hoeher (nicht mehr auf den Stationsnamen) und ist einen Hauch groesser
+- ZURUECK-GESTE IM SPIEL: verlaesst jetzt die Partie statt die App zu beenden (History-Wache fuer Schnellspiel, Kampagne und Online)
+
 ## 0.21.66
 - NEUES LOGIN-BILD (die hellere Fassung): Ritter und Titel freigestellt, Schachboden entfernt - und VIEL groesser dargestellt (bis 620px, Spielstand-Schirm 420px)
 - AUFSTELLUNG DESKTOP: das Auswahlmenue ist jetzt eine LISTE ueber die volle Breite - grosse Figur (52px), Name fett, Erklaerungstext darunter; Figuren sitzen ueberall MITTIG in ihren Kacheln (neue TileArt statt Brett-Verankerung, das behebt den Versatz)
