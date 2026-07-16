@@ -420,7 +420,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           {!viewing && (() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
-            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 56, height: 58, zIndex: 5,
+            return <div style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: 5,
               pointerEvents: "none", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}`,
               transform: bm ? "translate(-50%,-84%)" : "translate(-98%,-70%)" }}>
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}

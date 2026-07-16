@@ -288,7 +288,7 @@ export default function App() {
 
   if (wide) return (
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
-      padding: immersive ? "16px 18px 18px" : "16px 18px 0", rowGap: 22 }}>
+      padding: immersive ? "10px 10px 10px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
@@ -324,7 +324,7 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "22px 14px 108px",
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 14px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>

@@ -415,7 +415,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
-      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "4px 10px" }}>
+      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}

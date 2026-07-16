@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.81
+- DER WANDERER auf der Karte deutlich groesser (76x78 statt 56x58) - jetzt klar erkennbar
+- SCHACHBRETT breiter und hoeher: die Partie-Ansicht laesst nur noch einen schmalen dunklen Rand (Brett-Rand 2/4px, Shell-Polster im Spiel 10px Desktop / 3px mobil)
+
 ## 0.21.80
 - KARTEN-NAVIGATION neu: statt +/- jetzt ein runder SIEGEL-KNOPF mit handgezeichneter FELDKARTE + NADEL (drei gefaltete Bahnen, gestichelte Route, goldene Wegnadel mit Lichtpunkt) - ein Tipp oeffnet das Weltgemaelde; IN der Weltkarte sitzt oben links ein runder ZURUECK-PFEIL (ebenfalls handgezeichnet, Haus-Gold) zurueck zur Liga
 
