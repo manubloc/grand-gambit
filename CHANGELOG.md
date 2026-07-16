@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.70
+- HOTFIX 2 (React #310): der 0.21.69-Fix griff zu kurz - VOR dem Zurueck-Gesten-Hook lauerte noch ein weiterer Fruehausgang (authReady-Boot-Return). Der Hook steht jetzt VOR ALLEN Returns; per grep verifiziert, dass kein Return mehr davor liegt. Login laeuft
+
 ## 0.21.69
 - HOTFIX LOGIN-CRASH (React #310): der Zurueck-Gesten-Hook aus 0.21.67 stand HINTER den Login-/Spielstand-Fruehausgaengen und brach die Hook-Reihenfolge beim Einloggen - er laeuft jetzt bedingungslos vor allen Returns. Login funktioniert wieder
 - LOGIN- UND SPIELSTAND-BILD: das Ritter-Artwork wird jetzt EXAKT wie hochgeladen verwendet (keine Freistellung, kein Verlauf, kein Abdunkeln mehr) - nur sanft gerundete Ecken und ein Schatten

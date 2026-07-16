@@ -205,7 +205,6 @@ export default function App() {
     return () => clearInterval(iv);
   }, [account, slot]);
 
-  if (!authReady) return null;
   // ANDROID/PWA BACK: inside a match the back gesture must fall back to the
   // hall, never kill the app. This hook lives ABOVE the login early-returns —
   // hooks must run in the same order on every render (React #310).
@@ -220,6 +219,7 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, [inMatchNow]);
 
+  if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
     onLogout={async () => { await clearSession(); await signOutCloud(); setAccount(null); }}
