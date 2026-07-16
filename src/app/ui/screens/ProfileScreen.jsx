@@ -42,6 +42,11 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
         style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
+      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceStyle")}</div>
+      <Segmented value={profile.pieceStyle === "svg" ? "svg" : "painted"}
+        onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
+        options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }]} />
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />

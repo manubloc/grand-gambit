@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { PieceGlyph } from "./PieceGlyph.jsx";
+import { PieceArt } from "./PieceArt.jsx";
 
 const MOVE_DOT = "#c9a45c";
 
@@ -224,6 +225,18 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {isSpy && <div style={{ position: "absolute", inset: 0, boxShadow: "inset 0 0 0 3px #a78bfa", background: "rgba(167,139,250,.1)" }} />}
+          {(isSel || isSpy) && piece && artStyle === "painted" && (
+            /* the little herald: the SIMPLE vector twin of the chosen piece,
+               so painted and plain always map to one another */
+            <div style={{ position: "absolute", left: "3%", top: "3%", width: "34%", height: "34%", zIndex: 70,
+              pointerEvents: "none", background: "rgba(10,13,20,.82)", borderRadius: "22%",
+              border: `1px solid ${isSpy ? "#a78bfa" : "rgba(233,210,150,.55)"}`, padding: "5%",
+              boxShadow: "0 2px 6px rgba(0,0,0,.5)" }}>
+              <PieceArt kind={piece.kind} size="100%" level={1} art={piece.art}
+                fill={piece.color === pov ? "#c9a45c" : "#9aa3b8"} rim={piece.color === pov ? "#f0dfae" : "#c9d0de"}
+                detail={piece.color === pov ? "#59421a" : "#3a4152"} accent={piece.accent} />
+            </div>
+          )}
           {introSpot && introSpot.has(i) && piece && <div style={{ position: "absolute", inset: "4%", borderRadius: 8,
             pointerEvents: "none", animation: "ggNewPulse 1.15s ease-in-out infinite" }} />}
           {spyT && <div style={{ position: "absolute", width: "30%", height: "30%", borderRadius: "50%", left: "35%", top: "35%",

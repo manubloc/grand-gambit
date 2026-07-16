@@ -530,7 +530,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots}
-          texture={boardTexture(match, profile)} artStyle={classic ? "classic" : "painted"} friendly={!!match?.friendly}
+          texture={boardTexture(match, profile)} artStyle={classic ? "classic" : profile.pieceStyle === "svg" ? "svg" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />

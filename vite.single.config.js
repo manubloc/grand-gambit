@@ -9,6 +9,7 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import pkg from "./package.json";
 
 export default defineConfig({
+  resolve: { alias: { "virtual:pwa-register": "/src/app/pwa-stub.js" } },
   base: "./",
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [react(), viteSingleFile()],

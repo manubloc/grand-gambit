@@ -102,11 +102,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
     <div style={{ display: "flex", gap: 12, alignItems: "center", cursor: onToggle ? "pointer" : "default" }}
       onClick={onToggle ? (e) => { e.stopPropagation(); onToggle(); } : undefined}>
       {paintedById(char.id)
-        ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
+        ? <><img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
             style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
+        <span style={{ alignSelf: "flex-end", width: bigArt ? 34 : 26, height: bigArt ? 34 : 26, flex: "0 0 auto",
+          marginLeft: -10, marginBottom: 2, background: "rgba(10,13,20,.82)", borderRadius: 7, padding: 3,
+          border: "1px solid rgba(233,210,150,.4)", boxSizing: "border-box" }} title="Vektor-Symbol">
+          <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" showLevel={false} /></span></>
         : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
