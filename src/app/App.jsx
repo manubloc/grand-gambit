@@ -411,13 +411,17 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
           cursor: "pointer", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`,
           border: "1px solid #8a6d3544", borderRadius: T.radius, boxShadow: T.shadow,
-          padding: "13px 14px", color: T.dim, fontSize: 13 }}>
-          <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
-            transform: "rotate(45deg)", verticalAlign: "2px", marginRight: 10 }} />
-          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".08em", fontSize: 14.5 }}>{t("tut.title")}</span>
-          <span style={{ color: T.faint }}>{" · "}</span>{t("tut.sub")}
-          <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
-            transform: "rotate(45deg)", verticalAlign: "2px", marginLeft: 10 }} />
+          padding: "12px 14px 13px", color: T.dim, fontSize: 13 }}>
+          {/* line one: the title, a touch smaller, flanked by the twin diamonds */}
+          <span style={{ display: "block" }}>
+            <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
+              transform: "rotate(45deg)", verticalAlign: "2px", marginRight: 10 }} />
+            <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".08em", fontSize: 13.5 }}>{t("tut.title")}</span>
+            <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
+              transform: "rotate(45deg)", verticalAlign: "2px", marginLeft: 10 }} />
+          </span>
+          {/* line two: what awaits, quiet underneath */}
+          <span style={{ display: "block", marginTop: 4, fontSize: 12.5 }}>{t("tut.sub")}</span>
         </button>
       )}
     </div>

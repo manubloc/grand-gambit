@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.90
+- AKADEMIE-KNOPF im Hub zweizeilig: Zeile 1 "Die Akademie" (etwas kleiner, 13.5, mit den Doppel-Rauten), darunter "Regeln in zwei Minuten - jederzeit ueberspringbar" - gleiche Panel-Huelle wie die anderen Karten
+
 ## 0.21.89
 - STATIONSNAMEN-TOENE JETZT AUS DEN KARTEN SELBST: der Schein hinter jedem Namen wurde pro Liga aus den FREIEN FLAECHEN des jeweiligen Gemaeldes GESAMPELT (hellstes Luminanz-Band, Glanzlichter uebersprungen, +12% Licht fuer die Tinte) - Fruehling Wiesen-Pergament, Sommer Olivgold, Wueste Sandgold, Meer Graublau der See usw.; dazu DEUTLICH TRANSPARENTER (Halo .58/.38 statt .95/.78, Textschatten .55)
 - GAMBIT STEHT HOEHER auf der Karte (Fuesse ueber dem Ankerpunkt, -102%) - er verdeckt keine Stationsnamen mehr
