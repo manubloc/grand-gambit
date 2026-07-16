@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.80
+- KARTEN-NAVIGATION neu: statt +/- jetzt ein runder SIEGEL-KNOPF mit handgezeichneter FELDKARTE + NADEL (drei gefaltete Bahnen, gestichelte Route, goldene Wegnadel mit Lichtpunkt) - ein Tipp oeffnet das Weltgemaelde; IN der Weltkarte sitzt oben links ein runder ZURUECK-PFEIL (ebenfalls handgezeichnet, Haus-Gold) zurueck zur Liga
+
 ## 0.21.79
 - LOGIN + SPIELSTAND: mehr Freiraum unter dem Logo (26px bzw. 24px Abstand zum Anmelde-Bereich / zur Spielstand-Liste)
 

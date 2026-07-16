@@ -294,3 +294,31 @@ export function CrestIc({ size = 15 }) {
     <path d="M11 1.9 L18.6 4.4 L18.6 11 C18.6 15.5 15.5 18.6 11 20.2 C6.5 18.6 3.4 15.5 3.4 11 L3.4 4.4 Z" fill="url(#ggCrests)" />
   </svg>;
 }
+
+/** A folded field map with a waypin — hand-drawn, house gold. */
+export function MapPinIc({ size = 18 }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggMapP" />
+    {/* the folded map: three panels, middle one dips */}
+    <path d="M3 6.6 L9 4.6 L9 17.4 L3 19.4 Z" fill="url(#ggMapP)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M9 4.6 L15 6.6 L15 19.4 L9 17.4 Z" fill="url(#ggMapP)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" opacity=".92" />
+    <path d="M15 6.6 L21 4.6 L21 17.4 L15 19.4 Z" fill="url(#ggMapP)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    {/* a wandering route stitched across the panels */}
+    <path d="M4.6 15.6 C 7 13.2, 8 14.6, 10.4 11.6 S 15.2 9.4, 18.6 7.8" fill="none" stroke="#7a5c26"
+      strokeWidth="1" strokeDasharray="1.6 1.7" strokeLinecap="round" />
+    {/* the pin, leaning in with a drop shadow of its own */}
+    <path d="M16.9 3.2 C 19.3 3.2, 20.9 5, 20.9 7 C 20.9 9.8, 16.9 13.4, 16.9 13.4 C 16.9 13.4, 12.9 9.8, 12.9 7 C 12.9 5, 14.5 3.2, 16.9 3.2 Z"
+      fill="url(#ggMapP)" stroke="#5c4318" strokeWidth="1.1" strokeLinejoin="round" />
+    <circle cx="16.9" cy="7" r="1.7" fill="#5c4318" />
+    <circle cx="16.3" cy="6.4" r="0.55" fill="#fff6d8" opacity=".9" />
+  </svg>;
+}
+/** A quill-simple back arrow, house gold. */
+export function BackIc({ size = 18 }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggBack" />
+    <path d="M14.6 4.4 L7 12 L14.6 19.6 L16.8 17.4 L11.4 12 L16.8 6.6 Z"
+      fill="url(#ggBack)" stroke="#6f5526" strokeWidth="1.1" strokeLinejoin="round" />
+    <path d="M14.2 5.6 L8.6 11.2" fill="none" stroke="#fff6d8" strokeWidth="0.9" strokeLinecap="round" opacity=".8" />
+  </svg>;
+}

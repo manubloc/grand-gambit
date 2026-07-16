@@ -16,7 +16,7 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
-import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc } from "../icons.jsx";
+import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
@@ -467,20 +467,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
             and once the League Master has fallen, the golden gate: Onward. */}
-        {/* the atlas control: plus/minus stacked — minus steps out to the world,
-            plus steps back into the league */}
-        <div style={{ pointerEvents: "auto", display: "flex", flexDirection: "column", borderRadius: 12,
-          overflow: "hidden", border: "1px solid rgba(233, 210, 150, .38)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
-          backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-          <button onClick={() => setWorld(false)} title={t("camp.zoomIn")} disabled={!world}
-            style={{ cursor: world ? "pointer" : "default", background: "rgba(8, 11, 20, .42)", border: "none",
-              borderBottom: "1px solid rgba(233, 210, 150, .28)", color: world ? "#e9d296" : "rgba(233,210,150,.35)",
-              width: 36, height: 33, fontSize: 19, fontWeight: 700, lineHeight: 1, fontFamily: "inherit" }}>+</button>
-          <button onClick={() => setWorld(true)} title={t("camp.zoomOut")} disabled={world}
-            style={{ cursor: world ? "default" : "pointer", background: "rgba(8, 11, 20, .42)", border: "none",
-              color: world ? "rgba(233,210,150,.35)" : "#e9d296",
-              width: 36, height: 33, fontSize: 21, fontWeight: 700, lineHeight: 1, fontFamily: "inherit" }}>−</button>
-        </div>
+        {/* the atlas button: a small round seal with the field map + waypin,
+            hand-drawn — one tap steps out to the world painting */}
+        <button onClick={() => setWorld(true)} title={t("camp.zoomOut")}
+          style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
+            display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
+            border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+          <MapPinIc size={21} />
+        </button>
         {viewLeague > 1 && (
           <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
             style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
@@ -544,6 +539,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 430, margin: "0 auto",
               borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
               boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
+              <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
+                style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
+                  width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
+                  background: "rgba(8, 11, 20, .55)", border: "1px solid rgba(233, 210, 150, .42)",
+                  boxShadow: "0 2px 10px rgba(0,0,0,.4), inset 0 0.5px 0 rgba(255,243,196,.25)",
+                  backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
+                <BackIc size={20} />
+              </button>
               <img src={WORLD_MAP.url} alt="" draggable={false} style={{ display: "block", width: "100%",
                 aspectRatio: `${WORLD_MAP.w} / ${WORLD_MAP.h}`, userSelect: "none" }} />
               {/* mist over what lies ahead: from just above the current league to the crown */}
