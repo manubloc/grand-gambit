@@ -1,7 +1,6 @@
 // Career select — every account keeps several save slots, each documenting
 // its league, cleared count, percentage and total playtime. Admins get the
 // progress dial: any slot can be set to 0…100% in journey order.
-import { MysticBackground } from "../MysticBackground.jsx";
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
@@ -55,13 +54,13 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
 
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
-    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: "transparent", padding: "18px 16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      <MysticBackground league={(saves || []).reduce((m, sv) => Math.max(m, sv?.league || sv?.meta?.league || 1), 1)} />
+    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: "#000", padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
+      <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(90vw, 520px)", maxHeight: "30vh", objectFit: "contain", display: "block", marginTop: -4 }} />
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(90vw, 520px)", maxHeight: "22vh", objectFit: "contain", display: "block", marginTop: -4 }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
@@ -139,6 +138,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
           borderRadius: 16, padding: "14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5, cursor: "pointer" }}>
           <LeagueShield league={1} size={26} dim style={{ verticalAlign: "-7px", marginRight: 8 }} />{s.new}
         </button>
+      </div>
       </div>
     </div>
   );

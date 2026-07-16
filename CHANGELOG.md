@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.73
+- LOGIN + SPIELSTAND repariert: beide Schirme auf REINEM SCHWARZ (das Schachbrett/Hallen-Panorama hinter der Spielstand-Auswahl ist entfernt - wo Ritter und Schriftzug stehen, braucht es kein Brett)
+- CONTAIN STATT ABSCHNEIDEN: die Zentrierung lief in die klassische Flexbox-Falle (justify-content: center + Overflow schneidet oben ab). Jetzt margin-auto-Container: passt der Inhalt, steht er exakt mittig OHNE Scrollen - passt er nicht (kleine Schirme), scrollt es sauber ab der ersten Zeile. Bild kompakter gedeckelt (Login 30vh, Spielstand 22vh), Abstaende gestrafft
+
 ## 0.21.72
 - FIGUREN AUF DEM BRETT: deutlich heller (eigene brightness 1.3, Feind 1.18) und GROESSER - die Kunst bekommt 16% mehr Hoehe als die Kachel, der Kopf ragt bewusst leicht ueber das Feld hinaus (Figur sitzt unten auf)
 - NEUE WERTE-ANORDNUNG UM DIE FIGUR: LINKS die Lebenspunkte zweireihig vertikal (Schwergewichte: vertikale Lebenssaeule), RECHTS die Faehigkeiten zweireihig vertikal (aktiv bunt, verbraucht grau), OBEN LINKS der Angriffswert als Gold-Raute, OBEN RECHTS wie gehabt das Level - die Figur selbst bleibt frei
