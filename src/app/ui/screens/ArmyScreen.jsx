@@ -16,15 +16,25 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { paintedById } from "../board/paintedArt.js";
+import { paintedById, paintedForPiece } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
+/** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
+ *  so no bottom-anchoring, no hp padding, no badge chrome. */
+function TileArt({ kind, size, hero = false }) {
+  const src = paintedForPiece({ kind, color: "w", hero });
+  return src
+    ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
+        objectPosition: "center center", filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
+        userSelect: "none", pointerEvents: "none", display: "block", flex: "none" }} />
+    : <span style={{ fontSize: size * 0.8, lineHeight: 1 }}>♟</span>;
+}
 function Glyph({ kind, level, abilities, shield, size = 50, hero = false, art = "painted" }) {
-  return <div style={{ fontSize: size, width: "1.3em", height: "1.3em", display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
-    <PieceGlyph piece={{ kind, color: "w", level, abilities, shield, used: {}, hero }} artStyle={art} />
+  return <div style={{ width: size * 1.3, height: size * 1.3, display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
+    <TileArt kind={kind} size={size} hero={hero} />
   </div>;
 }
 
@@ -241,8 +251,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
 }
 
 const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
-  <span style={{ fontSize: size, width: "1em", height: "1em", display: "inline-grid", placeItems: "center" }}>
-    <PieceGlyph piece={{ kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle={art} />
+  <span style={{ width: typeof size === "number" ? size : size, height: typeof size === "number" ? size : size,
+    display: "inline-grid", placeItems: "center" }}>
+    <TileArt kind={kind} size={typeof size === "number" ? size : undefined} />
   </span>
 );
 
@@ -406,13 +417,19 @@ function FormationEditor({ profile, dispatch, t, en }) {
     )}
     {pick !== null && (
       <div style={{ background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, padding: 8, marginBottom: 10 }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 7 }}>
           {pieces.map((c) => {
             const on = draft[pick] === c.id;
             return <button key={c.id} onClick={() => setSlot(pick, c.id)}
-              style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 13px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13.5,
+              style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 13px", borderRadius: 11, cursor: "pointer", fontFamily: "inherit",
+                width: "100%", textAlign: "left",
                 background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text, border: `1px solid ${on ? T.lime : T.line}` }}>
-              <SlotGlyph kind={c.kind} size={30} art={"painted"} />{en ? c.nameEn : c.nameDe}
+              <SlotGlyph kind={c.kind} size={52} art={"painted"} />
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: "block", fontWeight: 800, fontSize: 14.5 }}>{en ? c.nameEn : c.nameDe}</span>
+                <span style={{ display: "block", fontSize: 12, lineHeight: 1.45, marginTop: 2,
+                  color: on ? T.limeInk : T.dim, fontStyle: "italic" }}>{en ? c.flavorEn : c.flavorDe}</span>
+              </span>
             </button>;
           })}
         </div>
@@ -640,8 +657,8 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     {/* three rooms instead of one endless scroll */}
     <Segmented value={tab} onChange={setTab} options={[
       { value: "formation", label: t("army.tabFormation") },
-      { value: "gear", label: t("army.tabGear") },
       { value: "chars", label: t("army.tabChars") },
+      { value: "gear", label: t("army.tabGear") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}

@@ -61,7 +61,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(56vw, 220px)", display: "block", marginTop: -4 }} />
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(80vw, 420px)", display: "block", marginTop: -6 }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.66
+- NEUES LOGIN-BILD (die hellere Fassung): Ritter und Titel freigestellt, Schachboden entfernt - und VIEL groesser dargestellt (bis 620px, Spielstand-Schirm 420px)
+- AUFSTELLUNG DESKTOP: das Auswahlmenue ist jetzt eine LISTE ueber die volle Breite - grosse Figur (52px), Name fett, Erklaerungstext darunter; Figuren sitzen ueberall MITTIG in ihren Kacheln (neue TileArt statt Brett-Verankerung, das behebt den Versatz)
+- REITER-REIHENFOLGE im Hofstaat: Aufstellung, FIGUREN, Ausruestung (Ausruestung ans Ende)
+- START-SPLASH traegt jetzt die goldene Wortmarke (statt Vektor-Schriftzug); die Kopfleisten-Logos (Desktop + Mobil) kamen bereits mit 0.21.65
+
 ## 0.21.65
 - NEUE LOGOS ueberall: Login zeigt den goldenen Ritter (Schachboden aus dem Bild entfernt - Luminanz-Freistellung, das App-Brett uebernimmt), Kopfleiste (Desktop + Mobil) traegt die goldene GRAND-GAMBIT-Wortmarke, App-Symbol/PWA-Icons/Favicon sind das GG-Emblem auf Navy (192/512/maskable/apple-touch neu gebaut)
 - WAEHRUNGEN IMMER IM BLICK: Kopfleiste zeigt Gold und Skillpunkte als Chips (Desktop und Mobil), XP-Balken wie gehabt; OFFENE BELOHNUNGEN erscheinen als goldene Zaehler-Plakette am Schatzkammer-Reiter

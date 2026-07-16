@@ -3,6 +3,7 @@
 // wordmark used in the app header, both vectorized after the official sheets.
 import { useEffect, useState } from "react";
 import { T } from "./theme.js";
+import logoMenuUrl from "./assets/logo-menu.webp";
 import { PieceArt } from "./board/PieceArt.jsx";
 
 const GOLD = "#c9a45c", GOLD_HI = "#e3c07a", GOLD_DK = "#a8863f", NAVY = "#0e1424";
@@ -81,7 +82,7 @@ export function Splash({ onDone }) {
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18,
       cursor: "pointer", ...(out ? { animation: "splashOut .5s ease both" } : {}) }}>
       <Emblem size={min(0.62)} animate />
-      <div style={{ width: min(0.5) }}><Wordmark scale={min(0.62) / 160} animate /></div>
+      <img src={logoMenuUrl} alt="Grand Gambit" style={{ width: min(0.72), display: "block" }} />
     </div>
   );
 }
