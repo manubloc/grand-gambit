@@ -53,16 +53,20 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
-  // the gift of sight: with a seeress or hawk in YOUR ranks you may study any
-  // enemy piece — tap it and its possible moves are revealed
-  const canSpy = state.rules === "hp" && state.board.some((p) => p && p.color === pov && (p.kind === "SE" || p.kind === "H"));
+  // WHO may be studied? Standard chessmen always (everyone knows how a rook
+  // moves). Exotic foes only once you have MET them before (the codex,
+  // knownKinds) — unless a seer with her first gift stands in your ranks
+  // (seerVision), which reads even strangers.
+  const STD_KINDS = new Set(["P", "N", "B", "R", "Q", "K"]);
+  const codexKey = (p) => (p.bossId ? "X:" + p.bossId : p.kind);
+  const spyAllowed = (p) => state.rules !== "hp" || STD_KINDS.has(p.kind) || seerVision || !!(knownKinds && knownKinds.has(codexKey(p)));
 
   // ── the board breathes as ONE: every now and then a golden wave rolls
   // across the dark slabs (never per-tile flicker). The interval is a skewed
@@ -158,7 +162,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     if (sel != null && targets.has(i)) { onMove(targets.get(i)); setSel(null); return; }
     const piece = state.board[i];
     if (piece && piece.color === state.turn) { setSel(i === sel ? null : i); setSpy(null); }
-    else if (piece && canSpy) { setSpy(i === spy ? null : i); setSel(null); }
+    else if (piece) {
+      if (onEnemyTap) onEnemyTap(i, spyAllowed(piece));      // the hall notices your curiosity (first-meet tales)
+      if (spyAllowed(piece)) setSpy(i === spy ? null : i);   // known or seen-through: study its moves
+      else setSpy(null);                                     // a stranger keeps its secrets — this time
+      setSel(null);
+    }
     else { setSel(null); setSpy(null); }
   }
 
@@ -222,13 +231,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
           {isSpy && <div style={{ position: "absolute", inset: 0, boxShadow: "inset 0 0 0 3px #a78bfa", background: "rgba(167,139,250,.1)" }} />}
+          {introSpot && introSpot.has(i) && piece && <div style={{ position: "absolute", inset: "4%", borderRadius: 8,
+            pointerEvents: "none", animation: "ggNewPulse 1.15s ease-in-out infinite" }} />}
           {spyT && <div style={{ position: "absolute", width: "30%", height: "30%", borderRadius: "50%", left: "35%", top: "35%",
             background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
             transform: (typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
-              + ((isSel || isSpy) ? " scale(1.24)" : ""), // the chosen one steps forward for inspection
+              + ((isSel || isSpy) ? " scale(1.38)" : ""), // the chosen one steps forward for inspection
             transformOrigin: "50% 72%", transition: "transform .16s ease",
             position: "relative", zIndex: (isSel || isSpy) ? 3 : undefined,
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}

@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.87
+- EROEFFNUNG DRAMATISCHER + VARIIERT: drei Kamerafluege (A/B/C), jede Schlacht zieht zufaellig einen - alle beginnen NAH UEBER DEN FEINDREIHEN und verweilen dort (die eigene Reihe kennt man), mit seitlichen Schwenks, 3.4s; NEUE, nie gesehene Feindfiguren PULSIEREN waehrend des Flugs golden - die Kamera stellt sie vor
+- DER CODEX (neue Kernmechanik): das Profil merkt sich, welchen exotischen Figuren man je begegnet ist. FEINDE SIND JETZT IMMER ANKLICKBAR - Standardfiguren und bereits BEKANNTE zeigen ihre Zuege; FREMDE behalten ihre Zuege beim ersten Treffen fuer sich (ab der naechsten Schlacht offen)
+- SEHER-GABE PRAEZISIERT: Hellseherin und Falke lesen auch FREMDE - aber erst ab Level 2 (die erste erworbene Faehigkeitsstufe schaltet den Spaehblick frei)
+- FIRST-MEET-GESCHICHTEN: klickt man eine nie gesehene Figur an, stellt sie sich einmalig mit einem Popup vor (Portrait, Name, Sage) - inkl. Hinweis, ob die Seher-Gabe sie bereits liest oder sie ihre Geheimnisse noch behaelt
+- Gewaehlte Figuren wachsen beim Anklicken jetzt auf 138% (vorher 124%)
+
 ## 0.21.86
 - KARTE: das Liga-Blaettern sind jetzt runde GOLD-PFEILE (links/rechts, gleicher Siegel-Stil) - der Karten-Nadel-Knopf bleibt ganz links
 - WERKBANK: der SPIELFORTSCHRITT-REGLER ist von der Spielstand-Karte in die Werkbank umgezogen (alte Stelle entfernt) und wirkt jetzt auf die GEWAEHLTE LIGA statt stur auf Liga 1

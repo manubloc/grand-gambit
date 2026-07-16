@@ -61,9 +61,22 @@ export const GLOBAL_CSS = `
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
   @keyframes splashText { from { letter-spacing: .55em; opacity: 0; } to { letter-spacing: .18em; opacity: 1; } }
   @keyframes marbleWave { 0% { opacity: 0; } 35% { opacity: .34; } 100% { opacity: 0; } }
-  @keyframes ggBoardFly { 0% { transform: scale(1.5) translateY(17%); }
-    58% { transform: scale(1.3) translateY(-11%); }
-    100% { transform: scale(1) translateY(0); } }
+  /* three opening flights — each battle draws one. All of them LINGER over
+     the enemy ranks first (your own you know by heart). */
+  @keyframes ggBoardFlyA { 0% { transform: scale(1.95) translateY(23%); }
+    34% { transform: scale(1.8) translateY(21%); }
+    62% { transform: scale(1.45) translateY(6%) translateX(-3%); }
+    100% { transform: scale(1) translateY(0) translateX(0); } }
+  @keyframes ggBoardFlyB { 0% { transform: scale(2.05) translateY(24%) translateX(9%); }
+    38% { transform: scale(1.85) translateY(22%) translateX(-7%); }
+    68% { transform: scale(1.4) translateY(4%) translateX(0); }
+    100% { transform: scale(1) translateY(0) translateX(0); } }
+  @keyframes ggBoardFlyC { 0% { transform: scale(1.75) translateY(-16%) translateX(-6%); }
+    30% { transform: scale(1.9) translateY(22%) translateX(4%); }
+    64% { transform: scale(1.9) translateY(21%) translateX(-4%); }
+    100% { transform: scale(1) translateY(0) translateX(0); } }
+  @keyframes ggNewPulse { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(240,206,122,.25), 0 0 10px rgba(240,206,122,.15); }
+    50% { box-shadow: inset 0 0 0 3.5px rgba(246,233,164,.9), 0 0 22px rgba(240,206,122,.65); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }
     50% { transform: translateX(-47%) translateY(-6%) scaleY(1.04); opacity: .8 }
     100% { transform: translateX(-50%) translateY(-14%) scaleY(1.1); opacity: .35 } }

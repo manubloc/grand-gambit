@@ -8,6 +8,7 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
+import { CHARACTERS } from "../../../content/index.js";
 import { paintedById } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -316,7 +317,40 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [armResign, setArmResign] = useState(false);
   const [zoomMode, setZoomMode] = useState(false); // the field glass: scrollable close view, the fixed board stays the default
   const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
-  useEffect(() => { const id = setTimeout(() => setFlyDone(true), 2600); return () => clearTimeout(id); }, []); // one tap arms, the second concedes
+  const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
+  // ── THE CODEX: which exotic foes has the player met before? First
+  // encounters keep their secrets (no move-reading) and introduce themselves
+  // with a tale instead; from the NEXT battle on they are an open book. ──
+  const STD_KINDS = useMemo(() => new Set(["P", "N", "B", "R", "Q", "K", "D+"]), []);
+  const codexKey = (pc) => (pc.bossId ? "X:" + pc.bossId : pc.kind);
+  const [knownAtStart] = useState(() => new Set(profile.codex?.met || []));
+  const [metTold, setMetTold] = useState(() => new Set()); // tales told this battle
+  const [firstMeet, setFirstMeet] = useState(null);        // the introduction sheet
+  useEffect(() => {
+    if (!dispatch || !state?.board) return;
+    const met = new Set(profile.codex?.met || []);
+    let grew = false;
+    for (const pc of state.board) if (pc && pc.color === oppColor && !STD_KINDS.has(pc.kind)) {
+      const k = codexKey(pc); if (!met.has(k)) { met.add(k); grew = true; }
+    }
+    if (grew) dispatch({ type: "REPLACE", profile: { ...profile, codex: { ...(profile.codex || {}), met: [...met] } } });
+  }, []);
+  const introSpots = useMemo(() => {
+    if (flyDone || !state?.board) return null;
+    const set = new Set();
+    state.board.forEach((pc, i) => { if (pc && pc.color === oppColor && !STD_KINDS.has(pc.kind) && !knownAtStart.has(codexKey(pc))) set.add(i); });
+    return set.size ? set : null;
+  }, [flyDone, state]);
+  const seerVision = state?.rules === "hp" && state.board.some((pc) => pc && pc.color === myColor && (pc.kind === "SE" || pc.kind === "H") && (pc.level || 1) >= 2);
+  const onEnemyTap = (i, allowed) => {
+    const pc = state.board[i]; if (!pc || STD_KINDS.has(pc.kind)) return;
+    const k = codexKey(pc);
+    if (!knownAtStart.has(k) && !metTold.has(k)) {           // a stranger — the hall tells its tale once
+      setMetTold((m) => new Set(m).add(k));
+      setFirstMeet({ piece: pc, seen: allowed });
+    }
+  };
+  useEffect(() => { const id = setTimeout(() => setFlyDone(true), 3500); return () => clearTimeout(id); }, []); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
     const id = setTimeout(() => setArmResign(false), 3500);
@@ -426,15 +460,42 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
         overflow: zoomMode ? "auto" : "visible", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
         <div style={{ width: zoomMode ? "185%" : "100%", height: zoomMode ? "185%" : "100%",
-          animation: !flyDone && !zoomMode ? "ggBoardFly 2.5s cubic-bezier(.35,.12,.22,1) both" : "none" }}>
+          animation: !flyDone && !zoomMode ? `ggBoardFly${flyVar} 3.4s cubic-bezier(.35,.12,.22,1) both` : "none" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
+          knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots}
           texture={boardTexture(match, profile)} artStyle={classic ? "classic" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
         </div>
+        {firstMeet && (() => {
+          const pc = firstMeet.piece;
+          const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);
+          const nm = pc.name ? (en ? pc.name.en : pc.name.de) : ch ? (en ? ch.nameEn : ch.nameDe) : pc.kind;
+          const tale = ch ? (en ? ch.flavorEn : ch.flavorDe) : t("meet.unknownTale");
+          const src = paintedForPiece({ kind: pc.kind, color: "w", hero: false });
+          return (
+            <div onClick={() => setFirstMeet(null)} style={{ position: "fixed", inset: 0, zIndex: 60, background: "rgba(4,6,10,.72)",
+              display: "grid", placeItems: "center", padding: 18, animation: "fade .2s ease" }}>
+              <div onClick={(e) => e.stopPropagation()} style={{ width: "min(92vw, 360px)", borderRadius: 16, padding: "16px 16px 14px",
+                background: "linear-gradient(178deg, #141a28, #0d1119)", border: "1px solid rgba(233,210,150,.45)",
+                boxShadow: "0 18px 50px rgba(0,0,0,.6)", textAlign: "center", animation: "rise .25s ease" }}>
+                <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".16em", color: T.gold }}>{t("meet.title")}</div>
+                {src && <img src={src} alt="" style={{ height: 110, margin: "10px auto 6px", display: "block", objectFit: "contain",
+                  filter: ENEMY_FILTER + " brightness(1.25) drop-shadow(0 4px 8px rgba(0,0,0,.6))" }} />}
+                <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".05em" }}>{nm}</div>
+                <div className="gg-serif" style={{ fontSize: 12.5, fontStyle: "italic", color: T.dim, lineHeight: 1.55, margin: "7px 0 4px" }}>{tale}</div>
+                <div style={{ fontSize: 11.5, color: firstMeet.seen ? "#b9a8ef" : T.faint, marginTop: 6 }}>
+                  {firstMeet.seen ? t("meet.seerNote") : t("meet.secretNote")}</div>
+                <button onClick={() => setFirstMeet(null)} style={{ marginTop: 12, width: "100%", padding: "10px 14px", borderRadius: 10,
+                  background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+                  color: "#17110a", fontWeight: 800, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer" }}>{t("meet.ok")}</button>
+              </div>
+            </div>
+          );
+        })()}
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
