@@ -239,7 +239,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             transition: "filter .45s ease",
             filter: introSpot && !introSpot.has(i)
               ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...
-              : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>                                       // ... the strangers stand sharp<PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+              : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" /* the strangers stand sharp */ }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
