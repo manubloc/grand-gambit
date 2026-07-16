@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.76
+- ERSTER START OEFFNET DIE WELT: wer die Kampagne zum ersten Mal betritt, sieht zuerst das grosse Weltgemaelde (einmalig, danach gemerkt) - die Reise beginnt mit dem Blick aufs Ganze
+- LORE-FENSTER IN DER KARTE: tippt man eine Liga an, erscheint die Geschichte jetzt INNERHALB des Gemaeldes - schwebend ueber dem Anker im vergrauten Dunkel (bei den obersten Ligen klappt es stattdessen darunter auf); kein Block mehr unter der Karte, auch auf Desktop
+- HELLER STRICH LINKS BEHOBEN: die Karte bekommt eine Deckungs-Reserve (Zoom +0.5%) und der Rahmen hinter Gemaelden ist dunkel statt Pergament - keine helle Naht mehr am Rand
+- NEBEL & RAUCH KRAEFTIGER: Kartenfenster-Nebel heller und dichter (0.4 + zweite 0.26er-Schicht, hellere Schwaden), der Rauch hinter feindlichen Figuren ist breiter, steigt ueber den Kopf hinaus und traegt mehr Deckkraft (0.55) - jetzt wirklich sichtbar
+
 ## 0.21.75
 - LOGIN + SPIELSTAND final aufgeraeumt: Inhalt beginnt GANZ OBEN (kein Riesen-Abstand mehr auf Desktop - die vertikale Zentrierung ist raus), das Ritter-Bild ist GROESSER (Login 36vh/720px, Spielstand 32vh/620px) und steht als Erstes; "Waehle deinen Spielstand" kleiner (14.5 statt 19); die GEISTER-PILL unter dem Absatz ist entfernt (leere Huelle des alten Admin-Hinweises, auf beiden Schirmen geprueft); Eingabefelder und Knoepfe kompakter - und gescrollt wird ganz normal, wenn die Bildschirmhoehe nicht reicht
 

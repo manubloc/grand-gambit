@@ -66,7 +66,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
-  const [world, setWorld] = useState(false); // the overworld: travel between leagues
+  const [world, setWorld] = useState(() => !profile?.notices?.worldSeen); // the first visit opens on the WHOLE world
+  useEffect(() => { if (world && !profile?.notices?.worldSeen) dispatch({ type: "SET_NOTICE", key: "worldSeen" }); }, [world]); // the overworld: travel between leagues
   const [worldSel, setWorldSel] = useState(null); // tapped league on the painting
   useEffect(() => { setViewLeague(league); }, [league]);
   const viewing = viewLeague !== league;
@@ -152,7 +153,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const fit = Math.max(vp.h / HM, vp.w / WMAP);       // cover the viewport
   // the painted worlds are 1796px wide — rendered any larger they go soft on
   // hi-DPI screens, so the window sits a step back from full bleed
-  const z = fit * (wide ? 0.8 : 1.0); // phones: full bleed to the menu, even padding at the rim
+  const z = fit * (wide ? 0.8 : 1.005); // phones: full bleed + a hair of cover reserve (no light seam at the rim)
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.min(vp.h, HM * z);
   const frameX = Math.round((vp.w - frameW) / 2);
@@ -195,14 +196,18 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         onPointerCancel={() => { dragRef.current = null; setDragging(false); }}
         onClickCapture={(e) => { if (clickSquelch.current) { clickSquelch.current = false; e.preventDefault(); e.stopPropagation(); } }}
         style={{ position: "absolute", left: frameX, top: frameY, width: frameW, height: frameH,
-        overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: th.paper,
+        overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: bm ? "#0c0e13" : th.paper,
         boxShadow: "0 0 34px rgba(0,0,0,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
         <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
-          filter: "blur(16px)", opacity: 0.28, mixBlendMode: "screen",
-          background: "radial-gradient(44% 34% at 86% 30%, rgba(216,206,188,.5), transparent 70%), radial-gradient(38% 30% at 78% 72%, rgba(196,186,168,.4), transparent 70%)",
+          filter: "blur(16px)", opacity: 0.4, mixBlendMode: "screen",
+          background: "radial-gradient(48% 36% at 86% 30%, rgba(236,228,212,.6), transparent 70%), radial-gradient(42% 32% at 78% 72%, rgba(220,212,196,.48), transparent 70%)",
           animation: "ggFogR 52s ease-in-out infinite alternate" }} />
+        <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
+          filter: "blur(22px)", opacity: 0.26, mixBlendMode: "screen",
+          background: "radial-gradient(40% 30% at 90% 52%, rgba(228,220,204,.55), transparent 70%)",
+          animation: "ggFogR2 67s ease-in-out infinite alternate" }} />
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
           transform: `translate(${-camX}px, ${-camY}px) scale(${z})`,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
@@ -590,28 +595,35 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   </div>
                 );
               })}
-            </div>
-            {/* the lore sheet: name, tale, travel */}
-            {worldSel && (() => {
-              const wt = themeForLeague(worldSel);
-              const lore = LEAGUE_LORE[worldSel];
-              return (
-                <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 430, margin: "10px auto 0", borderRadius: 14,
-                  border: "1px solid rgba(233,210,150,.4)", background: "rgba(12,15,22,.92)", padding: "13px 14px",
-                  animation: "rise .25s ease" }}>
-                  <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
-                    {ROMAN[worldSel - 1]} · {wt.nameDe}</div>
-                  <div className="gg-serif" style={{ color: "rgba(240,233,216,.85)", fontSize: 12.5, fontStyle: "italic",
-                    lineHeight: 1.6, marginTop: 6 }}>{lore ? (profile.lang === "en" ? lore.en : lore.de) : ""}</div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 11 }}>
-                    <GoldShineButton style={{ flex: 1, padding: "9px 12px", fontSize: 13, borderRadius: 10 }}
-                      onClick={() => { setViewLeague(worldSel); setPanOff({ x: 0, y: 0 }); setWorldSel(null); setWorld(false); }}>
-                      {worldSel === viewLeague ? t("camp.worldHere") : t("camp.worldTravel")}
-                    </GoldShineButton>
+              {/* the lore sheet lives INSIDE the painting now: above the tapped
+                  anchor, in the veiled dark where there is always room */}
+              {worldSel && (() => {
+                const wt = themeForLeague(worldSel);
+                const lore = LEAGUE_LORE[worldSel];
+                const ay = WORLD_MAP.anchors[worldSel][1];
+                const below = ay < 30;                       // crown anchors: sheet drops BELOW instead
+                const top = below ? `${ay + 5}%` : undefined;
+                const bottom = below ? undefined : `${100 - ay + 4}%`;
+                return (
+                  <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%",
+                    transform: "translateX(-50%)", width: "min(92%, 340px)", top, bottom, zIndex: 6,
+                    borderRadius: 14, border: "1px solid rgba(233,210,150,.4)", background: "rgba(12,15,22,.92)",
+                    padding: "12px 13px", animation: "rise .25s ease" }}>
+                    <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
+                      {ROMAN[worldSel - 1]} · {wt.nameDe}</div>
+                    <div className="gg-serif" style={{ color: "rgba(240,233,216,.85)", fontSize: 12.5, fontStyle: "italic",
+                      lineHeight: 1.6, marginTop: 6 }}>{lore ? (profile.lang === "en" ? lore.en : lore.de) : ""}</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 11 }}>
+                      <GoldShineButton style={{ flex: 1, padding: "9px 12px", fontSize: 13, borderRadius: 10 }}
+                        onClick={() => { setViewLeague(worldSel); setPanOff({ x: 0, y: 0 }); setWorldSel(null); setWorld(false); }}>
+                        {worldSel === viewLeague ? t("camp.worldHere") : t("camp.worldTravel")}
+                      </GoldShineButton>
+                    </div>
                   </div>
-                </div>
-              );
-            })()}
+                );
+              })()}
+            </div>
+
           </div>
         );
       })()}
