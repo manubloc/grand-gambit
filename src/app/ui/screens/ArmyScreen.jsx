@@ -50,7 +50,7 @@ function StatPill({ icon, val, color }) {
   return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12.5, fontWeight: 900, color }}>{icon} {val}</span>;
 }
 
-function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle }) {
+function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle, bigArt = false }) {
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const abWide = useMedia("(min-width: 680px)");
@@ -104,10 +104,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       {paintedById(char.id)
         ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-            style={{ width: 62, height: 80, objectFit: "contain", objectPosition: "bottom",
+            style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={44} />}
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
@@ -770,11 +770,18 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       ? <div key={f}><H>{en ? FAM_LABEL[f][1] : FAM_LABEL[f][0]}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null; })}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center", padding: 14, animation: "fade .18s ease" }}>
-        <div onClick={(e) => e.stopPropagation()} style={{ width: "min(94vw, 440px)", maxHeight: "86vh", overflowY: "auto",
-          borderRadius: 14, animation: "rise .22s ease" }}>
-          <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
-            onZoom={onZoom} open onToggle={() => setDetail(null)} />
+        display: "grid", placeItems: "center", padding: 16, animation: "fade .18s ease" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
+          borderRadius: 22, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,.6)",
+          border: "1px solid rgba(233,210,150,.4)", animation: "rise .22s ease" }}>
+          <button onClick={() => setDetail(null)} aria-label="close" style={{ position: "absolute", top: 9, right: 9, zIndex: 4,
+            width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
+            background: "rgba(10,13,20,.72)", border: "1px solid rgba(233,210,150,.4)", color: "#e9d296",
+            fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
+          <div className="gg-thinbar" style={{ maxHeight: "84vh", overflowY: "auto" }}>
+            <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
+              onZoom={onZoom} open bigArt />
+          </div>
         </div>
       </div>
     )}
@@ -809,31 +816,10 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
-      { value: "chars", label: t("army.tabChars") },
       { value: "gear", label: t("army.tabGear") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
-    {tab === "chars" && (
-      <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>
-        <H>{t("army.secRecruited")} · {rec.length}</H>
-        {rec.map((c) => {
-          const isOpen = openChar === c.id;
-          return (
-            <div key={c.id} onClick={() => { if (!isOpen) setOpenChar(c.id); }}
-              style={{ height: "100%", cursor: isOpen ? "default" : "pointer",
-                ...((c.epic && wide) || (isOpen && wide) ? { gridColumn: "1 / -1" } : {}) }}>
-              <CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar}
-                open={isOpen} onToggle={() => setOpenChar(isOpen ? null : c.id)} />
-            </div>
-          );
-        })}
-        {hid.length > 0 && <H>{t("army.secHidden")} · {hid.length}</H>}
-        {hid.map((c) => (
-          <div key={c.id} style={{ height: "100%" }}><CharCard char={c} profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} open={openChar === c.id} onToggle={() => setOpenChar(openChar === c.id ? null : c.id)} /></div>
-        ))}
-      </div>
-    )}
   </div>;
 }

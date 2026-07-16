@@ -42,6 +42,9 @@ export const GLOBAL_CSS = `
     -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
   button:active { transform: scale(.97); }
+  .gg-thinbar { scrollbar-width: thin; scrollbar-color: rgba(233,210,150,.28) transparent; }
+  .gg-thinbar::-webkit-scrollbar { width: 5px; }
+  .gg-thinbar::-webkit-scrollbar-thumb { background: rgba(233,210,150,.28); border: none; border-radius: 99px; }
   ::-webkit-scrollbar { width: 10px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #2b3550; border: 2.5px solid ${T.bg}; border-radius: 99px; }
