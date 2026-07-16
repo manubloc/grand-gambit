@@ -61,6 +61,9 @@ export const GLOBAL_CSS = `
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
   @keyframes splashText { from { letter-spacing: .55em; opacity: 0; } to { letter-spacing: .18em; opacity: 1; } }
   @keyframes marbleWave { 0% { opacity: 0; } 35% { opacity: .34; } 100% { opacity: 0; } }
+  @keyframes ggBoardFly { 0% { transform: scale(1.5) translateY(17%); }
+    58% { transform: scale(1.3) translateY(-11%); }
+    100% { transform: scale(1) translateY(0); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }
     50% { transform: translateX(-47%) translateY(-6%) scaleY(1.04); opacity: .8 }
     100% { transform: translateX(-50%) translateY(-14%) scaleY(1.1); opacity: .35 } }

@@ -58,7 +58,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
-  useEffect(() => { setSel(null); }, [state]); // clear selection whenever the position changes
+  const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
+  useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
+  // the gift of sight: with a seeress or hawk in YOUR ranks you may study any
+  // enemy piece — tap it and its possible moves are revealed
+  const canSpy = state.rules === "hp" && state.board.some((p) => p && p.color === pov && (p.kind === "SE" || p.kind === "H"));
 
   // ── the board breathes as ONE: every now and then a golden wave rolls
   // across the dark slabs (never per-tile flicker). The interval is a skewed
@@ -133,6 +137,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     if (sel != null) for (const mv of legalMovesFrom(state, sel)) m.set(mv.to, mv);
     return m;
   }, [sel, state]);
+  const spyTargets = useMemo(() => {
+    const m = new Set();
+    if (spy != null && state.board[spy]) {
+      try { for (const mv of legalMovesFrom({ ...state, turn: state.board[spy].color }, spy)) m.add(mv.to); } catch {}
+    }
+    return m;
+  }, [spy, state]);
 
   const checkSq = useMemo(() => {
     const k = findKing(state.board, state.turn, W);
@@ -146,8 +157,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     if (pick && onPick) { const pc = state.board[i]; if (pc && pc.color === pick) onPick(i); return; }
     if (sel != null && targets.has(i)) { onMove(targets.get(i)); setSel(null); return; }
     const piece = state.board[i];
-    if (piece && piece.color === state.turn) setSel(i === sel ? null : i);
-    else setSel(null);
+    if (piece && piece.color === state.turn) { setSel(i === sel ? null : i); setSpy(null); }
+    else if (piece && canSpy) { setSpy(i === spy ? null : i); setSel(null); }
+    else { setSel(null); setSpy(null); }
   }
 
   const cells = [];
@@ -167,6 +179,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const dark = (f + r) % 2 === 1;
       const tgt = targets.get(i);
       const isSel = sel === i;
+      const isSpy = spy === i;
+      const spyT = spyTargets.has(i);
       const isLast = lastMove && (lastMove.from === i || lastMove.to === i);
       const isHit = hpMode && lastMove && lastMove.to === i && (lastMove.damaged || lastMove.lethal);
       // Tiny coordinates on the rim squares (a–j / 1–10), chess-board style:
@@ -207,9 +221,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {isLast && i === lastMove.to && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 2px ${T.gold}cc`, pointerEvents: "none" }} />}
           {isHit && <div key={`hit${lastMove.from}-${lastMove.to}`} style={{ position: "absolute", inset: 0, background: T.danger, animation: "hit .45s ease-out forwards" }} />}
           {isSel && <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 3px ${T.gold}`, background: `${T.gold}14` }} />}
+          {isSpy && <div style={{ position: "absolute", inset: 0, boxShadow: "inset 0 0 0 3px #a78bfa", background: "rgba(167,139,250,.1)" }} />}
+          {spyT && <div style={{ position: "absolute", width: "30%", height: "30%", borderRadius: "50%", left: "35%", top: "35%",
+            background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
+            boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
-            transform: typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)", // measured: painted mass sits at ~60% height, -9.3% centers it optically
+            transform: (typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
+              + ((isSel || isSpy) ? " scale(1.24)" : ""), // the chosen one steps forward for inspection
+            transformOrigin: "50% 72%", transition: "transform .16s ease",
+            position: "relative", zIndex: (isSel || isSpy) ? 3 : undefined,
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>

@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
 import crest3 from "../assets/crest-3.webp";
-import { LaurelIc, PigeonIc, CloudIc, BladesIc } from "../icons.jsx";
+import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
@@ -139,7 +139,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
                 style={{ flex: 1, minWidth: 0, background: T.bg2, color: T.text, border: `1px solid ${T.line}`,
                   borderRadius: 10, padding: "9px 11px", fontFamily: "inherit", fontSize: 14 }} />
               <Button variant="subtle" title={t("online.tagRoll")} onClick={() => setTagDraft(rollTag(en))}
-                style={{ padding: "7px 13px", fontSize: 16 }}>🎲</Button>
+                style={{ padding: "7px 13px", display: "inline-grid", placeItems: "center" }}><DiceIc size={18} /></Button>
             </div>
             <Button variant="primary" disabled={!tagDraft.trim()} onClick={() => {
               dispatch({ type: "SET_NAME", name: tagDraft.trim() });

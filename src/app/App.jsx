@@ -7,7 +7,7 @@ import { SERVER_URL } from "./config.js";
 import { playerXpProgress, skillPoints, claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import emblemUrl from "./ui/assets/emblem.webp";
-import { CoinIc, SkillIc, LevelIc, CrestIc } from "./ui/icons.jsx";
+import { CoinIc, SkillIc, LevelIc, CrestIc, GoldHeartIc, MapPinIc } from "./ui/icons.jsx";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -475,9 +475,9 @@ function GameIntro({ t, dispatch, onStart }) {
         </div>
         <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: T.dim }}>{t("intro.lead")}</div>
         <div style={{ display: "grid", gap: 11, margin: "15px 0 4px" }}>
-          <Row icon={<HeartIc size={16} />}>{t("intro.p1")}</Row>
-          <Row icon={<SkillStar size={16} />}>{t("intro.p2")}</Row>
-          <Row icon={<MapIc size={16} />}>{t("intro.p3")}</Row>
+          <Row icon={<GoldHeartIc size={17} />}>{t("intro.p1")}</Row>
+          <Row icon={<SkillIc size={17} />}>{t("intro.p2")}</Row>
+          <Row icon={<MapPinIc size={17} />}>{t("intro.p3")}</Row>
         </div>
         <button onClick={() => { dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart(); }}
           style={{ marginTop: 15, width: "100%", padding: "12px 14px", borderRadius: 10,

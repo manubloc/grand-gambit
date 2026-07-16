@@ -9,7 +9,7 @@ import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { paintedById } from "../board/paintedArt.js";
-import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc } from "../icons.jsx";
+import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
@@ -313,7 +313,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       return n;
     });
   }
-  const [armResign, setArmResign] = useState(false); // one tap arms, the second concedes
+  const [armResign, setArmResign] = useState(false);
+  const [zoomMode, setZoomMode] = useState(false); // the field glass: scrollable close view, the fixed board stays the default
+  const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
+  useEffect(() => { const id = setTimeout(() => setFlyDone(true), 2600); return () => clearTimeout(id); }, []); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
     const id = setTimeout(() => setArmResign(false), 3500);
@@ -387,6 +390,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             border: `1.5px solid ${T.gold}${clockHot ? "cc" : "55"}`, color: clockHot ? T.goldBright : T.gold,
             letterSpacing: ".06em", fontSize: 14, gap: 5 })}><HourglassIc size={14} color={clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
         )}
+        <button onClick={() => setZoomMode((z) => !z)} title={t("game.zoom")}
+          style={pill({ border: `1.5px solid ${zoomMode ? T.gold : T.gold + "66"}`, color: zoomMode ? T.goldBright : T.dim,
+            cursor: "pointer", background: zoomMode ? "rgba(240,206,122,.12)" : undefined })}>
+          <ZoomIc size={15} />
+        </button>
         {armResign ? (
           <span style={pill({ cursor: "default", border: `1.5px solid ${T.gold}`, color: T.goldBright, gap: 9,
             animation: "ggGlow 1.6s ease-in-out infinite" })}>
@@ -415,7 +423,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
-      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px" }}>
+      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
+        overflow: zoomMode ? "auto" : "visible", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ width: zoomMode ? "185%" : "100%", height: zoomMode ? "185%" : "100%",
+          animation: !flyDone && !zoomMode ? "ggBoardFly 2.5s cubic-bezier(.35,.12,.22,1) both" : "none" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
@@ -423,6 +434,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
+        </div>
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}

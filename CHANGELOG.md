@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.84
+- GEZEICHNETE ICONS komplettiert: das Willkommen-Fenster traegt jetzt GOLD-HERZ, Gold-Funke und Feldkarte (statt gruenem Herz/Stern); der Namens-Wuerfel im Online-Duell ist ein handgezeichneter GOLD-WUERFEL mit dunklen Augen
+- DIE GEWAEHLTE FIGUR TRITT VOR: beim Anwaehlen waechst jede Figur um 24% aus ihrer Kachel (sanfte .16s-Bewegung) - eigene wie feindliche
+- SEHER-SPAEHBLICK (neue Faehigkeit von Hellseherin und Falke): steht eine SEHERIN oder ein FALKE in deinen Reihen, kannst du JEDE feindliche Figur antippen - sie tritt vor und ihre moeglichen Zuege leuchten in Seher-Violett auf. So analysierst du fremde Champions und Monster, bevor du ziehst
+- EROEFFNUNGSFLUG: jede Partie beginnt mit einem kurzen Kameraflug uebers Brett (2.5s, von den Feindreihen heran) - der Gegner steht dir einmal vor Augen, dann setzt sich das Brett
+- NAHANSICHT (Lupen-Knopf neben Aufgeben): schaltet einen scrollbaren Zoom-Modus (185%), um das Brett im Detail zu studieren - das feste, unverrueckbare Brett bleibt der Standard
+
 ## 0.21.83
 - UPDATE-PROBLEM AN DER WURZEL BEHOBEN: der Service Worker bekam skipWaiting + clientsClaim - neue Versionen uebernehmen ab jetzt beim NAECHSTEN LADEN sofort, statt zu warten bis alle Tabs geschlossen sind (der Grund, warum Aenderungen oft "nicht ankamen")
 - VERSIONSANZEIGE: unten auf Login und Spielstand-Auswahl steht jetzt dezent die laufende Versionsnummer - so ist sofort sichtbar, welcher Stand laedt

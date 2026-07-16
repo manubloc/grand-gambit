@@ -322,3 +322,42 @@ export function BackIc({ size = 18 }) {
     <path d="M14.2 5.6 L8.6 11.2" fill="none" stroke="#fff6d8" strokeWidth="0.9" strokeLinecap="round" opacity=".8" />
   </svg>;
 }
+
+/** A heart cast in the house gold — facets, sheen, drop shadow. */
+export function GoldHeartIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggHrt" />
+    <path d="M11 19.2 C6.2 15.4 3 12.4 3 9 C3 6.4 5 4.6 7.3 4.6 C8.8 4.6 10.2 5.4 11 6.6 C11.8 5.4 13.2 4.6 14.7 4.6 C17 4.6 19 6.4 19 9 C19 12.4 15.8 15.4 11 19.2 Z"
+      fill="url(#ggHrt)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M11 6.6 L11 19.2 M3.6 10.6 L18.4 10.6" stroke="#8a6830" strokeWidth="0.5" opacity=".5" />
+    <path d="M6 7.2 C5.2 7.7 4.7 8.4 4.7 9.3" fill="none" stroke="#fff6d8" strokeWidth="1.2" strokeLinecap="round" opacity=".9" />
+    <path d="M11 19.2 C6.2 15.4 3 12.4 3 9 C3 6.4 5 4.6 7.3 4.6 C8.8 4.6 10.2 5.4 11 6.6 C11.8 5.4 13.2 4.6 14.7 4.6 C17 4.6 19 6.4 19 9 C19 12.4 15.8 15.4 11 19.2 Z" fill="url(#ggHrts)" />
+  </svg>;
+}
+/** A gaming die in the house gold — tilted, pips sunk dark. */
+export function DiceIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggDie" />
+    <rect x="3.4" y="3.4" width="15.2" height="15.2" rx="3.4" transform="rotate(-8 11 11)"
+      fill="url(#ggDie)" stroke="#6f5526" strokeWidth="1" />
+    <rect x="4.6" y="4.6" width="12.8" height="12.8" rx="2.6" transform="rotate(-8 11 11)"
+      fill="none" stroke="#fff3c4" strokeWidth="0.5" opacity=".45" />
+    <g transform="rotate(-8 11 11)" fill="#5c4318">
+      <circle cx="7.4" cy="7.4" r="1.25" /><circle cx="14.6" cy="7.4" r="1.25" />
+      <circle cx="11" cy="11" r="1.25" />
+      <circle cx="7.4" cy="14.6" r="1.25" /><circle cx="14.6" cy="14.6" r="1.25" />
+    </g>
+    <path d="M5.2 5.8 C6 4.8 7 4.2 8.2 4" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".85" transform="rotate(-8 11 11)" />
+  </svg>;
+}
+/** A field glass / loupe in the house gold. */
+export function ZoomIc({ size = 17 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggZm" />
+    <circle cx="9.4" cy="9.4" r="5.6" fill="rgba(12,17,30,.35)" stroke="url(#ggZm)" strokeWidth="2.2" />
+    <circle cx="9.4" cy="9.4" r="5.6" fill="none" stroke="#6f5526" strokeWidth="0.7" opacity=".8" />
+    <path d="M7.2 7.4 C7.6 6.7 8.3 6.2 9.1 6.1" fill="none" stroke="#fff6d8" strokeWidth="1.2" strokeLinecap="round" opacity=".9" />
+    <path d="M13.6 13.6 L18.6 18.6" stroke="url(#ggZm)" strokeWidth="2.6" strokeLinecap="round" />
+    <path d="M13.6 13.6 L18.6 18.6" stroke="#6f5526" strokeWidth="0.7" strokeLinecap="round" opacity=".6" />
+  </svg>;
+}
