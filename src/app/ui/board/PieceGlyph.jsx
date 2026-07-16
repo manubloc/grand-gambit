@@ -92,9 +92,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       paddingBottom: "0.015em", animation: "pop .18s ease",
       boxSizing: "border-box" }}>
       {!white && (
-        <span aria-hidden style={{ position: "absolute", left: "50%", bottom: "0.02em", width: "0.86em", height: "1.34em",
-          transform: "translateX(-50%)", pointerEvents: "none", filter: "blur(2.5px)", opacity: 0.55, zIndex: 0,
-          background: "radial-gradient(52% 30% at 50% 88%, rgba(205,214,232,.6), transparent 72%), radial-gradient(40% 28% at 40% 52%, rgba(185,195,218,.46), transparent 70%), radial-gradient(34% 26% at 60% 18%, rgba(175,185,208,.36), transparent 70%)",
+        <span aria-hidden style={{ position: "absolute", left: "50%", bottom: "0.02em", width: "0.95em", height: "1.42em",
+          transform: "translateX(-50%)", pointerEvents: "none", filter: "blur(2.5px)", opacity: 0.85, zIndex: 0,
+          background: "radial-gradient(56% 32% at 50% 88%, rgba(222,230,244,.75), transparent 74%), radial-gradient(44% 30% at 40% 52%, rgba(205,214,235,.6), transparent 72%), radial-gradient(38% 28% at 60% 16%, rgba(195,205,228,.5), transparent 72%)",
           animation: "ggSmokeUp 5.5s ease-in-out infinite" }} />
       )}
       {/* the head may rise above the square: the art gets MORE than the tile */}

@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.78
+- FEIND-RAUCH nochmals deutlich verstaerkt (im Live-Test war er selbst im Zoom kaum sichtbar): hellere Schwaden, Deckkraft-Zyklus 0.45-0.8, breiter und hoeher (0.95em x 1.42em)
+
 ## 0.21.77
 - SPERRSCHIRM-SACKGASSE BEHOBEN (im Live-UX-Test gefunden): der "Profil gesperrt"-Schirm hatte KEINEN Weg zurueck - wer den falschen Spielstand antippte oder das Passwort nicht parat hatte, sass fest. Jetzt gibt es "Zurueck zur Spielstand-Auswahl" direkt unter dem Entsperren-Knopf
 
