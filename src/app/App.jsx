@@ -194,7 +194,8 @@ export default function App() {
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   const t = makeT(profile.lang);
-  if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)} />;
+  if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)}
+    onBack={() => { setLocked(false); setSlot(null); setReady(false); }} />;
 
   const prog = playerXpProgress(profile.xpEarned || profile.xp);
   const sub = (title, node) => <div><SubHeader title={title} onBack={() => setView("hub")} t={t} />{node}</div>;
@@ -423,7 +424,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   );
 }
 
-function Lock({ t, profile, onUnlock }) {
+function Lock({ t, profile, onUnlock, onBack }) {
   const [pin, setPin] = useState("");
   const [wrong, setWrong] = useState(false);
   async function tryUnlock() {
@@ -440,6 +441,9 @@ function Lock({ t, profile, onUnlock }) {
         style={{ width: "100%", textAlign: "center", letterSpacing: 2, background: T.bg2, border: `1px solid ${wrong ? T.danger : T.line}`, borderRadius: 10, color: T.text, padding: "12px", fontSize: 18, outline: "none", marginBottom: 10 }} />
       {wrong && <div style={{ color: T.danger, fontSize: 13, marginBottom: 10 }}>{t("lock.wrong")}</div>}
       <Button style={{ width: "100%" }} onClick={tryUnlock} disabled={pin.length < 4}>{t("lock.unlock")}</Button>
+      {onBack && <button onClick={onBack} className="gg-serif" style={{ background: "none", border: "none",
+        color: T.dim, textDecoration: "underline", fontFamily: "inherit", fontSize: 13, cursor: "pointer",
+        marginTop: 12, padding: 4 }}>{t("lock.back")}</button>}
     </Panel>
   </div>;
 }

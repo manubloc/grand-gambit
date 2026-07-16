@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.77
+- SPERRSCHIRM-SACKGASSE BEHOBEN (im Live-UX-Test gefunden): der "Profil gesperrt"-Schirm hatte KEINEN Weg zurueck - wer den falschen Spielstand antippte oder das Passwort nicht parat hatte, sass fest. Jetzt gibt es "Zurueck zur Spielstand-Auswahl" direkt unter dem Entsperren-Knopf
+
 ## 0.21.76
 - ERSTER START OEFFNET DIE WELT: wer die Kampagne zum ersten Mal betritt, sieht zuerst das grosse Weltgemaelde (einmalig, danach gemerkt) - die Reise beginnt mit dem Blick aufs Ganze
 - LORE-FENSTER IN DER KARTE: tippt man eine Liga an, erscheint die Geschichte jetzt INNERHALB des Gemaeldes - schwebend ueber dem Anker im vergrauten Dunkel (bei den obersten Ligen klappt es stattdessen darunter auf); kein Block mehr unter der Karte, auch auf Desktop
