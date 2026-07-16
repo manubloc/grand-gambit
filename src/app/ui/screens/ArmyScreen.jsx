@@ -344,8 +344,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
     <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
 
-    <div style={{ display: feWide ? "grid" : "block", gridTemplateColumns: feWide ? "minmax(0, 1fr) minmax(280px, 360px)" : undefined,
-      gap: feWide ? 18 : 0, alignItems: "start" }}>
+    {/* STACKED, not side-by-side: the intro text sits ABOVE, the formation
+        gets the FULL width below — room for properly big figures */}
+    <div style={{ display: "block" }}>
     <div style={{ minWidth: 0 }}>
     {preview && (
       <div style={{ marginBottom: feWide ? 0 : 12 }}>
@@ -389,8 +390,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
             ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
             : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                style={{ height: "clamp(20px, 8.6vw, 50px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(17px, 8vw, 46px)"} art={"painted"} />}
+                style={{ height: "clamp(22px, 9vw, 66px)", objectFit: "contain", pointerEvents: "none" }} />
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(19px, 8.5vw, 62px)"} art={"painted"} />}
         </button>;
       })}
     </div>

@@ -76,7 +76,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
   });
 
   return (
-    <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", alignItems: "center",
+    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       justifyContent: "center", padding: "30px 18px", background: T.bg }}>
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
@@ -84,8 +84,8 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
       {/* the artwork carries its own night sky — no vignette, no glow, nothing
           between the eye and the wordmark at its base */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(96vw, 620px)", display: "block", marginTop: -10, borderRadius: 18, boxShadow: "0 10px 40px rgba(0,0,0,.55)" }} />
-      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 24px" }}>{s.tag}</div>
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(98vw, 700px)", maxHeight: "42vh", objectFit: "contain", display: "block", marginTop: -6 }} />
+      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "18px 0 26px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>
         <input style={field} type="email" placeholder={s.email} value={email} autoComplete="username"

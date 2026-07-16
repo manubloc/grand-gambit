@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.71
+- LOGIN/SPIELSTAND: Ritter-Artwork groesser (bis 700px / 42vh) mit mehr Luft zum Text; RAND-FEDER statt harter Kante - innen 100% Original, nur die Raender schmelzen ins Schwarze (oben kraeftig), kein Rechteck-Hintergrund mehr; beide Schirme sind jetzt BILDSCHIRMFUELLEND OHNE SCROLLEN (Inhalt zentriert, gescrollt wird nur falls er wirklich nicht passt)
+- KOPFLEISTE: nur noch das GG-EMBLEM (groesser, heller, goldener Glanz-Schein) - die Wortmarke ist raus; rechts ein sauberes 2x2-SCHATZGRID: Gold, Skillpunkte, Level (XP im Tooltip), Hofwert - ALLE Icons handgezeichnet im einen Haus-Goldton (der gruene Funke ist jetzt gold)
+- MENUES SCROLLEN NUR NOCH BEI BEDARF: App-Shell auf feste Bildschirmhoehe, der Inhalt scrollt intern nur, wenn er nicht passt - definierter Abstand zum Hauptmenue, kein Leerlauf-Gescrolle mehr
+- AUFSTELLUNG: der Erklaertext (Klassische Schlacht / Bauern-Reihe) steht jetzt UEBER der Formation statt daneben - die Formation bekommt die volle Breite, Kacheln nochmals groesser (Slots bis 62px, Boss-Bilder 66px), Figuren exakt mittig
+
 ## 0.21.70
 - HOTFIX 2 (React #310): der 0.21.69-Fix griff zu kurz - VOR dem Zurueck-Gesten-Hook lauerte noch ein weiterer Fruehausgang (authReady-Boot-Return). Der Hook steht jetzt VOR ALLEN Returns; per grep verifiziert, dass kein Return mehr davor liegt. Login laeuft
 

@@ -55,13 +55,13 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
 
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
-    <div style={{ minHeight: "100dvh", background: "transparent", padding: "26px 16px 40px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: "transparent", padding: "18px 16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <MysticBackground league={(saves || []).reduce((m, sv) => Math.max(m, sv?.league || sv?.meta?.league || 1), 1)} />
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
-      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(80vw, 420px)", display: "block", marginTop: -6, borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,.5)" }} />
+      <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(90vw, 520px)", maxHeight: "30vh", objectFit: "contain", display: "block", marginTop: -4 }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}

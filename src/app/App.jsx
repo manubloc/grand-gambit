@@ -112,12 +112,16 @@ function CoinIc({ size = 13 }) {
 }
 function SkillIc({ size = 13 }) {
   return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
-    <defs><linearGradient id="ggSkillG" x1="0" y1="0" x2="0.6" y2="1">
-      <stop offset="0" stopColor="#d8f0b2" /><stop offset=".5" stopColor="#9ecb7a" /><stop offset="1" stopColor="#5f8c48" />
-    </linearGradient></defs>
     <path d="M10 1.6 L12.2 7.8 L18.4 10 L12.2 12.2 L10 18.4 L7.8 12.2 L1.6 10 L7.8 7.8 Z"
-      fill="url(#ggSkillG)" stroke="#476a35" strokeWidth="0.9" strokeLinejoin="round" />
-    <path d="M10 4.6 L8.6 8.6 L4.6 10" fill="none" stroke="#eef8da" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
+      fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="0.9" strokeLinejoin="round" />
+    <path d="M10 4.6 L8.6 8.6 L4.6 10" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
+  </svg>;
+}
+function LevelIc({ size = 13 }) {
+  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
+    <path d="M3 16.5 L3 8 L7 11 L10 4.5 L13 11 L17 8 L17 16.5 Z"
+      fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M4.4 8.9 L6.8 10.7" fill="none" stroke="#fff6d8" strokeWidth="1" strokeLinecap="round" opacity=".8" />
   </svg>;
 }
 function CrestIc({ size = 13 }) {
@@ -301,32 +305,25 @@ export default function App() {
       whiteSpace: "nowrap" }}>{icon} {val}</span>
   );
   const currencyRow = (
-    <div style={{ display: "flex", gap: 6, alignItems: "center", flex: "0 0 auto" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "auto auto", gap: 4, flex: "0 0 auto", justifyItems: "stretch" }}>
       {coinChip(<CoinIc />, profile.gold || 0, T.gold, t("army.balance"))}
-      {coinChip(<SkillIc />, skillPoints(profile), "#9ecb7a", "Skillpunkte")}
-      {coinChip(<CrestIc />, retinueScore(profile), "#e9d296", t("online.score"))}
+      {coinChip(<SkillIc />, skillPoints(profile), T.gold, "Skillpunkte")}
+      {coinChip(<LevelIc />, `Lv ${prog.level}`, T.gold, `${prog.into} / ${prog.span} XP`)}
+      {coinChip(<CrestIc />, retinueScore(profile), T.gold, t("online.score"))}
     </div>
   );
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-      <span style={{ display: "inline-flex", alignItems: "center", gap: 7, flex: "0 0 auto" }}>
-        <img src={emblemUrl} alt="" style={{ height: 30, display: "block" }} />
-        <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 26, display: "block" }} />
-      </span>
+      <img src={emblemUrl} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
+        filter: "brightness(1.14) saturate(1.12) drop-shadow(0 0 6px rgba(240,200,110,.45))" }} />
+      <div style={{ flex: 1 }} />
       {currencyRow}
-      <div style={{ flex: 1, maxWidth: 220 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: T.dim, marginBottom: 3 }}>
-          <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
-        </div>
-        <Bar pct={Math.max(prog.pct, 0.035)} height={6} color={T.gold} />
-      </div>
     </div>
   );
 
   if (wide) return (
-    <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
-      padding: "16px 18px 24px",
-      ...(immersive ? { height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", paddingBottom: 18 } : {}) }}>
+    <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
+      padding: immersive ? "16px 18px 18px" : "16px 18px 0" }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
@@ -335,21 +332,14 @@ export default function App() {
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, flex: "0 0 auto", paddingRight: 6 }}>
-            <img src={emblemUrl} alt="" style={{ height: 36, display: "block" }} />
-            <img src={logoMenuUrl} alt="Grand Gambit" style={{ height: 30, display: "block" }} />
-          </span>
+          <img src={emblemUrl} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
+            filter: "brightness(1.14) saturate(1.12) drop-shadow(0 0 7px rgba(240,200,110,.45))" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
-          <div style={{ flex: "0 0 auto", width: 168 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: T.dim, marginBottom: 4 }}>
-              <span>{t("home.level")} {prog.level}</span><span>{prog.into} / {prog.span} XP</span>
-            </div>
-            <Bar pct={Math.max(prog.pct, 0.035)} height={6} color={T.gold} />
-          </div>
         </aside>
       )}
-      <main style={{ width: "100%", minWidth: 0,
+      <main style={{ width: "100%", minWidth: 0, flex: "1 1 auto", minHeight: 0,
+        overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", paddingBottom: immersive ? 0 : 24,
         maxWidth: immersive ? "none" : 1020, // menus run as wide as the header bar
         ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
@@ -358,8 +348,8 @@ export default function App() {
   );
 
   return (
-    <div style={{ maxWidth: 560, margin: "0 auto", minHeight: "100%", display: "flex", flexDirection: "column",
-      ...(immersive ? { maxWidth: "none", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden" } : {}) }}>
+    <div style={{ maxWidth: 560, margin: "0 auto", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column",
+      ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
@@ -369,7 +359,7 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "14px 14px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
