@@ -7,7 +7,7 @@ import { SERVER_URL } from "./config.js";
 import { playerXpProgress, skillPoints, claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import emblemUrl from "./ui/assets/emblem.webp";
-import { CoinIc, SkillIc, LevelIc, CrestIc, GoldHeartIc, MapPinIc } from "./ui/icons.jsx";
+import { CoinIc, SkillIc, LevelIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -99,10 +99,10 @@ function reducer(state, a) {
 
 
 const TABS = [
-  { id: "play", icon: "♟", key: "nav.play" },
-  { id: "army", icon: "⚜️", key: "nav.army" },
-  { id: "ach", icon: "👑", key: "nav.ach" },
-  { id: "profile", icon: "👤", key: "nav.profile" },
+  { id: "play", key: "nav.play" },
+  { id: "army", key: "nav.army" },
+  { id: "ach", key: "nav.ach" },
+  { id: "profile", key: "nav.profile" },
 ];
 
 export default function App() {
@@ -433,7 +433,7 @@ function Lock({ t, profile, onUnlock, onBack }) {
   }
   return <div style={{ minHeight: "100%", display: "grid", placeItems: "center", padding: 20 }}>
     <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center" }}>
-      <div style={{ fontSize: 34, marginBottom: 6 }}>🔒</div>
+      <div style={{ display: "grid", placeItems: "center", marginBottom: 8 }}><LockIc size={34} color={"#d9b264"} /></div>
       <div style={{ fontWeight: 800, marginBottom: 14 }}>{t("lock.title")}</div>
       <input autoFocus value={pin} type="password" placeholder={t("lock.enter")}
         onChange={(e) => { setWrong(false); setPin(e.target.value.slice(0, 64)); }}

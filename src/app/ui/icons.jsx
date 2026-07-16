@@ -361,3 +361,97 @@ export function ZoomIc({ size = 17 }) {
     <path d="M13.6 13.6 L18.6 18.6" stroke="#6f5526" strokeWidth="0.7" strokeLinecap="round" opacity=".6" />
   </svg>;
 }
+
+/** Crossed blades in the house gold. */
+export function SwordsIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggSwd" />
+    <path d="M4.2 3.4 L14.8 14 L13 15.8 L2.4 5.2 L2.4 3.4 Z" fill="url(#ggSwd)" stroke="#6f5526" strokeWidth="0.9" strokeLinejoin="round" />
+    <path d="M17.8 3.4 L7.2 14 L9 15.8 L19.6 5.2 L19.6 3.4 Z" fill="url(#ggSwd)" stroke="#6f5526" strokeWidth="0.9" strokeLinejoin="round" />
+    <path d="M12.4 13.4 L15.6 16.6 M9.6 13.4 L6.4 16.6" stroke="#6f5526" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M12.4 13.4 L15.6 16.6 M9.6 13.4 L6.4 16.6" stroke="url(#ggSwd)" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="16.6" cy="17.6" r="1.35" fill="url(#ggSwd)" stroke="#6f5526" strokeWidth="0.7" />
+    <circle cx="5.4" cy="17.6" r="1.35" fill="url(#ggSwd)" stroke="#6f5526" strokeWidth="0.7" />
+    <path d="M4.6 4.4 L7.4 7.2" stroke="#fff6d8" strokeWidth="0.9" strokeLinecap="round" opacity=".8" />
+  </svg>;
+}
+/** The seer's orb — a crystal ball on a small gold stand. */
+export function OrbIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggOrb" />
+    <path d="M6.2 17 L15.8 17 L14.4 19.6 L7.6 19.6 Z" fill="url(#ggOrb)" stroke="#6f5526" strokeWidth="0.9" strokeLinejoin="round" />
+    <circle cx="11" cy="10" r="6.8" fill="rgba(167,139,250,.28)" stroke="url(#ggOrb)" strokeWidth="1.6" />
+    <circle cx="11" cy="10" r="6.8" fill="none" stroke="#6f5526" strokeWidth="0.6" opacity=".7" />
+    <path d="M7.8 7.4 C8.4 6.4 9.4 5.7 10.5 5.5" fill="none" stroke="#efe6ff" strokeWidth="1.3" strokeLinecap="round" opacity=".9" />
+    <circle cx="12.6" cy="11.4" r="1.5" fill="rgba(221,210,255,.55)" />
+  </svg>;
+}
+/** A ship's anchor in the house gold. */
+export function AnchorIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggAnc" />
+    <circle cx="11" cy="4.6" r="2" fill="none" stroke="url(#ggAnc)" strokeWidth="1.7" />
+    <path d="M11 6.6 L11 17.6 M6.6 10 L15.4 10" stroke="url(#ggAnc)" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M4.4 13.2 C4.8 16.4 7.4 18.6 11 18.6 C14.6 18.6 17.2 16.4 17.6 13.2 L15.4 14.6 M4.4 13.2 L6.6 14.6"
+      fill="none" stroke="url(#ggAnc)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M11 6.6 L11 17.6 M6.6 10 L15.4 10" stroke="#6f5526" strokeWidth="0.5" opacity=".6" />
+  </svg>;
+}
+/** A little rowing boat in the house gold. */
+export function BoatIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggBoa" />
+    <path d="M3 12.4 L19 12.4 L16.4 16.6 L5.6 16.6 Z" fill="url(#ggBoa)" stroke="#6f5526" strokeWidth="0.9" strokeLinejoin="round" />
+    <path d="M11 3.2 L11 12.4 M11 4 C14.6 4.6 16.6 7 17.2 10.2 L11 10.2" fill="none" stroke="url(#ggBoa)" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M11 4 C14.6 4.6 16.6 7 17.2 10.2 L11 10.2 Z" fill="url(#ggBoa)" opacity=".85" stroke="#6f5526" strokeWidth="0.7" />
+    <path d="M4.4 13.2 L7 13.2" stroke="#fff6d8" strokeWidth="0.9" strokeLinecap="round" opacity=".8" />
+  </svg>;
+}
+/** Rolling waves in the house gold (sea seal). */
+export function WaveIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggWav" />
+    <path d="M2.6 9 C4.6 6.4 7.4 6.4 9.4 9 C11.4 11.6 14.2 11.6 16.2 9 C17.4 7.4 18.8 6.8 19.8 7"
+      fill="none" stroke="url(#ggWav)" strokeWidth="1.9" strokeLinecap="round" />
+    <path d="M2.6 14.4 C4.6 11.8 7.4 11.8 9.4 14.4 C11.4 17 14.2 17 16.2 14.4 C17.4 12.8 18.8 12.2 19.8 12.4"
+      fill="none" stroke="url(#ggWav)" strokeWidth="1.9" strokeLinecap="round" opacity=".85" />
+    <path d="M3.4 8.2 C4.4 7.2 5.6 6.9 6.6 7.2" fill="none" stroke="#fff6d8" strokeWidth="0.9" strokeLinecap="round" opacity=".8" />
+  </svg>;
+}
+/** A wax-seal check / an empty pledge box — for quest requirements. */
+export function CheckIc({ size = 14 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "inline-block", verticalAlign: "-2px", ...drop }}>
+    <G id="ggChk" />
+    <rect x="2.6" y="2.6" width="16.8" height="16.8" rx="4.4" fill="url(#ggChk)" stroke="#6f5526" strokeWidth="1" />
+    <path d="M6.4 11.4 L9.8 14.8 L15.8 7.6" fill="none" stroke="#3d2f12" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4.6 5.4 C5.2 4.4 6.2 3.8 7.2 3.7" fill="none" stroke="#fff6d8" strokeWidth="1" strokeLinecap="round" opacity=".85" />
+  </svg>;
+}
+export function BoxIc({ size = 14 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "inline-block", verticalAlign: "-2px", ...drop }}>
+    <rect x="2.6" y="2.6" width="16.8" height="16.8" rx="4.4" fill="rgba(12,17,30,.35)"
+      stroke="#a58a4e" strokeWidth="1.4" strokeDasharray="2.6 2" />
+  </svg>;
+}
+/** An hourglass cast in gold, sand mid-fall. */
+export function HourglassGIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggHrg" />
+    <path d="M5.4 3 L16.6 3 M5.4 19 L16.6 19" stroke="url(#ggHrg)" strokeWidth="2.2" strokeLinecap="round" />
+    <path d="M6.6 3.6 C6.6 8 10 9.4 10 11 C10 12.6 6.6 14 6.6 18.4 L15.4 18.4 C15.4 14 12 12.6 12 11 C12 9.4 15.4 8 15.4 3.6 Z"
+      fill="rgba(12,17,30,.3)" stroke="url(#ggHrg)" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M8.6 16.6 L13.4 16.6 L11 13.4 Z M11 9.6 L11 12.4" fill="#d9b264" stroke="#d9b264" strokeWidth="1" strokeLinejoin="round" />
+  </svg>;
+}
+/** A fallen foe's skull, gilded. */
+export function GoldSkullIc({ size = 16 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggSkl" />
+    <path d="M11 2.8 C6.6 2.8 3.8 5.8 3.8 9.6 C3.8 12 5 13.8 6.6 14.8 L6.6 17.4 C6.6 18.2 7.2 18.8 8 18.8 L14 18.8 C14.8 18.8 15.4 18.2 15.4 17.4 L15.4 14.8 C17 13.8 18.2 12 18.2 9.6 C18.2 5.8 15.4 2.8 11 2.8 Z"
+      fill="url(#ggSkl)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <circle cx="8.2" cy="9.8" r="1.9" fill="#3d2f12" /><circle cx="13.8" cy="9.8" r="1.9" fill="#3d2f12" />
+    <path d="M11 12 L10 14 L12 14 Z" fill="#3d2f12" />
+    <path d="M9 16 L9 18.4 M13 16 L13 18.4" stroke="#6f5526" strokeWidth="1" strokeLinecap="round" />
+    <path d="M5.6 6.4 C6.2 5.2 7.2 4.4 8.4 4.1" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
+  </svg>;
+}

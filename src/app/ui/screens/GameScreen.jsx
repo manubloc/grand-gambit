@@ -9,7 +9,7 @@ import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { paintedById } from "../board/paintedArt.js";
-import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc } from "../icons.jsx";
+import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
@@ -445,7 +445,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             border: "1px solid rgba(233,210,150,.45)", borderRadius: 14, padding: "12px 14px",
             boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
             <div className="gg-serif" style={{ color: "#e9d296", fontSize: 14, letterSpacing: ".08em", marginBottom: 3 }}>
-              🔮 {t("scout.title")}</div>
+              <span style={{ display: "inline-block", verticalAlign: "-3px", marginRight: 6 }}><OrbIc size={15} /></span>{t("scout.title")}</div>
             <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5, marginBottom: 10 }}>
               {pvp ? t("scout.swapHint") : t("scout.hint")}</div>
             <div style={{ display: "flex", gap: 8 }}>
@@ -463,7 +463,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             border: "1px solid rgba(233,210,150,.35)", borderRadius: 14, padding: "12px 14px", textAlign: "center",
             boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
             <div className="gg-serif" style={{ color: "#e9d296", fontSize: 13.5, letterSpacing: ".08em", marginBottom: 3 }}>
-              🔮 {t("scout.oppTitle")}</div>
+              <span style={{ display: "inline-block", verticalAlign: "-3px", marginRight: 6 }}><OrbIc size={15} /></span>{t("scout.oppTitle")}</div>
             <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5 }}>{t("scout.oppHint")}</div>
           </div>
         )}

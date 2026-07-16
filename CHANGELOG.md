@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.85
+- GROSSE EMOJI-JAGD: die komplette App wurde nach Emoji-Symbolen durchkaemmt - alles jetzt handgezeichnet im Haus-Gold. NEU GEZEICHNET: gekreuzte Klingen, Seherkugel, Anker, Ruderboot, Wellen-Siegel, Wachs-Haken + Pflicht-Kaestchen, Gold-Sanduhr, vergoldeter Schaedel
+- AKADEMIE: alle Lektions-Icons auf Schatz-Gold umgestellt (Gold-Herz + Klingen, Sanduhr, Schaedel, Funke + Wimpel, Muenze); Stern-Emoji in den Texten durch den Funken ersetzt
+- MEER-POPUP: Wellen-Titel, Anker- und Boot-Bedingungen mit gezeichneten Haken/Kaestchen statt Emoji; ebenso die TOR-Bedingungen der Reise
+- AUSSERDEM: Seher-Fenster mit gezeichneter Kristallkugel, Bestenliste mit Gold-Pokal, Sperrschirm mit gezeichnetem Schloss, Schild-/Drachen-Emoji-Reste im Hofstaat entfernt, tote Emoji-Daten der Navigation bereinigt
+
 ## 0.21.84
 - GEZEICHNETE ICONS komplettiert: das Willkommen-Fenster traegt jetzt GOLD-HERZ, Gold-Funke und Feldkarte (statt gruenem Herz/Stern); der Namens-Wuerfel im Online-Duell ist ein handgezeichneter GOLD-WUERFEL mit dunklen Augen
 - DIE GEWAEHLTE FIGUR TRITT VOR: beim Anwaehlen waechst jede Figur um 24% aus ihrer Kachel (sanfte .16s-Bewegung) - eigene wie feindliche

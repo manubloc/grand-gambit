@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
 import crest3 from "../assets/crest-3.webp";
-import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc } from "../icons.jsx";
+import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc, TrophyIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
@@ -288,7 +288,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
 
         <Panel>
           <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-            <div className="gg-serif" style={{ fontSize: 15.5, color: T.text, letterSpacing: ".05em", flex: 1 }}>🏆 {t("online.leaderboard")}</div>
+            <div className="gg-serif" style={{ fontSize: 15.5, color: T.text, letterSpacing: ".05em", flex: 1, display: "flex", alignItems: "center", gap: 7 }}><TrophyIc size={16} color={"#d9b264"} /> {t("online.leaderboard")}</div>
             <Button variant="subtle" style={{ padding: "6px 11px", fontSize: 12 }} onClick={() => net.send({ t: "leaderboard" })}>{t("online.refresh")}</Button>
           </div>
           {!lb ? <div style={{ fontSize: 12.5, color: T.faint }}>—</div> : <>

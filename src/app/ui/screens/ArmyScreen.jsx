@@ -42,7 +42,7 @@ function Glyph({ kind, level, abilities, shield, size = 50, hero = false, art = 
 function rewardLabel(r, en) {
   if (!r) return null;
   if (r.ability) return ABILITIES[r.ability].icon + " " + aName(r.ability, en);
-  if (r.shield) return "🛡 +" + r.shield + (en ? " shield" : " Schild");
+  if (r.shield) return "+" + r.shield + (en ? " shield" : " Schild");
   return null;
 }
 
@@ -406,7 +406,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
           </>
         ) : (
           <>
-            <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".08em", color: T.gold, marginBottom: 4 }}>🐉 {t("army.dragonAskTitle")}</div>
+            <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".08em", color: T.gold, marginBottom: 4 }}>{t("army.dragonAskTitle")}</div>
             <div style={{ fontSize: 12.5, lineHeight: 1.55, color: T.text }}>
               {t("army.dragonAsk", { p: (() => { const w = draft[dragonAsk.wing]; const nm = w && !isBossEntry(w) ? (en ? CHARACTERS[w].nameEn : CHARACTERS[w].nameDe) : "—"; return nm; })() })}</div>
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>

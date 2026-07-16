@@ -16,7 +16,7 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
-import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc } from "../icons.jsx";
+import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
@@ -748,10 +748,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               background: "#c9a45c22", border: "1.5px dashed #a9853f", borderRadius: 9 }}>
               <ItemIcon id={it.id} size={22} />
               <div style={{ flex: 1, fontSize: 12.5 }}>
-                <b>{itemOk ? "✅ " : ""}{t("camp.gateNeed", { item: en ? it.nameEn : it.nameDe })}</b>
+                <b>{itemOk ? <><CheckIc size={13} /> </> : ""}{t("camp.gateNeed", { item: en ? it.nameEn : it.nameDe })}</b>
                 <div style={{ color: PP.dim, fontSize: 11.5 }}>{en ? it.textEn : it.textDe}</div>
                 {pieceCh2 && <div style={{ fontSize: 11.5, marginTop: 3, color: pieceOk ? PP.green : MP.liga, fontWeight: 700 }}>
-                  {pieceOk ? "✅" : "⬜"} {t("camp.gatePiece", { name: en ? pieceCh2.nameEn : pieceCh2.nameDe })}
+                  {pieceOk ? <CheckIc size={13} /> : <BoxIc size={13} />} {t("camp.gatePiece", { name: en ? pieceCh2.nameEn : pieceCh2.nameDe })}
                 </div>}
               </div>
               {!itemOk && <Button variant={can ? "primary" : "subtle"} disabled={!can}
@@ -784,11 +784,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
           padding: "18px 18px 110px", pointerEvents: "none" }}>
           <div style={{ width: "100%", maxWidth: 400, padding: "16px 14px", background: `linear-gradient(160deg, #14324a, #0c1e30)`,
             border: `1.5px solid #3f7fa0`, borderRadius: T.radius, boxShadow: "0 16px 44px rgba(0,0,0,.55)" }}>
-            <div className="gg-serif" style={{ fontSize: 17, color: "#cfe6f2", letterSpacing: ".06em" }}>🌊 {t("camp.seaLockedTitle")}</div>
+            <div className="gg-serif" style={{ fontSize: 17, color: "#cfe6f2", letterSpacing: ".06em", display: "flex", alignItems: "center", gap: 8 }}><WaveIc size={18} /> {t("camp.seaLockedTitle")}</div>
             <div style={{ fontSize: 12.5, color: "#9dbdd0", margin: "6px 0 10px", lineHeight: 1.5 }}>{t("camp.seaLockedText")}</div>
             <div style={{ display: "grid", gap: 6, fontSize: 13, color: "#cfe6f2" }}>
-              <div>{(profile.campaign?.unlocked || []).includes("captain") ? "✅" : "⬜"} ⚓ {t("camp.seaNeedCaptain")}</div>
-              <div>{hasItem(profile, "boat") ? "✅" : "⬜"} 🛶 {t("camp.seaNeedBoat")}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                {(profile.campaign?.unlocked || []).includes("captain") ? <CheckIc size={15} /> : <BoxIc size={15} />}
+                <AnchorIc size={15} /> {t("camp.seaNeedCaptain")}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                {hasItem(profile, "boat") ? <CheckIc size={15} /> : <BoxIc size={15} />}
+                <BoatIc size={15} /> {t("camp.seaNeedBoat")}</div>
             </div>
           </div>
         </div>

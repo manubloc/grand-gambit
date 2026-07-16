@@ -6,7 +6,7 @@ import { T } from "../theme.js";
 import { Button } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
-import { SkullIc, BladesIc, HourglassIc, SkillStar, GoldCoin, HeartIc } from "../icons.jsx";
+import { SkullIc, BladesIc, HourglassIc, SkillStar, GoldCoin, HeartIc, GoldHeartIc, SwordsIc, HourglassGIc, GoldSkullIc, SkillIc, LevelIc, CoinIc } from "../icons.jsx";
 
 const STEPS = [
   {
@@ -17,27 +17,27 @@ const STEPS = [
   {
     de: { title: "Ziehen & Kämpfen", text: "Figuren ziehen wie im Schach. Ein Zug auf ein gegnerisches Feld ist ein Angriff: Dein ⚔ trifft seine ♥. Überlebt der Gegner, bleibst du stehen — überlege also, wen du wohin schickst. Der König muss immer geschützt bleiben." },
     en: { title: "Move & fight", text: "Pieces move as in chess. Stepping onto an enemy square is an attack: your ⚔ strikes their ♥. If the defender survives, you hold your ground — so choose your targets well. The king must always be kept safe." },
-    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><HeartIc size={28} /><BladesIc color="#8a6f4d" size={28} /></div>,
+    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><GoldHeartIc size={28} /><SwordsIc size={28} /></div>,
   },
   {
     de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 ♥ (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },
     en: { title: "Draughts & time-turners", text: "The supply chest holds helpers: the healing draught restores 2 ♥ to a piece mid-battle (spends the turn). The time-turner takes back your last move — each reversal burns one hourglass. Both are bought with gold, both are scarce." },
-    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><ItemIcon id="potion" size={30} /><HourglassIc size={28} /></div>,
+    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><ItemIcon id="potion" size={30} /><HourglassGIc size={28} /></div>,
   },
   {
     de: { title: "Die Kampagne", text: "Die Karte führt durch vier Kapitel zur Ligafeste. An den Stationen warten Herausforderer — besiege sie und sie treten deinem Hofstaat bei. Nur die großen Bosse mit dem Totenkopf sind reine Ungeheuer. Manche Pfade sind verschlossen und wollen Gold oder Ausrüstung." },
     en: { title: "The campaign", text: "The map winds through four chapters to the League Keep. Challengers await at the stations — beat them and they join your court. Only the great skull-marked bosses are pure monsters. Some paths are barred and demand gold or gear." },
-    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><BladesIc size={26} /><SkullIc size={26} /></div>,
+    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><SwordsIc size={26} /><GoldSkullIc size={26} /></div>,
   },
   {
-    de: { title: "Der Hofstaat", text: "Rekrutierte Figuren leveln mit Skillpunkten ⭐ und lernen Fähigkeiten. Stelle im Hofstaat deine Formation zusammen und wähle die Position des Grand Gambit. Besiegst du einen Herausforderer erneut, wendet er sich als Abtrünniger gegen dich — der Doppelsieg schenkt einen Stern ★." },
-    en: { title: "The court", text: "Recruited pieces level up with skill points ⭐ and learn abilities. Arrange your formation in the court and choose the Grand Gambit's file. Beat a challenger a second time and they face you as a turncoat — the double victory grants a star ★." },
-    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><SkillStar size={26} /><span className="gg-serif" style={{ fontSize: 24, color: "#e3c07a" }}>★</span></div>,
+    de: { title: "Der Hofstaat", text: "Rekrutierte Figuren leveln mit Skillpunkten ✦ und lernen Fähigkeiten. Stelle im Hofstaat deine Formation zusammen und wähle die Position des Grand Gambit. Besiegst du einen Herausforderer erneut, wendet er sich als Abtrünniger gegen dich — der Doppelsieg schenkt einen Stern ★." },
+    en: { title: "The court", text: "Recruited pieces level up with skill points ✦ and learn abilities. Arrange your formation in the court and choose the Grand Gambit's file. Beat a challenger a second time and they face you as a turncoat — the double victory grants a star ★." },
+    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><SkillIc size={26} /><LevelIc size={26} /></div>,
   },
   {
     de: { title: "Gold & Truhe", text: "Jeder Sieg füllt die Schatzkammer. Gold öffnet Zollbrücken, kauft Ausrüstung und Tränke. Die Truhe enthüllt ihre Gegenstände erst nach und nach — was die Reise noch nicht erreicht hat, bleibt versiegelt." },
     en: { title: "Gold & chest", text: "Every victory fills the treasury. Gold opens toll bridges, buys gear and draughts. The chest reveals its wares one by one — whatever the journey has not reached stays under seal." },
-    art: <GoldCoin size={30} />,
+    art: <CoinIc size={30} />,
   },
   {
     de: { title: "Schnell & zu zweit", text: "Im Schnellen Spiel wartet die KI in drei Stufen — oder ihr spielt zu zweit an einem Gerät: Das Brett dreht sich nach jedem Zug zum Ziehenden. Online-Duelle mit Freunden gibt es obendrein. Und nun: Ein Reich wartet auf seinen Strategen." },
