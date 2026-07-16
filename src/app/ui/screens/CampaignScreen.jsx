@@ -177,7 +177,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // the frame is FIXED: even margins top and bottom (the dock gets its room on
   // phones); the painting scales and pans INSIDE this steady window
   const padTop = 12;
-  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 78 : 12;
+  // the shell already keeps the dock's 72px clear below the map — the frame
+  // itself only adds a BREATH of air, so the painting runs down TO the menu
+  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 10 : 12;
   const frameW = Math.min(vp.w, WMAP * z), frameH = Math.max(220, vp.h - padTop - dockPad);
   const frameX = Math.round((vp.w - frameW) / 2);
   const frameY = padTop; // pinned: same breath above as below
@@ -200,7 +202,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const seaLock = !viewing && th.sea && !seaAccessible(profile);
   const panelW = Math.min(352, frameW - 28);
   const panelLeft = 14;
-  const panelPos = { bottom: frameY + 14, maxHeight: frameH - 28, overflowY: "auto" };
+  const panelPos = { bottom: dockPad + 14, maxHeight: frameH - 28, overflowY: "auto" }; // anchored INSIDE the frame, never over the dock
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 
   return (
