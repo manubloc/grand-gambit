@@ -141,12 +141,21 @@ const winsIt = evItems.find((i) => i.id === "wins");
 ok("claims pay a fatter purse (80% of tier points, min 5)",
   cr2(winsIt, 0).gold === 5 && cr2(winsIt, 5).gold === 160);
 
-// the big invariant: league 1 first-clear income comfortably covers every key item
+// the big invariant: league 1 first-clear income comfortably covers every key
+// item AVAILABLE in league 1. Late keys (the boat, minLeague 9) are a life's
+// savings by design — they get their own invariant below.
 const l1Income = CAMP3.filter((n) => !n.league).reduce((a, n) => a + stageGold(n, 1), 0);
-const keyCost = IL3.filter((i) => i.kind === "key").reduce((a, i) => a + i.gold, 0);
+const keyCost = IL3.filter((i) => i.kind === "key" && (i.minLeague || 1) <= 1).reduce((a, i) => a + i.gold, 0);
 const tolls1 = CAMP3.filter((n) => n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
-ok("league 1 income covers all keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
+ok("league 1 income covers its keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
   l1Income > (keyCost + tolls1) * 1.1);
+
+// the boat is EXPENSIVE by design (a story savings goal) — but the income of
+// leagues 1..9 must still afford it comfortably before the Endless Sea calls
+const boat3 = IL3.find((i) => i.id === "boat");
+const income9 = [1,2,3,4,5,6,7,8,9].reduce((a, lg) => a + CAMP3.filter((n) => !n.league).reduce((b, n) => b + stageGold(n, lg), 0), 0);
+ok("the boat costs serious coin (>= 2000)", boat3.gold >= 2000);
+ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + ")", income9 > boat3.gold * 1.5);
 
 
 // ── v0.19: resigning forfeits everything; the chest reveals itself slowly ────

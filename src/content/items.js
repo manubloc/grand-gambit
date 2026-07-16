@@ -77,7 +77,7 @@ export const ITEMS = {
   },
 
   boat: {
-    id: "boat", emoji: "🛶", kind: "key", gold: 140, minLeague: 9,
+    id: "boat", emoji: "🛶", kind: "key", gold: 2400, minLeague: 9, // a life's savings: the passage to the Endless Sea is EARNED
     nameDe: "Boot", nameEn: "Boat",
     textDe: "Mit dem Kapitän an Bord öffnet es das Endlose Meer (Liga X).",
     textEn: "With the Captain aboard it opens the Endless Sea (League X).",

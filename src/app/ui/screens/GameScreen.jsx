@@ -315,7 +315,52 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     });
   }
   const [armResign, setArmResign] = useState(false);
-  const [zoomMode, setZoomMode] = useState(false); // the field glass: scrollable close view, the fixed board stays the default
+  const [zoomMode, setZoomMode] = useState(false); // the field glass: FREE pinch-zoom up to 200%, the fixed board stays the default
+  const [zv, setZv] = useState({ z: 1, x: 0, y: 0 });          // zoom view: scale + pan
+  const zoomBox = useRef(null);                                 // the clipping window
+  const zPtrs = useRef(new Map());                              // active pointers (pinch/pan)
+  const zStart = useRef(null);                                  // gesture baseline
+  const zDragged = useRef(false);                               // suppress the tap after a pan
+  const clampView = (v) => {
+    const el = zoomBox.current; const w = el?.clientWidth || 0, h = el?.clientHeight || 0;
+    const z = Math.max(1, Math.min(2, v.z));
+    const mx = ((z - 1) * w) / 2, my = ((z - 1) * h) / 2;
+    return { z, x: Math.max(-mx, Math.min(mx, v.x)), y: Math.max(-my, Math.min(my, v.y)) };
+  };
+  const zoomDown = (e) => {
+    if (!zoomMode) return;
+    zPtrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const pts = [...zPtrs.current.values()];
+    zStart.current = { view: zv, pts: pts.map((p) => ({ ...p })) };
+    zDragged.current = false;
+  };
+  const zoomMove = (e) => {
+    if (!zoomMode || !zPtrs.current.has(e.pointerId) || !zStart.current) return;
+    zPtrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const now = [...zPtrs.current.values()], st = zStart.current;
+    if (now.length >= 2 && st.pts.length >= 2) {                 // PINCH: scale around the fingers
+      const d0 = Math.hypot(st.pts[0].x - st.pts[1].x, st.pts[0].y - st.pts[1].y) || 1;
+      const d1 = Math.hypot(now[0].x - now[1].x, now[0].y - now[1].y);
+      const cx0 = (st.pts[0].x + st.pts[1].x) / 2, cy0 = (st.pts[0].y + st.pts[1].y) / 2;
+      const cx1 = (now[0].x + now[1].x) / 2, cy1 = (now[0].y + now[1].y) / 2;
+      zDragged.current = true;
+      setZv(clampView({ z: st.view.z * (d1 / d0), x: st.view.x + (cx1 - cx0), y: st.view.y + (cy1 - cy0) }));
+    } else if (now.length === 1 && st.view.z > 1.01) {           // PAN with one finger, once zoomed
+      const dx = now[0].x - st.pts[0].x, dy = now[0].y - st.pts[0].y;
+      if (Math.abs(dx) + Math.abs(dy) > 7) zDragged.current = true;
+      if (zDragged.current) setZv(clampView({ z: st.view.z, x: st.view.x + dx, y: st.view.y + dy }));
+    }
+  };
+  const zoomUp = (e) => {
+    zPtrs.current.delete(e.pointerId);
+    const pts = [...zPtrs.current.values()];
+    zStart.current = pts.length ? { view: zv, pts: pts.map((p) => ({ ...p })) } : null;
+  };
+  const zoomWheel = (e) => {                                     // desktop: the wheel is the pinch
+    if (!zoomMode) return;
+    setZv((v) => clampView({ ...v, z: v.z * (e.deltaY < 0 ? 1.12 : 0.9) }));
+  };
+  const toggleZoom = () => setZoomMode((on) => { const next = !on; if (!next) setZv({ z: 1, x: 0, y: 0 }); return next; });
   const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
   const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
   // ── THE CODEX: which exotic foes has the player met before? First
@@ -424,11 +469,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             border: `1.5px solid ${T.gold}${clockHot ? "cc" : "55"}`, color: clockHot ? T.goldBright : T.gold,
             letterSpacing: ".06em", fontSize: 14, gap: 5 })}><HourglassIc size={14} color={clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
         )}
-        <button onClick={() => setZoomMode((z) => !z)} title={t("game.zoom")}
-          style={pill({ border: `1.5px solid ${zoomMode ? T.gold : T.gold + "66"}`, color: zoomMode ? T.goldBright : T.dim,
-            cursor: "pointer", background: zoomMode ? "rgba(240,206,122,.12)" : undefined })}>
-          <ZoomIc size={15} />
-        </button>
         {armResign ? (
           <span style={pill({ cursor: "default", border: `1.5px solid ${T.gold}`, color: T.goldBright, gap: 9,
             animation: "ggGlow 1.6s ease-in-out infinite" })}>
@@ -457,9 +497,13 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
-      <div style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
-        overflow: zoomMode ? "auto" : "visible", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
-        <div style={{ width: zoomMode ? "185%" : "100%", height: zoomMode ? "185%" : "100%",
+      <div ref={zoomBox} onPointerDown={zoomDown} onPointerMove={zoomMove} onPointerUp={zoomUp} onPointerCancel={zoomUp}
+        onWheel={zoomWheel} onClickCapture={(e) => { if (zDragged.current) { e.stopPropagation(); e.preventDefault(); zDragged.current = false; } }}
+        style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
+        overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
+        <div style={{ width: "100%", height: "100%",
+          transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
+          transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: !flyDone && !zoomMode ? `ggBoardFly${flyVar} 3.4s cubic-bezier(.35,.12,.22,1) both` : "none" }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
@@ -470,6 +514,15 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
         </div>
+        <button onClick={toggleZoom} title={t("game.zoom")}
+          style={{ position: "absolute", right: 8, bottom: 8, zIndex: 6, cursor: "pointer",
+            width: 42, height: 42, borderRadius: "50%", display: "grid", placeItems: "center",
+            background: zoomMode ? "rgba(240,206,122,.2)" : "rgba(8, 11, 20, .55)",
+            border: `1px solid rgba(233, 210, 150, ${zoomMode ? ".8" : ".42"})`,
+            boxShadow: "0 2px 10px rgba(0,0,0,.4), inset 0 0.5px 0 rgba(255,243,196,.25)",
+            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
+          <ZoomIc size={19} />
+        </button>
         {firstMeet && (() => {
           const pc = firstMeet.piece;
           const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);

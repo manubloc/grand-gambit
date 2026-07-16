@@ -241,7 +241,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             transform: (typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
               + ((isSel || isSpy) ? " scale(1.38)" : ""), // the chosen one steps forward for inspection
             transformOrigin: "50% 72%", transition: "transform .16s ease",
-            position: "relative", zIndex: (isSel || isSpy) ? 3 : undefined,
+            position: "relative", zIndex: (isSel || isSpy) ? 60 : rr + 3, // row-by-row layering: front ranks cover back ranks
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
@@ -284,7 +284,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
-        display: "grid", gap: GAP, borderRadius: 12, overflow: "hidden", position: "relative",
+        display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {cells}

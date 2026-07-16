@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.88
+- DAS BOOT IST JETZT EIN LEBENSWERK: 2400 Gold statt 140 - die Passage aufs Endlose Meer will ueber die ganze Reise ERSPART sein (neue Test-Invarianten: Boot >= 2000, Einkommen der Ligen 1-9 deckt es locker; Liga-1-Invariante zaehlt nur noch Liga-1-Schluessel)
+- NAHANSICHT RICHTIG GEBAUT: freies PINCH-ZOOM bis 200% (zwei Finger), Ein-Finger-Ziehen verschiebt den Ausschnitt (Tippen bleibt Zug - nach einem Zieh-Manoever wird der versehentliche Tap geschluckt), am Desktop zoomt das Mausrad; KEIN Scrollbalken mehr (Transform statt Scroll). Der LUPEN-KNOPF sitzt jetzt UNTEN RECHTS im Brettfenster - weit weg vom Aufgeben-Knopf; Ausschalten setzt die Ansicht zurueck
+- EBENEN-STAPEL DER FIGUREN: die Reihen liegen jetzt sauber uebereinander - Brett zuunterst, hinterste Reihe darueber, jede naehere Reihe hoeher; vordere Figuren VERDECKEN dahinterstehende, die gewaehlte Figur steht ueber allem; die Marmor-Welle laeuft weiter unter den Figuren
+- DIE LETZTE REIHE WIRD NICHT MEHR ABGESCHNITTEN: das Brett laesst die Koepfe der hintersten Reihe ueber das Spielfeld hinausragen (overflow frei)
+
 ## 0.21.87
 - EROEFFNUNG DRAMATISCHER + VARIIERT: drei Kamerafluege (A/B/C), jede Schlacht zieht zufaellig einen - alle beginnen NAH UEBER DEN FEINDREIHEN und verweilen dort (die eigene Reihe kennt man), mit seitlichen Schwenks, 3.4s; NEUE, nie gesehene Feindfiguren PULSIEREN waehrend des Flugs golden - die Kamera stellt sie vor
 - DER CODEX (neue Kernmechanik): das Profil merkt sich, welchen exotischen Figuren man je begegnet ist. FEINDE SIND JETZT IMMER ANKLICKBAR - Standardfiguren und bereits BEKANNTE zeigen ihre Zuege; FREMDE behalten ihre Zuege beim ersten Treffen fuer sich (ab der naechsten Schlacht offen)

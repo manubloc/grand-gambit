@@ -192,7 +192,7 @@ const lg9 = { v: 2, sp: 0, gold: 0, xp: 0, xpEarned: 0, stats: {}, pieces: { lev
 ok("league IX finale is the Captain", bsm2("n22", lg9).boss.unlocks === "captain");
 const sailed = advanceLeague(advanceCampaign(lg9, "n22"));
 ok("beating him recruits the Captain and opens league X", sailed.campaign.unlocked.includes("captain") && sailed.campaign.league === 10);
-ok("but the sea still wants a boat", !seaAccessible(sailed) && seaAccessible(buyItem({ ...sailed, gold: 200 }, "boat")));
+ok("but the sea still wants a boat (and the boat wants a fortune)", !seaAccessible(sailed) && !seaAccessible(buyItem({ ...sailed, gold: 200 }, "boat")) && seaAccessible(buyItem({ ...sailed, gold: 2500 }, "boat")));
 
 // ── The Grand Gambit: the eponymous hero pawn ────────────────────────────────
 import { upgradeCost as upc2, heroColFor, buildArmy as bArmy } from "./src/meta/index.js";
