@@ -22,7 +22,7 @@ import { BoardView } from "../board/BoardView.jsx";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
-function Glyph({ kind, level, abilities, shield, size = 36, hero = false, art = "painted" }) {
+function Glyph({ kind, level, abilities, shield, size = 44, hero = false, art = "painted" }) {
   return <div style={{ fontSize: size, width: "1.3em", height: "1.3em", display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
     <PieceGlyph piece={{ kind, color: "w", level, abilities, shield, used: {}, hero }} artStyle={art} />
   </div>;
@@ -378,8 +378,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
             ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
             : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                style={{ height: "clamp(18px, 7vw, 34px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 30px)"} art={"painted"} />}
+                style={{ height: "clamp(18px, 7vw, 50px)", objectFit: "contain", pointerEvents: "none" }} />
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(15px, 6.4vw, 46px)"} art={"painted"} />}
         </button>;
       })}
     </div>
@@ -410,9 +410,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
           {pieces.map((c) => {
             const on = draft[pick] === c.id;
             return <button key={c.id} onClick={() => setSlot(pick, c.id)}
-              style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", borderRadius: 9, cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13,
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 13px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13.5,
                 background: on ? T.lime : T.panel2, color: on ? T.limeInk : T.text, border: `1px solid ${on ? T.lime : T.line}` }}>
-              <SlotGlyph kind={c.kind} size={18} art={"painted"} />{en ? c.nameEn : c.nameDe}
+              <SlotGlyph kind={c.kind} size={30} art={"painted"} />{en ? c.nameEn : c.nameDe}
             </button>;
           })}
         </div>

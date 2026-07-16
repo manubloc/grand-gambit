@@ -116,11 +116,12 @@ ok("a friendly against a recruited champion pays a quarter XP", (() => {
 import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } from "./src/meta/index.js";
 import { nodeById as nbId } from "./src/content/index.js";
 // stubborn champions: the Dragon demands three victories, tallied across replays & leagues
-ok("wins demands are read off the boss", winsNeeded(nbId("a4")) === 3 && winsNeeded(nbId("a2")) === 2 && winsNeeded(nbId("b4")) === 2);
+ok("wins demands are read off the boss (the Hoard hatches in League II)",
+  winsNeeded(nbId("a4"), 2) === 3 && winsNeeded(nbId("a4"), 1) === 1 && winsNeeded(nbId("a2")) === 2 && winsNeeded(nbId("b4")) === 2);
 // family pacing: the Crown yields fast (1-2 wins), the Shadows resist (2-3)
 ok("the standard falls in one win, moonlit adepts demand two", winsNeeded(nbId("d2")) === 1 && winsNeeded(nbId("b2")) === 2 && winsNeeded(nbId("b3")) === 2);
 {
-  let d = prof2;                                     // a1+a2 cleared; road to the Dragon
+  let d = { ...prof2, campaign: { ...prof2.campaign, league: 2 } }; // the Dragon only hatches in League II
   d = advanceCampaign(d, "a3");
   ok("first Dragon win only notches the tally", (() => { d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 1 && !unlockedCharacterIds(d).includes("dragon"); })());
   ok("a replay notches it again without progress or XP", (() => { const xp = d.xpEarned || 0; d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 2 && (d.xpEarned || 0) === xp && !unlockedCharacterIds(d).includes("dragon"); })());

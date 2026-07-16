@@ -104,6 +104,7 @@ const ATK_BOOST = [0, 0, 1, 1, 2];
 /** The boss army-spec for a node: a unique monster or the BOSS VERSION of an
  *  unlockable piece (same movement — fighting it teaches you the piece). */
 export function nodeBossSpec(node, league = 1) {
+  node = { ...node, boss: effectiveNodeBoss(node, league) };  // the Hoard hatches late
   if (!node.boss) return null;
   const override = node.id === "n22" ? leagueFinalBossPiece(league) : null;
   if (node.boss.pure && !override) {
@@ -128,6 +129,19 @@ export function nodeBossSpec(node, league = 1) {
 
 /** Resolve a node id into a ready-to-play match spec. The boss replaces the
  *  enemy QUEEN slot (the king always stays on the board). */
+/** THE DRAGON COMES LATER: his 2x2 form is a new machine, so the Hoard only
+ *  holds him from League II on. In League I the warm nest belongs to the
+ *  BROODMOTHER — the ancient heart has not hatched yet. */
+export function effectiveNodeBoss(node, lg) {
+  if (node?.id === "a4" && (lg || 1) < 2) return { pure: "b03" };
+  return node?.boss;
+}
+
+const A4_L1_STORY = {
+  de: "Im Drachenhort ist es warm — zu warm. Die Brutmutter hütet hier ein Gelege, das noch niemand schlüpfen sah. Noch nicht.",
+  en: "The Dragon Hoard is warm - too warm. The Broodmother tends a clutch here that no one has seen hatch. Not yet.",
+};
+
 export function buildStageMatch(id, profile = null) {
   const node = nodeById(id);
   const d = difficultyById(node.difficulty);
@@ -154,8 +168,9 @@ export function buildStageMatch(id, profile = null) {
   const recruitId = bossPieceFor(node, lg);
   const turncoat = !!(recruitId && profile && (profile.campaign?.unlocked || []).includes(recruitId));
   return {
-    nodeId: id, node,
+    nodeId: id,
     map: mapId, rules: node.rules,
+    node: (node.id === "a4" && lg < 2) ? { ...node, storyDe: A4_L1_STORY.de, storyEn: A4_L1_STORY.en } : node,
     boss: bossInfo,
     turncoat, excludeId: turncoat ? recruitId : null,
     // classic boards trade level bumps for a sharper mind in later leagues
@@ -196,7 +211,7 @@ export function advanceCampaign(profile, id) {
     bossWins[bossPiece] = (bossWins[bossPiece] || 0) + 1;
     if (unlocked.has(bossPiece)) {
       if (firstClear) dupes[bossPiece] = Math.min(2, (dupes[bossPiece] || 0) + 1);
-    } else if (bossWins[bossPiece] >= winsNeeded(node)) {
+    } else if (bossWins[bossPiece] >= winsNeeded(node, profile?.campaign?.league || 1)) {
       unlocked.add(bossPiece);
       joined = true;
       stats.recruits = (stats.recruits || 0) + 1;
@@ -253,19 +268,19 @@ export function advanceLeague(profile) {
  *  recruitment (plus a boat) is the only way onto the Endless Sea (X). */
 export const leagueFinalBossPiece = (league) => (((league - 1) % 10) + 1 === 9 ? "captain" : null);
 export const bossPieceFor = (node, league) =>
-  (node.id === "n22" && leagueFinalBossPiece(league)) || node.boss?.piece || null;
+  (node.id === "n22" && leagueFinalBossPiece(league)) || effectiveNodeBoss(node, league)?.piece || null;
 
 /** Some champions take convincing: `wins` on the boss is how many victories it
  *  takes before the piece joins (default 1). The tally lives on the profile
  *  (campaign.bossWins, per piece) and survives league rollovers — every
  *  victory over that boss counts, replays included. */
-export const winsNeeded = (node) => node?.boss?.wins || 1;
+export const winsNeeded = (node, lg = 1) => effectiveNodeBoss(node, lg)?.wins || 1;
 export const bossWinsFor = (profile, pieceId) => (profile?.campaign?.bossWins || {})[pieceId] || 0;
 /** The recruit THIS victory would seal — null while the champion still resists. */
 export function recruitOnWin(node, profile) {
   const pieceId = node?.boss ? bossPieceFor(node, profile?.campaign?.league || 1) : null;
   if (!pieceId || (profile?.campaign?.unlocked || []).includes(pieceId)) return null;
-  return bossWinsFor(profile, pieceId) + 1 >= winsNeeded(node) ? pieceId : null;
+  return bossWinsFor(profile, pieceId) + 1 >= winsNeeded(node, profile?.campaign?.league || 1) ? pieceId : null;
 }
 export const seaAccessible = (profile) =>
   (profile?.campaign?.unlocked || []).includes("captain") && hasItem(profile, "boat");

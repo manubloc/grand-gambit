@@ -272,7 +272,7 @@ export default function App() {
         </aside>
       )}
       <main style={{ width: "100%", minWidth: 0,
-        maxWidth: immersive ? "none" : inMatch ? 1020 : tab === "play" && view === "camp" ? 920 : 720,
+        maxWidth: immersive ? "none" : 1020, // menus run as wide as the header bar
         ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh / var(--vhz, 1) - 72px)" } : {}) }}>{screen}</main>

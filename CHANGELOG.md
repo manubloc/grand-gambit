@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.64
+- DESKTOP-BREITE: alle Menues laufen jetzt so breit wie die Kopfleiste (1020px statt 720); in der Aufstellung nutzen Auswahlmenue und Slots die volle Breite, Figuren-Kacheln deutlich groesser (Slots bis 46px, Auswahl-Buttons 30px-Bilder, Roster-Glyphen 44px)
+- ABTRUENNIG NUR VOR DEM SIEG: die rote "hat sich gegen dich gewandt"-Zeile erscheint nur noch, solange die Station offen ist - nach dem Sieg bleibt allein die Freundschaftskampf-Info
+- DIE SAGE SPRICHT AUF DER KARTE: die mystische Herold-Zeile (3. Person) jeder Figur steht jetzt auch im Stations-Panel unter dem Boss - Champions wie Monster; die Rotations-Stationen zeigen die Zeile des aktuell wachhabenden Monsters
+- DER DRACHE SCHLUEPFT IN LIGA II: im Drachenhort wacht in Liga I die BRUTMUTTER (eigene Story-Zeile, 1 Sieg, keine Rekrutierung); ab Liga II wartet der Drache (3 Siege) - wer ihn frueher schon rekrutiert hat, behaelt ihn
+- WELTKARTE: oeffnet jetzt DORT, wo du gerade bist (Auto-Scroll zur aktuellen Liga), und ueber dem noch verhuellten Land liegt wieder ganz sanfter, treibender NEBEL (zwei geblurte Schichten, 44s/58s Drift)
+
 ## 0.21.63
 - DER DRACHE IST GROSS (2x2): er belegt jetzt echte vier Felder. AUFSTELLUNG nur ganz aussen; sein Preis: der Nachbarplatz wird zur Drachenschwinge (leer) und die beiden Bauern davor weichen - mit Bestaetigungs-Abfrage im Editor ("Platz machen?"), der Grand Gambit tritt automatisch zur Seite, Rueckbau fuellt die Schwinge wieder
 - ZU FUSS langsam (der ganze Block schiebt sich 1 Feld, nie auf Figuren), dafuer GEWICHTS-AURA: nach jedem Setzen nehmen ALLE an den Block gedraengten Feinde ceil(atk/2) Schaden (automatisch, wie besprochen)

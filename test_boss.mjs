@@ -81,8 +81,13 @@ function loneBoss(boss) {
   const pm = buildStageMatch("a2"); // Attentäter piece boss
   ok("piece boss fields its own kind with boosted stats", pm.aiArmy.back.some((sp) => sp.kind === "S" && sp.hp >= 8) && pm.boss.unlocks === null
     && buildStageMatch("a2", { campaign: { bossWins: { assassin: 1 } } }).boss.unlocks === "assassin");
-  ok("a stubborn champion resists until his last demanded win", buildStageMatch("a4").boss.unlocks === null
-    && buildStageMatch("a4", { campaign: { bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
+  ok("a stubborn champion resists until his last demanded win (Hoard = League II)",
+    buildStageMatch("a4", { campaign: { league: 2 } }).boss.unlocks === null
+    && buildStageMatch("a4", { campaign: { league: 2, bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
+  ok("in League I the Hoard belongs to the Broodmother, no recruit", (() => {
+    const m = buildStageMatch("a4", { campaign: { league: 1 } });
+    return m.boss.bossId === "b03" && m.boss.unlocks === null && m.node.storyDe.includes("Brutmutter");
+  })());
   // monster stations rotate their champion by league — the whole bestiary marches
   const nA5 = (id) => CAMPAIGN.find((n) => n.id === id);
   ok("station rotation fields a fresh monster each league and cycles", nodeBossSpec(nA5("a5"), 1).bossId === "b22"

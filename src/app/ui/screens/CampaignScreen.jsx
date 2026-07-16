@@ -20,6 +20,7 @@ import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc } from "../ic
 import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
+import { voiceFor } from "../../../content/index.js";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse, SiteGlyph, siteTypeFor, WandererArt } from "../mapArt.jsx";
 
 // ── geometry (pixels; shared with previews via mapArt.GEO) ───────────────────
@@ -130,7 +131,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const status = nodeStatus(profile, sel);
   const boss = node?.boss ? nodeBossSpec(node, league) : null;
   const unlockCh = node?.boss?.piece ? CHARACTERS[node.boss.piece] : null;
-  const needWins = winsNeeded(node);                       // stubborn champions demand several victories
+  const needWins = winsNeeded(node, league);               // stubborn champions demand several victories
   const haveWins = unlockCh ? Math.min(needWins, bossWinsFor(profile, unlockCh.id)) : 0;
   const canRecruit = !!unlockCh && haveWins + 1 >= needWins;  // the NEXT win seals it
   const known = unlockCh ? (profile.campaign?.unlocked || []).includes(unlockCh.id) : true;
@@ -508,13 +509,23 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
       {world && (() => {
         const ratio = WORLD_MAP.h / WORLD_MAP.w;
         return (
-          <div onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "absolute", inset: 0, zIndex: 12,
+          <div ref={(el) => {
+              // open the atlas WHERE YOU ARE: scroll the current league into the middle
+              if (!el || el._ggScrolled) return; el._ggScrolled = true;
+              requestAnimationFrame(() => {
+                const img = el.querySelector("[data-world-frame]");
+                if (!img) return;
+                const ay = WORLD_MAP.anchors[Math.min(10, Math.max(1, league))][1] / 100;
+                el.scrollTop = Math.max(0, img.offsetTop + img.offsetHeight * ay - el.clientHeight / 2);
+              });
+            }}
+            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "absolute", inset: 0, zIndex: 12,
             background: "rgba(4,6,10,.82)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
             overflowY: "auto", padding: "22px 12px calc(30px + env(safe-area-inset-bottom))" }}>
             <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
               fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
             <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 12 }}>{t("camp.worldHint")}</div>
-            <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 430, margin: "0 auto",
+            <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 430, margin: "0 auto",
               borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
               boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
               <img src={WORLD_MAP.url} alt="" draggable={false} style={{ display: "block", width: "100%",
@@ -523,7 +534,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               {league < 10 && (() => {
                 const cutY = Math.max(0, WORLD_MAP.anchors[Math.min(10, league + 1)][1] - 4);
                 return <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${cutY + 5}%`,
-                  background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)" }} />;
+                  background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)",
+                  overflow: "hidden" }}>
+                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.5,
+                    background: "radial-gradient(42% 30% at 24% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
+                    animation: "ggFogA 44s ease-in-out infinite alternate" }} />
+                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(18px)", opacity: 0.38,
+                    background: "radial-gradient(46% 30% at 60% 22%, rgba(206,196,178,.3), transparent 70%), radial-gradient(40% 26% at 30% 76%, rgba(170,162,148,.24), transparent 70%)",
+                    animation: "ggFogB 58s ease-in-out infinite alternate" }} />
+                </div>;
               })()}
               {Array.from({ length: 10 }, (_, i) => i + 1).map((lg) => {
                 const [ax, ay] = WORLD_MAP.anchors[lg];
@@ -629,8 +648,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>
-                {unlockCh && known && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
+                {unlockCh && known && status !== "cleared" && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
+                {(() => { const v = voiceFor(boss);   // the saga speaks on the map too
+                  return v ? <div className="gg-serif" style={{ fontSize: 11.5, color: "#6b5c44", fontStyle: "italic", marginTop: 5, lineHeight: 1.5 }}>
+                    {v[en ? "heraldEn" : "heraldDe"]}</div> : null; })()}
               </div>
             </div>
           )}
