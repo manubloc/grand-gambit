@@ -1,4 +1,6 @@
 import { defineConfig } from "vite";
+import { readFileSync } from "node:fs";
+const GG_VERSION = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version;
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import pkg from "./package.json";
@@ -6,6 +8,7 @@ import pkg from "./package.json";
 // base: "./" makes the build portable (Cloudflare/GitHub Pages, itch.io,
 // any subfolder, TWA/Capacitor wrapper).
 export default defineConfig({
+  define: { __GG_VERSION__: JSON.stringify(GG_VERSION) },
   build: { assetsInlineLimit: (file, content) => file.endsWith(".webp") ? false : content.length < 400 * 1024 },
   base: "./",
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
@@ -31,7 +34,7 @@ export default defineConfig({
           { src: "icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       },
-      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,webp,webmanifest}"], globIgnores: ["**/painted-*"] },
+      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,webp,webmanifest}"], globIgnores: ["**/painted-*"], skipWaiting: true, clientsClaim: true },
     }),
   ],
 });

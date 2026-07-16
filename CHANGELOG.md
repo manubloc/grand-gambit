@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.83
+- UPDATE-PROBLEM AN DER WURZEL BEHOBEN: der Service Worker bekam skipWaiting + clientsClaim - neue Versionen uebernehmen ab jetzt beim NAECHSTEN LADEN sofort, statt zu warten bis alle Tabs geschlossen sind (der Grund, warum Aenderungen oft "nicht ankamen")
+- VERSIONSANZEIGE: unten auf Login und Spielstand-Auswahl steht jetzt dezent die laufende Versionsnummer - so ist sofort sichtbar, welcher Stand laedt
+- ABSTAND Logo -> Text nochmals kraeftiger: Login 42px, Spielstand-Auswahl 38px
+
 ## 0.21.82
 - STATIONSNAMEN tragen jetzt das Licht ihres Landes: der Schein hinter jedem Namen ist je Liga getoent - Fruehling Wiesengruen, Sommer Sonnengold, Herbst Bernstein, Winter Eisblau, Hochgebirge Felsgrau, Oedland Aschebeige, Steppe Grasgelb, Canyon Terrakotta, WUESTE SANDGELB, MEER MEERBLAU (dunkle Tinte bleibt lesbar)
 - BRETTFIGUREN nochmals groesser: die Glyphe waechst von 90% auf 98% der Kachel
