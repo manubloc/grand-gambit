@@ -313,8 +313,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             </> : Keep({ x: WMAP - 84, y: ny({ col: 2 }) - 10, s: 1.7, fill: MP.liga, k: "k2" }))}
           </svg>
 
-          {/* chapter banners */}
-          {CHAPTERS.map((c) => (
+          {/* chapter banners (drawn maps only — painted worlds carry a fixed pill in the chrome) */}
+          {!bm && CHAPTERS.map((c) => (
             <div key={"ch" + c.n} className="gg-quill" style={{ position: "absolute", top: 12,
               left: LEFT + ((c.fromRow + c.toRow) / 2) * STEP, transform: "translateX(-50%)",
               background: "rgba(239,233,218,.42)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
@@ -505,7 +505,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       })()}
       {/* floating chrome: back pill + league badge (left), zoom (right) —
           always INSIDE the rounded map frame, padded off its edge */}
-      <div style={{ position: "absolute", top: frameY + 20, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
+      <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
             and once the League Master has fallen, the golden gate: Onward. */}
@@ -529,6 +529,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           </button>
         )}
         <div style={{ flex: 1 }} />
+        {bm && (() => {
+          const cur = nodeById(token.at);
+          const ch = CHAPTERS.find((c) => cur && cur.row >= c.fromRow && cur.row <= c.toRow) || CHAPTERS[0];
+          return <div className="gg-serif" style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center",
+            height: 40, padding: "0 15px", borderRadius: 999, background: "rgba(8, 11, 20, .48)",
+            border: "1px solid rgba(233, 210, 150, .42)", color: "#e9d296", fontSize: 11.5, letterSpacing: ".12em",
+            whiteSpace: "nowrap", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][ch.n - 1]} · {(en ? ch.titleEn : ch.titleDe).toUpperCase()}
+          </div>;
+        })()}
         {viewLeague < league && (
           <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague] || viewLeague + 1}
             style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",

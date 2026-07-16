@@ -208,7 +208,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            boxShadow: "inset 2px 2px 0 rgba(255,246,220,.09), inset -2px -2px 0 rgba(0,0,0,.32)" }} />
+            boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />
 
@@ -236,7 +236,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             transformOrigin: "50% 72%", transition: "transform .16s ease",
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
             fontSize: piece.kind === "P" ? "0.9em" : "1.07em", // pawns humble, the court imposing
-            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+            transition: "filter .45s ease",
+            filter: introSpot && !introSpot.has(i)
+              ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...
+              : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>                                       // ... the strangers stand sharp<PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />

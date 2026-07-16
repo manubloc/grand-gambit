@@ -67,19 +67,19 @@ export const GLOBAL_CSS = `
   /* three opening flights — each battle draws one. All of them LINGER over
      the enemy ranks first (your own you know by heart). */
   @keyframes ggBoardFlyA { 0% { transform: scale(1.95) translateY(23%); }
-    34% { transform: scale(1.8) translateY(21%); }
-    62% { transform: scale(1.45) translateY(6%) translateX(-3%); }
+    48% { transform: scale(1.82) translateY(21%); }
+    74% { transform: scale(1.4) translateY(5%) translateX(-3%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggBoardFlyB { 0% { transform: scale(2.05) translateY(24%) translateX(9%); }
-    38% { transform: scale(1.85) translateY(22%) translateX(-7%); }
-    68% { transform: scale(1.4) translateY(4%) translateX(0); }
+    52% { transform: scale(1.88) translateY(22%) translateX(-7%); }
+    78% { transform: scale(1.38) translateY(4%) translateX(0); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggBoardFlyC { 0% { transform: scale(1.75) translateY(-16%) translateX(-6%); }
-    30% { transform: scale(1.9) translateY(22%) translateX(4%); }
-    64% { transform: scale(1.9) translateY(21%) translateX(-4%); }
+    26% { transform: scale(1.9) translateY(22%) translateX(4%); }
+    72% { transform: scale(1.92) translateY(21%) translateX(-4%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggNewPulse { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(240,206,122,.25), 0 0 10px rgba(240,206,122,.15); }
-    50% { box-shadow: inset 0 0 0 3.5px rgba(246,233,164,.9), 0 0 22px rgba(240,206,122,.65); } }
+    50% { box-shadow: inset 0 0 0 4.5px rgba(246,233,164,.95), 0 0 30px rgba(240,206,122,.8); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }
     50% { transform: translateX(-47%) translateY(-6%) scaleY(1.04); opacity: .8 }
     100% { transform: translateX(-50%) translateY(-14%) scaleY(1.1); opacity: .35 } }

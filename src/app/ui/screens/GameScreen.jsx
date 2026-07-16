@@ -379,6 +379,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   };
   const toggleZoom = () => setZoomMode((on) => { const next = !on; if (!next) setZv({ z: 1, x: 0, y: 0 }); return next; });
   const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
+  const [flyGo, setFlyGo] = useState(false);       // ... and only AFTER the story sheet is acknowledged
   const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
   const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
   // ── THE CODEX: which exotic foes has the player met before? First
@@ -399,11 +400,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (grew) dispatch({ type: "REPLACE", profile: { ...profile, codex: { ...(profile.codex || {}), met: [...met] } } });
   }, []);
   const introSpots = useMemo(() => {
-    if (flyDone || !state?.board) return null;
+    if (flyDone || !flyGo || !state?.board) return null;
     const set = new Set();
     state.board.forEach((pc, i) => { if (pc && pc.color === oppColor && !STD_KINDS.has(pc.kind) && !knownAtStart.has(codexKey(pc))) set.add(i); });
     return set.size ? set : null;
-  }, [flyDone, state]);
+  }, [flyDone, flyGo, state]);
   const seerVision = state?.rules === "hp" && state.board.some((pc) => pc && pc.color === myColor && (pc.kind === "SE" || pc.kind === "H") && (pc.level || 1) >= 2);
   const onEnemyTap = (i, allowed) => {
     const pc = state.board[i]; if (!pc || STD_KINDS.has(pc.kind)) return;
@@ -413,7 +414,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       setFirstMeet({ piece: pc, seen: allowed });
     }
   };
-  useEffect(() => { const id = setTimeout(() => setFlyDone(true), 3500); return () => clearTimeout(id); }, []); // one tap arms, the second concedes
+  useEffect(() => { if (!intro && !flyGo) setFlyGo(true); }, [intro]); // the curtain rises once the tale is told
+  useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 4900); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
     const id = setTimeout(() => setArmResign(false), 3500);
@@ -522,7 +524,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ width: "100%", height: "100%",
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
-          animation: !flyDone && !zoomMode ? `ggBoardFly${flyVar} 3.4s cubic-bezier(.35,.12,.22,1) both` : "none" }}>
+          animation: flyGo && !flyDone && !zoomMode ? `ggBoardFly${flyVar} 4.7s cubic-bezier(.35,.12,.22,1) both` : "none",
+          opacity: flyGo ? 1 : 0.985 }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
