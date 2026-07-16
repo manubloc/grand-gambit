@@ -72,8 +72,8 @@ function loneBoss(boss) {
   ok("at least 25 bosses exist", BOSSES.length >= 25);
   ok("every boss has a unique move spec", new Set(BOSSES.map((b) => JSON.stringify(b.moveSpec))).size === BOSSES.length);
   const bossStages = CAMPAIGN.filter((st) => st.boss);
-  ok("campaign has 40 boss stages (tolls, gardens, league wilds)", bossStages.length === 40);
-  ok("33 of them are recruitable piece bosses", bossStages.filter((st) => st.boss.piece).length === 33);
+  ok("campaign has 41 boss stages (the Moonwatch joined)", bossStages.length === 41);
+  ok("34 of them are recruitable piece bosses", bossStages.filter((st) => st.boss.piece).length === 34);
   ok("every pure boss resolves", bossStages.filter((st) => st.boss.pure).every((st) => bossById(st.boss.pure)));
   const m = buildStageMatch("n03");
   ok("boss replaces the enemy queen", m.aiArmy.back.some((sp) => sp.kind === "X") && !m.aiArmy.back.some((sp) => sp.kind === "Q"));

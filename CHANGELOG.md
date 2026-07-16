@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.62
+- DIE HELLSEHERIN IST DA: eigene Championfigur (Kind SE, sanfte Mystikerin: Damen-Linien mit 2 Feldern Reichweite, HP 3 / ATK 2, Leiter mit Teleport + Fernschuss). Neue Station MONDWARTE (e3) im Wisdom-Zweig direkt hinter der Sturmfeste, spaet in Liga I, 2 Siege - Position auf allen 10 gemalten Ligakarten gesetzt, eigene Vektor-Silhouette, gemaltes Portraet, Sage-Stimme (Herold + Antwort)
+- HELLSICHT PRO FAMILIE: die Gabe liegt jetzt bei EINEM Seher je Haus - KRONE: Hellseherin, SCHATTEN: Spaeher (Falke). Die Hexerin gibt die Gabe ab; online zaehlen die Kinds SE und H
+- FIGUREN-AUDIT: alle Anzeigewege (Brett, Karten-Medaillons, Vorspann, Siegesbanner, Hofstaat) ziehen aus den NEUEN painted-Dateien; dist-Hash-Vergleich bestaetigt die Auslieferung. Wer alte Figuren sieht, hat noch eine App-Version vor 0.21.58 - einmal komplett schliessen und neu oeffnen
+- WELTKARTEN-ANKER VERIFIZIERT: Kontrollbild mit allen 10 Ringen gerendert - L1-L8 sitzen auf der Schneise, L9 auf der Oase, L10 auf der Leuchtturm-Insel
+
 ## 0.21.61
 - NEUE FIGUREN-GALERIE: alle 25 Figuren aus dem Menschen-Setting eingebunden (Standard-Sechs + 19 Champions), plus ALLE SECHS Gambit-Stufenbilder und die HELLSEHERIN (painted-seeress.webp, wartet auf ihren Spielauftritt). Opake Lieferungen wurden per Rand-Flood-Fill freigestellt (weiche Weiss-Schleier, eingeschlossene Taschen und die Barden-Feder alle sauber), Klassik-Modus behaelt die alten classic-*.webp unangetastet
 - GAMBIT 6x10: der Held steigt jetzt bis LEVEL 60 (sechs Stufen a zehn Level). Jede Stufe traegt ihr eigenes Portraet und eine tiefere Gold-Aura (nur fuer die eigene Seite sichtbar). Der Aufstieg wird STEIL teurer: 2/3/4/6/8/10 SP pro Level nach Stufe - der ganze Weg kostet 328 SP. Fuenf weitere Schilde auf der langen Strasse (L34/40/46/52/58, gesamt 11); Staerke kommt weiter ueber +1 HP je Level

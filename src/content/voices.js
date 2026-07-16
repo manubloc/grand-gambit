@@ -73,6 +73,12 @@ export const VOICES = {
   },
 
   // ── the crown-loyal (Krone) ────────────────────────────────────────────────
+  seeress: {
+    heraldDe: "Die Hellseherin verließ den Hof eine Stunde, bevor er zerbrach — sie hatte es kommen sehen und niemand hatte gefragt.",
+    heraldEn: "The Seeress left the court an hour before it shattered — she had seen it coming, and no one had asked.",
+    afterDe: "Frag mich, Wanderer. Du bist der Erste seit dem Riss, dessen Züge ich nicht zu Ende sehe — deshalb folge ich dir.",
+    afterEn: "Ask me, Wanderer. You are the first since the rift whose moves I cannot see to their end — that is why I follow you.",
+  },
   mage: {
     heraldDe: "Der Magier versiegelte den ersten Spalt mit bloßer Hand — und zählt seither die Tage, bis das Siegel zu singen beginnt.",
     heraldEn: "The Mage sealed the first crack with his bare hand — and has counted the days ever since, waiting for the seal to sing.",

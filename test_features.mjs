@@ -173,7 +173,7 @@ ok("without charges the command is a no-op", red2(heal.state, potionCommand("b",
 // ── Item-gated secret paths + the Captain/boat chain ─────────────────────────
 import { nodeStatus as nst, seaAccessible, dupeCount as dc2 } from "./src/meta/index.js";
 import { buyItem, CAMPAIGN as CAMP2, ITEMS } from "./src/content/index.js";
-ok("the map now holds 50 sites (27 core + 9 secret + 2 tolls + 3 wilds + 9 league wilds)", CAMP2.length === 50 && CAMP2.filter((n) => n.gate).length === 11);
+ok("the map now holds 51 sites (the Moonwatch joined the wisdom road)", CAMP2.length === 51 && CAMP2.filter((n) => n.gate).length === 11);
 ok("fifteen sites are league-bound (6 secrets + 9 league wilds)", CAMP2.filter((n) => n.league).length === 15);
 import { nodeStatus as nstH } from "./src/meta/index.js";
 ok("league-bound sites hide outside their league", nstH({ campaign: { league: 1, cleared: ["a1"] } }, "g8") === "hidden");

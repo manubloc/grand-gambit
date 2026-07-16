@@ -96,7 +96,7 @@ export const PAINTED = {
 // kind letter -> character id (pawn wins the shared "P"; the hero flag decides gambit)
 const KIND2ID = {
   P: "pawn", N: "knight", B: "bishop", R: "rook", Q: "queen", K: "king",
-  A: "archbishop", C: "chancellor", H: "hawk", M: "amazon", V: "captain", S: "assassin",
+  A: "archbishop", C: "chancellor", H: "hawk", M: "amazon", V: "captain", S: "assassin", SE: "seeress",
   G: "guardian", D: "dragon", E: "mage", Z: "sorceress", L: "alchemist", W: "warlock",
   U: "paladin", I: "inquisitor", J: "bard", T: "engineer", F: "standard", Y: "strategist", O: "pathfinder",
 };

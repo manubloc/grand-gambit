@@ -141,7 +141,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // ONLINE the gaze does more: the seer may SWAP own pieces on the spot,
   // while the foe waits behind a notice; the swaps travel with scoutDone so
   // both boards stay identical.
-  const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "Z" || sp.kind === "H"); // sorceress Z, hawk (Spaeher) H
+  const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "SE" || sp.kind === "H"); // seeress (Crown), hawk (Shadow)
   const mySeerOnline = !!pvp && !classic && armyHasSeer(playerArmy);
   const oppSeerOnline = !!pvp && !classic && armyHasSeer(pvp?.oppArmy);
   const foresight = (!!campaign && !resume && !pvp && hasForesight(profile, map)) || mySeerOnline;

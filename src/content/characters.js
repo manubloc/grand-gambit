@@ -260,6 +260,21 @@ flavorDe: "Der Sturm fragt sie um Erlaubnis.", flavorEn: "The storm asks her per
       { level: 9, ability: "lifesteal" },
     ],
   },
+  seeress: {
+    id: "seeress", kind: KIND.SEERESS, glyph: null, nameDe: "Hellseherin", nameEn: "Seeress",
+flavorDe: "Sie hat das Ende jeder Partie gesehen — sie spielt nur mit, um zu erfahren, wie es sich anfühlt.", flavorEn: "She has seen the end of every game - she only plays to learn how it feels.",
+    // the CROWN's seer: her gift is the foresight itself (see hasForesight) —
+    // the shadow's counterpart is the hawk. On the board she is a gentle
+    // mystic: queen-lines, two squares of reach.
+    unlock: { type: "boss" }, flank: true, costValue: 420,
+    moveSpec: { slides: [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]], range: 2 },
+    ladder: [
+      { level: 2, shield: 1 },
+      { level: 4, ability: "teleport" },
+      { level: 6, shield: 1 },
+      { level: 8, ability: "ranged_shot" },
+    ],
+  },
   alchemist: {
     id: "alchemist", kind: KIND.ALCHEMIST, glyph: "⚗", nameDe: "Alchemist", nameEn: "Alchemist",
 flavorDe: "Hat den Pass gesprengt. Aus Versehen. Zweimal.", flavorEn: "Blew up the pass. By accident. Twice.",

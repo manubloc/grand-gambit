@@ -51,9 +51,9 @@ ok("playtime formats like a game", fmtPlaytime(45) === "0 min" && fmtPlaytime(37
 
 // ── progress dial (the admin control) ────────────────────────────────────────
 const order = leagueOrder(1);
-ok("journey order covers the whole league once", order.length === 35 && new Set(order).size === 35 && order[0] === "n01");
+ok("journey order covers the whole league once", order.length === 36 && new Set(order).size === 36 && order[0] === "n01");
 const full = withProgressPct(defaultProfile(), 100);
-ok("100% clears every site of the league", full.campaign.cleared.length === 35 && progressPct(full) === 100);
+ok("100% clears every site of the league", full.campaign.cleared.length === 36 && progressPct(full) === 100);
 ok("100% unlocks the bosses along the way", full.campaign.unlocked.length >= 15 && full.gold > 2000);
 const half = withProgressPct(defaultProfile(), 50);
 ok("50% clears the first half in journey order", half.campaign.cleared.length === 18 && half.campaign.cleared[0] === "n01");
