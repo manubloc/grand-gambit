@@ -77,7 +77,7 @@ const LABEL_TINT = {
 };
 const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 10) + 1] || "248,242,226";
 
-export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
+export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTree }) {
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
   const league = profile.campaign?.league || 1;
@@ -174,11 +174,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   // hi-DPI screens, so the window sits a step back from full bleed
   const z = fit * (wide ? 0.8 : 1.005); // phones: full bleed + a hair of cover reserve (no light seam at the rim)
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
-  // on phones the dock floats over the bottom edge — the frame leaves it room
-  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 78 : 0;
-  const frameW = Math.min(vp.w, WMAP * z), frameH = Math.max(220, Math.min(vp.h - dockPad, HM * z));
+  // the frame is FIXED: even margins top and bottom (the dock gets its room on
+  // phones); the painting scales and pans INSIDE this steady window
+  const padTop = 12;
+  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 78 : 12;
+  const frameW = Math.min(vp.w, WMAP * z), frameH = Math.max(220, vp.h - padTop - dockPad);
   const frameX = Math.round((vp.w - frameW) / 2);
-  const frameY = Math.min(10, Math.max(0, Math.round((vp.h - frameH) / 2))); // dock at the top — the hall breathes below
+  const frameY = padTop; // pinned: same breath above as below
   const camMaxX = Math.max(0, WMAP * z - frameW), camMaxY = Math.max(0, HM * z - frameH);
   const camX = clamp((viewing ? 0 : nx(camNode) * z - frameW * 0.46) + panOff.x, 0, camMaxX);
   const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * z - frameH * 0.5) + panOff.y, 0, camMaxY);
@@ -485,12 +487,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
       </div>
       </div>
 
-      {/* floating chrome: back pill + league badge (left), zoom (right) —
-          always INSIDE the rounded map frame, padded off its edge */}
-      <div style={{ position: "absolute", top: frameY + 20, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
-        alignItems: "center", gap: 8, pointerEvents: "none" }}>
-        {/* league navigation: ‹ back through mastered worlds, › forward again —
-            and once the League Master has fallen, the golden gate: Onward. */}
       {gambitInfo && (() => {
         const lvl = characterLevel(profile, "gambit") || 1;
         const gt = gambitTier(lvl);
@@ -507,6 +503,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
             color: "#17110a", fontWeight: 800, fontSize: 12.5, fontFamily: "inherit", cursor: "pointer" }}>{t("camp.gambitTree")} ›</button>}
         </div>;
       })()}
+      {/* floating chrome: back pill + league badge (left), zoom (right) —
+          always INSIDE the rounded map frame, padded off its edge */}
+      <div style={{ position: "absolute", top: frameY + 20, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
+        alignItems: "center", gap: 8, pointerEvents: "none" }}>
+        {/* league navigation: ‹ back through mastered worlds, › forward again —
+            and once the League Master has fallen, the golden gate: Onward. */}
+
         {/* the atlas button: a small round seal with the field map + waypin,
             hand-drawn — one tap steps out to the world painting */}
         <button onClick={() => setWorld(true)} title={t("camp.zoomOut")}

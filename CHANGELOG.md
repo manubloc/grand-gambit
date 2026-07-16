@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.95
+- ABSTURZ BEHOBEN: Tipp auf Gambit in der Karte crashte die App - der onOpenTree-Prop fehlte in der CampaignScreen-Signatur (ReferenceError beim Rendern des Rang-Blatts)
+- GAMBIT-BLATT SAUBER IM FRAME: das Blatt sass faelschlich IN der schwebenden Kopf-Leiste (doppelter Versatz) - jetzt liegt es auf Karten-Ebene, mittig, immer INNERHALB der Karte
+- FESTER KARTENRAHMEN MIT GLEICHMAESSIGEM ABSTAND: 12px Luft oben, 12px ueber dem Menue unten (mobil 78px inkl. Dock) - der Rahmen steht fest, die Karte SKALIERT und pannt innerhalb dieses Fensters (vorher schrumpfte der Rahmen mit dem Inhalt)
+
 ## 0.21.94
 - DER HOFSTAAT (vormals Chronik) IST JETZT REITER 1 im Hofstaat-Bereich und der Standard-Einstieg; danach Aufstellung, Figuren, Ausruestung
 - KACHELN AUFGERAEUMT: die zweite Zeile unter dem Figurennamen ist weg, die Figuren dafuer deutlich groesser (68px statt 52px); Status wie "Gesichtet"/"Verbuendet" und die Herkunft stehen als kleines Eck-Kuerzel oben rechts
