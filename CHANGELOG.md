@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.79
+- LOGIN + SPIELSTAND: mehr Freiraum unter dem Logo (26px bzw. 24px Abstand zum Anmelde-Bereich / zur Spielstand-Liste)
+
 ## 0.21.78
 - FEIND-RAUCH nochmals deutlich verstaerkt (im Live-Test war er selbst im Zoom kaum sichtbar): hellere Schwaden, Deckkraft-Zyklus 0.45-0.8, breiter und hoeher (0.95em x 1.42em)
 
