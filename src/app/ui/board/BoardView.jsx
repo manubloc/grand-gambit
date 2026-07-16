@@ -237,7 +237,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const bw = cell ? cell * W + (W - 1) * GAP : null;
   const bh = cell ? cell * H + (H - 1) * GAP : null;
   // Smaller boards → larger cells; glyph stays ~85% of a cell.
-  const glyph = cell ? `${Math.round(cell * 0.9)}px` : `min(${(0.9 * 88 / W).toFixed(1)}vw, ${Math.round(0.9 * maxPx / W)}px)`;
+  const glyph = cell ? `${Math.round(cell * 0.98)}px` : `min(${(0.98 * 88 / W).toFixed(1)}vw, ${Math.round(0.98 * maxPx / W)}px)`;
 
   // display coords for the overlay (respect flip)
   const disp = (i) => {

@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.21.82
+- STATIONSNAMEN tragen jetzt das Licht ihres Landes: der Schein hinter jedem Namen ist je Liga getoent - Fruehling Wiesengruen, Sommer Sonnengold, Herbst Bernstein, Winter Eisblau, Hochgebirge Felsgrau, Oedland Aschebeige, Steppe Grasgelb, Canyon Terrakotta, WUESTE SANDGELB, MEER MEERBLAU (dunkle Tinte bleibt lesbar)
+- BRETTFIGUREN nochmals groesser: die Glyphe waechst von 90% auf 98% der Kachel
+
 ## 0.21.81
 - DER WANDERER auf der Karte deutlich groesser (76x78 statt 56x58) - jetzt klar erkennbar
 - SCHACHBRETT breiter und hoeher: die Partie-Ansicht laesst nur noch einen schmalen dunklen Rand (Brett-Rand 2/4px, Shell-Polster im Spiel 10px Desktop / 3px mobil)

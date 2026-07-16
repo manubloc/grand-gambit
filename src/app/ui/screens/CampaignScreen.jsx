@@ -59,6 +59,22 @@ const CrownIc = ({ c = "#f2d98c", size = 16 }) => (
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 const CAM_EASE = "cubic-bezier(.45,.05,.35,1)";
 
+// the name-plate halo borrows each land's own light: spring green, desert
+// gold, sea blue ... (indexed by biome 1..10, dark ink stays readable)
+const LABEL_TINT = {
+  1: "212,232,196",   // Fruehling - Wiesengruen
+  2: "244,232,178",   // Sommer - Sonnengold
+  3: "240,214,176",   // Herbst - Bernstein
+  4: "224,236,244",   // Winter - Eisblau-Weiss
+  5: "216,226,232",   // Hochgebirge - Felsgrau-Blau
+  6: "216,208,188",   // Oedland - Aschebeige
+  7: "228,222,178",   // Steppe - Grasgelb
+  8: "240,204,176",   // Roter Canyon - Terrakotta
+  9: "246,228,164",   // Wueste - Sandgelb
+  10: "196,222,238",  // Endloses Meer - Meerblau
+};
+const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 10) + 1] || "248,242,226";
+
 export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
@@ -407,10 +423,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
                     <span aria-hidden style={{ position: "absolute", inset: "-7px -16px", borderRadius: "50%",
-                      background: "radial-gradient(ellipse at center, rgba(248,242,226,.95) 0%, rgba(248,242,226,.78) 52%, transparent 76%)",
+                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.95) 0%, rgba(${labelTint(league)},.78) 52%, transparent 76%)`,
                       filter: "blur(3px)", pointerEvents: "none" }} />
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: "0 1px 0 rgba(248,242,226,.9)" }}>{placeFor(n, league)}</span>
+                      lineHeight: 0.94, textShadow: `0 1px 0 rgba(${labelTint(league)},.9)` }}>{placeFor(n, league)}</span>
                   </span>
                 </div>
               </div>
