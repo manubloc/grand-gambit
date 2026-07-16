@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor } from "../../../content/index.js";
-import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold } from "../../../meta/index.js";
+import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
 import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
-import { CHARACTERS } from "../../../content/index.js";
+import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { paintedById } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -223,6 +223,23 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       : pvp ? 6
       : winGold(difficulty);
     const { profile: next, gained } = applyResult(profile, summary);
+    // every rung climbed this battle becomes a tale: which piece learned what
+    const lessons = [];
+    for (const cid of Object.keys(summary.charXpGains || {})) {
+      const ch = CHARACTERS[cid]; if (!ch) continue;
+      const before = characterLevel(profile, cid), after = characterLevel(next, cid);
+      if (after <= before) continue;
+      const nm = en ? ch.nameEn : ch.nameDe;
+      for (const rung of ch.ladder || []) {
+        if (rung.level > before && rung.level <= after) {
+          if (rung.ability && ABILITIES[rung.ability]) lessons.push({ nm, ab: ABILITIES[rung.ability] });
+          else if (rung.shield) lessons.push({ nm, shield: rung.shield });
+        }
+      }
+      if (cid === "gambit" && gambitTier(after) > gambitTier(before))
+        lessons.push({ nm, tier: ["I","II","III","IV","V","VI"][gambitTier(after) - 1] || gambitTier(after) });
+    }
+    if (lessons.length) setNewSkills(lessons);
     if (campaign && next.pausedMatch?.nodeId === match.nodeId) next.pausedMatch = null;
     dispatch({ type: "REPLACE", profile: next });
     if (campaign && result === "win") {
@@ -362,6 +379,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   };
   const toggleZoom = () => setZoomMode((on) => { const next = !on; if (!next) setZv({ z: 1, x: 0, y: 0 }); return next; });
   const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
+  const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
   const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
   // ── THE CODEX: which exotic foes has the player met before? First
   // encounters keep their secrets (no move-reading) and introduce themselves
@@ -845,6 +863,25 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
             </div>
           </div>;
         })()}
+        {newSkills.length > 0 && (
+          <div style={{ margin: "2px 0 12px", padding: "11px 13px 10px", borderRadius: 12, textAlign: "left",
+            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
+            animation: "rise .35s ease" }}>
+            <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".16em", color: T.gold, textAlign: "center", marginBottom: 7 }}>
+              {t("banner.learned")}</div>
+            {newSkills.map((l, i) => (
+              <div key={i} style={{ padding: "5px 0", borderTop: i ? "1px dashed rgba(233,210,150,.18)" : "none" }}>
+                <div className="gg-serif" style={{ fontSize: 13, color: T.goldBright }}>
+                  {l.ab ? t("banner.learnsAbility", { ch: l.nm, ab: en ? l.ab.nameEn : l.ab.nameDe })
+                    : l.shield ? t("banner.gainsShield", { ch: l.nm, n: l.shield })
+                    : t("banner.gambitTier", { r: l.tier })}
+                </div>
+                {l.ab && <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, marginTop: 2 }}>
+                  {en ? l.ab.descEn : l.ab.descDe}</div>}
+              </div>
+            ))}
+          </div>
+        )}
         {campaign ? (
           win
             ? (unlockId && onArmy

@@ -444,19 +444,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
               pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,
               ...(gambitInfo ? { filter: "drop-shadow(0 0 12px rgba(240,206,122,.55))" } : {}),
               transform: (bm ? "translate(-50%,-102%)" : "translate(-98%,-70%)") + (gambitInfo ? " scale(1.32)" : ""), transformOrigin: "50% 96%" }}>
-              {gambitInfo && (() => {
-                const lvl = characterLevel(profile, "gambit") || 1;
-                const gt = gambitTier(lvl);
-                return <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", bottom: "108%",
-                  transform: "translateX(-50%)", width: 196, zIndex: 12, borderRadius: 12, padding: "9px 11px",
-                  background: "rgba(12,15,22,.93)", border: "1px solid rgba(233,210,150,.45)",
-                  boxShadow: "0 8px 26px rgba(0,0,0,.55)", textAlign: "center", animation: "rise .2s ease", pointerEvents: "auto" }}>
-                  <div className="gg-serif" style={{ fontSize: 13.5, color: "#f6e9a4", letterSpacing: ".06em" }}>{t("camp.gambitTitle")}</div>
-                  <div className="gg-serif" style={{ fontSize: 12, color: "#e9d296", marginTop: 3 }}>
-                    {t("camp.gambitLine", { lvl, tier: ["I","II","III","IV","V","VI"][gt - 1] || gt })}</div>
-                  <div style={{ fontSize: 11, color: "#c9b98f", letterSpacing: ".2em", marginTop: 2 }}>{"✦".repeat(gt)}</div>
-                </div>;
-              })()}
+
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
                 transformOrigin: "0 50%", transform: `rotate(${stride.angle + 180}deg)`,
@@ -501,6 +489,22 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
             and once the League Master has fallen, the golden gate: Onward. */}
+      {gambitInfo && (() => {
+        const lvl = characterLevel(profile, "gambit") || 1;
+        const gt = gambitTier(lvl);
+        return <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: frameY + 68, left: "50%",
+          transform: "translateX(-50%)", width: "min(88vw, 250px)", zIndex: 12, borderRadius: 13, padding: "11px 13px 12px",
+          background: "rgba(12,15,22,.94)", border: "1px solid rgba(233,210,150,.45)",
+          boxShadow: "0 10px 30px rgba(0,0,0,.55)", textAlign: "center", animation: "rise .2s ease", pointerEvents: "auto" }}>
+          <div className="gg-serif" style={{ fontSize: 14, color: "#f6e9a4", letterSpacing: ".06em" }}>{t("camp.gambitTitle")}</div>
+          <div className="gg-serif" style={{ fontSize: 12.5, color: "#e9d296", marginTop: 4 }}>
+            {t("camp.gambitLine", { lvl, tier: ["I","II","III","IV","V","VI"][gt - 1] || gt })}</div>
+          <div style={{ fontSize: 11, color: "#c9b98f", letterSpacing: ".2em", marginTop: 2 }}>{"✦".repeat(gt)}</div>
+          {onOpenTree && <button onClick={onOpenTree} style={{ marginTop: 9, width: "100%", padding: "8px 12px", borderRadius: 9,
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+            color: "#17110a", fontWeight: 800, fontSize: 12.5, fontFamily: "inherit", cursor: "pointer" }}>{t("camp.gambitTree")} ›</button>}
+        </div>;
+      })()}
         {/* the atlas button: a small round seal with the field map + waypin,
             hand-drawn — one tap steps out to the world painting */}
         <button onClick={() => setWorld(true)} title={t("camp.zoomOut")}

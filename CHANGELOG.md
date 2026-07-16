@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.21.91
+- GAMBIT-BLATT REPARIERT: das Rang-Blatt haengt nicht mehr am Wanderer (ragte ueber den Kartenrand), sondern sitzt fest oben mittig im Kartenfenster mit sauberem Innenabstand - NEU: Knopf "Zum Faehigkeitenbaum" springt direkt in den Hofstaat zu den Figuren
+- DER FIGURENBAUM (Chronik, erste Version): neuer Hofstaat-Reiter mit ALLEN Figuren des Reichs, unterteilt in Hofstaat / Krone / Schatten / Monster-Familien (Golems, Bestien, Schlangen, Schemen, Tyrannen). SICHTBARKEIT NACH ERLEBTEM: Rekrutierte in Gold, Begegnete zeigen Gesicht + Siege-Zaehler, Monster der AKTUELLEN Liga lauern als dunkle Silhouette mit Namen ("Gesichtet"), der Rest ist ??? 
+- BESTECHUNG: begegnete Champions mit mind. 1 Sieg lassen sich mit GOLD bestechen (ca. 90% ihres Hofwerts) - Gold statt weiterer Siege, der Freundschaftskampf wird uebersprungen
+- FAEHIGKEITS-GESCHICHTEN IM SIEGESBANNER: jede in dieser Schlacht erklommene Leiterstufe wird erzaehlt - "{Figur} lernt {Faehigkeit}" mit Beschreibung, "+1 Schild"-Meldungen, und GAMBIT-STUFEN-WECHSEL ("sein Antlitz wandelt sich") werden angekuendigt
+
 ## 0.21.90
 - AKADEMIE-KNOPF im Hub zweizeilig: Zeile 1 "Die Akademie" (etwas kleiner, 13.5, mit den Doppel-Rauten), darunter "Regeln in zwei Minuten - jederzeit ueberspringbar" - gleiche Panel-Huelle wie die anderen Karten
 

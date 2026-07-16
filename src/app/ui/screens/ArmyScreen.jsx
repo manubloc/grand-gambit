@@ -2,13 +2,13 @@ import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
-import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById } from "../../../content/index.js";
+import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
-  itemRevealed,
+  itemRevealed, bossWinsFor, effectiveNodeBoss,
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
@@ -632,6 +632,91 @@ const FAMILIES = {
   shadow: { de: "Schattenwesen", en: "Shadows", color: "#8a7ab8" },
 };
 
+
+/** ── THE FIGURE TREE (Chronik) ──────────────────────────────────────────────
+ * Every piece of the realm on one page, sorted by kin. What you see depends
+ * on what you have LIVED: recruited pieces stand in gold; foes you have met
+ * show their face and their tally; monsters lurking in the CURRENT league are
+ * "sighted" (a dark silhouette with a name to earn); the rest is night.
+ * Champions you have beaten at least once can be BRIBED — gold instead of
+ * the remaining victories, the friendly duel politely skipped. */
+const CROWN_IDS = ["mage","guardian","bard","paladin","inquisitor","archbishop","chancellor","engineer","standard","seeress"];
+const SHADOW_IDS = ["hawk","assassin","pathfinder","dragon","sorceress","alchemist","warlock","amazon","strategist","captain"];
+const COURT_IDS = ["gambit","pawn","knight","bishop","rook","queen","king"];
+const FAM_LABEL = { golem: ["Golems","Golems"], beast: ["Bestien","Beasts"], serpent: ["Schlangen","Serpents"], wraith: ["Schemen","Wraiths"], tyrant: ["Tyrannen","Tyrants"] };
+function CodexTree({ profile, dispatch, t, en }) {
+  const met = new Set(profile.codex?.met || []);
+  const unlocked = new Set(profile.campaign?.unlocked || []);
+  const league = profile.campaign?.league || 1;
+  const gold = profile.gold || 0;
+  // monsters currently prowling THIS league's road (rotations included)
+  const sighted = useMemo(() => {
+    const set = new Set();
+    for (const n of CAMPAIGN) { const b = effectiveNodeBoss(n, league); if (b?.pure) set.add(b.pure); }
+    return set;
+  }, [league]);
+  const bribePrice = (ch) => Math.max(250, Math.round((ch.costValue || 320) * 0.9));
+  const bribe = (ch) => {
+    const price = bribePrice(ch);
+    if (gold < price) return;
+    dispatch({ type: "REPLACE", profile: { ...profile, gold: gold - price,
+      campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
+        bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
+  };
+  const Tile = ({ img, name, sub, dim, dark, action, glow }) => (
+    <div style={{ background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`, borderRadius: 11,
+      padding: "9px 7px 8px", textAlign: "center", minWidth: 0,
+      boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : undefined }}>
+      {img ? <img src={img} alt="" style={{ width: 52, height: 52, objectFit: "contain", display: "block", margin: "0 auto",
+        filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
+        userSelect: "none" }} />
+        : <div style={{ width: 52, height: 52, display: "grid", placeItems: "center", margin: "0 auto", fontSize: 26, color: T.faint }}>?</div>}
+      <div className="gg-serif" style={{ fontSize: 11.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
+      {sub && <div style={{ fontSize: 10, color: T.dim, marginTop: 2, lineHeight: 1.3 }}>{sub}</div>}
+      {action}
+    </div>
+  );
+  const champTile = (cid) => {
+    const ch = CHARACTERS[cid]; if (!ch) return null;
+    const img = paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit" });
+    const own = unlocked.has(cid) || COURT_IDS.includes(cid);
+    const seen = met.has(ch.kind);
+    const wins = bossWinsFor(profile, cid) || 0;
+    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow sub={t("tree.inCourt")} />;
+    if (seen || wins > 0) {
+      const price = bribePrice(ch);
+      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe}
+        sub={t("tree.winsSoFar", { n: wins })}
+        action={wins >= 1 ? <button onClick={() => bribe(ch)} disabled={gold < price}
+          title={t("tree.bribeHint")}
+          style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
+            fontSize: 10, cursor: gold >= price ? "pointer" : "default", opacity: gold >= price ? 1 : 0.45,
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)", color: "#17110a" }}>
+          {t("tree.bribe", { g: price })}</button> : null} />;
+    }
+    return <Tile key={cid} img={img} dark name={"???"} />;
+  };
+  const monsterTile = (b) => {
+    const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
+    const k = "X:" + b.id;
+    if (met.has(k)) return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe} sub={FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : ""} />;
+    if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark name={en ? b.nameEn : b.nameDe} sub={t("tree.sighted")} />;
+    return <Tile key={b.id} img={img} dark name={"???"} />;
+  };
+  const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))", gap: 7 };
+  const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, margin: "14px 0 7px" }}>{children}</div>;
+  const fams = ["golem", "beast", "serpent", "wraith", "tyrant"];
+  return <div>
+    <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
+    <H>{t("tree.court")}</H><div style={grid}>{COURT_IDS.map(champTile)}</div>
+    <H>{t("tree.crown")}</H><div style={grid}>{CROWN_IDS.map(champTile)}</div>
+    <H>{t("tree.shadow")}</H><div style={grid}>{SHADOW_IDS.map(champTile)}</div>
+    {fams.map((f) => { const list = BOSSES.filter((b) => b.art === f); return list.length
+      ? <div key={f}><H>{en ? FAM_LABEL[f][1] : FAM_LABEL[f][0]}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null; })}
+  </div>;
+}
+
 export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const [zoomChar, setZoomChar] = useState(null);
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
@@ -660,9 +745,11 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     <Segmented value={tab} onChange={setTab} options={[
       { value: "formation", label: t("army.tabFormation") },
       { value: "chars", label: t("army.tabChars") },
+      { value: "tree", label: t("army.tabTree") },
       { value: "gear", label: t("army.tabGear") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chars" && (
       <div style={{ display: "grid", gap: 12, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>

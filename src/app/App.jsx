@@ -120,6 +120,7 @@ export default function App() {
   if (!netRef.current) netRef.current = createNet();
   const profileRef = useRef(null);
   useEffect(() => { profileRef.current = profile; }, [profile]);
+  const [armyTab, setArmyTab] = useState({ tab: null, n: 0 }); // deep-link into the court (e.g. the skill tree)
   const [account, setAccount] = useState(null);     // signed-in account (null → login screen)
   const [slot, setSlot] = useState(null);           // active save slot (null → save select)
   const [authReady, setAuthReady] = useState(false);
@@ -209,12 +210,12 @@ export default function App() {
     : tab === "play" ? (
         view === "quick" ? sub(t("hub.quick"), <QuickSetup profile={profile} dispatch={dispatch} t={t} initial={lastQuick.current}
           onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
-        : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => setMatch(buildStageMatch(id, profile))} />
+        : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => setMatch(buildStageMatch(id, profile))} onOpenTree={() => { setArmyTab({ tab: "chars", n: Date.now() }); setTab("army"); }} />
         : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} onTutorial={() => setView("tutorial")} />
       )
-      : tab === "army" ? <ArmyScreen profile={profile} dispatch={dispatch} t={t} />
+      : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} />
         : tab === "ach" ? <div>
           <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
             {[["ach", t("ranks.tabAch")], ["lb", t("ranks.tabLb")]].map(([id, lbl]) => (
