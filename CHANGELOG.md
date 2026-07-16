@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.21.92
+- MONSTER-BESTECHUNG (Chronik): begegnete Monster lassen sich mit VIEL GOLD (1800) UND DEM OPFER EINER KRONENFIGUR auf deine Seite ziehen - der Knopf oeffnet die Opferwahl unter den rekrutierten Kronenfiguren; TYRANNEN und die beiden benannten Finals (Erzfeindin, Ligameister) sind unbestechlich. Bestochene Monster stehen als "Verbuendet" in Gold im Baum und sind sofort in der Aufstellung waehlbar (boss-Slot); Formationen, die das Opfer enthielten, werden aufgeloest, seine Siege verfallen
+- GAMBIT TRAEGT SEINEN RANG UEBERALL: das Stufen-Antlitz (Tier 1-6) erscheint jetzt zentral ueber die Galerie - auf dem BRETT, im HOFSTAAT, in der CHRONIK und auf der Karte (Formel exakt wie meta gambitTier: neue Gestalt alle 10 Level)
+- 3 neue Tests sichern den Monster-Besitz ab (403 gesamt)
+
 ## 0.21.91
 - GAMBIT-BLATT REPARIERT: das Rang-Blatt haengt nicht mehr am Wanderer (ragte ueber den Kartenrand), sondern sitzt fest oben mittig im Kartenfenster mit sauberem Innenabstand - NEU: Knopf "Zum Faehigkeitenbaum" springt direkt in den Hofstaat zu den Figuren
 - DER FIGURENBAUM (Chronik, erste Version): neuer Hofstaat-Reiter mit ALLEN Figuren des Reichs, unterteilt in Hofstaat / Krone / Schatten / Monster-Familien (Golems, Bestien, Schlangen, Schemen, Tyrannen). SICHTBARKEIT NACH ERLEBTEM: Rekrutierte in Gold, Begegnete zeigen Gesicht + Siege-Zaehler, Monster der AKTUELLEN Liga lauern als dunkle Silhouette mit Namen ("Gesichtet"), der Rest ist ??? 

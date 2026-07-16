@@ -113,7 +113,13 @@ export function paintedForPiece(piece) {
       || (piece.bossId === "b25" ? PAINTED["boss-leaguemaster"] : null)
       || PAINTED["boss-" + (piece.art || "")] || null;
   }
-  if (piece.hero) return PAINTED.gambit || null; // hero keeps his own portrait or stays drawn
+  if (piece.hero) {
+    // the hero WEARS his rank: each gambit tier has its own likeness — on the
+    // board, in the court, everywhere this gallery serves
+    const lvl = piece.level || 1;
+    const gt = Math.min(6, Math.floor((Math.max(1, lvl) - 1) / 10) + 1); // mirrors meta gambitTier
+    return (gt > 1 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
+  }
   const id = KIND2ID[piece.kind];
   return id ? PAINTED[id] || null : null;
 }

@@ -25,8 +25,8 @@ const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
 /** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
  *  so no bottom-anchoring, no hp padding, no badge chrome. */
-function TileArt({ kind, size, hero = false }) {
-  const src = paintedForPiece({ kind, color: "w", hero });
+function TileArt({ kind, size, hero = false, level = 1 }) {
+  const src = paintedForPiece({ kind, color: "w", hero, level });
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
         objectPosition: "center center", filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
@@ -35,7 +35,7 @@ function TileArt({ kind, size, hero = false }) {
 }
 function Glyph({ kind, level, abilities, shield, size = 50, hero = false, art = "painted" }) {
   return <div style={{ width: size * 1.3, height: size * 1.3, display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
-    <TileArt kind={kind} size={size} hero={hero} />
+    <TileArt kind={kind} size={size} hero={hero} level={level} />
   </div>;
 }
 
@@ -656,6 +656,27 @@ function CodexTree({ profile, dispatch, t, en }) {
     return set;
   }, [league]);
   const bribePrice = (ch) => Math.max(250, Math.round((ch.costValue || 320) * 0.9));
+  // ── monster bribery: SOME monsters take gold — but only a lot of it, and
+  // only sealed with the SACRIFICE of a recruited crown piece. Tyrants and
+  // the two named finals are beyond corruption. ──
+  const MONSTER_BRIBE_GOLD = 1800;
+  const [sacrificeFor, setSacrificeFor] = useState(null); // bossId awaiting a crown sacrifice
+  const bribedSet = new Set(profile.campaign?.bribedBosses || []);
+  const crownOwned = CROWN_IDS.filter((cid) => unlocked.has(cid));
+  const monsterBribable = (b) => b.art !== "tyrant" && b.id !== "b23" && b.id !== "b25" && met.has("X:" + b.id) && !bribedSet.has(b.id);
+  const bribeMonster = (bossId, victim) => {
+    if (gold < MONSTER_BRIBE_GOLD || !unlocked.has(victim)) return;
+    // formations that fielded the victim are dissolved (they fall back to default)
+    const forms = { ...(profile.loadout?.formations || {}) };
+    for (const k of Object.keys(forms)) if ((forms[k] || []).includes(victim)) delete forms[k];
+    dispatch({ type: "REPLACE", profile: { ...profile, gold: gold - MONSTER_BRIBE_GOLD,
+      loadout: { ...(profile.loadout || {}), formations: forms },
+      campaign: { ...profile.campaign,
+        unlocked: (profile.campaign?.unlocked || []).filter((c) => c !== victim),
+        bossWins: { ...(profile.campaign?.bossWins || {}), [victim]: 0 },
+        bribedBosses: [...new Set([...(profile.campaign?.bribedBosses || []), bossId])] } } });
+    setSacrificeFor(null);
+  };
   const bribe = (ch) => {
     const price = bribePrice(ch);
     if (gold < price) return;
@@ -679,7 +700,7 @@ function CodexTree({ profile, dispatch, t, en }) {
   );
   const champTile = (cid) => {
     const ch = CHARACTERS[cid]; if (!ch) return null;
-    const img = paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit" });
+    const img = paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: characterLevel(profile, cid) || 1 });
     const own = unlocked.has(cid) || COURT_IDS.includes(cid);
     const seen = met.has(ch.kind);
     const wins = bossWinsFor(profile, cid) || 0;
@@ -700,7 +721,31 @@ function CodexTree({ profile, dispatch, t, en }) {
   const monsterTile = (b) => {
     const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
     const k = "X:" + b.id;
-    if (met.has(k)) return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe} sub={FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : ""} />;
+    if (bribedSet.has(b.id)) return <Tile key={b.id} img={img} glow name={en ? b.nameEn : b.nameDe} sub={t("tree.allied")} />;
+    if (met.has(k)) {
+      const can = monsterBribable(b);
+      return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe}
+        sub={FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : ""}
+        action={can ? (sacrificeFor === b.id
+          ? <div style={{ marginTop: 5 }}>
+              <div style={{ fontSize: 9.5, color: T.gold, marginBottom: 3 }}>{t("tree.pickSacrifice")}</div>
+              {crownOwned.length === 0 && <div style={{ fontSize: 9.5, color: T.faint }}>{t("tree.noCrown")}</div>}
+              {crownOwned.map((cid) => <button key={cid} onClick={() => bribeMonster(b.id, cid)}
+                style={{ display: "block", width: "100%", marginTop: 3, padding: "3px 4px", borderRadius: 6,
+                  fontFamily: "inherit", fontSize: 9.5, fontWeight: 800, cursor: "pointer",
+                  background: T.panel, border: `1px solid ${T.gold}66`, color: T.gold }}>
+                {en ? CHARACTERS[cid].nameEn : CHARACTERS[cid].nameDe}</button>)}
+              <button onClick={() => setSacrificeFor(null)} style={{ display: "block", width: "100%", marginTop: 3,
+                padding: "3px 4px", borderRadius: 6, fontFamily: "inherit", fontSize: 9.5, cursor: "pointer",
+                background: "none", border: `1px solid ${T.line}`, color: T.dim }}>{t("tree.cancel")}</button>
+            </div>
+          : <button onClick={() => setSacrificeFor(b.id)} disabled={gold < MONSTER_BRIBE_GOLD}
+              title={t("tree.monsterBribeHint")}
+              style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
+                fontSize: 10, cursor: gold >= MONSTER_BRIBE_GOLD ? "pointer" : "default", opacity: gold >= MONSTER_BRIBE_GOLD ? 1 : 0.45,
+                background: "linear-gradient(165deg, #b78de0, #7a5ab0)", border: "1px solid rgba(226,205,255,.5)", color: "#17110a" }}>
+              {t("tree.bribe", { g: MONSTER_BRIBE_GOLD })}</button>) : null} />;
+    }
     if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark name={en ? b.nameEn : b.nameDe} sub={t("tree.sighted")} />;
     return <Tile key={b.id} img={img} dark name={"???"} />;
   };

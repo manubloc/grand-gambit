@@ -208,8 +208,12 @@ export function formationLegal(formation, unlockedIds) {
 // ── League bosses in YOUR ranks ──────────────────────────────────────────────
 // Beating a league wins you its boss. A formation entry "boss:bXX" fields him
 // in place of the queen — one boss at most; his AURA then serves YOUR side.
-export const ownedLeagueBosses = (profile) =>
-  LEAGUE_BOSSES.slice(0, Math.min(LEAGUE_BOSSES.length, profile?.stats?.leaguesWon || 0));
+export const ownedLeagueBosses = (profile) => {
+  const won = LEAGUE_BOSSES.slice(0, Math.min(LEAGUE_BOSSES.length, profile?.stats?.leaguesWon || 0));
+  // monsters BOUGHT with gold and a crown sacrifice fight for you too
+  const bribed = profile?.campaign?.bribedBosses || [];
+  return [...new Set([...won, ...bribed])];
+};
 export const isBossEntry = (id) => typeof id === "string" && id.startsWith("boss:");
 export const bossEntryId = (id) => (isBossEntry(id) ? id.slice(5) : null);
 

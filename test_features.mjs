@@ -300,5 +300,14 @@ ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish
   ok("first encounter is no turncoat", !fresh.turncoat && !fresh.excludeId);
 }
 
+// ── v0.21.92: bribed monsters join the ranks ─────────────────────────────────
+{
+  const pb = { stats: { leaguesWon: 1 }, campaign: { bribedBosses: ["b10"] } };
+  const owned = ownedLeagueBosses(pb);
+  ok("league victory grants its boss", owned.includes("b25"));
+  ok("a bribed monster fights for you too", owned.includes("b10"));
+  ok("no double entries in the ranks", new Set(owned).size === owned.length);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
