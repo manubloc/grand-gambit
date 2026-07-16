@@ -96,6 +96,8 @@ export function AchievementsScreen({ profile, dispatch, t }) {
                 })}
               </span>
             </div>
+            {(en ? it.descEn : it.descDe) && <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, margin: "2px 0 3px" }}>
+              {en ? it.descEn : it.descDe}</div>}
             <div style={{ margin: "8px 0 5px" }}><Bar pct={pct} height={5} color={done ? T.green : T.gold} /></div>
             <div style={{ fontSize: 11.5, color: T.faint, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
               <span>{done ? <span style={{ color: T.green }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>

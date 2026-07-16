@@ -202,23 +202,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           // the flat colour + a soft diagonal light stand INSTANTLY — no loading
           // state at all; the marble whisper fades in per square once every slab
           // is preloaded, so nothing ever pops
-          background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), ${dark ? sqD : sqL}`,
+          background: `${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `linear-gradient(148deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,.10) 100%), linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
+            background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            boxShadow: "inset 2px 2px 0 rgba(255,246,220,.09), inset -2px -2px 0 rgba(0,0,0,.32)" }} />
+          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />
-          {dark && !REDUCED && artReady && wave && (() => {
-            // one wave, one direction: the tile's delay is its position along
-            // the wave's travel — the glow rolls across the board in ~1.2s
-            const minP = Math.min(0, wave.dx * (W - 1)) + Math.min(0, wave.dy * (H - 1));
-            const span = Math.abs(wave.dx) * (W - 1) + Math.abs(wave.dy) * (H - 1) || 1;
-            const norm = (f * wave.dx + r * wave.dy - minP) / span;
-            return <div key={wave.id} aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-              background: `url(${MARBLE_G[slabIx(i)]}) center / cover`, mixBlendMode: "screen", opacity: 0,
-              animation: `marbleWave 2.6s ease-in-out ${(norm * 2).toFixed(2)}s 1 both` }} />;
-          })()}
+
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
@@ -237,11 +230,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
-          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center",
+          {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
             transform: (typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
               + ((isSel || isSpy) ? " scale(1.38)" : ""), // the chosen one steps forward for inspection
             transformOrigin: "50% 72%", transition: "transform .16s ease",
-            position: "relative", zIndex: (isSel || isSpy) ? 60 : rr + 3, // row-by-row layering: front ranks cover back ranks
+            position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
+            fontSize: piece.kind === "P" ? "0.9em" : "1.07em", // pawns humble, the court imposing
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {tgt && (tgt.capture
             ? <>

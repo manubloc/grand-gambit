@@ -1,5 +1,15 @@
 # Changelog — Grand Gambit
 
+## 0.21.93
+- BRETT-EBENEN STRIKT: auch die gewaehlte/vergroesserte Figur bleibt in ihrer Reihen-Ebene - eine grosse Figur in Reihe b verdeckt NIE eine Figur in Reihe a (naeher = hoeher, ausnahmslos)
+- KLICK-DURCHLASS: Figuren fangen keine Klicks mehr - das Feld direkt hinter einer vergroesserten Figur bleibt anklickbar (Klicks treffen immer die Zelle unterm Finger)
+- FEIND-RAUCH ENTFERNT (samt Animation)
+- MARMOR-WELLE ("Glow") ENTFERNT - der gelegentlich verbuggte Schimmer-Effekt ist raus
+- KACHEL-3D ALS SAUBERE FASE: statt des weichen Verlaufs klare Kanten - oben/links hell, unten/rechts dunkel (2px Inset)
+- FIGURENGROESSEN: Bauern (inkl. Gambit) auf 90%, alle anderen Figuren auf 107% - der Hof ueberragt das Fussvolk
+- KARTE MOBIL: der Kartenrahmen laesst dem Menue unten jetzt 78px Luft (nur auf schmalen Screens)
+- SCHATZKAMMER: jede der 14 Errungenschaften traegt jetzt eine ERKLAERUNG, was gezaehlt wird (de/en)
+
 ## 0.21.92
 - MONSTER-BESTECHUNG (Chronik): begegnete Monster lassen sich mit VIEL GOLD (1800) UND DEM OPFER EINER KRONENFIGUR auf deine Seite ziehen - der Knopf oeffnet die Opferwahl unter den rekrutierten Kronenfiguren; TYRANNEN und die beiden benannten Finals (Erzfeindin, Ligameister) sind unbestechlich. Bestochene Monster stehen als "Verbuendet" in Gold im Baum und sind sofort in der Aufstellung waehlbar (boss-Slot); Formationen, die das Opfer enthielten, werden aufgeloest, seine Siege verfallen
 - GAMBIT TRAEGT SEINEN RANG UEBERALL: das Stufen-Antlitz (Tier 1-6) erscheint jetzt zentral ueber die Galerie - auf dem BRETT, im HOFSTAAT, in der CHRONIK und auf der Karte (Formel exakt wie meta gambitTier: neue Gestalt alle 10 Level)
