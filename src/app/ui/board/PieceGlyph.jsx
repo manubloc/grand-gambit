@@ -84,15 +84,21 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     "drop-shadow(0 0 8px rgba(246,224,150,.74)) drop-shadow(0 0 18px rgba(240,214,138,.46))",
   ];
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))" + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "");
-  const pieceSize = hpMode && piece.maxHp > 0 ? "0.95em" : "0.97em"; // the figures own the square now
+  const pieceSize = hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em"; // the figures own the square now
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "flex-end",
       paddingBottom: "0.015em", animation: "pop .18s ease",
       boxSizing: "border-box" }}>
+      {!white && (
+        <span aria-hidden style={{ position: "absolute", left: "50%", bottom: "0.1em", width: "0.5em", height: "0.95em",
+          transform: "translateX(-50%)", pointerEvents: "none", filter: "blur(3px)", opacity: 0.4, zIndex: 0,
+          background: "radial-gradient(48% 34% at 50% 84%, rgba(190,200,220,.5), transparent 72%), radial-gradient(36% 30% at 44% 46%, rgba(170,180,205,.36), transparent 70%), radial-gradient(30% 26% at 58% 16%, rgba(160,170,195,.24), transparent 70%)",
+          animation: "ggSmokeUp 5.5s ease-in-out infinite" }} />
+      )}
       {/* the head may rise above the square: the art gets MORE than the tile */}
-      <div style={{ width: pieceSize, height: "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
+      <div style={{ position: "relative", zIndex: 1, width: pieceSize, height: "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
         marginTop: "-0.16em" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel;
@@ -105,7 +111,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
             // the gallery hangs in a dim hall — lift the paintings a step:
             // your golden court shines brighter, the steel foe a touch too
-            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.3) saturate(1.1)" : ENEMY_FILTER + " brightness(1.18)",
+            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)" : ENEMY_FILTER + " brightness(1.2)",
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}

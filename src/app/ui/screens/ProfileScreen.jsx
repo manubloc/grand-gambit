@@ -35,7 +35,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div className="gg-serif" style={{ fontSize: 22, letterSpacing: ".04em", color: T.goldBright }}>
         {profile.name || account?.name || "—"}</div>
       {account?.name && <div style={{ fontSize: 12, color: T.dim, marginTop: 3 }}>
-        {account.name}{account.isAdmin ? " · Admin" : ""}</div>}
+        {account.name}{account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" ? " · Admin" : ""}</div>}
     </GildedFrame>
     <Panel>
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>

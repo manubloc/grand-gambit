@@ -275,10 +275,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             </div>
           );
         })}
-        {/* the hall's light: a warm heart, night pressing in from the rim */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-          background: `radial-gradient(62% 54% at 50% 42%, rgba(255,214,120,.12), transparent 68%),
-            radial-gradient(125% 108% at 50% 40%, transparent 46%, rgba(2,3,6,.34) 100%)` }} />
 
         {/* the material rides on top too: a soft-light wash of the same wood, so
             scratches and grain read across light and dark squares alike */}

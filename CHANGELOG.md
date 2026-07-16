@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.21.74
+- KARTE: statt "Weltkarte"-Pill jetzt ein +/- UNTEREINANDER (minus = raus zur Weltkarte, plus = zurueck in die Liga; inaktive Richtung gedimmt) - die Kapitel-Pille steht damit frei; die Kopfzeile sitzt 8px tiefer. NEBEL deutlich praesenter (Kartenfenster 0.28, Weltkarten-Schleier 0.72/0.55, groessere Schwaden)
+- BRETT: das Gluehen/Vignette des Schachbretts ist KOMPLETT entfernt; Figuren nochmal minimal groesser (0.99em) und heller (1.36), eigene Figuren weniger orange/mehr gelb (hue +8); FEINDE weisser statt blau (Saettigung 0.32, Helligkeit 1.02/1.2) - und hinter JEDER feindlichen Figur steigt ganz leiser RAUCH auf (geblurte Schwade, 5.5s-Zyklus)
+- KOPFLEISTE: die 4 Menuepunkte auf Desktop MITTIG; das GG-Emblem ist im BILD selbst gelber getuned (Hue +7, Saettigung 1.22); die Schatz-Chips liegen NEBENEINANDER und sind hochwertig neu gezeichnet (facettierte Gold-Icons mit Sheen und Schlagschatten, Serif-Ziffern mit Tabellenziffern, satter Doppelrand) - dieselben Icons jetzt auch beim Kontostand im Hofstaat
+- ABSTAENDE: die Kopfleiste steht in JEDEM Menue fuer sich (22px Luft zum Inhalt, Desktop + Mobil); Hofstaat-Kacheln nochmals groesser (Slots bis 74px, Boss-Bilder 78px), mehr Luft um die Bauern-Reihe-Zeile und ueber dem Kontostand
+- AUFGERAEUMT: Meta-Texte ohne "kostenlos"; der Admin-Passwort-Hinweis beim Anmelden ist raus; "Willkommen, Admin · Admin" zeigt das Admin-Etikett nur noch, wenn der Name nicht schon Admin lautet
+
 ## 0.21.73
 - LOGIN + SPIELSTAND repariert: beide Schirme auf REINEM SCHWARZ (das Schachbrett/Hallen-Panorama hinter der Spielstand-Auswahl ist entfernt - wo Ritter und Schriftzug stehen, braucht es kein Brett)
 - CONTAIN STATT ABSCHNEIDEN: die Zentrierung lief in die klassische Flexbox-Falle (justify-content: center + Overflow schneidet oben ab). Jetzt margin-auto-Container: passt der Inhalt, steht er exakt mittig OHNE Scrollen - passt er nicht (kleine Schirme), scrollt es sauber ab der ersten Zeile. Bild kompakter gedeckelt (Login 30vh, Spielstand 22vh), Abstaende gestrafft

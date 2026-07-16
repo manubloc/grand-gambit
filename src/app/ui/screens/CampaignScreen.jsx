@@ -200,7 +200,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
         <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
-          filter: "blur(16px)", opacity: 0.16, mixBlendMode: "screen",
+          filter: "blur(16px)", opacity: 0.28, mixBlendMode: "screen",
           background: "radial-gradient(44% 34% at 86% 30%, rgba(216,206,188,.5), transparent 70%), radial-gradient(38% 30% at 78% 72%, rgba(196,186,168,.4), transparent 70%)",
           animation: "ggFogR 52s ease-in-out infinite alternate" }} />
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
@@ -458,19 +458,24 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
 
       {/* floating chrome: back pill + league badge (left), zoom (right) —
           always INSIDE the rounded map frame, padded off its edge */}
-      <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
+      <div style={{ position: "absolute", top: frameY + 20, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
             and once the League Master has fallen, the golden gate: Onward. */}
-        <button onClick={() => setWorld(true)} className="gg-serif"
-          style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-          cursor: "pointer", background: "rgba(8, 11, 20, .42)",
-          border: "1px solid rgba(233, 210, 150, .38)", color: "#e9d296", borderRadius: 999,
-          padding: "8px 14px", fontFamily: "inherit", fontWeight: 600, fontSize: 13.5, letterSpacing: ".08em",
-          boxShadow: "0 2px 10px rgba(0,0,0,.35)", textShadow: "0 1px 2px rgba(0,0,0,.5)",
+        {/* the atlas control: plus/minus stacked — minus steps out to the world,
+            plus steps back into the league */}
+        <div style={{ pointerEvents: "auto", display: "flex", flexDirection: "column", borderRadius: 12,
+          overflow: "hidden", border: "1px solid rgba(233, 210, 150, .38)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
           backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-          ❖ {t("camp.world")}
-        </button>
+          <button onClick={() => setWorld(false)} title={t("camp.zoomIn")} disabled={!world}
+            style={{ cursor: world ? "pointer" : "default", background: "rgba(8, 11, 20, .42)", border: "none",
+              borderBottom: "1px solid rgba(233, 210, 150, .28)", color: world ? "#e9d296" : "rgba(233,210,150,.35)",
+              width: 36, height: 33, fontSize: 19, fontWeight: 700, lineHeight: 1, fontFamily: "inherit" }}>+</button>
+          <button onClick={() => setWorld(true)} title={t("camp.zoomOut")} disabled={world}
+            style={{ cursor: world ? "default" : "pointer", background: "rgba(8, 11, 20, .42)", border: "none",
+              color: world ? "rgba(233,210,150,.35)" : "#e9d296",
+              width: 36, height: 33, fontSize: 21, fontWeight: 700, lineHeight: 1, fontFamily: "inherit" }}>−</button>
+        </div>
         {viewLeague > 1 && (
           <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} className="gg-serif"
             style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
@@ -542,10 +547,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack }) {
                 return <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${cutY + 5}%`,
                   background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)",
                   overflow: "hidden" }}>
-                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.55,
-                    background: "radial-gradient(42% 30% at 78% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
+                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.72,
+                    background: "radial-gradient(52% 38% at 78% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
                     animation: "ggFogR 44s ease-in-out infinite alternate" }} />
-                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(18px)", opacity: 0.38,
+                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(18px)", opacity: 0.55,
                     background: "radial-gradient(46% 30% at 84% 22%, rgba(206,196,178,.3), transparent 70%), radial-gradient(40% 26% at 30% 76%, rgba(170,162,148,.24), transparent 70%)",
                     animation: "ggFogR2 58s ease-in-out infinite alternate" }} />
                 </div>;

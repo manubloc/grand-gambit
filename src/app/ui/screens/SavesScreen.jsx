@@ -14,14 +14,12 @@ const STR = {
     league: "Liga", time: "Spielzeit", last: "Zuletzt", del: "Löschen", delSure: "Wirklich löschen?", rename: "Umbenennen",
     empty: "Noch kein Spielstand — beginne deine erste Reise.", logout: "Abmelden",
     admin: "Admin · Spielfortschritt", adminHint: "Setzt den gewählten Spielstand auf einen Fortschritt (Reihenfolge der Reise).",
-    apply: "Anwenden", zero: "0 %", full: "100 %", namePh: "Name des Spielstands",
-    defaultPass: "Der Admin nutzt noch das Standard-Passwort („gambit-admin\u201C) — bitte im Profil ändern." },
+    apply: "Anwenden", zero: "0 %", full: "100 %", namePh: "Name des Spielstands", },
   en: { hello: "Welcome", pick: "Choose your save", new: "+ New save", play: "Continue",
     league: "League", time: "Playtime", last: "Last played", del: "Delete", delSure: "Really delete?", rename: "Rename",
     empty: "No saves yet — begin your first journey.", logout: "Sign out",
     admin: "Admin · game progress", adminHint: "Sets the selected save to a progress level (in journey order).",
-    apply: "Apply", zero: "0 %", full: "100 %", namePh: "Save name",
-    defaultPass: "The admin still uses the default password (\u201Cgambit-admin\u201D) — please change it in the profile." },
+    apply: "Apply", zero: "0 %", full: "100 %", namePh: "Save name", },
 };
 const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X"];
 const fmtDate = (ts, lang) => new Date(ts).toLocaleDateString(lang === "de" ? "de-DE" : "en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
@@ -63,7 +61,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
       <img src={logoUrl} alt="Grand Gambit" style={{ width: "min(90vw, 520px)", maxHeight: "22vh", objectFit: "contain", display: "block", marginTop: -4 }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
-        {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
+        {account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" && <span style={{ color: T.gold }}> · Admin</span>}
         <button onClick={onLogout} className="gg-serif" style={{ background: "none", border: "none", color: T.faint,
           textDecoration: "underline", fontSize: 12.5, letterSpacing: ".05em", cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>
@@ -74,7 +72,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />
       </div>
       {passNote && <div style={{ maxWidth: 430, color: "#e0c98f", fontSize: 12.5, lineHeight: 1.5, marginBottom: 12,
-        border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}>{s.defaultPass}</div>}
+        border: `1px solid ${T.gold}55`, borderRadius: 12, padding: "9px 12px" }}></div>}
 
       <div style={{ width: "100%", maxWidth: 430, display: "flex", flexDirection: "column", gap: 10 }}>
         {saves && saves.length === 0 && <div style={{ color: T.dim, fontSize: 14, textAlign: "center", padding: "12px 0" }}>{s.empty}</div>}

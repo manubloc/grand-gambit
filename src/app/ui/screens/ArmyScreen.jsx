@@ -17,6 +17,7 @@ import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedById, paintedForPiece } from "../board/paintedArt.js";
+import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 
@@ -373,7 +374,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             {chip("shadow", sParts)}
           </div>;
         })()}
-        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 6, textAlign: "center" }}>{t("army.pawnSoon")}</div>
+        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 14, marginBottom: 4, textAlign: "center" }}>{t("army.pawnSoon")}</div>
       </div>
     )}
     </div>
@@ -390,8 +391,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
             ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
             : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                style={{ height: "clamp(22px, 9vw, 66px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(19px, 8.5vw, 62px)"} art={"painted"} />}
+                style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
+            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
         </button>;
       })}
     </div>
@@ -642,7 +643,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
-  return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip" }}>
+  return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip", paddingTop: 8 }}>
     <CharLightbox char={zoomChar} en={profile.lang === "en"} onClose={() => setZoomChar(null)} />
     {/* balance — always in sight, whatever the tab; wears the treasury's gold */}
     <GildedFrame pad="11px 16px">
@@ -650,8 +651,8 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
       <span className="gg-serif" style={{ fontSize: 13, letterSpacing: ".22em", textTransform: "uppercase",
         ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("army.balance")}</span>
       <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillStar size={17} /> {profile.sp || 0}</span>
-        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><GoldCoin size={17} shine /> {profile.gold || 0}</span>
+        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillIc size={18} /> {profile.sp || 0}</span>
+        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><CoinIc size={18} /> {profile.gold || 0}</span>
       </span>
     </div>
     </GildedFrame>

@@ -230,3 +230,67 @@ export function TrophyIc({ color = "#17110a", size = 15 }) {
     <path d="M12 14 L12 16.6 M9.2 19 L14.8 19 M10 16.6 L14 16.6" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
   </svg>;
 }
+
+// ── the treasury icons (header currencies), drawn in the house gold ──
+const G = ({ id }) => (
+  <defs>
+    <linearGradient id={id} x1="0" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stopColor="#fdf3c0" />
+      <stop offset="0.32" stopColor="#eecf7d" />
+      <stop offset="0.62" stopColor="#cda254" />
+      <stop offset="1" stopColor="#93702f" />
+    </linearGradient>
+    <radialGradient id={id + "s"} cx="0.32" cy="0.24" r="0.9">
+      <stop offset="0" stopColor="#fff8dd" stopOpacity="0.95" />
+      <stop offset="0.35" stopColor="#fff8dd" stopOpacity="0" />
+    </radialGradient>
+  </defs>
+);
+const drop = { filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" };
+
+export function CoinIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggCoin" />
+    <circle cx="11" cy="11" r="9.4" fill="url(#ggCoin)" stroke="#6f5526" strokeWidth="1" />
+    <circle cx="11" cy="11" r="6.7" fill="none" stroke="#8a6830" strokeWidth="1" opacity=".9" />
+    <circle cx="11" cy="11" r="6.7" fill="none" stroke="#fff3c4" strokeWidth="0.5" opacity=".5" />
+    <path d="M11 6.7 L12.2 9.9 L15.4 9.9 L12.9 12 L13.9 15.2 L11 13.3 L8.1 15.2 L9.1 12 L6.6 9.9 L9.8 9.9 Z"
+      fill="#7a5c26" stroke="#5c4318" strokeWidth="0.4" />
+    <circle cx="11" cy="11" r="9.4" fill="url(#ggCoins)" />
+  </svg>;
+}
+export function SkillIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggSkill" />
+    <path d="M11 1.6 L13.4 8.6 L20.4 11 L13.4 13.4 L11 20.4 L8.6 13.4 L1.6 11 L8.6 8.6 Z"
+      fill="url(#ggSkill)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M11 1.6 L11 20.4 M1.6 11 L20.4 11" stroke="#8a6830" strokeWidth="0.5" opacity=".55" />
+    <path d="M11 5 L9.4 9.4 L5 11" fill="none" stroke="#fff6d8" strokeWidth="1.2" strokeLinecap="round" opacity=".9" />
+    <path d="M11 1.6 L13.4 8.6 L20.4 11 L13.4 13.4 L11 20.4 L8.6 13.4 L1.6 11 L8.6 8.6 Z" fill="url(#ggSkills)" />
+  </svg>;
+}
+export function LevelIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggLvl" />
+    <path d="M3.2 17.6 L3.2 8.4 L7.6 11.6 L11 4.6 L14.4 11.6 L18.8 8.4 L18.8 17.6 Z"
+      fill="url(#ggLvl)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M3.2 15 L18.8 15" stroke="#8a6830" strokeWidth="0.7" opacity=".8" />
+    <circle cx="3.2" cy="7.4" r="1.15" fill="url(#ggLvl)" stroke="#6f5526" strokeWidth="0.6" />
+    <circle cx="11" cy="3.6" r="1.15" fill="url(#ggLvl)" stroke="#6f5526" strokeWidth="0.6" />
+    <circle cx="18.8" cy="7.4" r="1.15" fill="url(#ggLvl)" stroke="#6f5526" strokeWidth="0.6" />
+    <path d="M4.4 9.3 L6.9 11.1" fill="none" stroke="#fff6d8" strokeWidth="1" strokeLinecap="round" opacity=".85" />
+    <path d="M3.2 17.6 L3.2 8.4 L7.6 11.6 L11 4.6 L14.4 11.6 L18.8 8.4 L18.8 17.6 Z" fill="url(#ggLvls)" />
+  </svg>;
+}
+export function CrestIc({ size = 15 }) {
+  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
+    <G id="ggCrest" />
+    <path d="M11 1.9 L18.6 4.4 L18.6 11 C18.6 15.5 15.5 18.6 11 20.2 C6.5 18.6 3.4 15.5 3.4 11 L3.4 4.4 Z"
+      fill="url(#ggCrest)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
+    <path d="M11 3.4 L17.2 5.4 L17.2 11 C17.2 14.7 14.7 17.3 11 18.7 C7.3 17.3 4.8 14.7 4.8 11 L4.8 5.4 Z"
+      fill="none" stroke="#fff3c4" strokeWidth="0.5" opacity=".5" />
+    <path d="M11 6 L12.1 8.9 L15 8.9 L12.7 10.8 L13.6 13.7 L11 12 L8.4 13.7 L9.3 10.8 L7 8.9 L9.9 8.9 Z"
+      fill="#7a5c26" stroke="#5c4318" strokeWidth="0.4" />
+    <path d="M11 1.9 L18.6 4.4 L18.6 11 C18.6 15.5 15.5 18.6 11 20.2 C6.5 18.6 3.4 15.5 3.4 11 L3.4 4.4 Z" fill="url(#ggCrests)" />
+  </svg>;
+}

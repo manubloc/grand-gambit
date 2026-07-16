@@ -7,6 +7,7 @@ import { SERVER_URL } from "./config.js";
 import { playerXpProgress, skillPoints, claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import emblemUrl from "./ui/assets/emblem.webp";
+import { CoinIc, SkillIc, LevelIc, CrestIc } from "./ui/icons.jsx";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -96,45 +97,6 @@ function reducer(state, a) {
   }
 }
 
-
-/** Clean gold coinage for the header — drawn, not emoji. */
-function CoinIc({ size = 13 }) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
-    <defs><linearGradient id="ggCoinG" x1="0" y1="0" x2="0.6" y2="1">
-      <stop offset="0" stopColor="#f6e096" /><stop offset=".5" stopColor="#d9b264" /><stop offset="1" stopColor="#a97e3c" />
-    </linearGradient></defs>
-    <circle cx="10" cy="10" r="8.6" fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="1" />
-    <circle cx="10" cy="10" r="5.9" fill="none" stroke="#8a6830" strokeWidth="0.9" opacity=".85" />
-    <path d="M10 6.4 L11 9.2 L13.8 9.2 L11.6 11 L12.5 13.8 L10 12.1 L7.5 13.8 L8.4 11 L6.2 9.2 L9 9.2 Z"
-      fill="#7a5c26" opacity=".9" />
-    <path d="M4.4 6.4 A8.6 8.6 0 0 1 10 1.4" fill="none" stroke="#fff6d8" strokeWidth="1.3" strokeLinecap="round" opacity=".8" />
-  </svg>;
-}
-function SkillIc({ size = 13 }) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
-    <path d="M10 1.6 L12.2 7.8 L18.4 10 L12.2 12.2 L10 18.4 L7.8 12.2 L1.6 10 L7.8 7.8 Z"
-      fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="0.9" strokeLinejoin="round" />
-    <path d="M10 4.6 L8.6 8.6 L4.6 10" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
-  </svg>;
-}
-function LevelIc({ size = 13 }) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
-    <path d="M3 16.5 L3 8 L7 11 L10 4.5 L13 11 L17 8 L17 16.5 Z"
-      fill="url(#ggCoinG)" stroke="#7a5c26" strokeWidth="1" strokeLinejoin="round" />
-    <path d="M4.4 8.9 L6.8 10.7" fill="none" stroke="#fff6d8" strokeWidth="1" strokeLinecap="round" opacity=".8" />
-  </svg>;
-}
-function CrestIc({ size = 13 }) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden style={{ display: "block" }}>
-    <defs><linearGradient id="ggCrestG" x1="0" y1="0" x2="0.6" y2="1">
-      <stop offset="0" stopColor="#f6e096" /><stop offset=".5" stopColor="#d9b264" /><stop offset="1" stopColor="#a97e3c" />
-    </linearGradient></defs>
-    <path d="M10 2.2 L16.6 4.4 L16.6 10 C16.6 14 13.9 16.7 10 18 C6.1 16.7 3.4 14 3.4 10 L3.4 4.4 Z"
-      fill="url(#ggCrestG)" stroke="#7a5c26" strokeWidth="1" strokeLinejoin="round" />
-    <path d="M10 5.4 L11 8 L13.6 8 L11.5 9.7 L12.3 12.3 L10 10.8 L7.7 12.3 L8.5 9.7 L6.4 8 L9 8 Z" fill="#7a5c26" opacity=".9" />
-    <path d="M4.6 5 L10 3.2" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".8" />
-  </svg>;
-}
 
 const TABS = [
   { id: "play", icon: "♟", key: "nav.play" },
@@ -299,23 +261,25 @@ export default function App() {
     );
   });
 
-  const coinChip = (icon, val, color, title) => (
-    <span title={title} style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 8px", borderRadius: 9,
-      background: "rgba(240,200,110,.08)", border: `1px solid ${color}44`, color, fontSize: 11.5, fontWeight: 800,
-      whiteSpace: "nowrap" }}>{icon} {val}</span>
+  const coinChip = (icon, val, title) => (
+    <span title={title} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px",
+      borderRadius: 10, background: "linear-gradient(172deg, rgba(240,206,122,.13), rgba(240,206,122,.05))",
+      border: "1px solid rgba(214,176,96,.5)", boxShadow: "inset 0 0.5px 0 rgba(255,243,196,.35), 0 1px 4px rgba(0,0,0,.35)",
+      color: T.goldBright, fontSize: 12.5, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
+      fontVariantNumeric: "tabular-nums" }}>{icon} {val}</span>
   );
   const currencyRow = (
-    <div style={{ display: "grid", gridTemplateColumns: "auto auto", gap: 4, flex: "0 0 auto", justifyItems: "stretch" }}>
-      {coinChip(<CoinIc />, profile.gold || 0, T.gold, t("army.balance"))}
-      {coinChip(<SkillIc />, skillPoints(profile), T.gold, "Skillpunkte")}
-      {coinChip(<LevelIc />, `Lv ${prog.level}`, T.gold, `${prog.into} / ${prog.span} XP`)}
-      {coinChip(<CrestIc />, retinueScore(profile), T.gold, t("online.score"))}
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: "0 0 auto", alignItems: "center", justifyContent: "flex-end" }}>
+      {coinChip(<CoinIc />, profile.gold || 0, t("army.balance"))}
+      {coinChip(<SkillIc />, skillPoints(profile), "Skillpunkte")}
+      {coinChip(<LevelIc />, `Lv ${prog.level}`, `${prog.into} / ${prog.span} XP`)}
+      {coinChip(<CrestIc />, retinueScore(profile), t("online.score"))}
     </div>
   );
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
       <img src={emblemUrl} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
-        filter: "brightness(1.14) saturate(1.12) drop-shadow(0 0 6px rgba(240,200,110,.45))" }} />
+        filter: "drop-shadow(0 0 6px rgba(240,200,110,.45))" }} />
       <div style={{ flex: 1 }} />
       {currencyRow}
     </div>
@@ -323,7 +287,7 @@ export default function App() {
 
   if (wide) return (
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
-      padding: immersive ? "16px 18px 18px" : "16px 18px 0" }}>
+      padding: immersive ? "16px 18px 18px" : "16px 18px 0", rowGap: 22 }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
@@ -333,8 +297,8 @@ export default function App() {
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
           <img src={emblemUrl} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
-            filter: "brightness(1.14) saturate(1.12) drop-shadow(0 0 7px rgba(240,200,110,.45))" }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
+            filter: "drop-shadow(0 0 7px rgba(240,200,110,.45))" }} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
         </aside>
       )}
@@ -359,7 +323,7 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "14px 14px 108px",
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 6px") : inMatch ? "14px 14px 24px" : "22px 14px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>

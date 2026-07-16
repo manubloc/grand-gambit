@@ -122,4 +122,4 @@ export function paintedForPiece(piece) {
 export const paintedById = (id) => PAINTED[id] || null;
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
-export const ENEMY_FILTER = "hue-rotate(185deg) saturate(0.5) brightness(0.9)";
+export const ENEMY_FILTER = "hue-rotate(185deg) saturate(0.32) brightness(1.02)"; // whiter steel, less blue
