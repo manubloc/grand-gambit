@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.21.68
+- ADMIN-WERKBANK im Profil (nur Admin-Konto): Liga I-X direkt anspringen, alle Figuren rekrutieren, +1000 Gold / +50 Skillpunkte - Vollzugriff zum Testen, wirkt nur aufs eigene Profil
+
 ## 0.21.67
 - LOGIN-BILD: sanfter Verlauf oben ins Schwarze (kein harter Rand am Lichtschein mehr)
 - KOPFLEISTE: das runde GG-EMBLEM steht jetzt vor der Wortmarke (Desktop + Mobil); Gold, Skillpunkte und neu der HOFWERT als sauber GEZEICHNETE Gold-Icons (Muenze, Funke, Wappen - keine Emojis mehr); Level-/XP-Balken bleibt

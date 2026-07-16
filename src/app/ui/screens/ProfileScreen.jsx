@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { hashPin } from "../../../platform/index.js";
 import { serializeSave, parseSave, listRestorePoints, readSnapshot } from "../../../meta/index.js";
+import { CHARACTERS } from "../../../content/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
@@ -119,6 +120,31 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           };
           inp.click();
         }}>⬆ {t("profile.saveImport")}</Button>
+      </div>
+    </Panel>}
+
+    {account?.isAdmin && <Panel>
+      <PanelTitle tag="Admin">{t("profile.devTitle")}</PanelTitle>
+      <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.devHint")}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <span className="gg-serif" style={{ fontSize: 12.5, color: T.dim }}>{t("profile.devLeague")}</span>
+        {[1,2,3,4,5,6,7,8,9,10].map((lg) => (
+          <button key={lg} onClick={() => dispatch({ type: "REPLACE",
+              profile: { ...profile, campaign: { ...profile.campaign, league: lg } } })}
+            style={{ minWidth: 26, padding: "5px 4px", borderRadius: 7, cursor: "pointer", fontFamily: "inherit",
+              fontWeight: 800, fontSize: 11.5,
+              background: (profile.campaign?.league || 1) === lg ? T.gold : T.panel2,
+              color: (profile.campaign?.league || 1) === lg ? "#241a08" : T.text,
+              border: `1px solid ${(profile.campaign?.league || 1) === lg ? T.gold : T.line}` }}>{lg}</button>
+        ))}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        <Button variant="subtle" onClick={() => dispatch({ type: "REPLACE",
+          profile: { ...profile, campaign: { ...profile.campaign, unlocked: Object.keys(CHARACTERS) } } })}>
+          ⚜ {t("profile.devUnlockAll")}</Button>
+        <Button variant="subtle" onClick={() => dispatch({ type: "REPLACE",
+          profile: { ...profile, gold: (profile.gold || 0) + 1000, sp: (profile.sp || 0) + 50 } })}>
+          ✦ {t("profile.devFunds")}</Button>
       </div>
     </Panel>}
 
