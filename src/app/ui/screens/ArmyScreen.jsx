@@ -105,13 +105,11 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       {paintedById(char.id)
         ? <><img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-            style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
+            style={{ width: bigArt ? 118 : 74, height: bigArt ? 152 : 96, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        <span style={{ alignSelf: "center", width: bigArt ? 62 : 44, height: bigArt ? 62 : 44, flex: "0 0 auto",
-          marginLeft: -4, filter: "drop-shadow(0 2px 4px rgba(0,0,0,.55))" }} title="Vektor-Symbol">
-          <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" showLevel={false} /></span></>
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
+        </>
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 80 : 52} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
