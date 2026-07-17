@@ -16,12 +16,14 @@ const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "prom
 // always stands above them. Deep bottle-green glass with a bright specular
 // window and a shaded floor, so each bead reads as a tiny sphere. Giants
 // (>10 HP) keep a slim glass bar instead.
-function HpDots({ hp, max }) {
+function HpDots({ hp, max, side = "left", palette = "life" }) {
   const ratio = Math.max(0, Math.min(1, hp / max));
-  const [col, deep] = ratio > 0.55 ? ["#22a763", "#0a5229"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
+  // life speaks in the old traffic tongue; ENERGY is always the same cold blue
+  const [col, deep] = palette === "energy" ? ["#4aa3e8", "#123a66"]
+    : ratio > 0.55 ? ["#22a763", "#0a5229"] : ratio > 0.28 ? ["#e8a33f", "#8a5312"] : ["#e6394a", "#7c1622"];
   if (max > 10) {
     // heavyweights: a vertical life column on the LEFT flank, filling bottom-up
-    return <span style={{ position: "absolute", bottom: "0.07em", left: "-0.012em",
+    return <span style={{ position: "absolute", bottom: "0.07em", [side]: "-0.012em",
       display: "flex", alignItems: "flex-end", width: "max(3.5px, 0.05em)", height: "0.52em",
       background: "rgba(6,10,16,.7)", borderRadius: 99, overflow: "hidden", pointerEvents: "none",
       boxShadow: "inset 0 0 0 0.5px rgba(255,255,255,.22), inset 0 1px 1px rgba(0,0,0,.5)" }}>
@@ -30,7 +32,7 @@ function HpDots({ hp, max }) {
     </span>;
   }
   const d = Math.min(0.075, 0.5 / Math.ceil(max / 2));
-  return <span style={{ position: "absolute", bottom: "0.07em", left: "-0.028em",
+  return <span style={{ position: "absolute", bottom: "0.07em", [side]: "-0.028em",
     display: "grid", gridAutoFlow: "column", gridTemplateRows: `repeat(${Math.ceil(max / 2)}, auto)`,
     gap: "0.024em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))" }}>
@@ -112,19 +114,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         })()}
       </div>
 
-      {/* the quiet ledger: TWO bare numbers, nothing else — LIFE on the left
-          (warm green-white), ENERGY on the right (ice blue). Level, strike and
-          every richer detail live in the tap-to-inspect sheet. */}
-      {hpMode && piece.maxEn > 0 && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.02em", right: "0.005em", pointerEvents: "none",
-          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: piece.en > 0 ? "#8ec7f2" : "#5a6a80",
-          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.en}</span>
-      )}
-      {hpMode && piece.maxHp > 0 && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.02em", left: "0.005em", pointerEvents: "none",
-          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: piece.hp <= 2 ? "#e08a7a" : "#9fd6a8",
-          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.hp}</span>
-      )}
+      {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
+          right — same jewel language, only the cold blue tells them apart.
+          Level, strike and every richer detail live in the tap-to-inspect sheet. */}
+      {hpMode && piece.maxHp > 0 && <HpDots hp={piece.hp} max={piece.maxHp} />}
+      {hpMode && piece.maxEn > 0 && <HpDots hp={piece.en} max={piece.maxEn} side="right" palette="energy" />}
+
 
       {!hpMode && piece.shield > 0 && (
         <span style={{ position: "absolute", bottom: "-0.02em", right: "-0.04em", display: "flex", gap: "0.05em" }}>

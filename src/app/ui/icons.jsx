@@ -63,6 +63,26 @@ export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
 // ── Currency v3 — an order star and a crowned coin, drawn as insignia rather
 // than cartoon gold: clean silhouettes, fine dark contours, one soft light
 // edge. Reads crisp at chip size, shows its engraving when large. ───────────
+/** ENERGY: the second resource. An ice-blue bolt, cut like the treasury pieces —
+ *  bright crown light, deep cobalt body, a fine dark rim so it reads at 10px. */
+export function EnergyIc({ size = 18, style }) {
+  const fine = size >= 15;
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
+      style={{ display: "inline-block", verticalAlign: "-0.14em", ...style }}>
+      <defs>
+        <linearGradient id="ggBoltG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#cfe7ff" /><stop offset=".5" stopColor="#5aa8e8" /><stop offset="1" stopColor="#1d4f86" />
+        </linearGradient>
+      </defs>
+      <path d="M13.4 1.8 L5.6 13.2 H10.6 L9 22.2 L18.4 9.6 H12.6 Z" fill="url(#ggBoltG)"
+        stroke="#0c2440" strokeWidth="1.1" strokeLinejoin="round" />
+      {fine && <path d="M12.8 3.6 L7.8 11.6 H10.4" fill="none" stroke="#eaf5ff" strokeWidth="0.9"
+        strokeLinecap="round" opacity="0.85" />}
+    </svg>
+  );
+}
+
 export function SkillStar({ size = 18, style }) {
   const fine = size >= 16;
   return (

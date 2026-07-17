@@ -12,6 +12,8 @@ import {
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
+import { BASE_EN } from "../../../core/index.js";
+import { EnergyIc } from "../icons.jsx";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
@@ -155,7 +157,23 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
           {char.id === "gambit" && <span className="gg-serif" style={{ color: T.goldBright, marginRight: 8, letterSpacing: ".05em" }}>
             {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III", "IV", "V", "VI"][gambitTier(level) - 1] })}</span>}
-          {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
+          {(() => { // mirror of core/setup: the SAME formulas, so what you read is what you field
+            const k = char.kind, kingly = k === "K" ? 2 : 1;
+            const hpAt = (l) => (BASE_HP[k] || 1) + (l - 1) * kingly;
+            const atkAt = (l) => (BASE_ATK[k] || 1) + Math.floor((l - 1) / 2);
+            const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
+            const regen = (BASE_EN[k] || 2) >= 4;
+            return <>
+              <div style={{ display: "flex", gap: 9, flexWrap: "wrap", marginBottom: 3 }}>
+                <span style={{ fontWeight: 800, color: "#8fd6a0" }}>♥ {hpAt(level)}</span>
+                <span style={{ fontWeight: 800, color: "#e5975f" }}>⚔ {atkAt(level)}</span>
+                <span style={{ fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={11} /> {enAt(level)}{regen && <span style={{ color: "#6f96bd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</span>
+              </div>
+              {maxed ? t("army.maxed") : <span style={{ color: T.dim }}>Level {level} → {level + 1}
+                <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
+                {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · ⚔+1</span>}
+                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <EnergyIc size={10} />+1</span>}</span>}
+            </>; })()}
         </div>
         {!maxed && <button disabled={!affordable}
           onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}

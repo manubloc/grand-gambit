@@ -99,6 +99,9 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
       p.atk = (p.baseAtk ?? (BASE_ATK[p.kind] || 1)) + Math.floor((lvl - 1) / 2);
       p.maxEn = (p.baseEn ?? (BASE_EN[p.kind] || 2)) + Math.floor((lvl - 1) / 2);
       p.en = p.maxEn;
+      // caster natures (deep energy wells) REGENERATE: +1 spark at each of
+      // their turn dawns — the colossus owns none of that
+      p.enRegen = p.baseEnRegen ?? (((p.baseEn ?? BASE_EN[p.kind]) || 2) >= 4 ? 1 : 0);
       p.shield = 0;
     }
     // ── the two houses: commitment pays ───────────────────────────────────────

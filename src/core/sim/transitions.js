@@ -38,6 +38,13 @@ function repromote(piece, kind) {
  * attacker advances onto the square; if the target survives, the attacker stays
  * put (a "bump"). Either way the move costs a turn. Regicide ends the game.
  */
+/** Turn dawn: every caster-natured piece of the side NOW to move refills a spark. */
+function regenEnergyFor(state, color) {
+  for (const p of state.board)
+    if (p && p.color === color && p.enRegen > 0 && p.en != null && p.en < p.maxEn)
+      p.en = Math.min(p.maxEn, p.en + p.enRegen);
+}
+
 export function applyMove(state, move, opts) {
   const record = !!(opts && opts.record);
   const hp = state.rules === "hp";
@@ -73,6 +80,7 @@ export function applyMove(state, move, opts) {
     }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
+    regenEnergyFor(ns, ns.turn);
     ns.lastMove = { from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
     ns.moveCount = state.moveCount + 1;
     if (record) { ns.history = [...state.history, state]; }
@@ -142,6 +150,7 @@ export function applyMove(state, move, opts) {
     }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
+    regenEnergyFor(ns, ns.turn);
     ns.lastMove = { from: move.from, to: settled ? move.to : move.from, color: piece.color, kind: piece.kind,
       capture: lethal, damaged, lethal, special: move.special, bounced: !settled };
     ns.moveCount = state.moveCount + 1;
@@ -210,6 +219,7 @@ export function applyMove(state, move, opts) {
   // an armed TIME RIFT (magic circle) lets this move keep the turn — once
   if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
   else ns.turn = other(state.turn);
+  regenEnergyFor(ns, ns.turn);
   ns.moveCount = state.moveCount + 1;
   ns.lastMove = {
     from: move.from, to: move.to, color: piece.color, kind: move.kind,

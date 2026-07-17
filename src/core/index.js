@@ -12,7 +12,7 @@ export { makePiece, emptyBoard, clonePiece, cloneBoard, findKing, newId } from "
 export { DEFAULT_BACK_RANK, FLANK_SLOTS, defaultArmy, createInitialState } from "./domain/setup.js";
 
 // Rules: move generation + attack/check detection
-export { pieceMoves, pseudoMoves, hasAbility, ONCE_ABILITIES, ABILITY_COST } from "./rules/moves.js";
+export { pieceMoves, pseudoMoves, hasAbility, ABILITY_COST } from "./rules/moves.js";
 export { isSquareAttacked, inCheck } from "./rules/attacks.js";
 
 // Simulation: state, transitions, commands, events, reducer

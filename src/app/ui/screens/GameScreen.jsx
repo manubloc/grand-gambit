@@ -37,6 +37,7 @@ const boardTexture = (match, profile) => {
   return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
 };
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
+import { EnergyIc } from "../icons.jsx";
 
 function Tray({ kinds, color }) {
   if (!kinds.length) return <span style={{ color: T.faint, fontSize: 13 }}>—</span>;
@@ -519,6 +520,25 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
+      {state.rules === "hp" && (() => {
+        // the war ledger: both armies' TOTAL life and energy, live — the
+        // tactical weather report the player asked to see at a glance
+        const sum = { w: { hp: 0, en: 0 }, b: { hp: 0, en: 0 } };
+        for (const p of state.board) if (p && p.kind !== "D+") { sum[p.color].hp += p.hp || 0; sum[p.color].en += p.en || 0; }
+        const mine = sum[myColor], theirs = sum[myColor === "w" ? "b" : "w"];
+        const Cell = ({ label, v, own }) => (
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "3px 10px", borderRadius: 999,
+            background: "rgba(9,12,20,.72)", border: `1px solid ${own ? "rgba(233,210,150,.4)" : "rgba(158,166,190,.35)"}` }}>
+            <span className="gg-serif" style={{ fontSize: 10, letterSpacing: ".1em", color: own ? T.gold : "#aab2c8" }}>{label}</span>
+            <span style={{ fontSize: 11.5, fontWeight: 800, color: "#8fd6a0" }}>♥ {v.hp}</span>
+            <span style={{ fontSize: 11.5, fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={10} /> {v.en}</span>
+          </span>
+        );
+        return <div style={{ display: "flex", justifyContent: "space-between", gap: 8, margin: "0 2px 6px" }}>
+          <Cell label={t("game.ledgerYou")} v={mine} own />
+          <Cell label={t("game.ledgerFoe")} v={theirs} />
+        </div>;
+      })()}
       <div ref={zoomBox} onPointerDown={zoomDown} onPointerMove={zoomMove} onPointerUp={zoomUp} onPointerCancel={zoomUp}
         onWheel={zoomWheel} onClickCapture={(e) => { if (zDragged.current) { e.stopPropagation(); e.preventDefault(); zDragged.current = false; } }}
         style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
@@ -563,7 +583,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
                     {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
-                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2" }}>⚡ {pc.en}/{pc.maxEn}</span>}
+                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={11} /> {pc.en}/{pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
                     {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
@@ -584,7 +604,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                           background: seen ? (dry ? "rgba(24,26,32,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
                           color: seen ? (dry ? T.faint : "#e9d296") : T.faint,
                           opacity: seen && dry ? 0.75 : 1 }}>
-                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ color: dry ? "#5a6a80" : "#8ec7f2", fontWeight: 800 }}> · ⚡{cost}</span>}</>
+                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ color: dry ? "#5a6a80" : "#8ec7f2", fontWeight: 800 }}> · <EnergyIc size={10} />{cost}</span>}</>
                             : t("ins.unknown")}
                         </span>
                       );

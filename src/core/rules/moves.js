@@ -4,11 +4,6 @@ import {
 } from "../domain/constants.js";
 
 // Which abilities are one-shot (consumed per game). The rest are passive.
-export const ONCE_ABILITIES = new Set([
-  "pawn_sidestep", "pawn_forward_capture", "pawn_backstep",
-  "bishop_hop", "bishop_ortho_step", "rook_breach", "queen_knightleap", "king_dash",
-  "ranged_shot", "teleport", "blast", "pull", "chain",
-]);
 // ENERGY COSTS — the tactical currency. Cheap tricks flow, heavy magic drains.
 // A piece whose energy runs dry falls back to its plain moves.
 export const ABILITY_COST = {
@@ -21,9 +16,10 @@ export const ABILITY_COST = {
 };
 
 export function hasAbility(piece, id) {
+  // the energy law, plain and single: a talent fires if its cost is covered.
+  // (chess-rules pieces carry no energy pool — there, talents are free)
   if (!piece.abilities.includes(id)) return false;
-  if (piece.en != null) return piece.en >= (ABILITY_COST[id] ?? 0); // energy era: cost gates, nothing is once
-  return !(ONCE_ABILITIES.has(id) && piece.used[id]);               // legacy states without energy
+  return (piece.en ?? Infinity) >= (ABILITY_COST[id] ?? 0);
 }
 
 // ── Board-shape context ──────────────────────────────────────────────────────

@@ -183,5 +183,20 @@ import { bossSpec, bossById } from "./src/content/index.js";
   }
 }
 
+{ // energy REGENERATION: caster natures refill a spark at their turn's dawn
+  const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 9 });
+  const qi = g.board.findIndex((p) => p && p.kind === "Q" && p.color === "w");
+  ok("the queen is caster-natured (regenerates)", g.board[qi].enRegen === 1);
+  g.board[qi].en = 0;
+  const s1r = applyMove(g, legalMoves(g)[0]);            // white moves -> black's dawn
+  const s1 = s1r.state ?? s1r;
+  const s2r = applyMove(s1, legalMoves(s1)[0]);          // black moves -> WHITE's dawn
+  const s2 = s2r.state ?? s2r;
+  const q2 = s2.board.find((p) => p && p.kind === "Q" && p.color === "w");
+  ok("her well refills +1 at her dawn", q2 && q2.en === 1);
+  const pw = s2.board.find((p) => p && p.kind === "P" && p.color === "w" && p.maxEn);
+  ok("the pawn owns no such well", pw && !pw.enRegen);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
