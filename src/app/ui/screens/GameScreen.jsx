@@ -9,7 +9,7 @@ import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { CHARACTERS, ABILITIES } from "../../../content/index.js";
-import { paintedById } from "../board/paintedArt.js";
+import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
@@ -416,7 +416,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     }
   };
   useEffect(() => { if (!intro && !flyGo) setFlyGo(true); }, [intro]); // the curtain rises once the tale is told
-  useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 4900); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
+  useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 6400); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
     const id = setTimeout(() => setArmResign(false), 3500);
@@ -525,7 +525,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ width: "100%", height: "100%",
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
-          animation: flyGo && !flyDone && !zoomMode ? `ggBoardFly${flyVar} 4.7s cubic-bezier(.35,.12,.22,1) both` : "none",
+          animation: flyGo && !flyDone && !zoomMode ? `ggBoardFly${flyVar} 6.2s cubic-bezier(.4,.1,.25,1) both` : "none",
           opacity: flyGo ? 1 : 0.985 }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
@@ -543,18 +543,28 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           const nm = pc.name ? (en ? pc.name.en : pc.name.de) : ch ? (en ? ch.nameEn : ch.nameDe) : pc.kind;
           const abIds = pc.abilities || [];
           return (
-            <div style={{ position: "absolute", left: 8, right: 58, bottom: 8, zIndex: 7, pointerEvents: "none",
-              display: "flex", justifyContent: "flex-start" }}>
-              <div style={{ pointerEvents: "auto", maxWidth: 360, borderRadius: 12, padding: "8px 11px 8px",
+            <div style={{ position: "absolute", zIndex: 7, pointerEvents: "none", display: "flex",
+              // the LAYOUT LAW: your own piece reports BELOW (the action zone),
+              // the enemy's secrets pop up ABOVE the field
+              ...(own ? { left: 8, right: 58, bottom: 8, justifyContent: "flex-start" }
+                      : { left: 8, right: 8, top: 8, justifyContent: "center" }) }}>
+              <div style={{ pointerEvents: "auto", maxWidth: 380, borderRadius: 12, padding: "8px 11px 8px",
                 background: "rgba(9, 12, 20, .88)", border: `1px solid ${own ? "rgba(233,210,150,.5)" : "rgba(167,139,250,.55)"}`,
                 boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
                 animation: "rise .18s ease" }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 9, flexWrap: "wrap" }}>
-                  <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
-                  {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-                  {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
-                  {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
-                  {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {(() => { const src = paintedForPiece(pc); return src && (
+                    <img src={src} alt="" draggable={false} style={{ height: 46, width: 40, objectFit: "contain",
+                      objectPosition: "center bottom", flex: "0 0 auto", userSelect: "none",
+                      filter: own ? "brightness(1.3) saturate(1.05) drop-shadow(0 2px 4px rgba(0,0,0,.6))"
+                        : ENEMY_FILTER + " brightness(1.25) drop-shadow(0 2px 4px rgba(0,0,0,.6))" }} />); })()}
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
+                    <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
+                    {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
+                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
+                    {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
+                    {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
+                  </div>
                 </div>
                 {abIds.length > 0 && (
                   <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 6 }}>

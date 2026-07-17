@@ -64,19 +64,25 @@ export const GLOBAL_CSS = `
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
   @keyframes splashText { from { letter-spacing: .55em; opacity: 0; } to { letter-spacing: .18em; opacity: 1; } }
   @keyframes marbleWave { 0% { opacity: 0; } 35% { opacity: .34; } 100% { opacity: 0; } }
-  /* three opening flights — each battle draws one. All of them LINGER over
-     the enemy ranks first (your own you know by heart). */
-  @keyframes ggBoardFlyA { 0% { transform: scale(1.95) translateY(23%); }
-    48% { transform: scale(1.82) translateY(21%); }
-    74% { transform: scale(1.4) translateY(5%) translateX(-3%); }
+  /* three opening flights — each battle draws one. All of them ride CLOSE
+     along the enemy's TWO ranks (screen-filling) and sweep past once before
+     settling. A: left→right. B: right→left. C: a glance at your own line,
+     then the sweep. */
+  @keyframes ggBoardFlyA { 0% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
+    14% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
+    62% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+    82% { transform: scale(1.55) translateY(5%) translateX(-3%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
-  @keyframes ggBoardFlyB { 0% { transform: scale(2.05) translateY(24%) translateX(9%); }
-    52% { transform: scale(1.88) translateY(22%) translateX(-7%); }
-    78% { transform: scale(1.38) translateY(4%) translateX(0); }
+  @keyframes ggBoardFlyB { 0% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+    14% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+    62% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
+    82% { transform: scale(1.55) translateY(5%) translateX(3%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
-  @keyframes ggBoardFlyC { 0% { transform: scale(1.75) translateY(-16%) translateX(-6%); }
-    26% { transform: scale(1.9) translateY(22%) translateX(4%); }
-    72% { transform: scale(1.92) translateY(21%) translateX(-4%); }
+  @keyframes ggBoardFlyC { 0% { transform: scale(2.2) translateY(-19%) translateX(-8%); }
+    16% { transform: scale(2.2) translateY(-19%) translateX(6%); }
+    30% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
+    72% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+    86% { transform: scale(1.5) translateY(4%) translateX(0); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggAbilityGlow { 0%, 100% { box-shadow: 0 0 10px rgba(240,206,122,.22), inset 0 0.5px 0 rgba(255,243,196,.25); }
     50% { box-shadow: 0 0 22px rgba(240,206,122,.5), inset 0 0.5px 0 rgba(255,243,196,.4); } }

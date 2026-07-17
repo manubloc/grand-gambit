@@ -252,7 +252,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
             transform: (artStyle === "svg" ? "translateY(-2%)" // vector pieces sit LOW and settled
                 : typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
-              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.34)" : " scale(1.52)") : ""), // the chosen one steps forward — vectors more modestly
+              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""), // the chosen one steps forward — vectors more modestly
             transformOrigin: "50% 72%", transition: "transform .16s ease",
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
             fontSize: artStyle === "svg" ? (piece.kind === "P" ? "0.76em" : "0.92em") : (piece.kind === "P" ? "0.9em" : "1.07em"), // vectors a size calmer; pawns humble, the court imposing
