@@ -11,8 +11,8 @@
 // the save screen never has to load full profiles to render the list.
 import { storage } from "../platform/index.js";
 import { defaultProfile } from "./profile.js";
-import { clearedCount, campaignLength, nodeInLeague } from "./campaign.js";
-import { CAMPAIGN } from "../content/index.js";
+import { clearedCount, campaignLength, nodeInLeague, effectiveNodeBoss } from "./campaign.js";
+import { CAMPAIGN, CHARACTERS, BOSSES, bossById, ITEMS } from "../content/index.js";
 
 const IKEY = (acc) => `saves:${acc}`;
 const SKEY = (acc, slot) => `save:${acc}:${slot}`;
@@ -50,12 +50,45 @@ export function withProgressPct(profile, pct, league = 1) {
   const order = leagueOrder(lg);
   const k = Math.round((p / 100) * order.length);
   const cleared = order.slice(0, k);
-  const bosses = CAMPAIGN.filter((n) => cleared.includes(n.id) && n.boss?.piece).map((n) => n.boss.piece);
+  const clearedSet = new Set(cleared);
+  // ── the journey so far: every league BELOW the dial counts as mastered,
+  // the current one exactly as far as the dial reaches. Recruits, codex
+  // sightings and league-boss trophies grow along the road — the dial hands
+  // you the save an actual completionist would hold at this point. ──
+  const recruits = new Set(seaKit.unlocked);
+  const monstersMet = new Set();
+  for (const n of CAMPAIGN) for (let l = 1; l <= lg; l++) {
+    if (!nodeInLeague(n, l)) continue;
+    if (l === lg && !clearedSet.has(n.id)) continue; // the dial's frontier
+    const b = effectiveNodeBoss(n, l) || {};
+    if (b.piece) recruits.add(b.piece);
+    if (b.pure) monstersMet.add(b.pure);
+  }
+  let leaguesWon = lg - 1 + (p === 100 ? 1 : 0);
+  let bribed = [];
+  const items = { potion: p === 100 ? 5 : Math.floor(k / 8), ...seaKit.items };
+  if (p === 100) {
+    // Vollausbau: at the top of the dial NOTHING stays dark. League X even
+    // guarantees the complete catalogue, whatever the road rotations showed.
+    if (lg >= 10) {
+      for (const id of Object.keys(CHARACTERS)) recruits.add(id);
+      for (const b of BOSSES) monstersMet.add(b.id);
+    }
+    bribed = [...monstersMet].filter((id) => {
+      const b = bossById(id);
+      return b && b.art !== "tyrant" && b.id !== "b23" && b.id !== "b25"; // tyrants join via leaguesWon only
+    });
+    for (const it of Object.values(ITEMS)) items[it.id] = Math.max(items[it.id] || 0, it.max || 1);
+  }
+  const met = new Set([...monstersMet].map((id) => "X:" + id));
+  for (const id of recruits) { const kind = CHARACTERS[id]?.kind; if (kind) met.add(kind); }
   return {
     ...base, ...keep,
     gold: 90 * k + (lg - 1) * 300, sp: 3 * k + (lg - 1) * 10, xp: 130 * k * lg, xpEarned: 130 * k * lg,
-    items: { potion: p === 100 ? 5 : Math.floor(k / 8), ...seaKit.items },
-    campaign: { league: lg, cleared, unlocked: [...new Set([...bosses, ...seaKit.unlocked])], dupes: {} },
+    items,
+    stats: { ...base.stats, leaguesWon },
+    codex: { ...(base.codex || {}), met: [...met] },
+    campaign: { league: lg, cleared, unlocked: [...recruits], dupes: {}, bribedBosses: bribed },
   };
 }
 

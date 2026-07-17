@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.14
+- NACHZUEGLER: die Vollausbau-Engine selbst (withProgressPct baut jetzt Codex-Sichtungen, Liga-Kronen, Monster-Buendnisse und volle Truhe mit auf) lag nur im Arbeitsstand und fehlte im 0.22.13-Commit - ohne sie zeigte die neue Werkbank weiter Luecken und die neuen Tests schluegen auf frischem Klon fehl
+- ABSICHERUNG: kompletter Testlauf zusaetzlich auf einem frischen Klon des Repos ausgefuehrt, damit keine ungetrackten Arbeitsstand-Reste mehr fehlen koennen
+
 ## 0.22.13
 - WERKBANK OHNE REIHENFOLGE-FALLE: die Liga-Knoepfe WAEHLEN jetzt nur noch aus, SETZEN wendet Liga und Fortschritt zusammen an. Vorher wirkte der Regler auf die noch aktive Liga - wer erst Setzen und dann Liga 10 drueckte, bekam 17 Monster in Nacht, leaguesWon=1 und leere Liga-Boss-Plaetze
 - VOLLAUSBAU WIRKLICH VOLL SICHTBAR: Liga-Bosse, die fuer dich kaempfen, stehen im Figurenbaum jetzt golden mit "Im Hofstaat" statt grau (gilt auch im normalen Spielverlauf nach Liga-Siegen); nur die Erzfeindin bleibt bewusst unverbuendet, ihr Antlitz ist im Codex sichtbar
