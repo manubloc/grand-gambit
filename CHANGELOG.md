@@ -1,5 +1,15 @@
 # Changelog — Grand Gambit
 
+## 0.22.13
+- WERKBANK OHNE REIHENFOLGE-FALLE: die Liga-Knoepfe WAEHLEN jetzt nur noch aus, SETZEN wendet Liga und Fortschritt zusammen an. Vorher wirkte der Regler auf die noch aktive Liga - wer erst Setzen und dann Liga 10 drueckte, bekam 17 Monster in Nacht, leaguesWon=1 und leere Liga-Boss-Plaetze
+- VOLLAUSBAU WIRKLICH VOLL SICHTBAR: Liga-Bosse, die fuer dich kaempfen, stehen im Figurenbaum jetzt golden mit "Im Hofstaat" statt grau (gilt auch im normalen Spielverlauf nach Liga-Siegen); nur die Erzfeindin bleibt bewusst unverbuendet, ihr Antlitz ist im Codex sichtbar
+- 5 neue Tests sichern den Vollausbau ab: alle Figuren rekrutiert, alle Monster im Codex, alle Monster ausser der Erzfeindin im Feld, Truhe voll, zehn Kronen
+
+## 0.22.13
+- WERKBANK-REGLER BAUT JETZT DIE ECHTE REISE: fruehere Ligen zaehlen als gemeistert (Ligameister-Trophaeen inklusive), Rekruten und Codex-Sichtungen wachsen den Weg entlang mit - vorher setzte der Regler nur die aktuelle Liga und liess alles andere dunkel
+- 100% = VOLLAUSBAU: alle Figuren rekrutiert, jedes Monster im Codex, bestechbare Monster verbuendet, Tyrannen-Ligameister ueber Siege feldbar, Truhe komplett gefuellt - Liga X bei 100% garantiert den kompletten Katalog (nur die Erzfeindin bleibt wie im Spiel unerreichbar)
+- 5 neue Tests fuer die Vollausbau-Semantik (jetzt 416)
+
 ## 0.22.12
 - FEATURES AUS 0.22.9/0.22.10 ZURUECK: Glanz-Sweep auf kaufbaren Faehigkeitskarten, Medaillon-Symbole exakt mittig, Sicht-Leck im Figurenbaum gestopft (nur diesseits des Nebels gilt als gesichtet), Eroeffnungsfahrt nur noch ueber die Feindreihe (Variante C gestrichen), Vektor-Zwilling entfernt, CharCard-Portraits groesser
 - URSACHEN-ANALYSE: kein Code-Defekt in 0.22.9/0.22.10 reproduzierbar - echter Chromium-Boot des Multi-Chunk-Builds, eingeloggter Bootpfad mit Fortschritt und der Service-Worker-Deploy-Uebergang liefen alle fehlerfrei; der Haenger war sehr wahrscheinlich ein Deploy-/Cache-Zustand nach zwei Deploys in sieben Minuten

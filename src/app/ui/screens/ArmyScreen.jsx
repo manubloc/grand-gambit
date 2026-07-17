@@ -720,6 +720,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const MONSTER_BRIBE_GOLD = 1800;
   const [sacrificeFor, setSacrificeFor] = useState(null); // bossId awaiting a crown sacrifice
   const bribedSet = new Set(profile.campaign?.bribedBosses || []);
+  const ownedBossSet = new Set(ownedLeagueBosses(profile)); // beaten league tyrants fight FOR you — the tree shows them in gold
   const crownOwned = CROWN_IDS.filter((cid) => unlocked.has(cid));
   const monsterBribable = (b) => b.art !== "tyrant" && b.id !== "b23" && b.id !== "b25" && met.has("X:" + b.id) && !bribedSet.has(b.id);
   const bribeMonster = (bossId, victim) => {
@@ -780,7 +781,8 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const monsterTile = (b) => {
     const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
     const k = "X:" + b.id;
-    if (bribedSet.has(b.id)) return <Tile key={b.id} img={img} glow name={en ? b.nameEn : b.nameDe} origin={t("tree.allied")} />;
+    if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow
+      name={en ? b.nameEn : b.nameDe} origin={bribedSet.has(b.id) ? t("tree.allied") : t("tree.inCourt")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);
       return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe}

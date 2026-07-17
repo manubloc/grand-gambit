@@ -5,6 +5,8 @@ import { createSave, listSaves, loadSave, writeSave, deleteSave, renameSave,
   progressPct, withProgressPct, leagueOrder, migrateLegacyInto, fmtPlaytime } from "./src/meta/saves.js";
 import { defaultProfile } from "./src/meta/profile.js";
 import { storage } from "./src/platform/index.js";
+import { CHARACTERS, BOSSES, ITEMS } from "./src/content/index.js";
+import { ownedLeagueBosses } from "./src/meta/leveling.js";
 
 let pass = 0, fail = 0;
 const ok = (name, cond) => { if (cond) { pass++; console.log("  ok  -", name); } else { fail++; console.log(" FAIL -", name); } };
@@ -125,6 +127,31 @@ await clearSession();
   ok("pause codec keeps the potions", back.potions?.w === st.potions?.w);
   ok("pause codec keeps the board", JSON.stringify(back.board) === JSON.stringify(st.board));
 }
+
+// ── the dial hands over a completionist's save (v0.22.13) ────────────────────
+{
+  const { CHARACTERS, BOSSES, ITEMS } = await import("./src/content/index.js");
+  const { isUnlocked, ownedLeagueBosses } = await import("./src/meta/leveling.js");
+  const everything = withProgressPct(defaultProfile(), 100, 10);
+  ok("league X at 100% recruits every character", Object.values(CHARACTERS).every((c) => isUnlocked(c, everything)));
+  ok("league X at 100% has met every monster", BOSSES.every((b) => (everything.codex?.met || []).includes("X:" + b.id)));
+  ok("league X at 100% fields every reachable boss", ownedLeagueBosses(everything).length === 24 && everything.stats.leaguesWon === 10);
+  ok("league X at 100% fills the whole chest", Object.keys(ITEMS).every((id) => (everything.items || {})[id] >= 1));
+  const mid = withProgressPct(defaultProfile(), 40, 5);
+  ok("mid-journey counts earlier leagues as mastered", mid.stats.leaguesWon === 4 && mid.campaign.unlocked.length > 10 && (mid.campaign.bribedBosses || []).length === 0);
+}
+
+
+// ── workbench full build: 100% at league X leaves nothing dark ──────────────
+const COURT_T = ["gambit","pawn","knight","bishop","rook","queen","king"];
+const fullB = withProgressPct(defaultProfile(), 100, 10);
+const fullUn = new Set(fullB.campaign.unlocked), fullMet = new Set(fullB.codex.met);
+ok("full build recruits every character", Object.keys(CHARACTERS).every((id) => fullUn.has(id) || COURT_T.includes(id)));
+ok("full build meets every monster in the codex", BOSSES.every((b) => fullMet.has("X:" + b.id)));
+const fullOwned = new Set([...ownedLeagueBosses(fullB), ...(fullB.campaign.bribedBosses || [])]);
+ok("full build fields every monster except the arch-enemy", BOSSES.every((b) => fullOwned.has(b.id) || b.id === "b23"));
+ok("full build fills the chest", Object.values(ITEMS).every((it) => (fullB.items[it.id] || 0) > 0));
+ok("full build counts ten league crowns", fullB.stats.leaguesWon === 10);
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

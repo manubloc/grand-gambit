@@ -14,6 +14,7 @@ const inApp = () =>
 
 export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onLogout }) {
   const [devPct, setDevPct] = useState(0); // workbench: journey progress slider
+  const [devLg, setDevLg] = useState(profile.campaign?.league || 1); // workbench: league pick — applied together with the dial via SETZEN
   const [pin, setPin] = useState("");
   // manual install entry — the banner is missable, this one always waits here
   const [canPrompt, setCanPrompt] = useState(() => !!getDeferredInstall());
@@ -135,17 +136,13 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
         <span className="gg-serif" style={{ fontSize: 12.5, color: T.dim }}>{t("profile.devLeague")}</span>
         {[1,2,3,4,5,6,7,8,9,10].map((lg) => (
-          <button key={lg} onClick={() => dispatch({ type: "REPLACE",
-              // a clean league start: fresh journey, tolls cleared - and the Sea
-              // (X) comes provisioned with captain + boat so it is playable
-              profile: { ...profile, items: { ...(profile.items || {}), ...(((lg - 1) % 10) + 1 === 10 ? { boat: Math.max(1, profile.items?.boat || 0) } : {}) },
-                campaign: { ...profile.campaign, league: lg, cleared: [], tolls: [],
-                  unlocked: [...new Set([...(profile.campaign?.unlocked || []), ...(((lg - 1) % 10) + 1 === 10 ? ["captain"] : [])])] } } })}
+          <button key={lg} onClick={() => setDevLg(lg)}
+            title={t("profile.devApplyHint")}
             style={{ minWidth: 26, padding: "5px 4px", borderRadius: 7, cursor: "pointer", fontFamily: "inherit",
               fontWeight: 800, fontSize: 11.5,
-              background: (profile.campaign?.league || 1) === lg ? T.gold : T.panel2,
-              color: (profile.campaign?.league || 1) === lg ? "#241a08" : T.text,
-              border: `1px solid ${(profile.campaign?.league || 1) === lg ? T.gold : T.line}` }}>{lg}</button>
+              background: devLg === lg ? T.gold : T.panel2,
+              color: devLg === lg ? "#241a08" : T.text,
+              border: `1px solid ${devLg === lg ? T.gold : T.line}` }}>{lg}</button>
         ))}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 10 }}>
@@ -154,7 +151,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           style={{ flex: 1, accentColor: T.gold }} />
         <span style={{ color: T.text, fontWeight: 800, width: 42, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{devPct}%</span>
         <Button variant="subtle" style={{ padding: "7px 12px", fontSize: 12.5 }} onClick={() => dispatch({ type: "REPLACE",
-          profile: withProgressPct(profile, devPct, profile.campaign?.league || 1) })}>{t("profile.devApply")}</Button>
+          profile: withProgressPct(profile, devPct, devLg) })}>{t("profile.devApply")}</Button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         <Button variant="subtle" onClick={() => dispatch({ type: "REPLACE",
