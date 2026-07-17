@@ -48,7 +48,35 @@
       "publisher": { "@type": "Person", "name": "Manuel Frey" }
     }
     </script>
-  </head>
+    <script>
+    /* THE WATCHDOG — insurance against the stuck-cache death spiral: if the
+       boot note is still on screen 6s after load (the app never mounted),
+       this page CANNOT heal itself through the normal update path. So we do
+       it the hard way, ONCE: unregister every service worker, wipe every
+       cache, reload fresh from the network. A sessionStorage latch prevents
+       any loop. Healthy loads remove #gg-boot instantly — this never fires. */
+    (function () {
+      try {
+        var KEY = "gg-watchdog";
+        window.addEventListener("load", function () {
+          setTimeout(function () {
+            var boot = document.getElementById("gg-boot");
+            if (!boot || !document.body.contains(boot)) return;      // mounted: all is well
+            if (sessionStorage.getItem(KEY)) return;                 // already tried once
+            sessionStorage.setItem(KEY, "1");
+            var go = function () { location.reload(); };
+            Promise.resolve()
+              .then(function () { return ("serviceWorker" in navigator) ? navigator.serviceWorker.getRegistrations() : []; })
+              .then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })
+              .then(function () { return ("caches" in window) ? caches.keys() : []; })
+              .then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); })
+              .then(go, go);
+          }, 6000);
+        });
+      } catch (e) {}
+    })();
+  </script>
+</head>
   <body>
     <div id="root"><div id="gg-boot" style="font-family:Georgia,serif;color:#c9a45c;background:#0c111e;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px"><div><div style="font-size:22px;letter-spacing:3px">GRAND GAMBIT</div><div style="font-size:13px;color:#8b90a3;margin-top:10px;max-width:420px;line-height:1.5">Wird geladen … Wenn diese Meldung stehen bleibt, blockiert diese Vorschau JavaScript — Datei herunterladen und direkt im Browser öffnen.</div></div></div></div>
     <script type="module" src="/src/app/main.jsx"></script>
