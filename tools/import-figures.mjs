@@ -17,6 +17,8 @@ const MAP = {
   "gambit_stufe1": "gambit", "gambit_stufe2": "gambit-t2", "gambit_stufe3": "gambit-t3",
   "gambit_stufe4": "gambit-t4", "gambit_stufe5": "gambit-t5", "gambit_stufe6": "gambit-t6",
 };
+// the named monsters of the road: b01.png .. b25.png -> painted-boss-bXX.webp
+for (let i = 1; i <= 25; i++) { const n = "b" + String(i).padStart(2, "0"); MAP[n] = "boss-" + n; }
 
 // loosened: the flattened exports carry a SOFT white haze around the figures
 // (gradient down to ~216). Spread<20 still protects ivory (#f0e9d8, spread 24).

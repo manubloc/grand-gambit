@@ -66,7 +66,9 @@ import pbb19 from "../assets/painted/painted-boss-b19.webp";
 import pbb20 from "../assets/painted/painted-boss-b20.webp";
 import pbb21 from "../assets/painted/painted-boss-b21.webp";
 import pbb22 from "../assets/painted/painted-boss-b22.webp";
+import pbb23 from "../assets/painted/painted-boss-b23.webp";
 import pbb24 from "../assets/painted/painted-boss-b24.webp";
+import pbb25 from "../assets/painted/painted-boss-b25.webp";
 
 // ── the CLASSIC set: frozen copies of the original standard pieces. The
 // campaign's standard figures may be repainted (human setting), but classic
@@ -90,7 +92,7 @@ export const PAINTED = {
   "boss-tyrant": bTyrant, "boss-archenemy": bArchenemy, "boss-leaguemaster": bLeaguemaster,
   "boss-b01": pbb01, "boss-b02": pbb02, "boss-b03": pbb03, "boss-b04": pbb04, "boss-b05": pbb05, "boss-b06": pbb06, "boss-b07": pbb07, "boss-b08": pbb08,
   "boss-b09": pbb09, "boss-b10": pbb10, "boss-b11": pbb11, "boss-b12": pbb12, "boss-b13": pbb13, "boss-b14": pbb14, "boss-b15": pbb15, "boss-b16": pbb16,
-  "boss-b17": pbb17, "boss-b18": pbb18, "boss-b19": pbb19, "boss-b20": pbb20, "boss-b21": pbb21, "boss-b22": pbb22, "boss-b24": pbb24,
+  "boss-b17": pbb17, "boss-b18": pbb18, "boss-b19": pbb19, "boss-b20": pbb20, "boss-b21": pbb21, "boss-b22": pbb22, "boss-b23": pbb23, "boss-b24": pbb24, "boss-b25": pbb25,
 };
 
 // kind letter -> character id (pawn wins the shared "P"; the hero flag decides gambit)
