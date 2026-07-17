@@ -109,5 +109,6 @@ export const GLOBAL_CSS = `
   @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 12% { transform: translateX(320%) skewX(-18deg); } 100% { transform: translateX(320%) skewX(-18deg); } }
   @keyframes ggPulse { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: .9; transform: scale(1.12); } }
   @keyframes splashRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes ggSweep { 0% { background-position: 130% 0; } 55%, 100% { background-position: -30% 0; } }
   @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
 `;
