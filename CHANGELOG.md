@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.15
+- DIE CHRONIK DES RISSES: die zehn Welt-Geschichten sind jetzt EIN durchgehender Bogen mit drei Gestalten - Corvin (der Gambit, dem der Hof den Namen nahm), Mirenn (die Geopferte, die aus dem Riss zurueckkam und jeden genommenen Namen zurueckgeben will) und Vesna (die Seherin, die das verbotene Verzeichnis fuehrte und Mirenn einst selbst benannte). Osric, der Kapitaen, Doppelritter, Schattenfuerst, Lanzenmeister und Blutmagd bleiben Nebenwirkungen derselben Wunde, keine Nebenhelden
+- NAMEN MIT BEDEUTUNG: b23 heisst Mirenn, b25 heisst Osric, die Hellseherin heisst Vesna - und dass Opfer nur Titel tragen, ist jetzt selbst Teil der Geschichte (der Riss nimmt zuerst den Namen). Gambit-Tag, Riss-Begegnung, Bestechungs-Hinweis und Chronik-Intro sind in den Bogen eingewoben
+- KARTEN-BESCHRIFTUNG ZURUECKGENOMMEN: die Ellipsen unter den Ortsnamen sind auf ein Fluestern reduziert (Deckkraft .58 -> .22, langer Auslauf ins Transparente, staerkerer Blur); Lesbarkeit haengt jetzt an einem Schein entlang der Buchstaben statt an einer Flaeche - besonders auf dem Meer verschwinden die Felder unter der Schrift
+
 ## 0.22.14
 - NACHZUEGLER: die Vollausbau-Engine selbst (withProgressPct baut jetzt Codex-Sichtungen, Liga-Kronen, Monster-Buendnisse und volle Truhe mit auf) lag nur im Arbeitsstand und fehlte im 0.22.13-Commit - ohne sie zeigte die neue Werkbank weiter Luecken und die neuen Tests schluegen auf frischem Klon fehl
 - ABSICHERUNG: kompletter Testlauf zusaetzlich auf einem frischen Klon des Repos ausgefuehrt, damit keine ungetrackten Arbeitsstand-Reste mehr fehlen koennen

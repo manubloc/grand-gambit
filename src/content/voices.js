@@ -279,14 +279,14 @@ export const VOICES = {
 
   // ── the two who hold the tale together ─────────────────────────────────────
   b23: {
-    heraldDe: "Sie war die erste Klinge der Krone, ehe der Riss ihren Namen flüsterte — jetzt flüstert sie ihn zurück.",
-    heraldEn: "She was the Crown's first blade before the rift whispered her name — now she whispers it back.",
+    heraldDe: "Sie war die erste Klinge der Krone, ehe der Riss ihren Namen flüsterte — jetzt flüstert Mirenn ihn zurück.",
+    heraldEn: "She was the Crown's first blade before the rift whispered her name — now Mirenn whispers it back.",
     afterDe: "Du hörst ihn inzwischen auch, nicht wahr, Wanderer? … Bis zum nächsten Brett.",
     afterEn: "You hear it too by now, don't you, Wanderer? … Until the next board.",
   },
   b25: {
-    heraldDe: "Jeder Ligameister hütet ein Tor — und zahlt dem Riss die Miete in fremden Niederlagen.",
-    heraldEn: "Every League Master keeps a gate — and pays the rift its rent in other people's defeats.",
+    heraldDe: "Er öffnete den Riss, um einen Krieg zu gewinnen — jetzt hütet Osric das letzte Tor und zahlt die Miete in fremden Niederlagen.",
+    heraldEn: "He opened the rift to win a war — now Osric keeps the last gate and pays the rent in other people's defeats.",
     afterDe: "Das Tor gehört dir, Wanderer. Was dahinter wartet, hat mir nie gehört.",
     afterEn: "The gate is yours, Wanderer. What waits beyond it was never mine.",
   },

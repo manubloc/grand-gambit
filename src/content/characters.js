@@ -266,7 +266,7 @@ flavorDe: "Der Sturm fragt sie um Erlaubnis.", flavorEn: "The storm asks her per
     ],
   },
   seeress: {
-    id: "seeress", kind: KIND.SEERESS, glyph: null, nameDe: "Hellseherin", nameEn: "Seeress",
+    id: "seeress", kind: KIND.SEERESS, glyph: null, nameDe: "Vesna, die Seherin", nameEn: "Vesna the Seeress",
 flavorDe: "Sie hat das Ende jeder Partie gesehen — sie spielt nur mit, um zu erfahren, wie es sich anfühlt.", flavorEn: "She has seen the end of every game - she only plays to learn how it feels.",
     // the CROWN's seer: her gift is the foresight itself (see hasForesight) —
     // the shadow's counterpart is the hawk. On the board she is a gentle

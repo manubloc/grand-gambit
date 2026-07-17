@@ -48,9 +48,9 @@ export const BOSSES = [
   B("b20", "Der Hüter",        "The Keeper",      "tyrant",  "#34d399", 16, 3, { slides: KING, range: 1, leaps: sym(0, 2) }, { aura: { type: "courtHp", n: 2 }, abilities: ["bulwark"] }),
   B("b21", "Die Wandlerin",    "The Shifter",     "wraith",  "#f0abfc",  8, 3, { leaps: RING2, spawn: { max: 2 } }),
   B("b22", "Der Zerreißer",    "The Render",      "beast",   "#ef4444", 10, 5, { leaps: [...KNIGHT, ...CAMEL] }),
-  B("b23", "Die Erzfeindin",   "The Archenemy",   "tyrant",  "#fbbf24", 13, 4, { slides: KING, range: 3 }, { abilities: ["regen"] }),
+  B("b23", "Mirenn, die Erzfeindin", "Mirenn, the Archenemy",   "tyrant",  "#fbbf24", 13, 4, { slides: KING, range: 3 }, { abilities: ["regen"] }),
   B("b24", "Seuchenkönig",     "Plaguelord",      "serpent", "#84cc16",  9, 2, { slides: KING, range: 1, spawn: { max: 5 } }, { abilities: ["lifesteal"] }),
-  B("b25", "Der Ligameister",  "The League Master", "tyrant", "#ffd166", 18, 5, { slides: KING, range: 4, leaps: KNIGHT }, { aura: { type: "courtHp", n: 1 }, abilities: ["bulwark"] }),
+  B("b25", "Osric, der Ligameister", "Osric, the League Master", "tyrant", "#ffd166", 18, 5, { slides: KING, range: 4, leaps: KNIGHT }, { aura: { type: "courtHp", n: 1 }, abilities: ["bulwark"] }),
 ];
 
 export const bossById = (id) => BOSSES.find((b) => b.id === id) || null;

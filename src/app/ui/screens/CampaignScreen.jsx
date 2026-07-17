@@ -431,11 +431,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 24 : below ? 27 : 52, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
-                    <span aria-hidden style={{ position: "absolute", inset: "-7px -16px", borderRadius: "50%",
-                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.58) 0%, rgba(${labelTint(league)},.38) 52%, transparent 76%)`,
-                      filter: "blur(3px)", pointerEvents: "none" }} />
+                    {/* a WHISPER of ground: so faint the eye never catches a
+                        mismatched edge — readability lives in the letter halo below */}
+                    <span aria-hidden style={{ position: "absolute", inset: "-8px -18px", borderRadius: "50%",
+                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.22) 0%, rgba(${labelTint(league)},.12) 38%, rgba(${labelTint(league)},.04) 62%, transparent 78%)`,
+                      filter: "blur(4px)", pointerEvents: "none" }} />
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: `0 1px 0 rgba(${labelTint(league)},.55)` }}>{placeFor(n, league)}</span>
+                      lineHeight: 0.94, textShadow: `0 0 7px rgba(${labelTint(league)},.95), 0 0 3px rgba(${labelTint(league)},.9), 0 1px 1px rgba(${labelTint(league)},.55)` }}>{placeFor(n, league)}</span>
                   </span>
                 </div>
               </div>
