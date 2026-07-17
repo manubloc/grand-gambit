@@ -54,13 +54,19 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
   const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
+  useEffect(() => { // the inspect sheet mirrors whatever is currently chosen
+    if (!onInspect) return;
+    if (sel != null && state.board[sel]) onInspect({ i: sel, mode: "own" });
+    else if (spy != null && state.board[spy]) onInspect({ i: spy, mode: "spy" });
+    else onInspect(null);
+  }, [sel, spy]);
   // WHO may be studied? Standard chessmen always (everyone knows how a rook
   // moves). Exotic foes only once you have MET them before (the codex,
   // knownKinds) — unless a seer with her first gift stands in your ranks
@@ -246,7 +252,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
             transform: (artStyle === "svg" ? "translateY(-2%)" // vector pieces sit LOW and settled
                 : typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
-              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.2)" : " scale(1.38)") : ""), // the chosen one steps forward — vectors more modestly
+              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.34)" : " scale(1.52)") : ""), // the chosen one steps forward — vectors more modestly
             transformOrigin: "50% 72%", transition: "transform .16s ease",
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
             fontSize: artStyle === "svg" ? (piece.kind === "P" ? "0.76em" : "0.92em") : (piece.kind === "P" ? "0.9em" : "1.07em"), // vectors a size calmer; pawns humble, the court imposing

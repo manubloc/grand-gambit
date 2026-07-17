@@ -381,6 +381,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
   const [flyGo, setFlyGo] = useState(false);       // ... and only AFTER the story sheet is acknowledged
   const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
+  const [inspect, setInspect] = useState(null);    // the tapped piece's dossier: { i, mode: "own" | "spy" }
   const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
   // ── THE CODEX: which exotic foes has the player met before? First
   // encounters keep their secrets (no move-reading) and introduce themselves
@@ -529,12 +530,57 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
-          knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots}
+          knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
           texture={boardTexture(match, profile)} artStyle={classic ? "classic" : profile.pieceStyle === "svg" ? "svg" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
         </div>
+        {inspect && state.board[inspect.i] && !banner && (() => {
+          const pc = state.board[inspect.i];
+          const own = inspect.mode === "own";
+          const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);
+          const nm = pc.name ? (en ? pc.name.en : pc.name.de) : ch ? (en ? ch.nameEn : ch.nameDe) : pc.kind;
+          const abIds = pc.abilities || [];
+          return (
+            <div style={{ position: "absolute", left: 8, right: 58, bottom: 8, zIndex: 7, pointerEvents: "none",
+              display: "flex", justifyContent: "flex-start" }}>
+              <div style={{ pointerEvents: "auto", maxWidth: 360, borderRadius: 12, padding: "8px 11px 8px",
+                background: "rgba(9, 12, 20, .88)", border: `1px solid ${own ? "rgba(233,210,150,.5)" : "rgba(167,139,250,.55)"}`,
+                boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+                animation: "rise .18s ease" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 9, flexWrap: "wrap" }}>
+                  <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
+                  {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
+                  {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
+                  {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
+                  {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
+                </div>
+                {abIds.length > 0 && (
+                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 6 }}>
+                    {abIds.map((id) => {
+                      const ab = ABILITIES[id];
+                      // the fog of war: a foe's talent stays "???" until the piece has
+                      // USED it before your eyes — unless a seer reads it for you
+                      const seen = own || seerVision || !!(pc.used || {})[id];
+                      const spent = !!(pc.used || {})[id] && ab && ab.once;
+                      return (
+                        <span key={id} style={{ fontSize: 10.5, padding: "3px 8px", borderRadius: 999,
+                          border: `1px solid ${seen ? (spent ? "#5a5142" : "#a5813c") : "#39415c"}`,
+                          background: seen ? (spent ? "rgba(30,26,18,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
+                          color: seen ? (spent ? T.faint : "#e9d296") : T.faint,
+                          textDecoration: spent ? "line-through" : "none" }}>
+                          {seen && ab ? `${ab.icon} ${en ? ab.nameEn : ab.nameDe}${ab.once ? (spent ? " · " + t("ins.used") : " · " + t("ins.ready")) : ""}`
+                            : t("ins.unknown")}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
         <button onClick={toggleZoom} title={t("game.zoom")}
           style={{ position: "absolute", right: 8, bottom: 8, zIndex: 6, cursor: "pointer",
             width: 42, height: 42, borderRadius: "50%", display: "grid", placeItems: "center",

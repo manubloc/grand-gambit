@@ -111,42 +111,21 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}
       </div>
-      {hpMode && piece.maxHp > 0 && <HpDots hp={piece.hp} max={piece.maxHp} />}
 
+      {/* the quiet ledger: TWO bare numbers, nothing else — level in gold
+          (right), strike in red-gold (left). Every richer detail lives in the
+          tap-to-inspect sheet. */}
       {showLevel && lvl > 1 && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.008em", right: "-0.012em",
-          width: "max(9.5px, 0.15em)", height: "max(9.5px, 0.15em)", transform: "rotate(45deg)",
-          borderRadius: "20%", display: "grid", placeItems: "center", pointerEvents: "none",
-          background: "linear-gradient(135deg, #efdc9e 0%, #d9b565 46%, #a5813c 100%)",
-          boxShadow: "0 1px 2px rgba(0,0,0,.5), inset 0 0 0 0.5px #6f5526, inset 0 0.5px 0.5px #fff3c488" }}>
-          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6px, 0.088em)", fontWeight: 800,
-            color: "#2a2008", lineHeight: 1, letterSpacing: 0 }}>{lvl}</span>
-        </span>
+        <span aria-hidden style={{ position: "absolute", top: "-0.02em", right: "0.005em", pointerEvents: "none",
+          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: "#f0d68a",
+          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{lvl}</span>
       )}
       {hpMode && (
-        <span aria-hidden style={{ position: "absolute", top: "-0.008em", left: "-0.012em",
-          width: "max(9.5px, 0.15em)", height: "max(9.5px, 0.15em)", transform: "rotate(45deg)",
-          borderRadius: "20%", display: "grid", placeItems: "center", pointerEvents: "none",
-          background: "linear-gradient(135deg, #efdc9e 0%, #d9b565 46%, #a5813c 100%)",
-          boxShadow: "0 1px 2px rgba(0,0,0,.5), inset 0 0 0 0.5px #6f5526, inset 0 0.5px 0.5px #fff3c488" }}>
-          <span style={{ transform: "rotate(-45deg)", fontSize: "max(6px, 0.088em)", fontWeight: 800,
-            color: "#7c1622", lineHeight: 1 }}>{piece.atk}</span>
-        </span>
+        <span aria-hidden style={{ position: "absolute", top: "-0.02em", left: "0.005em", pointerEvents: "none",
+          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: "#e5975f",
+          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.atk}</span>
       )}
-      {abilityDots.length > 0 && (
-        <span aria-hidden style={{ position: "absolute", right: "-0.028em", bottom: "0.07em",
-          display: "grid", gridAutoFlow: "column", gridTemplateRows: "repeat(3, auto)",
-          gap: "0.028em", pointerEvents: "none" }}>
-          {isBoss && <span style={{ width: "max(3px, 0.075em)", height: "max(3px, 0.075em)", transform: "rotate(45deg)",
-            background: T.danger, boxShadow: `0 0 4px ${T.danger}88` }} />}
-          {abilityDots.map((d) => (
-            <span key={d.id} style={{ width: "max(3px, 0.08em)", height: "max(3px, 0.08em)", borderRadius: "50%",
-              background: d.spent ? "#454a58" : d.color,
-              boxShadow: d.spent ? "inset 0 0 0 1px rgba(255,255,255,.12)" : `0 0 4px ${d.color}77`,
-              opacity: d.spent ? 0.6 : 1 }} />
-          ))}
-        </span>
-      )}
+
       {!hpMode && piece.shield > 0 && (
         <span style={{ position: "absolute", bottom: "-0.02em", right: "-0.04em", display: "flex", gap: "0.05em" }}>
           {Array.from({ length: Math.min(piece.shield, 4) }).map((_, i) => (
