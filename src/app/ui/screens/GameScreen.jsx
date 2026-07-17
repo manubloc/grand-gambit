@@ -3,6 +3,7 @@ import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftComm
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
+import { ABILITY_COST } from "../../../core/index.js";
 import { T } from "../theme.js";
 import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
@@ -562,6 +563,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
                     {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
+                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2" }}>⚡ {pc.en}/{pc.maxEn}</span>}
                     {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
@@ -573,14 +575,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                       // the fog of war: a foe's talent stays "???" until the piece has
                       // USED it before your eyes — unless a seer reads it for you
                       const seen = own || seerVision || !!(pc.used || {})[id];
-                      const spent = !!(pc.used || {})[id] && ab && ab.once;
+                      const cost = ABILITY_COST[id] ?? 0;
+                      const dry = pc.en != null && cost > 0 && pc.en < cost; // too spent to cast
                       return (
-                        <span key={id} style={{ fontSize: 10.5, padding: "3px 8px", borderRadius: 999,
-                          border: `1px solid ${seen ? (spent ? "#5a5142" : "#a5813c") : "#39415c"}`,
-                          background: seen ? (spent ? "rgba(30,26,18,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
-                          color: seen ? (spent ? T.faint : "#e9d296") : T.faint,
-                          textDecoration: spent ? "line-through" : "none" }}>
-                          {seen && ab ? `${ab.icon} ${en ? ab.nameEn : ab.nameDe}${ab.once ? (spent ? " · " + t("ins.used") : " · " + t("ins.ready")) : ""}`
+                        <span key={id} title={dry ? t("ins.noEnergy") : undefined}
+                          style={{ fontSize: 10.5, padding: "3px 8px", borderRadius: 999,
+                          border: `1px solid ${seen ? (dry ? "#5a5142" : "#a5813c") : "#39415c"}`,
+                          background: seen ? (dry ? "rgba(24,26,32,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
+                          color: seen ? (dry ? T.faint : "#e9d296") : T.faint,
+                          opacity: seen && dry ? 0.75 : 1 }}>
+                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ color: dry ? "#5a6a80" : "#8ec7f2", fontWeight: 800 }}> · ⚡{cost}</span>}</>
                             : t("ins.unknown")}
                         </span>
                       );

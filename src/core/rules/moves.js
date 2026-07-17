@@ -9,9 +9,21 @@ export const ONCE_ABILITIES = new Set([
   "bishop_hop", "bishop_ortho_step", "rook_breach", "queen_knightleap", "king_dash",
   "ranged_shot", "teleport", "blast", "pull", "chain",
 ]);
+// ENERGY COSTS — the tactical currency. Cheap tricks flow, heavy magic drains.
+// A piece whose energy runs dry falls back to its plain moves.
+export const ABILITY_COST = {
+  pawn_sidestep: 1, pawn_forward_capture: 1, pawn_backstep: 1, pawn_charge: 1, pawn_early_promo: 2,
+  knight_longleap: 2, knight_outrider: 2, bishop_hop: 2, bishop_ortho_step: 1,
+  rook_diag_step: 1, rook_breach: 3, queen_knightleap: 2, king_dash: 2,
+  ranged_shot: 2, ranged_volley: 3, teleport: 3, blast: 3, pull: 2, chain: 3,
+  dragon_flight: 3, dragon_flight2: 3, dragon_flight3: 3, gambit_masquerade: 2,
+  lifesteal: 2, regen: 2, bulwark: 2,
+};
 
 export function hasAbility(piece, id) {
-  return piece.abilities.includes(id) && !(ONCE_ABILITIES.has(id) && piece.used[id]);
+  if (!piece.abilities.includes(id)) return false;
+  if (piece.en != null) return piece.en >= (ABILITY_COST[id] ?? 0); // energy era: cost gates, nothing is once
+  return !(ONCE_ABILITIES.has(id) && piece.used[id]);               // legacy states without energy
 }
 
 // ── Board-shape context ──────────────────────────────────────────────────────

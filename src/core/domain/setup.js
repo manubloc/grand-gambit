@@ -1,4 +1,4 @@
-import { FILES, RANKS, WHITE, BLACK, KIND, idx, BASE_HP, BASE_ATK, SHIELD_HP } from "./constants.js";
+import { FILES, RANKS, WHITE, BLACK, KIND, idx, BASE_HP, BASE_ATK, BASE_EN, SHIELD_HP } from "./constants.js";
 import { familyOf, crownHp, shadowAtk, shadowRifts } from "../rules/families.js";
 import { emptyBoard, makePiece } from "./board.js";
 
@@ -97,6 +97,8 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
       p.maxHp = (p.baseHp ?? (BASE_HP[p.kind] || 1)) + (lvl - 1) * perLvl + (p.shield || 0) * SHIELD_HP;
       p.hp = p.maxHp;
       p.atk = (p.baseAtk ?? (BASE_ATK[p.kind] || 1)) + Math.floor((lvl - 1) / 2);
+      p.maxEn = (p.baseEn ?? (BASE_EN[p.kind] || 2)) + Math.floor((lvl - 1) / 2);
+      p.en = p.maxEn;
       p.shield = 0;
     }
     // ── the two houses: commitment pays ───────────────────────────────────────

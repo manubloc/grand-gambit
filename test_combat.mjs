@@ -1,4 +1,4 @@
-import { createGame, reduce, moveCommand, legalMoves, status, idx } from "./src/core/index.js";
+import { createGame, reduce, moveCommand, legalMoves, legalMovesFrom, applyMove, status, idx } from "./src/core/index.js";
 import { mapById } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
@@ -155,6 +155,32 @@ import { bossSpec, bossById } from "./src/content/index.js";
   const hurtIx = js.board.findIndex((p) => p && p.color === "b" && p.kind === "P");
   js.board[hurtIx] = { ...js.board[hurtIx], hp: 1 };
   ok("noEnemyPotions aura: the Judge forbids hostile draughts", reduce(js, potCmd("b", hurtIx)).state === js);
+}
+
+// ── v0.22.4: ENERGY — the second resource ────────────────────────────────────
+{
+  const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 5 });
+  ok("every hp piece carries energy", g.board.filter(Boolean).every((p) => p.kind === "D+" || (p.maxEn > 0 && p.en === p.maxEn)));
+  const { BASE_EN } = await import("./src/core/index.js");
+  ok("the mage brims, the colossus rations (class law)", (BASE_EN.M || 0) > (BASE_EN.G || 0));
+  // a pawn learns the ranged shot: with energy the move exists, drained it vanishes
+  const pawns = g.board.map((p, j) => (p && p.kind === "P" && p.color === "w" ? j : -1)).filter((j) => j >= 2);
+  const pi = pawns[3]; // a mid-file pawn: room for a flat 2-square firing lane
+  g.board[pi].abilities = ["ranged_shot"]; g.board[pi].used = g.board[pi].used || {};
+  g.board[pi].en = 2; g.board[pi].maxEn = 3;
+  g.board[pi - 1] = null; // clear the lane ...
+  g.board[pi - 2] = { kind: "P", color: "b", level: 1, abilities: [], used: {}, shield: 0,
+    hp: 2, maxHp: 2, atk: 1, en: 1, maxEn: 1 }; // ... and stand a target at range 2
+  const shots = legalMovesFrom(g, pi).filter((m) => m.consumes === "ranged_shot");
+  ok("with 2 energy the 2-cost shot is offered", shots.length > 0);
+  if (shots.length) {
+    const after = applyMove(g, shots[0]);
+    const st2 = after.state ?? after;
+    const shooter = st2.board.find((p) => p && p.kind === "P" && p.color === "w" && p.used && p.used.ranged_shot);
+    ok("firing drains the cost (2 -> 0)", shooter && shooter.en === 0);
+    const dryShots = shooter ? legalMovesFrom(st2, st2.board.indexOf(shooter)).filter((m) => m.consumes === "ranged_shot") : [];
+    ok("drained pieces fall back to plain moves", dryShots.length === 0);
+  }
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

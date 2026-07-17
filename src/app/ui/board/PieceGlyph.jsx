@@ -112,18 +112,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         })()}
       </div>
 
-      {/* the quiet ledger: TWO bare numbers, nothing else — level in gold
-          (right), strike in red-gold (left). Every richer detail lives in the
-          tap-to-inspect sheet. */}
-      {showLevel && lvl > 1 && (
+      {/* the quiet ledger: TWO bare numbers, nothing else — LIFE on the left
+          (warm green-white), ENERGY on the right (ice blue). Level, strike and
+          every richer detail live in the tap-to-inspect sheet. */}
+      {hpMode && piece.maxEn > 0 && (
         <span aria-hidden style={{ position: "absolute", top: "-0.02em", right: "0.005em", pointerEvents: "none",
-          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: "#f0d68a",
-          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{lvl}</span>
+          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: piece.en > 0 ? "#8ec7f2" : "#5a6a80",
+          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.en}</span>
       )}
-      {hpMode && (
+      {hpMode && piece.maxHp > 0 && (
         <span aria-hidden style={{ position: "absolute", top: "-0.02em", left: "0.005em", pointerEvents: "none",
-          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: "#e5975f",
-          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.atk}</span>
+          fontSize: "max(8px, 0.13em)", fontWeight: 800, lineHeight: 1, color: piece.hp <= 2 ? "#e08a7a" : "#9fd6a8",
+          fontVariantNumeric: "tabular-nums", textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.7)" }}>{piece.hp}</span>
       )}
 
       {!hpMode && piece.shield > 0 && (
