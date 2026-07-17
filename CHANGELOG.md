@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.12
+- FEATURES AUS 0.22.9/0.22.10 ZURUECK: Glanz-Sweep auf kaufbaren Faehigkeitskarten, Medaillon-Symbole exakt mittig, Sicht-Leck im Figurenbaum gestopft (nur diesseits des Nebels gilt als gesichtet), Eroeffnungsfahrt nur noch ueber die Feindreihe (Variante C gestrichen), Vektor-Zwilling entfernt, CharCard-Portraits groesser
+- URSACHEN-ANALYSE: kein Code-Defekt in 0.22.9/0.22.10 reproduzierbar - echter Chromium-Boot des Multi-Chunk-Builds, eingeloggter Bootpfad mit Fortschritt und der Service-Worker-Deploy-Uebergang liefen alle fehlerfrei; der Haenger war sehr wahrscheinlich ein Deploy-/Cache-Zustand nach zwei Deploys in sieben Minuten
+- TESTPFLICHT: vor jedem Push npm test UND npm run build UND npm run build:single UND node test_boot.mjs
+
 ## 0.22.11
 - NOTFALL-REVERT auf Stand 0.22.8 - grandgambit.win blieb mit v0.22.9/10 beim Boot im Fallback haengen ("Wird geladen ...")
 - src/ und index.html exakt auf Commit 9cf98a2 (v0.22.8) zurueckgesetzt; die Features aus 0.22.9/0.22.10 folgen repariert als 0.22.12
