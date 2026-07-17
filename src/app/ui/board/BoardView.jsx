@@ -244,11 +244,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
-            transform: (typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
-              + ((isSel || isSpy) ? " scale(1.38)" : ""), // the chosen one steps forward for inspection
+            transform: (artStyle === "svg" ? "translateY(-2%)" // vector pieces sit LOW and settled
+                : typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
+              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.2)" : " scale(1.38)") : ""), // the chosen one steps forward — vectors more modestly
             transformOrigin: "50% 72%", transition: "transform .16s ease",
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
-            fontSize: piece.kind === "P" ? "0.9em" : "1.07em", // pawns humble, the court imposing
+            fontSize: artStyle === "svg" ? (piece.kind === "P" ? "0.76em" : "0.92em") : (piece.kind === "P" ? "0.9em" : "1.07em"), // vectors a size calmer; pawns humble, the court imposing
             transition: "filter .45s ease",
             filter: introSpot && !introSpot.has(i)
               ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...

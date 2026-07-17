@@ -78,6 +78,10 @@ export const GLOBAL_CSS = `
     26% { transform: scale(1.9) translateY(22%) translateX(4%); }
     72% { transform: scale(1.92) translateY(21%) translateX(-4%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
+  @keyframes ggAbilityGlow { 0%, 100% { box-shadow: 0 0 10px rgba(240,206,122,.22), inset 0 0.5px 0 rgba(255,243,196,.25); }
+    50% { box-shadow: 0 0 22px rgba(240,206,122,.5), inset 0 0.5px 0 rgba(255,243,196,.4); } }
+  @keyframes ggUpPulse { 0%, 100% { box-shadow: 0 0 10px rgba(64,110,220,.35), 0 0 0 0 rgba(227,192,122,.0), inset 0 1px 0 rgba(190,215,255,.35); }
+    50% { box-shadow: 0 0 18px rgba(80,130,240,.55), 0 0 0 3px rgba(227,192,122,.18), inset 0 1px 0 rgba(190,215,255,.45); } }
   @keyframes ggNewPulse { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(240,206,122,.25), 0 0 10px rgba(240,206,122,.15); }
     50% { box-shadow: inset 0 0 0 4.5px rgba(246,233,164,.95), 0 0 30px rgba(240,206,122,.8); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }

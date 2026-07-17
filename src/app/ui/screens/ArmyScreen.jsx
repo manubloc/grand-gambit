@@ -107,9 +107,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        <span style={{ alignSelf: "flex-end", width: bigArt ? 34 : 26, height: bigArt ? 34 : 26, flex: "0 0 auto",
-          marginLeft: -10, marginBottom: 2, background: "rgba(10,13,20,.82)", borderRadius: 7, padding: 3,
-          border: "1px solid rgba(233,210,150,.4)", boxSizing: "border-box" }} title="Vektor-Symbol">
+        <span style={{ alignSelf: "center", width: bigArt ? 46 : 34, height: bigArt ? 46 : 34, flex: "0 0 auto",
+          marginLeft: -4, filter: "drop-shadow(0 2px 4px rgba(0,0,0,.55))" }} title="Vektor-Symbol">
           <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" showLevel={false} /></span></>
         : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -158,9 +157,19 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III", "IV", "V", "VI"][gambitTier(level) - 1] })}</span>}
           {maxed ? t("army.maxed") : <>Level {level} → {level + 1}</>}
         </div>
-        {!maxed && <GoldShineButton disabled={!affordable} style={{ padding: "8px 14px", fontSize: 13 }}
-          onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}>
-          {t("army.upgrade")} · {cost} <SkillStar size={12} /></GoldShineButton>}
+        {!maxed && <button disabled={!affordable}
+          onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
+            fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
+            cursor: affordable ? "pointer" : "default",
+            // the INVERSE seal: deep night-blue, lettered in gold — nothing else looks like this
+            background: affordable ? "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" : "#1a2340",
+            color: affordable ? "#f6e9a4" : "#8d94ad",
+            border: `1.5px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
+            boxShadow: affordable ? "0 0 14px rgba(64,110,220,.4), inset 0 1px 0 rgba(190,215,255,.35)" : "none",
+            animation: affordable ? "ggUpPulse 2.2s ease-in-out infinite" : "none",
+            textShadow: affordable ? "0 1px 2px rgba(0,0,0,.5)" : "none" }}>
+          {t("army.upgrade")} · {cost} <SkillStar size={12} /></button>}
       </div>
     )}
 
@@ -206,11 +215,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           return (
             <div key={rg.id} style={{ display: "flex", flexDirection: "column", gap: 6, padding: "10px 12px 9px",
               borderRadius: 12,
-              border: `1px solid ${owned ? tg.color + "88" : reach ? "#8a6d3566" : "#3d4666"}`,
+              border: `1px solid ${owned ? tg.color + "88" : can ? "#e3c07acc" : reach ? "#8a6d3566" : "#3d4666"}`,
               background: owned
                 ? `linear-gradient(165deg, ${tg.color}16, rgba(8, 10, 20, .55))`
+                : can ? "linear-gradient(165deg, rgba(84, 66, 24, .5), rgba(26, 21, 10, .75))" // ripe for the taking: lit in gold
                 : reach ? `linear-gradient(165deg, rgba(43, 36, 16, .35), ${T.panel2})` : T.panel2,
-              boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)` : "none",
+              boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)`
+                : can ? "0 0 16px rgba(240,206,122,.3), inset 0 0.5px 0 rgba(255,243,196,.3)" : "none",
+              animation: can ? "ggAbilityGlow 2.6s ease-in-out infinite" : "none",
               opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <span style={{ fontSize: 15, lineHeight: 1 }}>{ab.icon}</span>
