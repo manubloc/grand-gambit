@@ -12,7 +12,7 @@ import {
 } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { BASE_EN } from "../../../core/index.js";
+import { BASE_EN, ABILITY_COST } from "../../../core/index.js";
 import { EnergyIc } from "../icons.jsx";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
@@ -109,7 +109,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        <span style={{ alignSelf: "center", width: bigArt ? 46 : 34, height: bigArt ? 46 : 34, flex: "0 0 auto",
+        <span style={{ alignSelf: "center", width: bigArt ? 62 : 44, height: bigArt ? 62 : 44, flex: "0 0 auto",
           marginLeft: -4, filter: "drop-shadow(0 2px 4px rgba(0,0,0,.55))" }} title="Vektor-Symbol">
           <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" showLevel={false} /></span></>
         : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
@@ -164,10 +164,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
             const regen = (BASE_EN[k] || 2) >= 4;
             return <>
-              <div style={{ display: "flex", gap: 9, flexWrap: "wrap", marginBottom: 3 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", marginBottom: 3 }}>
                 <span style={{ fontWeight: 800, color: "#8fd6a0" }}>♥ {hpAt(level)}</span>
                 <span style={{ fontWeight: 800, color: "#e5975f" }}>⚔ {atkAt(level)}</span>
-                <span style={{ fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={11} /> {enAt(level)}{regen && <span style={{ color: "#6f96bd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</span>
+                <span style={{ fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 3 }}><EnergyIc size={11} style={{ verticalAlign: 0 }} /> {enAt(level)}{regen && <span style={{ color: "#6f96bd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</span>
               </div>
               {maxed ? t("army.maxed") : <span style={{ color: T.dim }}>Level {level} → {level + 1}
                 <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
@@ -236,27 +236,45 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               border: `1px solid ${owned ? tg.color + "88" : can ? "#e3c07acc" : reach ? "#8a6d3566" : "#3d4666"}`,
               background: owned
                 ? `linear-gradient(165deg, ${tg.color}16, rgba(8, 10, 20, .55))`
-                : can ? "linear-gradient(165deg, rgba(84, 66, 24, .5), rgba(26, 21, 10, .75))" // ripe for the taking: lit in gold
+                : can ? "linear-gradient(165deg, rgba(101, 79, 26, .58), rgba(30, 24, 11, .8))" // ripe for the taking: lit in gold
                 : reach ? `linear-gradient(165deg, rgba(43, 36, 16, .35), ${T.panel2})` : T.panel2,
               boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)`
-                : can ? "0 0 16px rgba(240,206,122,.3), inset 0 0.5px 0 rgba(255,243,196,.3)" : "none",
+                : can ? "0 0 20px rgba(240,206,122,.42), inset 0 0.5px 0 rgba(255,243,196,.35)" : "none",
               animation: can ? "ggAbilityGlow 2.6s ease-in-out infinite" : "none",
               opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                <span style={{ fontSize: 15, lineHeight: 1 }}>{ab.icon}</span>
-                <b style={{ fontSize: 12.5, letterSpacing: ".01em", color: owned ? tg.color : reach ? T.text : "#b9b295" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span aria-hidden style={{ width: 30, height: 30, borderRadius: 999, flex: "0 0 auto",
+                  display: "grid", placeItems: "center", fontSize: 15, lineHeight: 1,
+                  background: `radial-gradient(circle at 35% 30%, ${tg.color}44, rgba(8,10,20,.72) 72%)`,
+                  border: `1px solid ${can ? "#e8c87d" : owned ? tg.color + "aa" : tg.color + "55"}`,
+                  boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(255,243,196,.3)"
+                    : owned ? `0 0 8px ${tg.color}33, inset 0 1px 0 rgba(255,255,255,.12)` : "inset 0 1px 0 rgba(255,255,255,.08)" }}>
+                  {ab.icon}</span>
+                <b className="gg-serif" style={{ fontSize: 13, letterSpacing: ".03em",
+                  color: owned ? tg.color : can ? "#f2dea0" : reach ? T.text : "#b9b295" }}>
                   {en ? ab.nameEn : ab.nameDe}</b>
                 <span style={{ flex: 1 }} />
-                {owned && <span aria-hidden style={{ width: 7, height: 7, transform: "rotate(45deg)", flex: "0 0 auto",
-                  background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588" }} />}
+                {owned
+                  ? <span aria-hidden style={{ width: 7, height: 7, transform: "rotate(45deg)", flex: "0 0 auto",
+                      background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588" }} />
+                  : reach && <span style={{ display: "inline-flex", alignItems: "center", gap: 3, flex: "0 0 auto",
+                      padding: "2.5px 8px", borderRadius: 999, fontSize: 11, fontWeight: 800,
+                      background: can ? "linear-gradient(180deg, #f4dd92, #c9a45c)" : "rgba(10, 14, 26, .55)",
+                      color: can ? "#2a1f08" : "#8d94ad",
+                      border: can ? "1px solid #f6e6ae" : `1px solid ${T.line}`,
+                      boxShadow: can ? "0 0 10px rgba(240,206,122,.4), inset 0 1px 0 rgba(255,250,220,.6)" : "none" }}>
+                      {price} <SkillStar size={11} /></span>}
               </div>
               <div style={{ fontSize: 11.5, lineHeight: 1.55, color: owned || reach ? INK : "#a8a28c" }}>
                 {en ? ab.descEn : ab.descDe}</div>
               <div style={{ flex: 1 }} />
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <Chip color={tg.color} bg={"rgba(8, 10, 20, .5)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
-                <Chip color={ab.once ? T.gold : T.green} bg={"rgba(8, 10, 20, .5)"}>
-                  {ab.once ? (en ? "once" : "einmalig") : (en ? "passive" : "dauerhaft")}</Chip>
+                {(ABILITY_COST[rg.id] ?? 0) > 0
+                  ? <Chip color={"#8ec7f2"} bg={"rgba(8, 10, 20, .5)"}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+                        <EnergyIc size={10} style={{ verticalAlign: 0 }} />{ABILITY_COST[rg.id]}</span></Chip>
+                  : <Chip color={T.green} bg={"rgba(8, 10, 20, .5)"}>{en ? "passive" : "dauerhaft"}</Chip>}
                 {!ab.live && <Chip color={T.faint} bg={"rgba(8, 10, 20, .5)"}>{en ? "soon" : "bald"}</Chip>}
                 <span style={{ flex: 1 }} />
                 {owned
@@ -265,7 +283,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                   : reach
                     ? <GoldShineButton disabled={!can} style={{ fontSize: 12, padding: "6px 12px" }}
                         onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })}>
-                        {en ? "Acquire" : "Erwerben"} · {price} <SkillStar size={12} /></GoldShineButton>
+                        {en ? "Acquire" : "Erwerben"}</GoldShineButton>
                     : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".06em", color: T.faint }}>
                         {en ? "from level" : "ab Stufe"} {rg.level}</span>}
               </div>

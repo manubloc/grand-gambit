@@ -68,20 +68,20 @@ export const GLOBAL_CSS = `
      along the enemy's TWO ranks (screen-filling) and sweep past once before
      settling. A: left→right. B: right→left. C: a glance at your own line,
      then the sweep. */
-  @keyframes ggBoardFlyA { 0% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
-    14% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
-    62% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+  @keyframes ggBoardFlyA { 0% { transform: scale(2.7) translateY(16.5%) translateX(15.5%); }
+    14% { transform: scale(2.7) translateY(16.5%) translateX(15.5%); }
+    62% { transform: scale(2.7) translateY(16.5%) translateX(-15.5%); }
     82% { transform: scale(1.55) translateY(5%) translateX(-3%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
-  @keyframes ggBoardFlyB { 0% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
-    14% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
-    62% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
+  @keyframes ggBoardFlyB { 0% { transform: scale(2.7) translateY(16.5%) translateX(-15.5%); }
+    14% { transform: scale(2.7) translateY(16.5%) translateX(-15.5%); }
+    62% { transform: scale(2.7) translateY(16.5%) translateX(15.5%); }
     82% { transform: scale(1.55) translateY(5%) translateX(3%); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggBoardFlyC { 0% { transform: scale(2.2) translateY(-19%) translateX(-8%); }
     16% { transform: scale(2.2) translateY(-19%) translateX(6%); }
-    30% { transform: scale(2.7) translateY(16.5%) translateX(12%); }
-    72% { transform: scale(2.7) translateY(16.5%) translateX(-12%); }
+    30% { transform: scale(2.7) translateY(16.5%) translateX(15.5%); }
+    72% { transform: scale(2.7) translateY(16.5%) translateX(-15.5%); }
     86% { transform: scale(1.5) translateY(4%) translateX(0); }
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggAbilityGlow { 0%, 100% { box-shadow: 0 0 10px rgba(240,206,122,.22), inset 0 0.5px 0 rgba(255,243,196,.25); }

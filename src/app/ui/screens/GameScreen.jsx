@@ -18,6 +18,27 @@ import texWear2 from "../assets/tex-wear-2.webp";
 import texWear3 from "../assets/tex-wear-3.webp";
 import texWear4 from "../assets/tex-wear-4.webp";
 
+// ── THE LAND BLEEDS INTO THE BOARD ──────────────────────────────────────────
+// Square tints sampled from each league's world painting: light = the open
+// ground, dark = the same landscape's saturated shadow (spring goes mossy
+// green, the sea deep blue) — every battle is fought INSIDE its world.
+const LEAGUE_BOARD = {
+  1: { sqLight: "#d6c79d", sqDark: "#716844" },
+  2: { sqLight: "#ac9250", sqDark: "#433d1e" },
+  3: { sqLight: "#ca954f", sqDark: "#5d3915" },
+  4: { sqLight: "#d2dae7", sqDark: "#687485" },
+  5: { sqLight: "#bfbeb9", sqDark: "#696864" },
+  6: { sqLight: "#ac8b64", sqDark: "#54412c" },
+  7: { sqLight: "#e1bc7b", sqDark: "#896429" },
+  8: { sqLight: "#e59558", sqDark: "#7d3f22" },
+  9: { sqLight: "#f8ca79", sqDark: "#a97c40" },
+  10: { sqLight: "#98a6a8", sqDark: "#315360" },
+};
+const boardPalette = (profile) => {
+  const lg = profile?.campaign?.league || 1;
+  return LEAGUE_BOARD[((lg - 1) % 10) + 1] || LEAGUE_BOARD[1];
+};
+
 // The board's material ages with the journey: leagues I–IV play on cared-for
 // wood, V–VII on well-used boards, VIII–X on veterans full of scars. Quick
 // play, hotseat and pvp keep the pristine one.
@@ -549,7 +570,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           animation: flyGo && !flyDone && !zoomMode ? `ggBoardFly${flyVar} 6.2s cubic-bezier(.4,.1,.25,1) both` : "none",
           opacity: flyGo ? 1 : 0.985 }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
-          flip={viewColor === BLACK} theme={map.theme} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
+          flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
           texture={boardTexture(match, profile)} artStyle={classic ? "classic" : profile.pieceStyle === "svg" ? "svg" : "painted"} friendly={!!match?.friendly}
@@ -579,11 +600,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                       objectPosition: "center bottom", flex: "0 0 auto", userSelect: "none",
                       filter: own ? "brightness(1.3) saturate(1.05) drop-shadow(0 2px 4px rgba(0,0,0,.6))"
                         : ENEMY_FILTER + " brightness(1.25) drop-shadow(0 2px 4px rgba(0,0,0,.6))" }} />); })()}
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
                     {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
-                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={11} /> {pc.en}/{pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
+                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 3 }}><EnergyIc size={11} style={{ verticalAlign: 0 }} /> {pc.en}/{pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
                     {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
