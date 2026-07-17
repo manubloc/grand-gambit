@@ -8,7 +8,8 @@ import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
-  itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus } from "../../../meta/index.js";
+  itemRevealed, bossWinsFor, effectiveNodeBoss,
+} from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { BASE_EN, ABILITY_COST } from "../../../core/index.js";
@@ -105,11 +106,13 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       {paintedById(char.id)
         ? <><img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-            style={{ width: bigArt ? 118 : 74, height: bigArt ? 152 : 96, objectFit: "contain", objectPosition: "bottom",
+            style={{ width: bigArt ? 100 : 62, height: bigArt ? 128 : 80, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        </>
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 80 : 52} />}
+        <span style={{ alignSelf: "center", width: bigArt ? 62 : 44, height: bigArt ? 62 : 44, flex: "0 0 auto",
+          marginLeft: -4, filter: "drop-shadow(0 2px 4px rgba(0,0,0,.55))" }} title="Vektor-Symbol">
+          <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" showLevel={false} /></span></>
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 66 : 44} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
@@ -238,14 +241,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)`
                 : can ? "0 0 20px rgba(240,206,122,.42), inset 0 0.5px 0 rgba(255,243,196,.35)" : "none",
               animation: can ? "ggAbilityGlow 2.6s ease-in-out infinite" : "none",
-              position: "relative", overflow: "hidden",
               opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
-              {can && <span aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-                background: "linear-gradient(115deg, transparent 32%, rgba(255,240,190,.12) 45%, rgba(255,248,214,.26) 50%, rgba(255,240,190,.12) 55%, transparent 68%)",
-                backgroundSize: "260% 100%", animation: "ggSweep 3.4s ease-in-out infinite" }} />}
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span aria-hidden style={{ width: 30, height: 30, borderRadius: 999, flex: "0 0 auto",
-                  display: "block", textAlign: "center", fontSize: 15, lineHeight: "28px",
+                  display: "grid", placeItems: "center", fontSize: 15, lineHeight: 1,
                   background: `radial-gradient(circle at 35% 30%, ${tg.color}44, rgba(8,10,20,.72) 72%)`,
                   border: `1px solid ${can ? "#e8c87d" : owned ? tg.color + "aa" : tg.color + "55"}`,
                   boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(255,243,196,.3)"
@@ -266,7 +265,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                       boxShadow: can ? "0 0 10px rgba(240,206,122,.4), inset 0 1px 0 rgba(255,250,220,.6)" : "none" }}>
                       {price} <SkillStar size={11} /></span>}
               </div>
-              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: can ? "#e6ddbf" : owned || reach ? INK : "#a8a28c" }}>
+              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: owned || reach ? INK : "#a8a28c" }}>
                 {en ? ab.descEn : ab.descDe}</div>
               <div style={{ flex: 1 }} />
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
@@ -705,14 +704,9 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   // monsters currently prowling THIS league's road (rotations included)
   const sighted = useMemo(() => {
     const set = new Set();
-    for (const n of CAMPAIGN) {
-      const st = nodeStatus(profile, n.id);
-      if (st === "locked" || st === "hidden") continue; // beyond the fog: never glimpsed
-      const b = effectiveNodeBoss(n, league);
-      if (b?.pure) set.add(b.pure);
-    }
+    for (const n of CAMPAIGN) { const b = effectiveNodeBoss(n, league); if (b?.pure) set.add(b.pure); }
     return set;
-  }, [profile, league]);
+  }, [league]);
   const bribePrice = (ch) => Math.max(250, Math.round((ch.costValue || 320) * 0.9));
   // ── monster bribery: SOME monsters take gold — but only a lot of it, and
   // only sealed with the SACRIFICE of a recruited crown piece. Tyrants and

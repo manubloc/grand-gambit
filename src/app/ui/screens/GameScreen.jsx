@@ -405,7 +405,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [flyGo, setFlyGo] = useState(false);       // ... and only AFTER the story sheet is acknowledged
   const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
   const [inspect, setInspect] = useState(null);    // the tapped piece's dossier: { i, mode: "own" | "spy" }
-  const [flyVar] = useState(() => ["A", "B"][Math.floor(Math.random() * 2)]); // sweep the ENEMY rank only — never our own
+  const [flyVar] = useState(() => ["A", "B", "C"][Math.floor(Math.random() * 3)]); // each battle opens a little differently
   // ── THE CODEX: which exotic foes has the player met before? First
   // encounters keep their secrets (no move-reading) and introduce themselves
   // with a tale instead; from the NEXT battle on they are an open book. ──

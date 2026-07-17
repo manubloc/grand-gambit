@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.11
+- NOTFALL-REVERT auf Stand 0.22.8 - grandgambit.win blieb mit v0.22.9/10 beim Boot im Fallback haengen ("Wird geladen ...")
+- src/ und index.html exakt auf Commit 9cf98a2 (v0.22.8) zurueckgesetzt; die Features aus 0.22.9/0.22.10 folgen repariert als 0.22.12
+- NEUE EISERNE REGEL: vor jedem Push npm test UND npm run build UND npm run build:single UND node test_boot.mjs (3/3)
+
 ## 0.21.95
 - ABSTURZ BEHOBEN: Tipp auf Gambit in der Karte crashte die App - der onOpenTree-Prop fehlte in der CampaignScreen-Signatur (ReferenceError beim Rendern des Rang-Blatts)
 - GAMBIT-BLATT SAUBER IM FRAME: das Blatt sass faelschlich IN der schwebenden Kopf-Leiste (doppelter Versatz) - jetzt liegt es auf Karten-Ebene, mittig, immer INNERHALB der Karte
