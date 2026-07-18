@@ -54,10 +54,12 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
-  const sqL = texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
-  const sqD = texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
+  // a GROUND painting beneath the field: the squares open further so meadow,
+  // stream and path shimmer through — the land itself hosts the battle
+  const sqL = ground ? hexA(sqL0, 0.6, 0.34) : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
+  const sqD = ground ? hexA(sqD0, 0.66, 0.07) : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
@@ -304,6 +306,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
         background: "#05070c",
         border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
+        {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: `url(${ground})`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         {cells}
         {/* ── THE BIG DRAGON: one sprite over four squares ── */}
         {state.board.map((pc, a) => {

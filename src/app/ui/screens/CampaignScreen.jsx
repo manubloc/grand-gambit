@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
 import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
+import bootUrl from "../assets/wanderer-boot.webp";
 import { T } from "../theme.js";
 import { Button, Chip } from "../primitives.jsx";
 import { GoldShineButton } from "../Gilded.jsx";
@@ -478,18 +479,22 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 background: "linear-gradient(90deg, rgba(240,214,138,.55), rgba(240,214,138,.18) 55%, rgba(240,214,138,0))",
                 borderRadius: 99, filter: "blur(1.6px)", pointerEvents: "none",
                 opacity: token.moving ? 0.8 : 0, transition: token.moving ? "opacity .12s ease" : "opacity .55s ease .05s" }} />
-              <div style={{ position: "absolute", left: "50%", bottom: -3, transform: "translateX(-46%)", width: 30, height: 8,
-                borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(46,42,32,.34), transparent 72%)" }} />
-              {th.sea && hasItem(profile, "boat") && <div style={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", width: 58, height: 29 }}>
-                <svg viewBox="-22 -14 44 22" width="100%" height="100%">{Boat({ x: 0, y: 0, s: 1, k: "tb" }).props.children}</svg>
-              </div>}
+              {!(th.sea && hasItem(profile, "boat")) && <div style={{ position: "absolute", left: "50%", bottom: -3, transform: "translateX(-46%)", width: 30, height: 8,
+                borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(46,42,32,.34), transparent 72%)" }} />}
+              {/* at SEA the Gambit takes to his painted boat: the hull rides in
+                  front of the figure, its foam replaces the road shadow */}
+              {th.sea && hasItem(profile, "boat") && <img src={bootUrl} alt="" draggable={false}
+                style={{ position: "absolute", left: "50%", bottom: -9, transform: "translateX(-50%)",
+                  width: 128, height: "auto", zIndex: 3, pointerEvents: "none", userSelect: "none",
+                  filter: "drop-shadow(0 2px 3px rgba(14,26,38,.45))" }} />}
               <div style={{ position: "relative", width: "100%", height: "100%",
                 // the risen Gambit glows quietly on the road too (Stufe II/III)
                 filter: (() => { const gt = gambitTier(characterLevel(profile, "gambit") || 1);
                   return gt >= 3 ? "drop-shadow(0 2px 3px rgba(46,42,32,.35)) drop-shadow(0 0 6px rgba(240,214,138,.55)) drop-shadow(0 0 13px rgba(240,214,138,.3))"
                     : gt === 2 ? "drop-shadow(0 2px 3px rgba(46,42,32,.35)) drop-shadow(0 0 7px rgba(240,214,138,.45))"
                     : "drop-shadow(0 2px 3px rgba(46,42,32,.35))"; })(),
-                transform: token.moving ? `rotate(${-7 * stride.dir}deg)` : "none", transition: "transform .3s ease" }}>
+                transform: ((th.sea && hasItem(profile, "boat") ? "translateY(-9%)" : "")
+                  + (token.moving ? ` rotate(${-7 * stride.dir}deg)` : "")) || "none", transition: "transform .3s ease" }}>
                 {bm && PAINTED.gambit
                   ? <img src={(() => { const gt = gambitTier(characterLevel(profile, "gambit") || 1);
                       return (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit; })()} alt="" draggable={false} style={{ width: "100%", height: "100%",

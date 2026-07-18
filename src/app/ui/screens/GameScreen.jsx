@@ -17,6 +17,7 @@ import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
 import texWear3 from "../assets/tex-wear-3.webp";
 import texWear4 from "../assets/tex-wear-4.webp";
+import ground01 from "../assets/ground-01.webp";
 
 // ── THE LAND BLEEDS INTO THE BOARD ──────────────────────────────────────────
 // Square tints sampled from each league's world painting: light = the open
@@ -50,6 +51,15 @@ const texHash = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.c
 // classic chess: the chosen Elo sets the bot's search depth
 const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 3;
 
+// the painted GROUND under a campaign board, per league world (01 = spring
+// meadow). Classic boards keep their bare wood; more worlds follow as their
+// paintings arrive.
+const GROUNDS = { 1: ground01 };
+const boardGround = (match, profile) => {
+  if (!match) return null; // quick play & duels keep their bare tables
+  const lg = (((profile?.campaign?.league || 1) - 1) % 10) + 1;
+  return GROUNDS[lg] || null;
+};
 const boardTexture = (match, profile) => {
   if (!match) return WEAR_TEX[0];
   if (match.friendly) return WEAR_TEX[0];   // friendlies play on the freshest table in the house
@@ -586,7 +596,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
-          texture={boardTexture(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
+          texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />

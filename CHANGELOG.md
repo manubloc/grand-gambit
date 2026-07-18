@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.24
+- DER GAMBIT STICHT IN SEE: auf der Meeres-Liga sitzt der Wanderer jetzt im gemalten Ruderboot (sobald das Boot in der Truhe liegt) - der Rumpf legt sich als vordere Ebene vor die Figur, die Gischt ersetzt den Wegschatten, die Figur hebt sich leicht ueber die Bordwand; alle sechs Stufen-Portraits funktionieren unveraendert, das alte Mini-SVG-Boot ist ersetzt
+- WIESE UNTERM BRETT (LIGA I): der gemalte Fruehlingsgrund (Bach, Pfad, Bluehwiese) liegt jetzt unter jedem Kampagnen-Brett der ersten Liga - die Felder oeffnen sich (60/66 Prozent Deckung), damit das Land durchschimmert; Schnellspiel und Duelle behalten ihre blanken Tische. Weitere Welten folgen, sobald ihre Gemaelde eintreffen (GROUNDS-Tabelle 1-10 vorbereitet)
+- Assets importiert und optimiert: Boot freigestellt und beschnitten (640x344, 92 KB WebP mit Alpha), Grund als 1024er WebP (246 KB)
+
 ## 0.22.23
 - SOFORT AUFS BRETT: die Eroeffnungs-Kamerafahrt entfaellt im Schnellen Spiel komplett (auch Klassik Schach und Hotseat) - sie gehoert zur Reise und bleibt Kampagne und Online-Duellen vorbehalten
 - SIMPLE FIGUREN UEBERALL: der Vektor-Figurenstil aus den Einstellungen gilt jetzt auch in Klassik Schach im Schnellen Spiel (vorher ueberschrieb der Klassik-Modus die Wahl mit seinen Gemaelden)
