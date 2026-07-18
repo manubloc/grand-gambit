@@ -58,6 +58,105 @@ function StatPill({ icon, val, color }) {
     <span style={{ display: "inline-flex", color }}>{icon}</span> {val}</span>;
 }
 
+// ── THE CHRONICLE: every figure of the court, its inborn moves and its whole
+// ability ladder — a rulebook page, not a progression view. One law rules it:
+// base moves are INBORN and never change; abilities are LEARNED by level.
+const DIRS_ORTHO = JSON.stringify([[1,0],[-1,0],[0,1],[0,-1]].sort());
+const DIRS_DIAG = JSON.stringify([[1,1],[1,-1],[-1,1],[-1,-1]].sort());
+function describeMoves(ch, en) {
+  const FIX = {
+    pawn: ["Zieht ein Feld voran (zwei aus der Grundreihe), schlägt schräg nach vorn.",
+           "Moves one square forward (two from home), captures diagonally forward."],
+    gambit: ["Zieht wie ein Bauer — doch er ist der Feldherr: Fällt er, ist die Schlacht verloren. Seine sechs Siegel-Stufen schärfen Fähigkeiten und Rüstzeug, nie die Schrittart.",
+             "Moves like a pawn — but he is the commander: lose him and the battle is lost. His six seal tiers sharpen abilities and gear, never the stride."],
+    knight: ["Springt im L (zwei vor, eins zur Seite) — über alles hinweg.", "Leaps in an L (two then one) — over everything."],
+    bishop: ["Gleitet diagonal, beliebig weit.", "Slides diagonally, any distance."],
+    rook: ["Gleitet gerade — waagerecht und senkrecht, beliebig weit.", "Slides straight — files and ranks, any distance."],
+    queen: ["Gleitet in alle acht Richtungen, beliebig weit.", "Slides in all eight directions, any distance."],
+    king: ["Ein Feld in jede Richtung.", "One square in any direction."],
+    archbishop: ["Läufer und Springer in einer Gestalt: diagonal gleiten oder im L springen.", "Bishop and knight in one: slide diagonally or leap the L."],
+    chancellor: ["Turm und Springer in einer Gestalt: gerade gleiten oder im L springen.", "Rook and knight in one: slide straight or leap the L."],
+    hawk: ["Springer-Sprung oder ein einzelner diagonaler Schritt — der wendige Flügelstürmer.", "Knight leap or a single diagonal step — the nimble flanker."],
+    amazon: ["Dame und Springer zugleich — das Schwerste, was der Hof kennt.", "Queen and knight at once — the heaviest piece the court knows."],
+    dragon: ["Ein 2×2-Koloss: Zu Fuß schiebt sich der ganze Block um ein Feld — kämpfen tut sein Gewicht (Trampel-Aura gegen alles am Block). Der Flug (per Fähigkeit) trägt ihn einmal pro Partie mitten ins Getümmel.",
+             "A 2×2 colossus: on foot the whole block shifts one square — his weight does the fighting (trample aura against everything pressed to the block). Flight (an ability) carries him once per battle into the fray."],
+  };
+  if (FIX[ch.id]) return FIX[ch.id][en ? 1 : 0];
+  const ms = ch.moveSpec || {};
+  const parts = [];
+  if (ms.slides?.length) {
+    const key = JSON.stringify([...ms.slides].sort());
+    const dir = key === DIRS_ORTHO ? (en ? "straight" : "gerade")
+      : key === DIRS_DIAG ? (en ? "diagonally" : "diagonal")
+      : (en ? "in all eight directions" : "in alle acht Richtungen");
+    const r = ms.range || 99;
+    parts.push(en ? `Slides ${dir}, up to ${r} square${r > 1 ? "s" : ""}` : `Gleitet ${dir}, bis zu ${r} ${r > 1 ? "Felder" : "Feld"}`);
+  }
+  if (ms.leaps?.length) {
+    const L = ms.leaps, n = L.length;
+    const allDiag1 = n === 4 && L.every(([a, b]) => Math.abs(a) === 1 && Math.abs(b) === 1);
+    const diag12 = n === 8 && L.every(([a, b]) => Math.abs(a) === Math.abs(b) && Math.abs(a) <= 2);
+    const ring2 = n === 16 && L.every(([a, b]) => Math.max(Math.abs(a), Math.abs(b)) === 2);
+    const ortho2 = n === 4 && L.every(([a, b]) => (a === 0) !== (b === 0) && Math.max(Math.abs(a), Math.abs(b)) === 2);
+    const knightL = n === 8 && L.every(([a, b]) => Math.abs(a) + Math.abs(b) === 3 && a && b);
+    const what = allDiag1 ? (en ? "one square diagonally (leaping)" : "ein Feld diagonal (springend)")
+      : diag12 ? (en ? "one or two squares diagonally, over pieces" : "ein bis zwei Felder diagonal, über Figuren hinweg")
+      : ring2 ? (en ? "anywhere on the 2-ring around it, over pieces" : "auf den gesamten 2er-Ring, über Figuren hinweg")
+      : ortho2 ? (en ? "two squares straight, over pieces" : "zwei Felder gerade, über Figuren hinweg")
+      : knightL ? (en ? "the knight's L" : "im Springer-L")
+      : (en ? `to ${n} fixed squares, over pieces` : `auf ${n} feste Zielfelder, über Figuren hinweg`);
+    parts.push((en ? "leaps " : "springt ") + what);
+  }
+  if (!parts.length) return en ? "Moves as its kind." : "Zieht nach Art seiner Gattung.";
+  const txt = parts.join(en ? "; " : "; ");
+  return txt.charAt(0).toUpperCase() + txt.slice(1) + ".";
+}
+
+function ChroniclePanel({ profile, t, en }) {
+  const [openId, setOpenId] = useState(null);
+  const figures = CHARACTER_LIST;
+  return <div style={{ display: "grid", gap: 8 }}>
+    <div className="gg-serif" style={{ fontSize: 12.5, color: "#a9a28a", fontStyle: "italic", lineHeight: 1.5, padding: "2px 4px" }}>
+      {t("chron.law")}</div>
+    {figures.map((ch) => {
+      const open = openId === ch.id;
+      const unlocked = isUnlocked(ch, profile);
+      const rungs = ch.ladder.filter((r) => r.ability);
+      return <div key={ch.id} style={{ borderRadius: 12, border: `1px solid ${open ? "#e3c07a88" : T.line}`,
+        background: "linear-gradient(180deg, rgba(24,32,58,.5), rgba(12,16,30,.6))", overflow: "hidden" }}>
+        <button onClick={() => setOpenId(open ? null : ch.id)} style={{ display: "flex", alignItems: "center", gap: 10,
+          width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+          <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
+            {paintedById(ch.id)
+              ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+                  filter: unlocked ? "none" : "grayscale(1) brightness(.55)" }} />
+              : <Glyph kind={ch.kind} color="w" size={30} />}
+          </span>
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: unlocked ? T.text : "#9a937c" }}>{en ? ch.nameEn : ch.nameDe}</span>
+          </span>
+          <span style={{ color: "#c9b26a", fontSize: 12 }}>{open ? "▾" : "▸"}</span>
+        </button>
+        {open && <div style={{ padding: "0 12px 11px", display: "grid", gap: 8 }}>
+          <div>
+            <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 3 }}>{t("chron.moves").toUpperCase()}</div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "#ddd6bd" }}>{describeMoves(ch, en)}</div>
+          </div>
+          {rungs.length > 0 && <div>
+            <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 4 }}>{t("chron.abilities").toUpperCase()}</div>
+            <div style={{ display: "grid", gap: 6 }}>
+              {rungs.map((rg) => { const ab = ABILITIES[rg.ability];
+                return <div key={rg.ability} style={{ fontSize: 12, lineHeight: 1.5, color: "#c9c3aa" }}>
+                  <span style={{ color: "#f6e4a8", fontWeight: 800 }}>{ab.icon} {ab[en ? "nameEn" : "nameDe"]}</span>
+                  <span className="gg-serif" style={{ color: "#a9a28a", fontSize: 11 }}> · {en ? "from level" : "ab Stufe"} {rg.level}</span>
+                  {" — "}{ab[en ? "descEn" : "descDe"]}</div>; })}
+            </div>
+          </div>}
+        </div>}
+      </div>; })}
+  </div>;
+}
+
 function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle, bigArt = false }) {
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
@@ -898,9 +997,11 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
+      { value: "chron", label: t("army.tabChron") },
       { value: "gear", label: t("army.tabGear") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
   </div>;

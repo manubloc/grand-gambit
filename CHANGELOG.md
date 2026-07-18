@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.32
+- NEUER REITER "CHRONIK" IM HOFSTAAT: das Regelbuch des Hofes - jede der 27 Figuren aufklappbar mit ihren GRUNDZUEGEN (handgeschrieben fuer die klassischen Gattungen inkl. Drache-2x2 und Grand Gambit; automatisch und stets korrekt aus dem moveSpec fuer alle Spezialisten: Gleiten/Reichweite/Spruenge) und ihrer kompletten FAEHIGKEITEN-LEITER (Symbol, Name, ab Stufe, Beschreibung). Noch nicht rekrutierte Figuren erscheinen ausgegraut, ihr Wissen ist frei einsehbar
+- DAS GESETZ STEHT DARUEBER: Grundzuege sind angeboren und aendern sich nie - allein der Grand Gambit waechst ueber seine Siegel-Stufen; Faehigkeiten kommen mit den Stufen hinzu und aendern die Schrittart nicht (im Code stimmt das per Bauart: moveSpec ist statisch je Figur)
+
 ## 0.22.31
 - DER DRACHE BREITET SICH AUS: der Drachenhort-Boss verlor beim Spec-Bau sein big-Flag und stand deshalb auf einem Feld - jetzt entfaltet er sich wie vorgesehen ueber 2x2 (Anker plus drei Fluegel-Marker)
 - AUFSTELLUNG WIEDER AENDERBAR: zwei Blocker behoben. Erstens startete der Editor auf der Klassik-Karte, wo alle Felder bewusst gesperrt sind (reines Schach) - Klassik ist jetzt aus der Kartenwahl des Editors raus, Arena zuerst. Zweitens kannte die map-bewusste Legalitaetspruefung die Drachen-Regeln nicht: der leere Fluegel-Slot machte jede Drachen-Formation illegal (Speichern gesperrt, Kampf fiel still auf Standard zurueck) - Ecken-Regel, Fluegel-Slot und Flex-Abzug jetzt uebernommen
