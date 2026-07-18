@@ -1,6 +1,10 @@
 # Changelog — Grand Gambit
 
 ## 0.22.17
+- ORTSNAMEN OHNE STEMPEL: Steppe (VII), Wueste (IX) und Endloses Meer (X) komplett neu benannt - vorher stanzten dieselben Woerter die halbe Liga (Gras 12x, Sand 17x, Salz 9x), jetzt ist jeder Ort ein eigener Name und keiner wiederholt sich ueber alle zehn Ligen (test_maps prueft das weiterhin automatisch)
+- STRENGE GEHEIMHALTUNG AUCH IM ORTSBLATT: die Story-Zeile einer Boss-Station nannte die wartende Figur (z.B. den Kundschafter am Wolfspass) und die Abtruennig-Zeile verriet eigene Champions vor dem ersten Kampf - beides bleibt jetzt verschleiert bis man an der Station angetreten ist; auf der Karte standen ungespielte Posten schon vorher korrekt leer
+
+## 0.22.17
 - ORTSNAMEN NEU GESCHRIEBEN: die Ligen II-X hatten fuer jede Station in jeder Liga dasselbe Grundwort mit Biom-Praefix (Saatwacht/Frostwacht/Sandwacht, Kornmuehle/Sandmuehle/Tidemuehle ...). Jetzt traegt jede der 51 Stationen pro Liga einen eigenstaendigen Namen aus dem Kapitel der jeweiligen Welt - keine mechanischen Serien mehr, kein Name doppelt ueber die ganze Reise (Test sichert Null Duplikate inkl. Liga I)
 - FIGUREN ERST NACH BEGEGNUNG: auf der Kampagnenkarte bleibt jeder Posten LEER, bis man an dieser Station in dieser Liga gespielt hat (Sieg oder Niederlage). Vorher wurde die Figur schon gezeigt, wenn man sie irgendwo rekrutiert oder anderswo getroffen hatte - jetzt strikt pro Station (campaign.faced), auch das Boss-Blatt und der Totenkopf erscheinen erst dann. Ein frischer Ligastart zeigt 0 von 41 Boss-Posten
 - 7 neue Tests (426 gesamt): Namens-Vollstaendigkeit/Eindeutigkeit und die strikte Pro-Station-Aufdeckung

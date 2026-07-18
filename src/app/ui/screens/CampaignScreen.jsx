@@ -719,8 +719,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
               color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>
           </div>
-          {node?.storyDe && <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
-            {en ? node.storyEn : node.storyDe}</div>}
+          {(() => { // STRICT secrecy extends to the tale: a boss station's story
+            // names its figure — so it stays veiled until you have PLAYED here
+            const tell = !node?.boss || status === "cleared" || facedSet.has(sel);
+            if (tell && node?.storyDe) return <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
+              {en ? node.storyEn : node.storyDe}</div>;
+            if (node?.boss) return <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
+              {t("camp.veiled")}</div>;
+            return null; })()}
           <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 9 }}>
             <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{mapById(effectiveMap(node, league))[en ? "nameEn" : "nameDe"]}</Chip>
             <Chip className="gg-serif" color={PP.chipInk} bg={PP.bg2}>{t("mode." + node.rules)}</Chip>
@@ -750,7 +756,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>
-                {unlockCh && known && status !== "cleared" && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
+                {unlockCh && known && status !== "cleared" && facedSet.has(sel) && <div className="gg-serif" style={{ fontSize: 11.5, color: "#8e2f39", fontStyle: "italic", marginTop: 4, lineHeight: 1.4 }}>
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
                 {(() => { const v = voiceFor(boss);   // the saga speaks on the map too
                   return v ? <div className="gg-serif" style={{ fontSize: 11.5, color: "#6b5c44", fontStyle: "italic", marginTop: 5, lineHeight: 1.5 }}>
