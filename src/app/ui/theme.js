@@ -68,6 +68,9 @@ export const GLOBAL_CSS = `
      along the enemy's TWO ranks (screen-filling) and sweep past once before
      settling. A: left→right. B: right→left. C: a glance at your own line,
      then the sweep. */
+  @keyframes ggBoardZoomIn { 0% { transform: scale(.22) translateY(2%); filter: blur(2.5px); }
+    55% { filter: blur(0); }
+    100% { transform: scale(1) translateY(0); filter: blur(0); } }
   @keyframes ggBoardFlyA { 0% { transform: scale(2.7) translateY(16.5%) translateX(16.2%); }
     14% { transform: scale(2.7) translateY(16.5%) translateX(16.2%); }
     62% { transform: scale(2.7) translateY(16.5%) translateX(-16.2%); }

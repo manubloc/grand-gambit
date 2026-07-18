@@ -428,7 +428,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [flyGo, setFlyGo] = useState(false);       // ... and only AFTER the story sheet is acknowledged
   const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
   const [inspect, setInspect] = useState(null);    // the tapped piece's dossier: { i, mode: "own" | "spy" }
-  const [flyVar] = useState(() => ["A", "B"][Math.floor(Math.random() * 2)]); // sweep the ENEMY rank only — never our own
   // ── THE CODEX: which exotic foes has the player met before? First
   // encounters keep their secrets (no move-reading) and introduce themselves
   // with a tale instead; from the NEXT battle on they are an open book. ──
@@ -462,7 +461,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     }
   };
   useEffect(() => { if (!intro && !flyGo) setFlyGo(true); }, [intro]); // the curtain rises once the tale is told
-  useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 6400); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
+  useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 2000); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
     const id = setTimeout(() => setArmResign(false), 3500);
@@ -590,7 +589,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ width: "100%", height: "100%",
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
-          animation: flyGo && !flyDone && !zoomMode ? `ggBoardFly${flyVar} 6.2s cubic-bezier(.4,.1,.25,1) both` : "none",
+          animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
         <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}

@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.29
+- ZOOM STATT KAMERAFAHRT: die 6-Sekunden-Eroeffnungsfahrt ueber die Feindreihe ist ersetzt durch einen kurzen, sauberen Zoom (1,9s) - das Brett steigt klein und leicht verschwommen aus der Kartenhoehe auf und rastet scharf in voller Groesse ein, wie ein Hineinzoomen in die Station; gilt fuer Kampagne und Duelle, Schnellspiel bleibt ohne Anlauf
+
 ## 0.22.28
 - ORGANISCHE FELD-UEBERGAENGE AUF GROUND-BRETTERN: die Hell/Dunkel-Schleier sind jetzt radiale Verlaeufe (kraeftig in der Feldmitte, zu den Raendern auslaufend), sodass Nachbarfelder ueber der Wiese ineinander verschmelzen statt an einer Kante zu stossen; die harten Relief-Linien weichen einem weichen, verwaschenen Hauch. Gemessen: Uebergangsbreite an der Naht ~17px statt 1-2px, Zentren-Kontrast 75 (Schachbrett klar lesbar)
 
