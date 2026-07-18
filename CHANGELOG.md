@@ -1,18 +1,12 @@
 # Changelog — Grand Gambit
 
-## 0.22.17
-- ORTSNAMEN OHNE STEMPEL: Steppe (VII), Wueste (IX) und Endloses Meer (X) komplett neu benannt - vorher stanzten dieselben Woerter die halbe Liga (Gras 12x, Sand 17x, Salz 9x), jetzt ist jeder Ort ein eigener Name und keiner wiederholt sich ueber alle zehn Ligen (test_maps prueft das weiterhin automatisch)
-- STRENGE GEHEIMHALTUNG AUCH IM ORTSBLATT: die Story-Zeile einer Boss-Station nannte die wartende Figur (z.B. den Kundschafter am Wolfspass) und die Abtruennig-Zeile verriet eigene Champions vor dem ersten Kampf - beides bleibt jetzt verschleiert bis man an der Station angetreten ist; auf der Karte standen ungespielte Posten schon vorher korrekt leer
+## 0.22.18
+- CHANGELOG bereinigt: drei 0.22.17-Bloecke aus mehreren Arbeitsgaengen zu einem zusammengefasst (keine Code-Aenderung)
 
 ## 0.22.17
-- ORTSNAMEN NEU GESCHRIEBEN: die Ligen II-X hatten fuer jede Station in jeder Liga dasselbe Grundwort mit Biom-Praefix (Saatwacht/Frostwacht/Sandwacht, Kornmuehle/Sandmuehle/Tidemuehle ...). Jetzt traegt jede der 51 Stationen pro Liga einen eigenstaendigen Namen aus dem Kapitel der jeweiligen Welt - keine mechanischen Serien mehr, kein Name doppelt ueber die ganze Reise (Test sichert Null Duplikate inkl. Liga I)
-- FIGUREN ERST NACH BEGEGNUNG: auf der Kampagnenkarte bleibt jeder Posten LEER, bis man an dieser Station in dieser Liga gespielt hat (Sieg oder Niederlage). Vorher wurde die Figur schon gezeigt, wenn man sie irgendwo rekrutiert oder anderswo getroffen hatte - jetzt strikt pro Station (campaign.faced), auch das Boss-Blatt und der Totenkopf erscheinen erst dann. Ein frischer Ligastart zeigt 0 von 41 Boss-Posten
-- 7 neue Tests (426 gesamt): Namens-Vollstaendigkeit/Eindeutigkeit und die strikte Pro-Station-Aufdeckung
-
-## 0.22.17
-- ECHTE ORTSNAMEN STATT PRAEFIX-SCHEMA: die Stationen der Ligen II-X heissen nicht mehr mechanisch "Salz..."/"Laub..." o.ae., sondern tragen handgeschriebene, zur jeweiligen Welt passende Namen (Sommer: Richtkanzel, Dreschfeste; Meer: Leuchtturm, Kapitaenshalle, Osrics Riff ...). 510 Namen, garantiert keiner doppelt ueber alle zehn Ligen (per Test abgesichert); Liga I behaelt ihre Heimatnamen
-- FIGUREN ERST NACH DEM KAMPF: an einem Knoten wird die Figur/das Monster gar nicht mehr dargestellt, solange man nicht gegen sie gespielt hat - der Posten bleibt leer (nur Schwerter-Symbol bzw. leerer Platz auf gemalten Karten). Erst ein geklaerter Knoten (oder eine bereits rekrutierte Figur) zeigt die Gestalt; Monster erscheinen, sobald sie einmal auf einem Brett gesichtet wurden. Kein grauer Schatten spoilert mehr, was wartet
-- 6 neue Tests sichern Vollstaendigkeit und Eindeutigkeit der Ortsnamen
+- ECHTE ORTSNAMEN STATT PRAEFIX-SCHEMA: alle Stationen der Ligen II-X tragen handgeschriebene, storygebundene Namen - keine mechanischen Serien mehr (vorher Saatwacht/Frostwacht/Sandwacht und zuletzt noch Gras 12x, Sand 17x, Salz 9x in VII/IX/X), kein Name doppelt ueber alle zehn Ligen inkl. Liga I (per Test gesichert); Liga I behaelt ihre Heimatnamen
+- FIGUREN ERST NACH DEM KAMPF: jeder Posten bleibt leer, bis man an dieser Station in dieser Liga gespielt hat (Sieg oder Niederlage, campaign.faced) - gemalte Karte, Boss-Blatt und Totenkopf decken erst dann auf; auch die Story-Zeile des Ortsblatts und die Abtruennig-Zeile bleiben bis dahin verschleiert (Schleiertext: "Niemand berichtet, was hier wartet ...")
+- Namens- und Aufdeckungs-Tests erweitert (428 gesamt gruen)
 
 ## 0.22.16
 - SIEGEL-FAMILIE AUF DER CHARAKTERKARTE: alle Zeichen-Bubbles tragen jetzt den Look des Verbessern-Knopfs (tiefes Nachtblau, Goldrand, Goldschrift) - die Herz/Schwert-Pillen im Kopf, der Sterne-Chip, die Wertezeile neben dem Verbessern-Knopf und die runden Talent-Symbole; die Zeichen selbst behalten ihre Bedeutungsfarbe, gekaufte Talente ihren Familien-Schein
