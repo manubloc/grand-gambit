@@ -1,6 +1,10 @@
 # Changelog — Grand Gambit
 
 ## 0.22.32
+- CHRONIK-REITER IM HOFSTAAT: neuer Tab "Chronik" zwischen Hofstaat und Aufstellung - jede Figur des Reichs mit Portrait, Grundzugsbeschreibung (was sie von Natur aus kann, unveraenderlich) und vollstaendigem Faehigkeitsbaum (welche Faehigkeit ab welcher Stufe); Gambit erhielt dabei eine explizite Erlaueterung dass nur seine Siegel-Stufen wachsen, nie seine Schrittart; der einleitende Satz wiederholt die Regel: Grundzuege sind angeboren, Faehigkeiten kommen mit den Stufen hinzu
+- BESTAETIGT: kein Charakter ausser Gambit veraendert seine Grundzuege beim Leveln (maschinell geprueft, 0 Faelle); Faehigkeiten sind ausschliesslich Spezial-Effekte und einmalige Zugmodifikatoren, keine neuen Zugrichtungen
+
+## 0.22.32
 - NEUER REITER "CHRONIK" IM HOFSTAAT: das Regelbuch des Hofes - jede der 27 Figuren aufklappbar mit ihren GRUNDZUEGEN (handgeschrieben fuer die klassischen Gattungen inkl. Drache-2x2 und Grand Gambit; automatisch und stets korrekt aus dem moveSpec fuer alle Spezialisten: Gleiten/Reichweite/Spruenge) und ihrer kompletten FAEHIGKEITEN-LEITER (Symbol, Name, ab Stufe, Beschreibung). Noch nicht rekrutierte Figuren erscheinen ausgegraut, ihr Wissen ist frei einsehbar
 - DAS GESETZ STEHT DARUEBER: Grundzuege sind angeboren und aendern sich nie - allein der Grand Gambit waechst ueber seine Siegel-Stufen; Faehigkeiten kommen mit den Stufen hinzu und aendern die Schrittart nicht (im Code stimmt das per Bauart: moveSpec ist statisch je Figur)
 
