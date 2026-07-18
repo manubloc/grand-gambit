@@ -445,13 +445,18 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 24 : below ? 27 : 52, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
-                    {/* a WHISPER of ground: so faint the eye never catches a
-                        mismatched edge — readability lives in the letter halo below */}
-                    <span aria-hidden style={{ position: "absolute", inset: "-8px -18px", borderRadius: "50%",
+                    {/* Land: a WHISPER of ground blends the label into a pale
+                        surface. The SEA has no pale surface to blend into — a halo
+                        there reads as an ugly oval, so we drop it and carry the
+                        name on the letters alone (bright ink, dark outline). */}
+                    {!th.sea && <span aria-hidden style={{ position: "absolute", inset: "-8px -18px", borderRadius: "50%",
                       background: `radial-gradient(ellipse at center, rgba(${labelTint(viewLeague)},.22) 0%, rgba(${labelTint(viewLeague)},.12) 38%, rgba(${labelTint(viewLeague)},.04) 62%, transparent 78%)`,
-                      filter: "blur(4px)", pointerEvents: "none" }} />
-                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: `0 0 7px rgba(${labelTint(viewLeague)},.95), 0 0 3px rgba(${labelTint(viewLeague)},.9), 0 1px 1px rgba(${labelTint(viewLeague)},.55)` }}>{placeFor(n, viewLeague)}</span>
+                      filter: "blur(4px)", pointerEvents: "none" }} />}
+                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700,
+                      color: th.sea ? "#fbf6e8" : "#231d10",
+                      lineHeight: 0.94, textShadow: th.sea
+                        ? "0 1px 2px rgba(6,20,34,.95), 0 0 4px rgba(6,20,34,.85), 0 0 1px rgba(6,20,34,1)"
+                        : `0 0 7px rgba(${labelTint(viewLeague)},.95), 0 0 3px rgba(${labelTint(viewLeague)},.9), 0 1px 1px rgba(${labelTint(viewLeague)},.55)` }}>{placeFor(n, viewLeague)}</span>
                   </span>
                 </div>
               </div>

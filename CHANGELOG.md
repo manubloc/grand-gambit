@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.22
+- MEER-ORTSNAMEN OHNE PLAKETTE: auf Liga X wird die helle Grund-Ellipse hinter den Namen jetzt WEGGELASSEN (an Land verschmilzt sie mit hellem Boden, auf dem Wasser sah sie wie ein aufgesetztes Oval aus). Die Namen tragen sich dort ueber die Schrift selbst - heller Text mit dunklem Umriss, gut lesbar auf dem Wasser. Alle anderen Ligen unveraendert (Halo wie gehabt). Verifiziert: Meer-Labels rendern jetzt in hellem #fbf6e8 statt dunkler Schrift auf Halo
+
 ## 0.22.21
 - KARTENNAMEN FOLGEN DER ANGEZEIGTEN LIGA: der Ortsname (und sein Text-Schein) richtete sich nach der Fortschritts-Liga statt nach der gerade angezeigten - beim Zurueckblattern auf fruehere Welten passten Name und Farbe nicht zusammen. Jetzt konsequent an viewLeague gekoppelt (die Werkbank setzt die Fortschritts-Liga, daher wirkte es dort besonders)
 - MEER-BESCHRIFTUNG WIE AN LAND: der Namens-Schein auf Liga X war graublau getoent und stach auf dem Wasser als Farbfleck hervor - jetzt heller neutraler Dunst wie bei den anderen Ligen, die Plakette verschwindet (0 graublaue Halo-Pixel im Meeresband gemessen)
