@@ -18,6 +18,15 @@ import texWear2 from "../assets/tex-wear-2.webp";
 import texWear3 from "../assets/tex-wear-3.webp";
 import texWear4 from "../assets/tex-wear-4.webp";
 import ground01 from "../assets/ground-01.webp";
+import ground02 from "../assets/ground-02.webp";
+import ground03 from "../assets/ground-03.webp";
+import ground04 from "../assets/ground-04.webp";
+import ground05 from "../assets/ground-05.webp";
+import ground06 from "../assets/ground-06.webp";
+import ground07 from "../assets/ground-07.webp";
+import ground08 from "../assets/ground-08.webp";
+import ground09 from "../assets/ground-09.webp";
+import ground10 from "../assets/ground-10.webp";
 
 // ── THE LAND BLEEDS INTO THE BOARD ──────────────────────────────────────────
 // Square tints sampled from each league's world painting: light = the open
@@ -54,7 +63,8 @@ const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 
 // the painted GROUND under a campaign board, per league world (01 = spring
 // meadow). Classic boards keep their bare wood; more worlds follow as their
 // paintings arrive.
-const GROUNDS = { 1: ground01 };
+const GROUNDS = { 1: ground01, 2: ground02, 3: ground03, 4: ground04, 5: ground05,
+  6: ground06, 7: ground07, 8: ground08, 9: ground09, 10: ground10 }; // every world carries its own land under the board
 const boardGround = (match, profile) => {
   if (!match) return null; // quick play & duels keep their bare tables
   const lg = (((profile?.campaign?.league || 1) - 1) % 10) + 1;

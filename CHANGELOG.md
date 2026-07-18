@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.30
+- ALLE ZEHN WELTEN UNTERM BRETT: die Ground-Tabelle ist komplett - Sommer (Trockengras), Herbst (Laubgrund), Winter (Schnee mit gefrorenem Bach), Hochgebirge (Fels mit Schneeresten), Oedland (rissige Erde mit Glutadern), Steppe (Grasland mit Pfaden), Roter Canyon (geborstener Fels), Wueste (Duenen mit Spuren) und Endloses Meer (Wellengang) liegen jetzt wie die Fruehlingswiese unter den Kampagnen-Brettern ihrer Liga, mit denselben organischen Hell/Dunkel-Schleiern; im Browser verifiziert (Liga IX rendert ground-09)
+
 ## 0.22.29
 - ZOOM STATT KAMERAFAHRT: die 6-Sekunden-Eroeffnungsfahrt ueber die Feindreihe ist ersetzt durch einen kurzen, sauberen Zoom (1,9s) - das Brett steigt klein und leicht verschwommen aus der Kartenhoehe auf und rastet scharf in voller Groesse ein, wie ein Hineinzoomen in die Station; gilt fuer Kampagne und Duelle, Schnellspiel bleibt ohne Anlauf
 
