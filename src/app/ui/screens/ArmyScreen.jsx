@@ -50,7 +50,8 @@ function rewardLabel(r, en) {
 function StatPill({ icon, val, color }) {
   // the little seals: the same deep night-blue as the Verbessern button, gold
   // rim, the SIGN keeps its meaning-color — one visual family across the card
-  return <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 900,
+  return <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 5,
+    fontSize: 12.5, fontWeight: 900, minWidth: 58, boxSizing: "border-box",
     padding: "3px 10px", borderRadius: 999, color: "#f6e9a4",
     background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
     border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>
@@ -117,7 +118,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         </>
         : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 94 : 60} />}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
+          paddingRight: bigArt ? 30 : 0 /* clear of the overlay close button */ }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
             {en ? char.nameEn : char.nameDe}
             {(() => { const f = familyOf(char.kind); return f ? <span aria-hidden title={en ? FAMILIES[f].en : FAMILIES[f].de}
@@ -130,7 +132,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             ? <>{stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
             : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
         </div>
-        <div style={{ display: "flex", gap: 14, marginTop: 6, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 10, marginTop: 10, alignItems: "center" }}>
           <StatPill icon={<HeartIc size={12} />} val={maxHp} color={T.green} />
           <StatPill icon={<BladesIc color={T.gold} size={12} />} val={atk} color={T.gold} />
           <span style={{ fontSize: 11.5, color: T.dim }}>{rungs.length} {en ? "abilities" : "Fähigkeiten"}</span>
@@ -167,20 +169,21 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
             const regen = (BASE_EN[k] || 2) >= 4;
             return <>
-              <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "2px 0 9px" }}>
                 {[
                   { ic: <span style={{ color: "#8fd6a0" }}>♥</span>, v: hpAt(level) },
                   { ic: <span style={{ color: "#e5975f" }}>⚔</span>, v: atkAt(level) },
                   { ic: <EnergyIc size={11} style={{ verticalAlign: 0, color: "#8ec7f2" }} />, v: <>{enAt(level)}{regen && <span style={{ color: "#9db8dd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</> },
                 ].map((p, i) => (
-                  <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontWeight: 800, fontSize: 12,
-                    padding: "2px 9px", borderRadius: 999, color: "#f6e9a4",
+                  <span key={i} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
+                    fontWeight: 800, fontSize: 12, minWidth: 58, boxSizing: "border-box",
+                    padding: "3px 9px", borderRadius: 999, color: "#f6e9a4",
                     background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
                     border: "1px solid #e3c07a", boxShadow: "0 0 7px rgba(64,110,220,.28), inset 0 1px 0 rgba(190,215,255,.25)" }}>
                     {p.ic} {p.v}</span>
                 ))}
               </div>
-              {maxed ? t("army.maxed") : <span style={{ color: T.dim }}>Level {level} → {level + 1}
+              {maxed ? t("army.maxed") : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5, marginTop: 1 }}>Level {level} → {level + 1}
                 <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
                 {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · ⚔+1</span>}
                 {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <EnergyIc size={10} />+1</span>}</span>}
@@ -207,7 +210,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       // tier's ten steps; every other piece keeps its plain ten.
       const tier = char.id === "gambit" ? gambitTier(level) : 1;
       const base = (tier - 1) * 10;
-      return <div style={{ display: "flex", gap: 4, marginTop: 9 }} aria-label={t("army.lvl") + " " + level}>
+      return <div style={{ display: "flex", gap: 4, marginTop: 13, marginBottom: 2 }} aria-label={t("army.lvl") + " " + level}>
         {Array.from({ length: 10 }).map((_, i) => (
           <span key={i} style={{ flex: 1, height: 5, borderRadius: 3,
             background: i < level - base ? `linear-gradient(90deg, ${T.lime}, ${T.gold})` : T.panel2,
@@ -230,7 +233,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           if (!reach && future.indexOf(rg) >= 2) return (
             <div key={rg.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
               minHeight: 72, borderRadius: 12, border: `1px dashed ${T.line}`, background: "rgba(10, 14, 26, .45)",
-              color: T.faint, fontSize: 12 }}>
+              color: "#a9a28a", fontSize: 12 }}>
               <LockIc size={12} />
               <span className="gg-serif" style={{ letterSpacing: ".08em" }}>
                 {en ? "Level" : "Stufe"} {rg.level} · {en ? "still veiled" : "noch verhüllt"}</span>
@@ -254,19 +257,22 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               animation: can ? "ggAbilityGlow 2.6s ease-in-out infinite" : "none",
               position: "relative", overflow: "hidden",
               opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
-              {can && <span aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-                background: "linear-gradient(115deg, transparent 32%, rgba(255,240,190,.12) 45%, rgba(255,248,214,.26) 50%, rgba(255,240,190,.12) 55%, transparent 68%)",
-                backgroundSize: "260% 100%", animation: "ggSweep 3.4s ease-in-out infinite" }} />}
+              {can && <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: 12, padding: 1.5,
+                pointerEvents: "none", // the glint rides the CONTOUR only: a ring mask keeps the face clean
+                background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.5) 45%, rgba(255,251,224,.95) 50%, rgba(255,240,190,.5) 55%, transparent 70%)",
+                backgroundSize: "260% 100%", animation: "ggEdgeSweep 3.2s ease-in-out infinite",
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor", mask: "linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)" }} />}
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span aria-hidden style={{ width: 30, height: 30, borderRadius: 999, flex: "0 0 auto",
-                  display: "block", textAlign: "center", fontSize: 15, lineHeight: "28px",
+                  display: "grid", placeItems: "center", fontSize: 15, lineHeight: 1,
                   background: "radial-gradient(circle at 35% 30%, #2c4f9e, #142450 78%)",
                   border: `1px solid ${can ? "#e8c87d" : owned ? "#e3c07a" : "#e3c07a99"}`,
                   boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(190,215,255,.3)"
                     : owned ? `0 0 8px ${tg.color}55, inset 0 1px 0 rgba(190,215,255,.25)` : "inset 0 1px 0 rgba(190,215,255,.18)" }}>
                   {ab.icon}</span>
                 <b className="gg-serif" style={{ fontSize: 13, letterSpacing: ".03em",
-                  color: owned ? tg.color : can ? "#f2dea0" : reach ? T.text : "#b9b295" }}>
+                  color: owned ? tg.color : can ? "#f6e4a8" : reach ? T.text : "#c9c3aa" }}>
                   {en ? ab.nameEn : ab.nameDe}</b>
                 <span style={{ flex: 1 }} />
                 {owned
@@ -280,16 +286,16 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                       boxShadow: can ? "0 0 10px rgba(240,206,122,.4), inset 0 1px 0 rgba(255,250,220,.6)" : "none" }}>
                       {price} <SkillStar size={11} /></span>}
               </div>
-              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: can ? "#e6ddbf" : owned || reach ? INK : "#a8a28c" }}>
+              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: can ? "#efe7c9" : owned || reach ? "#ddd6bd" : "#b5af98" }}>
                 {en ? ab.descEn : ab.descDe}</div>
               <div style={{ flex: 1 }} />
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                <Chip color={tg.color} bg={"rgba(8, 10, 20, .5)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
+                <Chip color={tg.color} bg={"rgba(8, 10, 20, .68)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
                 {(ABILITY_COST[rg.id] ?? 0) > 0
-                  ? <Chip color={"#8ec7f2"} bg={"rgba(8, 10, 20, .5)"}>
+                  ? <Chip color={"#9fd2f7"} bg={"rgba(8, 10, 20, .68)"}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
                         <EnergyIc size={10} style={{ verticalAlign: 0 }} />{ABILITY_COST[rg.id]}</span></Chip>
-                  : <Chip color={T.green} bg={"rgba(8, 10, 20, .5)"}>{en ? "passive" : "dauerhaft"}</Chip>}
+                  : <Chip color={T.green} bg={"rgba(8, 10, 20, .68)"}>{en ? "passive" : "dauerhaft"}</Chip>}
                 {!ab.live && <Chip color={T.faint} bg={"rgba(8, 10, 20, .5)"}>{en ? "soon" : "bald"}</Chip>}
                 <span style={{ flex: 1 }} />
                 {owned
@@ -299,7 +305,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                     ? <GoldShineButton disabled={!can} style={{ fontSize: 12, padding: "6px 12px" }}
                         onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })}>
                         {en ? "Acquire" : "Erwerben"}</GoldShineButton>
-                    : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".06em", color: T.faint }}>
+                    : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".07em", color: "#aaa48c", paddingLeft: 6 }}>
                         {en ? "from level" : "ab Stufe"} {rg.level}</span>}
               </div>
             </div>

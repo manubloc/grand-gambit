@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.19
+- NAMEN, RICHTIG KREATIV: die Ligen II-X komplett neu benannt - eigenstaendige, bildhafte Orte je Welt (Sommer: Maeusekirche, Wende des Lichts; Winter: Barfussspur, Letzte Flocke; Steppe: Hufdonner, Lied der Weite; Wueste: Fata Morgana, Namenlose Weite; Meer: Flaschenpost, Ebbe und Niemand, Planke ueber Schwarz). Bewusste Ketten bleiben als Erzaehlmotiv: je Liga eine Halle, eine Messe, eine Kanzel - und Osrics Koenigs-Mal auf jedem Land. Kein Name doppelt ueber alle zehn Ligen (Test erzwingt es)
+- FAEHIGKEITSKARTE FEINSCHLIFF: Talent-Symbole exakt mittig in den Bubbles (Grid statt Zeilenhoehe), Werte-Pillen fuer Leben/Staerke/Energie gleich gross (58px) mit sauberem Abstand nach oben und unten, Stufen-Chip mit Luft zum Schliessen-Knopf, Stufenpunkte ruecken ab
+- MEHR KONTRAST IM TALENTE-MENUE: Beschreibungen, Titel, Chips und die "ab Stufe"-Hinweise deutlich heller
+- GLANZ NUR IN DER KONTUR: kaufbare Talente tragen den Lichtlauf jetzt ausschliesslich in der Umrandung (Ring-Maske, neues Keyframe ggEdgeSweep) statt ueber der Flaeche; dabei eine Keyframe-Namenskollision behoben, die den Brett-Sweep still ueberschrieben hatte
+
 ## 0.22.18
 - CHANGELOG bereinigt: drei 0.22.17-Bloecke aus mehreren Arbeitsgaengen zu einem zusammengefasst (keine Code-Aenderung)
 
