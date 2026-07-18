@@ -61,8 +61,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // With a painted GROUND the land itself is the board: squares become pure
   // light/dark veils (no theme colour, no stone) so the meadow stays the star,
   // and the existing bevel layers make each tile read as gently RAISED.
-  const sqL = ground ? "rgba(255,255,255,.20)" : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
-  const sqD = ground ? "rgba(0,0,0,.30)" : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
+  // ORGANIC tiles on painted ground: each veil is a radial breath — strong at
+  // the heart of the square, fading out toward the seams so neighbouring tiles
+  // melt into one another over the land instead of meeting at a hard edge.
+  const sqL = ground
+    ? "radial-gradient(circle at 50% 50%, rgba(255,255,255,.27) 0%, rgba(255,255,255,.20) 52%, rgba(255,255,255,.06) 96%)"
+    : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
+  const sqD = ground
+    ? "radial-gradient(circle at 50% 50%, rgba(0,0,0,.37) 0%, rgba(0,0,0,.29) 52%, rgba(0,0,0,.09) 96%)"
+    : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
@@ -219,10 +226,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
             opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />}
-          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />
-          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />
+          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />}
+          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />}
+          {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            boxShadow: "inset 4px 4px 10px -4px rgba(255,252,236,.14), inset -4px -4px 10px -4px rgba(0,0,0,.18)" }} />}
 
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
