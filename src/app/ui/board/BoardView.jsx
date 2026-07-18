@@ -58,8 +58,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
-  const sqL = ground ? hexA(sqL0, 0.6, 0.34) : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
-  const sqD = ground ? hexA(sqD0, 0.66, 0.07) : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
+  // With a painted GROUND the land itself is the board: squares become pure
+  // light/dark veils (no theme colour, no stone) so the meadow stays the star,
+  // and the existing bevel layers make each tile read as gently RAISED.
+  const sqL = ground ? "rgba(255,247,222,.34)" : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
+  const sqD = ground ? "rgba(22,16,7,.44)" : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
@@ -203,7 +206,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const isHit = hpMode && lastMove && lastMove.to === i && (lastMove.damaged || lastMove.lethal);
       // Tiny coordinates on the rim squares (a–j / 1–10), chess-board style:
       // file letters along the bottom edge, rank numbers along the left edge.
-      const coordCol = dark ? sqL : sqD;
+      const coordCol = ground ? (dark ? "rgba(255,247,222,.92)" : "rgba(24,17,7,.88)") : (dark ? sqL : sqD);
       const fileLbl = rr === H - 1 ? "abcdefghij"[f] : null;
       const rankLbl = ff === 0 ? String(r + 1) : null;
       cells.push(
@@ -213,9 +216,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           // is preloaded, so nothing ever pops
           background: `${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
-          <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
-            opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />
+            opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />}
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",

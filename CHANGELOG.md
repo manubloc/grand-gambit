@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.25
+- WIESE ALS STAR, KACHELN ALS RELIEF: das Liga-I-Brett umgedreht - vorher lagen Themenfarbe und Stein-Slab fast deckend UEBER dem Grund, jetzt ist der gemalte Boden voll sichtbar und die Felder sind nur noch neutrale Hell/Dunkel-Schleier (34/44 Prozent) mit den bestehenden Relief-Kanten, wie erhabene Kacheln im Gelaende; Stein-Textur auf Ground-Brettern entfernt, Koordinaten in satter Tinte. Gemessen an leeren Reihen: Hell/Dunkel-Abstand 83, Wiese in beiden Feldtypen deutlich sichtbar (Gruen-Ueberhang +10/+26)
+
 ## 0.22.24
 - DER GAMBIT STICHT IN SEE: auf der Meeres-Liga sitzt der Wanderer jetzt im gemalten Ruderboot (sobald das Boot in der Truhe liegt) - der Rumpf legt sich als vordere Ebene vor die Figur, die Gischt ersetzt den Wegschatten, die Figur hebt sich leicht ueber die Bordwand; alle sechs Stufen-Portraits funktionieren unveraendert, das alte Mini-SVG-Boot ist ersetzt
 - WIESE UNTERM BRETT (LIGA I): der gemalte Fruehlingsgrund (Bach, Pfad, Bluehwiese) liegt jetzt unter jedem Kampagnen-Brett der ersten Liga - die Felder oeffnen sich (60/66 Prozent Deckung), damit das Land durchschimmert; Schnellspiel und Duelle behalten ihre blanken Tische. Weitere Welten folgen, sobald ihre Gemaelde eintreffen (GROUNDS-Tabelle 1-10 vorbereitet)
