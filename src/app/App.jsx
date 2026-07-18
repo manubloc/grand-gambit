@@ -4,10 +4,10 @@ import { nodeById, chapterForRow, buyItem } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
-import { playerXpProgress, skillPoints, claimableCount, retinueScore } from "../meta/index.js";
+import { claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import emblemUrl from "./ui/assets/emblem.webp";
-import { CoinIc, SkillIc, LevelIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
+import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -198,7 +198,6 @@ export default function App() {
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)}
     onBack={() => { setLocked(false); setSlot(null); setReady(false); }} />;
 
-  const prog = playerXpProgress(profile.xpEarned || profile.xp);
   const sub = (title, node) => <div><SubHeader title={title} onBack={() => setView("hub")} t={t} />{node}</div>;
   const screen = pvp
     ? <GameScreen key={"pvp" + pvp.matchId} profile={profile} dispatch={dispatch} t={t} pvp={pvp} onExit={() => setPvp(null)} />
@@ -279,8 +278,6 @@ export default function App() {
   const currencyRow = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: "0 0 auto", alignItems: "center", justifyContent: "flex-end" }}>
       {coinChip(<CoinIc />, profile.gold || 0, t("army.balance"))}
-      {coinChip(<SkillIc />, skillPoints(profile), "Skillpunkte")}
-      {coinChip(<LevelIc />, `Lv ${prog.level}`, `${prog.into} / ${prog.span} XP`)}
       {coinChip(<CrestIc />, retinueScore(profile), t("online.score"))}
     </div>
   );

@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.21
+- KARTENNAMEN FOLGEN DER ANGEZEIGTEN LIGA: der Ortsname (und sein Text-Schein) richtete sich nach der Fortschritts-Liga statt nach der gerade angezeigten - beim Zurueckblattern auf fruehere Welten passten Name und Farbe nicht zusammen. Jetzt konsequent an viewLeague gekoppelt (die Werkbank setzt die Fortschritts-Liga, daher wirkte es dort besonders)
+- MEER-BESCHRIFTUNG WIE AN LAND: der Namens-Schein auf Liga X war graublau getoent und stach auf dem Wasser als Farbfleck hervor - jetzt heller neutraler Dunst wie bei den anderen Ligen, die Plakette verschwindet (0 graublaue Halo-Pixel im Meeresband gemessen)
+- KOPFLEISTE AUFGERAEUMT: nur noch Gold und Hofwert; Level-Anzeige und Skillpunkte entfernt (Skillpunkte fliessen ohnehin in den Hofwert). Ungenutzte Importe/Variablen mitentfernt
+
 ## 0.22.20
 - ORTSNAMEN IM SITZ-REGISTER: alle Ligen II-X erneut ueberarbeitet in Richtung grosser Fantasy-Chroniken - Namen, die wie Stammsitze und Wegmarken klingen (Sichelmark, Zwillingsfeste, Frostthron, Koenigsjoch, Dornendiadem, Gischtthron, Ebbe und Niemand), nichts direkt uebernommen (Blacklist-Pruefung gegen bekannte Westeros-Namen im Build-Skript), kein Name doppelt, keine Slot-Stempel (Suffix-Budget geprueft: max 7 von 510)
 - NAMENSWUERFEL FUER ONLINE-DUELLE: zwei Muster statt einem - "Vorname Beiname" (Maera Salzherz, Torvin Rissgaenger) und das Siegel (EhernerFalke IX); 36 Vornamen x 32 Beinamen plus 20x20x9 Siegel = rund 4750 Kombinationen, dieselbe Kennung faellt in einer Sitzung nie zweimal (Session-Merker mit Ausweich-Suffix), Laengenkappe 24 Zeichen

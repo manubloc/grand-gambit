@@ -73,7 +73,7 @@ const LABEL_TINT = {
   7: "236,196,127",   // Steppe - Grassand
   8: "241,155,91",    // Roter Canyon - Terrakotta
   9: "255,212,127",   // Wueste - Sandgold
-  10: "157,174,176",  // Endloses Meer - Graublau der See
+  10: "228,236,238",  // Endloses Meer - heller Dunst statt Graublau, damit die Plakette wie an Land verschwindet
 };
 const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 10) + 1] || "248,242,226";
 
@@ -448,10 +448,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     {/* a WHISPER of ground: so faint the eye never catches a
                         mismatched edge — readability lives in the letter halo below */}
                     <span aria-hidden style={{ position: "absolute", inset: "-8px -18px", borderRadius: "50%",
-                      background: `radial-gradient(ellipse at center, rgba(${labelTint(league)},.22) 0%, rgba(${labelTint(league)},.12) 38%, rgba(${labelTint(league)},.04) 62%, transparent 78%)`,
+                      background: `radial-gradient(ellipse at center, rgba(${labelTint(viewLeague)},.22) 0%, rgba(${labelTint(viewLeague)},.12) 38%, rgba(${labelTint(viewLeague)},.04) 62%, transparent 78%)`,
                       filter: "blur(4px)", pointerEvents: "none" }} />
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700, color: "#231d10",
-                      lineHeight: 0.94, textShadow: `0 0 7px rgba(${labelTint(league)},.95), 0 0 3px rgba(${labelTint(league)},.9), 0 1px 1px rgba(${labelTint(league)},.55)` }}>{placeFor(n, league)}</span>
+                      lineHeight: 0.94, textShadow: `0 0 7px rgba(${labelTint(viewLeague)},.95), 0 0 3px rgba(${labelTint(viewLeague)},.9), 0 1px 1px rgba(${labelTint(viewLeague)},.55)` }}>{placeFor(n, viewLeague)}</span>
                   </span>
                 </div>
               </div>
