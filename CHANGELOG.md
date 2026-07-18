@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.26
+- WEISSE EINSCHLUESSE IN 25 FIGUREN ENTFERNT: beim urspruenglichen Freistellen ueberlebten eingeschlossene Hintergrund-Reste (weisse Taschen zwischen Arm und Koerper, unter Fluegeln, neben Sockeln). Alle 70 Figuren-Gemaelde maschinell gesichtet, Taschen mit der Original-Freistell-Logik plus Kern-Kriterium (grosse flache Reinweiss-Kerne) entfernt, Raender wie beim Import weich abgefedert. Nachgearbeitet: Amazone, Erzbischof, Attentaeter, Barde, Laeufer, Schildtraeger, Spaeher, Springer, Magier, Paladin, Dame, Seherin, Hexerin, Flaggentraeger sowie die Monster Waechter, Skorpion, Koloss, Sturmkraehe, Blutmagd, Eisenfaust, Schattenfuerst, Hueter, Wandlerin und Mirenn. Kontrolle: groesster verbliebener Weiss-Kern 179px (ein echtes Mal-Highlight), Malerei ausserhalb der Taschen unangetastet (nur Re-Encode-Rauschen), Erzbischof und Inquisitor bewusst in einem einzigen Encode-Durchgang
+
 ## 0.22.25
 - WIESE ALS STAR, KACHELN ALS RELIEF: das Liga-I-Brett umgedreht - vorher lagen Themenfarbe und Stein-Slab fast deckend UEBER dem Grund, jetzt ist der gemalte Boden voll sichtbar und die Felder sind nur noch neutrale Hell/Dunkel-Schleier (34/44 Prozent) mit den bestehenden Relief-Kanten, wie erhabene Kacheln im Gelaende; Stein-Textur auf Ground-Brettern entfernt, Koordinaten in satter Tinte. Gemessen an leeren Reihen: Hell/Dunkel-Abstand 83, Wiese in beiden Feldtypen deutlich sichtbar (Gruen-Ueberhang +10/+26)
 
