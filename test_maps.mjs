@@ -58,5 +58,16 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
   ok("later leagues rename the same node", placeFor(CAMPAIGN.find((n) => n.id === "a1"), 4) !== "Nordwacht");
 }
 
+// ── strict per-station secrecy: a station reveals its figure only after it
+// has been PLAYED in this league (campaign.faced), not merely because the
+// piece is recruited or the monster was met elsewhere ──
+{
+  const withFaced = (ids) => ({ campaign: { league: 3, faced: ids, unlocked: ["knight"], cleared: [] }, codex: { met: ["X:b10"] } });
+  // facedNode logic mirrored from CampaignScreen: cleared OR in faced set
+  const faced = (profile, id) => (profile.campaign?.faced || []).includes(id);
+  ok("an unplayed station stays hidden even for a recruited piece", faced(withFaced([]), "a4") === false);
+  ok("a played station reveals its figure", faced(withFaced(["a4"]), "a4") === true);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -167,16 +167,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // who has actually been FACED on a board — a piece by its kind, a monster by
   // "X:"+id. Until then a node keeps its figure hidden: an empty post, a name
   // to earn, no silhouette to spoil what waits.
-  const metSet = useMemo(() => new Set(profile.codex?.met || []), [profile]);
+  const facedSet = useMemo(() => new Set(profile.campaign?.faced || []), [profile]);
   const facedNode = (n) => {
+    // STRICT per-station secrecy: whether a figure waits here stays unknown
+    // until you have PLAYED at this very station in this league (win or
+    // lose) — even a champion of your own court or a monster met elsewhere.
     if (!n?.boss) return true;                       // plain stations: nothing to hide
     if (nodeStatus(profile, n.id) === "cleared") return true; // beaten HERE: of course shown
-    // a champion you already recruited stands in gold even before a rematch;
-    // otherwise a piece stays hidden until you have cleared THIS station
-    if (n.boss.piece) return unlockedSet.has(n.boss.piece);
-    // monsters: shown once this very foe has been faced on a board (codex)
-    if (n.boss.pure) { const sp = nodeBossSpec(n); return sp?.bossId ? metSet.has("X:" + sp.bossId) : false; }
-    return true;
+    return facedSet.has(n.id);
   };
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
@@ -426,7 +424,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                         <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                       : faced && pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
-                      : n.id === "n22" ? (((viewLeague - 1) % 10) + 1 === 9
+                      : n.id === "n22" ? ((faced && ((viewLeague - 1) % 10) + 1 === 9)
                           ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                           : <CrownIc />) : <Swords />}
                   </div>; })()}
@@ -440,7 +438,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                         justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>)}
                   {st === "gated" && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
                     filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : gateOf(n)?.gold ? <GoldCoin size={11} style={{ verticalAlign: "-2px" }} /> : <LockIc size={11} />}</span>}
-                  {!bm && n.boss?.pure && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 13, height: 13,
+                  {!bm && n.boss?.pure && (viewing || facedNode(n)) && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 13, height: 13,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
                     border: "1.5px solid #efe9da" }}><SkullIc color="#f6f0de" size={8} /></span>}
                 </button>
@@ -730,7 +728,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <Chip className="gg-serif" color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult * (friendly ? 0.25 : 1))} XP</Chip>
             <Chip className="gg-serif" color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult / (friendly ? 2 : 1))}</Chip>
           </div>
-          {boss && (
+          {boss && (status === "cleared" || facedSet.has(sel)) && (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
               <div style={{ width: 84, height: 108, flex: "0 0 auto" }}>
