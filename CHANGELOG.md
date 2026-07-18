@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.20
+- ORTSNAMEN IM SITZ-REGISTER: alle Ligen II-X erneut ueberarbeitet in Richtung grosser Fantasy-Chroniken - Namen, die wie Stammsitze und Wegmarken klingen (Sichelmark, Zwillingsfeste, Frostthron, Koenigsjoch, Dornendiadem, Gischtthron, Ebbe und Niemand), nichts direkt uebernommen (Blacklist-Pruefung gegen bekannte Westeros-Namen im Build-Skript), kein Name doppelt, keine Slot-Stempel (Suffix-Budget geprueft: max 7 von 510)
+- NAMENSWUERFEL FUER ONLINE-DUELLE: zwei Muster statt einem - "Vorname Beiname" (Maera Salzherz, Torvin Rissgaenger) und das Siegel (EhernerFalke IX); 36 Vornamen x 32 Beinamen plus 20x20x9 Siegel = rund 4750 Kombinationen, dieselbe Kennung faellt in einer Sitzung nie zweimal (Session-Merker mit Ausweich-Suffix), Laengenkappe 24 Zeichen
+
 ## 0.22.19
 - NAMEN, RICHTIG KREATIV: die Ligen II-X komplett neu benannt - eigenstaendige, bildhafte Orte je Welt (Sommer: Maeusekirche, Wende des Lichts; Winter: Barfussspur, Letzte Flocke; Steppe: Hufdonner, Lied der Weite; Wueste: Fata Morgana, Namenlose Weite; Meer: Flaschenpost, Ebbe und Niemand, Planke ueber Schwarz). Bewusste Ketten bleiben als Erzaehlmotiv: je Liga eine Halle, eine Messe, eine Kanzel - und Osrics Koenigs-Mal auf jedem Land. Kein Name doppelt ueber alle zehn Ligen (Test erzwingt es)
 - FAEHIGKEITSKARTE FEINSCHLIFF: Talent-Symbole exakt mittig in den Bubbles (Grid statt Zeilenhoehe), Werte-Pillen fuer Leben/Staerke/Energie gleich gross (58px) mit sauberem Abstand nach oben und unten, Stufen-Chip mit Luft zum Schliessen-Knopf, Stufenpunkte ruecken ab
