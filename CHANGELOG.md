@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.17
+- ECHTE ORTSNAMEN STATT PRAEFIX-SCHEMA: die Stationen der Ligen II-X heissen nicht mehr mechanisch "Salz..."/"Laub..." o.ae., sondern tragen handgeschriebene, zur jeweiligen Welt passende Namen (Sommer: Richtkanzel, Dreschfeste; Meer: Leuchtturm, Kapitaenshalle, Osrics Riff ...). 510 Namen, garantiert keiner doppelt ueber alle zehn Ligen (per Test abgesichert); Liga I behaelt ihre Heimatnamen
+- FIGUREN ERST NACH DEM KAMPF: an einem Knoten wird die Figur/das Monster gar nicht mehr dargestellt, solange man nicht gegen sie gespielt hat - der Posten bleibt leer (nur Schwerter-Symbol bzw. leerer Platz auf gemalten Karten). Erst ein geklaerter Knoten (oder eine bereits rekrutierte Figur) zeigt die Gestalt; Monster erscheinen, sobald sie einmal auf einem Brett gesichtet wurden. Kein grauer Schatten spoilert mehr, was wartet
+- 6 neue Tests sichern Vollstaendigkeit und Eindeutigkeit der Ortsnamen
+
 ## 0.22.16
 - SIEGEL-FAMILIE AUF DER CHARAKTERKARTE: alle Zeichen-Bubbles tragen jetzt den Look des Verbessern-Knopfs (tiefes Nachtblau, Goldrand, Goldschrift) - die Herz/Schwert-Pillen im Kopf, der Sterne-Chip, die Wertezeile neben dem Verbessern-Knopf und die runden Talent-Symbole; die Zeichen selbst behalten ihre Bedeutungsfarbe, gekaufte Talente ihren Familien-Schein
 - PORTRAITS GROESSER: geoeffnete Karte 118x152 -> 144x186, eingeklappte Kartenreihe 74x96 -> 86x112, Vektor-Fallback entsprechend

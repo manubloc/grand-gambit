@@ -164,6 +164,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const friendly = status === "cleared" && ((!!unlockCh && known) || sel === "n22");
   const closed = status === "cleared" && !friendly && profile.pausedMatch?.nodeId !== sel;
   const unlockedSet = useMemo(() => new Set(profile.campaign?.unlocked || []), [profile]);
+  // who has actually been FACED on a board — a piece by its kind, a monster by
+  // "X:"+id. Until then a node keeps its figure hidden: an empty post, a name
+  // to earn, no silhouette to spoil what waits.
+  const metSet = useMemo(() => new Set(profile.codex?.met || []), [profile]);
+  const facedNode = (n) => {
+    if (!n?.boss) return true;                       // plain stations: nothing to hide
+    if (nodeStatus(profile, n.id) === "cleared") return true; // beaten HERE: of course shown
+    // a champion you already recruited stands in gold even before a rematch;
+    // otherwise a piece stays hidden until you have cleared THIS station
+    if (n.boss.piece) return unlockedSet.has(n.boss.piece);
+    // monsters: shown once this very foe has been faced on a board (codex)
+    if (n.boss.pure) { const sp = nodeBossSpec(n); return sp?.bossId ? metSet.has("X:" + sp.bossId) : false; }
+    return true;
+  };
   const edges = useMemo(() => CAMPAIGN.flatMap((a) => a.next.map((tid) => ({ a, b: nodeById(tid) }))), []);
 
   // camera target = the Grand Gambit's position (he leads, the map follows)
@@ -344,6 +358,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 {bm && n.boss && (() => {
                   const spec = nodeBossSpec(n, viewLeague);
                   if (!spec) return null;
+                  const faced = viewing || facedNode(n);
+                  if (!faced) return null;           // not yet fought: the post stands empty
                   const finale = n.id === "n22";
                   const size = finale ? 68 : 46;
                   const beaten = st === "cleared";
@@ -402,18 +418,18 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     <ellipse cx="22" cy="8" rx="19.5" ry="7.2" fill={MP.medal} fillOpacity=".46" stroke={ringCol} strokeWidth="1.4" strokeOpacity=".85" />
                     <ellipse cx="22" cy="7" rx="14.5" ry="4.6" fill="none" stroke={ringCol} strokeWidth=".7" opacity=".3" />
                   </svg>}
-                  {!bm && <div style={{ position: "absolute", left: "50%", bottom: 9, transform: "translateX(-50%)",
+                  {!bm && (() => { const faced = viewing || facedNode(n); return <div style={{ position: "absolute", left: "50%", bottom: 9, transform: "translateX(-50%)",
                     width: MEDAL_ART + 2, height: MEDAL_ART + 2,
-                    filter: pieceCh && !unlockedSet.has(pieceCh.id) ? `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(0,0,0,.35))` : "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
+                    filter: faced && pieceCh && !unlockedSet.has(pieceCh.id) ? `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(0,0,0,.35))` : "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
                     display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {pieceCh ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
+                    {faced && pieceCh ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
-                      : pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
+                      : faced && pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
                       : n.id === "n22" ? (((viewLeague - 1) % 10) + 1 === 9
                           ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                           : <CrownIc />) : <Swords />}
-                  </div>}
+                  </div>; })()}
                   </div>
                   {st === "cleared" && (bm
                     ? <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-72%)",
