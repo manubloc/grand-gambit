@@ -172,7 +172,8 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 }
 {
   const fresh = { campaign: { league: 1, cleared: [] } };
-  ok("potion revealed from the start", itemRevealed(fresh, ITEMS.potion));
+  ok("potion veiled at the very start", !itemRevealed(fresh, ITEMS.potion));
+  ok("potion revealed after the first win", itemRevealed({ campaign: { league: 1, cleared: ["n01"] } }, ITEMS.potion));
   ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));
   const mid = { campaign: { league: 1, cleared: ["n01","n02","n03","c1","c2"] } };
   ok("machete revealed after 4 stages", itemRevealed(mid, ITEMS.machete));

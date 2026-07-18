@@ -4,7 +4,7 @@
 // of them (the boat, together with the Captain) opens the Endless Sea.
 export const ITEMS = {
   potion: {
-    id: "potion", emoji: "🧪", kind: "consumable", gold: 25, max: 3,
+    id: "potion", emoji: "🧪", kind: "consumable", gold: 25, max: 3, minCleared: 1,
     nameDe: "Lebenstrank", nameEn: "Healing draught",
     textDe: "Heilt im Kampf eine Figur um 2 ♥ (kostet den Zug).",
     textEn: "Heals a piece for 2 ♥ in battle (spends the turn).",

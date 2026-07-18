@@ -69,6 +69,7 @@ export const canUpgrade = (profile, charId) => {
 // Two shards lie in the court's vault per league you have reached; each one
 // grinds down into a single skill point. Gold buys them, the road unlocks them.
 export const SP_SHARD_GOLD = 45;
+export const SP_VAULT_MIN_CLEARED = 3; // the vault opens after the third victory
 export const SP_SHARDS_PER_LEAGUE = 2;
 export function spShardCap(profile) { return SP_SHARDS_PER_LEAGUE * (profile.campaign?.league || 1); }
 export function buySpShard(profile) {

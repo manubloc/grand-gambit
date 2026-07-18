@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
-import { SP_SHARD_GOLD, spShardCap } from "../../../meta/index.js";
+import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
-  characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier,
+  characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
   itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus } from "../../../meta/index.js";
@@ -606,6 +606,8 @@ function GearPanel({ profile, dispatch, t, en }) {
         {(() => {
           // Star shards: the treasury's rarest ware — skill points for gold,
           // strictly rationed: two per league the campaign has reached.
+          // The vault itself is EARNED: it stays closed until the third victory.
+          if (clearedCount(profile) < SP_VAULT_MIN_CLEARED) return null;
           const cap = spShardCap(profile);
           const bought = profile.spShards || 0;
           const left = Math.max(0, cap - bought);

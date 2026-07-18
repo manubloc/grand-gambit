@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.23
+- SOFORT AUFS BRETT: die Eroeffnungs-Kamerafahrt entfaellt im Schnellen Spiel komplett (auch Klassik Schach und Hotseat) - sie gehoert zur Reise und bleibt Kampagne und Online-Duellen vorbehalten
+- SIMPLE FIGUREN UEBERALL: der Vektor-Figurenstil aus den Einstellungen gilt jetzt auch in Klassik Schach im Schnellen Spiel (vorher ueberschrieb der Klassik-Modus die Wahl mit seinen Gemaelden)
+- AUSRUESTUNG ALS SIEGESBEUTE: nichts liegt mehr von Beginn an im Vorratslager. Der erste Kampagnen-Sieg enthuellt den Lebenstrank (+1 gratis), der zweite den Zeitenwender (+1 gratis), der dritte oeffnet den Sternensplitter-Tresor, danach enthuellt die Reise Stueck fuer Stueck den Rest - jede Freischaltung erscheint als eigene Siegel-Zeile im Siegesbanner; Schluessel-Gegenstaende werden angekuendigt und bleiben kaeuflich (die Tore behalten ihren Preis)
+- Test angepasst und erweitert (429 gesamt): Lebenstrank zu Beginn verhuellt, nach dem ersten Sieg enthuellt
+
 ## 0.22.22
 - MEER-ORTSNAMEN OHNE PLAKETTE: auf Liga X wird die helle Grund-Ellipse hinter den Namen jetzt WEGGELASSEN (an Land verschmilzt sie mit hellem Boden, auf dem Wasser sah sie wie ein aufgesetztes Oval aus). Die Namen tragen sich dort ueber die Schrift selbst - heller Text mit dunklem Umriss, gut lesbar auf dem Wasser. Alle anderen Ligen unveraendert (Halo wie gehabt). Verifiziert: Meer-Labels rendern jetzt in hellem #fbf6e8 statt dunkler Schrift auf Halo
 

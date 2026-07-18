@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
-import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor } from "../../../content/index.js";
-import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier } from "../../../meta/index.js";
+import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
+import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { ABILITY_COST } from "../../../core/index.js";
 import { T } from "../theme.js";
@@ -264,6 +264,19 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     }
     if (lessons.length) setNewSkills(lessons);
     if (campaign && next.pausedMatch?.nodeId === match.nodeId) next.pausedMatch = null;
+    // EVERY piece of gear is a battle prize: the first win reveals the draught,
+    // the third opens the star vault, the road unveils the rest — each with its
+    // own line on the victory banner, consumables landing one-for-free.
+    if (campaign && result === "win" && match.firstClear) {
+      const after = { ...next, campaign: { ...next.campaign, cleared: [...(next.campaign?.cleared || []), match.nodeId] } };
+      const fresh = Object.values(ITEMS).filter((it) => !itemRevealed(profile, it) && itemRevealed(after, it));
+      const newItems = fresh.map((it) => ({ id: it.id, free: it.kind === "consumable" }));
+      if (clearedCount(profile) < SP_VAULT_MIN_CLEARED && clearedCount(after) >= SP_VAULT_MIN_CLEARED)
+        newItems.push({ id: "spvault" });
+      for (const it of fresh) if (it.kind === "consumable")
+        next.items = { ...(next.items || {}), [it.id]: Math.min(it.max || 9, (next.items?.[it.id] || 0) + 1) };
+      if (newItems.length) gained.newItems = newItems;
+    }
     dispatch({ type: "REPLACE", profile: next });
     if (campaign && result === "win") {
       dispatch({ type: "RECORD_STAGE", id: match.nodeId, moves: summary.moveCount || 0 });
@@ -401,7 +414,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     setZv((v) => clampView({ ...v, z: v.z * (e.deltaY < 0 ? 1.12 : 0.9) }));
   };
   const toggleZoom = () => setZoomMode((on) => { const next = !on; if (!next) setZv({ z: 1, x: 0, y: 0 }); return next; });
-  const [flyDone, setFlyDone] = useState(false);   // the opening flight plays exactly once per battle
+  const [flyDone, setFlyDone] = useState(() => !!quick); // the opening flight belongs to the JOURNEY: quick play (incl. classic & hotseat) starts on the spot
   const [flyGo, setFlyGo] = useState(false);       // ... and only AFTER the story sheet is acknowledged
   const [newSkills, setNewSkills] = useState([]);  // "X learns Y" — the banner tells every lesson of this battle
   const [inspect, setInspect] = useState(null);    // the tapped piece's dossier: { i, mode: "own" | "spy" }
@@ -573,7 +586,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
-          texture={boardTexture(match, profile)} artStyle={classic ? "classic" : profile.pieceStyle === "svg" ? "svg" : "painted"} friendly={!!match?.friendly}
+          texture={boardTexture(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
@@ -934,6 +947,19 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
         </div>}
         {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
+        {g.newItems?.length > 0 && <div style={{ display: "grid", gap: 5, margin: "2px 0 12px" }}>
+          {g.newItems.map((ni) => {
+            const it = ITEMS[ni.id];
+            return <div key={ni.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+              padding: "7px 10px", borderRadius: 10, fontSize: 12.5, fontWeight: 800,
+              background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
+              border: "1px solid #e3c07a", color: "#f6e9a4",
+              boxShadow: "0 0 10px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>
+              {ni.id === "spvault" ? <SkillStar size={15} /> : <ItemIcon id={ni.id} size={17} />}
+              <span>{ni.id === "spvault" ? t("banner.vault")
+                : t(ni.free ? "banner.newItemFree" : "banner.newItem", { name: it ? (en ? it.nameEn : it.nameDe) : ni.id })}</span>
+            </div>; })}
+        </div>}
         {campaign && win && boss && voiceFor(boss) && (
           <div className="gg-serif" style={{ margin: "2px 0 10px", padding: "10px 12px", borderRadius: 12,
             border: "1px solid rgba(233,210,150,.3)", background: "rgba(10,13,20,.55)",
