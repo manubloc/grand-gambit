@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.27
+- GROUND-BRETT ENTSAETTIGT: die Feld-Schleier sind jetzt neutral (reines Weiss 20 Prozent / reines Schwarz 30 Prozent statt warmer Creme/Braun-Toene) und die Holz-Abnutzungstextur liegt auf Ground-Brettern nicht mehr drueber - die Wiese zeigt ihre echten Farben durch die Transparenzen, Hell/Dunkel bleibt klar erkennbar. Gemessen: Warmstich weg (Rot-Gruen-Abstand 12 auf 2), Gruen-Anteil deutlich hoeher, Hell/Dunkel-Abstand 62
+
 ## 0.22.26
 - WEISSE EINSCHLUESSE IN 25 FIGUREN ENTFERNT: beim urspruenglichen Freistellen ueberlebten eingeschlossene Hintergrund-Reste (weisse Taschen zwischen Arm und Koerper, unter Fluegeln, neben Sockeln). Alle 70 Figuren-Gemaelde maschinell gesichtet, Taschen mit der Original-Freistell-Logik plus Kern-Kriterium (grosse flache Reinweiss-Kerne) entfernt, Raender wie beim Import weich abgefedert. Nachgearbeitet: Amazone, Erzbischof, Attentaeter, Barde, Laeufer, Schildtraeger, Spaeher, Springer, Magier, Paladin, Dame, Seherin, Hexerin, Flaggentraeger sowie die Monster Waechter, Skorpion, Koloss, Sturmkraehe, Blutmagd, Eisenfaust, Schattenfuerst, Hueter, Wandlerin und Mirenn. Kontrolle: groesster verbliebener Weiss-Kern 179px (ein echtes Mal-Highlight), Malerei ausserhalb der Taschen unangetastet (nur Re-Encode-Rauschen), Erzbischof und Inquisitor bewusst in einem einzigen Encode-Durchgang
 

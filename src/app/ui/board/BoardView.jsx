@@ -61,8 +61,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // With a painted GROUND the land itself is the board: squares become pure
   // light/dark veils (no theme colour, no stone) so the meadow stays the star,
   // and the existing bevel layers make each tile read as gently RAISED.
-  const sqL = ground ? "rgba(255,247,222,.34)" : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
-  const sqD = ground ? "rgba(22,16,7,.44)" : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
+  const sqL = ground ? "rgba(255,255,255,.20)" : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
+  const sqD = ground ? "rgba(0,0,0,.30)" : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
   const [spy, setSpy] = useState(null);        // seer's gaze: an ENEMY square under inspection
   useEffect(() => { setSel(null); setSpy(null); }, [state]); // clear selection whenever the position changes
@@ -334,7 +334,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
 
         {/* the material rides on top too: a soft-light wash of the same wood, so
             scratches and grain read across light and dark squares alike */}
-        {texture && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+        {texture && !ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${texture})`, backgroundSize: "280px 280px", backgroundRepeat: "repeat",
           mixBlendMode: "soft-light", opacity: 0.7 }} />}
         {/* a FRIENDLY table wears its welcome: a warm golden wash, and on each
