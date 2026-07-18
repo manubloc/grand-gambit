@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.33
+- TUERME SIND KEINE PFLICHT MEHR: alle Karten verlangen nur noch Koenig, Dame und Laeufer - Tuerme wandern in den Flex-Pool und koennen wie jede Hofstaat-Figur getauscht werden (ein spaeter ueberschreibendes flank:false am Turm behoben). Rochade existiert im Spiel ohnehin nicht; falls sie je kommt, gilt sie den FELDERN, nicht den Figuren
+- STAT-TRIADE AUF JEDER FIGUR: Leben (gruen), Staerke (gelb) und Energie (blau) als drei gleichgestaltete Kugeln im Dreieck oben links an jeder Figur, Zahlen in der Kugel; die Kugel WAECHST mit ihrem Wert (zweistellige Zahlen bekommen ein breiteres Zuhause) und waechst nochmals um 40 Prozent, wenn die Figur angetippt ist; Gegner und eigene Figuren exakt gleich dargestellt; ersetzt die alten Punktspalten links/rechts. Gemessen: 96 Kugeln bei 32 Figuren, Groessen 8.8-14.8px je nach Wert und Fokus
+
 ## 0.22.32
 - CHRONIK-REITER IM HOFSTAAT: neuer Tab "Chronik" zwischen Hofstaat und Aufstellung - jede Figur des Reichs mit Portrait, Grundzugsbeschreibung (was sie von Natur aus kann, unveraenderlich) und vollstaendigem Faehigkeitsbaum (welche Faehigkeit ab welcher Stufe); Gambit erhielt dabei eine explizite Erlaueterung dass nur seine Siegel-Stufen wachsen, nie seine Schrittart; der einleitende Satz wiederholt die Regel: Grundzuege sind angeboren, Faehigkeiten kommen mit den Stufen hinzu
 - BESTAETIGT: kein Charakter ausser Gambit veraendert seine Grundzuege beim Leveln (maschinell geprueft, 0 Faelle); Faehigkeiten sind ausschliesslich Spezial-Effekte und einmalige Zugmodifikatoren, keine neuen Zugrichtungen

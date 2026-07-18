@@ -169,7 +169,7 @@ function boostSpec(char, dupes) {
 const BACK_SIZE = DEFAULT_BACK_RANK.length; // 10
 // The fixed-count heavy pieces every legal formation must contain (positionable,
 // but not multipliable — this keeps material balanced without a points budget).
-export const FORMATION_REQUIRED = { king: 1, queen: 1, rook: 2, bishop: 2 };
+export const FORMATION_REQUIRED = { king: 1, queen: 1, bishop: 2 };
 // The remaining slots are "flex": a knight or any unlocked flank-eligible fairy.
 export const FORMATION_FLEX = new Set(CHARACTER_LIST.filter((c) => c.flank).map((c) => c.id));
 export const FORMATION_FLEX_COUNT = BACK_SIZE - Object.values(FORMATION_REQUIRED).reduce((a, b) => a + b, 0); // 4

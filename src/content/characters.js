@@ -80,9 +80,9 @@ flavorDe: "Sieht die Welt nur schräg — und trifft sie deshalb umso genauer.",
     ],
   },
   rook: {
-    id: "rook", kind: KIND.ROOK, glyph: "♜", nameDe: "Turm", nameEn: "Rook",
+    id: "rook", kind: KIND.ROOK, glyph: "♜", nameDe: "Turm", nameEn: "Rook", flank: true,
 flavorDe: "Eine wandernde Festung mit schlechter Laune.", flavorEn: "A walking fortress in a foul mood.",
-    unlock: { type: "start" }, flank: false,
+    unlock: { type: "start" },
     ladder: [
       { level: 2, shield: 1 },
       { level: 3, ability: "rook_diag_step" },

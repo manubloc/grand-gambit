@@ -49,7 +49,40 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
   </span>;
 }
 
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted" }) {
+
+// ── THE STAT TRIAD: three orbs in the top-left corner — life (green), energy
+// (blue), power (yellow). One design, three colours, BOTH armies alike. The
+// orb GROWS with its number (two digits need a wider home), and grows again
+// when the piece is pressed (focus). Numbers live inside the orbs. ──
+function StatOrb({ v, kind, focus }) {
+  const [col, deep] = kind === "life" ? ["#26b06a", "#0a5229"]
+    : kind === "energy" ? ["#4aa3e8", "#123a66"] : ["#e9c53f", "#8a6a12"];
+  const digits = String(v).length;
+  const size = (Math.min(0.34, 0.145 + digits * 0.052 + Math.min(v, 20) * 0.004)) * (focus ? 1.4 : 1);
+  return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
+    display: "grid", placeItems: "center", flex: "0 0 auto",
+    background: `radial-gradient(circle at 32% 26%, #ffffffd8 0%, rgba(255,255,255,.25) 16%, ${col} 52%, ${deep} 100%)`,
+    boxShadow: `inset 0 0 0 0.5px rgba(255,255,255,.32), inset 0 -0.6px 1.2px ${deep}, 0 0.6px 2px rgba(0,0,0,.55)`,
+    transition: "width .15s ease, height .15s ease" }}>
+    <span style={{ fontSize: Math.max(0.088, size * 0.52) + "em", fontWeight: 900, lineHeight: 1,
+      color: "#0b1408", textShadow: "0 0.5px 0 rgba(255,255,255,.35)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+  </span>;
+}
+function StatTriad({ piece, focus }) {
+  return <span style={{ position: "absolute", top: "0.015em", left: "-0.035em", zIndex: 3,
+    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.014em",
+    pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.5))" }}>
+    <span style={{ display: "flex", gap: "0.014em" }}>
+      <StatOrb v={piece.hp} kind="life" focus={focus} />
+      <StatOrb v={piece.atk} kind="power" focus={focus} />
+    </span>
+    <span style={{ marginLeft: "0.05em" }}>
+      {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} />}
+    </span>
+  </span>;
+}
+
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -117,8 +150,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
           right — same jewel language, only the cold blue tells them apart.
           Level, strike and every richer detail live in the tap-to-inspect sheet. */}
-      {hpMode && piece.maxHp > 0 && <HpDots hp={piece.hp} max={piece.maxHp} />}
-      {hpMode && piece.maxEn > 0 && <HpDots hp={piece.en} max={piece.maxEn} side="right" palette="energy" />}
+      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} />}
 
 
       {!hpMode && piece.shield > 0 && (

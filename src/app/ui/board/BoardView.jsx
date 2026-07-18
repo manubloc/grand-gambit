@@ -336,7 +336,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               borderRadius: 10,
               boxShadow: selHere ? "inset 0 0 0 3px rgba(240,214,138,.85), 0 0 18px rgba(240,214,138,.35)" : "none",
               fontSize: `calc(${typeof glyph === "string" ? glyph : glyph + "px"} * 1.88)` }}>
-              <PieceGlyph piece={pc} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+              <PieceGlyph piece={pc} showLevel={showLevel} pov={pov} artStyle={artStyle} focus={selHere} />
             </div>
           );
         })}
