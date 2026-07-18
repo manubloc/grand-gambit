@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.16
+- SIEGEL-FAMILIE AUF DER CHARAKTERKARTE: alle Zeichen-Bubbles tragen jetzt den Look des Verbessern-Knopfs (tiefes Nachtblau, Goldrand, Goldschrift) - die Herz/Schwert-Pillen im Kopf, der Sterne-Chip, die Wertezeile neben dem Verbessern-Knopf und die runden Talent-Symbole; die Zeichen selbst behalten ihre Bedeutungsfarbe, gekaufte Talente ihren Familien-Schein
+- PORTRAITS GROESSER: geoeffnete Karte 118x152 -> 144x186, eingeklappte Kartenreihe 74x96 -> 86x112, Vektor-Fallback entsprechend
+
 ## 0.22.15
 - DIE CHRONIK DES RISSES: die zehn Welt-Geschichten sind jetzt EIN durchgehender Bogen mit drei Gestalten - Corvin (der Gambit, dem der Hof den Namen nahm), Mirenn (die Geopferte, die aus dem Riss zurueckkam und jeden genommenen Namen zurueckgeben will) und Vesna (die Seherin, die das verbotene Verzeichnis fuehrte und Mirenn einst selbst benannte). Osric, der Kapitaen, Doppelritter, Schattenfuerst, Lanzenmeister und Blutmagd bleiben Nebenwirkungen derselben Wunde, keine Nebenhelden
 - NAMEN MIT BEDEUTUNG: b23 heisst Mirenn, b25 heisst Osric, die Hellseherin heisst Vesna - und dass Opfer nur Titel tragen, ist jetzt selbst Teil der Geschichte (der Riss nimmt zuerst den Namen). Gambit-Tag, Riss-Begegnung, Bestechungs-Hinweis und Chronik-Intro sind in den Bogen eingewoben

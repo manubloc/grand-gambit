@@ -48,7 +48,13 @@ function rewardLabel(r, en) {
 }
 
 function StatPill({ icon, val, color }) {
-  return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12.5, fontWeight: 900, color }}>{icon} {val}</span>;
+  // the little seals: the same deep night-blue as the Verbessern button, gold
+  // rim, the SIGN keeps its meaning-color — one visual family across the card
+  return <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 900,
+    padding: "3px 10px", borderRadius: 999, color: "#f6e9a4",
+    background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
+    border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>
+    <span style={{ display: "inline-flex", color }}>{icon}</span> {val}</span>;
 }
 
 function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle, bigArt = false }) {
@@ -105,11 +111,11 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       {paintedById(char.id)
         ? <><img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
             title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-            style={{ width: bigArt ? 118 : 74, height: bigArt ? 152 : 96, objectFit: "contain", objectPosition: "bottom",
+            style={{ width: bigArt ? 144 : 86, height: bigArt ? 186 : 112, objectFit: "contain", objectPosition: "bottom",
             flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
             opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
         </>
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 80 : 52} />}
+        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 94 : 60} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
@@ -121,7 +127,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
           </div>
           {unlocked
-            ? <>{stars > 0 && <Chip color={"#17110a"} bg={T.gold}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
+            ? <>{stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
             : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
         </div>
         <div style={{ display: "flex", gap: 14, marginTop: 6, alignItems: "center" }}>
@@ -161,10 +167,18 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
             const regen = (BASE_EN[k] || 2) >= 4;
             return <>
-              <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", marginBottom: 3 }}>
-                <span style={{ fontWeight: 800, color: "#8fd6a0" }}>♥ {hpAt(level)}</span>
-                <span style={{ fontWeight: 800, color: "#e5975f" }}>⚔ {atkAt(level)}</span>
-                <span style={{ fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 3 }}><EnergyIc size={11} style={{ verticalAlign: 0 }} /> {enAt(level)}{regen && <span style={{ color: "#6f96bd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 4 }}>
+                {[
+                  { ic: <span style={{ color: "#8fd6a0" }}>♥</span>, v: hpAt(level) },
+                  { ic: <span style={{ color: "#e5975f" }}>⚔</span>, v: atkAt(level) },
+                  { ic: <EnergyIc size={11} style={{ verticalAlign: 0, color: "#8ec7f2" }} />, v: <>{enAt(level)}{regen && <span style={{ color: "#9db8dd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</> },
+                ].map((p, i) => (
+                  <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontWeight: 800, fontSize: 12,
+                    padding: "2px 9px", borderRadius: 999, color: "#f6e9a4",
+                    background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
+                    border: "1px solid #e3c07a", boxShadow: "0 0 7px rgba(64,110,220,.28), inset 0 1px 0 rgba(190,215,255,.25)" }}>
+                    {p.ic} {p.v}</span>
+                ))}
               </div>
               {maxed ? t("army.maxed") : <span style={{ color: T.dim }}>Level {level} → {level + 1}
                 <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
@@ -246,10 +260,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span aria-hidden style={{ width: 30, height: 30, borderRadius: 999, flex: "0 0 auto",
                   display: "block", textAlign: "center", fontSize: 15, lineHeight: "28px",
-                  background: `radial-gradient(circle at 35% 30%, ${tg.color}44, rgba(8,10,20,.72) 72%)`,
-                  border: `1px solid ${can ? "#e8c87d" : owned ? tg.color + "aa" : tg.color + "55"}`,
-                  boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(255,243,196,.3)"
-                    : owned ? `0 0 8px ${tg.color}33, inset 0 1px 0 rgba(255,255,255,.12)` : "inset 0 1px 0 rgba(255,255,255,.08)" }}>
+                  background: "radial-gradient(circle at 35% 30%, #2c4f9e, #142450 78%)",
+                  border: `1px solid ${can ? "#e8c87d" : owned ? "#e3c07a" : "#e3c07a99"}`,
+                  boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(190,215,255,.3)"
+                    : owned ? `0 0 8px ${tg.color}55, inset 0 1px 0 rgba(190,215,255,.25)` : "inset 0 1px 0 rgba(190,215,255,.18)" }}>
                   {ab.icon}</span>
                 <b className="gg-serif" style={{ fontSize: 13, letterSpacing: ".03em",
                   color: owned ? tg.color : can ? "#f2dea0" : reach ? T.text : "#b9b295" }}>
