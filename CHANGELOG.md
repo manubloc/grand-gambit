@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.31
+- DER DRACHE BREITET SICH AUS: der Drachenhort-Boss verlor beim Spec-Bau sein big-Flag und stand deshalb auf einem Feld - jetzt entfaltet er sich wie vorgesehen ueber 2x2 (Anker plus drei Fluegel-Marker)
+- AUFSTELLUNG WIEDER AENDERBAR: zwei Blocker behoben. Erstens startete der Editor auf der Klassik-Karte, wo alle Felder bewusst gesperrt sind (reines Schach) - Klassik ist jetzt aus der Kartenwahl des Editors raus, Arena zuerst. Zweitens kannte die map-bewusste Legalitaetspruefung die Drachen-Regeln nicht: der leere Fluegel-Slot machte jede Drachen-Formation illegal (Speichern gesperrt, Kampf fiel still auf Standard zurueck) - Ecken-Regel, Fluegel-Slot und Flex-Abzug jetzt uebernommen
+- BESTAETIGT: Dame kann durch verbuendete Liga-Bosse ersetzt werden, alle anderen Plaetze durch Hofstaat-Figuren (Pflicht-Kontingente der Karte bleiben) - im Browser durchgespielt: Slot antippen, Boss waehlen, speichern
+- 3 neue Regressionstests (Drachen-Formation legal, Spieler-Drache entfaltet 2x2, Hort-Boss traegt big) - 432 gesamt
+
 ## 0.22.30
 - ALLE ZEHN WELTEN UNTERM BRETT: die Ground-Tabelle ist komplett - Sommer (Trockengras), Herbst (Laubgrund), Winter (Schnee mit gefrorenem Bach), Hochgebirge (Fels mit Schneeresten), Oedland (rissige Erde mit Glutadern), Steppe (Grasland mit Pfaden), Roter Canyon (geborstener Fels), Wueste (Duenen mit Spuren) und Endloses Meer (Wellengang) liegen jetzt wie die Fruehlingswiese unter den Kampagnen-Brettern ihrer Liga, mit denselben organischen Hell/Dunkel-Schleiern; im Browser verifiziert (Liga IX rendert ground-09)
 

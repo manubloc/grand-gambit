@@ -250,8 +250,17 @@ export const formationSpec = (map) => ({ required: map.formation.required, flex:
 export function formationLegalOn(formation, unlockedIds, map, ownedBosses = []) {
   const { required, flex, size } = formationSpec(map);
   if (!Array.isArray(formation) || formation.length !== size) return false;
+  // THE BIG DRAGON, map-aware: only at the very edge of THIS board; the slot
+  // beside him stays EMPTY (null) — his wing claims it. One dragon per army.
+  const dLeft = formation[0] === "dragon", dRight = formation[size - 1] === "dragon";
+  const wingIdx = dLeft ? 1 : dRight ? size - 2 : -1;
+  if (formation.includes("dragon") && !dLeft && !dRight) return false;
+  if (dLeft && dRight) return false;
+  if (wingIdx >= 0 && formation[wingIdx] != null) return false;
   const unlocked = new Set(unlockedIds); let flexN = 0, bossN = 0;
-  for (const id of formation) {
+  for (let i = 0; i < formation.length; i++) {
+    const id = formation[i];
+    if (id == null) { if (i !== wingIdx) return false; continue; } // only the wing may be empty
     if (isBossEntry(id)) {                          // a league boss takes the queen's place
       if (!ownedBosses.includes(bossEntryId(id))) return false;
       bossN++; continue;
@@ -261,12 +270,12 @@ export function formationLegalOn(formation, unlockedIds, map, ownedBosses = []) 
     if (required[id] === undefined) { if (!FORMATION_FLEX.has(id)) return false; flexN++; }
   }
   if (bossN > 1) return false;                      // one boss at most on the field
-  const c = formationCounts(formation.filter((id) => !isBossEntry(id)));
+  const c = formationCounts(formation.filter((id) => id != null && !isBossEntry(id)));
   for (const [id, n] of Object.entries(required)) {
     const need = id === "queen" ? n - bossN : n;    // the boss stands in for the queen
     if ((c[id] || 0) !== need) return false;
   }
-  return flexN === flex;
+  return flexN === flex - (wingIdx >= 0 ? 1 : 0);   // the wing eats one flex slot
 }
 
 /** Build a player army for a specific map. Classic maps use base-level pieces

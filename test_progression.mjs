@@ -1,6 +1,9 @@
 import { createInitialState, status, applyMove, KIND } from "./src/core/index.js";
-import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel } from "./src/meta/index.js";
-import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL, maxLevelFor, gambitTier, GAMBIT_MAX_LEVEL, resolveCharacter, buildArmyForMap, itemRevealed } from "./src/meta/index.js";
+import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel, formationLegalOn, ownedLeagueBosses, unlockedCharacterIds, formationSpec, buildArmyForMap, withProgressPct, defaultProfile } from "./src/meta/index.js";
+import { buildStageMatch } from "./src/meta/campaign.js";
+import { createGame } from "./src/core/index.js";
+import { MAPS } from "./src/content/index.js";
+import { applyResult, upgradeCost, upgradePiece, canUpgrade, MAX_PIECE_LEVEL, maxLevelFor, gambitTier, GAMBIT_MAX_LEVEL, resolveCharacter, itemRevealed } from "./src/meta/index.js";
 import { mapById } from "./src/content/index.js";
 import { ITEMS } from "./src/content/index.js";
 import { evaluate as evalAch } from "./src/meta/index.js";
@@ -172,6 +175,24 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 }
 {
   const fresh = { campaign: { league: 1, cleared: [] } };
+    // THE BIG DRAGON: map-aware legality accepts corner+wing, and both sides unfold 2x2
+  {
+    const p = withProgressPct(defaultProfile(), 100, 10);
+    const map = MAPS.find((m) => !m.classic);
+    const spec = formationSpec(map);
+    const D = map.defaultFormation.slice();
+    const flexIdx = D.map((id, i) => spec.required[id] === undefined ? i : -1).filter((i) => i >= 0);
+    const f = ["dragon", null, ...D.filter((_, i) => i !== flexIdx[0] && i !== flexIdx[1])];
+    ok("dragon corner+wing formation is legal (map-aware)", formationLegalOn(f, unlockedCharacterIds(p), map, ownedLeagueBosses(p)));
+    const p3 = { ...p, loadout: { ...p.loadout, formations: { [map.id]: f } } };
+    const g = createGame(buildArmyForMap(p3, map), buildArmyForMap(p, map), { map, rules: "hp", seed: 5 });
+    ok("player dragon unfolds 2x2 (3 wings)", g.board.filter((x) => x && x.kind === "D+" && x.color === "w").length === 3);
+  }
+  {
+    const p = withProgressPct(defaultProfile(), 40, 2);
+    const m = buildStageMatch("a4", p);
+    ok("hoard boss dragon carries the big flag", !!m.aiArmy.back.find((s) => s && s.kind === "D" && s.big));
+  }
   ok("potion veiled at the very start", !itemRevealed(fresh, ITEMS.potion));
   ok("potion revealed after the first win", itemRevealed({ campaign: { league: 1, cleared: ["n01"] } }, ITEMS.potion));
   ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));

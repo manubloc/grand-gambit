@@ -124,6 +124,7 @@ export function nodeBossSpec(node, league = 1) {
     hp: (BASE_HP[ch.kind] || 3) + HP_BOOST[tier],
     atk: Math.min(6, (BASE_ATK[ch.kind] || 2) + ATK_BOOST[tier]),
     ...(ch.moveSpec ? { moveSpec: ch.moveSpec } : {}),
+    ...(ch.big ? { big: true } : {}), // the Dragon of the Hoard spreads across his 2x2 block like any dragon
     name: { de: ch.nameDe, en: ch.nameEn }, bossId: "pb_" + ch.id, accent: "#c9a45c",
   };
 }

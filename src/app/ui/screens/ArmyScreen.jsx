@@ -332,7 +332,7 @@ const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
 );
 
 // Classic is fixed standard chess → only non-classic maps are editable.
-const FORMATION_MAPS = MAPS; // Klassik zuerst — sie ist die Referenz
+const FORMATION_MAPS = MAPS.filter((m) => !m.classic); // Klassik ist reines Schach: dort gibt es nichts zu formieren
 
 function FormationEditor({ profile, dispatch, t, en }) {
   const feWide = useMedia("(min-width: 900px)");
