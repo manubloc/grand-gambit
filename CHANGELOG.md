@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.50
+- SAFARI OEFFNET WIEDER: aeltere iOS-Safari-Versionen (vor 15.4) kennen structuredClone nicht - eine einzige fehlende Funktion lie? die ganze App dort nicht starten (weisser Bildschirm). Ein kleiner Ersatz fuellt die Luecke, sodass die App auf jedem Geraet bootet. Zusaetzlich sind die neuen Bild- und Fehler-Bausteine rundum abgesichert, damit kein Browser-Eigenheit den Start blockiert
+- FEHLERBERICHTE IM ADMIN-BEREICH STATT PER MAIL: Absturz- und Fehlerberichte gehen nicht mehr an eine E-Mail, sondern werden in der App gesammelt - im Admin-Profil gibt es jetzt den Bereich Fehlerberichte, der sie auflistet (aufklappbar mit Zeit, Geraet, Meldung, Stacktrace und den letzten Fehlern). Mit eingerichteter Cloud (Supabase-Tabelle error_reports, Anleitung in SUPABASE-REPORTS.md) siehst du die Berichte ALLER Nutzer zentral; ohne Cloud die dieses Geraets
+- Der Absturz-Bildschirm vermerkt einen Fehler jetzt automatisch (kein Knopfdruck noetig) und bietet weiterhin Neu laden
+
 ## 0.22.49
 - APP-INSTALLATION AUF DEM IPHONE ERKLAERT SICH SELBST: Safari kennt keinen Installations-Knopf - der einzige Weg ist Teilen -> Zum Home-Bildschirm. Auf iPhone/iPad zeigt der Profil-Bereich Als App jetzt direkt die Schritt-fuer-Schritt-Anleitung statt eines Knopfs, der dort nichts tun kann; zudem zeigt das Home-Icon jetzt auf das echte 180er Apple-Touch-Icon
 - JEDES BILD KOMMT MIT EINEM KLEINEN AUFTRITT: Bilder, die noch laden muessen, blenden sanft ein (kurzes Aufsteigen); bereits geladene erscheinen sofort - kein Flackern mitten im Gefecht, kaputte Bilder bleiben nie unsichtbar

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { hashPin } from "../../../platform/index.js";
-import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct } from "../../../meta/index.js";
+import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
@@ -180,6 +180,12 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <RestorePoints t={t} dispatch={dispatch} />
     </Panel>}
 
+    {account?.isAdmin && <Panel>
+      <PanelTitle tag="Admin">{t("profile.reportsTitle")}</PanelTitle>
+      <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.reportsHint")}</div>
+      <ErrorReports t={t} />
+    </Panel>}
+
     <Panel>
       <PanelTitle>{t("profile.pinTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.pinHint")}</div>
@@ -200,6 +206,55 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
   </div>;
 }
 
+
+function ErrorReports({ t }) {
+  const [state, setState] = useState({ loading: true, source: "", rows: [] });
+  const [open, setOpen] = useState(null);
+  const load = () => {
+    setState((s) => ({ ...s, loading: true }));
+    listReports({ limit: 100 }).then((r) => setState({ loading: false, source: r.source, rows: r.rows || [] }))
+      .catch(() => setState({ loading: false, source: "local", rows: [] }));
+  };
+  useEffect(() => { load(); }, []);
+  const fmt = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso; } };
+  if (state.loading) return <div style={{ fontSize: 12, color: T.faint }}>{t("profile.reportsLoading")}</div>;
+  return <div>
+    <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
+      <Button kind="ghost" onClick={load}>{t("profile.reportsRefresh")}</Button>
+      <span style={{ fontSize: 11.5, color: T.faint }}>
+        {t(state.source === "cloud" ? "profile.reportsCloud" : "profile.reportsLocal")} · {state.rows.length}</span>
+      <div style={{ flex: 1 }} />
+      {state.source !== "cloud" && state.rows.length > 0 &&
+        <Button kind="ghost" onClick={() => { clearLocalReports(); load(); }}>{t("profile.reportsClear")}</Button>}
+    </div>
+    {state.rows.length === 0
+      ? <div style={{ fontSize: 12.5, color: T.dim, padding: "6px 0" }}>{t("profile.reportsEmpty")}</div>
+      : <div style={{ display: "grid", gap: 6, maxHeight: 340, overflowY: "auto" }}>
+          {state.rows.map((r, i) => {
+            const isOpen = open === i;
+            const isCrash = r.kind === "crash";
+            return <div key={i} style={{ border: `1px solid ${T.line}`, borderRadius: 9, overflow: "hidden" }}>
+              <button onClick={() => setOpen(isOpen ? null : i)} style={{ width: "100%", textAlign: "left",
+                background: T.bg2, border: "none", color: T.text, padding: "9px 11px", cursor: "pointer", display: "flex", gap: 8, alignItems: "baseline" }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", flex: "0 0 auto", alignSelf: "center",
+                  background: isCrash ? "#e0574f" : "#c9a45c" }} />
+                <span style={{ fontSize: 12.5, fontWeight: 700, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.message || "(kein Text)"}</span>
+                <span style={{ fontSize: 10.5, color: T.faint, whiteSpace: "nowrap" }}>v{r.version || "?"}</span>
+              </button>
+              {isOpen && <div style={{ padding: "9px 11px", fontSize: 11.5, color: T.dim, lineHeight: 1.5, background: T.bg }}>
+                <div>{fmt(r.created_at)}{r.account ? " · " + r.account : ""}</div>
+                <div style={{ color: T.faint, marginTop: 3, wordBreak: "break-word" }}>{r.ua}</div>
+                {r.note && <div style={{ marginTop: 6, color: T.text }}>{r.note}</div>}
+                {r.stack && <pre style={{ marginTop: 6, whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 10.5, color: T.faint, fontFamily: "monospace" }}>{r.stack}</pre>}
+                {Array.isArray(r.log) && r.log.length > 0 && <div style={{ marginTop: 6, color: T.faint }}>
+                  {r.log.slice(-6).map((l, j) => <div key={j} style={{ fontFamily: "monospace", fontSize: 10 }}>[{l.kind}] {l.msg}</div>)}
+                </div>}
+              </div>}
+            </div>;
+          })}
+        </div>}
+  </div>;
+}
 
 function RestorePoints({ t, dispatch }) {
   const [points, setPoints] = useState(null);

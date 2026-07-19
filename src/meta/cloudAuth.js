@@ -20,6 +20,8 @@ async function sb() {
   _sb = createClient(URL, KEYV);
   return _sb;
 }
+/** Shared Supabase client for other cloud features (e.g. error reports). */
+export const sbClient = sb;
 
 const isAdminMail = (email) => (ADMIN_EMAILS || []).map((e) => e.toLowerCase()).includes(String(email || "").toLowerCase());
 
