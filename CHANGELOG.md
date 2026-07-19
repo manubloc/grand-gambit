@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.56
+- WEICHER KARTENKOPF IN EIGENER FARBE: die gemalte Karte sitzt jetzt etwas tiefer im Fenster, und der obere Bereich wird von einem sanften Verlauf gefuellt, der aus der Karte SELBST stammt (ihre obere Kante, vergroessert und weich verwischt) - der Uebergang traegt also genau die Farben der jeweiligen Welt. Die oben schwebenden Knoepfe (Atlas, Liga-Navigation) liegen jetzt in diesem weichen Kopf statt hart auf der Karte; der obere Kartenrand blendet zusaetzlich weich ein, sodass keine harte Kante bleibt
+
 ## 0.22.55
 - KARTE IM FENSTER FEINER: die Rahmen-Kontur ist duenner (3 statt 5 Pixel), und die Karte selbst wird eine Stufe kleiner im Fenster gezeichnet - dadurch wirkt sie auf hochaufloesenden Handys SCHAERFER (die Unschaerfe kam vom Hochskalieren der gemalten Welt). Wegpunkte und Wanderer skalieren mit. Der schmale Rand, der so entsteht, wird von einem weichen Verlauf (Vignette) nach aussen ins Dunkle gefuehrt
 

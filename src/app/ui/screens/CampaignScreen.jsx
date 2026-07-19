@@ -207,6 +207,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);
   const camX = clamp((viewing ? 0 : nx(camNode) * zf - frameW * 0.46) + panOff.x, 0, camMaxX);
   const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * zf - frameH * 0.5) + panOff.y, 0, camMaxY);
+  // on the painted worlds, seat the map a little LOWER inside the frame so the
+  // top band becomes a soft gradient (in the map's own colours) the floating
+  // buttons rest in. translate happens before scale, so divide by zf.
+  const topInset = (frameH * 0.09) / zf;
   // fog of war: everything past the frontline stays a blurred rumour until
   // the league's end boss falls — the map never spoils the road ahead
   const frontierX = useMemo(() => {
@@ -251,12 +255,24 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: bm ? "#0c0e13" : th.paper,
         boxShadow: "inset 0 0 26px rgba(8,10,14,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
-        {/* the vignette: the smaller painting fades softly into the frame's
-            edge — hides the margin and draws the eye to the road at center */}
+        {/* THE SOFT TOP: the map's own upper edge, blown up and blurred, fills
+            the band above where the painting now sits — so the top fades into a
+            gradient in the map's OWN colours, and the floating buttons rest in
+            that soft haze. Only the painted worlds carry an image to sample. */}
+        {bm && bmDef && (
+          <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "34%", zIndex: 1,
+            pointerEvents: "none", overflow: "hidden", borderRadius: `${Math.min(22, frameW / 12)}px ${Math.min(22, frameW / 12)}px 0 0` }}>
+            <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
+              height: "260%", objectFit: "cover", objectPosition: "50% 0%",
+              filter: "blur(26px) brightness(.82) saturate(.9)", transform: "scaleY(-1)", opacity: 0.9 }} />
+            <div style={{ position: "absolute", inset: 0,
+              background: "linear-gradient(180deg, rgba(7,9,13,.5) 0%, rgba(7,9,13,.12) 40%, transparent 100%)" }} />
+          </div>
+        )}
+        {/* a gentle dark seat at the very bottom edge so the map meets the dock cleanly */}
         <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none",
           borderRadius: Math.min(22, frameW / 12),
-          background: `radial-gradient(120% 92% at 50% 46%, transparent 60%, rgba(9,11,16,.28) 80%, rgba(7,9,13,.7) 100%)`,
-          boxShadow: `inset 0 0 30px 8px rgba(8,10,14,.4)` }} />
+          background: `radial-gradient(130% 96% at 50% 54%, transparent 66%, rgba(9,11,16,.22) 86%, rgba(7,9,13,.5) 100%)` }} />
         {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
         <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
           filter: "blur(16px)", opacity: 0.4, mixBlendMode: "screen",
@@ -266,8 +282,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           filter: "blur(22px)", opacity: 0.26, mixBlendMode: "screen",
           background: "radial-gradient(40% 30% at 90% 52%, rgba(228,220,204,.55), transparent 70%)",
           animation: "ggFogR2 67s ease-in-out infinite alternate" }} />
-        <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
-          transform: `translate(${-camX}px, ${-camY}px) scale(${zf})`,
+        <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
+          transform: `translate(${-camX}px, ${-camY + (bm ? topInset : 0)}px) scale(${zf})`,
+          WebkitMaskImage: bm ? "linear-gradient(180deg, transparent 0, rgba(0,0,0,.35) 3%, #000 11%)" : undefined,
+          maskImage: bm ? "linear-gradient(180deg, transparent 0, rgba(0,0,0,.35) 3%, #000 11%)" : undefined,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
