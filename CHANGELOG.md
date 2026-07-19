@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.22.54
+- ZUG-ANIMATION GRUNDLEGEND UEBERARBEITET:
+  - RUCKELN BEHOBEN: eine doppelte CSS-Transition an der Figur liess sie nach dem Zug nochmal zucken - jetzt eine saubere kombinierte Transition, die ankommende Figur blendet sanft ein statt hart aufzupoppen
+  - FIGUREN NEIGEN SICH BEIM ZIEHEN: wie der Wanderer auf der Karte lehnt sich die gleitende Figur leicht in die Laufrichtung (nach rechts beim Zug nach rechts, nach links andersrum)
+  - SPRINGER UND UEBERSPRINGENDE ZUEGE HUEPFEN: das Pferd (und jeder nicht-gerade/nicht-diagonale Sprung) macht jetzt einen echten Huepfer im Bogen statt zu gleiten
+  - GESCHLAGENE FIGUREN FLIEGEN ZUR RICHTIGEN ABLAGE: rotierend raus - nach OBEN zur Gegner-Ablage, wenn ich schlage, nach UNTEN zu meiner Ablage, wenn der Gegner mich schlaegt (dorthin, wo man die Figur danach als Symbol sieht)
+  - ANIMATION INSGESAMT ETWAS LANGSAMer und ruhiger, beim Gegner wie bei mir
+
 ## 0.22.53
 - GEGNERZUEGE DEUTLICH LANGSAMER ANIMIERT: wenn der Gegner (KI oder online) am Zug ist, gleitet seine Figur jetzt spuerbar langsamer ueber das Brett (rund doppelt so lang wie ein eigener Zug) - so siehst du bewusst, welchen Zug er macht, statt dass er blitzschnell passiert. Eigene Zuege bleiben flott. Im Zwei-Spieler-Modus an einem Geraet bleibt alles gleich schnell (beide Seiten bist du)
 

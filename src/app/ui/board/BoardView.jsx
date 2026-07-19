@@ -136,12 +136,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     return () => { ro?.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
 
-  // Move animation for BOTH armies now. A ghost of the mover glides from→to.
-  // On a KILL, the dying piece spins off the board toward the victor's side,
-  // shrinking as it flies (it lands in that player's capture tray). On a hit
-  // the target SURVIVES, it shakes in place and the attacker slides back home.
+  // Move animation for BOTH armies. A ghost of the mover glides from→to, tilting
+  // slightly into the direction of travel (like the wanderer on the map). Pieces
+  // that LEAP (knights, and any move that isn't a straight line) hop in an arc.
+  // On a KILL the fallen piece spins off toward its captor's tray (up top for a
+  // foe I took, down low for a piece the foe took from me).
   const [anim, setAnim] = useState(null);
-  const [death, setDeath] = useState(null);   // { at, piece, dir, id }
+  const [death, setDeath] = useState(null);   // { at, piece, dir, fly, id }
   useEffect(() => {
     if (!lastMove || lastMove.from === lastMove.to) { setAnim(null); return; }
     // hotseat animates both; otherwise only the side we're told to animate
@@ -152,19 +153,29 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     // is this the OPPONENT moving? A foe move (vs AI or online, not hotseat)
     // glides noticeably slower so the eye can clearly follow what it does.
     const foe = !hotseat && lastMove.color !== pov;
+    // does this move LEAP? knights always; otherwise any non-straight, non-
+    // diagonal hop over distance (a piece that doesn't travel in a line).
+    const fF = lastMove.from % W, fR = (lastMove.from / W) | 0;
+    const tF = lastMove.to % W, tR = (lastMove.to / W) | 0;
+    const dF = Math.abs(tF - fF), dR = Math.abs(tR - fR);
+    const leaps = !lastMove.bounced && (glider.kind === "N" || !!(dF && dR && dF !== dR));
     const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
-      bounced: !!lastMove.bounced, foe, id: Date.now() };
+      bounced: !!lastMove.bounced, foe, leaps, id: Date.now() };
     setAnim(a);
-    // a lethal strike hurls the fallen piece off the board toward its captor
+    // a lethal strike hurls the fallen piece off the board toward its captor's
+    // capture tray: the winner's tray. My tray sits BELOW the board, the foe's
+    // ABOVE — fly toward whichever took the piece.
     if (lastMove.lethal && lastMove.hitKind) {
-      const victorWhite = lastMove.color === "w";
+      const iWon = lastMove.color === pov;            // did MY side make this capture?
       setDeath({ at: lastMove.to, id: a.id + 1,
-        piece: { kind: lastMove.hitKind, color: lastMove.hitColor || (victorWhite ? "b" : "w") },
-        dir: (victorWhite ? 1 : -1) * (pov === "w" ? 1 : -1) });   // toward the winner's tray
+        piece: { kind: lastMove.hitKind, color: lastMove.hitColor || (lastMove.color === "w" ? "b" : "w") },
+        dir: (lastMove.color === "w" ? 1 : -1) * (pov === "w" ? 1 : -1),
+        fly: iWon ? -1 : 1 });   // -1 up (foe's tray up top), +1 down (my tray below)
     }
     const raf = requestAnimationFrame(() => requestAnimationFrame(() =>
       setAnim((cur) => (cur && cur.id === a.id ? { ...cur, phase: 1 } : cur))));
-    const hold = foe ? 1300 : 950; // give the slower foe glide time to finish
+    // hold long enough for the (now slower) glide + arc to finish fully
+    const hold = foe ? 1500 : 1150;
     const t = setTimeout(() => { setAnim((cur) => (cur && cur.id === a.id ? null : cur));
       setDeath((cur) => (cur && cur.id === a.id + 1 ? null : cur)); }, hold);
     return () => { cancelAnimationFrame(raf); clearTimeout(t); };
@@ -278,10 +289,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             transform: (artStyle === "svg" ? "translateY(-2%)" // vector pieces sit LOW and settled
                 : typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
               + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""), // the chosen one steps forward — vectors more modestly
-            transformOrigin: "50% 72%", transition: "transform .16s ease",
+            transformOrigin: "50% 72%",
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
             fontSize: artStyle === "svg" ? (piece.kind === "P" ? "0.76em" : "0.92em") : (piece.kind === "P" ? "0.9em" : "1.07em"), // vectors a size calmer; pawns humble, the court imposing
-            transition: "filter .45s ease",
+            // a single combined transition: the settle (scale/lift) is quick, the
+            // arriving piece fades in gently so it never "pops" after the glide
+            transition: "transform .16s ease, opacity .18s ease, filter .45s ease",
             filter: introSpot && !introSpot.has(i)
               ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...
               : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" /* the strangers stand sharp */ }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
@@ -403,6 +416,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         // phase 0 sits at origin, phase 1 arrives (or, when bounced, returns).
         const a = disp(anim.from), b = disp(anim.to);
         const at = anim.bounced ? a : (anim.phase ? b : a);
+        const dur = anim.foe ? 0.66 : 0.44;   // seconds; foe moves read slower
+        const ease = "cubic-bezier(.34,.72,.28,1)";
+        // tilt INTO the direction of travel (like the wanderer leaning on the
+        // map): lean right when moving right, left when moving left.
+        const dir = Math.sign(b.l - a.l) || 0;
+        const tilt = anim.phase && !anim.bounced ? dir * (anim.leaps ? 10 : 6) : 0;
+        // a LEAP hops in an arc: the inner wrapper lifts up then drops, peaking
+        // mid-flight. We drive it with the same phase flip on a bounce-ease.
+        const lift = anim.leaps && anim.phase && !anim.bounced;
         return (
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
@@ -415,28 +437,35 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               <circle cx={b.x} cy={b.y} r="3.1" fill={T.gold} opacity="0.16" />
               <circle cx={b.x} cy={b.y} r="1.5" fill={T.gold} opacity="0.55" />
             </svg>
-            {/* the attacker glides out to the target then, on a bounce, back home.
-                A FOE's move glides slower — you should clearly see what it does. */}
-            <div style={{ position: "absolute", left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
-              top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`, width: `${100 / W}%`, height: `${100 / H}%`,
-              transition: anim.foe
-                ? "left .66s cubic-bezier(.4,.75,.35,1), top .66s cubic-bezier(.4,.75,.35,1)"
-                : "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",
-              display: "grid", placeItems: "center", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
-              <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+            {/* the mover glides (or leaps) from→to. Outer div carries the board
+                position; inner div carries the tilt and the hop's vertical arc,
+                so the two never fight each other. */}
+            <div style={{ position: "absolute",
+              left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
+              top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`,
+              width: `${100 / W}%`, height: `${100 / H}%`, zIndex: 7,
+              transition: `left ${dur}s ${ease}, top ${dur}s ${ease}`,
+              display: "grid", placeItems: "center" }}>
+              <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
+                // hop arc: rise ~26% of a cell at the peak, settle back to 0
+                transform: `translateY(${lift ? "-26%" : "0"}) rotate(${tilt}deg)`,
+                transition: `transform ${dur}s ${anim.leaps ? "cubic-bezier(.3,-0.6,.5,1)" : ease}`,
+                filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
+                <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+              </div>
             </div>
           </div>
         );
       })()}
 
-      {/* the FALLEN: spins off the board toward the victor, shrinking away */}
+      {/* the FALLEN: spins off toward its captor's tray, shrinking away */}
       {death && (() => {
         const d = disp(death.at);
         return <div key={`die${death.id}`} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
           width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
           display: "grid", placeItems: "center",
-          animation: `ggFallAway .82s cubic-bezier(.4,0,.7,1) forwards`,
-          ["--fdir"]: death.dir }}>
+          animation: `ggFallToTray 1s cubic-bezier(.4,0,.7,1) forwards`,
+          ["--fdir"]: death.dir, ["--fly"]: death.fly }}>
           <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
         </div>;
       })()}

@@ -67,6 +67,13 @@ export const GLOBAL_CSS = `
     0% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
     18% { transform: translate(calc(var(--fdir) * 20%), -34%) rotate(calc(var(--fdir) * 130deg)) scale(1.06); opacity: 1; }
     100% { transform: translate(calc(var(--fdir) * 340%), -120%) rotate(calc(var(--fdir) * 900deg)) scale(.12); opacity: 0; } }
+  /* the FALLEN fly to their captor's tray: UP off the top (foe took my piece →
+     my tray sits below, so it flies down; I took a foe piece → its tray sits up
+     top, flies up). --fdir still nudges sideways so pieces don't overlap. */
+  @keyframes ggFallToTray {
+    0%   { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
+    16%  { transform: translate(calc(var(--fdir) * 12%), calc(var(--fly) * -22%)) rotate(calc(var(--fdir) * 120deg)) scale(1.08); opacity: 1; }
+    100% { transform: translate(calc(var(--fdir) * 60%), calc(var(--fly) * 190%)) rotate(calc(var(--fdir) * 760deg)) scale(.16); opacity: 0; } }
   @keyframes splashRing { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes splashPiece { from { transform: translateY(26px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
