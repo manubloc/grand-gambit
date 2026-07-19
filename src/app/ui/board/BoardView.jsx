@@ -146,6 +146,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // foe I took, down low for a piece the foe took from me).
   const [anim, setAnim] = useState(null);
   const [death, setDeath] = useState(null);   // { at, piece, dir, fly, id }
+  const animSeq = useRef(0);   // strictly-increasing id: two moves in the same
+                               // millisecond must still get distinct keys, or
+                               // React recycles the ghost div and it slides in
+                               // from the PREVIOUS move's destination.
   // useIsoLayoutEffect: the ghost is armed BEFORE the browser paints, so the
   // real piece is never shown for a frame at its new square before the glide
   // starts (that was the "pops in at the wrong place" clip).
@@ -165,8 +169,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     const tF = lastMove.to % W, tR = (lastMove.to / W) | 0;
     const dF = Math.abs(tF - fF), dR = Math.abs(tR - fR);
     const leaps = !lastMove.bounced && (glider.kind === "N" || !!(dF && dR && dF !== dR));
+    const animId = ++animSeq.current;
     const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
-      bounced: !!lastMove.bounced, foe, leaps, id: Date.now() };
+      bounced: !!lastMove.bounced, foe, leaps, id: animId };
     setAnim(a);
     // a lethal strike hurls the fallen piece off the board toward its captor's
     // capture tray: the winner's tray. My tray sits BELOW the board, the foe's
@@ -432,14 +437,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         const dur = anim.foe ? 0.9 : 0.52;   // seconds; foe moves read much slower
         const ease = "cubic-bezier(.34,.72,.28,1)";
         // tilt INTO the direction of travel (like the wanderer leaning on the
-        // map): lean right when moving right, left when moving left.
-        const dir = Math.sign(b.l - a.l) || 0;
-        const tilt = anim.phase && !anim.bounced ? dir * (anim.leaps ? 10 : 6) : 0;
+        // map): lean toward where it's going. Even a straight vertical move gets
+        // a slight lean so EVERY moving piece looks like it's striding, tipped.
+        const dxSign = Math.sign(b.l - a.l);
+        const dir = dxSign || (Math.sign(b.t - a.t) || 1); // vertical moves lean too
+        const tilt = anim.phase && !anim.bounced ? dir * (anim.leaps ? 10 : 7) : 0;
         // a LEAP hops in an arc: the inner wrapper lifts up then drops, peaking
         // mid-flight. We drive it with the same phase flip on a bounce-ease.
         const lift = anim.leaps && anim.phase && !anim.bounced;
         return (
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          <div key={anim.id} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
               style={{ position: "absolute", inset: 0, animation: "arrowFade 1.05s ease forwards" }}>
               {Array.from({ length: 7 }).map((_, k) => {
@@ -452,17 +459,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             </svg>
             {/* the mover glides (or leaps) from→to. Outer div carries the board
                 position; inner div carries the tilt and the hop's vertical arc,
-                so the two never fight each other. */}
-            <div style={{ position: "absolute",
+                so the two never fight each other. The key={anim.id} forces a
+                FRESH element each move, so the ghost is born at FROM instead of
+                sliding in from the previous move's destination. */}
+            <div key={`g${anim.id}`} style={{ position: "absolute",
               left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
               top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`,
               width: `${100 / W}%`, height: `${100 / H}%`, zIndex: 7,
-              transition: `left ${dur}s ${ease}, top ${dur}s ${ease}`,
+              // NO transition in phase 0: the ghost is planted at FROM with no
+              // animation, so it can never glide in from a stale position (that
+              // was the "foe starts where my piece landed" bug). The transition
+              // is switched on only for phase 1, which then carries it to TO.
+              transition: anim.phase ? `left ${dur}s ${ease}, top ${dur}s ${ease}` : "none",
               display: "grid", placeItems: "center" }}>
               <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
                 // hop arc: rise ~26% of a cell at the peak, settle back to 0
                 transform: `translateY(${lift ? "-26%" : "0"}) rotate(${tilt}deg)`,
-                transition: `transform ${dur}s ${anim.leaps ? "cubic-bezier(.3,-0.6,.5,1)" : ease}`,
+                transition: anim.phase ? `transform ${dur}s ${anim.leaps ? "cubic-bezier(.3,-0.6,.5,1)" : ease}` : "none",
                 filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
                 <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
               </div>
@@ -477,7 +490,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         return <div key={`die${death.id}`} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
           width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
           display: "grid", placeItems: "center",
-          animation: `ggFallToTray 1s cubic-bezier(.4,0,.7,1) forwards`,
+          animation: `ggFallToTray 1.15s cubic-bezier(.35,.05,.6,1) forwards`,
           ["--fdir"]: death.dir, ["--fly"]: death.fly }}>
           <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
         </div>;

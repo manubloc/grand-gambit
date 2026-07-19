@@ -17,12 +17,42 @@ if (typeof globalThis.structuredClone !== "function") {
 // app opens, whenever the tab regains focus, and every 60s. registerType
 // "autoUpdate" then swaps the service worker in and reloads the page ONCE —
 // a fresh deploy reaches every phone the next time the game is looked at. ──
-// no image context menu (right-click / long-press "save image") — the
-// gallery stays in the hall. Inputs and text keep their normal menus.
+// no context menu anywhere (right-click / long-press "save image", "copy") —
+// the whole app is a closed hall. The ONLY exception is fields the user types
+// into, where the normal copy/paste menu must stay.
 document.addEventListener("contextmenu", (e) => {
   const t = e.target;
-  if (t && (t.tagName === "IMG" || t.tagName === "CANVAS" || t.closest?.("svg"))) e.preventDefault();
+  const editable = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA"
+    || t.isContentEditable || t.closest?.("input, textarea, [contenteditable]"));
+  if (!editable) e.preventDefault();
 });
+// and no dragging pictures out of the app
+document.addEventListener("dragstart", (e) => {
+  const t = e.target;
+  const editable = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+  if (!editable) e.preventDefault();
+});
+// no text selection anywhere except in fields the user types into — this
+// catches selection started by mouse drag or keyboard, belt-and-braces with CSS
+document.addEventListener("selectstart", (e) => {
+  const t = e.target;
+  const editable = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA"
+    || t.isContentEditable || t.closest?.("input, textarea, [contenteditable]"));
+  if (!editable) e.preventDefault();
+});
+// every image that ever enters the DOM gets draggable=false + no long-press
+// save sheet, so nothing can be pulled out or downloaded, even late-mounted art
+const ggLockImg = (img) => { try { img.setAttribute("draggable", "false"); img.style.webkitUserDrag = "none"; img.style.userSelect = "none"; } catch {} };
+try {
+  for (const im of document.images) ggLockImg(im);
+  new MutationObserver((muts) => {
+    for (const m of muts) for (const n of m.addedNodes) {
+      if (n.nodeType !== 1) continue;
+      if (n.tagName === "IMG") ggLockImg(n);
+      else if (n.querySelectorAll) { try { for (const im of n.querySelectorAll("img")) ggLockImg(im); } catch {} }
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+} catch {}
 
 // belt and braces for INSTALLED apps: the moment a new service worker takes
 // control, reload exactly once — even if the plugin's own hook were missed

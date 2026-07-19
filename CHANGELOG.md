@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.63
+- GEGNER-ZUG STARTET ENDLICH AM RICHTIGEN FELD: der Gegner-Ghost begann seine Bewegung faelschlich dort, wo MEINE Figur zuletzt hinzog. Ursache: bei zwei schnellen Zuegen in derselben Millisekunde bekam die Animation dieselbe Kennung, React verwendete das alte Element wieder und die Figur glitt von der alten Zielposition herein. Jetzt bekommt jeder Zug eine streng fortlaufende Kennung UND die Gleit-Animation ist im Startmoment abgeschaltet - die Figur wird am FROM-Feld gesetzt und gleitet erst dann sauber zum Ziel
+- ALLE Figuren ziehen leicht schraeg gekippt (nicht nur der Gegner) - auch gerade Zuege bekommen eine leichte Neigung, wie ein schreitender Wanderer
+- GESCHLAGENE FIGUR: ausdrucksstaerkerer Flug zur Ablage (klarer Bogen, mehr Drehung, sauberes Verblassen) - nach oben zur Gegner-Ablage wenn ich schlage, nach unten zu meiner wenn der Gegner schlaegt
+- NICHTS ist per Rechtsklick/Markieren/Ziehen speicherbar (verstaerkt: selectstart blockiert, jedes Bild draggable=false, auch spaet geladene) - Ausnahme bleiben Eingabefelder (Name, Passwort), wo Kopieren/Einfuegen funktioniert
+
 ## 0.22.62
 - HIMMEL UEBER DER KARTE: hinter den Wolken liegt jetzt ein Himmel in der Stimmung der Welt - blauer Himmel mit Sonne in den gruenen Welten, kuehler im Herbst/Winter, duestere Lila- und Glut-Toene in den tiefen Welten. Durch die Luecken der ziehenden Wolken schimmert dieser Himmel durch
 - WOLKEN STAERKER ANIMIERT: die Wolken ziehen jetzt weiter und sichtbarer ueber den Himmel (mehrere Ebenen in unterschiedlichem Tempo), luftiger, sodass mehr Himmel durchscheint

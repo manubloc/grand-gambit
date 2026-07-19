@@ -23,12 +23,19 @@ export const GLOBAL_CSS = `
   :root { --vhz: 1; }
   @media (min-width: 1440px) { #root { zoom: 1.15; } :root { --vhz: 1.15; } }
   @media (min-width: 1760px) { #root { zoom: 1.3; } :root { --vhz: 1.3; } }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* NOTHING in the app is selectable, draggable or downloadable — no text
+     selection, no long-press save sheet, no drag-out of art, no image context
+     menu. The ONLY exception is fields the user types into (name, password,
+     search, import boxes), so copy/paste still works there. */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+      -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
+  input, textarea, [contenteditable="true"], [contenteditable=""] {
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
+      -webkit-touch-callout: default; }
   /* pull-to-refresh is retired — the app updates itself (v0.21.42); the
      gesture only ever fought the map pan and the board */
   html, body { overscroll-behavior: none; overscroll-behavior-y: none; }
-  /* nothing in the app is downloadable: no long-press save sheet on phones,
-     no drag-out of the paintings, no image context menu */
   img, svg, canvas { -webkit-touch-callout: none; -webkit-user-drag: none; user-drag: none; user-select: none; }
   /* number fields render as plain gold boxes — no native spinners */
   input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -72,8 +79,9 @@ export const GLOBAL_CSS = `
      top, flies up). --fdir still nudges sideways so pieces don't overlap. */
   @keyframes ggFallToTray {
     0%   { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
-    16%  { transform: translate(calc(var(--fdir) * 12%), calc(var(--fly) * -22%)) rotate(calc(var(--fdir) * 120deg)) scale(1.08); opacity: 1; }
-    100% { transform: translate(calc(var(--fdir) * 60%), calc(var(--fly) * 190%)) rotate(calc(var(--fdir) * 760deg)) scale(.16); opacity: 0; } }
+    15%  { transform: translate(calc(var(--fdir) * 6%), calc(var(--fly) * -20%)) rotate(calc(var(--fdir) * 40deg)) scale(1.12); opacity: 1; }
+    55%  { transform: translate(calc(var(--fdir) * 26%), calc(var(--fly) * 40%)) rotate(calc(var(--fdir) * 300deg)) scale(.72); opacity: .9; }
+    100% { transform: translate(calc(var(--fdir) * 54%), calc(var(--fly) * 210%)) rotate(calc(var(--fdir) * 560deg)) scale(.18); opacity: 0; } }
   @keyframes splashRing { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes splashPiece { from { transform: translateY(26px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
