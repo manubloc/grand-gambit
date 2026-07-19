@@ -136,18 +136,33 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     return () => { ro?.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
 
-  // Enemy-move animation: a ghost of the moved piece glides from → to, with a
-  // fading gold arrow underneath, so the opponent's move is unmissable.
+  // Move animation for BOTH armies now. A ghost of the mover glides from→to.
+  // On a KILL, the dying piece spins off the board toward the victor's side,
+  // shrinking as it flies (it lands in that player's capture tray). On a hit
+  // the target SURVIVES, it shakes in place and the attacker slides back home.
   const [anim, setAnim] = useState(null);
+  const [death, setDeath] = useState(null);   // { at, piece, dir, id }
   useEffect(() => {
-    if (!lastMove || !animateFor || lastMove.color !== animateFor) { setAnim(null); return; }
+    if (!lastMove || lastMove.from === lastMove.to) { setAnim(null); return; }
+    // hotseat animates both; otherwise only the side we're told to animate
+    if (animateFor && lastMove.color !== animateFor) { setAnim(null); return; }
     const piece = state.board[lastMove.to];
-    if (!piece) { setAnim(null); return; }
-    const a = { from: lastMove.from, to: lastMove.to, piece, phase: 0, id: Date.now() };
+    if (!piece && !lastMove.bounced) { setAnim(null); return; }
+    const glider = piece || { kind: lastMove.kind, color: lastMove.color };
+    const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
+      bounced: !!lastMove.bounced, id: Date.now() };
     setAnim(a);
+    // a lethal strike hurls the fallen piece off the board toward its captor
+    if (lastMove.lethal && lastMove.hitKind) {
+      const victorWhite = lastMove.color === "w";
+      setDeath({ at: lastMove.to, id: a.id + 1,
+        piece: { kind: lastMove.hitKind, color: lastMove.hitColor || (victorWhite ? "b" : "w") },
+        dir: (victorWhite ? 1 : -1) * (pov === "w" ? 1 : -1) });   // toward the winner's tray
+    }
     const raf = requestAnimationFrame(() => requestAnimationFrame(() =>
       setAnim((cur) => (cur && cur.id === a.id ? { ...cur, phase: 1 } : cur))));
-    const t = setTimeout(() => setAnim((cur) => (cur && cur.id === a.id ? null : cur)), 950);
+    const t = setTimeout(() => { setAnim((cur) => (cur && cur.id === a.id ? null : cur));
+      setDeath((cur) => (cur && cur.id === a.id + 1 ? null : cur)); }, 950);
     return () => { cancelAnimationFrame(raf); clearTimeout(t); };
   }, [lastMove, animateFor]); // eslint-disable-line
 
@@ -362,13 +377,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           </svg>
         );
       })()}
+      {/* the target that SURVIVES a hit shakes where it stands */}
+      {lastMove && lastMove.damaged && !lastMove.lethal && !anim?.bounced && (() => {
+        const s = disp(lastMove.to);
+        return <div key={`shk${lastMove.id || lastMove.to}`} style={{ position: "absolute", left: `${s.l}%`, top: `${s.t}%`,
+          width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 6,
+          animation: "ggShake .5s ease-in-out", transformOrigin: "center" }} />;
+      })()}
+
       {anim && (() => {
-        const a = disp(anim.from), b = disp(anim.to), at = anim.phase ? b : a;
+        // bounce: attacker glides out and back; else a plain from→to glide.
+        // phase 0 sits at origin, phase 1 arrives (or, when bounced, returns).
+        const a = disp(anim.from), b = disp(anim.to);
+        const at = anim.bounced ? a : (anim.phase ? b : a);
         return (
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
               style={{ position: "absolute", inset: 0, animation: "arrowFade 1.05s ease forwards" }}>
-              {/* comet trail: fading, shrinking orbs from origin toward target */}
               {Array.from({ length: 7 }).map((_, k) => {
                 const q = (k + 1) / 8;
                 return <circle key={k} cx={a.x + (b.x - a.x) * q} cy={a.y + (b.y - a.y) * q}
@@ -377,13 +402,27 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               <circle cx={b.x} cy={b.y} r="3.1" fill={T.gold} opacity="0.16" />
               <circle cx={b.x} cy={b.y} r="1.5" fill={T.gold} opacity="0.55" />
             </svg>
-            <div style={{ position: "absolute", left: `${at.l}%`, top: `${at.t}%`, width: `${100 / W}%`, height: `${100 / H}%`,
+            {/* the attacker glides out to the target then, on a bounce, back home */}
+            <div style={{ position: "absolute", left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
+              top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`, width: `${100 / W}%`, height: `${100 / H}%`,
               transition: "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",
               display: "grid", placeItems: "center", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
               <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
             </div>
           </div>
         );
+      })()}
+
+      {/* the FALLEN: spins off the board toward the victor, shrinking away */}
+      {death && (() => {
+        const d = disp(death.at);
+        return <div key={`die${death.id}`} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
+          width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
+          display: "grid", placeItems: "center",
+          animation: `ggFallAway .82s cubic-bezier(.4,0,.7,1) forwards`,
+          ["--fdir"]: death.dir }}>
+          <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+        </div>;
       })()}
     </div>
   );

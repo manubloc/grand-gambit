@@ -59,6 +59,14 @@ export const GLOBAL_CSS = `
   @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes glow { 0%,100% { box-shadow: 0 0 0 2px ${T.danger}; } 50% { box-shadow: 0 0 0 2px ${T.danger}66; } }
   @keyframes hit { 0% { opacity: .8; } 100% { opacity: 0; } }
+  @keyframes ggShake { 0%,100% { transform: translateX(0) rotate(0); }
+    15% { transform: translateX(-9%) rotate(-5deg); } 30% { transform: translateX(8%) rotate(4deg); }
+    45% { transform: translateX(-6%) rotate(-3deg); } 60% { transform: translateX(5%) rotate(2deg); }
+    75% { transform: translateX(-3%) rotate(-1deg); } }
+  @keyframes ggFallAway {
+    0% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
+    18% { transform: translate(calc(var(--fdir) * 20%), -34%) rotate(calc(var(--fdir) * 130deg)) scale(1.06); opacity: 1; }
+    100% { transform: translate(calc(var(--fdir) * 340%), -120%) rotate(calc(var(--fdir) * 900deg)) scale(.12); opacity: 0; } }
   @keyframes splashRing { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes splashPiece { from { transform: translateY(26px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }

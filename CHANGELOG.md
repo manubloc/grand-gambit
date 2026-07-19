@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.40
+- FIGUREN ZIEHEN UND FALLEN ANIMIERT: Zuege werden jetzt fuer BEIDE Armeen animiert - die Figur gleitet sichtbar von ihrem Feld zum Ziel (mit Kometenschweif), nicht nur der Gegner wie bisher
+- TODESFLUG: schlaegt man eine Figur und sie stirbt, wirbelt sie mit vielen Rotationen aus dem Spielfeld - im Flug wird sie immer kleiner und segelt zur Beute-Seite des Siegers (Endposition ausserhalb des Bretts)
+- UEBERLEBTER TREFFER: ueberlebt die getroffene Figur, wackelt sie kurz und bleibt stehen, waehrend die angreifende Figur genau den Weg zurueckgleitet, den sie gekommen ist (Prellzug)
+
 ## 0.22.39
 - AUFSTELLUNG WIRD JETZT IM KAMPF UEBERNOMMEN: in fruehen Ligen biegt das Spiel jeden Kampf auf das 8x8-Klassik-Feld um, auch wenn der Knoten eine andere Karte vorsieht - dadurch wurde die gespeicherte Aufstellung unter der falschen Karte gesucht und still verworfen. Jetzt greift, wenn fuer das genaue Kampffeld keine eigene Aufstellung vorliegt, eine gespeicherte Aufstellung von einem gleich grossen Feld (gleiche Slot-Zahl), sofern sie hier legal ist; die exakte Karte hat weiter Vorrang. End-to-End geprueft: Turm-gegen-Springer-Tausch erscheint auf dem Brett (1 Turm, 3 Springer statt 2/2)
 - 2 neue Regressionstests (Aufstellung uebertraegt sich aufs umgebogene Feld; exakte Karte gewinnt)

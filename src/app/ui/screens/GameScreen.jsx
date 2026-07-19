@@ -601,7 +601,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={hotseat ? null : oppColor}
+        <BoardView state={state} onMove={play} interactive={myTurn} lastMove={state.lastMove} animateFor={null}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
