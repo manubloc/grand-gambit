@@ -1,5 +1,5 @@
-import { createInitialState, status, applyMove, KIND } from "./src/core/index.js";
-import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel, formationLegalOn, ownedLeagueBosses, unlockedCharacterIds, formationSpec, buildArmyForMap, withProgressPct, defaultProfile } from "./src/meta/index.js";
+import { createInitialState, status, applyMove, legalMoves, KIND } from "./src/core/index.js";
+import { buildArmy, buildAiArmy, characterLevel, playerLevelForXp, charLevelForXp, charXpForLevel, formationLegalOn, ownedLeagueBosses, unlockedCharacterIds, formationSpec, buildArmyForMap, withProgressPct, defaultProfile, summarizeMatch } from "./src/meta/index.js";
 import { buildStageMatch } from "./src/meta/campaign.js";
 import { createGame } from "./src/core/index.js";
 import { MAPS } from "./src/content/index.js";
@@ -175,6 +175,27 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 }
 {
   const fresh = { campaign: { league: 1, cleared: [] } };
+    // GRAND GAMBIT bonus XP: survives the battle → survival bonus in the summary
+  {
+    const p = withProgressPct(defaultProfile(), 30, 1);
+    const map = mapById("classic");
+    const wArmy = buildArmyForMap(p, map, null, "hp");
+    const bArmy = buildArmyForMap(p, map, null, "hp");
+    let g = createGame(wArmy, bArmy, { map, rules: "hp", seed: 5 });
+    const log = [];
+    for (let i = 0; i < 30; i++) {
+      const moves = legalMoves(g);
+      if (!moves.length) break;
+      const caps = moves.filter((m) => g.board[m.to] && g.board[m.to].color !== g.turn);
+      const m = caps[0] || moves[(i * 7) % moves.length];
+      log.push({ from: m.from, to: m.to, ...(m.special ? { special: m.special } : {}), ...(m.promotion ? { promotion: m.promotion } : {}) });
+      g = applyMove(g, m);
+      if (g.status?.over) break;
+    }
+    const sum = summarizeMatch(wArmy, bArmy, 5, log, "win", "w", { map, rules: "hp" });
+    ok("Grand Gambit earns survival bonus XP when he lives", (sum.charXpGains.gambit || 0) > 12);
+    ok("summary reports heroSurvived", sum.heroSurvived === true);
+  }
     // FORMATION carries into battle — even when the fight is re-routed to another
   // board of the same size (early leagues bend everything onto the classic field)
   {

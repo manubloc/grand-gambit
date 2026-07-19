@@ -20,7 +20,7 @@ export const Ev = {
   healed: (color, kind, at, hp) => ({ type: "healed", color, kind, at, hp }),
   moved: (color, kind, from, to, special = null) => ({ type: EVENT.MOVED, color, kind, from, to, special }),
   // `by` captured a piece of `kind` at square `at`; `byKind` is the attacker's kind.
-  captured: (by, byKind, kind, at) => ({ type: EVENT.CAPTURED, by, byKind, kind, at }),
+  captured: (by, byKind, kind, at, byHero = false, heroVictim = false) => ({ type: EVENT.CAPTURED, by, byKind, kind, at, byHero, heroVictim }),
   // `by` dealt `dmg` to a (`color`/`kind`) piece at `at`, leaving `hpAfter` HP.
   damaged: (by, color, kind, at, dmg, hpAfter) => ({ type: EVENT.DAMAGED, by, color, kind, at, dmg, hpAfter }),
   // a shielded piece (`color`/`kind`) at `at` absorbed a hit from `by`.

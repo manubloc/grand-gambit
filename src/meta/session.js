@@ -3,6 +3,10 @@ import { KIND_TO_CHAR } from "../content/index.js";
 
 // XP a player character earns from a match (event-sourced, see below).
 const PARTICIPATION = 12, CAP_XP = 10, PROMO_XP = 15;
+// The Grand Gambit is bold: he earns EXTRA when he strikes, and extra again for
+// surviving the whole battle on the board. These teach an aggressive, present
+// commander — the heart of his risk/reward.
+const HERO_CAP_XP = 8, HERO_SURVIVE_XP = 14;
 
 /** Start a session, pre-seeding participation XP for the player's deployed characters. */
 export function newSession(playerColor = WHITE, playerArmy = null) {
@@ -10,9 +14,10 @@ export function newSession(playerColor = WHITE, playerArmy = null) {
   if (playerArmy) {
     const present = new Set(["pawn"]);
     for (const spec of playerArmy.back) { const id = KIND_TO_CHAR[spec.kind]; if (id) present.add(id); }
+    if (playerArmy.hero) present.add("gambit"); // the commander always fights
     present.forEach((id) => { charXpGains[id] = PARTICIPATION; });
   }
-  return { playerColor, captures: 0, promotions: 0, lostQueen: false, checkmate: false, moveCount: 0, charXpGains };
+  return { playerColor, captures: 0, promotions: 0, lostQueen: false, checkmate: false, moveCount: 0, charXpGains, heroFell: false, heroCaptures: 0 };
 }
 
 /** Fold a batch of core events into the session. */
@@ -27,8 +32,11 @@ export function applyEvents(session, events) {
           session.captures++;
           const id = KIND_TO_CHAR[e.byKind];
           if (id) session.charXpGains[id] = (session.charXpGains[id] || 0) + CAP_XP;
-        } else if (e.kind === "Q") {
-          session.lostQueen = true; // our queen was taken
+          // the Grand Gambit's own strikes pay a bold-commander bonus
+          if (e.byHero) { session.charXpGains.gambit = (session.charXpGains.gambit || 0) + HERO_CAP_XP; session.heroCaptures++; }
+        } else {
+          if (e.kind === "Q") session.lostQueen = true; // our queen was taken
+          if (e.heroVictim) session.heroFell = true;    // our commander was struck down
         }
         break;
       case "promoted":
@@ -47,6 +55,8 @@ export function applyEvents(session, events) {
 
 /** The summary consumed by rewards.applyResult. */
 export function summarize(session, result) {
+  // the commander who stayed on the board to the end earns his survival bonus
+  if (!session.heroFell) session.charXpGains.gambit = (session.charXpGains.gambit || 0) + HERO_SURVIVE_XP;
   return {
     result,
     captures: session.captures,
@@ -54,6 +64,8 @@ export function summarize(session, result) {
     checkmate: result === "win" && session.checkmate,
     lostQueen: session.lostQueen,
     moveCount: session.moveCount,
+    heroCaptures: session.heroCaptures,
+    heroSurvived: !session.heroFell,
     charXpGains: session.charXpGains,
   };
 }

@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave } from "../meta/index.js";
-import { nodeById, chapterForRow, buyItem } from "../content/index.js";
+import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
+import { nodeById, chapterForRow, buyItem, CHARACTER_LIST } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
@@ -194,6 +194,8 @@ export default function App() {
   if (!ready || !profile) return null;
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
+  // onboarding lessons appear between battles, never over a running match
+  const teach = (!showPrivacy && !showIntro && !inMatchNow) ? pendingTeach(profile) : null;
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)}
     onBack={() => { setLocked(false); setSlot(null); setReady(false); }} />;
@@ -296,6 +298,7 @@ export default function App() {
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {(!immersive || mapView) && (
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -322,6 +325,7 @@ export default function App() {
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,
@@ -512,6 +516,42 @@ function PrivacyNotice({ t, dispatch }) {
         </div>
         <Button variant="primary" style={{ width: "100%" }}
           onClick={() => dispatch({ type: "SET_NOTICE", key: "privacy" })}>{t("privacy.ok")}</Button>
+      </div>
+    </div>
+  );
+}
+
+// ── ONBOARDING: three one-time lessons that ride the natural progression ──
+function pendingTeach(profile) {
+  if (!profile) return null;
+  const n = profile.notices || {};
+  const cleared = clearedCount(profile);
+  const hasExtra = CHARACTER_LIST.some((c) => c.kind !== "P" && c.unlock?.type !== "start" && isUnlocked(c, profile));
+  if (hasExtra && !n.teachFormation) return "teachFormation";
+  if (cleared >= 2 && !n.teachGambitXp) return "teachGambitXp";
+  if (cleared >= 3 && !n.teachGambitPos) return "teachGambitPos";
+  return null;
+}
+function TeachPopup({ which, t, dispatch }) {
+  const map = { teachFormation: ["teach.formationTitle", "teach.formationBody"],
+    teachGambitXp: ["teach.gambitXpTitle", "teach.gambitXpBody"],
+    teachGambitPos: ["teach.gambitPosTitle", "teach.gambitPosBody"] };
+  const [tk, bk] = map[which];
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 62, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
+      <div style={{ width: "100%", maxWidth: 400, background: T.panel, border: `1px solid ${T.gold}77`,
+        borderRadius: T.radius, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "20px 18px 16px", animation: "rise .35s ease" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4 }}>
+          <span style={{ width: 8, height: 8, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
+          <div className="gg-serif" style={{ fontSize: 18.5, color: T.gold, letterSpacing: ".04em" }}>{t(tk)}</div>
+        </div>
+        <div style={{ fontSize: 13.5, color: T.dim, lineHeight: 1.6, margin: "8px 0 14px" }}>{t(bk)}</div>
+        <button onClick={() => dispatch({ type: "SET_NOTICE", key: which })}
+          style={{ width: "100%", padding: "12px 14px", borderRadius: 10,
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+            color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit", cursor: "pointer", letterSpacing: ".04em" }}>
+          {t("teach.ok")} ›</button>
       </div>
     </div>
   );

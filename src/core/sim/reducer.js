@@ -22,7 +22,7 @@ export function reduce(state, command) {
       events.push(Ev.moved(lm.color, lm.kind, lm.from, lm.to, lm.special));
       if (lm.bounced) events.push(Ev.shieldAbsorbed(lm.hitColor, lm.hitKind, lm.to, lm.color));
       else if (lm.damaged) events.push(Ev.damaged(lm.color, lm.hitColor, lm.hitKind, lm.to, lm.dmg, lm.targetHpAfter));
-      else if (lm.capture) events.push(Ev.captured(lm.color, lm.kind, lm.captured, lm.to));
+      else if (lm.capture) events.push(Ev.captured(lm.color, lm.kind, lm.captured, lm.to, lm.byHero, lm.hitHero));
       if (lm.promotion) events.push(Ev.promoted(lm.color, lm.to, lm.promotion));
 
       const sideToMove = next.turn;

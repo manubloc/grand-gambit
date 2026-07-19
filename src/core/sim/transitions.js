@@ -222,12 +222,13 @@ export function applyMove(state, move, opts) {
   regenEnergyFor(ns, ns.turn);
   ns.moveCount = state.moveCount + 1;
   ns.lastMove = {
-    from: move.from, to: move.to, color: piece.color, kind: move.kind,
+    from: move.from, to: move.to, color: piece.color, kind: move.kind, byHero: !!piece.hero,
     capture: captured, bounced, damaged, dmg, lethal,
     targetHpAfter: hp && target ? Math.max(0, target.hp) : null,
     captured: captured ? target.kind : null,
     hitKind: target ? target.kind : null,
     hitColor: target ? target.color : null,
+    hitHero: target ? !!target.hero : false,
     special: move.special || null, promotion: move.promotion || null,
   };
   if (record) ns.history = state.history.concat([state]);
