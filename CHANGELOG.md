@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.43
+- DOPPELTE KRAEFTE-ANZEIGE ENTFERNT: die bunte DU/GEGNER-Leiste mit Leben und Energie direkt ueber dem Brett ist raus - die Kraefte stehen weiterhin in den Kopf- und Fussleisten (Herz + Staerke je Seite), also keine Dopplung mehr
+- KAMPAGNEN-SMOKE-TEST: neuer Regressionstest spielt JEDEN der 51 Kampagnen-Knoten ueber 5 Startwerte voll durch (ueber 25000 Zuege) inklusive Belohnungs-Auswertung und prueft, dass jedes Drachen-Level seinen 2x2-Block korrekt entfaltet - faengt Zug- und Aufbau-Abstuerze auf Engine-Ebene ab und laeuft ab jetzt bei jedem npm test mit
+
 ## 0.22.42
 - STAT-BUBBLES GROESSER UND TIEFER: die drei Kugeln (Leben, Staerke, Energie) sind rund 30 Prozent groesser und sitzen weiter unten an der Figur (die L-Form ragt jetzt leicht unter das Feld) - die Zahlen sind dadurch deutlich besser lesbar; der Leben-Orb misst rund 42 Prozent der Feldbreite statt vorher ~30
 

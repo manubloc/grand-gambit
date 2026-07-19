@@ -573,25 +573,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const boardBlock = (<>
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
-      {state.rules === "hp" && (() => {
-        // the war ledger: both armies' TOTAL life and energy, live — the
-        // tactical weather report the player asked to see at a glance
-        const sum = { w: { hp: 0, en: 0 }, b: { hp: 0, en: 0 } };
-        for (const p of state.board) if (p && p.kind !== "D+") { sum[p.color].hp += p.hp || 0; sum[p.color].en += p.en || 0; }
-        const mine = sum[myColor], theirs = sum[myColor === "w" ? "b" : "w"];
-        const Cell = ({ label, v, own }) => (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "3px 10px", borderRadius: 999,
-            background: "rgba(9,12,20,.72)", border: `1px solid ${own ? "rgba(233,210,150,.4)" : "rgba(158,166,190,.35)"}` }}>
-            <span className="gg-serif" style={{ fontSize: 10, letterSpacing: ".1em", color: own ? T.gold : "#aab2c8" }}>{label}</span>
-            <span style={{ fontSize: 11.5, fontWeight: 800, color: "#8fd6a0" }}>♥ {v.hp}</span>
-            <span style={{ fontSize: 11.5, fontWeight: 800, color: "#8ec7f2" }}><EnergyIc size={10} /> {v.en}</span>
-          </span>
-        );
-        return <div style={{ display: "flex", justifyContent: "space-between", gap: 8, margin: "0 2px 6px" }}>
-          <Cell label={t("game.ledgerYou")} v={mine} own />
-          <Cell label={t("game.ledgerFoe")} v={theirs} />
-        </div>;
-      })()}
       <div ref={zoomBox} onPointerDown={zoomDown} onPointerMove={zoomMove} onPointerUp={zoomUp} onPointerCancel={zoomUp}
         onWheel={zoomWheel} onClickCapture={(e) => { if (zDragged.current) { e.stopPropagation(); e.preventDefault(); zDragged.current = false; } }}
         style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
@@ -735,7 +716,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
           unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
           fledName={match?.boss && !match?.boss?.unlocks ? (match.boss.name?.[profile.lang === "en" ? "en" : "de"] || null) : null}
-          unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} />}
+          unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} newSkills={newSkills} />}
       </div>
 
 </>);
@@ -933,7 +914,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   );
 }
 
-function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, fledName = null, en = false, onArmy = null, pvpInfo = null, boss = null }) {
+function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSettings = null, unlockName = null, unlockId = null, fledName = null, en = false, onArmy = null, pvpInfo = null, boss = null, newSkills = [] }) {
   const win = banner.result === "win";
   const color = banner.hotseat ? T.gold : win ? T.lime : banner.result === "draw" ? T.gold : "#b4636c";
   const title = banner.hotseat
