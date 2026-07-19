@@ -12,7 +12,8 @@ import { LoginScreen } from "./src/app/ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./src/app/ui/screens/SavesScreen.jsx";
 import { LeaderboardSection } from "./src/app/ui/screens/LeaderboardScreen.jsx";
 import { createNet } from "./src/platform/net.web.js";
-import { defaultProfile, buildStageMatch, advanceCampaign } from "./src/meta/index.js";
+import { defaultProfile, buildStageMatch, advanceCampaign, withProgressPct } from "./src/meta/index.js";
+import { CAMPAIGN } from "./src/content/index.js";
 import { makeT } from "./src/app/i18n/strings.js";
 
 const t = makeT("de");
@@ -34,6 +35,23 @@ step("CampaignScreen (forked)", () => renderToStaticMarkup(<CampaignScreen profi
 step("ArmyScreen", () => renderToStaticMarkup(<ArmyScreen profile={prof} dispatch={() => {}} t={t} />));
 step("GameScreen quick play", () => renderToStaticMarkup(<GameScreen profile={prof} dispatch={() => {}} t={t} />));
 step("GameScreen campaign piece-boss", () => renderToStaticMarkup(<GameScreen profile={prof} dispatch={() => {}} t={t} match={buildStageMatch("a2")} onExit={() => {}} />));
+// EVERY campaign node must at least OPEN (render) without crashing — this is
+// exactly the "a level won't open" failure, dragon stages included. We build a
+// fully-progressed profile so every node (dragons a4/g7/g1, all bosses) is reachable.
+{
+  const full = withProgressPct(defaultProfile(), 100, 10);
+  let opened = 0, failed = [];
+  for (const node of CAMPAIGN) {
+    try {
+      const m = buildStageMatch(node.id, full);
+      renderToStaticMarkup(<GameScreen profile={full} dispatch={() => {}} t={t} match={m} onExit={() => {}} />);
+      opened++;
+    } catch (e) { failed.push(node.id + ": " + e.message); }
+  }
+  step(`all ${CAMPAIGN.length} campaign nodes open (render)`, () => {
+    if (failed.length) throw new Error(`${failed.length} node(s) crash on open: ` + failed.slice(0, 4).join(" | "));
+  });
+}
 step("OnlineScreen (disconnected)", () => renderToStaticMarkup(<OnlineScreen profile={prof} dispatch={() => {}} t={t} net={createNet()} onMatch={() => {}} />));
 step("AchievementsScreen", () => renderToStaticMarkup(<AchievementsScreen profile={prof} t={t} />));
 step("ProfileScreen", () => renderToStaticMarkup(<ProfileScreen profile={prof} dispatch={() => {}} t={t} />));
