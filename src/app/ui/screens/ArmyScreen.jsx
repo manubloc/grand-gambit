@@ -112,35 +112,104 @@ function describeMoves(ch, en) {
   return txt.charAt(0).toUpperCase() + txt.slice(1) + ".";
 }
 
+// ── MOVE VISUALISATION ───────────────────────────────────────────────────────
+// Every piece's BASE stride drawn on a small board: the piece sits in the
+// centre, reachable squares glow. Slides (rays) shade the whole line and mark
+// their reach; leaps (fixed jumps) mark single squares. Standard kinds have no
+// stored moveSpec, so we derive one from the same vectors the engine uses.
+const DIRS_O = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+const DIRS_D = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+const DIRS_ALL = [...DIRS_O, ...DIRS_D];
+const KNIGHT_L = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
+function specForKind(kind, ownSpec) {
+  if (ownSpec) return ownSpec;
+  switch (kind) {
+    case "N": return { leaps: KNIGHT_L };
+    case "B": return { slides: DIRS_D, range: 99 };
+    case "R": return { slides: DIRS_O, range: 99 };
+    case "Q": return { slides: DIRS_ALL, range: 99 };
+    case "K": return { slides: DIRS_ALL, range: 1 };
+    case "A": return { slides: DIRS_D, range: 99, leaps: KNIGHT_L };
+    case "C": return { slides: DIRS_O, range: 99, leaps: KNIGHT_L };
+    case "H": return { leaps: [...KNIGHT_L, ...DIRS_D] };
+    case "M": return { slides: DIRS_ALL, range: 99, leaps: KNIGHT_L };
+    case "D": return { slides: DIRS_ALL, range: 1 };            // the block shuffles one square
+    case "P": return { leaps: [[0, 1]], pawn: true };
+    default: return null;
+  }
+}
+function MoveDiagram({ kind, moveSpec }) {
+  const sp = specForKind(kind, moveSpec);
+  if (!sp) return null;
+  const R = 3;                                     // radius → 7x7 board (fits knight L and 2-3 slides)
+  const N = R * 2 + 1;
+  const reach = new Map();                          // "df,dr" → "slide" | "leap"
+  const rng = Math.min(sp.range || 1, R);
+  for (const [df, dr] of sp.slides || [])
+    for (let k = 1; k <= rng; k++) reach.set(`${df * k},${dr * k}`, "slide");
+  for (const [df, dr] of sp.leaps || [])
+    if (Math.abs(df) <= R && Math.abs(dr) <= R) reach.set(`${df},${dr}`, "leap");
+  const cells = [];
+  for (let r = R; r >= -R; r--) for (let f = -R; f <= R; f++) {
+    const here = f === 0 && r === 0;
+    const mark = reach.get(`${f},${r}`);
+    const light = (f + r + 100) % 2 === 0;
+    cells.push({ f, r, here, mark, light });
+  }
+  return <div style={{ display: "grid", gridTemplateColumns: `repeat(${N}, 1fr)`, gap: 1.5, width: "min(184px, 62vw)",
+    padding: 5, borderRadius: 8, background: "rgba(8,12,22,.55)", border: "1px solid #ffffff10" }}>
+    {cells.map((c, i) => <div key={i} style={{ aspectRatio: "1", borderRadius: 3, position: "relative",
+      background: c.here ? "linear-gradient(160deg,#e7c877,#b1863c)"
+        : c.mark === "slide" ? "rgba(74,163,232,.42)"
+        : c.mark === "leap" ? "rgba(233,197,63,.5)"
+        : c.light ? "rgba(255,255,255,.05)" : "rgba(255,255,255,.02)",
+      boxShadow: c.here ? "0 0 5px rgba(231,200,119,.7)" : c.mark ? "inset 0 0 0 1px rgba(255,255,255,.18)" : "none" }}>
+      {c.here && <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+        fontSize: 9, fontWeight: 900, color: "#1a1206" }}>✦</span>}
+    </div>)}
+  </div>;
+}
+const MOVE_LEGEND = { de: "Blau: Gleiten · Gelb: Sprung · ✦ die Figur", en: "Blue: slide · Yellow: leap · ✦ the piece" };
+
 function ChroniclePanel({ profile, t, en }) {
   const [openId, setOpenId] = useState(null);
+  const met = new Set(profile.codex?.met || []);
+  // seen = recruited OR met in battle. Base moves are only revealed once you
+  // have actually LIVED the piece — recruited, or faced across the board.
+  const seenChar = (ch) => isUnlocked(ch, profile) || met.has(ch.kind);
+  const seenBoss = (b) => met.has("X:" + b.id) || (profile.campaign?.bribedBosses || []).includes(b.id)
+    || ownedLeagueBosses(profile).includes(b.id);
   const figures = CHARACTER_LIST;
+  const FAM = { golem: ["Golems", "Golems"], beast: ["Bestien", "Beasts"], serpent: ["Schlangen", "Serpents"], wraith: ["Schemen", "Wraiths"], tyrant: ["Tyrannen", "Tyrants"] };
   return <div style={{ display: "grid", gap: 8 }}>
     <div className="gg-serif" style={{ fontSize: 12.5, color: "#a9a28a", fontStyle: "italic", lineHeight: 1.5, padding: "2px 4px" }}>
       {t("chron.law")}</div>
     {figures.map((ch) => {
       const open = openId === ch.id;
-      const unlocked = isUnlocked(ch, profile);
+      const seen = seenChar(ch);
       const rungs = ch.ladder.filter((r) => r.ability);
       return <div key={ch.id} style={{ borderRadius: 12, border: `1px solid ${open ? "#e3c07a88" : T.line}`,
         background: "linear-gradient(180deg, rgba(24,32,58,.5), rgba(12,16,30,.6))", overflow: "hidden" }}>
-        <button onClick={() => setOpenId(open ? null : ch.id)} style={{ display: "flex", alignItems: "center", gap: 10,
-          width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+        <button onClick={() => seen && setOpenId(open ? null : ch.id)} style={{ display: "flex", alignItems: "center", gap: 10,
+          width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: seen ? "pointer" : "default", textAlign: "left" }}>
           <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
             {paintedById(ch.id)
               ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
-                  filter: unlocked ? "none" : "grayscale(1) brightness(.55)" }} />
+                  filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
               : <Glyph kind={ch.kind} color="w" size={30} />}
           </span>
           <span style={{ flex: 1, minWidth: 0 }}>
-            <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: unlocked ? T.text : "#9a937c" }}>{en ? ch.nameEn : ch.nameDe}</span>
+            <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: seen ? T.text : "#79735f" }}>{seen ? (en ? ch.nameEn : ch.nameDe) : "???"}</span>
+            {!seen && <span style={{ fontSize: 11, color: "#6c6653" }}><LockIc size={10} /> {en ? "not yet encountered" : "noch nicht begegnet"}</span>}
           </span>
-          <span style={{ color: "#c9b26a", fontSize: 12 }}>{open ? "▾" : "▸"}</span>
+          {seen && <span style={{ color: "#c9b26a", fontSize: 12 }}>{open ? "▾" : "▸"}</span>}
         </button>
-        {open && <div style={{ padding: "0 12px 11px", display: "grid", gap: 8 }}>
+        {open && seen && <div style={{ padding: "0 12px 11px", display: "grid", gap: 8 }}>
           <div>
             <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 3 }}>{t("chron.moves").toUpperCase()}</div>
-            <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "#ddd6bd" }}>{describeMoves(ch, en)}</div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "#ddd6bd", marginBottom: 7 }}>{describeMoves(ch, en)}</div>
+            <MoveDiagram kind={ch.kind} moveSpec={ch.moveSpec} />
+            <div style={{ fontSize: 10, color: "#8a856f", marginTop: 4, fontStyle: "italic" }}>{en ? MOVE_LEGEND.en : MOVE_LEGEND.de}</div>
           </div>
           {rungs.length > 0 && <div>
             <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 4 }}>{t("chron.abilities").toUpperCase()}</div>
@@ -152,6 +221,39 @@ function ChroniclePanel({ profile, t, en }) {
                   {" — "}{ab[en ? "descEn" : "descDe"]}</div>; })}
             </div>
           </div>}
+        </div>}
+      </div>; })}
+
+    {/* ── THE BESTIARY: monsters of the rift, revealed once faced ── */}
+    <div className="gg-serif" style={{ fontSize: 11, letterSpacing: ".14em", color: "#c9b26a", textTransform: "uppercase",
+      marginTop: 10, marginBottom: 2, padding: "2px 4px" }}>{en ? "Bestiary" : "Bestiarium"}</div>
+    {BOSSES.map((b) => {
+      const open = openId === "X:" + b.id;
+      const seen = seenBoss(b);
+      const fam = FAM[b.art] ? (en ? FAM[b.art][1] : FAM[b.art][0]) : b.art;
+      return <div key={b.id} style={{ borderRadius: 12, border: `1px solid ${open ? "#e3c07a88" : T.line}`,
+        background: "linear-gradient(180deg, rgba(46,24,40,.42), rgba(14,10,18,.6))", overflow: "hidden" }}>
+        <button onClick={() => seen && setOpenId(open ? null : "X:" + b.id)} style={{ display: "flex", alignItems: "center", gap: 10,
+          width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: seen ? "pointer" : "default", textAlign: "left" }}>
+          <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
+            {(paintedById("boss-" + b.id) || paintedById("boss-" + b.art))
+              ? <img src={paintedById("boss-" + b.id) || paintedById("boss-" + b.art)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+                  filter: seen ? "none" : "grayscale(1) brightness(.35)" }} />
+              : <span style={{ fontSize: 24, filter: seen ? "none" : "grayscale(1) brightness(.4)" }}>👁</span>}
+          </span>
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: seen ? "#e7b7c9" : "#79735f" }}>{seen ? (en ? b.nameEn : b.nameDe) : "???"}</span>
+            <span style={{ fontSize: 11, color: seen ? "#a98ba0" : "#6c6653" }}>{seen ? fam : (en ? "a shadow on the road" : "ein Schemen auf der Straße")}</span>
+          </span>
+          {seen && <span style={{ color: "#c9b26a", fontSize: 12 }}>{open ? "▾" : "▸"}</span>}
+        </button>
+        {open && seen && <div style={{ padding: "0 12px 11px", display: "grid", gap: 8 }}>
+          <div>
+            <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 3 }}>{t("chron.moves").toUpperCase()}</div>
+            <MoveDiagram kind={null} moveSpec={b.moveSpec} />
+            <div style={{ fontSize: 10, color: "#8a856f", marginTop: 4, fontStyle: "italic" }}>{en ? MOVE_LEGEND.en : MOVE_LEGEND.de}</div>
+          </div>
+          {(en ? b.hintEn : b.hintDe) && <div className="gg-serif" style={{ fontSize: 12, fontStyle: "italic", color: "#b7a9b2", lineHeight: 1.5 }}>„{en ? b.hintEn : b.hintDe}“</div>}
         </div>}
       </div>; })}
   </div>;
@@ -997,8 +1099,8 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
-      { value: "chron", label: t("army.tabChron") },
       { value: "gear", label: t("army.tabGear") },
+      { value: "chron", label: t("army.tabChron") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} />}

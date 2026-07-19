@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.34
+- CHRONIK HINTER AUSRUESTUNG: Reiter-Reihenfolge jetzt Hofstaat, Aufstellung, Ausruestung, Chronik
+- BESTIARIUM: alle 25 Monster des Risses in der Chronik ergaenzt (eigene Sektion unter den Figuren), mit Familie, Zug-Diagramm und Andeutung
+- NUR ERLEBTES WIRD ENTHUELLT: Chronik-Eintraege sind verschlossen (Silhouette, "???", "noch nicht begegnet"), bis man die Figur besitzt ODER ihr im Kampf begegnet ist - Standardfiguren kennt man von Beginn an, exotische Figuren und Monster erst nach der Begegnung (nutzt denselben Codex wie der Hofstaat-Baum)
+- GRUNDZUEGE VISUALISIERT: jede enthuellte Figur zeigt ihr Zugmuster auf einem kleinen 7x7-Diagramm - blaue Felder fuers Gleiten (mit Reichweite), gelbe fuer Spruenge, die Figur in der Mitte; fuer Standardfiguren aus den Engine-Vektoren abgeleitet, fuer Sonderfiguren und Monster aus ihrem moveSpec (verifiziert: Springer zeigt reines Sprung-L, 0 Gleitfelder)
+
 ## 0.22.33
 - TUERME SIND KEINE PFLICHT MEHR: alle Karten verlangen nur noch Koenig, Dame und Laeufer - Tuerme wandern in den Flex-Pool und koennen wie jede Hofstaat-Figur getauscht werden (ein spaeter ueberschreibendes flank:false am Turm behoben). Rochade existiert im Spiel ohnehin nicht; falls sie je kommt, gilt sie den FELDERN, nicht den Figuren
 - STAT-TRIADE AUF JEDER FIGUR: Leben (gruen), Staerke (gelb) und Energie (blau) als drei gleichgestaltete Kugeln im Dreieck oben links an jeder Figur, Zahlen in der Kugel; die Kugel WAECHST mit ihrem Wert (zweistellige Zahlen bekommen ein breiteres Zuhause) und waechst nochmals um 40 Prozent, wenn die Figur angetippt ist; Gegner und eigene Figuren exakt gleich dargestellt; ersetzt die alten Punktspalten links/rechts. Gemessen: 96 Kugeln bei 32 Figuren, Groessen 8.8-14.8px je nach Wert und Fokus
