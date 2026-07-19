@@ -190,6 +190,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
 
   function tap(i) {
     if (!interactive) return;
+    // A selected dragon moving one square forward lands on a square its own 2x2
+    // block currently covers (a wing marker). That target must WIN over the
+    // "tap a wing = tap the dragon" redirect, or he can never step forward.
+    if (sel != null && targets.has(i)) { onMove(targets.get(i)); setSel(null); return; }
     const w0 = state.board[i];
     if (w0 && w0.kind === "D+") i = w0.ref;        // a wing tap is a dragon tap
     if (pick && onPick) { const pc = state.board[i]; if (pc && pc.color === pick) onPick(i); return; }
@@ -331,11 +335,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           const dc = flip ? W - 2 - f0 : f0;
           const dr = flip ? r0 : H - 2 - r0;
           const selHere = sel === a;
+          // once the dragon is chosen, let taps fall THROUGH to the squares
+          // beneath (his step-forward target sits under his own block), so the
+          // move markers stay reachable — a re-tap on him still deselects via
+          // the wing cells underneath.
           return (
-            <div key={"drg" + a} onClick={() => tap(a)} style={{ position: "absolute", zIndex: 2,
+            <div key={"drg" + a} onClick={selHere ? undefined : () => tap(a)} style={{ position: "absolute", zIndex: 2,
               left: `calc(${(dc / W) * 100}% )`, top: `calc(${(dr / H) * 100}% )`,
               width: `${(2 / W) * 100}%`, height: `${(2 / H) * 100}%`,
               display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default",
+              pointerEvents: selHere ? "none" : "auto",
               borderRadius: 10,
               boxShadow: selHere ? "inset 0 0 0 3px rgba(240,214,138,.85), 0 0 18px rgba(240,214,138,.35)" : "none",
               fontSize: `calc(${typeof glyph === "string" ? glyph : glyph + "px"} * 1.88)` }}>

@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.44
+- DRACHE KANN ENDLICH VORWAERTS: der Schritt nach vorne landet auf einem Feld, das sein eigener 2x2-Block gerade ueberdeckt (ein Fluegel-Feld) - bisher wurde ein Tipp darauf als "Drache erneut antippen" gedeutet und der Zug verworfen. Jetzt gewinnt ein gueltiges Zugziel vor der Fluegel-Umleitung, und das grosse Drachenbild laesst bei Auswahl Tipps auf die Zielfelder darunter durch. Er wandert jetzt sichtbar Feld fuer Feld
+- 3 neue Regressionstests (Vorwaerts-Feld ist Fluegel, Zug ist legal, Drache rueckt eine Reihe vor)
+
 ## 0.22.43
 - DOPPELTE KRAEFTE-ANZEIGE ENTFERNT: die bunte DU/GEGNER-Leiste mit Leben und Energie direkt ueber dem Brett ist raus - die Kraefte stehen weiterhin in den Kopf- und Fussleisten (Herz + Staerke je Seite), also keine Dopplung mehr
 - KAMPAGNEN-SMOKE-TEST: neuer Regressionstest spielt JEDEN der 51 Kampagnen-Knoten ueber 5 Startwerte voll durch (ueber 25000 Zuege) inklusive Belohnungs-Auswertung und prueft, dass jedes Drachen-Level seinen 2x2-Block korrekt entfaltet - faengt Zug- und Aufbau-Abstuerze auf Engine-Ebene ab und laeuft ab jetzt bei jedem npm test mit

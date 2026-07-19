@@ -115,5 +115,23 @@ const mk = (lvl = 5, rules = "hp") => createGame(
     g.board.every((p) => !p || p.kind !== "D+" || g.board[p.ref]?.kind === "D"));
 }
 
+// ── the step-forward target sits UNDER his own 2x2 block (a wing square) ──
+// the tap handler must let a valid move win over the "wing = dragon" redirect,
+// or he can never walk forward. Here we assert the move is legal & lands right.
+{
+  const dform = ["dragon", null, "rook", "rook", "bishop", "queen", "king", "bishop", "knight", "knight"];
+  const g = createGame(buildArmyFromFormation(() => 6, dform), buildArmyFromFormation(() => 4, map.defaultFormation), { map, rules: "hp", seed: 7 });
+  const W2 = g.w;
+  const anchor = g.board.findIndex((x) => x && x.big && x.kind === "D");
+  const fwd = anchor + W2; // one square forward = his own lower-left wing cell
+  ok("the dragon's forward square is currently a wing of his own block",
+    g.board[fwd]?.kind === "D+" && g.board[fwd].ref === anchor);
+  const step = legalMoves(g).find((m) => m.from === anchor && m.to === fwd);
+  ok("stepping forward onto that wing square is a legal move", !!step);
+  const g2 = applyMove(g, step);
+  const newAnchor = g2.board.findIndex((x) => x && x.big && x.kind === "D");
+  ok("after the step he has advanced one rank", ((newAnchor / W2) | 0) === ((anchor / W2) | 0) + 1);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);
