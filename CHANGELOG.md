@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.55
+- KARTE IM FENSTER FEINER: die Rahmen-Kontur ist duenner (3 statt 5 Pixel), und die Karte selbst wird eine Stufe kleiner im Fenster gezeichnet - dadurch wirkt sie auf hochaufloesenden Handys SCHAERFER (die Unschaerfe kam vom Hochskalieren der gemalten Welt). Wegpunkte und Wanderer skalieren mit. Der schmale Rand, der so entsteht, wird von einem weichen Verlauf (Vignette) nach aussen ins Dunkle gefuehrt
+
 ## 0.22.54
 - ZUG-ANIMATION GRUNDLEGEND UEBERARBEITET:
   - RUCKELN BEHOBEN: eine doppelte CSS-Transition an der Figur liess sie nach dem Zug nochmal zucken - jetzt eine saubere kombinierte Transition, die ankommende Figur blendet sanft ein statt hart aufzupoppen

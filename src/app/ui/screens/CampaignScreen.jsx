@@ -197,9 +197,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const frameW = wide ? Math.min(vp.w, WMAP * z)
     : Math.min(vp.w, Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536)); // exactly the dock's width
   const frameH = Math.max(220, vp.h - padTop - dockPad);
-  // fit covers the FRAME (not the viewport): a narrower window shows the
-  // painting a step smaller — and every waypoint & wanderer scales with it
-  const zf = wide ? z : Math.max(frameH / HM, frameW / WMAP) * 1.02;
+  // fit covers the FRAME (not the viewport). Rendering the painting a touch
+  // SMALLER than the frame keeps it crisp on hi-DPI phones (the soft look comes
+  // from upscaling), and leaves a slim margin the vignette fades into. Every
+  // waypoint and wanderer scales with it.
+  const zf = wide ? z : Math.max(frameH / HM, frameW / WMAP) * 0.9;
   const frameX = Math.round((vp.w - frameW) / 2);
   const frameY = padTop; // pinned: same breath above as below
   const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);
@@ -231,9 +233,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       <div ref={vpRef} style={{ position: "absolute", inset: 0 }}>
       {/* the painted frame: the league's rim colour running light-to-dark
           around the window — the map hangs like a canvas over the chrome */}
-      <div aria-hidden style={{ position: "absolute", left: frameX - 5, top: frameY - 5,
-        width: frameW + 10, height: frameH + 10, borderRadius: Math.min(26, frameW / 11),
-        background: `linear-gradient(180deg, rgba(${labelTint(viewLeague)},.55) 0%, rgba(${labelTint(viewLeague)},.22) 42%, rgba(9,11,16,.95) 100%)`,
+      <div aria-hidden style={{ position: "absolute", left: frameX - 3, top: frameY - 3,
+        width: frameW + 6, height: frameH + 6, borderRadius: Math.min(24, frameW / 12),
+        background: `linear-gradient(180deg, rgba(${labelTint(viewLeague)},.5) 0%, rgba(${labelTint(viewLeague)},.2) 42%, rgba(9,11,16,.95) 100%)`,
         boxShadow: "0 10px 34px rgba(0,0,0,.5)", pointerEvents: "none" }} />
       <div
         onPointerDown={(e) => { if (seaLock) return;
@@ -249,6 +251,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: bm ? "#0c0e13" : th.paper,
         boxShadow: "inset 0 0 26px rgba(8,10,14,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
+        {/* the vignette: the smaller painting fades softly into the frame's
+            edge — hides the margin and draws the eye to the road at center */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none",
+          borderRadius: Math.min(22, frameW / 12),
+          background: `radial-gradient(120% 92% at 50% 46%, transparent 60%, rgba(9,11,16,.28) 80%, rgba(7,9,13,.7) 100%)`,
+          boxShadow: `inset 0 0 30px 8px rgba(8,10,14,.4)` }} />
         {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
         <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
           filter: "blur(16px)", opacity: 0.4, mixBlendMode: "screen",
