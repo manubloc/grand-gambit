@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.49
+- APP-INSTALLATION AUF DEM IPHONE ERKLAERT SICH SELBST: Safari kennt keinen Installations-Knopf - der einzige Weg ist Teilen -> Zum Home-Bildschirm. Auf iPhone/iPad zeigt der Profil-Bereich Als App jetzt direkt die Schritt-fuer-Schritt-Anleitung statt eines Knopfs, der dort nichts tun kann; zudem zeigt das Home-Icon jetzt auf das echte 180er Apple-Touch-Icon
+- JEDES BILD KOMMT MIT EINEM KLEINEN AUFTRITT: Bilder, die noch laden muessen, blenden sanft ein (kurzes Aufsteigen); bereits geladene erscheinen sofort - kein Flackern mitten im Gefecht, kaputte Bilder bleiben nie unsichtbar
+- SCHWARZE BOX + FEHLERBERICHT AN DEN SUPPORT: Laufzeitfehler landen in einem kleinen Ringpuffer; stuerzt die App ab, bietet der Absturz-Bildschirm neben Neu laden jetzt Bericht an Support senden (oeffnet die Mail-App mit Version, Browser, Zeit, Absturz und den letzten Fehlern vorausgefuellt) und Bericht kopieren
+
 ## 0.22.48
 - ABMELDEN JETZT UNUMSTOESSLICH: der Abmelde-Knopf (Profil und Spielstand-Auswahl) faehrt jetzt einen harten, deterministischen Pfad - Login erscheint sofort, lokale Sitzung wird geloescht, die Cloud-Abmeldung bekommt ein kurzes Zeitfenster (damit kein Wiederherstellen nach dem Neuladen das Konto zurueckholt), dann startet die App sauber neu am Anmeldebildschirm. Kein React-Zustand, Cache oder Listener kann das mehr rueckgaengig machen - auf jedem Browser
 

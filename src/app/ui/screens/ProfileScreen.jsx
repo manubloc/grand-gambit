@@ -57,16 +57,27 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         {onLogout && <Button kind="ghost" onClick={onLogout}>{t("profile.signout")}</Button>}
       </div>
       <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("profile.artHint")}</div>
-      {!inApp() && <>
+      {!inApp() && (() => {
+        // Safari on iPhone/iPad has NO install prompt at all — the ONLY road is
+        // Share → "Add to Home Screen". So on iOS we show the walking
+        // directions right away instead of a button that cannot do anything.
+        const isIos = typeof navigator !== "undefined" && (/iPad|iPhone|iPod/.test(navigator.userAgent)
+          || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+        return <>
         <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.install")}</div>
-        <Button style={{ width: "100%" }} onClick={async () => {
-          if (canPrompt) { await promptInstall(); setCanPrompt(false); }
-          else setShowIosHint(true);
-        }}>{t("profile.installBtn")}</Button>
-        {showIosHint && !canPrompt && (
-          <div style={{ fontSize: 12, color: T.dim, lineHeight: 1.55, marginTop: 8 }}>{t("profile.installHint")}</div>
-        )}
-      </>}
+        {isIos && !canPrompt ? (
+          <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.6, padding: "10px 12px",
+            background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10 }}>{t("profile.installIos")}</div>
+        ) : <>
+          <Button style={{ width: "100%" }} onClick={async () => {
+            if (canPrompt) { await promptInstall(); setCanPrompt(false); }
+            else setShowIosHint(true);
+          }}>{t("profile.installBtn")}</Button>
+          {showIosHint && !canPrompt && (
+            <div style={{ fontSize: 12, color: T.dim, lineHeight: 1.55, marginTop: 8 }}>{t("profile.installHint")}</div>
+          )}
+        </>}
+      </>; })()}
     </Panel>
 
     <Panel>
