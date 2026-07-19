@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.57
+- ZIEHENDE WOLKEN UEBER DEM KARTENKOPF: der weiche obere Bereich der Karte bekommt jetzt langsam ziehende Wolken/Rauch (zwei Ebenen in unterschiedlichem Tempo, sanft atmend) - in den Farben der jeweiligen Welt. Die Helligkeit folgt der Reise: Grasland hell, SOMMER fast weiss, danach Herbst/Winter/Hochgebirge duenner und die tiefen Welten (Oedland, Canyon) dunkel und schwer. Der alte statische Nebel oben wurde durch die Wolken ersetzt
+
 ## 0.22.56
 - WEICHER KARTENKOPF IN EIGENER FARBE: die gemalte Karte sitzt jetzt etwas tiefer im Fenster, und der obere Bereich wird von einem sanften Verlauf gefuellt, der aus der Karte SELBST stammt (ihre obere Kante, vergroessert und weich verwischt) - der Uebergang traegt also genau die Farben der jeweiligen Welt. Die oben schwebenden Knoepfe (Atlas, Liga-Navigation) liegen jetzt in diesem weichen Kopf statt hart auf der Karte; der obere Kartenrand blendet zusaetzlich weich ein, sodass keine harte Kante bleibt
 

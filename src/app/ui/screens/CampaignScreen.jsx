@@ -257,31 +257,48 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         {/* THE SOFT TOP: the map's own upper edge, blown up and blurred, fills
             the band above where the painting now sits — so the top fades into a
-            gradient in the map's OWN colours, and the floating buttons rest in
-            that soft haze. Only the painted worlds carry an image to sample. */}
-        {bm && bmDef && (
-          <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "34%", zIndex: 1,
-            pointerEvents: "none", overflow: "hidden", borderRadius: `${Math.min(22, frameW / 12)}px ${Math.min(22, frameW / 12)}px 0 0` }}>
+            gradient in the map's OWN colours. Over it drift CLOUDS whose bright-
+            ness follows the world: bright meadow air in league 1, near-white in
+            summer, then darker and heavier the deeper the road runs. */}
+        {bm && bmDef && (() => {
+          // cloud tint by world (1..10, repeating). Summer (2) is brightest, then
+          // it darkens with the seasons and the wastes beyond.
+          const world = ((Math.max(1, viewLeague) - 1) % 10) + 1;
+          const CLOUD = {
+            1: "236,232,222", 2: "255,255,255", 3: "214,198,176", 4: "222,228,236",
+            5: "198,204,214", 6: "150,132,112", 7: "170,158,132", 8: "150,138,120",
+            9: "196,168,120", 10: "150,168,186",
+          }[world] || "220,214,200";
+          const CLOUD_OP = { 1: 0.72, 2: 0.9, 3: 0.6, 4: 0.62, 5: 0.54, 6: 0.4, 7: 0.46, 8: 0.36, 9: 0.5, 10: 0.48 }[world] ?? 0.55;
+          const rad = Math.min(22, frameW / 12);
+          return (
+          <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "38%", zIndex: 5,
+            pointerEvents: "none", overflow: "hidden", borderRadius: `${rad}px ${rad}px 0 0` }}>
+            {/* the map's own upper edge, mirrored + blurred → base colours of the world */}
             <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
               height: "260%", objectFit: "cover", objectPosition: "50% 0%",
-              filter: "blur(26px) brightness(.82) saturate(.9)", transform: "scaleY(-1)", opacity: 0.9 }} />
+              filter: "blur(26px) brightness(.9) saturate(.9)", transform: "scaleY(-1)", opacity: 0.85 }} />
+            {/* a soft luminous bed so the clouds have light to catch (brighter in
+                early/summer worlds, dimmer in the deep) */}
             <div style={{ position: "absolute", inset: 0,
-              background: "linear-gradient(180deg, rgba(7,9,13,.5) 0%, rgba(7,9,13,.12) 40%, transparent 100%)" }} />
+              background: `linear-gradient(180deg, rgba(${CLOUD},${CLOUD_OP * 0.6}) 0%, rgba(${CLOUD},${CLOUD_OP * 0.22}) 46%, transparent 82%)` }} />
+            {/* drifting clouds — two soft layers crossing at different speeds */}
+            <div style={{ position: "absolute", inset: "-12% -30%", filter: "blur(20px)",
+              opacity: CLOUD_OP + 0.28, animation: "ggCloudA 46s ease-in-out infinite alternate, ggCloudBreath 19s ease-in-out infinite",
+              background: `radial-gradient(40% 55% at 22% 40%, rgba(${CLOUD},.95), transparent 66%), radial-gradient(46% 60% at 60% 32%, rgba(${CLOUD},.82), transparent 70%), radial-gradient(36% 50% at 86% 46%, rgba(${CLOUD},.88), transparent 68%)` }} />
+            <div style={{ position: "absolute", inset: "-12% -30%", filter: "blur(26px)",
+              opacity: CLOUD_OP + 0.12, animation: "ggCloudB 61s ease-in-out infinite alternate, ggCloudBreath 24s ease-in-out infinite",
+              background: `radial-gradient(48% 56% at 38% 36%, rgba(${CLOUD},.8), transparent 70%), radial-gradient(42% 54% at 74% 28%, rgba(${CLOUD},.72), transparent 72%)` }} />
+            {/* seat the haze into the map below (kept light so clouds stay visible) */}
+            <div style={{ position: "absolute", inset: 0,
+              background: "linear-gradient(180deg, transparent 58%, rgba(9,11,16,.28) 100%)" }} />
           </div>
-        )}
+          );
+        })()}
         {/* a gentle dark seat at the very bottom edge so the map meets the dock cleanly */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none",
+        <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none",
           borderRadius: Math.min(22, frameW / 12),
-          background: `radial-gradient(130% 96% at 50% 54%, transparent 66%, rgba(9,11,16,.22) 86%, rgba(7,9,13,.5) 100%)` }} />
-        {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
-        <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
-          filter: "blur(16px)", opacity: 0.4, mixBlendMode: "screen",
-          background: "radial-gradient(48% 36% at 86% 30%, rgba(236,228,212,.6), transparent 70%), radial-gradient(42% 32% at 78% 72%, rgba(220,212,196,.48), transparent 70%)",
-          animation: "ggFogR 52s ease-in-out infinite alternate" }} />
-        <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
-          filter: "blur(22px)", opacity: 0.26, mixBlendMode: "screen",
-          background: "radial-gradient(40% 30% at 90% 52%, rgba(228,220,204,.55), transparent 70%)",
-          animation: "ggFogR2 67s ease-in-out infinite alternate" }} />
+          background: `radial-gradient(130% 80% at 50% 82%, transparent 60%, rgba(9,11,16,.2) 84%, rgba(7,9,13,.44) 100%)` }} />
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
           transform: `translate(${-camX}px, ${-camY + (bm ? topInset : 0)}px) scale(${zf})`,
           WebkitMaskImage: bm ? "linear-gradient(180deg, transparent 0, rgba(0,0,0,.35) 3%, #000 11%)" : undefined,
