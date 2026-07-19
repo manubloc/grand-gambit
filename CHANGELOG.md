@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.58
+- WOLKENKOPF KORRIGIERT: der Wolkenbereich reichte zu weit in die Karte und hatte unten eine harte Kante. Er ist jetzt deutlich niedriger und der GANZE Kopf wird nach unten weich ausgeblendet (per Maske) - die Wolken loesen sich sanft in die Karte auf, keine harte Kante mehr. Die Karte rueckt entsprechend weniger tief nach unten
+
 ## 0.22.57
 - ZIEHENDE WOLKEN UEBER DEM KARTENKOPF: der weiche obere Bereich der Karte bekommt jetzt langsam ziehende Wolken/Rauch (zwei Ebenen in unterschiedlichem Tempo, sanft atmend) - in den Farben der jeweiligen Welt. Die Helligkeit folgt der Reise: Grasland hell, SOMMER fast weiss, danach Herbst/Winter/Hochgebirge duenner und die tiefen Welten (Oedland, Canyon) dunkel und schwer. Der alte statische Nebel oben wurde durch die Wolken ersetzt
 

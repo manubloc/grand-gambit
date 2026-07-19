@@ -210,7 +210,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // on the painted worlds, seat the map a little LOWER inside the frame so the
   // top band becomes a soft gradient (in the map's own colours) the floating
   // buttons rest in. translate happens before scale, so divide by zf.
-  const topInset = (frameH * 0.09) / zf;
+  const topInset = (frameH * 0.055) / zf;
   // fog of war: everything past the frontline stays a blurred rumour until
   // the league's end boss falls — the map never spoils the road ahead
   const frontierX = useMemo(() => {
@@ -271,27 +271,28 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           }[world] || "220,214,200";
           const CLOUD_OP = { 1: 0.72, 2: 0.9, 3: 0.6, 4: 0.62, 5: 0.54, 6: 0.4, 7: 0.46, 8: 0.36, 9: 0.5, 10: 0.48 }[world] ?? 0.55;
           const rad = Math.min(22, frameW / 12);
+          // fade the WHOLE head out toward its lower edge so there's never a hard
+          // cut — the clouds dissolve softly into the map instead.
+          const softMask = "linear-gradient(180deg, #000 0%, #000 42%, rgba(0,0,0,.55) 72%, transparent 100%)";
           return (
-          <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "38%", zIndex: 5,
-            pointerEvents: "none", overflow: "hidden", borderRadius: `${rad}px ${rad}px 0 0` }}>
+          <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "22%", zIndex: 5,
+            pointerEvents: "none", overflow: "hidden", borderRadius: `${rad}px ${rad}px 0 0`,
+            WebkitMaskImage: softMask, maskImage: softMask }}>
             {/* the map's own upper edge, mirrored + blurred → base colours of the world */}
             <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
-              height: "260%", objectFit: "cover", objectPosition: "50% 0%",
+              height: "420%", objectFit: "cover", objectPosition: "50% 0%",
               filter: "blur(26px) brightness(.9) saturate(.9)", transform: "scaleY(-1)", opacity: 0.85 }} />
             {/* a soft luminous bed so the clouds have light to catch (brighter in
                 early/summer worlds, dimmer in the deep) */}
             <div style={{ position: "absolute", inset: 0,
-              background: `linear-gradient(180deg, rgba(${CLOUD},${CLOUD_OP * 0.6}) 0%, rgba(${CLOUD},${CLOUD_OP * 0.22}) 46%, transparent 82%)` }} />
+              background: `linear-gradient(180deg, rgba(${CLOUD},${CLOUD_OP * 0.6}) 0%, rgba(${CLOUD},${CLOUD_OP * 0.2}) 55%, transparent 100%)` }} />
             {/* drifting clouds — two soft layers crossing at different speeds */}
-            <div style={{ position: "absolute", inset: "-12% -30%", filter: "blur(20px)",
+            <div style={{ position: "absolute", inset: "-20% -30%", filter: "blur(20px)",
               opacity: CLOUD_OP + 0.28, animation: "ggCloudA 46s ease-in-out infinite alternate, ggCloudBreath 19s ease-in-out infinite",
-              background: `radial-gradient(40% 55% at 22% 40%, rgba(${CLOUD},.95), transparent 66%), radial-gradient(46% 60% at 60% 32%, rgba(${CLOUD},.82), transparent 70%), radial-gradient(36% 50% at 86% 46%, rgba(${CLOUD},.88), transparent 68%)` }} />
-            <div style={{ position: "absolute", inset: "-12% -30%", filter: "blur(26px)",
+              background: `radial-gradient(40% 60% at 22% 30%, rgba(${CLOUD},.95), transparent 66%), radial-gradient(46% 64% at 60% 24%, rgba(${CLOUD},.82), transparent 70%), radial-gradient(36% 54% at 86% 34%, rgba(${CLOUD},.88), transparent 68%)` }} />
+            <div style={{ position: "absolute", inset: "-20% -30%", filter: "blur(26px)",
               opacity: CLOUD_OP + 0.12, animation: "ggCloudB 61s ease-in-out infinite alternate, ggCloudBreath 24s ease-in-out infinite",
-              background: `radial-gradient(48% 56% at 38% 36%, rgba(${CLOUD},.8), transparent 70%), radial-gradient(42% 54% at 74% 28%, rgba(${CLOUD},.72), transparent 72%)` }} />
-            {/* seat the haze into the map below (kept light so clouds stay visible) */}
-            <div style={{ position: "absolute", inset: 0,
-              background: "linear-gradient(180deg, transparent 58%, rgba(9,11,16,.28) 100%)" }} />
+              background: `radial-gradient(48% 60% at 38% 28%, rgba(${CLOUD},.8), transparent 70%), radial-gradient(42% 58% at 74% 20%, rgba(${CLOUD},.72), transparent 72%)` }} />
           </div>
           );
         })()}
