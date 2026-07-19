@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.59
+- ELO-EINSCHAETZUNG BEIM KAMPAGNEN-SCHWIERIGKEITSGRAD: unter Sanft/Normal/Hart steht jetzt eine grobe Einordnung der Gegnerstaerke - Sanft etwa Anfaenger (grob 600-900 Elo), Normal etwa Gelegenheitsspieler (grob 1000-1300), Hart etwa Vereinsspieler (grob 1400-1700). Die Angabe ist bewusst grob, da die Kampagne kein reines Schach ist (Faehigkeiten, Level, Lebenspunkte spielen mit)
+
 ## 0.22.58
 - WOLKENKOPF KORRIGIERT: der Wolkenbereich reichte zu weit in die Karte und hatte unten eine harte Kante. Er ist jetzt deutlich niedriger und der GANZE Kopf wird nach unten weich ausgeblendet (per Maske) - die Wolken loesen sich sanft in die Karte auf, keine harte Kante mehr. Die Karte rueckt entsprechend weniger tief nach unten
 

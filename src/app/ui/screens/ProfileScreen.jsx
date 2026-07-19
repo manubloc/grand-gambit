@@ -54,7 +54,9 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.campDiff")}</div>
       <Segmented value={profile.campDifficulty || "normal"} onChange={(v) => dispatch({ type: "SET_CAMP_DIFFICULTY", difficulty: v })}
         options={[{ value: "gentle", label: t("profile.diffGentle") }, { value: "normal", label: t("profile.diffNormal") }, { value: "brutal", label: t("profile.diffBrutal") }]} />
-      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.campDiffHint")}</div>
+      <div style={{ fontSize: 11.5, color: T.gold, margin: "6px 2px 0", letterSpacing: 0.2 }}>
+        {t("profile.campDiffElo_" + (profile.campDifficulty || "normal"))}</div>
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "3px 2px 0", lineHeight: 1.45 }}>{t("profile.campDiffHint")}</div>
       <div style={{ fontSize: 12, color: T.faint, margin: "16px 0 6px" }}>{t("profile.session")}</div>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {onSwitchSave && <Button kind="ghost" onClick={onSwitchSave}>{t("profile.switchSave")}</Button>}
