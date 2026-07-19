@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap } from "../../../meta/index.js";
@@ -533,7 +533,7 @@ const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
 );
 
 // Classic is fixed standard chess → only non-classic maps are editable.
-const FORMATION_MAPS = MAPS.filter((m) => !m.classic); // Klassik ist reines Schach: dort gibt es nichts zu formieren
+const FORMATION_MAPS = MAPS; // every board is arrangeable here — even Classic. This is about the FIELD, not the ruleset (quick-play Classic keeps the fixed chess setup regardless)
 
 function FormationEditor({ profile, dispatch, t, en }) {
   const feWide = useMedia("(min-width: 900px)");
@@ -559,6 +559,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
   // the wing eats one flex slot: show the reduced requirement so the chip stays honest
 
   const [dragonAsk, setDragonAsk] = useState(null); // { slot, wing } awaiting consent
+  const pickerRef = useRef(null);
+  const scrollToPicker = () => requestAnimationFrame(() =>
+    pickerRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   const setSlot = (i, id) => {
     if (id === "dragon") {
       const last = draft.length - 1;
@@ -605,9 +608,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
     if (!legal) return null;
     const levelOf = map.classic ? () => 1 : (id) => characterLevel(profile, id);
     const mine = buildArmyFromFormation(levelOf, draft, map.classic ? null : (id) => chosenAbilities(profile, id), map.classic ? null : (id) => dupeCount(profile, id));
-    if (!map.classic) mine.hero = { col: heroColFor(profile, map), spec: (() => {
-      const lvl = characterLevel(profile, "gambit") || 1;
-      const r = resolveCharacter(CHARACTERS.gambit, lvl, chosenAbilities(profile, "gambit"));
+    mine.hero = { col: heroColFor(profile, map), spec: (() => {
+      const lvl = map.classic ? 1 : (characterLevel(profile, "gambit") || 1);
+      const r = resolveCharacter(CHARACTERS.gambit, lvl, map.classic ? null : chosenAbilities(profile, "gambit"));
       return { kind: "P", level: lvl, abilities: r.abilities, shield: r.shield, tier: gambitTier(lvl) };
     })() };
     const foe = buildAiArmyForMap("easy", map, 0);
@@ -657,16 +660,25 @@ function FormationEditor({ profile, dispatch, t, en }) {
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
       {draft.map((id, i) => {
         const open = pick === i;
-        return <button key={i} disabled={map.classic} onClick={() => setPick(open ? null : i)}
+        // the dragon's wing: an empty square the block spills into — NOT a slot
+        // you may fill. It reads as part of the dragon (a 2x2 shadow), and a tap
+        // jumps to the dragon's own slot instead.
+        const isWing = id == null;
+        const dragonAt = draft[0] === "dragon" ? 0 : draft[draft.length - 1] === "dragon" ? draft.length - 1 : -1;
+        const isDragon = id === "dragon";
+        return <button key={i} onClick={() => { if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
           style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
-            display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0,
-            background: open ? T.lime : T.bg2, border: `2px solid ${open ? T.lime : T.line}` }}>
-          {id == null
-            ? <span title={t("army.wing")} style={{ fontSize: "clamp(13px, 5vw, 22px)", opacity: 0.55 }}>🜁</span>
+            display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
+            background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,
+            border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
+          {isWing
+            ? <span title={t("army.wing")} style={{ fontSize: "clamp(11px, 4vw, 18px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
             : isBossEntry(id)
             ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
                 style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
             : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
+          {isDragon && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 9, fontWeight: 800,
+            color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>}
         </button>;
       })}
     </div>
@@ -692,7 +704,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       </div>
     )}
     {pick !== null && (
-      <div style={{ background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, padding: 8, marginBottom: 10 }}>
+      <div ref={pickerRef} style={{ background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, padding: 8, marginBottom: 10 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 7 }}>
           {pieces.map((c) => {
             const on = draft[pick] === c.id;
@@ -739,13 +751,15 @@ function FormationEditor({ profile, dispatch, t, en }) {
       </div>
     )}
 
-    {!map.classic && (
+    {(
       <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
         border: `1px solid ${T.gold}44` }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 7 }}>
           <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>{t("army.heroPos")}</span>
           <span style={{ fontSize: 10.5, color: T.faint }}>{t("army.heroPosHint")}</span>
         </div>
+        {/* the pawn rank made visible: the Grand Gambit takes one file, the rest
+            are ordinary pawns. Tap a square to move the commander's start. */}
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3 }}>
           {Array.from({ length: map.w }).map((_, f) => {
             const on = f === heroColFor(profile, map);
@@ -754,13 +768,14 @@ function FormationEditor({ profile, dispatch, t, en }) {
                 background: on ? `radial-gradient(circle at 40% 32%, ${T.gold}33, ${T.panel})` : T.panel,
                 border: on ? `1.5px solid ${T.gold}` : `1px solid ${T.line}`,
                 boxShadow: on ? `0 0 8px ${T.gold}55` : "none", display: "grid", placeItems: "center" }}>
-              <div style={{ width: "82%", height: "82%", opacity: on ? 1 : 0.4 }}>
-                <PieceArt kind="P" fill={on ? "#c9a45c" : "#5b617a"} rim={on ? null : "#3a415c"}
-                  detail={on ? "#7a5c26" : "#3a415c"} size="100%" level={1} hero={on} />
+              <div style={{ width: "82%", height: "82%", opacity: on ? 1 : 0.5 }}>
+                <PieceArt kind="P" fill={on ? "#c9a45c" : "#8a7f63"} rim={on ? null : "#5a5238"}
+                  detail={on ? "#7a5c26" : "#5a5238"} size="100%" level={1} hero={on} />
               </div>
             </button>;
           })}
         </div>
+        <div style={{ fontSize: 10.5, color: T.faint, marginTop: 6, fontStyle: "italic" }}>{t("army.pawnRankNote")}</div>
       </div>
     )}
 

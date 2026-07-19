@@ -315,7 +315,10 @@ export function buildArmyForMap(profile, map, excludeId = null) {
   const chosenOf = map.classic ? null : (id) => chosenAbilities(profile, id);
   const boostOf = map.classic ? null : (id) => dupeCount(profile, id);
   const saved = profile?.loadout?.formations?.[map.id];
-  const ok = !map.classic && saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
+  // The FIELD is arrangeable even on a classic board — honour a saved legal
+  // formation regardless of ruleset. (Quick-play classic builds from a separate
+  // path and keeps the fixed chess setup; this only affects campaign boards.)
+  const ok = saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
   let formation = ok ? saved : map.defaultFormation;
   // Turncoat duels (v0.20): fighting the double of a piece you own — your own
   // copy sits the match out, its slot falls back to the map's default rank.

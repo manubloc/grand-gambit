@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.36
+- KLASSIK WIEDER AUFSTELLBAR: die Klassik-Karte ist zurueck in der Kartenwahl des Aufstellungs-Editors und voll bearbeitbar - es geht um das SPIELFELD (8x8), nicht um die Schach-Regeln. Im Schnellspiel bleibt Klassik unveraendert die traditionelle Aufstellung (eigener Baupfad); nur Kampagnen-Bretter ehren die gespeicherte Formation (Sperre map.classic in buildArmyForMap entfernt)
+- FIGURENWAHL SPRINGT AUF: tippt man einen Slot an, scrollt die Auswahl-Liste automatisch ins Bild (vorher musste man selbst suchen)
+- DRACHEN-FLUEGEL GESPERRT: der leere 2x2-Nachbarplatz laesst sich nicht mehr eigenstaendig belegen - er zeigt sich als Teil des Drachen (lila Schimmer, Flug-Symbol) und ein Tipp darauf springt zum Drachen-Slot; der Drache traegt jetzt ein sichtbares 2x2-Abzeichen
+- BAUERNREIHE + GAMBIT IM EDITOR: die Position des Grand Gambit (seine Spalte in der Bauernreihe) ist jetzt auf JEDER Karte waehlbar, auch Klassik - der Rest der Bauernreihe steht fest; Hinweistext klargestellt
+
 ## 0.22.35
 - KARTEN-BUTTON VEREINHEITLICHT: der goldene Textknopf "Weiter - Liga X" (erschien nur nach dem Ligameister-Sieg) ist ersetzt durch einen runden Symbol-Knopf im selben Stil wie der Zurueck-Knopf, nur seitenverkehrt (Pfeil nach vorn)
 - STAT-BUBBLES NACH UNTEN LINKS: Leben (gruen) sitzt jetzt fest in der unteren linken Ecke jeder Figur, Staerke (gelb) direkt darueber, Energie (blau) rechts neben dem Leben - L-Form mit kleinem tangentialem Abstand zwischen den Kugeln; Gegner und eigene Figuren gleich

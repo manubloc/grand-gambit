@@ -11,7 +11,7 @@ const DE = {
   "game.rewards": "Belohnungen", "game.levelup": "Level {n} erreicht!", "game.captured": "Geschlagen",
   "diff.easy": "Leicht", "diff.normal": "Normal", "diff.hard": "Schwer", "game.map": "Karte", "mode.chess": "Schach", "mode.hp": "HP-Gefecht", "game.regicide": "Königsmord!", "game.power": "Kampfkraft", "game.unlockHint": "In der Kampagne freischalten", "camp.new": "NEU",
   "army.title": "Dein Hofstaat", "army.next": "Nächste Belohnung", "army.locked": "Gesperrt",
-  "army.unlockLevel": "Frei ab Level {n}", "army.preview": "Startaufstellung", "army.pawnSoon": "Bauern-Reihe fix — Tausch kommt in einem späteren Update.", "army.abilities": "Fähigkeiten", "army.shield": "Schild",
+  "army.unlockLevel": "Frei ab Level {n}", "army.preview": "Startaufstellung", "army.pawnSoon": "Die Bauern-Reihe steht — nur der Grand Gambit wählt seine Spalte.", "army.pawnRankNote": "Der Grand Gambit ist ein Bauer unter Bauern — seine Spalte bestimmst du, der Rest der Reihe ist fest.", "army.abilities": "Fähigkeiten", "army.shield": "Schild",
   "army.flank": "Flanken-Slots", "army.flankHint": "Setze freigespielte Figuren in deine Aufstellung.",
   "army.assign": "Einsetzen", "army.equipped": "Im Einsatz", "army.maxed": "Voll ausgebaut", "army.lvl": "Lvl", "army.stufe": "Stufe {r}",
   "ach.title": "Erfolge", "ach.points": "Skillpoints", "ach.tiers": "Stufen", "ach.next": "Nächstes Ziel: {n}", "ach.done": "Komplett",
@@ -53,7 +53,7 @@ const DE = {
   "game.confirmResign": "Wirklich aufgeben?",
   "hub.station": "Station {a} von {b}", "hub.nextStop": "Nächster Halt", "hub.soon": "Bald verfügbar",
   "camp.reward": "Bonus", "camp.league": "Die Liga", "camp.boss": "Endboss", "camp.rival": "Gegner", "camp.newPiece": "Neue Figur", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
-  "army.formation": "Aufstellung", "army.mapPick": "Karte wählen", "army.classicHint": "Die klassische Schlacht — traditionelle Aufstellung, hier wird nichts verstellt.", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
+  "army.formation": "Aufstellung", "army.mapPick": "Karte wählen", "army.classicHint": "Das klassische 8×8-Feld — hier darfst du deine Reihe genauso ordnen wie auf jeder Karte. (Im Schnellspiel bleibt Klassik immer die traditionelle Aufstellung.)", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
 };
 const EN = {
@@ -66,7 +66,7 @@ const EN = {
   "game.rewards": "Rewards", "game.levelup": "Reached level {n}!", "game.captured": "Captured",
   "diff.easy": "Easy", "diff.normal": "Normal", "diff.hard": "Hard", "game.map": "Map", "mode.chess": "Chess", "mode.hp": "HP Battle", "game.regicide": "Regicide!", "game.power": "Power", "game.unlockHint": "Unlock via the campaign", "camp.new": "NEW",
   "army.title": "Your court", "army.next": "Next reward", "army.locked": "Locked",
-  "army.unlockLevel": "Unlocks at level {n}", "army.preview": "Starting position", "army.pawnSoon": "Pawn row is fixed — swapping comes in a later update.", "army.abilities": "Abilities", "army.shield": "Shield",
+  "army.unlockLevel": "Unlocks at level {n}", "army.preview": "Starting position", "army.pawnSoon": "The pawn row is set — only the Grand Gambit picks his file.", "army.pawnRankNote": "The Grand Gambit is a pawn among pawns — you choose his file, the rest of the row is fixed.", "army.abilities": "Abilities", "army.shield": "Shield",
   "army.flank": "Flank slots", "army.flankHint": "Place unlocked pieces into your formation.",
   "army.assign": "Assign", "army.equipped": "In play", "army.maxed": "Fully upgraded", "army.lvl": "Lvl", "army.stufe": "Tier {r}",
   "ach.title": "Achievements", "ach.points": "Skillpoints", "ach.tiers": "Tiers", "ach.next": "Next goal: {n}", "ach.done": "Complete",
@@ -108,7 +108,7 @@ const EN = {
   "game.confirmResign": "Really resign?",
   "hub.station": "Stage {a} of {b}", "hub.nextStop": "Next stop", "hub.soon": "Coming soon",
   "camp.reward": "Bonus", "camp.league": "The League", "camp.boss": "Boss", "camp.rival": "Opponent", "camp.newPiece": "New piece", "camp.unknown": "Movement unknown", "camp.back": "Back to campaign", "game.stageCleared": "Stage cleared!",
-  "army.formation": "Formation", "army.mapPick": "Choose a map", "army.classicHint": "The classic battle — traditional setup, nothing to rearrange here.", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
+  "army.formation": "Formation", "army.mapPick": "Choose a map", "army.classicHint": "The classic 8×8 field — arrange your rank here just like any board. (Quick-play classic always keeps the traditional setup.)", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
   "army.standard": "Standard", "army.flex": "Flex", "army.invalid": "Formation incomplete",
 };
 
