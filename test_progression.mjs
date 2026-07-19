@@ -175,6 +175,21 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 }
 {
   const fresh = { campaign: { league: 1, cleared: [] } };
+    // FORMATION carries into battle — even when the fight is re-routed to another
+  // board of the same size (early leagues bend everything onto the classic field)
+  {
+    const p = withProgressPct(defaultProfile(), 100, 5);
+    const courtyard = mapById("courtyard");           // 8x8, same size as classic
+    const custom = courtyard.defaultFormation.map((id) => id === "rook" ? "knight" : id);
+    const p2 = { ...p, loadout: { ...p.loadout, formations: { courtyard: custom } } };
+    const army = buildArmyForMap(p2, mapById("classic"), null, "hp");
+    const kinds = army.back.filter((s) => s).map((s) => s.kind);
+    ok("saved 8x8 formation carries onto the re-routed classic field", !kinds.includes("R"));
+    // exact-map save still wins
+    const p3 = { ...p, loadout: { ...p.loadout, formations: { classic: courtyard.defaultFormation } } };
+    const army3 = buildArmyForMap(p3, mapById("classic"), null, "hp");
+    ok("exact-map formation is honoured", army3.back.filter((s) => s).map((s) => s.kind).includes("R"));
+  }
     // THE BIG DRAGON: map-aware legality accepts corner+wing, and both sides unfold 2x2
   {
     const p = withProgressPct(defaultProfile(), 100, 10);

@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.39
+- AUFSTELLUNG WIRD JETZT IM KAMPF UEBERNOMMEN: in fruehen Ligen biegt das Spiel jeden Kampf auf das 8x8-Klassik-Feld um, auch wenn der Knoten eine andere Karte vorsieht - dadurch wurde die gespeicherte Aufstellung unter der falschen Karte gesucht und still verworfen. Jetzt greift, wenn fuer das genaue Kampffeld keine eigene Aufstellung vorliegt, eine gespeicherte Aufstellung von einem gleich grossen Feld (gleiche Slot-Zahl), sofern sie hier legal ist; die exakte Karte hat weiter Vorrang. End-to-End geprueft: Turm-gegen-Springer-Tausch erscheint auf dem Brett (1 Turm, 3 Springer statt 2/2)
+- 2 neue Regressionstests (Aufstellung uebertraegt sich aufs umgebogene Feld; exakte Karte gewinnt)
+
 ## 0.22.38
 - BUBBLES MIT GLANZ: die Stat-Kugeln haben oben jetzt einen weissen Glanzpunkt statt der durchsichtigen Stelle - die Zahl liest sich besser; die schwarze Kontur ist deutlich duenner (nur noch ein zarter unterer Rand statt Vollring)
 - VEKTOR-ZWILLING WEG: beim Antippen einer Figur erschien oben links im Feld ihre simple Vektor-Kopie - diese Anzeige ist entfernt

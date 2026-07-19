@@ -2,7 +2,7 @@ import { KIND, VALUE, BASE_HP, BASE_ATK, BASE_EN } from "../core/index.js";
 import { DEFAULT_BACK_RANK, FLANK_SLOTS } from "../core/index.js";
 import { bossById, bossSpec, LEAGUE_BOSSES } from "../content/bosses.js";
 import { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "../content/index.js";
-import { difficultyById, mapById } from "../content/index.js";
+import { difficultyById, mapById, MAPS } from "../content/index.js";
 
 // ── XP curves ───────────────────────────────────────────────────────────────
 export const charXpForLevel = (n) => (n <= 1 ? 0 : Math.round(40 * Math.pow(n - 1, 1.7)));
@@ -318,9 +318,23 @@ export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   const levelOf = chess ? () => 1 : (id) => characterLevel(profile, id);
   const chosenOf = chess ? null : (id) => chosenAbilities(profile, id);
   const boostOf = chess ? null : (id) => dupeCount(profile, id);
-  const saved = profile?.loadout?.formations?.[map.id];
   // The FIELD is arrangeable on every board — honour a saved legal formation.
-  const ok = saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
+  // A battle may be re-routed to a DIFFERENT board of the same size (early
+  // leagues bend everything onto the 8x8 classic field), so if this exact map
+  // has no saved rank, fall back to any saved formation from a same-width board
+  // that is legal here. This keeps your arrangement from silently vanishing.
+  const forms = profile?.loadout?.formations || {};
+  const legalHere = (f) => f && formationLegalOn(f, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
+  let saved = forms[map.id];
+  if (!legalHere(saved)) {
+    saved = null;
+    for (const [mid, f] of Object.entries(forms)) {
+      if (mid === map.id) continue;
+      const src = MAPS.find((m) => m.id === mid);
+      if (src && src.w === map.w && src.defaultFormation.length === map.defaultFormation.length && legalHere(f)) { saved = f; break; }
+    }
+  }
+  const ok = legalHere(saved);
   let formation = ok ? saved : map.defaultFormation;
   // Turncoat duels (v0.20): fighting the double of a piece you own — your own
   // copy sits the match out, its slot falls back to the map's default rank.
