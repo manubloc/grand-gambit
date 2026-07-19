@@ -156,7 +156,14 @@ const A4_L1_STORY = {
 
 export function buildStageMatch(id, profile = null, leagueOverride = null) {
   const node = nodeById(id);
-  const d = difficultyById(node.difficulty);
+  // THE PLAYER'S OWN DIAL: a campaign-wide difficulty offset shifts each
+  // station's built-in level up or down (-1 gentler … 0 as designed … +1
+  // harder). It never drops below easy nor past hard. Set under Profile.
+  const TIERS = ["easy", "normal", "hard"];
+  const off = { gentle: -1, normal: 0, brutal: 1 }[profile?.campDifficulty || "normal"] ?? 0;
+  const baseIdx = Math.max(0, TIERS.indexOf(node.difficulty));
+  const tunedTier = TIERS[Math.max(0, Math.min(TIERS.length - 1, baseIdx + off))];
+  const d = difficultyById(tunedTier);
   // LOOKING BACK (leagueOverride): a mastered league replays as it WAS — maps,
   // foes and bosses scale to that old league, and every station is a friendly:
   // no first-clear, no progression, just the road walked once more.

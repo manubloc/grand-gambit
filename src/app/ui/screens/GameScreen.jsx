@@ -711,12 +711,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <div style={{ color: "rgba(240,233,216,.8)", fontSize: 12, lineHeight: 1.5 }}>{t("scout.oppHint")}</div>
           </div>
         )}
-        {banner && <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit} boss={match?.boss || null}
-          onSettings={!campaign && !pvp ? onExit : null}
-          pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
-          unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
-          fledName={match?.boss && !match?.boss?.unlocks ? (match.boss.name?.[profile.lang === "en" ? "en" : "de"] || null) : null}
-          unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} newSkills={newSkills} />}
       </div>
 
 </>);
@@ -761,6 +755,15 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       </div>
 </>);
 
+  // the victory/defeat banner lives at the TOP of the screen tree (not inside
+  // the zoomable board), so it always floats OVER every piece and overlay
+  const bannerEl = banner ? <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit} boss={match?.boss || null}
+    onSettings={!campaign && !pvp ? onExit : null}
+    pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
+    unlockName={match?.boss?.unlocks ? (profile.lang === "en" ? CHARACTERS_BY_ID[match.boss.unlocks]?.nameEn : CHARACTERS_BY_ID[match.boss.unlocks]?.nameDe) : null}
+    fledName={match?.boss && !match?.boss?.unlocks ? (match.boss.name?.[profile.lang === "en" ? "en" : "de"] || null) : null}
+    unlockId={match?.boss?.unlocks || null} en={profile.lang === "en"} onArmy={onArmy} newSkills={newSkills} /> : null;
+
   if (wideMatch) return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%", display: "flex" }}>
       <div style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", padding: "10px 2px 14px 10px" }}>
@@ -773,6 +776,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ flex: 1, minHeight: 14 }} />
         {yourStrip}
       </aside>
+      {bannerEl}
     </div>
   );
 
@@ -783,6 +787,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {enemyStrip}
       {boardBlock}
       {yourStrip}
+      {bannerEl}
     </div>
   );
 }
@@ -931,7 +936,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
   const g = banner.gained;
   const leveled = g.levelAfter > g.levelBefore;
   return (
-    <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(8,10,14,.72)", backdropFilter: "blur(2px)", borderRadius: 12, padding: 14 }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "grid", placeItems: "center", background: "rgba(8,10,14,.72)", backdropFilter: "blur(2px)", padding: 14 }}>
       <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", animation: "rise .25s ease", borderColor: color + "66" }}>
         <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1 }}>{sub}</div>
         <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>

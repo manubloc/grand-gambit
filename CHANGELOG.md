@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.52
+- SIEG-POPUP LIEGT JETZT UEBER ALLEM: das Ergebnis-Banner (Geschafft/Verloren mit Belohnungen) wurde bisher IM zoombaren Brett-Container gezeichnet und lag dadurch hinter Figuren und Overlays. Es wird jetzt ganz oben im Bildschirm als festes Overlay (position fixed, hoechste Ebene) gerendert - immer klar ueber allen Figuren
+- SCHWIERIGKEIT DER KAMPAGNE EINSTELLBAR: unter Profil gibt es jetzt den Regler Schwierigkeit der Kampagne (Sanft / Normal / Hart), jederzeit aenderbar. Sanft macht jede Station eine Stufe leichter, Hart eine Stufe schwerer - das verschiebt Gegner-Level UND KI-Suchtiefe pro Station relativ zu ihrer vorgesehenen Staerke
+
 ## 0.22.51
 - FEHLERBERICHTE LAUFEN JETZT UEBER DIE ONLINE-HALLE: statt E-Mail oder nur lokal werden Berichte im bestehenden Multiplayer-Worker gesammelt (POST /report offen fuer alle, GET /reports nur mit Admin-Token). Im Admin-Profil traegst du einmal das Token ein und siehst dann die Berichte ALLER Nutzer geraeteuebergreifend - ohne neue Infrastruktur, kein Supabase noetig. Einrichtung: worker deployen + ADMIN_TOKEN setzen (Anleitung in REPORTS-SETUP.md)
 - Absturzberichte werden weiterhin automatisch vermerkt und an die Halle gesendet (auch nach einem Absturz dank keepalive)
