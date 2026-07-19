@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.42
+- STAT-BUBBLES GROESSER UND TIEFER: die drei Kugeln (Leben, Staerke, Energie) sind rund 30 Prozent groesser und sitzen weiter unten an der Figur (die L-Form ragt jetzt leicht unter das Feld) - die Zahlen sind dadurch deutlich besser lesbar; der Leben-Orb misst rund 42 Prozent der Feldbreite statt vorher ~30
+
 ## 0.22.41
 - GRAND GAMBIT VERDIENT MUTIG: der Kommandant bekommt jetzt Bonus-Erfahrung, wenn ER selbst eine Figur schlaegt (+8) und wenn er das ganze Gefecht auf dem Brett uebersteht (+14) - das belohnt einen kuehnen, stets anwesenden Anfuehrer; Schlag-Herkunft und Opfer laufen dafuer durch die Event-Kette (byHero/hitHero)
 - ONBOARDING IN DREI STUFEN: neue einmalige Erklaerungs-Popups entlang des Fortschritts - (1) wie man aufstellt, sobald die erste Zusatzfigur freigespielt ist; (2) die Gambit-Bonus-XP-Mechanik nach dem 2. gewonnenen Kampf; (3) dass der Gambit ab dem 3. Kampf seine Spalte selbst waehlen darf. Erscheinen nur zwischen Kaempfen, nie ueber einem laufenden Spiel, je genau einmal

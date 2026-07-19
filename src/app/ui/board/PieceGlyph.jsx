@@ -62,19 +62,20 @@ function StatOrb({ v, kind, focus }) {
     : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
     : ["#ffd743", "#d19a1a", "#2a1c02"];
   const digits = String(v).length;
-  const size = (Math.min(0.34, 0.145 + digits * 0.052 + Math.min(v, 20) * 0.004)) * (focus ? 1.4 : 1);
+  const size = (Math.min(0.44, 0.2 + digits * 0.062 + Math.min(v, 20) * 0.005)) * (focus ? 1.4 : 1);
   return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
     display: "grid", placeItems: "center", flex: "0 0 auto",
     background: `radial-gradient(circle at 36% 26%, #ffffff 0%, #ffffffe8 20%, rgba(255,255,255,.34) 34%, ${core} 52%, ${mid} 80%, ${rim} 100%)`,
     boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.6px rgba(0,0,0,.5)`,
     transition: "width .15s ease, height .15s ease" }}>
-    <span style={{ fontSize: Math.max(0.088, size * 0.52) + "em", fontWeight: 900, lineHeight: 1,
+    <span style={{ fontSize: Math.max(0.1, size * 0.54) + "em", fontWeight: 900, lineHeight: 1,
       color: "#0a1206", textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
   </span>;
 }
 function StatTriad({ piece, focus }) {
-  // L-shape anchored bottom-left: [power] on top of [life], [energy] beside life
-  return <span style={{ position: "absolute", bottom: "0.02em", left: "-0.02em", zIndex: 3,
+  // L-shape anchored bottom-left, riding a touch below the tile so the orbs
+  // read large and clear
+  return <span style={{ position: "absolute", bottom: "-0.1em", left: "-0.08em", zIndex: 3,
     display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.03em",
     pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
     <StatOrb v={piece.atk} kind="power" focus={focus} />
