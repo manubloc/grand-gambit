@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.61
+- GEGNER-ZUG-ANIMATION: CLIP-FEHLER BEHOBEN + LANGSAMER
+  - Der Gegner-Zug klippte manchmal (die Figur erschien kurz an der falschen Stelle - etwa auf meiner Figur - und sprang dann). Ursache war ein Timing-Fenster, in dem die echte Figur schon am Zielfeld stand, bevor die Gleit-Animation begann. Die Animation wird jetzt VOR dem Bildaufbau scharf gestellt (useLayoutEffect) und der Startpunkt garantiert zuerst gezeichnet - die Figur gleitet jetzt sauber von ihrem Feld los
+  - Gegnerzuege sind jetzt DEUTLICH langsamer animiert (0,9s statt 0,66s), eigene Zuege minimal ruhiger (0,52s) - der Gegnerzug ist klar nachvollziehbar
+
 ## 0.22.60
 - KARTE UNTEN WIEDER GESCHLOSSEN: die Karte fuellt das Fenster jetzt wieder voll und ist unten buendig - die runde untere Kante ist sauber geschlossen (vorher fehlte dort ein Stueck, weil die Karte nach unten verschoben war)
 - SCHACHBRETT-HINTERGRUND WEG: der Kartenhintergrund ist jetzt reines Schwarz - kein durchschimmerndes Muster mehr am Rand

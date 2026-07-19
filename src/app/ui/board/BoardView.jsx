@@ -1,4 +1,7 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useLayoutEffect, useRef } from "react";
+// useLayoutEffect on the client (fires before paint → no flicker), plain
+// useEffect on the server (no SSR warning; the board never animates there).
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { PieceGlyph } from "./PieceGlyph.jsx";
@@ -143,7 +146,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // foe I took, down low for a piece the foe took from me).
   const [anim, setAnim] = useState(null);
   const [death, setDeath] = useState(null);   // { at, piece, dir, fly, id }
-  useEffect(() => {
+  // useIsoLayoutEffect: the ghost is armed BEFORE the browser paints, so the
+  // real piece is never shown for a frame at its new square before the glide
+  // starts (that was the "pops in at the wrong place" clip).
+  useIsoLayoutEffect(() => {
     if (!lastMove || lastMove.from === lastMove.to) { setAnim(null); return; }
     // hotseat animates both; otherwise only the side we're told to animate
     if (animateFor && lastMove.color !== animateFor) { setAnim(null); return; }
@@ -172,13 +178,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         dir: (lastMove.color === "w" ? 1 : -1) * (pov === "w" ? 1 : -1),
         fly: iWon ? -1 : 1 });   // -1 up (foe's tray up top), +1 down (my tray below)
     }
-    const raf = requestAnimationFrame(() => requestAnimationFrame(() =>
-      setAnim((cur) => (cur && cur.id === a.id ? { ...cur, phase: 1 } : cur))));
+    // arm the glide: phase 0 paints the ghost at FROM, then the next frame(s)
+    // flip to phase 1 so the CSS transition carries it to TO. A double rAF plus
+    // a tiny timeout guarantees the FROM frame is painted first on every device
+    // — without it the ghost can appear straight at TO (the "clip onto my
+    // piece" glitch).
+    let raf2 = 0;
+    const raf = requestAnimationFrame(() => { raf2 = requestAnimationFrame(() => {
+      setAnim((cur) => (cur && cur.id === a.id ? { ...cur, phase: 1 } : cur));
+    }); });
     // hold long enough for the (now slower) glide + arc to finish fully
-    const hold = foe ? 1500 : 1150;
+    const hold = foe ? 1900 : 1350;
     const t = setTimeout(() => { setAnim((cur) => (cur && cur.id === a.id ? null : cur));
       setDeath((cur) => (cur && cur.id === a.id + 1 ? null : cur)); }, hold);
-    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+    return () => { cancelAnimationFrame(raf); cancelAnimationFrame(raf2); clearTimeout(t); };
   }, [lastMove, animateFor, hotseat, pov]); // eslint-disable-line
 
   const W = state.w ?? FILES, H = state.h ?? RANKS;
@@ -416,7 +429,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         // phase 0 sits at origin, phase 1 arrives (or, when bounced, returns).
         const a = disp(anim.from), b = disp(anim.to);
         const at = anim.bounced ? a : (anim.phase ? b : a);
-        const dur = anim.foe ? 0.66 : 0.44;   // seconds; foe moves read slower
+        const dur = anim.foe ? 0.9 : 0.52;   // seconds; foe moves read much slower
         const ease = "cubic-bezier(.34,.72,.28,1)";
         // tilt INTO the direction of travel (like the wanderer leaning on the
         // map): lean right when moving right, left when moving left.
