@@ -91,6 +91,27 @@ export const CHAPTERS = [
   { n: 4, fromRow: 12, toRow: 14, titleDe: "Der Aufstieg",     titleEn: "The Ascent" },
 ];
 export const chapterForRow = (row) => CHAPTERS.find((c) => row >= c.fromRow && row <= c.toRow) || CHAPTERS[0];
+// Every league tells its OWN four chapters — the road reads differently in the
+// summer meadows than in the dunes or out on the open sea. Indexed by the
+// league's world (1..10, repeating beyond); falls back to the base titles.
+const CHAPTER_TITLES = [
+  /* 1 grassland */ [["Der Aufbruch","The Departure"],["Die drei Pfade","The Three Paths"],["Die Prüfungen","The Trials"],["Der Aufstieg","The Ascent"]],
+  /* 2 summer   */ [["Ins hohe Gras","Into the Tall Grass"],["Wege im Weizen","Roads in the Wheat"],["Die Sonnenwende","The Solstice"],["Der Erntethron","The Harvest Throne"]],
+  /* 3 autumn   */ [["Fallendes Laub","Falling Leaves"],["Der Nebelscheid","The Mist Divide"],["Sturmernte","Storm Harvest"],["Der letzte Farbenrausch","The Last Blaze"]],
+  /* 4 winter   */ [["Erster Frost","First Frost"],["Drei gefrorene Furten","Three Frozen Fords"],["Die weiße Belagerung","The White Siege"],["Über das Eis","Across the Ice"]],
+  /* 5 highland */ [["Am Fuß der Wand","At the Foot of the Wall"],["Grate und Scharten","Ridges and Notches"],["Die Seilprobe","The Rope Trial"],["Zum Gipfelthron","To the Summit Throne"]],
+  /* 6 wasteland*/ [["In die Asche","Into the Ash"],["Drei tote Flüsse","Three Dead Rivers"],["Das Knochenfeld","The Bonefield"],["Der Herr der Öde","The Lord of the Waste"]],
+  /* 7 steppe   */ [["Unter weitem Himmel","Under the Wide Sky"],["Die Reiterpfade","The Rider Trails"],["Feuer im Gras","Fire in the Grass"],["Der Khan der Steppe","The Khan of the Steppe"]],
+  /* 8 canyon   */ [["In die Schlucht","Into the Gorge"],["Die drei Klammen","The Three Clefts"],["Echo und Absturz","Echo and Fall"],["Über der Felskante","Above the Rim"]],
+  /* 9 desert   */ [["Der erste Brunnen","The First Well"],["Karawanenwege","Caravan Roads"],["Die Glutprobe","The Ember Trial"],["Der Dünenthron","The Dune Throne"]],
+  /* 10 sea     */ [["Ablegen","Casting Off"],["Drei Strömungen","Three Currents"],["Die Sturmfahrt","The Storm Passage"],["Der Herr der Wellen","The Lord of the Waves"]],
+];
+export const chapterTitle = (league, n, en = false) => {
+  const world = ((Math.max(1, league) - 1) % 10);
+  const set = CHAPTER_TITLES[world] || CHAPTER_TITLES[0];
+  const pair = set[Math.max(0, Math.min(3, n - 1))];
+  return en ? pair[1] : pair[0];
+};
 
 export const nodeById = (id) => CAMPAIGN.find((n) => n.id === id) || null;
 

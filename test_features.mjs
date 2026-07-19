@@ -143,7 +143,11 @@ import { mapById as mapOf } from "./src/content/index.js";
   const army = bFromForm(() => 1, withBoss);
   ok("the fielded boss brings his stats and aura", army.back[4].bossId === "b25" && army.back[4].aura.type === "courtHp");
 }
-ok("Liga I fields classic boards; later leagues open the stages", effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 2) === "skirmish" && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "arena" && effectiveMap(nbId("n22"), 1) === "arena");
+ok("Liga I fields classic boards; later leagues open the stages (classic-heavy, v0.22.45)",
+  effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 4) === "classic" /* bent onto 8x8 for good */
+  && effectiveMap(nbId("b3"), 2) === "skirmish" /* signature skirmish survives */
+  && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "classic" /* the wide arena yields */
+  && effectiveMap(nbId("n22"), 1) === "arena" /* the finale keeps its stage */);
 
 // ── League 2 (New Game+): rollover, duplication stars, scaling ───────────────
 import { buildStageMatch as bsm2, dupeCount, leagueBump } from "./src/meta/index.js";

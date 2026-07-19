@@ -4,7 +4,7 @@
 export { ABILITIES, TAGS } from "./abilities.js";
 export { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "./characters.js";
 export { DIFFICULTIES, difficultyById } from "./difficulties.js";
-export { CAMPAIGN, nodeById, BRANCHES, campaignTag, CHAPTERS, chapterForRow } from "./campaign.js";
+export { CAMPAIGN, nodeById, BRANCHES, campaignTag, CHAPTERS, chapterForRow, chapterTitle } from "./campaign.js";
 export { MAPS, mapById, validateMap, inMap, isHole, holeSet, mapIdx, playableCount } from "./maps.js";
 export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } from "./bosses.js";
 

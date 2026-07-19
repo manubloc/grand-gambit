@@ -211,7 +211,8 @@ export default function App() {
     : tab === "play" ? (
         view === "quick" ? sub(t("hub.quick"), <QuickSetup profile={profile} dispatch={dispatch} t={t} initial={lastQuick.current}
           onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
-        : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id) => {
+        : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id, lookLeague = null) => {
+          if (lookLeague != null) { setMatch(buildStageMatch(id, profile, lookLeague)); return; } // the look back: a friendly replay, no bookkeeping
           // the first fight at a station lifts its veil: FACED is recorded at
           // battle start (win or lose), per league — empty posts until then
           const faced = profile.campaign?.faced || [];

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.45
+- KLASSIK BEHERRSCHT DAS REICH: die Karten-Verteilung der Kampagne ist umgebaut - das 8x8-Feld traegt jetzt 75 Prozent aller Stationen (Klassik allein 19 von 51 und damit groesste Einzelgruppe, dazu Schneise 12 und Hof 7); die weite Arena und das enge Scharmuetzel ueberleben nur auf ihren Signatur-Stationen (Ligameister, Finale, wenige markante Orte)
+- RUECKBLICK IST JETZT SPIELBAR: in bereits gemeisterten Ligen (Pfeile auf der Karte) laesst sich jede Station antippen und als FREUNDSCHAFTSKAMPF der alten Liga erneut spielen - Gegner, Karte und Boss skalieren auf die damalige Liga, kein Fortschritt/keine Rekrutierung/kein Zeitdruck, nur die Ehre (und etwas Freundschafts-XP). Kuenftige Ligen bleiben verschlossen
+- JEDE LIGA ERZAEHLT EIGENE KAPITEL: die vier Kapitel-Banner oben tragen jetzt pro Welt eigene Titel (Sommer, Herbst, Winter, Hochgebirge, Oedland, Steppe, Canyon, Wueste, Meer) statt immer derselben vier Namen
+- 5 neue Regressionstests (8x8-Mehrheit, Klassik groesste Gruppe, Rueckblick friendly/alte Skalierung/keine Rekrutierung)
+
 ## 0.22.44
 - DRACHE KANN ENDLICH VORWAERTS: der Schritt nach vorne landet auf einem Feld, das sein eigener 2x2-Block gerade ueberdeckt (ein Fluegel-Feld) - bisher wurde ein Tipp darauf als "Drache erneut antippen" gedeutet und der Zug verworfen. Jetzt gewinnt ein gueltiges Zugziel vor der Fluegel-Umleitung, und das grosse Drachenbild laesst bei Auswahl Tipps auf die Zielfelder darunter durch. Er wandert jetzt sichtbar Feld fuer Feld
 - 3 neue Regressionstests (Vorwaerts-Feld ist Fluegel, Zug ist legal, Drache rueckt eine Reihe vor)

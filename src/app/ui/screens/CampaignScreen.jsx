@@ -7,7 +7,7 @@ import { familyOf } from "../../../core/index.js";
 // medallions are waypoints (small), and the node detail lives in a parchment
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS } from "../../../content/index.js";
+import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle } from "../../../content/index.js";
 import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import bootUrl from "../assets/wanderer-boot.webp";
@@ -335,7 +335,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               background: "rgba(239,233,218,.42)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: "1px solid rgba(201,191,164,.6)", borderRadius: 999, padding: "8px 15px",
               fontSize: 12.5, color: MP.ink, whiteSpace: "nowrap", boxShadow: "0 0 18px rgba(30,25,15,.14)" }}>
-              {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][c.n - 1]} · {(en ? c.titleEn : c.titleDe).toUpperCase()}
+              {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][c.n - 1]} · {chapterTitle(viewLeague, c.n, en).toUpperCase()}
             </div>
           ))}
           <div className="gg-serif" style={{ position: "absolute", top: Math.max(14, ny({ col: 2 }) - 74), left: Math.min(WMAP - 84, WMAP - 14), transform: "translateX(-50%)",
@@ -392,8 +392,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   filter: st === "locked" ? "grayscale(.6)" : "none" }}>
                   <SiteGlyph type={siteTypeFor(n)} width={n.id === "n22" ? 54 : 44} />
                 </div>}
-                <button onClick={() => { if (viewing) return; setSel(n.id); setPanelOpen(true); walkTo(n.id); }}
-                  style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: viewing ? "default" : "pointer",
+                <button onClick={() => { setSel(n.id); setPanelOpen(true); if (!viewing) walkTo(n.id); }}
+                  style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: "pointer",
                     position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center",
                     opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1 }}>
                   <div style={{ position: "relative", width: MEDAL + 10, height: MEDAL + 9,
@@ -565,7 +565,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             border: "1px solid rgba(233, 210, 150, .42)", color: "#e9d296", fontSize: 11.5, letterSpacing: ".12em",
             whiteSpace: "nowrap", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
             backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][ch.n - 1]} · {(en ? ch.titleEn : ch.titleDe).toUpperCase()}
+            {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][ch.n - 1]} · {chapterTitle(viewLeague, ch.n, en).toUpperCase()}
           </div>;
         })()}
         {viewLeague < league && (
@@ -710,6 +710,32 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
 
       {/* embedded node panel — parchment overlay near the medallion; arrival is
           part of the world, not a card below the map */}
+      {/* THE LOOK BACK: a mastered league is open ground — tap any station and
+          replay it as a FRIENDLY, scaled to that old league. No progression,
+          no bookkeeping; just the road, walked once more. */}
+      {panelOpen && viewing && !!node && (
+        <div key={"vw" + sel} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
+          zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
+          WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
+          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px", animation: "rise .26s ease" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span className="gg-serif" style={{ fontSize: 15.5, fontWeight: 700 }}>{placeFor(node, viewLeague)}</span>
+            <span style={{ fontSize: 11, color: PP.dim }}>{en ? mapById(effectiveMap(node, viewLeague)).nameEn : mapById(effectiveMap(node, viewLeague)).nameDe}</span>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
+              cursor: "pointer", color: PP.dim, fontSize: 17, lineHeight: 1, padding: 2 }}>×</button>
+          </div>
+          <div className="gg-serif" style={{ marginTop: 6, fontSize: 12, fontStyle: "italic", lineHeight: 1.45, color: PP.dim }}>
+            {t("camp.lookbackHint")}</div>
+          <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+            <Button variant="primary" onClick={() => onStart(sel, viewLeague)} style={{ flex: 1,
+              background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)" }}>
+              <BladesIc color={T.limeInk} size={14} /> {t("camp.friendly")}
+            </Button>
+          </div>
+        </div>
+      )}
       {showPanel && (
         <div key={sel + (token.at === sel ? "@" : "")} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",

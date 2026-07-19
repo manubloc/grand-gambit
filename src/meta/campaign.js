@@ -154,10 +154,14 @@ const A4_L1_STORY = {
   en: "The Dragon Hoard is warm - too warm. The Broodmother tends a clutch here that no one has seen hatch. Not yet.",
 };
 
-export function buildStageMatch(id, profile = null) {
+export function buildStageMatch(id, profile = null, leagueOverride = null) {
   const node = nodeById(id);
   const d = difficultyById(node.difficulty);
-  const lgMap = profile?.campaign?.league || 1;
+  // LOOKING BACK (leagueOverride): a mastered league replays as it WAS — maps,
+  // foes and bosses scale to that old league, and every station is a friendly:
+  // no first-clear, no progression, just the road walked once more.
+  const looking = leagueOverride != null;
+  const lgMap = looking ? leagueOverride : (profile?.campaign?.league || 1);
   const mapId = effectiveMap(node, lgMap);
   const map = mapById(mapId);
   // CLASSIC boards mean classic chess: NO level bumps for the AI either —
@@ -168,8 +172,8 @@ export function buildStageMatch(id, profile = null) {
   const chess = node.rules === "chess";
   const base = chess ? () => 1 : (cid) => d.levels[cid] || 1;
   const formation = node.formation || map.defaultFormation;
-  const aiArmy = buildArmyFromFormation((cid) => chess ? 1 : base(cid) + (node.bump || 0) + leagueBump(profile?.campaign?.league), formation);
-  const lg = profile?.campaign?.league || 1;
+  const aiArmy = buildArmyFromFormation((cid) => chess ? 1 : base(cid) + (node.bump || 0) + leagueBump(lgMap), formation);
+  const lg = lgMap;
   const boss0 = nodeBossSpec(node, lg);
   const boss = boss0 && lg > 1 ? { ...boss0, hp: boss0.hp + 2 * (lg - 1), atk: boss0.atk + (lg - 1) } : boss0;
   let bossInfo = null;
@@ -177,7 +181,7 @@ export function buildStageMatch(id, profile = null) {
     let qi = formation.indexOf("queen");
     if (qi === -1) qi = Math.max(0, Math.floor(formation.length / 2) - 1);
     aiArmy.back = aiArmy.back.map((spec, j) => (j === qi ? boss : spec));
-    bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: recruitOnWin(node, profile),
+    bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: looking ? null : recruitOnWin(node, profile),
       art: boss.art || null, accent: boss.accent, kind: boss.kind };
   }
   const recruitId = bossPieceFor(node, lg);
@@ -189,15 +193,16 @@ export function buildStageMatch(id, profile = null) {
     boss: bossInfo,
     turncoat, excludeId: turncoat ? recruitId : null,
     // classic boards trade level bumps for a sharper mind in later leagues
-    depth: Math.min(3, (node.depth || d.depth) + (map.classic && (profile?.campaign?.league || 1) >= 3 ? 1 : 0)),
+    depth: Math.min(3, (node.depth || d.depth) + (map.classic && lg >= 3 ? 1 : 0)),
     aiArmy,
-    timer: stageTimer(node, lg),
+    timer: looking ? null : stageTimer(node, lg),
     gold: stageGold(node, lg),
-    firstClear: profile ? nodeStatus(profile, id) === "available" : true,
+    firstClear: looking ? false : (profile ? nodeStatus(profile, id) === "available" : true),
     // a FRIENDLY: the station is cleared and one of your own holds the post —
-    // a recruited champion, or the fallen League Master in his keep
-    friendly: !!profile && nodeStatus(profile, id) === "cleared"
-      && (id === "n22" || (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg)))),
+    // a recruited champion, or the fallen League Master in his keep. In the
+    // look-back, EVERY station replays as a friendly.
+    friendly: looking || (!!profile && nodeStatus(profile, id) === "cleared"
+      && (id === "n22" || (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg))))),
     reward: node.reward || { xp: 0 },
   };
 }
@@ -310,11 +315,22 @@ export const leagueBump = (league) => 2 * ((league || 1) - 1);
 export function effectiveMap(node, league = 1) {
   if (!node) return "classic";
   if (node.id === "n22" || node.league) return node.map; // finale & combo sites keep their stage
+  // THE CLASSIC BOARD RULES THE REALM: most stations fight on 8x8 — classic
+  // first, with the Gauntlet and the Courtyard as its lieutenants. The wide
+  // arena and the tight skirmish survive only on their signature stations.
+  const bent = BEND_8X8[node.id] || node.map;
   const lg = leagueNo(league);
-  if (lg >= 4) return node.map;
+  if (lg >= 4) return bent;
   const allowed = lg === 1 ? ["classic"] : lg === 2 ? ["classic", "skirmish"] : ["classic", "skirmish", "courtyard", "gauntlet"];
-  return allowed.includes(node.map) ? node.map : "classic";
+  return allowed.includes(bent) ? bent : "classic";
 }
+// deterministic per-station re-routing toward the 8x8 boards (classic-heavy)
+const BEND_8X8 = {
+  n16: "classic", n17: "classic", d1: "classic", d2: "classic", e1: "classic",
+  e2: "courtyard", e3: "classic", n20: "classic", n21: "classic", g2: "classic",
+  w2: "classic", a1: "classic", a2: "classic", c1: "classic", z1: "classic",
+  w1: "classic", w3: "classic",
+};
 
 /** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
  *  the monster milestones (pure bosses, incl. the League Keep) grant a total

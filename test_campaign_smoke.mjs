@@ -4,7 +4,7 @@
 // if a node's board, moves, dragon unfolding, capture events or match summary
 // throw, this fails loudly.
 import { CAMPAIGN, mapById } from "./src/content/index.js";
-import { buildStageMatch } from "./src/meta/campaign.js";
+import { buildStageMatch, effectiveMap } from "./src/meta/campaign.js";
 import { createGame, applyMove, legalMoves, status } from "./src/core/index.js";
 import { buildArmyForMap, withProgressPct, defaultProfile, summarizeMatch, applyResult } from "./src/meta/index.js";
 
@@ -50,6 +50,26 @@ for (const node of CAMPAIGN) {
 ok(`all ${CAMPAIGN.length} campaign nodes play out over ${SEEDS.length} seeds without crashing`, crashed.length === 0);
 if (crashed.length) crashed.slice(0, 8).forEach((c) => console.log("    " + c));
 ok("every dragon node unfolds its 2x2 block with valid wing refs", dragonNodes > 0 && dragonOk === dragonNodes);
+
+// ── the classic board rules the realm (8x8 majority, classic the largest) ──
+{
+  const eff = {};
+  for (const n of CAMPAIGN) { const m = effectiveMap(n, 5); eff[m] = (eff[m] || 0) + 1; }
+  const x8 = (eff.classic || 0) + (eff.courtyard || 0) + (eff.gauntlet || 0);
+  ok("8x8 boards carry a clear majority of stations", x8 / CAMPAIGN.length >= 0.6);
+  ok("classic alone is the single largest board", Object.entries(eff).every(([k, v]) => k === "classic" || v <= eff.classic));
+}
+// ── the look back: a mastered league replays as an honest friendly ──
+{
+  const p5 = withProgressPct(defaultProfile(), 60, 5);
+  const look = buildStageMatch("n16", p5, 1);
+  ok("look-back match is a friendly with no first-clear and no timer",
+    look.friendly === true && look.firstClear === false && look.timer == null);
+  const now = buildStageMatch("n16", p5);
+  const maxL = (m) => Math.max(...m.aiArmy.back.filter((s) => s).map((s) => s.level));
+  ok("look-back foes scale to the OLD league (weaker than today)", maxL(look) < maxL(now));
+  ok("look-back never dangles a recruit reward", !look.boss || look.boss.unlocks == null);
+}
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
