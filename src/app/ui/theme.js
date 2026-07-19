@@ -113,13 +113,17 @@ export const GLOBAL_CSS = `
     100% { transform: translateX(-50%) translateY(-14%) scaleY(1.1); opacity: .35 } }
   @keyframes ggFogR { from { transform: translateX(5%) } to { transform: translateX(-6%) } }
   @keyframes ggFogR2 { from { transform: translateX(7%) translateY(1.5%) } to { transform: translateX(-4%) translateY(-1%) } }
-  /* drifting clouds over the map's head: two layers crossing at different
-     speeds, gently breathing in scale so the haze rolls like weather */
-  @keyframes ggCloudA { 0% { transform: translateX(-14%) scale(1.15); }
-    100% { transform: translateX(12%) scale(1.28); } }
-  @keyframes ggCloudB { 0% { transform: translateX(10%) scale(1.3); }
-    100% { transform: translateX(-12%) scale(1.16); } }
-  @keyframes ggCloudBreath { 0%,100% { opacity: .78; } 50% { opacity: 1; } }
+  /* drifting clouds over the map's head: layers crossing at different speeds,
+     rolling and breathing so the haze moves like real weather */
+  @keyframes ggCloudA { 0% { transform: translate(-18%, 2%) scale(1.2); }
+    50% { transform: translate(4%, -3%) scale(1.34); }
+    100% { transform: translate(16%, 3%) scale(1.22); } }
+  @keyframes ggCloudB { 0% { transform: translate(14%, -2%) scale(1.32); }
+    50% { transform: translate(-6%, 4%) scale(1.18); }
+    100% { transform: translate(-16%, -1%) scale(1.3); } }
+  @keyframes ggCloudC { 0% { transform: translate(6%, 1%) scale(1.25); }
+    100% { transform: translate(-10%, -2%) scale(1.4); } }
+  @keyframes ggCloudBreath { 0%,100% { opacity: .72; } 50% { opacity: 1; } }
   @keyframes ggFogA { from { transform: translate(-3.5%, -1.5%) } to { transform: translate(3.5%, 1.5%) } }
   @keyframes ggFogB { from { transform: translate(3%, 1.8%) } to { transform: translate(-3%, -1.8%) } }
   @keyframes ggSweep { from { transform: translate(var(--sx0), var(--sy0)); } to { transform: translate(var(--sx1), var(--sy1)); } }

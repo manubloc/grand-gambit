@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.60
+- KARTE UNTEN WIEDER GESCHLOSSEN: die Karte fuellt das Fenster jetzt wieder voll und ist unten buendig - die runde untere Kante ist sauber geschlossen (vorher fehlte dort ein Stueck, weil die Karte nach unten verschoben war)
+- SCHACHBRETT-HINTERGRUND WEG: der Kartenhintergrund ist jetzt reines Schwarz - kein durchschimmerndes Muster mehr am Rand
+- WOLKEN AM KARTENKOPF UEBERARBEITET: drei Ebenen ziehen jetzt sichtbar und in unterschiedlichem Tempo (rollen + atmen wie echtes Wetter). Oben ist es nicht mehr flaechig weiss - dunklere Stellen der Karte schimmern zwischen den Wolken durch, wie am Himmel. Der untere Rand des Nebels laeuft ueber eine lange weiche Maske aus, keine harte Kante mehr
+
 ## 0.22.59
 - ELO-EINSCHAETZUNG BEIM KAMPAGNEN-SCHWIERIGKEITSGRAD: unter Sanft/Normal/Hart steht jetzt eine grobe Einordnung der Gegnerstaerke - Sanft etwa Anfaenger (grob 600-900 Elo), Normal etwa Gelegenheitsspieler (grob 1000-1300), Hart etwa Vereinsspieler (grob 1400-1700). Die Angabe ist bewusst grob, da die Kampagne kein reines Schach ist (Faehigkeiten, Level, Lebenspunkte spielen mit)
 
