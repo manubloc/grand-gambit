@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.47
+- ABMELDEN IN SAFARI REPARIERT: der Abmelden-Knopf im Profil lag unter dem schwebenden Menue-Dock - in Safari (Home-Balken-Reserve) hat das Dock den Tipp geschluckt. Der Scrollbereich reserviert jetzt Dock-Hoehe plus Safe-Area, sodass die letzten Knoepfe immer frei liegen. Zusaetzlich meldet der Knopf jetzt SOFORT ab (lokal), waehrend Cloud-Abmeldung und Aufraeumen im Hintergrund folgen - ein haengender Netzwerk-Aufruf kann den Knopf nicht mehr tot wirken lassen
+
 ## 0.22.46
 - KARTE ALS GERAHMTES GEMAELDE: das Kartenfenster ist auf dem Handy jetzt exakt so breit wie das Menue darunter (gleiches Raster, 536er-Cap) mit spuerbar mehr Luft zum Menue; die Welt darin zeigt sich eine Stufe kleiner (Fit aufs Fenster statt auf den Bildschirm) - Wegpunkte und Wanderer skalieren automatisch mit; um das Fenster laeuft ein Rahmen im Randton der jeweiligen Liga mit leichtem Verlauf ins Dunkle
 - BUBBLES MITTIG UNTER DER FIGUR: die drei Stat-Kugeln stehen jetzt als eine zentrierte Reihe unter der Figur - Staerke, Leben, Energie (statt L-Form unten links); die Farbe fuellt die Kugel deutlich satter, der weisse Glanz ist nur noch ein kleiner Lichtpunkt (~1 Prozent der Flaeche)

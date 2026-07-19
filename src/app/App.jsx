@@ -189,7 +189,7 @@ export default function App() {
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
-    onLogout={async () => { await clearSession(); await signOutCloud(); setAccount(null); }}
+    onLogout={() => { setAccount(null); clearSession().catch(() => {}); signOutCloud().catch(() => {}); }} /* sign out NOW; cloud+storage follow in the background (Safari must never see a dead button) */
     onOpen={(sl, prof) => { dispatch({ type: "HYDRATE", profile: prof }); setLocked(!!prof.pin); setSlot(sl); setReady(true); }} />;
   if (!ready || !profile) return null;
   const showPrivacy = !profile.notices?.privacy;
@@ -238,7 +238,7 @@ export default function App() {
         </div>
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account}
               onSwitchSave={() => setSlot(null)}
-              onLogout={async () => { await clearSession(); await signOutCloud(); setSlot(null); setAccount(null); }} />;
+              onLogout={() => { setSlot(null); setAccount(null); clearSession().catch(() => {}); signOutCloud().catch(() => {}); }} />;
 
   const inMatch = !!match || !!pvp || !!quick;
   // map & match immersion (v0.3/v0.4): the campaign map and every running
@@ -312,7 +312,11 @@ export default function App() {
         </aside>
       )}
       <main style={{ width: "100%", minWidth: 0, flex: "1 1 auto", minHeight: 0,
-        overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", paddingBottom: immersive ? 0 : 24,
+        overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none",
+        // the fixed dock (~76px) + Safari's home-bar safe-area float OVER the
+        // scroll area: without this reserve the last buttons (e.g. sign-out on
+        // the profile) end up UNDER the dock, which then swallows the tap
+        paddingBottom: immersive ? 0 : "calc(94px + env(safe-area-inset-bottom))",
         maxWidth: immersive ? "none" : 1020, // menus run as wide as the header bar
         ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
