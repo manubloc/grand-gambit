@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.46
+- KARTE ALS GERAHMTES GEMAELDE: das Kartenfenster ist auf dem Handy jetzt exakt so breit wie das Menue darunter (gleiches Raster, 536er-Cap) mit spuerbar mehr Luft zum Menue; die Welt darin zeigt sich eine Stufe kleiner (Fit aufs Fenster statt auf den Bildschirm) - Wegpunkte und Wanderer skalieren automatisch mit; um das Fenster laeuft ein Rahmen im Randton der jeweiligen Liga mit leichtem Verlauf ins Dunkle
+- BUBBLES MITTIG UNTER DER FIGUR: die drei Stat-Kugeln stehen jetzt als eine zentrierte Reihe unter der Figur - Staerke, Leben, Energie (statt L-Form unten links); die Farbe fuellt die Kugel deutlich satter, der weisse Glanz ist nur noch ein kleiner Lichtpunkt (~1 Prozent der Flaeche)
+
 ## 0.22.45
 - KLASSIK BEHERRSCHT DAS REICH: die Karten-Verteilung der Kampagne ist umgebaut - das 8x8-Feld traegt jetzt 75 Prozent aller Stationen (Klassik allein 19 von 51 und damit groesste Einzelgruppe, dazu Schneise 12 und Hof 7); die weite Arena und das enge Scharmuetzel ueberleben nur auf ihren Signatur-Stationen (Ligameister, Finale, wenige markante Orte)
 - RUECKBLICK IST JETZT SPIELBAR: in bereits gemeisterten Ligen (Pfeile auf der Karte) laesst sich jede Station antippen und als FREUNDSCHAFTSKAMPF der alten Liga erneut spielen - Gegner, Karte und Boss skalieren auf die damalige Liga, kein Fortschritt/keine Rekrutierung/kein Zeitdruck, nur die Ehre (und etwas Freundschafts-XP). Kuenftige Ligen bleiben verschlossen

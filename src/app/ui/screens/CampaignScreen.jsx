@@ -190,15 +190,21 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // the frame is FIXED: even margins top and bottom (the dock gets its room on
   // phones); the painting scales and pans INSIDE this steady window
   const padTop = 12;
-  // the shell already keeps the dock's 72px clear below the map — the frame
-  // itself only adds a BREATH of air, so the painting runs down TO the menu
-  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 10 : 12;
-  const frameW = Math.min(vp.w, WMAP * z), frameH = Math.max(220, vp.h - padTop - dockPad);
+  // the window now matches the MENU: same width as the dock (536 max, 12px
+  // gutters) and a fuller breath of air above it — the map is a framed
+  // painting over the chrome, not a full bleed
+  const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 20 : 16;
+  const frameW = wide ? Math.min(vp.w, WMAP * z)
+    : Math.min(vp.w, Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536)); // exactly the dock's width
+  const frameH = Math.max(220, vp.h - padTop - dockPad);
+  // fit covers the FRAME (not the viewport): a narrower window shows the
+  // painting a step smaller — and every waypoint & wanderer scales with it
+  const zf = wide ? z : Math.max(frameH / HM, frameW / WMAP) * 1.02;
   const frameX = Math.round((vp.w - frameW) / 2);
   const frameY = padTop; // pinned: same breath above as below
-  const camMaxX = Math.max(0, WMAP * z - frameW), camMaxY = Math.max(0, HM * z - frameH);
-  const camX = clamp((viewing ? 0 : nx(camNode) * z - frameW * 0.46) + panOff.x, 0, camMaxX);
-  const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * z - frameH * 0.5) + panOff.y, 0, camMaxY);
+  const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);
+  const camX = clamp((viewing ? 0 : nx(camNode) * zf - frameW * 0.46) + panOff.x, 0, camMaxX);
+  const camY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * zf - frameH * 0.5) + panOff.y, 0, camMaxY);
   // fog of war: everything past the frontline stays a blurred rumour until
   // the league's end boss falls — the map never spoils the road ahead
   const frontierX = useMemo(() => {
@@ -223,6 +229,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       {/* the wanderer's window onto the world — a rounded frame; whatever the
           screen shape, chrome stays dark and every control lives INSIDE */}
       <div ref={vpRef} style={{ position: "absolute", inset: 0 }}>
+      {/* the painted frame: the league's rim colour running light-to-dark
+          around the window — the map hangs like a canvas over the chrome */}
+      <div aria-hidden style={{ position: "absolute", left: frameX - 5, top: frameY - 5,
+        width: frameW + 10, height: frameH + 10, borderRadius: Math.min(26, frameW / 11),
+        background: `linear-gradient(180deg, rgba(${labelTint(viewLeague)},.55) 0%, rgba(${labelTint(viewLeague)},.22) 42%, rgba(9,11,16,.95) 100%)`,
+        boxShadow: "0 10px 34px rgba(0,0,0,.5)", pointerEvents: "none" }} />
       <div
         onPointerDown={(e) => { if (seaLock) return;
           dragRef.current = { id: e.pointerId, px: e.clientX, py: e.clientY, ox: panOff.x, oy: panOff.y, moved: false, el: e.currentTarget }; }}
@@ -235,7 +247,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         onClickCapture={(e) => { if (clickSquelch.current) { clickSquelch.current = false; e.preventDefault(); e.stopPropagation(); } }}
         style={{ position: "absolute", left: frameX, top: frameY, width: frameW, height: frameH,
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: bm ? "#0c0e13" : th.paper,
-        boxShadow: "0 0 34px rgba(0,0,0,.45)", touchAction: "none",
+        boxShadow: "inset 0 0 26px rgba(8,10,14,.45)", touchAction: "none",
         ...(seaLock ? { pointerEvents: "none", filter: "saturate(.55) brightness(.8)" } : {}) }}>
         {/* the hall's breath: a whisper of fog drifting in from the right, held by the frame */}
         <div aria-hidden style={{ position: "absolute", inset: "-14%", zIndex: 6, pointerEvents: "none",
@@ -247,7 +259,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           background: "radial-gradient(40% 30% at 90% 52%, rgba(228,220,204,.55), transparent 70%)",
           animation: "ggFogR2 67s ease-in-out infinite alternate" }} />
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0",
-          transform: `translate(${-camX}px, ${-camY}px) scale(${z})`,
+          transform: `translate(${-camX}px, ${-camY}px) scale(${zf})`,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>

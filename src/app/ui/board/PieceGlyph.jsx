@@ -65,7 +65,8 @@ function StatOrb({ v, kind, focus }) {
   const size = (Math.min(0.44, 0.2 + digits * 0.062 + Math.min(v, 20) * 0.005)) * (focus ? 1.4 : 1);
   return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
     display: "grid", placeItems: "center", flex: "0 0 auto",
-    background: `radial-gradient(circle at 36% 26%, #ffffff 0%, #ffffffe8 20%, rgba(255,255,255,.34) 34%, ${core} 52%, ${mid} 80%, ${rim} 100%)`,
+    // the colour OWNS the sphere now — the highlight is a small, tight glint
+    background: `radial-gradient(circle at 34% 24%, #ffffff 0%, #ffffffd8 7%, rgba(255,255,255,.28) 15%, ${core} 30%, ${mid} 78%, ${rim} 100%)`,
     boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.6px rgba(0,0,0,.5)`,
     transition: "width .15s ease, height .15s ease" }}>
     <span style={{ fontSize: Math.max(0.1, size * 0.54) + "em", fontWeight: 900, lineHeight: 1,
@@ -73,16 +74,13 @@ function StatOrb({ v, kind, focus }) {
   </span>;
 }
 function StatTriad({ piece, focus }) {
-  // L-shape anchored bottom-left, riding a touch below the tile so the orbs
-  // read large and clear
-  return <span style={{ position: "absolute", bottom: "-0.1em", left: "-0.08em", zIndex: 3,
-    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.03em",
+  // one centred row riding just under the figure: [power] [life] [energy]
+  return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
+    display: "flex", alignItems: "flex-end", justifyContent: "center", gap: "0.03em",
     pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
     <StatOrb v={piece.atk} kind="power" focus={focus} />
-    <span style={{ display: "flex", gap: "0.03em", alignItems: "flex-end" }}>
-      <StatOrb v={piece.hp} kind="life" focus={focus} />
-      {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} />}
-    </span>
+    <StatOrb v={piece.hp} kind="life" focus={focus} />
+    {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} />}
   </span>;
 }
 
