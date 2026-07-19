@@ -288,10 +288,10 @@ export const heroColFor = (profile, map) => {
   const c = saved == null ? mid : saved;
   return Math.max(0, Math.min(map.w - 1, c));
 };
-function heroSpec(profile) {
+function heroSpec(profile, chess = false) {
   const ch = CHARACTERS.gambit;
-  const level = Math.max(1, characterLevel(profile, "gambit") || 1);
-  const { abilities, shield } = resolveCharacter(ch, level, chosenAbilities(profile, "gambit"));
+  const level = chess ? 1 : Math.max(1, characterLevel(profile, "gambit") || 1);
+  const { abilities, shield } = resolveCharacter(ch, level, chess ? null : chosenAbilities(profile, "gambit"));
   return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level), ...(ch.big ? { big: true } : {}) };
 }
 
@@ -301,8 +301,8 @@ function heroSpec(profile) {
  *  ranks never do. */
 // ONE SEER PER FAMILY: the Crown's Hellseherin and the Shadow's Spaeher (hawk).
 const SEERS = ["seeress", "hawk"];
-export function hasForesight(profile, map) {
-  if (!profile || !map || map.classic) return false;
+export function hasForesight(profile, map, rules = null) {
+  if (!profile || !map || rules === "chess") return false; // pure chess has no seers
   const owned = unlockedCharacterIds(profile);
   const saved = profile?.loadout?.formations?.[map.id];
   const ok = saved && formationLegalOn(saved, owned, map, ownedLeagueBosses(profile));
@@ -310,14 +310,16 @@ export function hasForesight(profile, map) {
   return SEERS.some((id) => owned.includes(id) && formation.includes(id));
 }
 
-export function buildArmyForMap(profile, map, excludeId = null) {
-  const levelOf = map.classic ? () => 1 : (id) => characterLevel(profile, id);
-  const chosenOf = map.classic ? null : (id) => chosenAbilities(profile, id);
-  const boostOf = map.classic ? null : (id) => dupeCount(profile, id);
+export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
+  // Combat strength follows the RULESET, not the board: pure CHESS means
+  // level-1 vanilla pieces (authentic), but an HP battle — even on the 8x8
+  // classic field — brings your leveled pieces, their abilities and dupes.
+  const chess = rules === "chess";
+  const levelOf = chess ? () => 1 : (id) => characterLevel(profile, id);
+  const chosenOf = chess ? null : (id) => chosenAbilities(profile, id);
+  const boostOf = chess ? null : (id) => dupeCount(profile, id);
   const saved = profile?.loadout?.formations?.[map.id];
-  // The FIELD is arrangeable even on a classic board — honour a saved legal
-  // formation regardless of ruleset. (Quick-play classic builds from a separate
-  // path and keeps the fixed chess setup; this only affects campaign boards.)
+  // The FIELD is arrangeable on every board — honour a saved legal formation.
   const ok = saved && formationLegalOn(saved, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
   let formation = ok ? saved : map.defaultFormation;
   // Turncoat duels (v0.20): fighting the double of a piece you own — your own
@@ -325,7 +327,8 @@ export function buildArmyForMap(profile, map, excludeId = null) {
   if (excludeId) formation = formation.map((cid, i) =>
     cid === excludeId ? (map.defaultFormation[i] !== excludeId ? map.defaultFormation[i] : "knight") : cid);
   const army = buildArmyFromFormation(levelOf, formation, chosenOf, boostOf);
-  if (!map.classic) army.hero = { col: heroColFor(profile, map), spec: heroSpec(profile) };
+  // the Grand Gambit leads every army — even in pure chess he holds his file
+  army.hero = { col: heroColFor(profile, map), spec: heroSpec(profile, chess) };
   return army;
 }
 
@@ -370,7 +373,7 @@ export function buildAiArmyForMap(difficultyId, map, seed = 0) {
 
 /** Player army. Defaults to the 10×10 Arena (used by the campaign); the app
  *  passes the active map for quick play. */
-export const buildArmy = (profile, map = ARENA(), excludeId = null) => buildArmyForMap(profile, map, excludeId);
+export const buildArmy = (profile, map = ARENA(), excludeId = null, rules = null) => buildArmyForMap(profile, map, excludeId, rules);
 
 export const buildAiArmy = (difficultyId) => {
   const d = difficultyById(difficultyId);

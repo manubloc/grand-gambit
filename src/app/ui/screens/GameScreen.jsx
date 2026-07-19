@@ -127,7 +127,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
   const rules = pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
   const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
-  const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null), [profile, map]); // eslint-disable-line
+  const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null, rules), [profile, map]); // eslint-disable-line
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
 
   // ── pause & resume (v0.19): a campaign match interrupted mid-fight waits in
@@ -188,7 +188,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const armyHasSeer = (a) => !!a?.back?.some((sp) => sp.kind === "SE" || sp.kind === "H"); // seeress (Crown), hawk (Shadow)
   const mySeerOnline = !!pvp && !classic && armyHasSeer(playerArmy);
   const oppSeerOnline = !!pvp && !classic && armyHasSeer(pvp?.oppArmy);
-  const foresight = (!!campaign && !resume && !pvp && hasForesight(profile, map)) || mySeerOnline;
+  const foresight = (!!campaign && !resume && !pvp && hasForesight(profile, map, rules)) || mySeerOnline;
   const [scout, setScout] = useState(() => foresight && (!!pvp || !(match && match.node && (match.node.storyDe || match.node.storyEn))));
   const [scoutWaitOpp, setScoutWaitOpp] = useState(() => oppSeerOnline); // the foe reads — we wait
   const scoutSwapsRef = useRef([]);      // [fromIdx, toIdx] pairs the seer performed
@@ -240,7 +240,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       return;
     }
     const ai = campaign ? match.aiArmy : buildAiArmyForMap(diff, m, seed);
-    setState(createGame(buildArmy(profile, m, campaign ? match.excludeId : null), ai, { map: m, rules: rl, seed }));
+    setState(createGame(buildArmy(profile, m, campaign ? match.excludeId : null, rl), ai, { map: m, rules: rl, seed }));
   }
   function newGame() { reset(difficulty); }
 

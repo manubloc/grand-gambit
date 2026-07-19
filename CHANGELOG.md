@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.37
+- AUFSTELLUNG ZEIGT BEIDE REIHEN: ueber der Hinterreihe erscheint jetzt die Bauernreihe mit echten Figurenbildern - gewoehnliche Bauern und der Grand Gambit (sein aktuelles Siegel-Portrait) auf seiner Spalte, mit Stern markiert; ein Tipp auf ein Bauernfeld setzt seine Spalte. Der alte separate Positionsbalken entfaellt
+- DRACHE VERDRAENGT SICHTBAR: setzt man den Drachen in eine Ecke, verschwinden in der Anzeige die zwei Bauern vor ihm UND die Nachbarfigur in der Hinterreihe (Flug-Symbol, ausgegraut) - man sieht direkt, dass er 2x2 Felder samt der zwei Bauern beansprucht
+- KAMPFSTAERKE FOLGT DEM REGELWERK, NICHT DEM BRETT: auf dem klassischen 8x8-Feld gibt es HP-Kaempfe (31 Kampagnen-Knoten) - dort bringen deine Figuren jetzt ihre Level, Faehigkeiten und Duplikate mit, genau wie auf jeder anderen Karte. Reines Schach (Schnellspiel-Klassik, Schach-Knoten) bleibt Level 1 ohne Faehigkeiten. Betrifft Spieler UND Gegner und den Grand Gambit; Seher-Vorschau ebenso an die Regel gekoppelt
+
 ## 0.22.36
 - KLASSIK WIEDER AUFSTELLBAR: die Klassik-Karte ist zurueck in der Kartenwahl des Aufstellungs-Editors und voll bearbeitbar - es geht um das SPIELFELD (8x8), nicht um die Schach-Regeln. Im Schnellspiel bleibt Klassik unveraendert die traditionelle Aufstellung (eigener Baupfad); nur Kampagnen-Bretter ehren die gespeicherte Formation (Sperre map.classic in buildArmyForMap entfernt)
 - FIGURENWAHL SPRINGT AUF: tippt man einen Slot an, scrollt die Auswahl-Liste automatisch ins Bild (vorher musste man selbst suchen)

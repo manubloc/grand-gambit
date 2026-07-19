@@ -16,7 +16,6 @@ import { EnergyIc } from "../icons.jsx";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
-import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedById, paintedForPiece } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -657,31 +656,64 @@ function FormationEditor({ profile, dispatch, t, en }) {
     </div>
 
     <div style={{ minWidth: 0 }}>
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
-      {draft.map((id, i) => {
-        const open = pick === i;
-        // the dragon's wing: an empty square the block spills into — NOT a slot
-        // you may fill. It reads as part of the dragon (a 2x2 shadow), and a tap
-        // jumps to the dragon's own slot instead.
-        const isWing = id == null;
-        const dragonAt = draft[0] === "dragon" ? 0 : draft[draft.length - 1] === "dragon" ? draft.length - 1 : -1;
-        const isDragon = id === "dragon";
-        return <button key={i} onClick={() => { if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
-          style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
-            display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
-            background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,
-            border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
-          {isWing
-            ? <span title={t("army.wing")} style={{ fontSize: "clamp(11px, 4vw, 18px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
-            : isBossEntry(id)
-            ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
-            : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
-          {isDragon && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 9, fontWeight: 800,
-            color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>}
-        </button>;
-      })}
-    </div>
+    {(() => {
+      const heroCol = heroColFor(profile, map);
+      const dragonAt = draft[0] === "dragon" ? 0 : draft[draft.length - 1] === "dragon" ? draft.length - 1 : -1;
+      // the block swallows the two pawns standing in front of the dragon's 2x2
+      const dragonPawns = dragonAt === 0 ? [0, 1] : dragonAt === draft.length - 1 ? [draft.length - 2, draft.length - 1] : [];
+      const gLvl = characterLevel(profile, "gambit") || 1;
+      const gImg = paintedById("gambit-t" + gambitTier(gLvl)) || paintedById("gambit");
+      const pawnImg = paintedById("pawn");
+      return <>
+      {/* ── THE PAWN RANK (front): ordinary pawns, save the Grand Gambit on his
+          chosen file. Tap it to move him. Squares the dragon covers go dark. ── */}
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3, marginBottom: 3 }}>
+        {Array.from({ length: map.w }).map((_, f) => {
+          const isHero = f === heroCol;
+          const eaten = dragonPawns.includes(f);
+          return <button key={f} disabled={eaten} onClick={() => { if (!eaten) dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f }); }}
+            title={isHero ? t("army.heroPos") : undefined}
+            style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: eaten ? "default" : "pointer",
+              display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
+              background: eaten ? "rgba(120,90,190,.1)" : isHero ? `radial-gradient(circle at 42% 30%, ${T.gold}2e, ${T.bg2})` : T.bg2,
+              border: `2px solid ${isHero ? T.gold : eaten ? "#8a7ab8" : T.line}`, opacity: eaten ? 0.4 : 1,
+              boxShadow: isHero ? `0 0 9px ${T.gold}55` : "none" }}>
+            {eaten
+              ? <span style={{ fontSize: "clamp(10px, 3.6vw, 16px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
+              : (isHero ? gImg : pawnImg)
+              ? <img src={isHero ? gImg : pawnImg} alt="" draggable={false}
+                  style={{ height: "clamp(20px, 8vw, 66px)", objectFit: "contain", objectPosition: "bottom", pointerEvents: "none",
+                    filter: isHero ? "drop-shadow(0 1px 3px rgba(201,164,92,.5))" : "none" }} />
+              : <SlotGlyph kind="P" size={"clamp(18px, 7vw, 60px)"} art={"painted"} />}
+            {isHero && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 8, fontWeight: 800,
+              color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>★</span>}
+          </button>;
+        })}
+      </div>
+      {/* ── THE BACK RANK (rear): the pieces you arrange ── */}
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${draft.length}, 1fr)`, gap: 3, marginBottom: 10 }}>
+        {draft.map((id, i) => {
+          const open = pick === i;
+          const isWing = id == null;
+          const isDragon = id === "dragon";
+          return <button key={i} onClick={() => { if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
+            style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
+              display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
+              background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,
+              border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
+            {isWing
+              ? <span title={t("army.wing")} style={{ fontSize: "clamp(11px, 4vw, 18px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
+              : isBossEntry(id)
+              ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
+                  style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
+              : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
+            {isDragon && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 9, fontWeight: 800,
+              color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>}
+          </button>;
+        })}
+      </div>
+      </>;
+    })()}
 
     {dragonAsk && (
       <div style={{ background: T.bg2, border: `1.5px solid ${T.gold}66`, borderRadius: 10, padding: "11px 12px", marginBottom: 10 }}>
@@ -751,33 +783,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
       </div>
     )}
 
-    {(
-      <div style={{ margin: "2px 0 12px", padding: "10px 11px", background: T.panel2, borderRadius: T.radiusSm,
-        border: `1px solid ${T.gold}44` }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 7 }}>
-          <span className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".1em", color: T.gold }}>{t("army.heroPos")}</span>
-          <span style={{ fontSize: 10.5, color: T.faint }}>{t("army.heroPosHint")}</span>
-        </div>
-        {/* the pawn rank made visible: the Grand Gambit takes one file, the rest
-            are ordinary pawns. Tap a square to move the commander's start. */}
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3 }}>
-          {Array.from({ length: map.w }).map((_, f) => {
-            const on = f === heroColFor(profile, map);
-            return <button key={f} onClick={() => dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f })}
-              style={{ aspectRatio: "1", borderRadius: 7, cursor: "pointer", padding: 1,
-                background: on ? `radial-gradient(circle at 40% 32%, ${T.gold}33, ${T.panel})` : T.panel,
-                border: on ? `1.5px solid ${T.gold}` : `1px solid ${T.line}`,
-                boxShadow: on ? `0 0 8px ${T.gold}55` : "none", display: "grid", placeItems: "center" }}>
-              <div style={{ width: "82%", height: "82%", opacity: on ? 1 : 0.5 }}>
-                <PieceArt kind="P" fill={on ? "#c9a45c" : "#8a7f63"} rim={on ? null : "#5a5238"}
-                  detail={on ? "#7a5c26" : "#5a5238"} size="100%" level={1} hero={on} />
-              </div>
-            </button>;
-          })}
-        </div>
-        <div style={{ fontSize: 10.5, color: T.faint, marginTop: 6, fontStyle: "italic" }}>{t("army.pawnRankNote")}</div>
-      </div>
-    )}
+    {/* the pawn rank above already carries the Grand Gambit's file — no
+        separate hero strip needed anymore */}
 
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12, alignItems: "center" }}>
       {reqChips.map((r) => (
