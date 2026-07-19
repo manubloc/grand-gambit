@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.38
+- BUBBLES MIT GLANZ: die Stat-Kugeln haben oben jetzt einen weissen Glanzpunkt statt der durchsichtigen Stelle - die Zahl liest sich besser; die schwarze Kontur ist deutlich duenner (nur noch ein zarter unterer Rand statt Vollring)
+- VEKTOR-ZWILLING WEG: beim Antippen einer Figur erschien oben links im Feld ihre simple Vektor-Kopie - diese Anzeige ist entfernt
+- DRACHE MITTIG & GROSS: im Aufstellungs-Editor wird der Drache jetzt als ein grosses, mittig ueber seinem 2x2-Block schwebendes Bild gezeichnet (nicht mehr klein in einem Einzelfeld); auf dem Spielfeld fuellt er seinen Block zentriert (big-Flag ans Sprite durchgereicht)
+- ZUGDIAGRAMM PRO FAEHIGKEIT: Faehigkeiten, die die Bewegung veraendern (Weitsprung, Vorreiter, Phase, Blinzeln, Koenigsflucht u.a.), zeigen ihr eigenes Mini-Diagramm mit den neuen Feldern in Gruen - eingebettet sowohl in die Chronik als auch in die Hofstaat-Figurenkarten unter der jeweiligen Faehigkeit
+
 ## 0.22.37
 - AUFSTELLUNG ZEIGT BEIDE REIHEN: ueber der Hinterreihe erscheint jetzt die Bauernreihe mit echten Figurenbildern - gewoehnliche Bauern und der Grand Gambit (sein aktuelles Siegel-Portrait) auf seiner Spalte, mit Stern markiert; ein Tipp auf ein Bauernfeld setzt seine Spalte. Der alte separate Positionsbalken entfaellt
 - DRACHE VERDRAENGT SICHTBAR: setzt man den Drachen in eine Ecke, verschwinden in der Anzeige die zwei Bauern vor ihm UND die Nachbarfigur in der Hinterreihe (Flug-Symbol, ausgegraut) - man sieht direkt, dass er 2x2 Felder samt der zwei Bauern beansprucht

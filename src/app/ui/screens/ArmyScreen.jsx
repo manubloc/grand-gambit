@@ -137,17 +137,42 @@ function specForKind(kind, ownSpec) {
     default: return null;
   }
 }
-function MoveDiagram({ kind, moveSpec }) {
+// Which abilities CHANGE how a piece moves — and the squares they add. Only
+// these get their own little diagram; combat/sustain abilities do not. Deltas
+// are [file, rank] offsets from the piece; "spec" abilities extend slides.
+const ABILITY_MOVE = {
+  knight_longleap: { leaps: [[1, 3], [3, 1], [-1, 3], [-3, 1], [1, -3], [3, -1], [-1, -3], [-3, -1]] },
+  knight_outrider: { leaps: [[2, 2], [2, -2], [-2, 2], [-2, -2]] },
+  bishop_hop: { leaps: [[2, 2], [2, -2], [-2, 2], [-2, -2]] },       // hop over a neighbour
+  bishop_ortho_step: { leaps: [[1, 0], [-1, 0], [0, 1], [0, -1]] },
+  rook_diag_step: { leaps: [[1, 1], [1, -1], [-1, 1], [-1, -1]] },
+  rook_breach: { leaps: [[2, 0], [-2, 0], [0, 2], [0, -2]] },        // breach over an adjacent piece
+  queen_knightleap: { leaps: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]] },
+  king_dash: { leaps: [[2, 0], [-2, 0], [0, 2], [0, -2]] },
+  pawn_sidestep: { leaps: [[1, 0], [-1, 0]] },
+  pawn_forward_capture: { leaps: [[0, 1]] },
+  pawn_charge: { leaps: [[0, 2]] },
+  pawn_backstep: { leaps: [[0, -1]] },
+  dragon_flight: { leaps: [[0, 2], [0, -2], [2, 0], [-2, 0], [2, 2], [-2, 2], [2, -2], [-2, -2]] },
+  dragon_flight2: { leaps: [[0, 3], [0, -3], [3, 0], [-3, 0], [3, 3], [-3, 3], [3, -3], [-3, -3]] },
+  dragon_flight3: { leaps: [[0, 3], [0, -3], [3, 0], [-3, 0], [3, 3], [-3, 3], [3, -3], [-3, -3]] },
+};
+function MoveDiagram({ kind, moveSpec, extra = null }) {
   const sp = specForKind(kind, moveSpec);
-  if (!sp) return null;
+  if (!sp && !extra) return null;
   const R = 3;                                     // radius → 7x7 board (fits knight L and 2-3 slides)
   const N = R * 2 + 1;
-  const reach = new Map();                          // "df,dr" → "slide" | "leap"
-  const rng = Math.min(sp.range || 1, R);
-  for (const [df, dr] of sp.slides || [])
-    for (let k = 1; k <= rng; k++) reach.set(`${df * k},${dr * k}`, "slide");
-  for (const [df, dr] of sp.leaps || [])
-    if (Math.abs(df) <= R && Math.abs(dr) <= R) reach.set(`${df},${dr}`, "leap");
+  const reach = new Map();                          // "df,dr" → "slide" | "leap" | "extra"
+  if (sp) {
+    const rng = Math.min(sp.range || 1, R);
+    for (const [df, dr] of sp.slides || [])
+      for (let k = 1; k <= rng; k++) reach.set(`${df * k},${dr * k}`, "slide");
+    for (const [df, dr] of sp.leaps || [])
+      if (Math.abs(df) <= R && Math.abs(dr) <= R) reach.set(`${df},${dr}`, "leap");
+  }
+  // ability squares glow green, ON TOP of the base pattern
+  if (extra) for (const [df, dr] of extra.leaps || [])
+    if (Math.abs(df) <= R && Math.abs(dr) <= R) reach.set(`${df},${dr}`, "extra");
   const cells = [];
   for (let r = R; r >= -R; r--) for (let f = -R; f <= R; f++) {
     const here = f === 0 && r === 0;
@@ -155,20 +180,22 @@ function MoveDiagram({ kind, moveSpec }) {
     const light = (f + r + 100) % 2 === 0;
     cells.push({ f, r, here, mark, light });
   }
-  return <div style={{ display: "grid", gridTemplateColumns: `repeat(${N}, 1fr)`, gap: 1.5, width: "min(184px, 62vw)",
-    padding: 5, borderRadius: 8, background: "rgba(8,12,22,.55)", border: "1px solid #ffffff10" }}>
+  return <div style={{ display: "grid", gridTemplateColumns: `repeat(${N}, 1fr)`, gap: 1.5, width: "min(150px, 52vw)",
+    padding: 4, borderRadius: 8, background: "rgba(8,12,22,.55)", border: "1px solid #ffffff10" }}>
     {cells.map((c, i) => <div key={i} style={{ aspectRatio: "1", borderRadius: 3, position: "relative",
       background: c.here ? "linear-gradient(160deg,#e7c877,#b1863c)"
         : c.mark === "slide" ? "rgba(74,163,232,.42)"
         : c.mark === "leap" ? "rgba(233,197,63,.5)"
+        : c.mark === "extra" ? "rgba(62,224,137,.62)"
         : c.light ? "rgba(255,255,255,.05)" : "rgba(255,255,255,.02)",
-      boxShadow: c.here ? "0 0 5px rgba(231,200,119,.7)" : c.mark ? "inset 0 0 0 1px rgba(255,255,255,.18)" : "none" }}>
+      boxShadow: c.here ? "0 0 5px rgba(231,200,119,.7)" : c.mark === "extra" ? "inset 0 0 0 1px rgba(120,255,180,.5)" : c.mark ? "inset 0 0 0 1px rgba(255,255,255,.18)" : "none" }}>
       {c.here && <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
-        fontSize: 9, fontWeight: 900, color: "#1a1206" }}>✦</span>}
+        fontSize: 8, fontWeight: 900, color: "#1a1206" }}>✦</span>}
     </div>)}
   </div>;
 }
 const MOVE_LEGEND = { de: "Blau: Gleiten · Gelb: Sprung · ✦ die Figur", en: "Blue: slide · Yellow: leap · ✦ the piece" };
+const MOVE_LEGEND_ABILITY = { de: "Grün: neue Felder durch diese Fähigkeit", en: "Green: squares this ability adds" };
 
 function ChroniclePanel({ profile, t, en }) {
   const [openId, setOpenId] = useState(null);
@@ -213,11 +240,15 @@ function ChroniclePanel({ profile, t, en }) {
           {rungs.length > 0 && <div>
             <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 4 }}>{t("chron.abilities").toUpperCase()}</div>
             <div style={{ display: "grid", gap: 6 }}>
-              {rungs.map((rg) => { const ab = ABILITIES[rg.ability];
+              {rungs.map((rg) => { const ab = ABILITIES[rg.ability]; const mv = ABILITY_MOVE[rg.ability];
                 return <div key={rg.ability} style={{ fontSize: 12, lineHeight: 1.5, color: "#c9c3aa" }}>
                   <span style={{ color: "#f6e4a8", fontWeight: 800 }}>{ab.icon} {ab[en ? "nameEn" : "nameDe"]}</span>
                   <span className="gg-serif" style={{ color: "#a9a28a", fontSize: 11 }}> · {en ? "from level" : "ab Stufe"} {rg.level}</span>
-                  {" — "}{ab[en ? "descEn" : "descDe"]}</div>; })}
+                  {" — "}{ab[en ? "descEn" : "descDe"]}
+                  {mv && <div style={{ marginTop: 5, marginBottom: 3 }}>
+                    <MoveDiagram kind={ch.kind} moveSpec={ch.moveSpec} extra={mv} />
+                    <div style={{ fontSize: 9.5, color: "#7fb98f", marginTop: 3, fontStyle: "italic" }}>{en ? MOVE_LEGEND_ABILITY.en : MOVE_LEGEND_ABILITY.de}</div>
+                  </div>}</div>; })}
             </div>
           </div>}
         </div>}
@@ -419,6 +450,13 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         ))}
       </div>;
     })()}
+    {open && unlocked && char.kind !== "P" && (
+      <div style={{ marginTop: 12 }}>
+        <div className="gg-serif" style={{ fontSize: 10, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 5 }}>{(en ? "Base moves" : "Grundzüge").toUpperCase()}</div>
+        <MoveDiagram kind={char.kind} moveSpec={char.moveSpec} />
+        <div style={{ fontSize: 9.5, color: "#8a856f", marginTop: 3, fontStyle: "italic" }}>{en ? MOVE_LEGEND.en : MOVE_LEGEND.de}</div>
+      </div>
+    )}
     {open && unlocked && (() => {
       // Every talent is a tile of equal height: owned ones glow in their tag
       // color behind a gold-tinted frame, purchasable ones invite with a gold
@@ -488,6 +526,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               </div>
               <div style={{ fontSize: 11.5, lineHeight: 1.55, color: can ? "#efe7c9" : owned || reach ? "#ddd6bd" : "#b5af98" }}>
                 {en ? ab.descEn : ab.descDe}</div>
+              {ABILITY_MOVE[rg.id] && <div style={{ marginTop: 2 }}>
+                <MoveDiagram kind={char.kind} moveSpec={char.moveSpec} extra={ABILITY_MOVE[rg.id]} />
+                <div style={{ fontSize: 9, color: "#7fb98f", marginTop: 2, fontStyle: "italic" }}>{en ? MOVE_LEGEND_ABILITY.en : MOVE_LEGEND_ABILITY.de}</div>
+              </div>}
               <div style={{ flex: 1 }} />
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <Chip color={tg.color} bg={"rgba(8, 10, 20, .68)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
@@ -664,7 +706,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       const gLvl = characterLevel(profile, "gambit") || 1;
       const gImg = paintedById("gambit-t" + gambitTier(gLvl)) || paintedById("gambit");
       const pawnImg = paintedById("pawn");
-      return <>
+      return <div style={{ position: "relative" }}>
       {/* ── THE PAWN RANK (front): ordinary pawns, save the Grand Gambit on his
           chosen file. Tap it to move him. Squares the dragon covers go dark. ── */}
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3, marginBottom: 3 }}>
@@ -696,6 +738,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
           const open = pick === i;
           const isWing = id == null;
           const isDragon = id === "dragon";
+          // the dragon is drawn by the centred 2x2 overlay instead — its two
+          // squares here stay empty of art (but keep their tap targets)
+          const dragonSquare = isDragon || (isWing && dragonAt >= 0);
           return <button key={i} onClick={() => { if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
             style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
@@ -703,16 +748,35 @@ function FormationEditor({ profile, dispatch, t, en }) {
               border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
             {isWing
               ? <span title={t("army.wing")} style={{ fontSize: "clamp(11px, 4vw, 18px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
+              : isDragon
+              ? null /* drawn by the overlay */
               : isBossEntry(id)
               ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
                   style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
               : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
-            {isDragon && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 9, fontWeight: 800,
-              color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>}
           </button>;
         })}
       </div>
-      </>;
+      {/* ── THE DRAGON: one big sprite centred over its 2x2 block (the anchor +
+          wing in the back rank, and the two pawn squares above them) ── */}
+      {dragonAt >= 0 && (() => {
+        const dImg = paintedById("dragon");
+        // columns the block spans (anchor + neighbour, inward)
+        const c0 = dragonAt === 0 ? 0 : draft.length - 2;
+        // left edge in %, block is 2 columns wide of `map.w`
+        const leftPct = (c0 / map.w) * 100;
+        return <div onClick={() => { setPick(dragonAt); scrollToPicker(); }}
+          style={{ position: "absolute", top: 0, left: `${leftPct}%`, width: `${(2 / map.w) * 100}%`,
+            height: "100%", display: "grid", placeItems: "center", cursor: "pointer", zIndex: 4, pointerEvents: "auto" }}>
+          {dImg
+            ? <img src={dImg} alt="" draggable={false} style={{ width: "94%", height: "94%", objectFit: "contain",
+                objectPosition: "center", filter: "drop-shadow(0 2px 6px rgba(0,0,0,.55))", pointerEvents: "none" }} />
+            : <SlotGlyph kind="D" size="clamp(48px, 18vw, 150px)" art={"painted"} />}
+          <span style={{ position: "absolute", bottom: 3, right: 4, fontSize: 10, fontWeight: 800,
+            color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>
+        </div>;
+      })()}
+      </div>;
     })()}
 
     {dragonAsk && (

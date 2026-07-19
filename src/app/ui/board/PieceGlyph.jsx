@@ -65,8 +65,8 @@ function StatOrb({ v, kind, focus }) {
   const size = (Math.min(0.34, 0.145 + digits * 0.052 + Math.min(v, 20) * 0.004)) * (focus ? 1.4 : 1);
   return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
     display: "grid", placeItems: "center", flex: "0 0 auto",
-    background: `radial-gradient(circle at 34% 28%, #ffffffe0 0%, rgba(255,255,255,.2) 13%, ${core} 40%, ${mid} 72%, ${rim} 100%)`,
-    boxShadow: `inset 0 0 0 0.6px rgba(0,0,0,.55), inset 0 -0.7px 1.4px ${rim}, 0 0 0 0.6px ${rim}, 0 0.6px 2px rgba(0,0,0,.6)`,
+    background: `radial-gradient(circle at 36% 26%, #ffffff 0%, #ffffffe8 20%, rgba(255,255,255,.34) 34%, ${core} 52%, ${mid} 80%, ${rim} 100%)`,
+    boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.6px rgba(0,0,0,.5)`,
     transition: "width .15s ease, height .15s ease" }}>
     <span style={{ fontSize: Math.max(0.088, size * 0.52) + "em", fontWeight: 900, lineHeight: 1,
       color: "#0a1206", textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
@@ -85,7 +85,7 @@ function StatTriad({ piece, focus }) {
   </span>;
 }
 
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false }) {
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -126,13 +126,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "flex-end",
-      paddingBottom: "0.015em", animation: "pop .18s ease",
+      alignItems: "center", justifyContent: big ? "center" : "flex-end",
+      paddingBottom: big ? 0 : "0.015em", animation: "pop .18s ease",
       boxSizing: "border-box" }}>
 
-      {/* the head may rise above the square: the art gets MORE than the tile */}
-      <div style={{ position: "relative", zIndex: 1, width: pieceSize, height: "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
-        marginTop: "-0.16em" }}>
+      {/* the head may rise above the square: the art gets MORE than the tile.
+          A big piece (the 2x2 dragon) fills its whole block, centred. */}
+      <div style={{ position: "relative", zIndex: 1, width: big ? "1.42em" : pieceSize, height: big ? "1.42em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
+        marginTop: big ? 0 : "-0.16em" }}>
         {(() => {
           // the gallery: painted figurines when chosen — enemy turned to steel;
           // the risen Gambit wears his tier portrait (own side only)
@@ -144,7 +145,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
             // the gallery hangs in a dim hall — lift the paintings a step:
             // your golden court shines brighter, the steel foe a touch too
-            objectFit: "contain", objectPosition: "center bottom", filter: white ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)" : ENEMY_FILTER + " brightness(1.2)",
+            objectFit: "contain", objectPosition: big ? "center" : "center bottom", filter: white ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)" : ENEMY_FILTER + " brightness(1.2)",
             userSelect: "none", pointerEvents: "none" }} />;
           return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
         })()}
