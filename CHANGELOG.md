@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.62
+- HIMMEL UEBER DER KARTE: hinter den Wolken liegt jetzt ein Himmel in der Stimmung der Welt - blauer Himmel mit Sonne in den gruenen Welten, kuehler im Herbst/Winter, duestere Lila- und Glut-Toene in den tiefen Welten. Durch die Luecken der ziehenden Wolken schimmert dieser Himmel durch
+- WOLKEN STAERKER ANIMIERT: die Wolken ziehen jetzt weiter und sichtbarer ueber den Himmel (mehrere Ebenen in unterschiedlichem Tempo), luftiger, sodass mehr Himmel durchscheint
+- META/SEO: Titel und Beschreibung geschaerft (Das Schach-RPG - Schach auf einem neuen Level), Ladehinweis entschlackt (kein Browser-Hinweis mehr)
+
 ## 0.22.61
 - GEGNER-ZUG-ANIMATION: CLIP-FEHLER BEHOBEN + LANGSAMER
   - Der Gegner-Zug klippte manchmal (die Figur erschien kurz an der falschen Stelle - etwa auf meiner Figur - und sprang dann). Ursache war ein Timing-Fenster, in dem die echte Figur schon am Zielfeld stand, bevor die Gleit-Animation begann. Die Animation wird jetzt VOR dem Bildaufbau scharf gestellt (useLayoutEffect) und der Startpunkt garantiert zuerst gezeichnet - die Figur gleitet jetzt sauber von ihrem Feld los

@@ -114,16 +114,19 @@ export const GLOBAL_CSS = `
   @keyframes ggFogR { from { transform: translateX(5%) } to { transform: translateX(-6%) } }
   @keyframes ggFogR2 { from { transform: translateX(7%) translateY(1.5%) } to { transform: translateX(-4%) translateY(-1%) } }
   /* drifting clouds over the map's head: layers crossing at different speeds,
-     rolling and breathing so the haze moves like real weather */
-  @keyframes ggCloudA { 0% { transform: translate(-18%, 2%) scale(1.2); }
-    50% { transform: translate(4%, -3%) scale(1.34); }
-    100% { transform: translate(16%, 3%) scale(1.22); } }
-  @keyframes ggCloudB { 0% { transform: translate(14%, -2%) scale(1.32); }
-    50% { transform: translate(-6%, 4%) scale(1.18); }
-    100% { transform: translate(-16%, -1%) scale(1.3); } }
-  @keyframes ggCloudC { 0% { transform: translate(6%, 1%) scale(1.25); }
-    100% { transform: translate(-10%, -2%) scale(1.4); } }
-  @keyframes ggCloudBreath { 0%,100% { opacity: .72; } 50% { opacity: 1; } }
+     travelling FAR across the sky so blue/sun/dusk keeps opening up between them */
+  @keyframes ggCloudA { 0% { transform: translate(-48%, 3%) scale(1.16); }
+    50% { transform: translate(4%, -5%) scale(1.34); }
+    100% { transform: translate(46%, 4%) scale(1.18); } }
+  @keyframes ggCloudB { 0% { transform: translate(44%, -3%) scale(1.32); }
+    50% { transform: translate(-10%, 6%) scale(1.14); }
+    100% { transform: translate(-46%, -2%) scale(1.3); } }
+  @keyframes ggCloudC { 0% { transform: translate(28%, 2%) scale(1.22); }
+    100% { transform: translate(-34%, -4%) scale(1.46); } }
+  @keyframes ggCloudD { 0% { transform: translate(-38%, -2%) scale(1.2); }
+    50% { transform: translate(14%, 5%) scale(1.3); }
+    100% { transform: translate(40%, -3%) scale(1.16); } }
+  @keyframes ggCloudBreath { 0%,100% { opacity: .58; } 50% { opacity: 1; } }
   @keyframes ggFogA { from { transform: translate(-3.5%, -1.5%) } to { transform: translate(3.5%, 1.5%) } }
   @keyframes ggFogB { from { transform: translate(3%, 1.8%) } to { transform: translate(-3%, -1.8%) } }
   @keyframes ggSweep { from { transform: translate(var(--sx0), var(--sy0)); } to { transform: translate(var(--sx1), var(--sy1)); } }
