@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.53
+- GEGNERZUEGE DEUTLICH LANGSAMER ANIMIERT: wenn der Gegner (KI oder online) am Zug ist, gleitet seine Figur jetzt spuerbar langsamer ueber das Brett (rund doppelt so lang wie ein eigener Zug) - so siehst du bewusst, welchen Zug er macht, statt dass er blitzschnell passiert. Eigene Zuege bleiben flott. Im Zwei-Spieler-Modus an einem Geraet bleibt alles gleich schnell (beide Seiten bist du)
+
 ## 0.22.52
 - SIEG-POPUP LIEGT JETZT UEBER ALLEM: das Ergebnis-Banner (Geschafft/Verloren mit Belohnungen) wurde bisher IM zoombaren Brett-Container gezeichnet und lag dadurch hinter Figuren und Overlays. Es wird jetzt ganz oben im Bildschirm als festes Overlay (position fixed, hoechste Ebene) gerendert - immer klar ueber allen Figuren
 - SCHWIERIGKEIT DER KAMPAGNE EINSTELLBAR: unter Profil gibt es jetzt den Regler Schwierigkeit der Kampagne (Sanft / Normal / Hart), jederzeit aenderbar. Sanft macht jede Station eine Stufe leichter, Hart eine Stufe schwerer - das verschiebt Gegner-Level UND KI-Suchtiefe pro Station relativ zu ihrer vorgesehenen Staerke

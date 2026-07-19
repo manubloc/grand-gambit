@@ -54,7 +54,7 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -149,8 +149,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     const piece = state.board[lastMove.to];
     if (!piece && !lastMove.bounced) { setAnim(null); return; }
     const glider = piece || { kind: lastMove.kind, color: lastMove.color };
+    // is this the OPPONENT moving? A foe move (vs AI or online, not hotseat)
+    // glides noticeably slower so the eye can clearly follow what it does.
+    const foe = !hotseat && lastMove.color !== pov;
     const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
-      bounced: !!lastMove.bounced, id: Date.now() };
+      bounced: !!lastMove.bounced, foe, id: Date.now() };
     setAnim(a);
     // a lethal strike hurls the fallen piece off the board toward its captor
     if (lastMove.lethal && lastMove.hitKind) {
@@ -161,10 +164,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     }
     const raf = requestAnimationFrame(() => requestAnimationFrame(() =>
       setAnim((cur) => (cur && cur.id === a.id ? { ...cur, phase: 1 } : cur))));
+    const hold = foe ? 1300 : 950; // give the slower foe glide time to finish
     const t = setTimeout(() => { setAnim((cur) => (cur && cur.id === a.id ? null : cur));
-      setDeath((cur) => (cur && cur.id === a.id + 1 ? null : cur)); }, 950);
+      setDeath((cur) => (cur && cur.id === a.id + 1 ? null : cur)); }, hold);
     return () => { cancelAnimationFrame(raf); clearTimeout(t); };
-  }, [lastMove, animateFor]); // eslint-disable-line
+  }, [lastMove, animateFor, hotseat, pov]); // eslint-disable-line
 
   const W = state.w ?? FILES, H = state.h ?? RANKS;
   const holes = state.holes; // Set of blocked indices (or undefined)
@@ -411,10 +415,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               <circle cx={b.x} cy={b.y} r="3.1" fill={T.gold} opacity="0.16" />
               <circle cx={b.x} cy={b.y} r="1.5" fill={T.gold} opacity="0.55" />
             </svg>
-            {/* the attacker glides out to the target then, on a bounce, back home */}
+            {/* the attacker glides out to the target then, on a bounce, back home.
+                A FOE's move glides slower — you should clearly see what it does. */}
             <div style={{ position: "absolute", left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
               top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`, width: `${100 / W}%`, height: `${100 / H}%`,
-              transition: "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",
+              transition: anim.foe
+                ? "left .66s cubic-bezier(.4,.75,.35,1), top .66s cubic-bezier(.4,.75,.35,1)"
+                : "left .34s cubic-bezier(.3,.8,.3,1), top .34s cubic-bezier(.3,.8,.3,1)",
               display: "grid", placeItems: "center", filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
               <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
             </div>
