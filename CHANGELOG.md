@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.48
+- ABMELDEN JETZT UNUMSTOESSLICH: der Abmelde-Knopf (Profil und Spielstand-Auswahl) faehrt jetzt einen harten, deterministischen Pfad - Login erscheint sofort, lokale Sitzung wird geloescht, die Cloud-Abmeldung bekommt ein kurzes Zeitfenster (damit kein Wiederherstellen nach dem Neuladen das Konto zurueckholt), dann startet die App sauber neu am Anmeldebildschirm. Kein React-Zustand, Cache oder Listener kann das mehr rueckgaengig machen - auf jedem Browser
+
 ## 0.22.47
 - ABMELDEN IN SAFARI REPARIERT: der Abmelden-Knopf im Profil lag unter dem schwebenden Menue-Dock - in Safari (Home-Balken-Reserve) hat das Dock den Tipp geschluckt. Der Scrollbereich reserviert jetzt Dock-Hoehe plus Safe-Area, sodass die letzten Knoepfe immer frei liegen. Zusaetzlich meldet der Knopf jetzt SOFORT ab (lokal), waehrend Cloud-Abmeldung und Aufraeumen im Hintergrund folgen - ein haengender Netzwerk-Aufruf kann den Knopf nicht mehr tot wirken lassen
 

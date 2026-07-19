@@ -139,6 +139,17 @@ export default function App() {
       oppName: m.opp?.name || "?", oppScore: m.opp?.score || 0, oppArmy: m.oppArmy, net: netRef.current });
   }), []);
 
+  // THE HARD GOODBYE: sign-out must WORK on every browser, every time. We show
+  // the login instantly, clear the local session, give the cloud sign-out a
+  // short window (so a resume after reload cannot revive the account), then
+  // restart the app cold — no React state, cache or listener can undo that.
+  const hardLogout = async () => {
+    setSlot(null); setAccount(null);
+    try { await clearSession(); } catch {}
+    try { await Promise.race([signOutCloud(), new Promise((r) => setTimeout(r, 1500))]); } catch {}
+    try { location.replace(location.pathname + location.search); } catch {}
+  };
+
   // boot: resume a cloud session (OAuth redirect) or the local one; the game
   // itself only hydrates once an account picked a save slot.
   useEffect(() => { (async () => {
@@ -189,7 +200,7 @@ export default function App() {
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
-    onLogout={() => { setAccount(null); clearSession().catch(() => {}); signOutCloud().catch(() => {}); }} /* sign out NOW; cloud+storage follow in the background (Safari must never see a dead button) */
+    onLogout={hardLogout}
     onOpen={(sl, prof) => { dispatch({ type: "HYDRATE", profile: prof }); setLocked(!!prof.pin); setSlot(sl); setReady(true); }} />;
   if (!ready || !profile) return null;
   const showPrivacy = !profile.notices?.privacy;
@@ -238,7 +249,7 @@ export default function App() {
         </div>
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account}
               onSwitchSave={() => setSlot(null)}
-              onLogout={() => { setSlot(null); setAccount(null); clearSession().catch(() => {}); signOutCloud().catch(() => {}); }} />;
+              onLogout={hardLogout} />;
 
   const inMatch = !!match || !!pvp || !!quick;
   // map & match immersion (v0.3/v0.4): the campaign map and every running
