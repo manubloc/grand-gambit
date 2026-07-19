@@ -627,11 +627,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                 boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
                 animation: "rise .18s ease" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  {(() => { const src = paintedForPiece(pc); return src && (
-                    <img src={src} alt="" draggable={false} style={{ height: 46, width: 40, objectFit: "contain",
-                      objectPosition: "center bottom", flex: "0 0 auto", userSelect: "none",
-                      filter: own ? "brightness(1.3) saturate(1.05) drop-shadow(0 2px 4px rgba(0,0,0,.6))"
-                        : ENEMY_FILTER + " brightness(1.25) drop-shadow(0 2px 4px rgba(0,0,0,.6))" }} />); })()}
                   <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}

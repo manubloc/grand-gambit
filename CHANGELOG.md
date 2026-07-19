@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.35
+- KARTEN-BUTTON VEREINHEITLICHT: der goldene Textknopf "Weiter - Liga X" (erschien nur nach dem Ligameister-Sieg) ist ersetzt durch einen runden Symbol-Knopf im selben Stil wie der Zurueck-Knopf, nur seitenverkehrt (Pfeil nach vorn)
+- STAT-BUBBLES NACH UNTEN LINKS: Leben (gruen) sitzt jetzt fest in der unteren linken Ecke jeder Figur, Staerke (gelb) direkt darueber, Energie (blau) rechts neben dem Leben - L-Form mit kleinem tangentialem Abstand zwischen den Kugeln; Gegner und eigene Figuren gleich
+- KRAEFTIGERE BUBBLES: leuchtender Kern, satter Mittelton und fast schwarzer Rand (dreistufiger Verlauf plus dunkler Aussenring) fuer klaren Kontrast auf jedem Untergrund
+- DOSSIER OHNE MINI-BILD: beim Antippen der eigenen Figur zeigt das Info-Feld weiterhin Name, Werte und Faehigkeiten, aber nicht mehr das kleine Figurenbild - die Kugeln wachsen ja bereits beim Fokus
+
 ## 0.22.34
 - CHRONIK HINTER AUSRUESTUNG: Reiter-Reihenfolge jetzt Hofstaat, Aufstellung, Ausruestung, Chronik
 - BESTIARIUM: alle 25 Monster des Risses in der Chronik ergaenzt (eigene Sektion unter den Figuren), mit Familie, Zug-Diagramm und Andeutung

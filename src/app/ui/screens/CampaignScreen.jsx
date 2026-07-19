@@ -578,14 +578,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           </button>
         )}
         {!viewing && nodeStatus(profile, "n22") === "cleared" && (
-          <button onClick={() => dispatch({ type: "REPLACE", profile: advanceLeague(profile) })} className="gg-serif"
-            style={{ pointerEvents: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-            cursor: "pointer", background: "linear-gradient(160deg, rgba(240,214,138,.92), rgba(176,140,68,.92))",
-            border: "1px solid rgba(255,240,200,.7)", color: "#17110a", borderRadius: 999,
-            padding: "8px 14px 8px 16px", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, letterSpacing: ".08em",
-            boxShadow: "0 2px 14px rgba(201,164,92,.45)",
-            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            {t("camp.advance", { r: ROMAN[league] || league + 1 })} <span style={{ fontSize: 16, lineHeight: 1 }}>›</span>
+          <button onClick={() => dispatch({ type: "REPLACE", profile: advanceLeague(profile) })} title={t("camp.advance", { r: ROMAN[league] || league + 1 })}
+            style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
+              display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
+            <span style={{ transform: "scaleX(-1)", display: "grid" }}><BackIc size={19} /></span>
           </button>
         )}
       </div>

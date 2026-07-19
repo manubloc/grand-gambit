@@ -50,33 +50,36 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
 }
 
 
-// ── THE STAT TRIAD: three orbs in the top-left corner — life (green), energy
-// (blue), power (yellow). One design, three colours, BOTH armies alike. The
-// orb GROWS with its number (two digits need a wider home), and grows again
-// when the piece is pressed (focus). Numbers live inside the orbs. ──
+// ── THE STAT TRIAD: three orbs anchored to the BOTTOM-LEFT corner. Life is
+// always the corner stone (bottom-left); Power sits ABOVE it; Energy sits to
+// the RIGHT of life. They keep a small tangential gap between them. One design,
+// three colours, BOTH armies alike. Each orb GROWS with its number (two digits
+// need a wider home) and grows again when the piece is pressed (focus). Rims
+// run to near-black with a vivid inner colour. Numbers live inside. ──
 function StatOrb({ v, kind, focus }) {
-  const [col, deep] = kind === "life" ? ["#26b06a", "#0a5229"]
-    : kind === "energy" ? ["#4aa3e8", "#123a66"] : ["#e9c53f", "#8a6a12"];
+  // vivid core, deep near-black rim
+  const [core, mid, rim] = kind === "life" ? ["#3ee089", "#1f9a58", "#03210f"]
+    : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
+    : ["#ffd743", "#d19a1a", "#2a1c02"];
   const digits = String(v).length;
   const size = (Math.min(0.34, 0.145 + digits * 0.052 + Math.min(v, 20) * 0.004)) * (focus ? 1.4 : 1);
   return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
     display: "grid", placeItems: "center", flex: "0 0 auto",
-    background: `radial-gradient(circle at 32% 26%, #ffffffd8 0%, rgba(255,255,255,.25) 16%, ${col} 52%, ${deep} 100%)`,
-    boxShadow: `inset 0 0 0 0.5px rgba(255,255,255,.32), inset 0 -0.6px 1.2px ${deep}, 0 0.6px 2px rgba(0,0,0,.55)`,
+    background: `radial-gradient(circle at 34% 28%, #ffffffe0 0%, rgba(255,255,255,.2) 13%, ${core} 40%, ${mid} 72%, ${rim} 100%)`,
+    boxShadow: `inset 0 0 0 0.6px rgba(0,0,0,.55), inset 0 -0.7px 1.4px ${rim}, 0 0 0 0.6px ${rim}, 0 0.6px 2px rgba(0,0,0,.6)`,
     transition: "width .15s ease, height .15s ease" }}>
     <span style={{ fontSize: Math.max(0.088, size * 0.52) + "em", fontWeight: 900, lineHeight: 1,
-      color: "#0b1408", textShadow: "0 0.5px 0 rgba(255,255,255,.35)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+      color: "#0a1206", textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
   </span>;
 }
 function StatTriad({ piece, focus }) {
-  return <span style={{ position: "absolute", top: "0.015em", left: "-0.035em", zIndex: 3,
-    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.014em",
-    pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.5))" }}>
-    <span style={{ display: "flex", gap: "0.014em" }}>
+  // L-shape anchored bottom-left: [power] on top of [life], [energy] beside life
+  return <span style={{ position: "absolute", bottom: "0.02em", left: "-0.02em", zIndex: 3,
+    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.03em",
+    pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
+    <StatOrb v={piece.atk} kind="power" focus={focus} />
+    <span style={{ display: "flex", gap: "0.03em", alignItems: "flex-end" }}>
       <StatOrb v={piece.hp} kind="life" focus={focus} />
-      <StatOrb v={piece.atk} kind="power" focus={focus} />
-    </span>
-    <span style={{ marginLeft: "0.05em" }}>
       {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} />}
     </span>
   </span>;
