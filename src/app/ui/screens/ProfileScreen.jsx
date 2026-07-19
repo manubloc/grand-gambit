@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { hashPin } from "../../../platform/index.js";
-import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports } from "../../../meta/index.js";
+import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
@@ -208,26 +208,38 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
 
 
 function ErrorReports({ t }) {
-  const [state, setState] = useState({ loading: true, source: "", rows: [] });
+  const [state, setState] = useState({ loading: true, source: "", rows: [], error: "" });
   const [open, setOpen] = useState(null);
+  const [tok, setTok] = useState(() => getAdminToken());
+  const [savedTok, setSavedTok] = useState(() => getAdminToken());
   const load = () => {
     setState((s) => ({ ...s, loading: true }));
-    listReports({ limit: 100 }).then((r) => setState({ loading: false, source: r.source, rows: r.rows || [] }))
-      .catch(() => setState({ loading: false, source: "local", rows: [] }));
+    listReports({ limit: 120 }).then((r) => setState({ loading: false, source: r.source, rows: r.rows || [], error: r.error || "" }))
+      .catch(() => setState({ loading: false, source: "local", rows: [], error: "offline" }));
   };
   useEffect(() => { load(); }, []);
+  const saveToken = () => { setAdminToken(tok.trim()); setSavedTok(tok.trim()); load(); };
   const fmt = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso; } };
-  if (state.loading) return <div style={{ fontSize: 12, color: T.faint }}>{t("profile.reportsLoading")}</div>;
   return <div>
+    {/* the read token: paste the Worker's ADMIN_TOKEN once to see ALL devices */}
+    <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+      <input value={tok} onChange={(e) => setTok(e.target.value)} placeholder={t("profile.reportsToken")} type="password" autoComplete="off"
+        style={{ flex: 1, background: T.bg2, border: `1px solid ${savedTok ? T.line : "#a9853f"}`, borderRadius: 10, color: T.text, padding: "10px 12px", fontSize: 14, outline: "none" }} />
+      <Button onClick={saveToken} disabled={tok.trim() === savedTok}>{t("profile.reportsTokenSave")}</Button>
+    </div>
     <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
       <Button kind="ghost" onClick={load}>{t("profile.reportsRefresh")}</Button>
-      <span style={{ fontSize: 11.5, color: T.faint }}>
-        {t(state.source === "cloud" ? "profile.reportsCloud" : "profile.reportsLocal")} · {state.rows.length}</span>
+      <span style={{ fontSize: 11.5, color: state.error === "unauthorized" ? "#e0574f" : T.faint }}>
+        {state.loading ? t("profile.reportsLoading")
+          : state.error === "unauthorized" ? t("profile.reportsBadToken")
+          : state.source === "hall" ? t("profile.reportsCloud") + " · " + state.rows.length
+          : state.error === "no-token" ? t("profile.reportsNeedToken")
+          : t("profile.reportsLocal") + " · " + state.rows.length}</span>
       <div style={{ flex: 1 }} />
-      {state.source !== "cloud" && state.rows.length > 0 &&
+      {state.source === "local" && state.rows.length > 0 &&
         <Button kind="ghost" onClick={() => { clearLocalReports(); load(); }}>{t("profile.reportsClear")}</Button>}
     </div>
-    {state.rows.length === 0
+    {state.loading ? null : state.rows.length === 0
       ? <div style={{ fontSize: 12.5, color: T.dim, padding: "6px 0" }}>{t("profile.reportsEmpty")}</div>
       : <div style={{ display: "grid", gap: 6, maxHeight: 340, overflowY: "auto" }}>
           {state.rows.map((r, i) => {

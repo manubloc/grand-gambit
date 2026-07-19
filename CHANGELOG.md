@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.51
+- FEHLERBERICHTE LAUFEN JETZT UEBER DIE ONLINE-HALLE: statt E-Mail oder nur lokal werden Berichte im bestehenden Multiplayer-Worker gesammelt (POST /report offen fuer alle, GET /reports nur mit Admin-Token). Im Admin-Profil traegst du einmal das Token ein und siehst dann die Berichte ALLER Nutzer geraeteuebergreifend - ohne neue Infrastruktur, kein Supabase noetig. Einrichtung: worker deployen + ADMIN_TOKEN setzen (Anleitung in REPORTS-SETUP.md)
+- Absturzberichte werden weiterhin automatisch vermerkt und an die Halle gesendet (auch nach einem Absturz dank keepalive)
+
 ## 0.22.50
 - SAFARI OEFFNET WIEDER: aeltere iOS-Safari-Versionen (vor 15.4) kennen structuredClone nicht - eine einzige fehlende Funktion lie? die ganze App dort nicht starten (weisser Bildschirm). Ein kleiner Ersatz fuellt die Luecke, sodass die App auf jedem Geraet bootet. Zusaetzlich sind die neuen Bild- und Fehler-Bausteine rundum abgesichert, damit kein Browser-Eigenheit den Start blockiert
 - FEHLERBERICHTE IM ADMIN-BEREICH STATT PER MAIL: Absturz- und Fehlerberichte gehen nicht mehr an eine E-Mail, sondern werden in der App gesammelt - im Admin-Profil gibt es jetzt den Bereich Fehlerberichte, der sie auflistet (aufklappbar mit Zeit, Geraet, Meldung, Stacktrace und den letzten Fehlern). Mit eingerichteter Cloud (Supabase-Tabelle error_reports, Anleitung in SUPABASE-REPORTS.md) siehst du die Berichte ALLER Nutzer zentral; ohne Cloud die dieses Geraets

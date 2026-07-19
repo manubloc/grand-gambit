@@ -1,79 +1,73 @@
 // ── THE ADMIN BLACK BOX ──────────────────────────────────────────────────────
-// Crash reports never leave in an e-mail. They pool inside the app: written to
-// the cloud (Supabase table `error_reports`) when it's configured, and mirrored
-// into a local ring buffer so nothing is lost offline. The Admin area reads
-// them back — the admin sees what players hit, right inside the game.
+// Crash reports never leave in an e-mail. They pool in the game's own Hall (the
+// existing Cloudflare Worker): anyone can FILE a report (POST /report), and the
+// admin READS them (GET /reports?token=…) straight inside the app. Every report
+// is also mirrored to a local ring buffer so nothing is lost offline.
 //
-// Supabase table (see SUPABASE-SETUP.md):
-//   create table error_reports (
-//     id bigint generated always as identity primary key,
-//     created_at timestamptz default now(),
-//     version text, ua text, url text, kind text, message text, stack text,
-//     account text, note text, log jsonb
-//   );
-//   alter table error_reports enable row level security;
-//   create policy "anyone can file" on error_reports for insert with check (true);
-//   create policy "admins can read" on error_reports for select using (
-//     auth.jwt() ->> 'email' in ( ...your admin e-mails... ) );
+// The admin token is the Worker's ADMIN_TOKEN secret (npx wrangler secret put
+// ADMIN_TOKEN). The admin pastes it once in the Fehlerberichte panel; it's kept
+// on the device only.
 
-import { cloudConfigured, sbClient } from "./cloudAuth.js";
+import { HALL_HTTP } from "../app/config.js";
 
-const LOCAL = "gg_reports_local";   // this device's own filed reports (fallback + offline)
-const ERRLOG = "gg_errlog";          // the raw runtime error ring buffer (written in main.jsx)
+const LOCAL = "gg_reports_local";  // this device's filed reports (offline mirror)
+const ERRLOG = "gg_errlog";         // raw runtime error ring buffer (written in main.jsx)
+const TOKKEY = "gg_admin_token";    // admin's read token, this device only
 
 const readLS = (k, fb) => { try { return JSON.parse(localStorage.getItem(k) || fb); } catch { return JSON.parse(fb); } };
 const writeLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
-/** The raw error ring buffer captured by the global handlers. */
 export function recentErrors() { return readLS(ERRLOG, "[]"); }
+export function getAdminToken() { try { return localStorage.getItem(TOKKEY) || ""; } catch { return ""; } }
+export function setAdminToken(tok) { try { tok ? localStorage.setItem(TOKKEY, tok) : localStorage.removeItem(TOKKEY); } catch {} }
 
-/** File a report: cloud first (so the admin sees every device), always mirrored
- *  locally. `note` is the player's optional description, `err` an optional
- *  crash object. Returns { ok, where }. Never throws. */
-export async function fileReport({ note = "", err = null, account = null } = {}) {
-  const row = {
+function buildRow({ note = "", err = null, account = null } = {}) {
+  return {
     version: (typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "?"),
     ua: (typeof navigator !== "undefined" ? navigator.userAgent : "").slice(0, 240),
     url: (typeof location !== "undefined" ? location.pathname : ""),
     kind: err ? "crash" : "manual",
     message: String(err?.message || err || note || "(kein Text)").slice(0, 400),
-    stack: String(err?.stack || "").slice(0, 1200),
+    stack: String(err?.stack || "").slice(0, 1600),
     account: account ? String(account).slice(0, 120) : null,
     note: String(note || "").slice(0, 1000),
     log: recentErrors().slice(-25),
     created_at: new Date().toISOString(),
   };
-  // mirror locally no matter what
-  const mine = readLS(LOCAL, "[]"); mine.push(row); writeLS(LOCAL, mine.slice(-50));
+}
 
-  if (cloudConfigured()) {
+/** File a report: sent to the Hall so the admin sees every device; always
+ *  mirrored locally. Never throws. Returns { ok, where }. */
+export async function fileReport(opts = {}) {
+  const row = buildRow(opts);
+  const mine = readLS(LOCAL, "[]"); mine.push(row); writeLS(LOCAL, mine.slice(-50));
+  if (HALL_HTTP) {
     try {
-      const c = await sbClient();
-      if (c) {
-        const { error } = await c.from("error_reports").insert([{ ...row, log: row.log }]);
-        if (!error) return { ok: true, where: "cloud" };
-      }
+      const res = await fetch(HALL_HTTP + "/report", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify(row), keepalive: true, // survive a page unload after a crash
+      });
+      if (res.ok) return { ok: true, where: "hall" };
     } catch {}
   }
   return { ok: true, where: "local" };
 }
 
-/** Admin view: pull the newest reports. Cloud when available (all devices),
- *  otherwise this device's local mirror. Returns an array (newest first). */
+/** Admin view: pull the newest reports from the Hall (all devices) using the
+ *  admin token. Falls back to this device's local mirror. Returns
+ *  { source, rows, error? }. */
 export async function listReports({ limit = 100 } = {}) {
-  if (cloudConfigured()) {
+  const token = getAdminToken();
+  if (HALL_HTTP && token) {
     try {
-      const c = await sbClient();
-      if (c) {
-        const { data, error } = await c.from("error_reports").select("*").order("created_at", { ascending: false }).limit(limit);
-        if (!error && Array.isArray(data)) return { source: "cloud", rows: data };
-      }
+      const res = await fetch(HALL_HTTP + "/reports?token=" + encodeURIComponent(token) + "&limit=" + limit);
+      if (res.status === 401) return { source: "hall", rows: [], error: "unauthorized" };
+      if (res.ok) { const j = await res.json(); if (Array.isArray(j.rows)) return { source: "hall", rows: j.rows }; }
     } catch {}
   }
-  const mine = readLS(LOCAL, "[]").slice().reverse().slice(0, limit);
-  return { source: "local", rows: mine };
+  const local = readLS(LOCAL, "[]").slice().reverse().slice(0, limit);
+  return { source: "local", rows: local, error: token ? "offline" : "no-token" };
 }
 
-/** Admin housekeeping: clear the local mirror on this device. Cloud rows are
- *  left untouched (delete those in the Supabase dashboard). */
+/** Clear this device's local mirror. Hall rows are untouched. */
 export function clearLocalReports() { writeLS(LOCAL, []); }
