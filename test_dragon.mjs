@@ -63,13 +63,15 @@ const mk = (lvl = 5, rules = "hp") => createGame(
     g2.board[22].hp < 20 && (g2.board[0].used || {}).dragon_flight === true);
 }
 
-// ── the weight of him: the aura ──────────────────────────────────────────────
+// ── on foot he crushes a foe caught under his leading edge ──────────────────
 {
-  const g = mk(5); // atk 6 -> aura 3
-  g.board[3 * W] = { id: 903, kind: "P", color: "b", level: 1, abilities: [], shield: 0, used: {}, hasMoved: true, maxHp: 9, hp: 9, atk: 1 };
+  const g = mk(5); // atk 6
+  g.board[2 * W] = { id: 903, kind: "P", color: "b", level: 1, abilities: [], shield: 0, used: {}, hasMoved: true, maxHp: 2, hp: 2, atk: 1 };
   const step = legalMoves(g, "w").find((m) => m.special === "dragonStep" && m.to === W);
+  ok("he may step onto a foe under his leading edge", !!step);
   const g2 = applyMove(g, step);
-  ok("every foe pressed against the block takes ceil(atk/2)", g2.board[3 * W].hp === 6);
+  ok("the crushed foe is captured and he settles forward",
+    g2.captured.w.includes("P") && g2.board[W]?.kind === "D" && g2.board[0] === null && g2.board[2 * W]?.kind === "D+");
 }
 
 // ── damage routes through the wings; death clears all four cells ─────────────

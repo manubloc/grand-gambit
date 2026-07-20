@@ -228,9 +228,9 @@ flavorDe: "Sein Schild hat mehr Schlachten gesehen als mancher General.", flavor
     id: "dragon", kind: KIND.DRAGON, glyph: "🐉", nameDe: "Drache", nameEn: "Dragon",
 flavorDe: "Jung, gierig und fest überzeugt, dass alles Gold ihm gehört.", flavorEn: "Young, greedy, and firmly convinced all gold is his.",
     // THE BIG ONE: he claims a 2x2 block on the board. Deploying him costs
-    // the neighbouring piece and both pawns in front. On foot he is slow
-    // (one square), but his weight bruises everything pressed against the
-    // block — and once per game, the wings carry him.
+    // the neighbouring piece and both pawns in front. On foot he shifts the
+    // whole block one square (forward, sideways or back) and crushes a foe
+    // caught under his leading edge — and once per game, the wings carry him.
     unlock: { type: "boss" }, flank: true, big: true, costValue: 860,
     ladder: [
       { level: 2, shield: 1 },

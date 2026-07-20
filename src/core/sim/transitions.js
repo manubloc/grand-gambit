@@ -89,20 +89,19 @@ export function applyMove(state, move, opts) {
 
 
   // ── THE BIG DRAGON moves as a 2x2 block ─────────────────────────────────────
-  // dragonStep: the block shifts one square — slow, never onto anyone.
-  // dragonFly: ONCE per game the block leaps. Landing on foes is a direct
-  // strike on every covered square; in hp play, SURVIVORS throw him back to
-  // where he took off (the strike still counts). After settling (step or
-  // flight), his sheer weight bruises every adjacent foe: ceil(atk/2).
+  // dragonStep: one square orthogonally, and he crushes any foe under his
+  // leading edge. dragonFly: ONCE per game the block leaps farther. Landing on
+  // foes is a direct strike on every covered square; in hp play, SURVIVORS
+  // throw him back to where he took off (the strike still counts).
   if (move.special === "dragonStep" || move.special === "dragonFly") {
     const W = ns.w ?? 10;
     const block = (a) => [a, a + 1, a + W, a + W + 1];
     const oldCells = block(move.from), newCells = block(move.to);
     for (const c of oldCells) b[c] = null;                    // lift off
     let settled = true;
-    if (move.special === "dragonFly") {
-      piece.used = { ...(piece.used || {}), dragon_flight: true };
-      const covered = newCells.map((c) => b[c]).filter((oc) => oc && oc.color !== piece.color);
+    if (move.special === "dragonFly") piece.used = { ...(piece.used || {}), dragon_flight: true };
+    const covered = newCells.map((c) => b[c]).filter((oc) => oc && oc.color !== piece.color);
+    if (covered.length) {
       if (hp) {
         for (const oc of covered) {
           const before = oc.hp;
@@ -118,6 +117,7 @@ export function applyMove(state, move, opts) {
         settled = newCells.every((c) => !b[c]);               // any survivor throws him back
       } else {
         for (const oc of covered) {
+          lethal = true;
           ns.captured[piece.color].push(oc.kind);
           for (const c2 of newCells) if (b[c2] === oc) b[c2] = null;
         }
@@ -127,27 +127,6 @@ export function applyMove(state, move, opts) {
     b[home] = piece;
     for (const c of block(home)) if (c !== home) b[c] = { kind: "D+", color: piece.color, ref: home };
     piece.hasMoved = true;
-    if (hp) {
-      // the weight of him: every foe pressed against the block takes half his fury
-      const aura = Math.max(1, Math.ceil(piece.atk / 2));
-      const seen = new Set();
-      for (const c of block(home)) {
-        const f0 = c % W, r0 = (c / W) | 0;
-        for (let df = -1; df <= 1; df++) for (let dr = -1; dr <= 1; dr++) {
-          const f2 = f0 + df, r2 = r0 + dr;
-          if (f2 < 0 || f2 >= W || r2 < 0 || r2 >= (ns.h ?? 10)) continue;
-          const i2 = r2 * W + f2;
-          const oc = b[i2];
-          if (!oc || oc.color === piece.color || oc.kind === "D+" || seen.has(oc.id ?? i2)) continue;
-          seen.add(oc.id ?? i2);
-          const before = oc.hp;
-          oc.hp = Math.max(0, oc.hp - (oc.shield > 0 ? Math.max(1, aura - 1) : aura));
-          if (oc.shield > 0) oc.shield -= 1;
-          damaged = damaged || oc.hp < before;
-          if (oc.hp <= 0) { lethal = true; ns.captured[piece.color].push(oc.kind); b[i2] = null; }
-        }
-      }
-    }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
     regenEnergyFor(ns, ns.turn);

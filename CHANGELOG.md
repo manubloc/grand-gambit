@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.78
+- DRACHE vereinfacht und intuitiver: Er zieht ein Feld orthogonal (vorwaerts, seitlich oder zurueck) und darf dabei schlagen, was unter seiner Vorderkante steht. Zuvor konnte er zu Fuss gar nicht schlagen. Die Trampel-Aura (Nachbar-Gegner nahmen automatisch Schaden) wurde ersatzlos entfernt. Der einmalige Flug pro Partie bleibt unveraendert. Beschreibungstext im Hofstaat angepasst.
+
 ## 0.22.77
 - FIGUREN-RENDERING: Systematischen Rechts-Versatz aller Hoffiguren behoben. Ursache war die Feld-Zentrierung per CSS-Grid, die eine Figur groesser als ihr Feld nicht symmetrisch zentriert (~4-5px nach rechts wandernd); auf Flexbox umgestellt -> jetzt exakt mittig (am echten Brett verifiziert: Schnitt -0.4px statt +4.6px). Bauern waren nie betroffen (kleiner als das Feld).
 - Turm minimal verkleinert, jetzt auf Groesse der uebrigen Hoffiguren.

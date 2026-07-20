@@ -297,11 +297,11 @@ function dragonBlockFree(board, holes, w, h, a, self, forColor, allowEnemies, no
 }
 function bigDragonMoves(moves, from, piece, board, D) {
   const { w, h, holes, rules } = D;
-  // ON FOOT: painfully slow — the whole block shifts one square, never onto
-  // anyone. His weight does the fighting (the aura), not the walking.
+  // ON FOOT: one square in the four orthogonal directions. He may crush a foe
+  // caught under his leading edge (but never smother the king in classic play).
   for (const d of [-1, 1, -w, w]) {
     const a2 = from + d;
-    if (dragonBlockFree(board, holes, w, h, a2, piece, piece.color, false, false))
+    if (dragonBlockFree(board, holes, w, h, a2, piece, piece.color, true, rules !== "hp"))
       moves.push({ from, to: a2, special: "dragonStep" });
   }
   // FLIGHT: once per game, range grows with the unlocked wing. Landing on foes

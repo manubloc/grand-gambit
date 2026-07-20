@@ -152,8 +152,8 @@ function describeMoves(ch, en) {
     chancellor: ["Turm und Springer in einer Gestalt: gerade gleiten oder im L springen.", "Rook and knight in one: slide straight or leap the L."],
     hawk: ["Springer-Sprung oder ein einzelner diagonaler Schritt — der wendige Flügelstürmer.", "Knight leap or a single diagonal step — the nimble flanker."],
     amazon: ["Dame und Springer zugleich — das Schwerste, was der Hof kennt.", "Queen and knight at once — the heaviest piece the court knows."],
-    dragon: ["Ein 2×2-Koloss: Zu Fuß schiebt sich der ganze Block um ein Feld — kämpfen tut sein Gewicht (Trampel-Aura gegen alles am Block). Der Flug (per Fähigkeit) trägt ihn einmal pro Partie mitten ins Getümmel.",
-             "A 2×2 colossus: on foot the whole block shifts one square — his weight does the fighting (trample aura against everything pressed to the block). Flight (an ability) carries him once per battle into the fray."],
+    dragon: ["Ein 2×2-Koloss: Zu Fuß schiebt sich der ganze Block um ein Feld — gerade, seitlich oder zurück — und zermalmt dabei, was unter seiner Vorderkante steht. Der Flug (per Fähigkeit) trägt ihn einmal pro Partie weiter ins Getümmel.",
+             "A 2×2 colossus: on foot the whole block shifts one square — forward, sideways or back — crushing whatever stands under his leading edge. Flight (an ability) carries him once per battle deeper into the fray."],
   };
   if (FIX[ch.id]) return FIX[ch.id][en ? 1 : 0];
   const ms = ch.moveSpec || {};
