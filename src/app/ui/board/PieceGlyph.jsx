@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, paintedScaleFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -130,8 +130,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     : artStyle === "painted"
     ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece))
     : null;
-  // every painting's foot levelled to one base width; big pieces and the drawn SVG opt out
-  const sockScale = (painting && !big) ? paintedScaleFor(piece) : 1;
+  // every painting fitted to one box (uniform height) and dropped onto one
+  // baseline; big pieces and the drawn SVG opt out
+  const fit = (painting && !big) ? paintedFitFor(piece) : { h: 1, y: 0 };
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
@@ -145,7 +146,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           base stays planted on the square. */}
       <div style={{ position: "relative", zIndex: 1, width: big ? "1.48em" : pieceSize, height: big ? "1.48em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
         marginTop: big ? 0 : "-0.16em",
-        transform: sockScale !== 1 ? `scale(${sockScale})` : undefined, transformOrigin: "50% 100%" }}>
+        transform: (fit.h !== 1 || fit.y !== 0) ? `translateY(${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
         {painting
           ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:

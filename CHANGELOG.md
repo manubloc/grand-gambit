@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.75
+- FIGUREN-RENDERING: Die Spielfiguren stehen jetzt einheitlich gross und auf einer gemeinsamen Grundlinie mit etwas Luft darunter. Die fruehere Sockelbreiten-Normierung hatte breite Figuren (Turm, Magier u.a.) zu stark verkleinert und die uebrigen unterschiedlich hoch sitzen lassen. Ersetzt durch eine Box-Anpassung: einheitliche Figurhoehe (sehr breite Figuren werden nur sanft in der Breite begrenzt) plus Grundlinien-Ausrichtung. Bauern, Grand Gambit und Drache behalten bewusst ihre eigene Groesse.
+
 ## 0.22.74
 - KAMPAGNENKARTE: Tippen auf den Grand Gambit oeffnet jetzt das Level-Panel der aktuellen Station ("Herausforderung starten"), statt zum Faehigkeitenbaum zu springen. Dadurch laesst sich das Panel nach dem Schliessen jederzeit wieder oeffnen und das Level erneut starten. Die alte Rang-Box mit dem Faehigkeitenbaum-Sprung wurde entfernt (der Faehigkeitenbaum bleibt ueber den Hofstaat erreichbar).
 

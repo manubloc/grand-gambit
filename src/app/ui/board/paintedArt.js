@@ -132,26 +132,50 @@ export const paintedById = (id) => PAINTED[id] || null;
 // ── Base-width normalisation ────────────────────────────────────────────────
 // Every painting is 1024x1024, but each figure fills a different share of it,
 // so at one font size their FEET (the base that rests on the square) came out
-// wildly different widths — the rook read as a giant. These factors were
-// MEASURED from the art (base width / image height per figure) and scale each
-// piece so every base lands at the same width (~0.475 of the tile). Broad-based
-// figures (rook, queen, king, guardian, warlock) shrink; slender ones grow.
-// The pawn already sits smaller via its own font size; the gambit is nudged a
-// touch smaller on purpose; the dragon is drawn big and opts out entirely.
-const PAINTED_SCALE = {
-  pawn: 1.02, gambit: 0.94, knight: 1.06, bishop: 1.01, queen: 0.85,
-  rook: 0.75, king: 0.89, chancellor: 0.95, archbishop: 1.04, amazon: 1.06,
-  hawk: 1.02, seeress: 1.02, assassin: 1.02, guardian: 0.82, captain: 0.97,
-  sorceress: 1.03, pathfinder: 1.02, mage: 0.91, alchemist: 0.94, warlock: 0.72,
-  paladin: 0.94, inquisitor: 0.90, bard: 0.97, engineer: 1.06, standard: 1.02,
-  strategist: 0.99, dragon: 1.0,
+// wildly different sizes AND heights — the rook read as a giant, the queen and
+// bishop hung low. So instead of levelling only WIDTH (which shrank broad
+// figures out of proportion), each painting is fitted to a uniform BOX: `h`
+// scales it to one figure height (broad figures capped in width so they don't
+// sprawl into the neighbours), and `y` lifts or drops the foot onto one shared
+// baseline with a little air beneath. The pawn (already smaller via its font),
+// the gambit and the big dragon keep their own size on purpose. MEASURED from
+// each painting's alpha bounding box.
+const PAINTED_FIT = {
+  "pawn": { h: 1.02, y: -0.02 },
+  "gambit": { h: 0.94, y: -0.109 },
+  "knight": { h: 0.972, y: -0.1077 },
+  "bishop": { h: 0.983, y: -0.1046 },
+  "queen": { h: 0.985, y: -0.1027 },
+  "rook": { h: 1.003, y: -0.0975 },
+  "king": { h: 0.979, y: -0.1009 },
+  "chancellor": { h: 0.963, y: -0.1106 },
+  "archbishop": { h: 0.973, y: -0.0943 },
+  "amazon": { h: 0.975, y: -0.0943 },
+  "hawk": { h: 1.023, y: -0.086 },
+  "seeress": { h: 0.976, y: -0.0943 },
+  "assassin": { h: 0.945, y: -0.0988 },
+  "guardian": { h: 0.995, y: -0.1006 },
+  "captain": { h: 0.971, y: -0.1067 },
+  "sorceress": { h: 0.971, y: -0.1029 },
+  "pathfinder": { h: 0.991, y: -0.0939 },
+  "mage": { h: 0.967, y: -0.103 },
+  "alchemist": { h: 0.957, y: -0.1163 },
+  "warlock": { h: 0.947, y: -0.1089 },
+  "paladin": { h: 0.977, y: -0.1028 },
+  "inquisitor": { h: 0.981, y: -0.1028 },
+  "bard": { h: 0.987, y: -0.1094 },
+  "engineer": { h: 0.98, y: -0.098 },
+  "standard": { h: 0.967, y: -0.0945 },
+  "strategist": { h: 0.973, y: -0.1048 },
+  "dragon": { h: 1.0, y: 0.0 },
 };
-/** Per-figure scale that levels every painting's base to one width. 1 = as-is
- *  (bosses, big pieces, unknown ids). Mirrors paintedForPiece's id resolution. */
-export function paintedScaleFor(piece) {
-  if (!piece || piece.bossId) return 1;
+/** Per-figure { h, y }: box-fit height scale + baseline shift (em). Default
+ *  { h:1, y:0 } for bosses, big pieces and unknown ids. Mirrors
+ *  paintedForPiece's id resolution. */
+export function paintedFitFor(piece) {
+  if (!piece || piece.bossId) return { h: 1, y: 0 };
   const id = piece.hero ? "gambit" : KIND2ID[piece.kind];
-  return (id && PAINTED_SCALE[id]) || 1;
+  return (id && PAINTED_FIT[id]) || { h: 1, y: 0 };
 }
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
