@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.66
+- BUBBLES OHNE GLANZ: der weisse Glanzpunkt ist aus allen Stat-Bubbles entfernt (Staerke/Leben/Energie) - durchgaengig im Spiel wie auf den Charakterkarten. Die Farbe fuellt die Kugel jetzt satt, nur die Kante dunkelt fuer die Rundung nach
+- CHARAKTERKARTE, TEXTREIHENFOLGE: der Flavor-Text (in der Serifenschrift, kursiv) steht jetzt direkt unter dem Namen - noch VOR den Stats, nicht mehr danach. Dazwischen bleibt die kleine Zeile mit Name der Zugehoerigkeit (Freie Figur, Kronenfigur bzw. das Haus). Reihenfolge also: Name, Zugehoerigkeit, Flavor, dann die Werte
+
 ## 0.22.65
 - GESCHLAGENE FIGUR LANDET EXAKT IN DER ABLAGE: statt nur grob vom Brett zu fliegen, dreht sich die geschlagene Figur jetzt heraus und landet PRAEZISE auf dem Ablage-Feld, das sie danach anzeigt - beim Gegner oben rechts, bei mir unten rechts. Die echte Bildschirmposition der Ablage wird im Flugmoment gemessen, also stimmt das Ziel in Hoch- und Querformat und egal aus welcher Perspektive gespielt wird
 - SPRINGER HUEPFT WIRKLICH: ein Sprung ist jetzt ein echter Bogen - die Figur springt hoch, wird am Scheitel eine Spur groesser (als kaeme sie dem Auge naeher) und landet wieder, statt nur ueber das Brett zu gleiten

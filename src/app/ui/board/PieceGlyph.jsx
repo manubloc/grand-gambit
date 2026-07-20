@@ -65,8 +65,8 @@ function StatOrb({ v, kind, focus }) {
   const size = (Math.min(0.44, 0.2 + digits * 0.062 + Math.min(v, 20) * 0.005)) * (focus ? 1.4 : 1);
   return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
     display: "grid", placeItems: "center", flex: "0 0 auto",
-    // the colour OWNS the sphere now — the highlight is a small, tight glint
-    background: `radial-gradient(circle at 34% 24%, #ffffff 0%, #ffffffd8 7%, rgba(255,255,255,.28) 15%, ${core} 30%, ${mid} 78%, ${rim} 100%)`,
+    // the colour OWNS the sphere — no white glint, just core deepening to rim
+    background: `radial-gradient(circle at 38% 32%, ${core} 0%, ${mid} 70%, ${rim} 100%)`,
     boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.6px rgba(0,0,0,.5)`,
     transition: "width .15s ease, height .15s ease" }}>
     <span style={{ fontSize: Math.max(0.1, size * 0.54) + "em", fontWeight: 900, lineHeight: 1,

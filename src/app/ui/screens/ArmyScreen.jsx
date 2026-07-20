@@ -65,7 +65,7 @@ function SheetOrb({ kind, v, size = 26 }) {
     : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
     : ["#ffd743", "#d19a1a", "#2a1c02"];
   return <span style={{ width: size, height: size, borderRadius: "50%", display: "grid", placeItems: "center", flex: "0 0 auto",
-    background: `radial-gradient(circle at 34% 24%, #ffffff 0%, #ffffffd8 7%, rgba(255,255,255,.28) 15%, ${core} 30%, ${mid} 78%, ${rim} 100%)`,
+    background: `radial-gradient(circle at 38% 32%, ${core} 0%, ${mid} 70%, ${rim} 100%)`,
     boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.8px rgba(0,0,0,.5)` }}>
     <span style={{ fontSize: size * 0.5, fontWeight: 900, lineHeight: 1, color: "#0a1206",
       textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
@@ -453,6 +453,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           </div>
           {stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", flex: "0 0 auto", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}
         </div>
+        {/* the flavour line, in the serif voice — directly under the name and
+            house line, BEFORE the stats, as asked */}
+        {(en ? char.flavorEn : char.flavorDe) && (
+          <div className="gg-serif" style={{ marginTop: 7, fontSize: 12, lineHeight: 1.4, color: "#b9b295",
+            fontStyle: "italic", letterSpacing: ".015em" }}>
+            „{en ? char.flavorEn : char.flavorDe}“
+          </div>
+        )}
         {/* THE ORBS — the same spheres the piece wears in battle */}
         <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "10px 0 2px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "PWR" : "STK"}</span></span>
@@ -466,12 +474,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         </div>
       </div>
     </div>
-    {(en ? char.flavorEn : char.flavorDe) && (
-      <div className="gg-serif" style={{ marginTop: 10, fontSize: 12, lineHeight: 1.45, color: "#b9b295",
-        fontStyle: "italic", letterSpacing: ".015em" }}>
-        „{en ? char.flavorEn : char.flavorDe}“
-      </div>
-    )}
     {open && epic && (
       <div style={{ marginTop: 7, fontSize: 11.5, lineHeight: 1.5 }}>
         <span style={{ color: T.gold, fontWeight: 700 }}>{t("army.gambitTag")}</span>{" "}
