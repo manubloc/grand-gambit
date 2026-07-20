@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.72
+- FIGUREN-SOCKEL VEREINHEITLICHT: Jede gemalte Figur fuellt ihr 1024er Quadrat anders aus, darum kamen die Fuesse (die Standflaeche auf dem Feld) bei gleicher Schriftgroesse unterschiedlich breit heraus - der Turm wirkte viel groesser. Aus den Bildern vermessene Pro-Figur-Faktoren (paintedScaleFor) skalieren nun jede Figur so, dass alle Sockel gleich breit stehen (Turm/Dame/Koenig/Waechter kleiner, schlanke Figuren groesser); der Bauer bleibt ueber seine kleinere Schriftgroesse kleiner, der Gambit wird bewusst etwas kleiner, der Drache (2x2) etwas groesser. Skalierung am Fuss verankert, damit die Figur auf dem Feld stehen bleibt.
+
 ## 0.22.71
 - OEFFENTLICHE STARTSEITE (landing.html) fuer das Google-Login-Branding: Google verlangt, dass die im OAuth-Zustimmungsbildschirm angegebene Startseite OHNE Anmeldung erklaert, was die App ist - die App-Wurzel zeigt aber den Login-Screen. Neue oeffentliche Landing-Seite im Spiel-Stil (dunkle Halle, GG-Wappen, Feature-Uebersicht, "Jetzt spielen"-Button zur App, Hinweis zum optionalen Konto, Links zu Datenschutz + Nutzungsbedingungen). Im Google-Branding als Startseite eintragen: https://grandgambit.win/landing.html
 

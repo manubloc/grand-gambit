@@ -129,5 +129,30 @@ export function paintedForPiece(piece) {
 /** Painting by character id — for the court's character cards. */
 export const paintedById = (id) => PAINTED[id] || null;
 
+// ── Base-width normalisation ────────────────────────────────────────────────
+// Every painting is 1024x1024, but each figure fills a different share of it,
+// so at one font size their FEET (the base that rests on the square) came out
+// wildly different widths — the rook read as a giant. These factors were
+// MEASURED from the art (base width / image height per figure) and scale each
+// piece so every base lands at the same width (~0.475 of the tile). Broad-based
+// figures (rook, queen, king, guardian, warlock) shrink; slender ones grow.
+// The pawn already sits smaller via its own font size; the gambit is nudged a
+// touch smaller on purpose; the dragon is drawn big and opts out entirely.
+const PAINTED_SCALE = {
+  pawn: 1.02, gambit: 0.94, knight: 1.06, bishop: 1.01, queen: 0.85,
+  rook: 0.75, king: 0.89, chancellor: 0.95, archbishop: 1.04, amazon: 1.06,
+  hawk: 1.02, seeress: 1.02, assassin: 1.02, guardian: 0.82, captain: 0.97,
+  sorceress: 1.03, pathfinder: 1.02, mage: 0.91, alchemist: 0.94, warlock: 0.72,
+  paladin: 0.94, inquisitor: 0.90, bard: 0.97, engineer: 1.06, standard: 1.02,
+  strategist: 0.99, dragon: 1.0,
+};
+/** Per-figure scale that levels every painting's base to one width. 1 = as-is
+ *  (bosses, big pieces, unknown ids). Mirrors paintedForPiece's id resolution. */
+export function paintedScaleFor(piece) {
+  if (!piece || piece.bossId) return 1;
+  const id = piece.hero ? "gambit" : KIND2ID[piece.kind];
+  return (id && PAINTED_SCALE[id]) || 1;
+}
+
 /** The enemy fields the same paintings, turned to cold steel by filter. */
 export const ENEMY_FILTER = "hue-rotate(185deg) saturate(0.32) brightness(1.02)"; // whiter steel, less blue

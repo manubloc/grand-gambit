@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, paintedScaleFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -123,6 +123,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))" + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "");
   const pieceSize = hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em"; // the figures own the square now
 
+  // Resolve the painting up-front (if any) so we can level its base width. The
+  // enemy's gallery is turned to steel; the risen Gambit wears his tier portrait.
+  const painting = artStyle === "classic"
+    ? (CLASSIC_PAINTED[piece.kind] || paintedForPiece(piece))
+    : artStyle === "painted"
+    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece))
+    : null;
+  // every painting's foot levelled to one base width; big pieces and the drawn SVG opt out
+  const sockScale = (painting && !big) ? paintedScaleFor(piece) : 1;
+
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: big ? "center" : "flex-end",
@@ -130,24 +140,19 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       boxSizing: "border-box" }}>
 
       {/* the head may rise above the square: the art gets MORE than the tile.
-          A big piece (the 2x2 dragon) fills its whole block, centred. */}
-      <div style={{ position: "relative", zIndex: 1, width: big ? "1.42em" : pieceSize, height: big ? "1.42em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
-        marginTop: big ? 0 : "-0.16em" }}>
-        {(() => {
-          // the gallery: painted figurines when chosen — enemy turned to steel;
-          // the risen Gambit wears his tier portrait (own side only)
-          const painting = artStyle === "classic"
-            ? (CLASSIC_PAINTED[piece.kind] || paintedForPiece(piece))
-            : artStyle === "painted"
-            ? (heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece)
-            : null;
-          if (painting) return <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
-            // the gallery hangs in a dim hall — lift the paintings a step:
-            // your golden court shines brighter, the steel foe a touch too
-            objectFit: "contain", objectPosition: big ? "center" : "center bottom", filter: white ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)" : ENEMY_FILTER + " brightness(1.2)",
-            userSelect: "none", pointerEvents: "none" }} />;
-          return <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />;
-        })()}
+          A big piece (the 2x2 dragon) fills its whole block, centred. The scale
+          levels each figure's base to one width, anchored at the foot so the
+          base stays planted on the square. */}
+      <div style={{ position: "relative", zIndex: 1, width: big ? "1.48em" : pieceSize, height: big ? "1.48em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
+        marginTop: big ? 0 : "-0.16em",
+        transform: sockScale !== 1 ? `scale(${sockScale})` : undefined, transformOrigin: "50% 100%" }}>
+        {painting
+          ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
+              // the gallery hangs in a dim hall — lift the paintings a step:
+              // your golden court shines brighter, the steel foe a touch too
+              objectFit: "contain", objectPosition: big ? "center" : "center bottom", filter: white ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)" : ENEMY_FILTER + " brightness(1.2)",
+              userSelect: "none", pointerEvents: "none" }} />
+          : <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
