@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.76
+- FIGUREN-RENDERING: Alle Figuren einheitlich etwas hoeher gesetzt (gemeinsame Grundlinie und Bauern gleichmaessig um denselben Betrag angehoben), sodass sie mittiger im Feld sitzen. Groessen und horizontale Zentrierung unveraendert.
+
 ## 0.22.75
 - FIGUREN-RENDERING: Die Spielfiguren stehen jetzt einheitlich gross und auf einer gemeinsamen Grundlinie mit etwas Luft darunter. Die fruehere Sockelbreiten-Normierung hatte breite Figuren (Turm, Magier u.a.) zu stark verkleinert und die uebrigen unterschiedlich hoch sitzen lassen. Ersetzt durch eine Box-Anpassung: einheitliche Figurhoehe (sehr breite Figuren werden nur sanft in der Breite begrenzt) plus Grundlinien-Ausrichtung. Bauern, Grand Gambit und Drache behalten bewusst ihre eigene Groesse.
 
