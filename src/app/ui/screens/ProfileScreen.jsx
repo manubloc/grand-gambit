@@ -213,6 +213,51 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
 }
 
 
+// one report, formatted as plain text ready to paste straight into a chat
+// with Claude (or anywhere else) — every field a debugger would want, in a
+// readable order, no JSON braces to wade through.
+function reportText(r, t) {
+  const fmt = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso; } };
+  const L = [
+    `[Grand Gambit — ${t("profile.reportsTitle")}]`,
+    `${fmt(r.created_at)} · v${r.version || "?"} · ${r.kind || "?"}`,
+  ];
+  if (r.account) L.push(`Konto/Account: ${r.account}`);
+  if (r.url) L.push(`URL: ${r.url}`);
+  if (r.ua) L.push(`Geraet/UA: ${r.ua}`);
+  L.push("", r.message || "(kein Text)");
+  if (r.note) L.push("", `Notiz/Note: ${r.note}`);
+  if (r.stack) L.push("", "Stack:", r.stack);
+  if (Array.isArray(r.log) && r.log.length) {
+    L.push("", "Letzte Ereignisse/Recent log:");
+    for (const l of r.log.slice(-15)) L.push(`[${l.kind}] ${l.msg}`);
+  }
+  return L.join("\n");
+}
+
+// copies text to the clipboard, flashing a brief "copied" confirmation —
+// falls back to the old execCommand trick if the async Clipboard API isn't
+// available (some embedded/older webviews).
+function CopyBtn({ text, label, t, style }) {
+  const [copied, setCopied] = useState(false);
+  const doCopy = async (e) => {
+    e.stopPropagation();
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); document.body.removeChild(ta);
+      } catch { return; }
+    }
+    setCopied(true); setTimeout(() => setCopied(false), 1500);
+  };
+  return <Button kind="ghost" onClick={doCopy} style={{ fontSize: 11.5, whiteSpace: "nowrap", ...style }}>
+    {copied ? t("profile.reportsCopied") : "⧉ " + label}
+  </Button>;
+}
+
 function ErrorReports({ t }) {
   const [state, setState] = useState({ loading: true, source: "", rows: [], error: "" });
   const [open, setOpen] = useState(null);
@@ -242,9 +287,13 @@ function ErrorReports({ t }) {
           : state.error === "no-token" ? t("profile.reportsNeedToken")
           : t("profile.reportsLocal") + " · " + state.rows.length}</span>
       <div style={{ flex: 1 }} />
+      {state.rows.length > 0 &&
+        <CopyBtn t={t} label={t("profile.reportsCopyAll")}
+          text={state.rows.map((r) => reportText(r, t)).join("\n\n" + "—".repeat(24) + "\n\n")} />}
       {state.source === "local" && state.rows.length > 0 &&
         <Button kind="ghost" onClick={() => { clearLocalReports(); load(); }}>{t("profile.reportsClear")}</Button>}
     </div>
+    {state.rows.length > 0 && <div style={{ fontSize: 11, color: T.faint, marginTop: -4, marginBottom: 10 }}>{t("profile.reportsCopyAllHint")}</div>}
     {state.loading ? null : state.rows.length === 0
       ? <div style={{ fontSize: 12.5, color: T.dim, padding: "6px 0" }}>{t("profile.reportsEmpty")}</div>
       : <div style={{ display: "grid", gap: 6, maxHeight: 340, overflowY: "auto" }}>
@@ -267,6 +316,9 @@ function ErrorReports({ t }) {
                 {Array.isArray(r.log) && r.log.length > 0 && <div style={{ marginTop: 6, color: T.faint }}>
                   {r.log.slice(-6).map((l, j) => <div key={j} style={{ fontFamily: "monospace", fontSize: 10 }}>[{l.kind}] {l.msg}</div>)}
                 </div>}
+                <div style={{ marginTop: 8 }}>
+                  <CopyBtn t={t} label={t("profile.reportsCopyOne")} text={reportText(r, t)} />
+                </div>
               </div>}
             </div>;
           })}

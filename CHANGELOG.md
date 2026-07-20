@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.68
+- FEHLERBERICHTE ZUM DIREKTEN KOPIEREN: unter Profil -> Fehlerberichte gibt es jetzt "Alle kopieren" (kopiert saemtliche geladenen Berichte als lesbaren Text, durch Trennlinien getrennt - zum direkten Einfuegen hier im Chat) sowie einen "Kopieren"-Knopf an jedem einzelnen aufgeklappten Bericht. Der kopierte Text enthaelt Zeit, Version, Art, Konto, URL, Geraet, Meldung, Notiz, Stacktrace und die letzten Ereignisse - alles, was fuer eine Fehlersuche gebraucht wird, in einem Block
+
 ## 0.22.67
 - KEIN AUFBLINZELN MEHR AM ZUGENDE: die Uebergabe von der Zug-Animation zur echten Figur ist jetzt unsichtbar. Ursache war, dass die animierte Figur nach der Landung noch schraeg gekippt (und mit Schatten) stehen blieb und erst spaeter gegen die aufrechte echte Figur getauscht wurde - dieser Sprung war das Blinzeln. Jetzt richtet sich die Neigung schon VOR der Landung wieder auf, der Schatten blendet mit aus, und der Tausch passiert im Moment der Landung, wenn beide pixelgleich sind
 - SPRUNG-ZUEGE (Springer und alle Figuren mit Sprung-Bewegung): deutlich hoeherer Bogen (ueber eine ganze Feldhoehe), langsamer in der Luft, und die Figur bleibt dabei komplett aufrecht - keine Schraegstellung beim Huepfen. Der Schatten unter der Figur vertieft sich am Scheitel
