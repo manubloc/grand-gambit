@@ -387,8 +387,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
-          {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
-            transform: `translateY(${pieceLift})` + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
+          {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none",
+            transform: `translateY(${pieceLift})` + ((isSel || isSpy) && !piece.big ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
             transformOrigin: PIECE_ORIGIN,
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
             fontSize: pieceFont(piece.kind),
@@ -568,7 +568,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                   : bounceNow ? { ["--bx"]: `${bx}%`, ["--by"]: `${by}%`, animation: `ggBounce ${dur}s ease-in-out forwards` }
                   : {}) }}>
                 {/* INNER = the piece, IDENTICAL geometry to the cell version */}
-                <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center",
                   transform: `translateY(${pieceLift})`, transformOrigin: PIECE_ORIGIN,
                   fontSize: pieceFont(anim.piece.kind),
                   filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>

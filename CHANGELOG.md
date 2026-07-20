@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.77
+- FIGUREN-RENDERING: Systematischen Rechts-Versatz aller Hoffiguren behoben. Ursache war die Feld-Zentrierung per CSS-Grid, die eine Figur groesser als ihr Feld nicht symmetrisch zentriert (~4-5px nach rechts wandernd); auf Flexbox umgestellt -> jetzt exakt mittig (am echten Brett verifiziert: Schnitt -0.4px statt +4.6px). Bauern waren nie betroffen (kleiner als das Feld).
+- Turm minimal verkleinert, jetzt auf Groesse der uebrigen Hoffiguren.
+- Drache waechst beim Anwaehlen nicht mehr, sondern behaelt seine Groesse; angewaehlt werden nur die moeglichen Zug-Felder gezeigt.
+
 ## 0.22.76
 - FIGUREN-RENDERING: Alle Figuren einheitlich etwas hoeher gesetzt (gemeinsame Grundlinie und Bauern gleichmaessig um denselben Betrag angehoben), sodass sie mittiger im Feld sitzen. Groessen und horizontale Zentrierung unveraendert.
 
