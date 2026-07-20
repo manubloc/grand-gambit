@@ -791,8 +791,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
           WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
           boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px",
-          animation: "rise .26s ease",
-          transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, bottom .72s ${CAM_EASE}` }}>
+          animation: "rise .26s ease" }}>
           {(() => {
             const br = { a1: "blades", b1: "magic", c1: "order", d1: "power", e1: "wisdom" }[sel];
             return br ? <div className="gg-quill" style={{ fontSize: 12.5, color: PP.dim, marginBottom: 2 }}>

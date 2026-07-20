@@ -1025,6 +1025,9 @@ const CROWN_IDS = ["mage","guardian","bard","paladin","inquisitor","archbishop",
 const SHADOW_IDS = ["hawk","assassin","pathfinder","dragon","sorceress","alchemist","warlock","amazon","strategist","captain"];
 const COURT_IDS = ["gambit","pawn","knight","bishop","rook","queen","king"];
 const FAM_LABEL = { golem: ["Golems","Golems"], beast: ["Bestien","Beasts"], serpent: ["Schlangen","Serpents"], wraith: ["Schemen","Wraiths"], tyrant: ["Tyrannen","Tyrants"] };
+// figure paintings preload once per session, so the muster grid shows tiles
+// and figures TOGETHER instead of empty tiles that fill in a moment later
+let codexArtReady = false;
 function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const met = new Set(profile.codex?.met || []);
   const unlocked = new Set(profile.campaign?.unlocked || []);
@@ -1047,6 +1050,25 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   // the two named finals are beyond corruption. ──
   const MONSTER_BRIBE_GOLD = 1800;
   const [sacrificeFor, setSacrificeFor] = useState(null); // bossId awaiting a crown sacrifice
+  // preload every painting shown in the grid, then reveal tiles + figures at once
+  const [artReady, setArtReady] = useState(codexArtReady);
+  useEffect(() => {
+    if (codexArtReady) return;
+    const urls = new Set();
+    const push = (u) => { if (u) urls.add(u); };
+    for (const cid of [...COURT_IDS, ...CROWN_IDS, ...SHADOW_IDS]) {
+      const ch = CHARACTERS[cid];
+      if (ch) push(paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: 1 }));
+    }
+    for (const b of BOSSES) push(paintedById["boss-" + b.id] || paintedById["boss-" + b.art]);
+    const list = [...urls];
+    if (!list.length) { codexArtReady = true; setArtReady(true); return; }
+    let done = 0, cancelled = false;
+    const bump = () => { if (!cancelled && ++done >= list.length) { codexArtReady = true; setArtReady(true); } };
+    for (const u of list) { const im = new Image(); im.onload = bump; im.onerror = bump; im.src = u; }
+    const to = setTimeout(() => { if (!cancelled) { codexArtReady = true; setArtReady(true); } }, 3000);
+    return () => { cancelled = true; clearTimeout(to); };
+  }, []);
   const bribedSet = new Set(profile.campaign?.bribedBosses || []);
   const ownedBossSet = new Set(ownedLeagueBosses(profile)); // beaten league tyrants fight FOR you — the tree shows them in gold
   const crownOwned = CROWN_IDS.filter((cid) => unlocked.has(cid));
@@ -1144,7 +1166,14 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const crownIn = CROWN_IDS.filter((c) => unlocked.has(c));
   const shadowIn = SHADOW_IDS.filter((c) => unlocked.has(c));
   const alliedIn = BOSSES.filter((b) => bribedSet.has(b.id));
-  return <div>
+  if (!artReady) return <div style={{ animation: "rise .2s ease" }}>
+    <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
+    <div style={{ padding: "48px 0", display: "grid", placeItems: "center" }}>
+      <div style={{ width: 26, height: 26, borderRadius: "50%", border: `2px solid ${T.line}`,
+        borderTopColor: T.gold, animation: "spin .8s linear infinite" }} />
+    </div>
+  </div>;
+  return <div style={{ animation: "rise .32s ease" }}>
     <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
     <H>{t("tree.court")}</H><div style={grid}>
       {COURT_IDS.map((c) => champTile(c))}

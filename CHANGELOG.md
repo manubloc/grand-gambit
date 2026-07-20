@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.79
+- ANIMATIONEN: Panels und Popups blenden jetzt sanft ein (Fade) statt herein- oder hochzugleiten. Die rise-Animation zieht nichts mehr hoch, und das Kampagnen-Panel gleitet nicht mehr seitlich mit der Kamera mit.
+- HOFSTAAT: Die Figurenbilder werden vorgeladen und erscheinen gemeinsam mit den Kacheln (kurzer Ladespinner beim ersten Oeffnen), statt dass leere Kacheln sich erst danach fuellen.
+
 ## 0.22.78
 - DRACHE vereinfacht und intuitiver: Er zieht ein Feld orthogonal (vorwaerts, seitlich oder zurueck) und darf dabei schlagen, was unter seiner Vorderkante steht. Zuvor konnte er zu Fuss gar nicht schlagen. Die Trampel-Aura (Nachbar-Gegner nahmen automatisch Schaden) wurde ersatzlos entfernt. Der einmalige Flug pro Partie bleibt unveraendert. Beschreibungstext im Hofstaat angepasst.
 
