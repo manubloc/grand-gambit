@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.71
+- OEFFENTLICHE STARTSEITE (landing.html) fuer das Google-Login-Branding: Google verlangt, dass die im OAuth-Zustimmungsbildschirm angegebene Startseite OHNE Anmeldung erklaert, was die App ist - die App-Wurzel zeigt aber den Login-Screen. Neue oeffentliche Landing-Seite im Spiel-Stil (dunkle Halle, GG-Wappen, Feature-Uebersicht, "Jetzt spielen"-Button zur App, Hinweis zum optionalen Konto, Links zu Datenschutz + Nutzungsbedingungen). Im Google-Branding als Startseite eintragen: https://grandgambit.win/landing.html
+
 ## 0.22.70
 - ZUG-ANIMATION SAUBER REFACTORED: die ziehende Figur wird jetzt als EIN Objekt animiert, das pixelgenau der Figur entspricht, die danach im Feld steht (gleicher Versatz, gleiche Groesse). Frueher glitt ein mittig sitzender, kleinerer Ghost und wurde beim Landen durch die echte, hoehere + groessere Figur ersetzt - das war das "zieht zu weit, springt dann zurecht". Die Figur sitzt nun auf ihrem ZIELFELD und gleitet per Transform vom Start auf translate(0,0) = exakt das Feld; per DOM-Messung als pixelgenau verifiziert (Delta 0)
 - SPRINGEN/HUEPFEN: Pferd & Co. landen jetzt exakt statt daneben und werden nicht mehr nachtraeglich zurechtgerueckt; eigener Sprung minimal laenger fuer ein volleres Sprunggefuehl

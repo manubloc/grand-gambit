@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grand Gambit — Das Schach-RPG</title>
+  <meta name="description" content="Grand Gambit ist das Schach-RPG: Deine Figuren haben Lebenspunkte, steigen im Level auf und lernen echte Fähigkeiten. Kampagne über zehn Ligen, 26 Helden, Online-Duelle. Kostenlos, werbefrei, sofort im Browser." />
+  <link rel="canonical" href="https://grandgambit.win/landing.html" />
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0c111e" />
+  <meta property="og:title" content="Grand Gambit — Das Schach-RPG" />
+  <meta property="og:description" content="Schach, das Charaktere erhebt: Figuren mit Lebenspunkten, Level-Aufstieg und echten Fähigkeiten. Kampagne über zehn Ligen, 26 Helden, Online-Duelle. Kostenlos & werbefrei." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://grandgambit.win/landing.html" />
+  <meta property="og:image" content="https://grandgambit.win/og.jpg" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --night: #05070c;
+      --bg: #0c111e;
+      --panel: #101827;
+      --card: #141b2c;
+      --line: #26304c;
+      --gold: #c9a45c;
+      --gold-bright: #e3c07a;
+      --gleam: #f4dca0;
+      --ivory: #ded8c8;
+      --muted: #939bb0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ivory);
+      background: var(--night);
+      font: 16px/1.7 Georgia, "Times New Roman", serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--gold-bright); }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: clamp(56px, 12vw, 128px) 0 clamp(48px, 9vw, 96px);
+      text-align: center;
+      background:
+        radial-gradient(120% 90% at 50% -10%, #12203a 0%, #0a1120 46%, #05070c 82%);
+      border-bottom: 1px solid var(--line);
+    }
+    /* a faint marble board whispers along the hero floor — the game's own world */
+    .hero::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
+      background-image:
+        linear-gradient(45deg, rgba(201,164,92,.16) 25%, transparent 25% 75%, rgba(201,164,92,.16) 75%),
+        linear-gradient(45deg, rgba(201,164,92,.16) 25%, transparent 25% 75%, rgba(201,164,92,.16) 75%);
+      background-size: 46px 46px; background-position: 0 0, 23px 23px;
+      opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(180deg, transparent, #000 120%);
+      mask-image: linear-gradient(180deg, transparent, #000 120%);
+    }
+    .hero > .wrap { position: relative; z-index: 1; }
+
+    .crest {
+      width: clamp(96px, 22vw, 148px); height: auto; display: block; margin: 0 auto 26px;
+      filter:
+        drop-shadow(0 3px 10px rgba(0,0,0,.6))
+        drop-shadow(0 0 26px rgba(227,192,122,.28));
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) both;
+    }
+    .eyebrow {
+      font-size: 12.5px; letter-spacing: .42em; text-transform: uppercase;
+      color: var(--gold); margin: 0 0 14px; padding-left: .42em;
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .06s both;
+    }
+    h1 {
+      margin: 0; font-weight: 700; letter-spacing: .04em; line-height: 1.02;
+      font-size: clamp(44px, 10vw, 88px);
+      background: linear-gradient(178deg, var(--gleam) 8%, var(--gold-bright) 42%, #b58a3f 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: var(--gold-bright);
+      text-shadow: 0 1px 30px rgba(227,192,122,.14);
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .12s both;
+    }
+    .tagline {
+      margin: 14px 0 0; font-style: italic; font-size: clamp(18px, 3.6vw, 24px);
+      color: #cbb78a; letter-spacing: .01em;
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .18s both;
+    }
+    .lead {
+      max-width: 620px; margin: 22px auto 0; color: var(--ivory); font-size: clamp(16px, 2.3vw, 18px);
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .24s both;
+    }
+    .cta-row { margin-top: 34px; animation: rise .9s cubic-bezier(.2,.7,.2,1) .3s both; }
+    .play {
+      display: inline-block; text-decoration: none; cursor: pointer;
+      padding: 15px 40px; border-radius: 11px; font-size: 18px; font-weight: 700;
+      letter-spacing: .03em; color: #1a1206;
+      background: linear-gradient(180deg, var(--gleam), var(--gold) 92%);
+      box-shadow: 0 8px 22px rgba(201,164,92,.28), inset 0 1px 0 rgba(255,255,255,.5);
+      border: 1px solid #8a6c2e; transition: transform .16s ease, box-shadow .2s ease;
+    }
+    .play:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(201,164,92,.4), inset 0 1px 0 rgba(255,255,255,.6); }
+    .meta { margin: 18px 0 0; font-size: 13.5px; color: var(--muted); letter-spacing: .02em;
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .36s both; }
+
+    /* ── Sections ─────────────────────────────────────────── */
+    section { padding: clamp(48px, 9vw, 84px) 0; }
+    .band-line { border-top: 1px solid var(--line); }
+    .sec-eyebrow { font-size: 12px; letter-spacing: .34em; text-transform: uppercase;
+      color: var(--gold); text-align: center; margin: 0 0 8px; }
+    .sec-title { text-align: center; margin: 0 0 34px; font-size: clamp(24px, 5vw, 34px);
+      color: var(--gold-bright); font-weight: 700; letter-spacing: .02em; }
+
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 620px) { .grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
+    .card {
+      background: linear-gradient(180deg, var(--card), #10182688);
+      border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 24px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 18.5px; color: var(--gold-bright); font-weight: 700; letter-spacing: .01em; }
+    .card p { margin: 0; color: var(--ivory); font-size: 15px; line-height: 1.62; }
+    .card .rune { font-size: 22px; color: var(--gold); display: block; margin-bottom: 12px; line-height: 1; }
+
+    /* ── Account note ─────────────────────────────────────── */
+    .note {
+      max-width: 680px; margin: 0 auto; background: var(--panel);
+      border: 1px solid var(--line); border-left: 3px solid var(--gold);
+      border-radius: 12px; padding: 22px 24px;
+    }
+    .note h3 { margin: 0 0 8px; color: var(--gold-bright); font-size: 18px; }
+    .note p { margin: 0; color: var(--ivory); font-size: 15px; }
+
+    /* ── Closing call ─────────────────────────────────────── */
+    .closing { text-align: center; }
+    .closing p { margin: 0 0 22px; font-style: italic; font-size: clamp(20px, 4vw, 28px); color: #cbb78a; }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; text-align: center;
+      font-size: 13px; color: var(--muted); }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; border-radius: 4px; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .crest, .eyebrow, h1, .tagline, .lead, .cta-row, .meta { animation: none; }
+      .play { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <img class="crest" src="./icons/icon-512.png" alt="Grand Gambit — goldenes GG-Wappen" width="148" height="148" />
+      <p class="eyebrow">Das Schach-RPG</p>
+      <h1>Grand Gambit</h1>
+      <p class="tagline">Schach, das Charaktere erhebt.</p>
+      <p class="lead">Deine Figuren haben Lebenspunkte, steigen im Level auf und lernen echte Fähigkeiten.
+      Führe sie durch eine Kampagne über zehn Ligen und stelle aus 26 Helden deine eigene Armee auf.</p>
+      <div class="cta-row"><a class="play" href="./">Jetzt spielen</a></div>
+      <p class="meta">Kostenlos · werbefrei · sofort im Browser — auch als App installierbar</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="wrap">
+        <p class="sec-eyebrow">Was dich erwartet</p>
+        <h2 class="sec-title">Ein Schachbrett wird zum Abenteuer</h2>
+        <div class="grid">
+          <div class="card"><span class="rune" aria-hidden="true">♥</span>
+            <h3>Figuren mit Leben</h3>
+            <p>Kein Alles-oder-Nichts mehr: Jede Figur trägt Lebenspunkte, teilt Schaden aus und steckt Treffer ein.</p></div>
+          <div class="card"><span class="rune" aria-hidden="true">✦</span>
+            <h3>Aufstieg &amp; Fähigkeiten</h3>
+            <p>Figuren sammeln Erfahrung, steigen im Level auf und erlernen echte Fähigkeiten, die den Kampf verändern.</p></div>
+          <div class="card"><span class="rune" aria-hidden="true">⚑</span>
+            <h3>Kampagne über zehn Ligen</h3>
+            <p>Zieh Stufe um Stufe durch ein wachsendes Reich — jede Liga stellt stärkere Gegner und neue Herausforderer.</p></div>
+          <div class="card"><span class="rune" aria-hidden="true">♞</span>
+            <h3>Sechsundzwanzig Helden</h3>
+            <p>Wähle aus 26 Helden und stelle deinen Hof so auf, wie es deine eigene Strategie verlangt.</p></div>
+          <div class="card"><span class="rune" aria-hidden="true">⚔</span>
+            <h3>Online oder zu zweit</h3>
+            <p>Tritt online gegen andere Strategen an oder spielt zu zweit an einem einzigen Gerät.</p></div>
+          <div class="card"><span class="rune" aria-hidden="true">☾</span>
+            <h3>Kostenlos &amp; werbefrei</h3>
+            <p>Kein Preis, keine Werbung, kein Tracking. Dein Spielstand gehört dir und bleibt auf deinem Gerät.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band-line">
+      <div class="wrap">
+        <div class="note">
+          <h3>Ein Konto ist optional</h3>
+          <p>Du kannst sofort als Gast losspielen. Meldest du dich mit E-Mail oder mit Google an, sichern
+          wir nur deinen Anzeigenamen und deinen Spielstand in deinem Konto — damit du auf jedem Gerät
+          weiterspielen kannst. Mehr Daten verlangen wir nicht.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band-line closing">
+      <div class="wrap">
+        <p>Bereit für den ersten Zug?</p>
+        <a class="play" href="./">Jetzt spielen</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      Grand Gambit · <a href="./privacy.html">Datenschutz &amp; Impressum</a> ·
+      <a href="./terms.html">Nutzungsbedingungen</a>
+    </div>
+  </footer>
+</body>
+</html>
