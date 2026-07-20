@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.64
+- CHARAKTERKARTEN ALS STECKBRIEF: die Detailkarte einer Figur ist neu aufgebaut wie ein Wanted-Poster-Dossier. Portrait links in gerahmter Platte, Name und Haus-Zeile (mit Familien-Raute) oben, daneben die DREI SPIEL-BUBBLES (dieselben Kugeln wie im Kampf) fuer Staerke/Leben/Energie zur sofortigen Wiedererkennung, darunter Ledger-Zeilen (Stufe, Faehigkeiten) im Steckbrief-Rhythmus
+- FAEHIGKEITEN ALS AKKORDEON: jede Faehigkeit ist eine aufklappbare Zeile. Schon EINGEKLAPPT sichtbar sind Icon, Name, Typ-Badge (Bewegung/Angriff/Fernkampf/passiv...) und die Kosten (Energie-Pips, oder "passiv" wenn kostenlos). Antippen klappt Beschreibung, Zug-Diagramm und Erlernen-Knopf auf. Weit entfernte Talente bleiben "noch verhuellt"
+- Upgrade-Box verschlankt: keine doppelten Stats mehr, nur der Fortschritt Stufe->Stufe+1 mit den Zuwaechsen und der Verbessern-Knopf
+
 ## 0.22.63
 - GEGNER-ZUG STARTET ENDLICH AM RICHTIGEN FELD: der Gegner-Ghost begann seine Bewegung faelschlich dort, wo MEINE Figur zuletzt hinzog. Ursache: bei zwei schnellen Zuegen in derselben Millisekunde bekam die Animation dieselbe Kennung, React verwendete das alte Element wieder und die Figur glitt von der alten Zielposition herein. Jetzt bekommt jeder Zug eine streng fortlaufende Kennung UND die Gleit-Animation ist im Startmoment abgeschaltet - die Figur wird am FROM-Feld gesetzt und gleitet erst dann sauber zum Ziel
 - ALLE Figuren ziehen leicht schraeg gekippt (nicht nur der Gegner) - auch gerade Zuege bekommen eine leichte Neigung, wie ein schreitender Wanderer

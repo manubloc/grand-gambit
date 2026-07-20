@@ -57,7 +57,82 @@ function StatPill({ icon, val, color }) {
     <span style={{ display: "inline-flex", color }}>{icon}</span> {val}</span>;
 }
 
+// THE STAT ORB — the very same sphere the pieces wear on the board, so the
+// character sheet speaks the game's own visual language (instant recognition).
+// power = gold, life = green, energy = blue.
+function SheetOrb({ kind, v, size = 26 }) {
+  const [core, mid, rim] = kind === "life" ? ["#3ee089", "#1f9a58", "#03210f"]
+    : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
+    : ["#ffd743", "#d19a1a", "#2a1c02"];
+  return <span style={{ width: size, height: size, borderRadius: "50%", display: "grid", placeItems: "center", flex: "0 0 auto",
+    background: `radial-gradient(circle at 34% 24%, #ffffff 0%, #ffffffd8 7%, rgba(255,255,255,.28) 15%, ${core} 30%, ${mid} 78%, ${rim} 100%)`,
+    boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.8px rgba(0,0,0,.5)` }}>
+    <span style={{ fontSize: size * 0.5, fontWeight: 900, lineHeight: 1, color: "#0a1206",
+      textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+  </span>;
+}
+
+// a dossier line: LABEL ........ value — the wanted-poster rhythm
+function SheetRow({ label, children }) {
+  return <div style={{ display: "flex", alignItems: "baseline", gap: 8, padding: "3px 0" }}>
+    <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".14em", color: "#9a8f6f",
+      textTransform: "uppercase", flex: "0 0 auto" }}>{label}</span>
+    <span aria-hidden style={{ flex: 1, borderBottom: "1px dotted #8a7f5f", opacity: 0.35, transform: "translateY(-2px)" }} />
+    <span style={{ fontSize: 13.5, fontWeight: 800, color: "#e8e1c8", flex: "0 0 auto" }}>{children}</span>
+  </div>;
+}
+
+// one talent as an ACCORDION row: the header always shows the icon, name,
+// TYPE badge (movement/attack/passive…) and cost; tapping it unfolds the full
+// description (and move diagram, when the talent changes how the piece strides).
+function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, open, onToggle, onBuy }) {
+  const typeName = en ? tg.nameEn : tg.nameDe;
+  return <div style={{ borderRadius: 11, overflow: "hidden",
+    border: `1px solid ${owned ? tg.color + "77" : can ? "#e3c07acc" : reach ? "#6f5a30" : "#3a4360"}`,
+    background: owned ? `linear-gradient(165deg, ${tg.color}14, rgba(8,10,20,.5))` : "rgba(10,13,24,.5)" }}>
+    <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: 9,
+      padding: "9px 11px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left",
+      fontFamily: "inherit", color: "inherit" }}>
+      <span style={{ fontSize: 17, width: 24, textAlign: "center", flex: "0 0 auto",
+        filter: owned ? "none" : "grayscale(.4) opacity(.85)" }}>{ab.icon}</span>
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ display: "block", fontSize: 13.5, fontWeight: 800, color: owned ? "#f1e8c6" : "#d7d0b6",
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{en ? ab.nameEn : ab.nameDe}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+          {/* TYPE badge — attack/movement/passive, in the talent's own colour */}
+          <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase",
+            color: tg.color, background: tg.color + "1f", border: `1px solid ${tg.color}66`,
+            padding: "1.5px 6px", borderRadius: 999 }}>{typeName}</span>
+          {/* cost — energy pips, always visible before unfolding */}
+          {cost > 0 && <span style={{ fontSize: 10.5, fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 2 }}>
+            <EnergyIc size={10} /> {cost}</span>}
+          {cost === 0 && <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", color: "#8a856f" }}>{en ? "passive" : "passiv"}</span>}
+        </span>
+      </span>
+      {owned && <span style={{ fontSize: 10, fontWeight: 800, color: tg.color, flex: "0 0 auto" }}>✓</span>}
+      <span aria-hidden style={{ fontSize: 11, color: "#8a856f", flex: "0 0 auto",
+        transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>
+    </button>
+    {open && <div style={{ padding: "0 11px 11px", fontSize: 12.5, lineHeight: 1.5, color: "#c6c0a8" }}>
+      <div style={{ borderTop: `1px solid ${tg.color}22`, paddingTop: 8 }}>{en ? ab.descEn : ab.descDe}</div>
+      {ABILITY_MOVE[ab.id] && <div style={{ marginTop: 9 }}>
+        <MoveDiagram kind={kind} moveSpec={null} extra={ABILITY_MOVE[ab.id]} />
+        <div style={{ fontSize: 9.5, color: "#8a856f", marginTop: 3, fontStyle: "italic" }}>{en ? MOVE_LEGEND_ABILITY.en : MOVE_LEGEND_ABILITY.de}</div>
+      </div>}
+      {reach && !owned && can && onBuy && <button onClick={(e) => { e.stopPropagation(); onBuy(); }}
+        style={{ marginTop: 10, display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 13px", borderRadius: 9,
+          fontFamily: "inherit", fontWeight: 800, fontSize: 12.5, cursor: "pointer",
+          background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)", color: "#f6e9a4",
+          border: "1.5px solid #e3c07a", boxShadow: "0 0 10px rgba(64,110,220,.35)" }}>
+        {en ? "Learn" : "Erlernen"} · {price} <SkillStar size={11} /></button>}
+      {!reach && <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a856f", display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <LockIc size={11} /> {en ? "Unlocks at level" : "Ab Stufe"} {price != null ? "" : ""}<b style={{ color: "#b9b295" }}>{ab._lvl}</b></div>}
+    </div>}
+  </div>;
+}
+
 // ── THE CHRONICLE: every figure of the court, its inborn moves and its whole
+
 // ability ladder — a rulebook page, not a progression view. One law rules it:
 // base moves are INBORN and never change; abilities are LEARNED by level.
 const DIRS_ORTHO = JSON.stringify([[1,0],[-1,0],[0,1],[0,-1]].sort());
@@ -293,6 +368,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const abWide = useMedia("(min-width: 680px)");
+  const [openAb, setOpenAb] = useState(null); // which ability row is unfolded
 
   // Locked pieces stay a MYSTERY: a grayed silhouette, the name, and only the
   // place where their boss awaits — no stats, no abilities, pure temptation.
@@ -337,41 +413,61 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
 
 
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
+  const enNow = (BASE_EN[char.kind] || 2) + Math.floor((level - 1) / 2);
+  const hasEnergy = (BASE_EN[char.kind] || 0) > 0;
+  const fam = familyOf(char.kind);
   return <Panel style={{ opacity: unlocked ? 1 : 0.74, height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
-    <div style={{ display: "flex", gap: 12, alignItems: "center", cursor: onToggle ? "pointer" : "default" }}
+    {/* THE DOSSIER HEAD: a wanted-poster masthead — portrait to the side, name
+        and house up top, the game's own stat orbs for instant recognition, and
+        the vital lines beneath in a ledger rhythm. */}
+    <div style={{ display: "flex", gap: 13, alignItems: "stretch", cursor: onToggle ? "pointer" : "default" }}
       onClick={onToggle ? (e) => { e.stopPropagation(); onToggle(); } : undefined}>
-      {paintedById(char.id)
-        ? <><img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
-            title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-            style={{ width: bigArt ? 144 : 86, height: bigArt ? 186 : 112, objectFit: "contain", objectPosition: "bottom",
-            flex: "0 0 auto", filter: unlocked ? "drop-shadow(0 3px 5px rgba(0,0,0,.5))" : "grayscale(1) brightness(1.1)",
-            opacity: unlocked ? 1 : 0.6, cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-        </>
-        : <Glyph kind={char.kind} level={level} abilities={unlocked ? abilities : []} shield={unlocked ? shield : 0} hero={epic} art={"painted"} size={bigArt ? 94 : 60} />}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8,
-          paddingRight: bigArt ? 30 : 0 /* clear of the overlay close button */ }}>
-          <div style={{ fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 7 }}>
-            {en ? char.nameEn : char.nameDe}
-            {(() => { const f = familyOf(char.kind); return f ? <span aria-hidden title={en ? FAMILIES[f].en : FAMILIES[f].de}
-              style={{ width: 8, height: 8, transform: "rotate(45deg)", borderRadius: 2, flex: "0 0 auto",
-                background: FAMILIES[f].color, boxShadow: `0 0 4px ${FAMILIES[f].color}88` }} /> : null; })()}
-            {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint,
-              transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
+      {/* portrait, framed like a poster plate */}
+      <div style={{ flex: "0 0 auto", position: "relative", borderRadius: 12, overflow: "hidden",
+        width: bigArt ? 128 : 92, background: "linear-gradient(180deg, rgba(30,36,54,.5), rgba(10,12,20,.7))",
+        border: "1px solid rgba(227,192,122,.28)", display: "grid", placeItems: "end center" }}>
+        {paintedById(char.id)
+          ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
+              title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
+              style={{ width: "100%", height: bigArt ? 176 : 128, objectFit: "contain", objectPosition: "bottom",
+              filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
+          : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 94 : 68} /></div>}
+      </div>
+      {/* masthead + orbs + ledger */}
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8,
+          paddingRight: bigArt ? 26 : 0 }}>
+          <div style={{ minWidth: 0 }}>
+            <div className="gg-serif" style={{ fontWeight: 800, fontSize: 17, letterSpacing: ".02em", color: "#f0e8cc",
+              display: "inline-flex", alignItems: "center", gap: 7, lineHeight: 1.15 }}>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{en ? char.nameEn : char.nameDe}</span>
+              {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint, flex: "0 0 auto",
+                transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
+            </div>
+            {/* the house line, poster-style */}
+            <div style={{ fontSize: 11, color: "#9a8f6f", letterSpacing: ".05em", marginTop: 2, display: "inline-flex", alignItems: "center", gap: 6 }}>
+              {fam && <span aria-hidden style={{ width: 8, height: 8, transform: "rotate(45deg)", borderRadius: 2, flex: "0 0 auto",
+                background: FAMILIES[fam].color, boxShadow: `0 0 4px ${FAMILIES[fam].color}88` }} />}
+              {epic ? t("army.gambitTag") : fam ? (en ? FAMILIES[fam].en : FAMILIES[fam].de) : (en ? "Free piece" : "Freie Figur")}
+            </div>
           </div>
-          {unlocked
-            ? <>{stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}<Chip color={T.limeInk} bg={T.lime}>{t("army.lvl")} {level}</Chip></>
-            : <Chip color={T.faint} bg={T.panel2}><LockIc size={11} /> {t("camp.challenger")}</Chip>}
+          {stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", flex: "0 0 auto", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}
         </div>
-        <div style={{ display: "flex", gap: 10, marginTop: 10, alignItems: "center" }}>
-          <StatPill icon={<HeartIc size={12} />} val={maxHp} color={T.green} />
-          <StatPill icon={<BladesIc color={T.gold} size={12} />} val={atk} color={T.gold} />
-          <span style={{ fontSize: 11.5, color: T.dim }}>{rungs.length} {en ? "abilities" : "Fähigkeiten"}</span>
+        {/* THE ORBS — the same spheres the piece wears in battle */}
+        <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "10px 0 2px" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "PWR" : "STK"}</span></span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "LIFE" : "LEB"}</span></span>
+          {hasEnergy && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="energy" v={enNow} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "ENR" : "ENE"}</span></span>}
+        </div>
+        {/* the ledger lines */}
+        <div style={{ marginTop: 6 }}>
+          <SheetRow label={t("army.lvl")}>{level}{maxed && <span style={{ color: "#9a8f6f", fontWeight: 600, fontSize: 11 }}> · {en ? "max" : "max."}</span>}</SheetRow>
+          <SheetRow label={en ? "Abilities" : "Fähigkeiten"}>{chosen.length}/{rungs.length}</SheetRow>
         </div>
       </div>
     </div>
     {(en ? char.flavorEn : char.flavorDe) && (
-      <div className="gg-serif" style={{ marginTop: 8, fontSize: 12, lineHeight: 1.45, color: "#b9b295",
+      <div className="gg-serif" style={{ marginTop: 10, fontSize: 12, lineHeight: 1.45, color: "#b9b295",
         fontStyle: "italic", letterSpacing: ".015em" }}>
         „{en ? char.flavorEn : char.flavorDe}“
       </div>
@@ -388,7 +484,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       </div>
     )}
     {open && unlocked && (
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "8px 10px",
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 11, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
         <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
           {char.id === "gambit" && <span className="gg-serif" style={{ color: T.goldBright, marginRight: 8, letterSpacing: ".05em" }}>
@@ -398,34 +494,19 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const hpAt = (l) => (BASE_HP[k] || 1) + (l - 1) * kingly;
             const atkAt = (l) => (BASE_ATK[k] || 1) + Math.floor((l - 1) / 2);
             const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
-            const regen = (BASE_EN[k] || 2) >= 4;
-            return <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "2px 0 9px" }}>
-                {[
-                  { ic: <span style={{ color: "#8fd6a0" }}>♥</span>, v: hpAt(level) },
-                  { ic: <span style={{ color: "#e5975f" }}>⚔</span>, v: atkAt(level) },
-                  { ic: <EnergyIc size={11} style={{ verticalAlign: 0, color: "#8ec7f2" }} />, v: <>{enAt(level)}{regen && <span style={{ color: "#9db8dd", fontWeight: 600 }}> +1/{en ? "turn" : "Zug"}</span>}</> },
-                ].map((p, i) => (
-                  <span key={i} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
-                    fontWeight: 800, fontSize: 12, minWidth: 58, boxSizing: "border-box",
-                    padding: "3px 9px", borderRadius: 999, color: "#f6e9a4",
-                    background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
-                    border: "1px solid #e3c07a", boxShadow: "0 0 7px rgba(64,110,220,.28), inset 0 1px 0 rgba(190,215,255,.25)" }}>
-                    {p.ic} {p.v}</span>
-                ))}
-              </div>
-              {maxed ? t("army.maxed") : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5, marginTop: 1 }}>Level {level} → {level + 1}
+            return maxed
+              ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
+              : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
                 <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
                 {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · ⚔+1</span>}
-                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <EnergyIc size={10} />+1</span>}</span>}
-            </>; })()}
+                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <EnergyIc size={10} />+1</span>}</span>;
+          })()}
         </div>
         {!maxed && <button disabled={!affordable}
           onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
             cursor: affordable ? "pointer" : "default",
-            // the INVERSE seal: deep night-blue, lettered in gold — nothing else looks like this
             background: affordable ? "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" : "#1a2340",
             color: affordable ? "#f6e9a4" : "#8d94ad",
             border: `1.5px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
@@ -458,106 +539,40 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       </div>
     )}
     {open && unlocked && (() => {
-      // Every talent is a tile of equal height: owned ones glow in their tag
-      // color behind a gold-tinted frame, purchasable ones invite with a gold
-      // button, near-future ones sit dimmed — and once a talent is revealed,
-      // its explanation NEVER disappears again, bought or not.
+      // THE TALENTS as an accordion: each row shows icon, name, TYPE and cost
+      // folded; tapping unfolds the description + move diagram + learn button.
+      // Talents more than two levels out stay veiled — pure temptation.
       const future = rungs.filter((rg) => level < rg.level);
-      return <div style={{ display: "grid", gap: 8, marginTop: 12,
-        gridTemplateColumns: abWide ? "1fr 1fr" : "1fr", alignItems: "stretch" }}>
+      return <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 12 }}>
+        <div className="gg-serif" style={{ fontSize: 10, letterSpacing: ".14em", color: "#c9b26a", marginBottom: 1 }}>
+          {(en ? "Abilities" : "Fähigkeiten").toUpperCase()}</div>
         {rungs.map((rg) => {
           const owned = chosen.includes(rg.id);
           const reach = level >= rg.level;
           if (!reach && future.indexOf(rg) >= 2) return (
-            <div key={rg.id} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-              minHeight: 72, borderRadius: 12, border: `1px dashed ${T.line}`, background: "rgba(10, 14, 26, .45)",
-              color: "#a9a28a", fontSize: 12 }}>
+            <div key={rg.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 11px",
+              borderRadius: 11, border: `1px dashed ${T.line}`, background: "rgba(10, 14, 26, .4)", color: "#a9a28a", fontSize: 12 }}>
               <LockIc size={12} />
-              <span className="gg-serif" style={{ letterSpacing: ".08em" }}>
+              <span className="gg-serif" style={{ letterSpacing: ".06em" }}>
                 {en ? "Level" : "Stufe"} {rg.level} · {en ? "still veiled" : "noch verhüllt"}</span>
             </div>
           );
           const ab = ABILITIES[rg.id];
-          const tg = (ab && TAGS[ab.tag]) || { color: T.gold, nameDe: "Talent", nameEn: "Talent" };
           if (!ab) return null;
+          const tg = TAGS[ab.tag] || { color: T.gold, nameDe: "Talent", nameEn: "Talent" };
           const price = abilityCost(rg.level);
+          const cost = ABILITY_COST[rg.id] ?? 0;
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
-          return (
-            <div key={rg.id} style={{ display: "flex", flexDirection: "column", gap: 6, padding: "10px 12px 9px",
-              borderRadius: 12,
-              border: `1px solid ${owned ? tg.color + "88" : can ? "#e3c07acc" : reach ? "#8a6d3566" : "#3d4666"}`,
-              background: owned
-                ? `linear-gradient(165deg, ${tg.color}16, rgba(8, 10, 20, .55))`
-                : can ? "linear-gradient(165deg, rgba(101, 79, 26, .58), rgba(30, 24, 11, .8))" // ripe for the taking: lit in gold
-                : reach ? `linear-gradient(165deg, rgba(43, 36, 16, .35), ${T.panel2})` : T.panel2,
-              boxShadow: owned ? `0 0 12px ${tg.color}22, inset 0 0 22px rgba(0,0,0,.22)`
-                : can ? "0 0 20px rgba(240,206,122,.42), inset 0 0.5px 0 rgba(255,243,196,.35)" : "none",
-              animation: can ? "ggAbilityGlow 2.6s ease-in-out infinite" : "none",
-              position: "relative", overflow: "hidden",
-              opacity: owned || reach ? 1 : 0.84, filter: owned || reach ? "none" : "saturate(.75)" }}>
-              {can && <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: 12, padding: 1.5,
-                pointerEvents: "none", // the glint rides the CONTOUR only: a ring mask keeps the face clean
-                background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.5) 45%, rgba(255,251,224,.95) 50%, rgba(255,240,190,.5) 55%, transparent 70%)",
-                backgroundSize: "260% 100%", animation: "ggEdgeSweep 3.2s ease-in-out infinite",
-                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMaskComposite: "xor", mask: "linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)" }} />}
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span aria-hidden style={{ width: 30, height: 30, borderRadius: 999, flex: "0 0 auto",
-                  display: "grid", placeItems: "center", fontSize: 15, lineHeight: 1,
-                  background: "radial-gradient(circle at 35% 30%, #2c4f9e, #142450 78%)",
-                  border: `1px solid ${can ? "#e8c87d" : owned ? "#e3c07a" : "#e3c07a99"}`,
-                  boxShadow: can ? "0 0 10px rgba(240,206,122,.45), inset 0 1px 0 rgba(190,215,255,.3)"
-                    : owned ? `0 0 8px ${tg.color}55, inset 0 1px 0 rgba(190,215,255,.25)` : "inset 0 1px 0 rgba(190,215,255,.18)" }}>
-                  {ab.icon}</span>
-                <b className="gg-serif" style={{ fontSize: 13, letterSpacing: ".03em",
-                  color: owned ? tg.color : can ? "#f6e4a8" : reach ? T.text : "#c9c3aa" }}>
-                  {en ? ab.nameEn : ab.nameDe}</b>
-                <span style={{ flex: 1 }} />
-                {owned
-                  ? <span aria-hidden style={{ width: 7, height: 7, transform: "rotate(45deg)", flex: "0 0 auto",
-                      background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588" }} />
-                  : reach && <span style={{ display: "inline-flex", alignItems: "center", gap: 3, flex: "0 0 auto",
-                      padding: "2.5px 8px", borderRadius: 999, fontSize: 11, fontWeight: 800,
-                      background: can ? "linear-gradient(180deg, #f4dd92, #c9a45c)" : "rgba(10, 14, 26, .55)",
-                      color: can ? "#2a1f08" : "#8d94ad",
-                      border: can ? "1px solid #f6e6ae" : `1px solid ${T.line}`,
-                      boxShadow: can ? "0 0 10px rgba(240,206,122,.4), inset 0 1px 0 rgba(255,250,220,.6)" : "none" }}>
-                      {price} <SkillStar size={11} /></span>}
-              </div>
-              <div style={{ fontSize: 11.5, lineHeight: 1.55, color: can ? "#efe7c9" : owned || reach ? "#ddd6bd" : "#b5af98" }}>
-                {en ? ab.descEn : ab.descDe}</div>
-              {ABILITY_MOVE[rg.id] && <div style={{ marginTop: 2 }}>
-                <MoveDiagram kind={char.kind} moveSpec={char.moveSpec} extra={ABILITY_MOVE[rg.id]} />
-                <div style={{ fontSize: 9, color: "#7fb98f", marginTop: 2, fontStyle: "italic" }}>{en ? MOVE_LEGEND_ABILITY.en : MOVE_LEGEND_ABILITY.de}</div>
-              </div>}
-              <div style={{ flex: 1 }} />
-              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                <Chip color={tg.color} bg={"rgba(8, 10, 20, .68)"}>{en ? tg.nameEn : tg.nameDe}</Chip>
-                {(ABILITY_COST[rg.id] ?? 0) > 0
-                  ? <Chip color={"#9fd2f7"} bg={"rgba(8, 10, 20, .68)"}>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
-                        <EnergyIc size={10} style={{ verticalAlign: 0 }} />{ABILITY_COST[rg.id]}</span></Chip>
-                  : <Chip color={T.green} bg={"rgba(8, 10, 20, .68)"}>{en ? "passive" : "dauerhaft"}</Chip>}
-                {!ab.live && <Chip color={T.faint} bg={"rgba(8, 10, 20, .5)"}>{en ? "soon" : "bald"}</Chip>}
-                <span style={{ flex: 1 }} />
-                {owned
-                  ? <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".08em", color: "#d9b565" }}>
-                      {en ? "Acquired" : "Erworben"}</span>
-                  : reach
-                    ? <GoldShineButton disabled={!can} style={{ fontSize: 12, padding: "6px 12px" }}
-                        onClick={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })}>
-                        {en ? "Acquire" : "Erwerben"}</GoldShineButton>
-                    : <span className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".07em", color: "#aaa48c", paddingLeft: 6 }}>
-                        {en ? "from level" : "ab Stufe"} {rg.level}</span>}
-              </div>
-            </div>
-          );
+          return <AbilityAccordion key={rg.id} ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
+            owned={owned} reach={reach} can={can} kind={char.kind} en={en}
+            open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
+            onBuy={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} />;
         })}
         {chosen.length > 0 && (
           <button onClick={() => dispatch({ type: "RESPEC", id: char.id })} disabled={(profile.gold || 0) < RESPEC_GOLD}
-            style={{ gridColumn: "1 / -1", justifySelf: "start", background: "none", border: "none", fontFamily: "inherit",
+            style={{ justifySelf: "start", background: "none", border: "none", fontFamily: "inherit",
               cursor: "pointer", fontSize: 11.5, color: (profile.gold || 0) >= RESPEC_GOLD ? T.dim : T.faint,
-              padding: "0 2px", textDecoration: "underline" }}>
+              padding: "2px 2px 0", textDecoration: "underline", textAlign: "left" }}>
             ↺ {t("army.respec", { g: RESPEC_GOLD })}
           </button>
         )}
