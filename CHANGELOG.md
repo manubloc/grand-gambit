@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.22.65
+- GESCHLAGENE FIGUR LANDET EXAKT IN DER ABLAGE: statt nur grob vom Brett zu fliegen, dreht sich die geschlagene Figur jetzt heraus und landet PRAEZISE auf dem Ablage-Feld, das sie danach anzeigt - beim Gegner oben rechts, bei mir unten rechts. Die echte Bildschirmposition der Ablage wird im Flugmoment gemessen, also stimmt das Ziel in Hoch- und Querformat und egal aus welcher Perspektive gespielt wird
+- SPRINGER HUEPFT WIRKLICH: ein Sprung ist jetzt ein echter Bogen - die Figur springt hoch, wird am Scheitel eine Spur groesser (als kaeme sie dem Auge naeher) und landet wieder, statt nur ueber das Brett zu gleiten
+- alle uebrigen Zuege gleiten weiterhin leicht schraeg gekippt wie ein schreitender Wanderer
+
 ## 0.22.64
 - CHARAKTERKARTEN ALS STECKBRIEF: die Detailkarte einer Figur ist neu aufgebaut wie ein Wanted-Poster-Dossier. Portrait links in gerahmter Platte, Name und Haus-Zeile (mit Familien-Raute) oben, daneben die DREI SPIEL-BUBBLES (dieselben Kugeln wie im Kampf) fuer Staerke/Leben/Energie zur sofortigen Wiedererkennung, darunter Ledger-Zeilen (Stufe, Faehigkeiten) im Steckbrief-Rhythmus
 - FAEHIGKEITEN ALS AKKORDEON: jede Faehigkeit ist eine aufklappbare Zeile. Schon EINGEKLAPPT sichtbar sind Icon, Name, Typ-Badge (Bewegung/Angriff/Fernkampf/passiv...) und die Kosten (Energie-Pips, oder "passiv" wenn kostenlos). Antippen klappt Beschreibung, Zug-Diagramm und Erlernen-Knopf auf. Weit entfernte Talente bleiben "noch verhuellt"

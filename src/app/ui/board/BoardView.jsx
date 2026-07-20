@@ -9,6 +9,54 @@ import { PieceArt } from "./PieceArt.jsx";
 
 const MOVE_DOT = "#c9a45c";
 
+// THE FALLEN, in flight: a captured piece doesn't just fade in a rough
+// direction — it spins off the board and lands EXACTLY on its captor's tray
+// (the very slot where it now shows among the taken). We measure the real
+// on-screen tray at flight time (querying [data-gg-tray=<victim colour>]), so
+// it lands true whether the layout is portrait, landscape or flipped.
+function DeathFlyer({ death, disp, W, H, pov, artStyle }) {
+  const ref = useRef(null);
+  const d = disp(death.at);
+  useIsoLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const from = el.getBoundingClientRect();
+    const cx = from.left + from.width / 2, cy = from.top + from.height / 2;
+    // aim at the tray that displays a piece of THIS victim's colour; land on
+    // its newest (right-most) slot — that's where the capture now sits.
+    const tray = typeof document !== "undefined" && document.querySelector(`[data-gg-tray="${death.piece.color}"]`);
+    let tx, ty;
+    if (tray) {
+      const tr = tray.getBoundingClientRect();
+      tx = tr.right - Math.min(tr.height, from.width) * 0.5;   // the last glyph's centre
+      ty = tr.top + tr.height / 2;
+    } else {
+      // no tray on screen (rare) — fall off toward the correct corner instead
+      tx = cx + from.width * 2.4 * (death.dir || 1);
+      ty = cy + from.height * 3.5 * (death.fly || -1);
+    }
+    const dx = tx - cx, dy = ty - cy;
+    const dir = death.dir || 1;
+    // shrink toward the little tray glyph so it seems to BECOME the trophy
+    const endScale = Math.max(0.16, Math.min(0.4, (from.width ? 22 / from.width : 0.3)));
+    const kf = [
+      { transform: "translate(0px,0px) rotate(0deg) scale(1)", opacity: 1, offset: 0 },
+      // a small pop UP and back first, like being knocked loose
+      { transform: `translate(${dx * 0.12}px, ${dy * 0.12 - from.height * 0.55}px) rotate(${dir * 70}deg) scale(1.12)`, opacity: 1, offset: 0.2 },
+      { transform: `translate(${dx * 0.6}px, ${dy * 0.5}px) rotate(${dir * 320}deg) scale(.7)`, opacity: 0.92, offset: 0.6 },
+      { transform: `translate(${dx}px, ${dy}px) rotate(${dir * 560}deg) scale(${endScale})`, opacity: 0, offset: 1 },
+    ];
+    const player = el.animate(kf, { duration: 1150, easing: "cubic-bezier(.34,.06,.6,1)", fill: "forwards" });
+    return () => { try { player.cancel(); } catch {} };
+  }, [death.id]); // eslint-disable-line
+  return <div ref={ref} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
+    width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
+    display: "grid", placeItems: "center", willChange: "transform, opacity",
+    filter: "drop-shadow(0 4px 8px rgba(0,0,0,.55))" }}>
+    <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+  </div>;
+}
+
 // Modern game-style HP: one segment per hit point (readable at a glance),
 // falling back to a continuous bar when segments would get too tiny.
 
@@ -442,9 +490,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         const dxSign = Math.sign(b.l - a.l);
         const dir = dxSign || (Math.sign(b.t - a.t) || 1); // vertical moves lean too
         const tilt = anim.phase && !anim.bounced ? dir * (anim.leaps ? 10 : 7) : 0;
-        // a LEAP hops in an arc: the inner wrapper lifts up then drops, peaking
-        // mid-flight. We drive it with the same phase flip on a bounce-ease.
-        const lift = anim.leaps && anim.phase && !anim.bounced;
+        // a LEAP hops in a real arc (up, apex, down) driven by a keyframe;
+        // a plain move just glides with a slight lean.
+        const leapNow = anim.leaps && anim.phase && !anim.bounced;
         return (
           <div key={anim.id} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
@@ -470,13 +518,18 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               // animation, so it can never glide in from a stale position (that
               // was the "foe starts where my piece landed" bug). The transition
               // is switched on only for phase 1, which then carries it to TO.
-              transition: anim.phase ? `left ${dur}s ${ease}, top ${dur}s ${ease}` : "none",
+              // A leap glides its board position LINEARLY so the arc reads clean.
+              transition: anim.phase ? `left ${dur}s ${leapNow ? "cubic-bezier(.4,0,.6,1)" : ease}, top ${dur}s ${leapNow ? "cubic-bezier(.4,0,.6,1)" : ease}` : "none",
               display: "grid", placeItems: "center" }}>
               <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
-                // hop arc: rise ~26% of a cell at the peak, settle back to 0
-                transform: `translateY(${lift ? "-26%" : "0"}) rotate(${tilt}deg)`,
-                transition: anim.phase ? `transform ${dur}s ${anim.leaps ? "cubic-bezier(.3,-0.6,.5,1)" : ease}` : "none",
-                filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))" }}>
+                filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))",
+                ...(leapNow
+                  // real hop: keyframe arc up-and-down, lean held via --tilt
+                  ? { ["--tilt"]: `${tilt}deg`, transform: `rotate(${tilt}deg)`,
+                      animation: `ggLeapArc ${dur}s cubic-bezier(.3,.4,.5,1) forwards` }
+                  // plain glide: lean into travel, no vertical arc
+                  : { transform: `translateY(0) rotate(${tilt}deg)`,
+                      transition: anim.phase ? `transform ${dur}s ${ease}` : "none" }) }}>
                 <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
               </div>
             </div>
@@ -484,17 +537,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         );
       })()}
 
-      {/* the FALLEN: spins off toward its captor's tray, shrinking away */}
-      {death && (() => {
-        const d = disp(death.at);
-        return <div key={`die${death.id}`} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
-          width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
-          display: "grid", placeItems: "center",
-          animation: `ggFallToTray 1.15s cubic-bezier(.35,.05,.6,1) forwards`,
-          ["--fdir"]: death.dir, ["--fly"]: death.fly }}>
-          <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
-        </div>;
-      })()}
+      {/* the FALLEN: spins off and lands exactly on its captor's tray */}
+      {death && <DeathFlyer death={death} disp={disp} W={W} H={H} pov={pov} artStyle={artStyle} />}
     </div>
   );
   if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>{board}</div>;

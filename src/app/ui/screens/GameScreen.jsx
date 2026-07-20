@@ -567,7 +567,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
         {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
         <div style={{ flex: 1 }} />
-        <Tray kinds={state.captured.b} color="w" />
+        <span data-gg-tray="w"><Tray kinds={state.captured.b} color="w" /></span>
       </div>
 
 </>);
@@ -743,7 +743,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
           textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
-        <Tray kinds={state.captured.w} color="b" />
+        <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
         {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
           <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
             style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, borderRadius: 10,

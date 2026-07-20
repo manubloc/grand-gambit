@@ -77,11 +77,6 @@ export const GLOBAL_CSS = `
   /* the FALLEN fly to their captor's tray: UP off the top (foe took my piece →
      my tray sits below, so it flies down; I took a foe piece → its tray sits up
      top, flies up). --fdir still nudges sideways so pieces don't overlap. */
-  @keyframes ggFallToTray {
-    0%   { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
-    15%  { transform: translate(calc(var(--fdir) * 6%), calc(var(--fly) * -20%)) rotate(calc(var(--fdir) * 40deg)) scale(1.12); opacity: 1; }
-    55%  { transform: translate(calc(var(--fdir) * 26%), calc(var(--fly) * 40%)) rotate(calc(var(--fdir) * 300deg)) scale(.72); opacity: .9; }
-    100% { transform: translate(calc(var(--fdir) * 54%), calc(var(--fly) * 210%)) rotate(calc(var(--fdir) * 560deg)) scale(.18); opacity: 0; } }
   @keyframes splashRing { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes splashPiece { from { transform: translateY(26px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes splashSide { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: .92; } }
@@ -144,6 +139,13 @@ export const GLOBAL_CSS = `
   @keyframes queuePulse { 0%,100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.18); opacity: .18; } }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes arrowFade { 0% { opacity: 0; } 12% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
+  /* a LEAP is a real hop: the piece springs up, grows a touch as it nears the
+     eye at the apex, then lands — not a slide. --tilt keeps the lean while it
+     flies. */
+  @keyframes ggLeapArc {
+    0%   { transform: translateY(0) scale(1) rotate(var(--tilt, 0deg)); }
+    46%  { transform: translateY(-58%) scale(1.16) rotate(var(--tilt, 0deg)); }
+    100% { transform: translateY(0) scale(1) rotate(var(--tilt, 0deg)); } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
   .gg-quill { font-family: "IM Fell English", Georgia, "Times New Roman", serif; font-style: italic; }
   @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 12% { transform: translateX(320%) skewX(-18deg); } 100% { transform: translateX(320%) skewX(-18deg); } }
