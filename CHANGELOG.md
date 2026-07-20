@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.74
+- KAMPAGNENKARTE: Tippen auf den Grand Gambit oeffnet jetzt das Level-Panel der aktuellen Station ("Herausforderung starten"), statt zum Faehigkeitenbaum zu springen. Dadurch laesst sich das Panel nach dem Schliessen jederzeit wieder oeffnen und das Level erneut starten. Die alte Rang-Box mit dem Faehigkeitenbaum-Sprung wurde entfernt (der Faehigkeitenbaum bleibt ueber den Hofstaat erreichbar).
+
 ## 0.22.73
 - LANDING-SEITE deutlich ausgebaut: Spielmodi (klassisches Schach ODER das RPG; gegen die KI, zu zweit an einem Geraet, oder online), eine Figuren-Chronik mit vier Helden (Bild, Flavor-Text und Faehigkeiten), ein geformtes Liga-Brett mit gesperrten Feldern und ein stilisiertes Weltkarten-Diagramm der Kampagne (drei Pfade laufen zum Ligameister zusammen). Durchgehende Hallen-Atmosphaere, die auch unter dem letzten Container mit Abstand wieder sichtbar wird. Der Hinweis "im Browser" wurde aus der Kopfzeile entfernt. Vier verkleinerte Figurenbilder unter public/pieces.
 

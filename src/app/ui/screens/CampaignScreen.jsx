@@ -86,7 +86,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
   const [world, setWorld] = useState(() => !profile?.notices?.worldSeen);
-  const [gambitInfo, setGambitInfo] = useState(false); // tap the wanderer: he steps forward and shows his rank // the first visit opens on the WHOLE world
+  // (the traveller now opens the current node's panel on tap — see below)
   useEffect(() => { if (world && !profile?.notices?.worldSeen) dispatch({ type: "SET_NOTICE", key: "worldSeen" }); }, [world]); // the overworld: travel between leagues
   const [worldSel, setWorldSel] = useState(null); // tapped league on the painting
   useEffect(() => { setViewLeague(league); }, [league]);
@@ -534,11 +534,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           {!viewing && (() => {
             const tn = nodeById(token.at);
             if (!tn) return null;
-            return <div onClick={(e) => { e.stopPropagation(); setGambitInfo((g) => !g); }}
-              title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: gambitInfo ? 9 : 5,
+            return <div onClick={(e) => { e.stopPropagation(); setSel(token.at); setPanelOpen(true); }}
+              title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: 5,
               pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,
-              ...(gambitInfo ? { filter: "drop-shadow(0 0 12px rgba(240,206,122,.55))" } : {}),
-              transform: (bm ? "translate(-50%,-102%)" : "translate(-98%,-70%)") + (gambitInfo ? " scale(1.32)" : ""), transformOrigin: "50% 96%" }}>
+              transform: (bm ? "translate(-50%,-102%)" : "translate(-98%,-70%)"), transformOrigin: "50% 96%" }}>
 
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,
@@ -582,22 +581,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       </div>
       </div>
 
-      {gambitInfo && (() => {
-        const lvl = characterLevel(profile, "gambit") || 1;
-        const gt = gambitTier(lvl);
-        return <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: frameY + 68, left: "50%",
-          transform: "translateX(-50%)", width: "min(88vw, 250px)", zIndex: 12, borderRadius: 13, padding: "11px 13px 12px",
-          background: "rgba(12,15,22,.94)", border: "1px solid rgba(233,210,150,.45)",
-          boxShadow: "0 10px 30px rgba(0,0,0,.55)", textAlign: "center", animation: "rise .2s ease", pointerEvents: "auto" }}>
-          <div className="gg-serif" style={{ fontSize: 14, color: "#f6e9a4", letterSpacing: ".06em" }}>{t("camp.gambitTitle")}</div>
-          <div className="gg-serif" style={{ fontSize: 12.5, color: "#e9d296", marginTop: 4 }}>
-            {t("camp.gambitLine", { lvl, tier: ["I","II","III","IV","V","VI"][gt - 1] || gt })}</div>
-          <div style={{ fontSize: 11, color: "#c9b98f", letterSpacing: ".2em", marginTop: 2 }}>{"✦".repeat(gt)}</div>
-          {onOpenTree && <button onClick={onOpenTree} style={{ marginTop: 9, width: "100%", padding: "8px 12px", borderRadius: 9,
-            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
-            color: "#17110a", fontWeight: 800, fontSize: 12.5, fontFamily: "inherit", cursor: "pointer" }}>{t("camp.gambitTree")} ›</button>}
-        </div>;
-      })()}
       {/* floating chrome: back pill + league badge (left), zoom (right) —
           always INSIDE the rounded map frame, padded off its edge */}
       <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
