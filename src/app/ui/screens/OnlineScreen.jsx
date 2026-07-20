@@ -6,11 +6,11 @@ import { T } from "../theme.js";
 import crest3 from "../assets/crest-3.webp";
 import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc, TrophyIc } from "../icons.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
-import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation } from "../../../meta/index.js";
+import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation, listSaves, fmtPlaytime } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
 import { SERVER_URL } from "../../config.js";
 import { hasItem } from "../../../content/index.js";
-import { serializeSave, parseSave } from "../../../meta/index.js";
+import { serializeSave, parseSave, getAdminToken } from "../../../meta/index.js";
 import { useMedia } from "../../App.jsx";
 
 
@@ -56,6 +56,17 @@ const rollTag = (en) => {
   const tag = (r(TAG_FIRST) + " " + r(TAG_EPI[L])).slice(0, 20) + " " + (11 + Math.floor(Math.random() * 88));
   rolledTags.add(tag); return tag;
 };
+// The figures a player sees on their own profile, mirrored to the Hall so the
+// admin can survey everyone. Same numbers, nothing private.
+function buildStats(profile, playtimeSec) {
+  const st = profile.stats || {};
+  return {
+    games: st.games || 0, wins: st.wins || 0, losses: st.losses || 0, draws: st.draws || 0,
+    league: profile.campaign?.league || 1,
+    stagesCleared: st.stagesCleared || 0, bossKills: st.bossKills || 0,
+    xp: profile.xpEarned || 0, playtimeSec: playtimeSec || 0,
+  };
+}
 export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
@@ -95,6 +106,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
       net.on("match", () => { setSearching(false); setChallenge(null); }),
       net.on("leaderboard", (m) => setLb(m)),
       net.on("vault", (m) => setVault(m.list || [])),
+      net.on("admin", (m) => { if (m.cmd === "dump") setUsers(Array.isArray(m.players) ? m.players : Object.values(m.players || {})); }),
       net.on("vaultSave", (m) => {
         try {
           const prof = parseSave(m.save);
@@ -125,13 +137,24 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
 
   const [askConsent, setAskConsent] = useState(false);
   const [vault, setVault] = useState(null);
+  const [myPlaytime, setMyPlaytime] = useState(0);
+  const [users, setUsers] = useState(null);          // admin: the whole roster
+  // total playtime across this account's save slots (mirrored for the admin)
+  useEffect(() => { let ok = true; (async () => {
+    try { const list = await listSaves(account.id); const tot = (list || []).reduce((a, s) => a + (s.playtimeSec || 0), 0); if (ok) setMyPlaytime(tot); } catch {}
+  })(); return () => { ok = false; }; }, [account.id]);
+  // keep the Hall's mirror of my stats fresh while connected
+  useEffect(() => {
+    if (conn !== "on" || !net.open) return;
+    try { net.send({ t: "set", stats: buildStats(profile, myPlaytime) }); } catch {}
+  }, [conn, profile, myPlaytime]);
   async function connect(force = false) {
     if (!server) return;
     if (!force && !profile.notices?.online) { setAskConsent(true); return; }
     setConn("busy");
     dispatch({ type: "SET_ONLINE", online: { ...o, server } });
     try {
-      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public" });
+      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public", stats: buildStats(profile, myPlaytime) });
     } catch { setConn("fail"); }
   }
   function setPrivacy(privacy) {
@@ -346,6 +369,42 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
               </div>
             )}
           </>}
+        </Panel>
+
+        <Panel>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+            <div className="gg-serif" style={{ fontSize: 15.5, color: T.text, letterSpacing: ".05em", flex: 1 }}>
+              {en ? "Users" : "Nutzer"}{users ? ` · ${users.length}` : ""}</div>
+            <Button variant="subtle" style={{ padding: "6px 11px", fontSize: 12 }}
+              onClick={() => { const tok = getAdminToken(); if (!tok) { flash(en ? "No admin token set (Profile → Reports)" : "Kein Admin-Token gesetzt (Profil → Fehlerberichte)"); return; } net.send({ t: "admin", cmd: "dump", token: tok }); }}>
+              {users ? t("online.refresh") : (en ? "Load" : "Laden")}</Button>
+          </div>
+          <div style={{ fontSize: 11.5, color: T.faint, margin: "-2px 0 9px", lineHeight: 1.45 }}>
+            {en ? "Everyone who has gone online. Offline-only players stay on their own device."
+                : "Alle, die online waren. Reine Offline-Spieler bleiben auf ihrem Gerät."}</div>
+          {!users ? <div style={{ fontSize: 12.5, color: T.faint }}>—</div>
+            : users.length === 0 ? <div style={{ fontSize: 12.5, color: T.faint }}>{en ? "No users yet." : "Noch keine Nutzer."}</div>
+            : <div style={{ display: "grid", gap: 6 }}>
+              {[...users].sort((a, b) => (b.seen || 0) - (a.seen || 0)).map((u) => {
+                const st = u.stats || {};
+                return (
+                  <div key={u.id} style={{ padding: "8px 10px", background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                      <span style={{ fontSize: 13.5, fontWeight: 800, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</span>
+                      {u.rating != null && <span style={{ fontWeight: 900, color: T.gold, fontSize: 13 }}>ELO {u.rating}</span>}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: T.dim, marginTop: 3, display: "flex", flexWrap: "wrap", gap: "2px 9px" }}>
+                      <span>{en ? "League" : "Liga"} {st.league || 1}</span>
+                      <span>· {fmtPlaytime(st.playtimeSec || 0)}</span>
+                      <span>· {st.games || 0} {en ? "games" : "Spiele"}</span>
+                      <span>· {u.wins}/{u.losses}/{u.draws} {en ? "duels" : "Duelle"}</span>
+                      {st.stagesCleared ? <span>· {st.stagesCleared} {en ? "stages" : "Etappen"}</span> : null}
+                      {u.seen ? <span style={{ color: T.faint }}>· {new Date(u.seen).toLocaleDateString(en ? "en" : "de", { day: "2-digit", month: "2-digit", year: "2-digit" })}</span> : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>}
         </Panel>
       </>)}
 

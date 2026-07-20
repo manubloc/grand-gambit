@@ -160,6 +160,12 @@ function mkHall(t0 = 1000) {
   ok("wrong admin tokens are denied", threw === "denied");
   hall.handle("a", { t: "admin", cmd: "stats", token: "super-secret-admin-token-24chars" });
   ok("the right token reads stats", last("admin", "a").players === 2);
+  hall.handle("a", { t: "set", stats: { games: 12, wins: 7, league: 3, playtimeSec: 3600, secret: "leak", evil: 9 } });
+  hall.handle("a", { t: "admin", cmd: "dump", token: "super-secret-admin-token-24chars" });
+  const dmp = last("admin", "a");
+  const rowA = dmp.players.find((r) => r.id === "a");
+  ok("admin dump lists players with their mirrored stats", !!rowA && rowA.stats.games === 12 && rowA.stats.league === 3 && rowA.stats.playtimeSec === 3600);
+  ok("admin dump never leaks secrets or junk fields", dmp.players.every((r) => r.secret === undefined) && rowA.stats.secret === undefined && rowA.stats.evil === undefined);
   for (let i = 0; i < 5; i++) { try { hall.handle("a", { t: "admin", cmd: "stats", token: "nope-nope-nope-nope-nope-" }, "1.2.3.4"); } catch {} }
   try { hall.handle("a", { t: "admin", cmd: "stats", token: "super-secret-admin-token-24chars" }, "1.2.3.4"); } catch (e) { threw = e.message; }
   ok("five failures lock the source out", threw === "locked");

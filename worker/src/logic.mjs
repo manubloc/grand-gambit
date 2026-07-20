@@ -17,6 +17,20 @@
 const BAND = (waited) => 150 + Math.floor(waited / 5000) * 60;
 const REMATCH_MS = 120000;
 
+// A player may mirror the same figures they see on their own profile so the
+// admin can survey everyone at a glance. Whitelisted, clamped, numbers only —
+// never trust the wire.
+const STAT_KEYS = ["games", "wins", "losses", "draws", "league", "playtimeSec", "stagesCleared", "bossKills", "xp"];
+function cleanStats(s) {
+  if (!s || typeof s !== "object") return null;
+  const out = {};
+  for (const k of STAT_KEYS) {
+    const v = s[k];
+    if (typeof v === "number" && isFinite(v)) out[k] = Math.max(0, Math.min(v | 0, 2e9));
+  }
+  return Object.keys(out).length ? out : null;
+}
+
 export class HallCore {
   constructor({ store, send, now = () => Date.now(), adminToken = "" }) {
     this.store = store; this.send = send; this.now = now;
@@ -166,7 +180,15 @@ export class HallCore {
         return reply({ players: ids.length, online: this.online.size,
           matches: Object.keys(this.matches).length, vaultSnapshots: this.store.vaultCount() }), me;
       }
-      if (msg.cmd === "dump") return reply({ players: this.store.dumpPlayers() }), me;
+      if (msg.cmd === "dump") {
+        const all = this.store.dumpPlayers();
+        const rows = Object.entries(all).map(([id, p]) => ({
+          id, name: p.name || "—", score: p.score || 0, rating: p.rating ?? null,
+          wins: p.wins || 0, losses: p.losses || 0, draws: p.draws || 0,
+          friends: (p.friends || []).length, seen: p.seen || null, stats: p.stats || null,
+        }));
+        return reply({ players: rows }), me;
+      }
       throw new Error("unknown admin cmd");
     }
     if (msg.t === "hello") {
@@ -176,7 +198,8 @@ export class HallCore {
       if (ex && ex.secret !== secret) throw new Error("identity taken");
       this.savePlayer({ ...(ex || { friends: [], pending: [] }), id, secret,
         name: String(name).slice(0, 20), score: score | 0,
-        privacy: privacy === "friends" ? "friends" : "public" });
+        privacy: privacy === "friends" ? "friends" : "public",
+        seen: this.now(), stats: cleanStats(msg.stats) || ex?.stats || null });
       me = id;
       this.connect(me);
       const p = this.player(me);
@@ -191,6 +214,8 @@ export class HallCore {
       if (msg.privacy) p.privacy = msg.privacy === "friends" ? "friends" : "public";
       if (msg.score != null) p.score = msg.score | 0;
       if (msg.name) p.name = String(msg.name).slice(0, 20);
+      if (msg.stats) p.stats = cleanStats(msg.stats) || p.stats;
+      p.seen = this.now();
       this.savePlayer(p); return me;
     }
     if (msg.t === "friendRequest") {

@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.22.80
+- ADMIN: Neue Nutzerliste im Online-Bereich (nur fuer Admins). Zeigt alle Nutzer, die online waren, mit Liga/Fortschritt, Spielzeit, Anzahl Spiele, Duell-Bilanz und ELO. Jeder Client spiegelt beim Verbinden dieselben Werte, die er auf dem eigenen Profil sieht, an die Hall; der Admin-Dump liefert sie gesammelt zurueck (ohne Secrets). Reine Offline-Spieler erscheinen nicht, da ihre Daten lokal auf dem Geraet bleiben.
+- SICHERHEIT: Der Admin-Dump gibt keine Spieler-Secrets mehr preis (nur Name, Liga, Spielzeit, Spiele, Bilanz, Rating, zuletzt gesehen).
+
 ## 0.22.79
 - ANIMATIONEN: Panels und Popups blenden jetzt sanft ein (Fade) statt herein- oder hochzugleiten. Die rise-Animation zieht nichts mehr hoch, und das Kampagnen-Panel gleitet nicht mehr seitlich mit der Kamera mit.
 - HOFSTAAT: Die Figurenbilder werden vorgeladen und erscheinen gemeinsam mit den Kacheln (kurzer Ladespinner beim ersten Oeffnen), statt dass leere Kacheln sich erst danach fuellen.
