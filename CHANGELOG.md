@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.67
+- KEIN AUFBLINZELN MEHR AM ZUGENDE: die Uebergabe von der Zug-Animation zur echten Figur ist jetzt unsichtbar. Ursache war, dass die animierte Figur nach der Landung noch schraeg gekippt (und mit Schatten) stehen blieb und erst spaeter gegen die aufrechte echte Figur getauscht wurde - dieser Sprung war das Blinzeln. Jetzt richtet sich die Neigung schon VOR der Landung wieder auf, der Schatten blendet mit aus, und der Tausch passiert im Moment der Landung, wenn beide pixelgleich sind
+- SPRUNG-ZUEGE (Springer und alle Figuren mit Sprung-Bewegung): deutlich hoeherer Bogen (ueber eine ganze Feldhoehe), langsamer in der Luft, und die Figur bleibt dabei komplett aufrecht - keine Schraegstellung beim Huepfen. Der Schatten unter der Figur vertieft sich am Scheitel
+- Gleit-Zuege neigen sich weiterhin in Laufrichtung, aber nur MITTEN im Zug - zur Landung hin stehen sie wieder gerade
+- CHARAKTERKARTE: das Portrait sitzt jetzt vertikal mittig in seiner Kachel und fuellt sie maximal aus (vorher klebte die Figur am unteren Rand)
+
 ## 0.22.66
 - BUBBLES OHNE GLANZ: der weisse Glanzpunkt ist aus allen Stat-Bubbles entfernt (Staerke/Leben/Energie) - durchgaengig im Spiel wie auf den Charakterkarten. Die Farbe fuellt die Kugel jetzt satt, nur die Kante dunkelt fuer die Rundung nach
 - CHARAKTERKARTE, TEXTREIHENFOLGE: der Flavor-Text (in der Serifenschrift, kursiv) steht jetzt direkt unter dem Namen - noch VOR den Stats, nicht mehr danach. Dazwischen bleibt die kleine Zeile mit Name der Zugehoerigkeit (Freie Figur, Kronenfigur bzw. das Haus). Reihenfolge also: Name, Zugehoerigkeit, Flavor, dann die Werte

@@ -422,14 +422,16 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         the vital lines beneath in a ledger rhythm. */}
     <div style={{ display: "flex", gap: 13, alignItems: "stretch", cursor: onToggle ? "pointer" : "default" }}
       onClick={onToggle ? (e) => { e.stopPropagation(); onToggle(); } : undefined}>
-      {/* portrait, framed like a poster plate */}
+      {/* portrait, framed like a poster plate — the figure centred and as
+          large as the plate allows */}
       <div style={{ flex: "0 0 auto", position: "relative", borderRadius: 12, overflow: "hidden",
-        width: bigArt ? 128 : 92, background: "linear-gradient(180deg, rgba(30,36,54,.5), rgba(10,12,20,.7))",
-        border: "1px solid rgba(227,192,122,.28)", display: "grid", placeItems: "end center" }}>
+        width: bigArt ? 128 : 92, minHeight: bigArt ? 176 : 128,
+        background: "linear-gradient(180deg, rgba(30,36,54,.5), rgba(10,12,20,.7))",
+        border: "1px solid rgba(227,192,122,.28)", display: "grid", placeItems: "center" }}>
         {paintedById(char.id)
           ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
-              style={{ width: "100%", height: bigArt ? 176 : 128, objectFit: "contain", objectPosition: "bottom",
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 94 : 68} /></div>}
       </div>

@@ -139,13 +139,19 @@ export const GLOBAL_CSS = `
   @keyframes queuePulse { 0%,100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.18); opacity: .18; } }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes arrowFade { 0% { opacity: 0; } 12% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
-  /* a LEAP is a real hop: the piece springs up, grows a touch as it nears the
-     eye at the apex, then lands — not a slide. --tilt keeps the lean while it
-     flies. */
+  /* a plain stride LEANS into the direction of travel mid-way and settles back
+     upright on arrival — so the ghost's final frame is IDENTICAL to the real
+     piece and the handoff is invisible. The shadow breathes in and out with it. */
+  @keyframes ggLean {
+    0%   { transform: rotate(0deg); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+    45%  { transform: rotate(var(--tilt, 0deg)); filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); }
+    100% { transform: rotate(0deg); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } }
+  /* a LEAP is a real hop: spring high, grow toward the eye at the apex, land —
+     upright the whole way (no lean), the shadow deepens beneath at the peak. */
   @keyframes ggLeapArc {
-    0%   { transform: translateY(0) scale(1) rotate(var(--tilt, 0deg)); }
-    46%  { transform: translateY(-58%) scale(1.16) rotate(var(--tilt, 0deg)); }
-    100% { transform: translateY(0) scale(1) rotate(var(--tilt, 0deg)); } }
+    0%   { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+    46%  { transform: translateY(-110%) scale(1.18); filter: drop-shadow(0 16px 12px rgba(0,0,0,.42)); }
+    100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
   .gg-quill { font-family: "IM Fell English", Georgia, "Times New Roman", serif; font-style: italic; }
   @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 12% { transform: translateX(320%) skewX(-18deg); } 100% { transform: translateX(320%) skewX(-18deg); } }
