@@ -271,22 +271,6 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             9: "196,168,120", 10: "150,168,186",
           }[world] || "220,214,200";
           const CLOUD_OP = { 1: 0.72, 2: 0.9, 3: 0.6, 4: 0.62, 5: 0.54, 6: 0.4, 7: 0.46, 8: 0.36, 9: 0.5, 10: 0.48 }[world] ?? 0.55;
-          // THE SKY behind the clouds: each world has its own weather. Bright blue
-          // + sun in the green worlds; cooler and hazier in autumn/winter; dusky
-          // purples and dark embered light in the deep, ominous worlds. The clouds
-          // drift OVER this, so blue sky / sun / dusk peeks through the gaps.
-          const SKY = {
-            1: "radial-gradient(60% 90% at 74% 8%, rgba(255,241,196,.85), transparent 46%), linear-gradient(180deg, rgba(120,178,232,.9) 0%, rgba(150,196,236,.5) 46%, transparent 82%)",
-            2: "radial-gradient(56% 88% at 70% 6%, rgba(255,248,214,.95), transparent 48%), linear-gradient(180deg, rgba(126,190,240,.92) 0%, rgba(170,210,244,.5) 48%, transparent 84%)",
-            3: "radial-gradient(60% 90% at 30% 8%, rgba(255,214,150,.7), transparent 50%), linear-gradient(180deg, rgba(150,164,190,.82) 0%, rgba(176,168,168,.44) 48%, transparent 82%)",
-            4: "linear-gradient(180deg, rgba(150,176,206,.86) 0%, rgba(196,208,224,.46) 48%, transparent 82%)",
-            5: "radial-gradient(58% 86% at 66% 8%, rgba(228,226,255,.6), transparent 50%), linear-gradient(180deg, rgba(126,150,196,.82) 0%, rgba(158,172,206,.44) 48%, transparent 82%)",
-            6: "radial-gradient(60% 92% at 28% 6%, rgba(224,150,96,.5), transparent 52%), linear-gradient(180deg, rgba(96,86,104,.85) 0%, rgba(120,98,96,.46) 46%, transparent 80%)",
-            7: "radial-gradient(58% 88% at 72% 8%, rgba(240,196,120,.5), transparent 52%), linear-gradient(180deg, rgba(140,128,150,.8) 0%, rgba(160,146,140,.42) 46%, transparent 80%)",
-            8: "radial-gradient(58% 90% at 34% 8%, rgba(200,120,150,.44), transparent 52%), linear-gradient(180deg, rgba(112,92,124,.84) 0%, rgba(128,104,120,.44) 46%, transparent 80%)",
-            9: "radial-gradient(60% 92% at 70% 6%, rgba(255,206,140,.55), transparent 50%), linear-gradient(180deg, rgba(150,118,150,.8) 0%, rgba(170,140,140,.42) 46%, transparent 80%)",
-            10: "radial-gradient(58% 88% at 66% 8%, rgba(170,150,255,.5), transparent 52%), linear-gradient(180deg, rgba(96,110,150,.85) 0%, rgba(120,132,166,.46) 48%, transparent 82%)",
-          }[world] || "linear-gradient(180deg, rgba(140,170,210,.8), transparent 82%)";
           const rad = Math.min(22, frameW / 12);
           // fade the WHOLE band out toward its lower edge — a long, gentle mask so
           // the clouds dissolve into the map with no hard cut whatsoever.
@@ -298,27 +282,29 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             {/* the SKY is the base: a full wash of the world's weather — blue +
                 sun in green worlds, dusk/purple in the deep. Clouds drift over
                 it; the gaps between them reveal this sky. */}
-            <div style={{ position: "absolute", inset: 0, background: "#0e1622" }} />
+            {/* sky base removed — fully transparent now, no blue wash; only the
+                faint terrain hint and the drifting clouds remain over the map */}
+            <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             {/* the faintest hint of terrain colour at the very bottom edge, UNDER
                 the sky so it never tints the blue */}
             <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
               height: "460%", objectFit: "cover", objectPosition: "50% 0%",
               filter: "blur(24px) brightness(.95) saturate(.95)", transform: "scaleY(-1)", opacity: 0.14,
               WebkitMaskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)", maskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)" }} />
-            <div style={{ position: "absolute", inset: 0, background: SKY }} />
+            <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             {/* drifting cloud PUFFS with real gaps — the sky (blue/sun/dusk)
                 stays visible between and behind them. Airy, so blue peeks through. */}
             <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(15px)",
-              opacity: (CLOUD_OP + 0.14) * 0.52, animation: "ggCloudA 24s ease-in-out infinite alternate, ggCloudBreath 11s ease-in-out infinite",
+              opacity: (CLOUD_OP + 0.14) * 0.52, animation: "ggCloudA 31s ease-in-out infinite alternate, ggCloudBreath 14s ease-in-out infinite",
               background: `radial-gradient(20% 30% at 16% 30%, rgba(${CLOUD},.92), transparent 60%), radial-gradient(24% 34% at 54% 20%, rgba(${CLOUD},.78), transparent 62%), radial-gradient(18% 28% at 84% 34%, rgba(${CLOUD},.85), transparent 60%)` }} />
             <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(20px)",
-              opacity: (CLOUD_OP) * 0.5, animation: "ggCloudB 33s ease-in-out infinite alternate, ggCloudBreath 15s ease-in-out infinite",
+              opacity: (CLOUD_OP) * 0.5, animation: "ggCloudB 43s ease-in-out infinite alternate, ggCloudBreath 19s ease-in-out infinite",
               background: `radial-gradient(22% 32% at 32% 24%, rgba(${CLOUD},.8), transparent 62%), radial-gradient(20% 30% at 72% 18%, rgba(${CLOUD},.7), transparent 64%)` }} />
             <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(26px)", mixBlendMode: "screen",
-              opacity: (CLOUD_OP + 0.1) * 0.42, animation: "ggCloudC 42s ease-in-out infinite alternate",
+              opacity: (CLOUD_OP + 0.1) * 0.42, animation: "ggCloudC 54s ease-in-out infinite alternate",
               background: `radial-gradient(26% 36% at 46% 16%, rgba(${CLOUD},.55), transparent 66%)` }} />
             <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(15px)",
-              opacity: (CLOUD_OP + 0.08) * 0.46, animation: "ggCloudD 19s ease-in-out infinite alternate, ggCloudBreath 9s ease-in-out infinite",
+              opacity: (CLOUD_OP + 0.08) * 0.46, animation: "ggCloudD 25s ease-in-out infinite alternate, ggCloudBreath 12s ease-in-out infinite",
               background: `radial-gradient(15% 24% at 62% 34%, rgba(${CLOUD},.88), transparent 58%), radial-gradient(13% 22% at 6% 22%, rgba(${CLOUD},.82), transparent 58%)` }} />
           </div>
           );

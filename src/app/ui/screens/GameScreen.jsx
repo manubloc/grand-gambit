@@ -340,7 +340,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         const mv = chooseMove(state, depth);
         setThinking(false);
         if (mv) play(mv);
-      }, 260);
+      }, 1000);   // a clear beat before the foe moves — no rushed jump into its turn
       return () => clearTimeout(id);
     }
   }, [state]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.22.70
+- ZUG-ANIMATION SAUBER REFACTORED: die ziehende Figur wird jetzt als EIN Objekt animiert, das pixelgenau der Figur entspricht, die danach im Feld steht (gleicher Versatz, gleiche Groesse). Frueher glitt ein mittig sitzender, kleinerer Ghost und wurde beim Landen durch die echte, hoehere + groessere Figur ersetzt - das war das "zieht zu weit, springt dann zurecht". Die Figur sitzt nun auf ihrem ZIELFELD und gleitet per Transform vom Start auf translate(0,0) = exakt das Feld; per DOM-Messung als pixelgenau verifiziert (Delta 0)
+- SPRINGEN/HUEPFEN: Pferd & Co. landen jetzt exakt statt daneben und werden nicht mehr nachtraeglich zurechtgerueckt; eigener Sprung minimal laenger fuer ein volleres Sprunggefuehl
+- RAUSFLIEGENDE FIGUREN endlich sichtbar: der Todesflug wurde nie ausgeloest, weil er auf lethal (nur HP-Modus) statt auf capture pruefte - im normalen Schach ist lethal=false. Er fliegt jetzt bei jedem Schlag; die geschlagene Figur bleibt stehen, bis der Angreifer ankommt, und wird dann zur Ablage geschleudert
+- ALLE FIGUREN ETWAS GROESSER
+- GEGNER: 1 Sekunde Pause vor seinem Zug (statt 260ms) - kein hektischer Sofort-Zug mehr
+- KAMPAGNENKARTE: der blaue Himmel hinter den Wolken ist jetzt komplett transparent (kein Blau mehr), Wolken-Animation ~30% langsamer
+
 ## 0.22.69
 - FAVICON UEBERALL ERNEUERT: das neue runde GG-Wappen liegt jetzt konsistent als Browser-Tab-Icon (favicon.ico + PNG 16/32/192), Apple-Touch-Icon, PWA-Icon (192/512) und maskable-Icon (mit gefuellter Safe-Zone) vor; index.html und PWA-Manifest darauf umgestellt
 - DATENSCHUTZERKLAERUNG EU-KONFORM UEBERARBEITET: konkrete Aufsichtsbehoerde (LfDI Baden-Wuerttemberg), Drittlanduebermittlung mit Rechtsgrundlage (EU-SCC/DPF), jsDelivr-CDN der Login-Bibliothek, Speicherdauern, Abschnitt Minderjaehrige (Art. 8 DSGVO), kein Profiling (Art. 22), Widerspruchsrecht (Art. 21); bewusst KEIN Verweis auf die zum 20.7.2025 abgeschaltete EU-ODR-Plattform (waere abmahngefaehrlich)

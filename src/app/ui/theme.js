@@ -152,6 +152,12 @@ export const GLOBAL_CSS = `
     0%   { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
     46%  { transform: translateY(-110%) scale(1.18); filter: drop-shadow(0 16px 12px rgba(0,0,0,.42)); }
     100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } }
+  /* a blocked strike: the attacker lunges toward the foe (--bx/--by point at the
+     target) and springs back to where it stood — ends neutral. */
+  @keyframes ggBounce {
+    0%   { transform: translate(0,0); }
+    38%  { transform: translate(var(--bx, 0), var(--by, 0)); }
+    100% { transform: translate(0,0); } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
   .gg-quill { font-family: "IM Fell English", Georgia, "Times New Roman", serif; font-style: italic; }
   @keyframes ggShine { 0% { transform: translateX(-160%) skewX(-18deg); } 12% { transform: translateX(320%) skewX(-18deg); } 100% { transform: translateX(320%) skewX(-18deg); } }

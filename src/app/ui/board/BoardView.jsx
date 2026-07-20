@@ -41,19 +41,27 @@ function DeathFlyer({ death, disp, W, H, pov, artStyle }) {
     const endScale = Math.max(0.16, Math.min(0.4, (from.width ? 22 / from.width : 0.3)));
     const kf = [
       { transform: "translate(0px,0px) rotate(0deg) scale(1)", opacity: 1, offset: 0 },
-      // a small pop UP and back first, like being knocked loose
-      { transform: `translate(${dx * 0.12}px, ${dy * 0.12 - from.height * 0.55}px) rotate(${dir * 70}deg) scale(1.12)`, opacity: 1, offset: 0.2 },
-      { transform: `translate(${dx * 0.6}px, ${dy * 0.5}px) rotate(${dir * 320}deg) scale(.7)`, opacity: 0.92, offset: 0.6 },
-      { transform: `translate(${dx}px, ${dy}px) rotate(${dir * 560}deg) scale(${endScale})`, opacity: 0, offset: 1 },
+      // knocked loose: a clear pop UP and a spin before it's flung off
+      { transform: `translate(${dx * 0.1}px, ${dy * 0.1 - from.height * 0.62}px) rotate(${dir * 82}deg) scale(1.16)`, opacity: 1, offset: 0.24 },
+      { transform: `translate(${dx * 0.58}px, ${dy * 0.48}px) rotate(${dir * 330}deg) scale(.66)`, opacity: 0.92, offset: 0.62 },
+      { transform: `translate(${dx}px, ${dy}px) rotate(${dir * 580}deg) scale(${endScale})`, opacity: 0, offset: 1 },
     ];
-    const player = el.animate(kf, { duration: 1150, easing: "cubic-bezier(.34,.06,.6,1)", fill: "forwards" });
+    // fill "both": BEFORE the delay elapses the first frame holds the victim in
+    // place (visible on its square) while the attacker glides in; then it flies.
+    const player = el.animate(kf, { duration: 1200, delay: death.holdMs || 0, easing: "cubic-bezier(.34,.06,.6,1)", fill: "both" });
     return () => { try { player.cancel(); } catch {} };
   }, [death.id]); // eslint-disable-line
   return <div ref={ref} style={{ position: "absolute", left: `${d.l}%`, top: `${d.t}%`,
     width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 8,
-    display: "grid", placeItems: "center", willChange: "transform, opacity",
-    filter: "drop-shadow(0 4px 8px rgba(0,0,0,.55))" }}>
-    <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+    display: "grid", placeItems: "center", willChange: "transform, opacity" }}>
+    {/* same lift/size/origin as the cell piece, so while it waits on its square
+        it sits exactly where the real piece stood */}
+    <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
+      transform: `translateY(${death.lift || "-10%"})`, transformOrigin: "50% 72%",
+      fontSize: death.font || "1.16em",
+      filter: "drop-shadow(0 0.09em 0.13em rgba(0,0,0,.6))" }}>
+      <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+    </div>
   </div>;
 }
 
@@ -217,20 +225,27 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     const tF = lastMove.to % W, tR = (lastMove.to / W) | 0;
     const dF = Math.abs(tF - fF), dR = Math.abs(tR - fR);
     const leaps = !lastMove.bounced && (glider.kind === "N" || !!(dF && dR && dF !== dR));
-    // leaps read slower AND higher — a real jump takes its time in the air
-    const durS = leaps ? (foe ? 1.25 : 0.85) : (foe ? 0.9 : 0.52);
+    // leaps read slower AND higher — a real jump takes its time in the air.
+    // own leap a touch longer than before so the hop feels complete (the foe's
+    // is already well-paced), plain glides quick.
+    const durS = leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52);
     const animId = ++animSeq.current;
     const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
       bounced: !!lastMove.bounced, foe, leaps, dur: durS, id: animId };
     setAnim(a);
-    // a lethal strike hurls the fallen piece off the board toward its captor's
-    // capture tray: the winner's tray. My tray sits BELOW the board, the foe's
-    // ABOVE — fly toward whichever took the piece.
-    if (lastMove.lethal && lastMove.hitKind) {
+    // a struck piece is hurled off toward its captor's tray. It fires on ANY
+    // capture — in chess rules a taken piece has capture=true but lethal=false
+    // (lethal is the HP-mode "dropped to 0" flag), so keying off lethal alone
+    // meant the flight never played in normal games. Never on a blocked hit.
+    if ((lastMove.capture || lastMove.lethal) && lastMove.hitKind && !lastMove.bounced) {
       const iWon = lastMove.color === pov;            // did MY side make this capture?
       setDeath({ at: lastMove.to, id: a.id + 100000,
         piece: { kind: lastMove.hitKind, color: lastMove.hitColor || (lastMove.color === "w" ? "b" : "w") },
         dir: (lastMove.color === "w" ? 1 : -1) * (pov === "w" ? 1 : -1),
+        // hold the victim in place until the attacker actually arrives, THEN
+        // fling it — so you read the strike, not a piece leaving early.
+        holdMs: Math.round(durS * 1000),
+        lift: pieceLift, font: pieceFont(lastMove.hitKind),
         fly: iWon ? -1 : 1 });   // -1 up (foe's tray up top), +1 down (my tray below)
     }
     // arm the glide: phase 0 paints the ghost at FROM, then the next frame(s)
@@ -250,8 +265,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     }, durS * 1000 + 90);
     const hold = Math.max(durS * 1000 + 650, 1150);   // trail fade-out cover
     const t = setTimeout(() => { setAnim((cur) => (cur && cur.id === a.id ? null : cur)); }, hold);
-    // the death flight runs 1.15s on its own clock — never cut short
-    const tDeath = setTimeout(() => { setDeath((cur) => (cur && cur.id === a.id + 100000 ? null : cur)); }, 1400);
+    // the death flight = hold (until the attacker lands) + 1.2s flight; never cut short
+    const tDeath = setTimeout(() => { setDeath((cur) => (cur && cur.id === a.id + 100000 ? null : cur)); }, durS * 1000 + 1500);
     return () => { cancelAnimationFrame(raf); cancelAnimationFrame(raf2); clearTimeout(tDone); clearTimeout(t); clearTimeout(tDeath); };
   }, [lastMove, animateFor, hotseat, pov]); // eslint-disable-line
 
@@ -297,6 +312,19 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     }
     else { setSel(null); setSpy(null); }
   }
+
+  // ── Shared piece-in-cell geometry ──────────────────────────────────────────
+  // The ANIMATED overlay reuses these EXACT values, so the gliding/leaping piece
+  // is pixel-identical to the one that finally stands in the cell: same lift,
+  // same size, same transform-origin. Previously the ghost sat centred and a
+  // size smaller, so on landing the piece visibly jumped up and grew — that was
+  // the "drifts too far, then snaps into place" glitch. One source of truth now.
+  const bigScreen = typeof innerWidth !== "undefined" && innerWidth >= 640;
+  const pieceLift = artStyle === "svg" ? "-2%" : bigScreen ? "-10%" : "-13%";
+  const pieceFont = (kind) => artStyle === "svg"
+    ? (kind === "P" ? "0.84em" : "1.0em")
+    : (kind === "P" ? "0.98em" : "1.16em");   // the court stands a touch larger now
+  const PIECE_ORIGIN = "50% 72%";
 
   const cells = [];
   for (let rr = 0; rr < H; rr++) {
@@ -360,12 +388,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
           {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "grid", placeItems: "center", pointerEvents: "none",
-            transform: (artStyle === "svg" ? "translateY(-2%)" // vector pieces sit LOW and settled
-                : typeof innerWidth !== "undefined" && innerWidth >= 640 ? "translateY(-10%)" : "translateY(-13%)")
-              + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""), // the chosen one steps forward — vectors more modestly
-            transformOrigin: "50% 72%",
+            transform: `translateY(${pieceLift})` + ((isSel || isSpy) ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
+            transformOrigin: PIECE_ORIGIN,
             position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
-            fontSize: artStyle === "svg" ? (piece.kind === "P" ? "0.76em" : "0.92em") : (piece.kind === "P" ? "0.9em" : "1.07em"), // vectors a size calmer; pawns humble, the court imposing
+            fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide
             transition: "transform .16s ease, opacity .18s ease, filter .45s ease",
@@ -486,22 +512,34 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       })()}
 
       {anim && (() => {
-        // bounce: attacker glides out and back; else a plain from→to glide.
-        // phase 0 sits at origin, phase 1 arrives (or, when bounced, returns),
-        // phase 2 is LANDED: the ghost is gone, the real piece shows — the
-        // swap happens in one commit while both are pixel-identical (upright,
-        // no shadow), so nothing blinks. The trail svg lingers through it.
+        // The mover is drawn ONCE, as an overlay that is pixel-identical to the
+        // piece that will stand in the cell (same lift, size, origin — see the
+        // shared pieceLift/pieceFont above). It sits on its DESTINATION cell and
+        // slides in FROM the origin as a transform (FROM-offset -> 0), so it
+        // lands EXACTLY on its square: transform 0 IS the cell. A leap arcs, a
+        // plain move leans, a blocked strike lunges and returns — every one ends
+        // neutral, so when the overlay hands off to the cell nothing shifts,
+        // grows or blinks. (The old ghost sat centred and smaller, then jumped.)
         const a = disp(anim.from), b = disp(anim.to);
-        const at = anim.bounced ? a : (anim.phase ? b : a);
         const dur = anim.dur || (anim.foe ? 0.9 : 0.52);
         const ease = "cubic-bezier(.34,.72,.28,1)";
-        // lean INTO the direction of travel — mid-flight only; the keyframe
-        // settles it back upright before arrival. Leaps stay upright entirely.
+        const leapEase = "cubic-bezier(.42,.05,.58,.95)";
+        // lean INTO the direction of travel — mid-flight only.
         const dxSign = Math.sign(b.l - a.l);
-        const dir = dxSign || (Math.sign(b.t - a.t) || 1); // vertical moves lean too
+        const dir = dxSign || (Math.sign(b.t - a.t) || 1);
         const tilt = dir * 7;
+        // BASE cell: normal move/leap → destination (slide in from origin);
+        // a bounce → origin (lunge toward the foe and spring back).
+        const base = anim.bounced ? a : b;
+        // offset that plants the piece at FROM while its base cell is TO, in %
+        // of one cell (translate(-100%) == exactly one cell). Same disp() maths
+        // as the grid, so origin and destination line up to the pixel.
+        const txStart = (a.l - b.l) * W, tyStart = (a.t - b.t) * H;
+        const bx = (b.l - a.l) * W * 0.42, by = (b.t - a.t) * H * 0.42; // lunge vector
+        const glideOn = !anim.bounced && anim.phase >= 1;
         const leapNow = anim.leaps && anim.phase === 1 && !anim.bounced;
         const leanNow = !anim.leaps && anim.phase === 1 && !anim.bounced;
+        const bounceNow = anim.bounced && anim.phase === 1;
         return (
           <div key={anim.id} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
@@ -514,31 +552,28 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               <circle cx={b.x} cy={b.y} r="3.1" fill={T.gold} opacity="0.16" />
               <circle cx={b.x} cy={b.y} r="1.5" fill={T.gold} opacity="0.55" />
             </svg>
-            {/* the mover glides (or leaps) from→to. Outer div carries the board
-                position; inner div carries the lean or the hop's vertical arc,
-                so the two never fight each other. The key={anim.id} forces a
-                FRESH element each move, so the ghost is born at FROM instead of
-                sliding in from the previous move's destination. */}
             {anim.phase < 2 && <div key={`g${anim.id}`} style={{ position: "absolute",
-              left: `${(anim.bounced ? (anim.phase ? a.l : b.l) : at.l)}%`,
-              top: `${(anim.bounced ? (anim.phase ? a.t : b.t) : at.t)}%`,
+              left: `${base.l}%`, top: `${base.t}%`,
               width: `${100 / W}%`, height: `${100 / H}%`, zIndex: 7,
-              // NO transition in phase 0: the ghost is planted at FROM with no
-              // animation, so it can never glide in from a stale position (that
-              // was the "foe starts where my piece landed" bug). The transition
-              // is switched on only for phase 1, which then carries it to TO.
-              // A leap glides its board position evenly so the arc reads clean.
-              transition: anim.phase ? `left ${dur}s ${anim.leaps ? "cubic-bezier(.42,.05,.58,.95)" : ease}, top ${dur}s ${anim.leaps ? "cubic-bezier(.42,.05,.58,.95)" : ease}` : "none",
+              // OUTER = board glide. Destination-based, so transform 0 lands the
+              // piece dead-centre on its cell. No transition in phase 0 (planted
+              // at FROM); phase 1 switches it on and carries it home.
+              transform: anim.bounced ? "none" : (glideOn ? "translate(0%,0%)" : `translate(${txStart}%, ${tyStart}%)`),
+              transition: anim.bounced ? "none" : (glideOn ? `transform ${dur}s ${anim.leaps ? leapEase : ease}` : "none"),
               display: "grid", placeItems: "center" }}>
+              {/* MIDDLE = the hop arc / lean / lunge — all end neutral */}
               <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
-                ...(leapNow
-                  // real hop: high keyframe arc up-and-down, upright, shadow beneath
-                  ? { animation: `ggLeapArc ${dur}s cubic-bezier(.4,.12,.5,1) forwards` }
-                  : leanNow
-                  // plain glide: lean mid-way, settle upright before landing
-                  ? { ["--tilt"]: `${tilt}deg`, animation: `ggLean ${dur}s ${ease} forwards` }
+                ...(leapNow ? { animation: `ggLeapArc ${dur}s cubic-bezier(.4,.12,.5,1) forwards` }
+                  : leanNow ? { ["--tilt"]: `${tilt}deg`, animation: `ggLean ${dur}s ${ease} forwards` }
+                  : bounceNow ? { ["--bx"]: `${bx}%`, ["--by"]: `${by}%`, animation: `ggBounce ${dur}s ease-in-out forwards` }
                   : {}) }}>
-                <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+                {/* INNER = the piece, IDENTICAL geometry to the cell version */}
+                <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center",
+                  transform: `translateY(${pieceLift})`, transformOrigin: PIECE_ORIGIN,
+                  fontSize: pieceFont(anim.piece.kind),
+                  filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>
+                  <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+                </div>
               </div>
             </div>}
           </div>
