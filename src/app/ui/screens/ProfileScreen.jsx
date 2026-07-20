@@ -206,7 +206,8 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
 
     <div style={{ textAlign: "center", fontSize: 11.5, color: T.faint, padding: "4px 0 10px" }}>
       Grand Gambit v{typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev"} ·{" "}
-      <a href="./privacy.html" target="_blank" rel="noreferrer" style={{ color: T.dim }}>{t("profile.privacy")}</a>
+      <a href="./privacy.html" target="_blank" rel="noreferrer" style={{ color: T.dim }}>{t("profile.privacy")}</a> ·{" "}
+      <a href="./terms.html" target="_blank" rel="noreferrer" style={{ color: T.dim }}>{t("profile.terms")}</a>
     </div>
 
   </div>;

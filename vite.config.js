@@ -17,7 +17,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: false, // registration lives in main.jsx (update loop + auto-reload)
-      includeAssets: ["favicon.svg", "og.png", "privacy.html", "robots.txt"],
+      includeAssets: ["favicon.ico", "favicon.svg", "og.png", "privacy.html", "terms.html", "robots.txt"],
       manifest: {
         name: "Grand Gambit",
         short_name: "Grand Gambit",

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.22.69
+- FAVICON UEBERALL ERNEUERT: das neue runde GG-Wappen liegt jetzt konsistent als Browser-Tab-Icon (favicon.ico + PNG 16/32/192), Apple-Touch-Icon, PWA-Icon (192/512) und maskable-Icon (mit gefuellter Safe-Zone) vor; index.html und PWA-Manifest darauf umgestellt
+- DATENSCHUTZERKLAERUNG EU-KONFORM UEBERARBEITET: konkrete Aufsichtsbehoerde (LfDI Baden-Wuerttemberg), Drittlanduebermittlung mit Rechtsgrundlage (EU-SCC/DPF), jsDelivr-CDN der Login-Bibliothek, Speicherdauern, Abschnitt Minderjaehrige (Art. 8 DSGVO), kein Profiling (Art. 22), Widerspruchsrecht (Art. 21); bewusst KEIN Verweis auf die zum 20.7.2025 abgeschaltete EU-ODR-Plattform (waere abmahngefaehrlich)
+- NUTZUNGSBEDINGUNGEN NEU (terms.html): kostenloser Dienst, Pflichten/verbotene Nutzung (Cheaten, Bots, rechtswidrige Namen), Rechte am Spiel, dreistufige Haftungsklausel nach deutschem Recht (Vorsatz/grobe Fahrlaessigkeit und Leben/Koerper/Gesundheit unbeschraenkt, einfache Fahrlaessigkeit nur Kardinalpflicht), deutsches Recht, § 36 VSBG; im Footer und in der Datenschutzseite verlinkt
+- Hinweis: keine anwaltliche Pruefung - solide DSGVO-orientierte Grundlage, fuer volle Rechtssicherheit fachliche Pruefung empfohlen
+
 ## 0.22.68
 - FEHLERBERICHTE ZUM DIREKTEN KOPIEREN: unter Profil -> Fehlerberichte gibt es jetzt "Alle kopieren" (kopiert saemtliche geladenen Berichte als lesbaren Text, durch Trennlinien getrennt - zum direkten Einfuegen hier im Chat) sowie einen "Kopieren"-Knopf an jedem einzelnen aufgeklappten Bericht. Der kopierte Text enthaelt Zeit, Version, Art, Konto, URL, Geraet, Meldung, Notiz, Stacktrace und die letzten Ereignisse - alles, was fuer eine Fehlersuche gebraucht wird, in einem Block
 
