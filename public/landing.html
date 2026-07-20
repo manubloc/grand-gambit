@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Grand Gambit — Das Schach-RPG</title>
-  <meta name="description" content="Grand Gambit ist das Schach-RPG: Deine Figuren haben Lebenspunkte, steigen im Level auf und lernen echte Fähigkeiten. Kampagne über zehn Ligen, 26 Helden, Online-Duelle. Kostenlos, werbefrei, sofort im Browser." />
+  <meta name="description" content="Grand Gambit ist das Schach-RPG: Figuren mit Lebenspunkten, Level-Aufstieg und echten Fähigkeiten. Kampagne über zehn Ligen, 26 Helden, Online-Duelle — oder ganz klassisches Schach. Kostenlos & werbefrei." />
   <link rel="canonical" href="https://grandgambit.win/landing.html" />
   <link rel="icon" href="./favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
@@ -28,173 +28,297 @@
       --gleam: #f4dca0;
       --ivory: #ded8c8;
       --muted: #939bb0;
+      --navy: #1a2233;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0; color: var(--ivory);
-      background: var(--night);
       font: 16px/1.7 Georgia, "Times New Roman", serif;
       -webkit-font-smoothing: antialiased;
+      /* one hall for the whole page: a deep glow at the top, a second at the
+         foot, so the atmosphere returns below the last panel too */
+      background:
+        radial-gradient(130% 60% at 50% 0%, #14243f 0%, #0a1120 40%, #05070c 74%),
+        radial-gradient(120% 40% at 50% 100%, #12203a 0%, #070c17 46%, #05070c 80%);
+      background-attachment: fixed;
     }
     a { color: var(--gold-bright); }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
+
+    /* a faint marble board, reused top and bottom to frame the hall */
+    .board-whisper { position: absolute; left: 0; right: 0; height: 42%; pointer-events: none;
+      background-image:
+        linear-gradient(45deg, rgba(201,164,92,.15) 25%, transparent 25% 75%, rgba(201,164,92,.15) 75%),
+        linear-gradient(45deg, rgba(201,164,92,.15) 25%, transparent 25% 75%, rgba(201,164,92,.15) 75%);
+      background-size: 46px 46px; background-position: 0 0, 23px 23px; opacity: .14; }
 
     /* ── Hero ─────────────────────────────────────────────── */
-    .hero {
-      position: relative; overflow: hidden;
-      padding: clamp(56px, 12vw, 128px) 0 clamp(48px, 9vw, 96px);
-      text-align: center;
-      background:
-        radial-gradient(120% 90% at 50% -10%, #12203a 0%, #0a1120 46%, #05070c 82%);
-      border-bottom: 1px solid var(--line);
-    }
-    /* a faint marble board whispers along the hero floor — the game's own world */
-    .hero::after {
-      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
-      background-image:
-        linear-gradient(45deg, rgba(201,164,92,.16) 25%, transparent 25% 75%, rgba(201,164,92,.16) 75%),
-        linear-gradient(45deg, rgba(201,164,92,.16) 25%, transparent 25% 75%, rgba(201,164,92,.16) 75%);
-      background-size: 46px 46px; background-position: 0 0, 23px 23px;
-      opacity: .16; pointer-events: none;
-      -webkit-mask-image: linear-gradient(180deg, transparent, #000 120%);
-      mask-image: linear-gradient(180deg, transparent, #000 120%);
-    }
+    .hero { position: relative; overflow: hidden; text-align: center;
+      padding: clamp(56px, 12vw, 122px) 0 clamp(46px, 8vw, 86px); }
+    .hero .board-whisper { bottom: 0; -webkit-mask-image: linear-gradient(180deg, transparent, #000 120%); mask-image: linear-gradient(180deg, transparent, #000 120%); }
     .hero > .wrap { position: relative; z-index: 1; }
-
-    .crest {
-      width: clamp(96px, 22vw, 148px); height: auto; display: block; margin: 0 auto 26px;
-      filter:
-        drop-shadow(0 3px 10px rgba(0,0,0,.6))
-        drop-shadow(0 0 26px rgba(227,192,122,.28));
-      animation: rise .9s cubic-bezier(.2,.7,.2,1) both;
-    }
-    .eyebrow {
-      font-size: 12.5px; letter-spacing: .42em; text-transform: uppercase;
-      color: var(--gold); margin: 0 0 14px; padding-left: .42em;
-      animation: rise .9s cubic-bezier(.2,.7,.2,1) .06s both;
-    }
-    h1 {
-      margin: 0; font-weight: 700; letter-spacing: .04em; line-height: 1.02;
-      font-size: clamp(44px, 10vw, 88px);
+    .crest { width: clamp(94px, 21vw, 142px); height: auto; display: block; margin: 0 auto 24px;
+      filter: drop-shadow(0 3px 10px rgba(0,0,0,.6)) drop-shadow(0 0 26px rgba(227,192,122,.28));
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) both; }
+    .eyebrow { font-size: 12.5px; letter-spacing: .42em; text-transform: uppercase; color: var(--gold);
+      margin: 0 0 14px; padding-left: .42em; animation: rise .9s cubic-bezier(.2,.7,.2,1) .06s both; }
+    h1 { margin: 0; font-weight: 700; letter-spacing: .04em; line-height: 1.02; font-size: clamp(44px, 10vw, 86px);
       background: linear-gradient(178deg, var(--gleam) 8%, var(--gold-bright) 42%, #b58a3f 100%);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent; color: var(--gold-bright);
-      text-shadow: 0 1px 30px rgba(227,192,122,.14);
-      animation: rise .9s cubic-bezier(.2,.7,.2,1) .12s both;
-    }
-    .tagline {
-      margin: 14px 0 0; font-style: italic; font-size: clamp(18px, 3.6vw, 24px);
-      color: #cbb78a; letter-spacing: .01em;
-      animation: rise .9s cubic-bezier(.2,.7,.2,1) .18s both;
-    }
-    .lead {
-      max-width: 620px; margin: 22px auto 0; color: var(--ivory); font-size: clamp(16px, 2.3vw, 18px);
-      animation: rise .9s cubic-bezier(.2,.7,.2,1) .24s both;
-    }
-    .cta-row { margin-top: 34px; animation: rise .9s cubic-bezier(.2,.7,.2,1) .3s both; }
-    .play {
-      display: inline-block; text-decoration: none; cursor: pointer;
-      padding: 15px 40px; border-radius: 11px; font-size: 18px; font-weight: 700;
-      letter-spacing: .03em; color: #1a1206;
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--gold-bright);
+      text-shadow: 0 1px 30px rgba(227,192,122,.14); animation: rise .9s cubic-bezier(.2,.7,.2,1) .12s both; }
+    .tagline { margin: 14px 0 0; font-style: italic; font-size: clamp(18px, 3.6vw, 24px); color: #cbb78a;
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .18s both; }
+    .lead { max-width: 630px; margin: 22px auto 0; font-size: clamp(16px, 2.3vw, 18px);
+      animation: rise .9s cubic-bezier(.2,.7,.2,1) .24s both; }
+    .cta-row { margin-top: 32px; animation: rise .9s cubic-bezier(.2,.7,.2,1) .3s both; }
+    .play { display: inline-block; text-decoration: none; cursor: pointer; padding: 15px 40px; border-radius: 11px;
+      font-size: 18px; font-weight: 700; letter-spacing: .03em; color: #1a1206;
       background: linear-gradient(180deg, var(--gleam), var(--gold) 92%);
-      box-shadow: 0 8px 22px rgba(201,164,92,.28), inset 0 1px 0 rgba(255,255,255,.5);
-      border: 1px solid #8a6c2e; transition: transform .16s ease, box-shadow .2s ease;
-    }
+      box-shadow: 0 8px 22px rgba(201,164,92,.28), inset 0 1px 0 rgba(255,255,255,.5); border: 1px solid #8a6c2e;
+      transition: transform .16s ease, box-shadow .2s ease; }
     .play:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(201,164,92,.4), inset 0 1px 0 rgba(255,255,255,.6); }
     .meta { margin: 18px 0 0; font-size: 13.5px; color: var(--muted); letter-spacing: .02em;
       animation: rise .9s cubic-bezier(.2,.7,.2,1) .36s both; }
 
     /* ── Sections ─────────────────────────────────────────── */
-    section { padding: clamp(48px, 9vw, 84px) 0; }
-    .band-line { border-top: 1px solid var(--line); }
-    .sec-eyebrow { font-size: 12px; letter-spacing: .34em; text-transform: uppercase;
-      color: var(--gold); text-align: center; margin: 0 0 8px; }
-    .sec-title { text-align: center; margin: 0 0 34px; font-size: clamp(24px, 5vw, 34px);
-      color: var(--gold-bright); font-weight: 700; letter-spacing: .02em; }
+    section { position: relative; padding: clamp(44px, 8vw, 76px) 0; }
+    .divider::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: min(80%, 620px); height: 1px; background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent); }
+    .sec-eyebrow { font-size: 12px; letter-spacing: .34em; text-transform: uppercase; color: var(--gold);
+      text-align: center; margin: 0 0 8px; }
+    .sec-title { text-align: center; margin: 0 0 12px; font-size: clamp(24px, 5vw, 34px); color: var(--gold-bright);
+      font-weight: 700; letter-spacing: .02em; }
+    .sec-intro { max-width: 640px; margin: 0 auto 34px; text-align: center; color: var(--ivory); font-size: 16px; }
 
-    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
-    @media (min-width: 620px) { .grid { grid-template-columns: 1fr 1fr; } }
-    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
-    .card {
-      background: linear-gradient(180deg, var(--card), #10182688);
-      border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 24px;
-    }
-    .card h3 { margin: 0 0 8px; font-size: 18.5px; color: var(--gold-bright); font-weight: 700; letter-spacing: .01em; }
-    .card p { margin: 0; color: var(--ivory); font-size: 15px; line-height: 1.62; }
-    .card .rune { font-size: 22px; color: var(--gold); display: block; margin-bottom: 12px; line-height: 1; }
+    /* modes */
+    .modes { display: grid; gap: 15px; grid-template-columns: 1fr; }
+    @media (min-width: 720px) { .modes { grid-template-columns: 1fr 1fr; } }
+    .mode { background: linear-gradient(180deg, var(--card), #10182688); border: 1px solid var(--line);
+      border-radius: 14px; padding: 20px 22px; }
+    .mode h3 { margin: 0 0 6px; font-size: 18px; color: var(--gold-bright); }
+    .mode p { margin: 0; font-size: 15px; color: var(--ivory); }
+    .versus { margin: 20px auto 0; max-width: 680px; display: grid; gap: 12px; grid-template-columns: 1fr 1fr 1fr; text-align: center; }
+    @media (max-width: 560px) { .versus { grid-template-columns: 1fr; } }
+    .vs { background: #0f1626; border: 1px solid var(--line); border-radius: 12px; padding: 16px 12px; }
+    .vs .ico { font-size: 22px; color: var(--gold); display: block; margin-bottom: 6px; }
+    .vs b { display: block; color: var(--gold-bright); font-size: 15px; margin-bottom: 2px; }
+    .vs span { font-size: 13px; color: var(--muted); }
 
-    /* ── Account note ─────────────────────────────────────── */
-    .note {
-      max-width: 680px; margin: 0 auto; background: var(--panel);
-      border: 1px solid var(--line); border-left: 3px solid var(--gold);
-      border-radius: 12px; padding: 22px 24px;
-    }
+    /* chronicle gallery */
+    .roster { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 620px) { .roster { grid-template-columns: 1fr 1fr; } }
+    .fig { display: flex; gap: 16px; align-items: center; background: linear-gradient(180deg, var(--card), #10182688);
+      border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+    .fig img { width: 84px; height: 84px; object-fit: contain; flex: 0 0 auto;
+      filter: brightness(1.28) saturate(1.05) drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+    .fig .who { min-width: 0; }
+    .fig h3 { margin: 0 0 3px; font-size: 17px; color: var(--gold-bright); }
+    .fig .flavor { margin: 0 0 7px; font-style: italic; font-size: 13.5px; color: #c3b489; line-height: 1.45; }
+    .fig .can { margin: 0; font-size: 13px; color: var(--ivory); }
+    .fig .can b { color: var(--gold); font-weight: 400; }
+
+    /* league board */
+    .board-wrap { display: grid; gap: 26px; grid-template-columns: 1fr; align-items: center; }
+    @media (min-width: 760px) { .board-wrap { grid-template-columns: 300px 1fr; } }
+    .board { width: 300px; max-width: 84vw; aspect-ratio: 1; margin: 0 auto; display: grid;
+      grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+      border: 1px solid #2a2f3d; border-radius: 8px; overflow: hidden;
+      box-shadow: 0 14px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(227,192,122,.14); }
+    .sq { display: grid; place-items: center; font-size: 20px; line-height: 1; }
+    .sq.l { background: #8a8371; } .sq.d { background: #3a3e49; }
+    .sq.hole { background: #090d16; box-shadow: inset 0 0 8px rgba(0,0,0,.8); position: relative; }
+    .sq.hole::after { content: ""; width: 30%; height: 30%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(227,150,80,.5), transparent 70%); }
+    .pc { filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+    .pc.w { color: #e9cf8f; } .pc.b { color: #10151f; text-shadow: 0 0 1px #4a5570; }
+    .board-note h3 { margin: 0 0 8px; color: var(--gold-bright); font-size: 19px; }
+    .board-note p { margin: 0 0 10px; font-size: 15px; color: var(--ivory); }
+    .board-note .pips { font-size: 13px; color: var(--muted); }
+
+    /* world map */
+    .worldmap { max-width: 560px; margin: 0 auto; }
+    .worldmap svg { width: 100%; height: auto; display: block; }
+    .legend { max-width: 620px; margin: 20px auto 0; text-align: center; font-size: 14px; color: var(--muted); }
+    .legend b { color: var(--gold); font-weight: 400; }
+
+    /* account note */
+    .note { max-width: 680px; margin: 0 auto; background: var(--panel); border: 1px solid var(--line);
+      border-left: 3px solid var(--gold); border-radius: 12px; padding: 22px 24px; }
     .note h3 { margin: 0 0 8px; color: var(--gold-bright); font-size: 18px; }
     .note p { margin: 0; color: var(--ivory); font-size: 15px; }
 
-    /* ── Closing call ─────────────────────────────────────── */
     .closing { text-align: center; }
     .closing p { margin: 0 0 22px; font-style: italic; font-size: clamp(20px, 4vw, 28px); color: #cbb78a; }
 
-    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; text-align: center;
+    footer { position: relative; border-top: 1px solid var(--line); padding: 26px 0 0; text-align: center;
       font-size: 13px; color: var(--muted); }
     footer a { color: var(--gold); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+    /* the hall breathes below the last panel: open space where the background shows */
+    .footer-hall { position: relative; height: clamp(90px, 16vw, 150px); overflow: hidden; }
+    .footer-hall .board-whisper { top: 0; -webkit-mask-image: linear-gradient(0deg, transparent, #000 130%); mask-image: linear-gradient(0deg, transparent, #000 130%); }
 
     :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; border-radius: 4px; }
-
     @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .crest, .eyebrow, h1, .tagline, .lead, .cta-row, .meta { animation: none; }
       .play { transition: none; }
+      body { background-attachment: scroll; }
     }
   </style>
 </head>
 <body>
   <header class="hero">
+    <div class="board-whisper"></div>
     <div class="wrap">
-      <img class="crest" src="./icons/icon-512.png" alt="Grand Gambit — goldenes GG-Wappen" width="148" height="148" />
+      <img class="crest" src="./icons/icon-512.png" alt="Grand Gambit — goldenes GG-Wappen" width="142" height="142" />
       <p class="eyebrow">Das Schach-RPG</p>
       <h1>Grand Gambit</h1>
       <p class="tagline">Schach, das Charaktere erhebt.</p>
       <p class="lead">Deine Figuren haben Lebenspunkte, steigen im Level auf und lernen echte Fähigkeiten.
-      Führe sie durch eine Kampagne über zehn Ligen und stelle aus 26 Helden deine eigene Armee auf.</p>
+      Führe sie durch eine Kampagne über zehn Ligen und stelle aus 26 Helden deine eigene Armee auf —
+      oder spiel einfach eine Partie klassisches Schach.</p>
       <div class="cta-row"><a class="play" href="./">Jetzt spielen</a></div>
-      <p class="meta">Kostenlos · werbefrei · sofort im Browser — auch als App installierbar</p>
+      <p class="meta">Kostenlos · werbefrei · auch als App installierbar</p>
     </div>
   </header>
 
   <main>
-    <section>
+    <!-- MODES -->
+    <section class="divider">
       <div class="wrap">
-        <p class="sec-eyebrow">Was dich erwartet</p>
-        <h2 class="sec-title">Ein Schachbrett wird zum Abenteuer</h2>
-        <div class="grid">
-          <div class="card"><span class="rune" aria-hidden="true">♥</span>
-            <h3>Figuren mit Leben</h3>
-            <p>Kein Alles-oder-Nichts mehr: Jede Figur trägt Lebenspunkte, teilt Schaden aus und steckt Treffer ein.</p></div>
-          <div class="card"><span class="rune" aria-hidden="true">✦</span>
-            <h3>Aufstieg &amp; Fähigkeiten</h3>
-            <p>Figuren sammeln Erfahrung, steigen im Level auf und erlernen echte Fähigkeiten, die den Kampf verändern.</p></div>
-          <div class="card"><span class="rune" aria-hidden="true">⚑</span>
-            <h3>Kampagne über zehn Ligen</h3>
-            <p>Zieh Stufe um Stufe durch ein wachsendes Reich — jede Liga stellt stärkere Gegner und neue Herausforderer.</p></div>
-          <div class="card"><span class="rune" aria-hidden="true">♞</span>
-            <h3>Sechsundzwanzig Helden</h3>
-            <p>Wähle aus 26 Helden und stelle deinen Hof so auf, wie es deine eigene Strategie verlangt.</p></div>
-          <div class="card"><span class="rune" aria-hidden="true">⚔</span>
-            <h3>Online oder zu zweit</h3>
-            <p>Tritt online gegen andere Strategen an oder spielt zu zweit an einem einzigen Gerät.</p></div>
-          <div class="card"><span class="rune" aria-hidden="true">☾</span>
-            <h3>Kostenlos &amp; werbefrei</h3>
-            <p>Kein Preis, keine Werbung, kein Tracking. Dein Spielstand gehört dir und bleibt auf deinem Gerät.</p></div>
+        <p class="sec-eyebrow">Spiel es, wie du willst</p>
+        <h2 class="sec-title">Zwei Spiele auf einem Brett</h2>
+        <div class="modes">
+          <div class="mode"><h3>Klassisches Schach</h3>
+            <p>Nur die vierundsechzig Felder? Reines Schach, sauber und ohne Schnickschnack — jederzeit spielbar.</p></div>
+          <div class="mode"><h3>Das volle RPG</h3>
+            <p>Oder die Kampagne mit lebenden Figuren: Lebenspunkte, Stufen und Fähigkeiten machen aus jedem Zug eine Schlacht.</p></div>
+        </div>
+        <div class="versus">
+          <div class="vs"><span class="ico" aria-hidden="true">♟</span><b>Gegen die KI</b><span>Allein üben oder herausgefordert werden</span></div>
+          <div class="vs"><span class="ico" aria-hidden="true">⚔</span><b>Zu zweit, ein Gerät</b><span>Abwechselnd am selben Brett</span></div>
+          <div class="vs"><span class="ico" aria-hidden="true">🜲</span><b>Online</b><span>Gegen andere Strategen weltweit</span></div>
         </div>
       </div>
     </section>
 
-    <section class="band-line">
+    <!-- CHRONICLE -->
+    <section class="divider">
+      <div class="wrap">
+        <p class="sec-eyebrow">Aus der Chronik</p>
+        <h2 class="sec-title">Wer auf deiner Seite kämpft</h2>
+        <p class="sec-intro">Sechsundzwanzig Helden warten. Die meisten stehen zuerst als Gegner auf dem Feld —
+        überlebst du sie, ziehen sie mit dir. Ein kleiner Vorgeschmack:</p>
+        <div class="roster">
+          <div class="fig"><img src="./pieces/gambit.webp" alt="Grand Gambit" loading="lazy" />
+            <div class="who"><h3>Grand Gambit</h3>
+              <p class="flavor">„Geboren, geopfert zu werden — entschlossen, es nicht zu bleiben."</p>
+              <p class="can"><b>Kann:</b> als Bauer beginnen und über sechs Stufen zur Legende aufsteigen — mit Teleport und Tarnung.</p></div></div>
+          <div class="fig"><img src="./pieces/amazon.webp" alt="Amazone" loading="lazy" />
+            <div class="who"><h3>Amazone</h3>
+              <p class="flavor">„Niemand fordert sie zweimal heraus."</p>
+              <p class="can"><b>Kann:</b> ziehen wie Dame <em>und</em> Springer, aus der Ferne schlagen und Leben rauben.</p></div></div>
+          <div class="fig"><img src="./pieces/seeress.webp" alt="Vesna, die Seherin" loading="lazy" />
+            <div class="who"><h3>Vesna, die Seherin</h3>
+              <p class="flavor">„Sie hat das Ende jeder Partie gesehen — sie spielt nur mit, um zu erfahren, wie es sich anfühlt."</p>
+              <p class="can"><b>Kann:</b> aus der Distanz schießen und quer über das Brett springen.</p></div></div>
+          <div class="fig"><img src="./pieces/dragon.webp" alt="Drache" loading="lazy" />
+            <div class="who"><h3>Drache</h3>
+              <p class="flavor">„Jung, gierig und fest überzeugt, dass alles Gold ihm gehört."</p>
+              <p class="can"><b>Kann:</b> als ganzer 2×2-Koloss über Mauern fliegen und jedes bedeckte Feld zugleich treffen.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEAGUE BOARD -->
+    <section class="divider">
+      <div class="wrap">
+        <p class="sec-eyebrow">Das Schlachtfeld</p>
+        <h2 class="sec-title">Bretter mit Charakter</h2>
+        <div class="board-wrap">
+          <div class="board" role="img" aria-label="Ein geformtes Spielbrett mit gesperrten Feldern und Figuren">
+            <!-- row 0 -->
+            <div class="sq l"><span class="pc b">♜</span></div><div class="sq d"><span class="pc b">♞</span></div><div class="sq l"></div><div class="sq d"><span class="pc b">♛</span></div><div class="sq l"><span class="pc b">♚</span></div><div class="sq d"></div><div class="sq l"><span class="pc b">♞</span></div><div class="sq d"><span class="pc b">♜</span></div>
+            <!-- row 1 -->
+            <div class="sq d"><span class="pc b">♟</span></div><div class="sq l"><span class="pc b">♟</span></div><div class="sq d"><span class="pc b">♟</span></div><div class="sq l"><span class="pc b">♟</span></div><div class="sq d"><span class="pc b">♟</span></div><div class="sq l"><span class="pc b">♟</span></div><div class="sq d"><span class="pc b">♟</span></div><div class="sq l"><span class="pc b">♟</span></div>
+            <!-- row 2 -->
+            <div class="sq l"></div><div class="sq d"></div><div class="sq hole"></div><div class="sq l"></div><div class="sq d"></div><div class="sq hole"></div><div class="sq l"></div><div class="sq d"></div>
+            <!-- row 3 -->
+            <div class="sq d"></div><div class="sq l"></div><div class="sq d"></div><div class="sq l"></div><div class="sq d"></div><div class="sq l"></div><div class="sq d"></div><div class="sq l"></div>
+            <!-- row 4 -->
+            <div class="sq l"></div><div class="sq d"></div><div class="sq l"></div><div class="sq d"></div><div class="sq l"></div><div class="sq d"></div><div class="sq l"></div><div class="sq d"></div>
+            <!-- row 5 -->
+            <div class="sq d"></div><div class="sq l"></div><div class="sq hole"></div><div class="sq d"></div><div class="sq l"></div><div class="sq hole"></div><div class="sq d"></div><div class="sq l"></div>
+            <!-- row 6 -->
+            <div class="sq l"><span class="pc w">♟</span></div><div class="sq d"><span class="pc w">♟</span></div><div class="sq l"><span class="pc w">♟</span></div><div class="sq d"><span class="pc w">♟</span></div><div class="sq l"><span class="pc w">♟</span></div><div class="sq d"><span class="pc w">♟</span></div><div class="sq l"><span class="pc w">♟</span></div><div class="sq d"><span class="pc w">♟</span></div>
+            <!-- row 7 -->
+            <div class="sq d"><span class="pc w">♜</span></div><div class="sq l"><span class="pc w">♞</span></div><div class="sq d"></div><div class="sq l"><span class="pc w">♛</span></div><div class="sq d"><span class="pc w">♚</span></div><div class="sq l"></div><div class="sq d"><span class="pc w">♞</span></div><div class="sq l"><span class="pc w">♜</span></div>
+          </div>
+          <div class="board-note">
+            <h3>Nicht jedes Feld ist gleich</h3>
+            <p>Ligen bringen eigene Bretter: mal weit, mal eng, mal von Schluchten und gesperrten Feldern durchzogen.
+            Wo eine Mauer steht, muss ein Plan herumführen.</p>
+            <p class="pips">Und im RPG bluten Figuren, statt einfach zu verschwinden — jede trägt Lebenspunkte,
+            Rüstung und Schlagkraft mit sich.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORLD MAP -->
+    <section class="divider">
+      <div class="wrap">
+        <p class="sec-eyebrow">Die Reise</p>
+        <h2 class="sec-title">Eine Welt, viele Wege</h2>
+        <p class="sec-intro">Von der Alten Wacht führt dein Weg über verzweigte Pfade bis zum Ligameister.
+        Jede Station hat ihren eigenen Hüter — und ihre eigene Geschichte.</p>
+        <div class="worldmap">
+          <svg viewBox="0 0 320 226" role="img" aria-label="Weltkarte der Kampagne mit verzweigten Pfaden">
+            <defs>
+              <radialGradient id="node" cx="38%" cy="32%" r="70%">
+                <stop offset="0%" stop-color="#f4dca0"/><stop offset="55%" stop-color="#c9a45c"/><stop offset="100%" stop-color="#8a6c2e"/>
+              </radialGradient>
+            </defs>
+            <g stroke="#3a4666" stroke-width="2" fill="none" opacity="0.55">
+              <path d="M160,22 L160,52"/>
+              <path d="M160,52 L60,84 M160,52 L160,84 M160,52 L260,84"/>
+              <path d="M60,84 L60,116 L60,148 M160,84 L160,116 L160,148 M260,84 L260,116 L260,148"/>
+              <path d="M60,148 L160,180 M160,148 L160,180 M260,148 L160,180"/>
+              <path d="M160,180 L160,196"/>
+            </g>
+            <g fill="url(#node)" stroke="#5a4620" stroke-width="1">
+              <circle cx="160" cy="22" r="7"/>
+              <circle cx="160" cy="52" r="6"/>
+              <circle cx="60" cy="84" r="5.5"/><circle cx="60" cy="116" r="5.5"/><circle cx="60" cy="148" r="5.5"/>
+              <circle cx="160" cy="84" r="5.5"/><circle cx="160" cy="116" r="5.5"/><circle cx="160" cy="148" r="5.5"/>
+              <circle cx="260" cy="84" r="5.5"/><circle cx="260" cy="116" r="5.5"/><circle cx="260" cy="148" r="5.5"/>
+              <circle cx="160" cy="180" r="6.5"/>
+              <circle cx="160" cy="199" r="8"/>
+            </g>
+            <g fill="#c9a45c" font-family="Georgia, serif" font-size="9" text-anchor="middle" opacity="0.92">
+              <text x="160" y="14">Alte Wacht</text>
+              <text x="60" y="76">Klingen</text>
+              <text x="160" y="76">Magie</text>
+              <text x="260" y="76">Ordnung</text>
+            </g>
+            <g fill="#e3c07a" font-family="Georgia, serif" font-size="9.5" text-anchor="middle">
+              <text x="160" y="172">Hohes Heiligtum</text>
+            </g>
+            <g fill="#f4dca0" font-family="Georgia, serif" font-size="10.5" font-weight="bold" text-anchor="middle">
+              <text x="160" y="219">Der Ligameister</text>
+            </g>
+          </svg>
+        </div>
+        <p class="legend">Drei Pfade — <b>Klingen</b>, <b>Magie</b> und <b>Ordnung</b> — laufen wieder zusammen,
+        bevor die letzte Liga wartet. Über zwanzig Stationen, jede mit eigenem Boss.</p>
+      </div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section class="divider">
       <div class="wrap">
         <div class="note">
           <h3>Ein Konto ist optional</h3>
@@ -205,7 +329,8 @@
       </div>
     </section>
 
-    <section class="band-line closing">
+    <!-- CLOSING -->
+    <section class="divider closing">
       <div class="wrap">
         <p>Bereit für den ersten Zug?</p>
         <a class="play" href="./">Jetzt spielen</a>
@@ -218,6 +343,7 @@
       Grand Gambit · <a href="./privacy.html">Datenschutz &amp; Impressum</a> ·
       <a href="./terms.html">Nutzungsbedingungen</a>
     </div>
+    <div class="footer-hall"><div class="board-whisper"></div></div>
   </footer>
 </body>
 </html>

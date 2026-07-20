@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.22.73
+- LANDING-SEITE deutlich ausgebaut: Spielmodi (klassisches Schach ODER das RPG; gegen die KI, zu zweit an einem Geraet, oder online), eine Figuren-Chronik mit vier Helden (Bild, Flavor-Text und Faehigkeiten), ein geformtes Liga-Brett mit gesperrten Feldern und ein stilisiertes Weltkarten-Diagramm der Kampagne (drei Pfade laufen zum Ligameister zusammen). Durchgehende Hallen-Atmosphaere, die auch unter dem letzten Container mit Abstand wieder sichtbar wird. Der Hinweis "im Browser" wurde aus der Kopfzeile entfernt. Vier verkleinerte Figurenbilder unter public/pieces.
+
 ## 0.22.72
 - FIGUREN-SOCKEL VEREINHEITLICHT: Jede gemalte Figur fuellt ihr 1024er Quadrat anders aus, darum kamen die Fuesse (die Standflaeche auf dem Feld) bei gleicher Schriftgroesse unterschiedlich breit heraus - der Turm wirkte viel groesser. Aus den Bildern vermessene Pro-Figur-Faktoren (paintedScaleFor) skalieren nun jede Figur so, dass alle Sockel gleich breit stehen (Turm/Dame/Koenig/Waechter kleiner, schlanke Figuren groesser); der Bauer bleibt ueber seine kleinere Schriftgroesse kleiner, der Gambit wird bewusst etwas kleiner, der Drache (2x2) etwas groesser. Skalierung am Fuss verankert, damit die Figur auf dem Feld stehen bleibt.
 
