@@ -189,5 +189,27 @@ function mkHall(t0 = 1000) {
 }
 
 
+// ── per-map armies: the match uses the formation saved for the map that was
+// actually picked, never the one saved for some other candidate map ─────────
+{
+  const { hall, last } = mkHall();
+  hall.handle(null, { t: "hello", id: "e1", secret: "s", name: "E1", score: 0 });
+  hall.handle(null, { t: "hello", id: "e2", secret: "s", name: "E2", score: 0 });
+  // e1 only has "gauntlet" in common with e2; both bring per-map armies plus
+  // a legacy single .army that must NOT be used once a map-specific one exists.
+  hall.handle("e1", { t: "queue", maps: ["arena", "gauntlet"], army: ["ARENA_ARMY_E1"],
+    armies: { arena: ["ARENA_ARMY_E1"], gauntlet: ["GAUNTLET_ARMY_E1"] } });
+  hall.handle("e2", { t: "queue", maps: ["gauntlet"], army: ["GAUNTLET_ARMY_E2"],
+    armies: { gauntlet: ["GAUNTLET_ARMY_E2"] } });
+  const mids = Object.keys(hall.matches);
+  ok("players with only one map in common are matched on it", mids.length === 1 && hall.matches[mids[0]].map === "gauntlet");
+  const m = hall.matches[mids[0]];
+  const bothArmies = [m.armyW, m.armyB].map((a) => a[0]);
+  ok("the match uses each side's GAUNTLET army, not their arena one",
+    bothArmies.includes("GAUNTLET_ARMY_E1") && bothArmies.includes("GAUNTLET_ARMY_E2"));
+  const msgs = ["e1", "e2"].map((id) => last("match", id));
+  ok("oppArmy shown to each side is also the map-correct one", msgs.every((mm) => mm.oppArmy[0] === "GAUNTLET_ARMY_E1" || mm.oppArmy[0] === "GAUNTLET_ARMY_E2"));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

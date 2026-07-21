@@ -75,9 +75,21 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const armyFor = (mapId) => buildArmy(profile, mapById(mapId));
   // classic online: pure standard chess — the plain level-1 side, mate rules
   const [duelMode, setDuelMode] = useState("duel"); // duel | classic
+  const [duelMapChoice, setDuelMapChoice] = useState("random"); // "random" | a map id from myMaps
   const classicSide = () => buildArmyFromFormation(() => 1, mapById("classic").defaultFormation);
-  const queueMaps = () => duelMode === "classic" ? ["classic"] : myMaps;
-  const queueArmy = () => duelMode === "classic" ? classicSide() : armyFor(myMaps.includes("arena") ? "arena" : myMaps[0]);
+  const queueMaps = () => {
+    if (duelMode === "classic") return ["classic"];
+    if (duelMapChoice !== "random" && myMaps.includes(duelMapChoice)) return [duelMapChoice];
+    return myMaps;
+  };
+  // One saved formation per candidate map, keyed by map id — so whichever map
+  // the matchmaker (or a friend's client) actually settles on, the army sent
+  // to battle is the one you arranged FOR that exact board, never a mismatch.
+  const armiesFor = (maps) => duelMode === "classic"
+    ? { classic: classicSide() }
+    : Object.fromEntries(maps.map((m) => [m, armyFor(m)]));
+  const queueArmies = () => armiesFor(queueMaps());
+  const queueArmy = () => { const maps = queueMaps(); return queueArmies()[maps[0]]; }; // legacy single-army fallback
 
   const [server, setServer] = useState(SERVER_URL || o.server || "");
   const name = profile.name || "Spieler " + (o.id || "").slice(0, 4);
@@ -163,10 +175,10 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   }
   function findRandom() {
     if (searching) { net.send({ t: "dequeue" }); setSearching(false); return; }
-    net.send({ t: "queue", maps: queueMaps(), army: queueArmy(), mode: duelMode });
+    net.send({ t: "queue", maps: queueMaps(), army: queueArmy(), armies: queueArmies(), mode: duelMode });
     setSearching(true);
   }
-  const challengeFriend = (f) => net.send({ t: "challenge", targetId: f.id, maps: queueMaps(), army: duelMode === "classic" ? classicSide() : armyFor(myMaps[0]), mode: duelMode });
+  const challengeFriend = (f) => { const maps = queueMaps(); net.send({ t: "challenge", targetId: f.id, maps, army: duelMode === "classic" ? classicSide() : armyFor(maps[0]), armies: armiesFor(maps), mode: duelMode }); };
 
   const Line = ({ children }) => <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>{children}</div>;
   const input = { flex: 1, minWidth: 120, background: T.bg2, border: `1px solid ${T.line}`, color: T.text,
@@ -248,6 +260,19 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
             {!searching ? (<>
               <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
                 options={[{ value: "duel", label: t("online.duel") }, { value: "classic", label: t("mode.classic") }]} />
+              {duelMode === "duel" && myMaps.length > 1 && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ fontSize: 11.5, color: T.faint, marginBottom: 5 }}>{t("online.mapChoice")}</div>
+                  <Segmented value={duelMapChoice} onChange={setDuelMapChoice}
+                    options={[{ value: "random", label: t("online.mapRandom") },
+                      ...myMaps.map((m) => ({ value: m, label: en ? mapById(m).nameEn : mapById(m).nameDe }))]} />
+                </div>
+              )}
+              <div style={{ fontSize: 11.5, color: T.dim, margin: "8px 2px 0", lineHeight: 1.5 }}>
+                {duelMode === "classic" ? t("online.infoClassic") :
+                  duelMapChoice === "random" ? t("online.infoRandomMap") :
+                  t("online.infoFixedMap", { map: en ? mapById(duelMapChoice).nameEn : mapById(duelMapChoice).nameDe })}
+              </div>
               <div style={{ height: 8 }} />
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>
                 <BladesIc color={T.limeInk} size={13} /> {t("online.random")}
@@ -266,6 +291,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
                 </div>
                 <div style={{ fontSize: 13, color: T.gold, textAlign: "center" }}>{t("online.searching")}</div>
                 <div style={{ fontSize: 11.5, color: T.faint }}>{t("online.band", { n: 150 + Math.floor(waitSec / 5) * 60 })}</div>
+                {onlineN <= 1 && <div style={{ fontSize: 11.5, color: T.faint, textAlign: "center", maxWidth: 240 }}>{t("online.noOneHint")}</div>}
                 <Button variant="subtle" onClick={findRandom} style={{ padding: "8px 18px" }}>{t("online.cancel")}</Button>
               </div>
             )}
@@ -417,7 +443,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
             <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 12 }}>{t("online.score")}: {challenge.from.score}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <Button variant="primary" onClick={() => {
-                net.send({ t: "challengeRespond", challengeId: challenge.challengeId, accept: true, maps: myMaps, army: challenge.mode === "classic" ? classicSide() : armyFor(myMaps[0]) });
+                net.send({ t: "challengeRespond", challengeId: challenge.challengeId, accept: true, maps: myMaps, army: challenge.mode === "classic" ? classicSide() : armyFor(myMaps[0]), armies: challenge.mode === "classic" ? { classic: classicSide() } : armiesFor(myMaps) });
                 setChallenge(null);
               }}>{t("online.accept")}</Button>
               <Button variant="subtle" onClick={() => {

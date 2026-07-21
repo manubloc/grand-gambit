@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.0
+- ONLINE-DUELL: Kartenwahl hinzugefuegt (Zufaellig oder eine bestimmte freigeschaltete Karte), sichtbar VOR dem Suchen inkl. Hinweis, dass deine dafuer gespeicherte Aufstellung verwendet wird. Waehrend der Suche erscheint ein Hinweis, wenn gerade niemand sonst online ist.
+- BUGFIX (Worker): Die Armee eines Online-Duells wurde bisher fuer eine feste Karte (Arena bzw. erste freigeschaltete Karte) gebaut, unabhaengig davon, welche Karte das Matchmaking am Ende tatsaechlich waehlte. Jeder Spieler sendet nun pro Kandidaten-Karte eine eigene Aufstellung; der Server nutzt beim Start des Matches genau die zur gewaehlten Karte passende. Betrifft Zufallssuche, Freundes-Herausforderung und Annahme einer Herausforderung.
+
 ## 0.23.1
 - BEGRIFFE: Die rekrutierbaren Kapitel-Endgegner heissen jetzt schlicht MEISTER (statt Kapitelmeister).
 - ORTSNAME: Die Finalstation von Kapitel I heisst nun DIE ZITADELLE (statt der unklaren "Meisterfeste"/"Ligafeste"). Der generische Finale-Story-Text nennt keinen Ortsnamen mehr, sodass er in jedem Kapitel zum jeweiligen Ort passt.
