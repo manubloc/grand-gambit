@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.1
+- FIGUREN: Groessen-Hierarchie auf dem Brett. Bauern etwas kleiner, alle anderen Figuren etwas groesser, Koenig und Koenigin am groessten. Umgesetzt ueber Skalierung der Figurenhoehen (vom Fusspunkt aus, daher bleibt die gemeinsame Grundlinie erhalten); der Gambit-Held und der Drache bleiben unveraendert.
+
 ## 0.24.0
 - ONLINE-DUELL: Kartenwahl hinzugefuegt (Zufaellig oder eine bestimmte freigeschaltete Karte), sichtbar VOR dem Suchen inkl. Hinweis, dass deine dafuer gespeicherte Aufstellung verwendet wird. Waehrend der Suche erscheint ein Hinweis, wenn gerade niemand sonst online ist.
 - BUGFIX (Worker): Die Armee eines Online-Duells wurde bisher fuer eine feste Karte (Arena bzw. erste freigeschaltete Karte) gebaut, unabhaengig davon, welche Karte das Matchmaking am Ende tatsaechlich waehlte. Jeder Spieler sendet nun pro Kandidaten-Karte eine eigene Aufstellung; der Server nutzt beim Start des Matches genau die zur gewaehlten Karte passende. Betrifft Zufallssuche, Freundes-Herausforderung und Annahme einer Herausforderung.
