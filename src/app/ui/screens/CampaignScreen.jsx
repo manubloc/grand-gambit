@@ -586,7 +586,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       <div style={{ position: "absolute", top: frameY + 12, left: frameX + 12, right: frameX + 12, zIndex: 8, display: "flex",
         alignItems: "center", gap: 8, pointerEvents: "none" }}>
         {/* league navigation: ‹ back through mastered worlds, › forward again —
-            and once the League Master has fallen, the golden gate: Onward. */}
+            and once the Grandmaster has fallen, the golden gate: Onward. */}
 
         {/* the atlas button: a small round seal with the field map + waypin,
             hand-drawn — one tap steps out to the world painting */}

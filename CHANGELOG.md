@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.23.0
+- STORY/BEGRIFFE: Grosser Umbau der Weltsprache passend zur ueberarbeiteten Erzaehlung. Die zehn Welten heissen jetzt KAPITEL (statt Liga), die vier inneren Etappen ABSCHNITT (statt Kapitel). Der Endgegner der Reise ist OSRIC, DER GROSSMEISTER (statt Ligameister); die rekrutierbaren Welt-Endgegner heissen KAPITELMEISTER (statt Liga-Bosse).
+- NAME: Die Erzfeindin heisst nun ASRA (statt Mirenn) — durchgezogen ueber Boss-Namen, Welt-Lore, Herold-Sprueche und den Ortsnamen "Asras Brunnen" (Kapitel VII).
+- Betroffen: i18n (DE+EN), Boss-Namen, Ortsnamen, Herold-Texte, Welt-Lore, Item-Beschreibungen und die Landing-Page. Reine Umbenennung mit korrekter deutscher Grammatik; Spielmechanik unveraendert.
+
 ## 0.22.80
 - ADMIN: Neue Nutzerliste im Online-Bereich (nur fuer Admins). Zeigt alle Nutzer, die online waren, mit Liga/Fortschritt, Spielzeit, Anzahl Spiele, Duell-Bilanz und ELO. Jeder Client spiegelt beim Verbinden dieselben Werte, die er auf dem eigenen Profil sieht, an die Hall; der Admin-Dump liefert sie gesammelt zurueck (ohne Secrets). Reine Offline-Spieler erscheinen nicht, da ihre Daten lokal auf dem Geraet bleiben.
 - SICHERHEIT: Der Admin-Dump gibt keine Spieler-Secrets mehr preis (nur Name, Liga, Spielzeit, Spiele, Bilanz, Rating, zuletzt gesehen).

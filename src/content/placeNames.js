@@ -325,7 +325,7 @@ export const PLACE_NAMES = {
     "Bannergrund",
     "Falkenkanzel",
     "Halle des einen Gangs",
-    "Mirenns Brunnen",
+    "Asras Brunnen",
     "Hoher Ausguck",
     "Verlassene Jurte",
     "Böenritt",

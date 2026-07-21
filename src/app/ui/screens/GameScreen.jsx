@@ -151,7 +151,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       return createGame(side(), ai, { map, rules, seed });
     }
     let ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
-    // THE LEAGUE MASTER REDEPLOYS: every attempt at the Keep meets a freshly
+    // THE GRANDMASTER REDEPLOYS: every attempt at the Keep meets a freshly
     // shuffled back rank — losing means facing a NEW array, and only the
     // Seeress's gaze reveals it before the first horn.
     if (campaign && match.nodeId === "n22" && ai?.back?.length) {

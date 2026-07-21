@@ -1,5 +1,5 @@
 // ── THE TALE OF THE RIFT ─────────────────────────────────────────────────────
-// One court, once. Then the first League Master opened a rift to win a war he
+// One court, once. Then the first Grandmaster opened a rift to win a war he
 // could not win — and the shadow has been calling ever since. The court
 // shattered: some fled to guard what they knew, some liked what they heard.
 // Every champion carries ONE sentence of this tale. Read along the campaign,
@@ -123,7 +123,7 @@ export const VOICES = {
   },
   engineer: {
     heraldDe: "Der Ingenieur baute die Tore zwischen den Ligen — und weiß als Einziger, wohin sie sich wirklich öffnen.",
-    heraldEn: "The Engineer built the gates between the leagues — and alone knows where they truly open.",
+    heraldEn: "The Engineer built the gates between the chapters — and alone knows where they truly open.",
     afterDe: "Die Tore öffnen sich für dich, Wanderer. Frag nicht, womit ich sie geölt habe.",
     afterEn: "The gates will open for you, Wanderer. Do not ask what I oiled them with.",
   },
@@ -181,8 +181,8 @@ export const VOICES = {
     afterEn: "At last someone looks AT me instead of through me. Thank you, Wanderer. That is all I ever wanted.",
   },
   b08: {
-    heraldDe: "Der Kanonier hütet das Tor der neunten Liga und zahlt die Miete pünktlich — er hat gelernt, wohin man besser nicht zielt.",
-    heraldEn: "The Cannoneer keeps the ninth league's gate and pays his rent on time — he has learned where one had better not aim.",
+    heraldDe: "Der Kanonier hütet das Tor des neunten Kapitels und zahlt die Miete pünktlich — er hat gelernt, wohin man besser nicht zielt.",
+    heraldEn: "The Cannoneer keeps the ninth chapter's gate and pays his rent on time — he has learned where one had better not aim.",
     afterDe: "Nimm die Lunte, Wanderer. Und wenn du je ans Meer kommst: ziele auf gar nichts.",
     afterEn: "Take the fuse, Wanderer. And should you ever reach the sea: aim at nothing at all.",
   },
@@ -193,8 +193,8 @@ export const VOICES = {
     afterEn: "…the crack was my home once, Wanderer… now it is merely hungry…",
   },
   b10: {
-    heraldDe: "Der Doppelritter hütet das Tor der dritten Liga — zwei Leiber, ein Eid, und keiner von beiden erinnert sich, wem er galt.",
-    heraldEn: "The Twin Knight keeps the third league's gate — two bodies, one oath, and neither remembers to whom it was sworn.",
+    heraldDe: "Der Doppelritter hütet das Tor des dritten Kapitels — zwei Leiber, ein Eid, und keiner von beiden erinnert sich, wem er galt.",
+    heraldEn: "The Twin Knight keeps the third chapter's gate — two bodies, one oath, and neither remembers to whom it was sworn.",
     afterDe: "Wir erinnern uns jetzt, Wanderer: Der Eid galt dem, der uns schlägt. Er galt dir.",
     afterEn: "We remember now, Wanderer: the oath was to whoever bests us. It was to you.",
   },
@@ -205,8 +205,8 @@ export const VOICES = {
     afterEn: "The word I leave out, Wanderer? It is always the same one: your name.",
   },
   b12: {
-    heraldDe: "Der Richter hütet das Tor der zweiten Liga und spricht Recht im Namen eines Hofes, den es nicht mehr gibt.",
-    heraldEn: "The Judge keeps the second league's gate, passing sentence in the name of a court that no longer exists.",
+    heraldDe: "Der Richter hütet das Tor des zweiten Kapitels und spricht Recht im Namen eines Hofes, den es nicht mehr gibt.",
+    heraldEn: "The Judge keeps the second chapter's gate, passing sentence in the name of a court that no longer exists.",
     afterDe: "Das Urteil lautet: schuldig — ich, des Wartens. Die Waage gehört dir, Wanderer.",
     afterEn: "The verdict: guilty — I, of waiting. The scales are yours, Wanderer.",
   },
@@ -217,8 +217,8 @@ export const VOICES = {
     afterEn: "Fire was the wrong answer, Wanderer. But admit it: it was a BEAUTIFUL wrong answer.",
   },
   b14: {
-    heraldDe: "Der Koloss hütet das Tor der zehnten Liga — er ist der Deckel auf dem Brunnen, und der Brunnen ist das Meer.",
-    heraldEn: "The Colossus keeps the tenth league's gate — he is the lid upon the well, and the well is the sea.",
+    heraldDe: "Der Koloss hütet das Tor des zehnten Kapitels — er ist der Deckel auf dem Brunnen, und der Brunnen ist das Meer.",
+    heraldEn: "The Colossus keeps the tenth chapter's gate — he is the lid upon the well, and the well is the sea.",
     afterDe: "Ich hebe mich beiseite, Wanderer. Was im Brunnen wohnt, gehört jetzt zu deiner Wache.",
     afterEn: "I move aside, Wanderer. What lives in the well is your watch now.",
   },
@@ -229,32 +229,32 @@ export const VOICES = {
     afterEn: "A message for you, Wanderer — unsigned, as always: 'Do not come to the sea.'",
   },
   b16: {
-    heraldDe: "Die Blutmagd hütet das Tor der sechsten Liga; sie schenkt aus einem Kelch, der nie geleert und nie gefüllt wird.",
-    heraldEn: "The Bloodmaid keeps the sixth league's gate, pouring from a chalice never emptied and never filled.",
+    heraldDe: "Die Blutmagd hütet das Tor des sechsten Kapitels; sie schenkt aus einem Kelch, der nie geleert und nie gefüllt wird.",
+    heraldEn: "The Bloodmaid keeps the sixth chapter's gate, pouring from a chalice never emptied and never filled.",
     afterDe: "Der Kelch bleibt hier, Wanderer. Manche Gaben soll man verlieren dürfen.",
     afterEn: "The chalice stays here, Wanderer. Some gifts one should be allowed to lose.",
   },
   b17: {
-    heraldDe: "Der Lanzenmeister hütet das Tor der siebten Liga und reitet Turnier um Turnier gegen einen Gegner, den nur er sieht.",
-    heraldEn: "The Lancemaster keeps the seventh league's gate, riding tilt after tilt against a foe only he can see.",
+    heraldDe: "Der Lanzenmeister hütet das Tor des siebten Kapitels und reitet Turnier um Turnier gegen einen Gegner, den nur er sieht.",
+    heraldEn: "The Lancemaster keeps the seventh chapter's gate, riding tilt after tilt against a foe only he can see.",
     afterDe: "Du hast ihn auch gesehen, im letzten Gang — nicht wahr, Wanderer? Dann war es kein Wahn.",
     afterEn: "You saw him too, in the final pass — didn't you, Wanderer? Then it was no madness.",
   },
   b18: {
-    heraldDe: "Eisenfaust hütet das Tor der achten Liga; die Faust ballte sich am Tag des Risses und ging nie wieder auf.",
-    heraldEn: "Ironfist keeps the eighth league's gate; the fist clenched on the day of the rift and never opened again.",
+    heraldDe: "Eisenfaust hütet das Tor des achten Kapitels; die Faust ballte sich am Tag des Risses und ging nie wieder auf.",
+    heraldEn: "Ironfist keeps the eighth chapter's gate; the fist clenched on the day of the rift and never opened again.",
     afterDe: "Sieh, Wanderer … sie öffnet sich. Was Jahre in ihr lag, gebe ich dir: einen Schlüssel.",
     afterEn: "Look, Wanderer … it opens. What lay inside for years, I give to you: a key.",
   },
   b19: {
-    heraldDe: "Der Schattenfürst hütet das Tor der vierten Liga — halb Mensch, halb das, was der Riss aus Menschen macht.",
-    heraldEn: "The Shadowlord keeps the fourth league's gate — half a man, half what the rift makes of men.",
+    heraldDe: "Der Schattenfürst hütet das Tor des vierten Kapitels — halb Mensch, halb das, was der Riss aus Menschen macht.",
+    heraldEn: "The Shadowlord keeps the fourth chapter's gate — half a man, half what the rift makes of men.",
     afterDe: "Merke dir meine Hälften gut, Wanderer. Der Riss zeigt dir gerade deine eigene Wahl.",
     afterEn: "Mark my halves well, Wanderer. The rift is showing you your own choice.",
   },
   b20: {
-    heraldDe: "Der Hüter hütet das Tor der fünften Liga und trägt Schlüssel zu Türen, die längst niemand mehr findet.",
-    heraldEn: "The Keeper keeps the fifth league's gate, carrying keys to doors no one can find anymore.",
+    heraldDe: "Der Hüter hütet das Tor des fünften Kapitels und trägt Schlüssel zu Türen, die längst niemand mehr findet.",
+    heraldEn: "The Keeper keeps the fifth chapter's gate, carrying keys to doors no one can find anymore.",
     afterDe: "Nimm den Ring, Wanderer. Ein Schlüssel darunter passt ans Meer — ich habe nie gewagt, ihn zu prüfen.",
     afterEn: "Take the ring, Wanderer. One key on it fits the sea — I never dared to try it.",
   },
@@ -279,8 +279,8 @@ export const VOICES = {
 
   // ── the two who hold the tale together ─────────────────────────────────────
   b23: {
-    heraldDe: "Sie war die erste Klinge der Krone, ehe der Riss ihren Namen flüsterte — jetzt flüstert Mirenn ihn zurück.",
-    heraldEn: "She was the Crown's first blade before the rift whispered her name — now Mirenn whispers it back.",
+    heraldDe: "Sie war die erste Klinge der Krone, ehe der Riss ihren Namen flüsterte — jetzt flüstert Asra ihn zurück.",
+    heraldEn: "She was the Crown's first blade before the rift whispered her name — now Asra whispers it back.",
     afterDe: "Du hörst ihn inzwischen auch, nicht wahr, Wanderer? … Bis zum nächsten Brett.",
     afterEn: "You hear it too by now, don't you, Wanderer? … Until the next board.",
   },

@@ -206,7 +206,7 @@ export function buildStageMatch(id, profile = null, leagueOverride = null) {
     gold: stageGold(node, lg),
     firstClear: looking ? false : (profile ? nodeStatus(profile, id) === "available" : true),
     // a FRIENDLY: the station is cleared and one of your own holds the post —
-    // a recruited champion, or the fallen League Master in his keep. In the
+    // a recruited champion, or the fallen Grandmaster in his keep. In the
     // look-back, EVERY station replays as a friendly.
     friendly: looking || (!!profile && nodeStatus(profile, id) === "cleared"
       && (id === "n22" || (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg))))),
@@ -247,7 +247,7 @@ export function advanceCampaign(profile, id) {
   if (!firstClear) {
     // a pure replay: only the tally (and a possible late recruit) moves —
     // EXCEPT a friendly match against one of your OWN (a recruited champion,
-    // or the fallen League Master holding his keep), which still pays a
+    // or the fallen Grandmaster holding his keep), which still pays a
     // quarter of the station's XP (gold is halved in applyResult)
     const friendlyXp = ((bossPiece && unlocked.has(bossPiece) && !joined) || id === "n22")
       ? Math.round((node.reward?.xp || 0) * leagueRewardMult(league) * 0.25) : 0;
@@ -280,7 +280,7 @@ export function advanceCampaign(profile, id) {
   };
 }
 
-/** Step through the gate: the League Master already yielded, so the next
+/** Step through the gate: the Grandmaster already yielded, so the next
  *  league begins WITHOUT a rematch — court, tallies and dupes travel along,
  *  clears and paid tolls reset with the new climate. */
 export function advanceLeague(profile) {
