@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.23.1
+- BEGRIFFE: Die rekrutierbaren Kapitel-Endgegner heissen jetzt schlicht MEISTER (statt Kapitelmeister).
+- ORTSNAME: Die Finalstation von Kapitel I heisst nun DIE ZITADELLE (statt der unklaren "Meisterfeste"/"Ligafeste"). Der generische Finale-Story-Text nennt keinen Ortsnamen mehr, sodass er in jedem Kapitel zum jeweiligen Ort passt.
+
 ## 0.23.0
 - STORY/BEGRIFFE: Grosser Umbau der Weltsprache passend zur ueberarbeiteten Erzaehlung. Die zehn Welten heissen jetzt KAPITEL (statt Liga), die vier inneren Etappen ABSCHNITT (statt Kapitel). Der Endgegner der Reise ist OSRIC, DER GROSSMEISTER (statt Ligameister); die rekrutierbaren Welt-Endgegner heissen KAPITELMEISTER (statt Liga-Bosse).
 - NAME: Die Erzfeindin heisst nun ASRA (statt Mirenn) — durchgezogen ueber Boss-Namen, Welt-Lore, Herold-Sprueche und den Ortsnamen "Asras Brunnen" (Kapitel VII).

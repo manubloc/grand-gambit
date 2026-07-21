@@ -30,8 +30,8 @@ export const ITEMS = {
   torch: {
     id: "torch", emoji: "🔥", kind: "key", gold: 45, minCleared: 11,
     nameDe: "Fackel", nameEn: "Torch",
-    textDe: "Erleuchtet die Sturmgrotte vor der Meisterfeste.",
-    textEn: "Lights the Storm Grotto before the Master’s Keep.",
+    textDe: "Erleuchtet die Sturmgrotte vor der Zitadelle.",
+    textEn: "Lights the Storm Grotto before the Citadel.",
   },
   bergschluessel: {
     id: "bergschluessel", emoji: "🗝", kind: "key", gold: 55, minLeague: 5,
