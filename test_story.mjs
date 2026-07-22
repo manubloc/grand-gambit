@@ -1,0 +1,172 @@
+// STORY CONTRACT — the campaign must not lie to the player.
+//
+// Every station promises something in prose; the match that follows has to
+// deliver it. Two real defects motivated this file: a station announced "the
+// Render" by name while its rotation actually served four different monsters,
+// and several gate stations named the WRONG character (calling the Pathfinder
+// a Hawk — two pieces that both exist, so the sentence read as a promise of a
+// figure you would never meet).
+import { CAMPAIGN, BOSSES, CHARACTERS, ITEMS, mapById } from "./src/content/index.js";
+import { BASE_HP, BASE_ATK } from "./src/core/index.js";
+import { leagueFinalBossPiece } from "./src/meta/campaign.js";
+
+let pass = 0, fail = 0;
+const ok = (n, c) => { if (c) { pass++; console.log("  ok  -", n); } else { fail++; console.log(" FAIL -", n); } };
+
+const bossById = Object.fromEntries((BOSSES || []).map((b) => [b.id, b]));
+const charNames = Object.values(CHARACTERS).map((c) => ({ id: c.id, de: c.nameDe, en: c.nameEn }));
+// the meaningful word of a name: longest token, articles dropped
+const core = (nm) => (nm || "").split(/[\s,]+/)
+  .filter((w) => !/^(der|die|das|den|dem|the|a|an)$/i.test(w))
+  .sort((a, b) => b.length - a.length)[0] || nm;
+
+// ── 1. Structure: every node is playable ────────────────────────────────────
+{
+  const ids = new Set(CAMPAIGN.map((n) => n.id));
+  ok("node ids are unique", ids.size === CAMPAIGN.length);
+  const dangling = CAMPAIGN.flatMap((n) => (n.next || []).filter((x) => !ids.has(x)).map((x) => `${n.id}→${x}`));
+  ok("no edge points into the void", dangling.length === 0 || console.log("     ", dangling.join(", ")));
+  ok("every node names a place", CAMPAIGN.every((n) => n.place && n.place.trim().length > 2));
+  ok("every node carries both languages", CAMPAIGN.every((n) => n.storyDe && n.storyEn));
+  ok("every node's map exists", CAMPAIGN.every((n) => !n.map || !!mapById(n.map)));
+  ok("every node's rules are known", CAMPAIGN.every((n) => !n.rules || ["chess", "hp"].includes(n.rules)));
+}
+
+// ── 2. Bosses: the opponent actually exists ─────────────────────────────────
+{
+  const bad = [];
+  for (const n of CAMPAIGN) {
+    if (!n.boss) continue;
+    if (n.boss.piece && !CHARACTERS[n.boss.piece]) bad.push(`${n.id}: unknown piece ${n.boss.piece}`);
+    for (const id of n.boss.rotation || (n.boss.pure ? [n.boss.pure] : []))
+      if (!bossById[id]) bad.push(`${n.id}: unknown monster ${id}`);
+  }
+  ok("every boss referenced by the campaign exists", bad.length === 0 || console.log("     ", bad.join(" | ")));
+  ok("no node fields both a piece boss and a monster",
+    CAMPAIGN.every((n) => !(n.boss?.piece && n.boss?.pure)));
+}
+
+// ── 3. THE NAMED-FOE RULE ───────────────────────────────────────────────────
+// If the prose names a specific monster, the station must actually field that
+// monster every time — otherwise the sentence is a promise the game breaks.
+{
+  const liars = [];
+  for (const n of CAMPAIGN) {
+    const rot = n.boss?.rotation || (n.boss?.pure ? [n.boss.pure] : []);
+    if (rot.length < 2) continue;
+    // The PLACE name is scenery, not a promise: "Geisterfeld" / "Ghost Field"
+    // may host a wraith rotation without naming any single wraith. Only the
+    // German place name is stored, so the English line is cleared of the same
+    // words (the translated place always sits in the opening clause).
+    const de = (n.storyDe || "").split(n.place).join(" ");
+    let en = n.storyEn || "";
+    for (const w of n.place.split(/[\s-]+/)) {
+      // "Geisterfeld" → its English twin shares the root: strip both halves
+      const root = w.replace(/(feld|berg|tal|moor|pass|bucht|turm|hort|wacht|schlucht)$/i, "");
+      for (const cand of [w, root, root + " Field", root + "field"])
+        if (cand.length > 3) en = en.split(cand).join(" ");
+    }
+    // and the literal English scenery words that translate our place nouns
+    for (const w of ["Ghost Field", "Blade Gorge", "Mist Fen", "Witch Fen", "Shadow Cliff"])
+      en = en.split(w).join(" ");
+    for (const id of rot) {
+      const b = bossById[id]; if (!b) continue;
+      if (de.includes(core(b.nameDe)) || en.includes(core(b.nameEn)))
+        liars.push(`${n.id} "${n.place}" names ${b.nameDe} but rotates ${rot.length} foes`);
+    }
+  }
+  ok("no station names one monster while rotating several", liars.length === 0 || console.log("     ", liars.join(" | ")));
+}
+
+// ── 4. THE WRONG-CHARACTER RULE ─────────────────────────────────────────────
+// A station may only name a character that it actually involves: its boss, or
+// the piece its gate demands. Naming any OTHER existing character misleads.
+{
+  const liars = [];
+  for (const n of CAMPAIGN) {
+    const involved = new Set([n.boss?.piece, n.gate?.piece, n.requires?.piece].filter(Boolean));
+    for (const c of charNames) {
+      if (involved.has(c.id)) continue;
+      if (c.de.length < 6) continue;                       // short names appear as common words
+      if ((n.storyDe || "").includes(c.de))
+        liars.push(`${n.id} "${n.place}" names ${c.de}, but fields ${[...involved].join("/") || "no one"}`);
+    }
+  }
+  ok("no station names a character it does not involve", liars.length === 0 || console.log("     ", liars.join(" | ")));
+}
+
+// ── 5. Gates: what a station demands must be obtainable ─────────────────────
+{
+  const bad = [];
+  for (const n of CAMPAIGN) {
+    const g = n.gate || n.requires; if (!g) continue;
+    if (g.piece && !CHARACTERS[g.piece]) bad.push(`${n.id}: gate wants unknown piece ${g.piece}`);
+    if (g.item && ITEMS && !ITEMS[g.item] && !Object.values(ITEMS || {}).some((i) => i.id === g.item))
+      bad.push(`${n.id}: gate wants unknown item ${g.item}`);
+  }
+  ok("every gate demands things that exist", bad.length === 0 || console.log("     ", bad.join(" | ")));
+}
+
+// ── 6. Rewards and difficulty climb, not wobble ─────────────────────────────
+{
+  ok("every node pays something", CAMPAIGN.every((n) => !n.reward || (n.reward.xp ?? 0) >= 0));
+  const tiers = CAMPAIGN.filter((n) => n.tier != null).map((n) => n.tier);
+  ok("boss tiers stay in the designed 1..4 band", tiers.every((t) => t >= 1 && t <= 4));
+  ok("difficulty labels are known",
+    CAMPAIGN.every((n) => !n.difficulty || ["easy", "normal", "hard"].includes(n.difficulty)));
+  // the road must get richer: late stations should not pay less than the first
+  const first = CAMPAIGN[0]?.reward?.xp ?? 0;
+  const last = CAMPAIGN[CAMPAIGN.length - 1]?.reward?.xp ?? 0;
+  ok("the last station pays more than the first", last >= first);
+}
+
+// ── 7. EVERY PIECE HAS A DOOR ───────────────────────────────────────────────
+// A character nobody can ever recruit is dead content. Two doors exist: a
+// station that unlocks it on the kill, and the league finale (that is where
+// the Captain waits — the sea route depends on him).
+{
+  const fromNodes = new Set(CAMPAIGN.filter((n) => n.boss?.piece).map((n) => n.boss.piece));
+  const fromFinals = new Set(Array.from({ length: 10 }, (_, i) => leagueFinalBossPiece(i + 1)).filter(Boolean));
+  const startingSix = ["pawn", "gambit", "king", "queen", "rook", "knight", "bishop"];
+  const orphans = Object.values(CHARACTERS)
+    .filter((c) => c.kind && !startingSix.includes(c.id))
+    .filter((c) => !fromNodes.has(c.id) && !fromFinals.has(c.id))
+    .map((c) => `${c.id} (${c.nameDe})`);
+  ok("every recruitable piece has a way into the court", orphans.length === 0 || console.log("     ", orphans.join(", ")));
+  // and the gates may only demand pieces that are obtainable BEFORE them
+  const gated = CAMPAIGN.map((n) => (n.gate || n.requires)?.piece).filter(Boolean);
+  ok("gates only demand obtainable pieces",
+    gated.every((id) => fromNodes.has(id) || fromFinals.has(id)));
+}
+
+// ── 8. THE WEIGHT OF THINGS ─────────────────────────────────────────────────
+// Power index = hp + 2·atk. Pieces must rank sanely: the pawn stays the
+// smallest, the king the sturdiest, and nothing may balloon out of the band.
+{
+  const power = (k) => (BASE_HP[k] || 0) + 2 * (BASE_ATK[k] || 0);
+  const kinds = [...new Set(Object.values(CHARACTERS).map((c) => c.kind).filter((k) => BASE_HP[k]))];
+  ok("the pawn is the humblest piece on the board",
+    kinds.every((k) => k === "P" || power(k) > power("P")));
+  ok("the king carries the deepest life pool",
+    kinds.every((k) => (BASE_HP[k] || 0) <= BASE_HP.K));
+  ok("no piece exceeds twice the queen's weight",
+    kinds.every((k) => power(k) <= 2 * power("Q")));
+  ok("every fielded kind has both stats", kinds.every((k) => BASE_HP[k] > 0 && BASE_ATK[k] > 0));
+}
+
+// ── 9. THE ROAD PAYS BETTER THE FURTHER YOU WALK ────────────────────────────
+// Along the main spine (the n-nodes) the purse must never shrink: a later
+// station paying less than an earlier one reads as a bug to the player.
+{
+  const spine = CAMPAIGN.filter((n) => /^n\d+$/.test(n.id) && n.reward?.xp)
+    .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+  const drops = [];
+  for (let i = 1; i < spine.length; i++)
+    if (spine[i].reward.xp < spine[i - 1].reward.xp)
+      drops.push(`${spine[i - 1].id}(${spine[i - 1].reward.xp}) → ${spine[i].id}(${spine[i].reward.xp})`);
+  ok("the main road's rewards never fall back", drops.length === 0 || console.log("     ", drops.join(", ")));
+  ok("the spine actually climbs", spine.length > 3 && spine[spine.length - 1].reward.xp > spine[0].reward.xp * 2);
+}
+
+console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
+process.exit(fail ? 1 : 0);

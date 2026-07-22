@@ -20,7 +20,14 @@ const t = makeT("de");
 let prof = defaultProfile();
 const legacy = { v: 1, xp: 777, charXp: { pawn: 300, knight: 120 }, campaign: { cleared: 3 }, loadout: {}, stats: {} };
 
-const step = (name, fn) => { try { fn(); console.log("  ok  -", name); } catch (e) { console.log(" FAIL -", name, "→", e.message); console.log(e.stack.split("\n").slice(0,4).join("\n")); } };
+// THE SILENT TRAP, closed: this harness printed FAIL and then exited 0, so a
+// broken screen sailed straight through `npm test`. Failures are counted now
+// and the process ends red — plus a RESULT line so the battery can tally it.
+let sPass = 0, sFail = 0;
+const step = (name, fn) => {
+  try { fn(); sPass++; console.log("  ok  -", name); }
+  catch (e) { sFail++; console.log(" FAIL -", name, "→", e.message); console.log(e.stack.split("\n").slice(0, 4).join("\n")); }
+};
 
 step("Splash renders", () => renderToStaticMarkup(<Splash onDone={() => {}} />));
 step("Wordmark renders", () => renderToStaticMarkup(<Wordmark />));
@@ -57,4 +64,5 @@ step("AchievementsScreen", () => renderToStaticMarkup(<AchievementsScreen profil
 // the accordion OPEN: this exact path once crashed live (tiers missing on the item)
 step("AchievementsScreen (open)", () => renderToStaticMarkup(<AchievementsScreen profile={prof} t={t} initialOpenId="wins" />));
 step("ProfileScreen", () => renderToStaticMarkup(<ProfileScreen profile={prof} dispatch={() => {}} t={t} />));
-console.log("done");
+console.log(`\nRESULT: ${sPass} passed, ${sFail} failed`);
+if (sFail) process.exit(1);

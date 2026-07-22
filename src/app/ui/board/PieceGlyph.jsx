@@ -65,6 +65,13 @@ function numeralStyle(px) {
     textShadow: "0 0.06em 0 rgba(255,248,226,.26)", fontVariantNumeric: "tabular-nums" };
 }
 
+// MEASURED on the artwork (144x144): the sphere's visible mass centres at
+// 49.6% / 48.2% of the image — it sits a hair left and noticeably HIGH in its
+// box. A numeral centred on the BOX therefore reads ~1.8% too low and 0.4%
+// too far right. ORB_TRUE_CENTER pulls it back onto the sphere's real middle,
+// so single digits, double digits and "+1" all sit dead centre.
+const ORB_TRUE_CENTER = { x: -0.004, y: -0.018 };
+
 const NUM_FONT = "'Spectral', Georgia, serif";
 
 // THE SPELL STAR — one gold star hovering in the seam between the two orbs:
@@ -93,7 +100,9 @@ function StatDuo({ piece, focus, shrink = 1 }) {
   const spell = (piece.abilities || []).some((id) => ABILITIES[id]?.live) && Object.keys(piece.used || {}).length === 0;
   const orb = (img, v) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center",
       backgroundImage: `url(${img})`, backgroundSize: "100% 100%" }}>
-    <span style={numeralStyle(d * 0.6 + "em")}>{v}</span>
+    {/* same optical correction as the badges: the sphere sits high in its box */}
+    <span style={{ ...numeralStyle(d * 0.6 + "em"),
+      transform: `translate(${(ORB_TRUE_CENTER.x * d).toFixed(4)}em, ${(ORB_TRUE_CENTER.y * d).toFixed(4)}em)` }}>{v}</span>
   </span>;
   return <span style={{ position: "absolute", bottom: "-0.09em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
     display: "inline-flex", gap: gap + "em", pointerEvents: "none",
@@ -114,10 +123,15 @@ export function JewelIc({ kind, size = 13 }) {
 
 // px-based jewel badge for sheets & the court roster — the separately cut orbs.
 export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
+  // multi-glyph values ("+1", "12") get a touch more room so they stay inside
+  // the cavity without shrinking below legibility
+  const chars = String(v ?? "").length;
+  const scale = chars >= 3 ? 0.78 : chars === 2 ? 0.88 : 1;
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * num), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * num * scale), textShadow: "0 1px 0 rgba(255,245,216,.22)",
+      transform: `translate(${(ORB_TRUE_CENTER.x * size).toFixed(2)}px, ${(ORB_TRUE_CENTER.y * size).toFixed(2)}px)` }}>{v}</span>
   </span>;
 }
 
@@ -141,12 +155,11 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const accent = piece.accent || T.gold;
   const lvl = piece.level || 1;
   const hpMode = piece.atk != null;
-  // A master standing in the queen's place keeps her SHAPE to enemy eyes:
-  // only his own commander (pov) sees who really wears the crown. Same idea
-  // as the Gambit's masquerade — surprise is part of the bargain.
-  const bossVeiled = !!piece.bossId && piece.color !== pov;
-  const isBoss = !!piece.bossId && !bossVeiled;
-  const paintPiece = bossVeiled ? { ...piece, bossId: undefined, kind: "Q" } : piece;
+  // A master stands in the QUEEN'S PLACE — that is a matter of formation, not
+  // of disguise. He shows his true face to both sides: the whole point of
+  // meeting a champion is SEEING whom you face.
+  const isBoss = !!piece.bossId;
+  const paintPiece = piece;
   // The Grand Gambit wears his crest openly — unless Masquerade is learned:
   // then only his OWN commander (pov) still sees who he is.
   const showHero = !!piece.hero && (piece.color === pov || !(piece.abilities || []).includes("gambit_masquerade"));
@@ -179,7 +192,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // even at tier one (gold for your own, cold steel for a foe's), beneath the
   // tier aura that grows with his rank.
   const isKing = !piece.hero && !isBoss && piece.kind === "K";
-  const isQueen = bossVeiled || (!piece.hero && !isBoss && piece.kind === "Q");
+  const isQueen = !piece.hero && !isBoss && piece.kind === "Q";
   const isPawn = !piece.hero && !isBoss && piece.kind === "P";
   const royal = isKing || isQueen || isBoss;
   const ROYAL_HALO = white

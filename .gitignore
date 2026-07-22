@@ -10,6 +10,7 @@ dist-single
 .sf-out.js
 .smoke.mjs
 .preview.mjs
+.uitest.mjs
 .pl.mjs
 .iife.js
 

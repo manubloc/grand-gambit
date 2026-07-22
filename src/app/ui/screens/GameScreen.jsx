@@ -93,11 +93,13 @@ function forces(board) {
 }
 function ForceBadge({ hp, atk, neon, t }) {
   // the army totals speak the SAME jewel language as every piece on the board
+  // NO PILL: the jewels ARE the badge — a frame around them only fought the
+  // orb's own rim. They stand bare, big, and close, exactly as on the board.
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", borderRadius: 999,
-      background: "rgba(8,6,15,.55)", border: `1px solid ${neon}66`, boxShadow: `0 0 10px ${neon}30`, whiteSpace: "nowrap" }}>
-      <StatOrbBadge kind="power" v={atk} size={19} />
-      <StatOrbBadge kind="life" v={hp} size={19} />
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 2, whiteSpace: "nowrap",
+      filter: `drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 0 7px ${neon}44)` }}>
+      <StatOrbBadge kind="power" v={atk} size={30} />
+      <StatOrbBadge kind="life" v={hp} size={30} />
     </span>
   );
 }
