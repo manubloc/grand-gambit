@@ -474,7 +474,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
     )}
     {!unlocked && bossNode && (
       <div style={{ marginTop: 9, fontSize: 12, color: T.dim, display: "flex", alignItems: "center", gap: 6 }}>
-        <BladesIc size={13} /> {t("army.lockedBoss", { place: bossNode.place })}
+        <JewelIc kind="power" size={13} /> {t("army.lockedBoss", { place: bossNode.place })}
       </div>
     )}
     {open && unlocked && (

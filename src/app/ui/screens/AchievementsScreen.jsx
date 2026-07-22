@@ -1,6 +1,7 @@
 // Achievements — a lean, modern trophy wall. Every entry gets a monochrome
 // in-house icon in a medallion: earned tiers glow gold, untouched ones sit
 // grayed and quiet. Progress is a single number and a thin bar — no clutter.
+import { useState } from "react";
 import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../meta/index.js";
 import { T } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
@@ -18,6 +19,7 @@ const cornerDiamond = (pos) => (
 );
 
 export function AchievementsScreen({ profile, dispatch, t }) {
+  const [openId, setOpenId] = useState(null);
   const en = profile.lang === "en";
   const { items } = evaluate(profile.stats);
   const tiersDone = items.reduce((a, i) => a + i.done, 0);
@@ -68,8 +70,10 @@ export function AchievementsScreen({ profile, dispatch, t }) {
       const done = it.nextN === null;
       const started = it.done > 0;
       const pct = done ? 1 : Math.min(1, it.val / it.nextN);
+      const isOpen = openId === it.id;
       return (
-        <Panel key={it.id} style={{ display: "flex", gap: 13, alignItems: "center",
+        <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
+          style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer",
           opacity: started || pct > 0 ? 1 : 0.55,
           boxShadow: started ? `inset 3px 0 0 ${T.gold}bb, ${T.shadow}` : T.shadow }}>
           <div style={{ width: 46, height: 46, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
@@ -96,8 +100,24 @@ export function AchievementsScreen({ profile, dispatch, t }) {
                 })}
               </span>
             </div>
-            {(en ? it.descEn : it.descDe) && <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, margin: "2px 0 3px" }}>
-              {en ? it.descEn : it.descDe}</div>}
+            {isOpen && <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.5, margin: "4px 0 3px" }}>
+              {(en ? it.descEn : it.descDe) || null}
+              {/* the LEDGER of the goal: every tier, its target and its purse —
+                  the character-card accordion, brought to the treasury */}
+              <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 3 }}>
+                <div style={{ color: T.faint, letterSpacing: ".06em", fontSize: 10.5 }}>{en ? "HOW TO EARN IT" : "SO ERREICHST DU ES"}</div>
+                {it.tiers.map((tr, i) => {
+                  const cl = claimedTiers(profile, it.id);
+                  const st = i < cl ? "✓" : i < it.done ? "◆" : "·";
+                  const r = claimReward(it, i);
+                  return <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 8,
+                    color: i < it.done ? T.text : T.faint }}>
+                    <span>{st} {en ? "Tier" : "Stufe"} {i + 1}: {tr.n} ×</span>
+                    <span style={{ whiteSpace: "nowrap" }}><SkillStar size={10} /> {r.sp} · <GoldCoin size={10} /> {r.gold}</span>
+                  </div>;
+                })}
+              </div>
+            </div>}
             <div style={{ margin: "8px 0 5px" }}><Bar pct={pct} height={5} color={done ? T.green : T.gold} /></div>
             <div style={{ fontSize: 11.5, color: T.faint, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
               <span>{done ? <span style={{ color: T.green }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
@@ -105,7 +125,7 @@ export function AchievementsScreen({ profile, dispatch, t }) {
                 const cl = claimedTiers(profile, it.id);
                 if (cl >= it.done) return null;
                 const r = claimReward(it, cl);
-                return <button onClick={() => dispatch({ type: "CLAIM_ACH", id: it.id })}
+                return <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "CLAIM_ACH", id: it.id }); }}
                   style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12, borderRadius: 999, padding: "7px 13px",
                     border: "none", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
                     boxShadow: `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa`, whiteSpace: "nowrap",

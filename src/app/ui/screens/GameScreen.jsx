@@ -529,13 +529,13 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         )}
         <div style={{ flex: "1 1 130px", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
           {pvp ? <>
-              <Chip color={T.gold} bg={T.panel}><BladesIc color={T.gold} size={12} /> {pvp.oppName}</Chip>
+              <Chip color={T.gold} bg={T.panel}><JewelIc kind="power" size={12} /> {pvp.oppName}</Chip>
               <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
               {desync && <Chip color={"#b4636c"} bg={T.panel}>{t("online.desync")}</Chip>}
             </>
             : campaign ? <>
               <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
-              {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <BladesIc color={T.gold} size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
+              {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <JewelIc kind="power" size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
             : hotseat ? <Chip color={T.text} bg={T.panel}>{t("quick.hotseat")}</Chip>
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
@@ -694,7 +694,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <div style={{ display: "flex", gap: 8 }}>
               <GoldShineButton style={{ flex: 1, padding: "10px 12px", fontSize: 13.5, borderRadius: 10 }}
                 onClick={endScout}>
-                <BladesIc color="#17110a" size={13} /> {t("story.begin")}
+                <JewelIc kind="power" size={13} /> {t("story.begin")}
               </GoldShineButton>
               {!pvp && onArmy && <Button variant="subtle" onClick={onArmy} style={{ padding: "10px 12px", fontSize: 12.5 }}>{t("scout.army")}</Button>}
             </div>
@@ -869,7 +869,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
       <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12, marginTop: 16 }}
         onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); if (mode === "classic") dispatch({ type: "SET_CLASSIC_ELO", elo });
           onStart({ mapId: mode === "classic" ? "classic" : mapId, mode, difficulty, elo, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
-        <BladesIc color="#17110a" size={15} /> {t("quick.start")}
+        <JewelIc kind="power" size={15} /> {t("quick.start")}
       </GoldShineButton>
     </Panel>
   );
@@ -899,7 +899,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
           {en ? node.storyEn : node.storyDe}
         </div>
         {boss && <div style={{ marginTop: 12, fontSize: 12.5, fontWeight: 800, color: "#8e2f39" }}>
-          {boss.bossId?.startsWith("pb_") ? <BladesIc color="#8e2f39" size={12} /> : <SkullIc size={12} />} {boss.name[en ? "en" : "de"]}
+          {boss.bossId?.startsWith("pb_") ? <JewelIc kind="power" size={12} /> : <SkullIc size={12} />} {boss.name[en ? "en" : "de"]}
         </div>}
         {boss && voiceFor(boss) && <div className="gg-serif" style={{ marginTop: 7, fontSize: 12.5, fontStyle: "italic",
           lineHeight: 1.55, color: "#5c5140" }}>

@@ -142,7 +142,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const accent = piece.accent || T.gold;
   const lvl = piece.level || 1;
   const hpMode = piece.atk != null;
-  const isBoss = !!piece.bossId;
+  // A master standing in the queen's place keeps her SHAPE to enemy eyes:
+  // only his own commander (pov) sees who really wears the crown. Same idea
+  // as the Gambit's masquerade — surprise is part of the bargain.
+  const bossVeiled = !!piece.bossId && piece.color !== pov;
+  const isBoss = !!piece.bossId && !bossVeiled;
+  const paintPiece = bossVeiled ? { ...piece, bossId: undefined, kind: "Q" } : piece;
   // The Grand Gambit wears his crest openly — unless Masquerade is learned:
   // then only his OWN commander (pov) still sees who he is.
   const showHero = !!piece.hero && (piece.color === pov || !(piece.abilities || []).includes("gambit_masquerade"));
@@ -175,7 +180,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // even at tier one (gold for your own, cold steel for a foe's), beneath the
   // tier aura that grows with his rank.
   const isKing = !piece.hero && !isBoss && piece.kind === "K";
-  const isQueen = !piece.hero && !isBoss && piece.kind === "Q";
+  const isQueen = bossVeiled || (!piece.hero && !isBoss && piece.kind === "Q");
   const isPawn = !piece.hero && !isBoss && piece.kind === "P";
   const royal = isKing || isQueen || isBoss;
   const ROYAL_HALO = white
@@ -195,13 +200,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // Resolve the painting up-front (if any) so we can level its base width. The
   // enemy's gallery is turned to steel; the risen Gambit wears his tier portrait.
   const painting = artStyle === "classic"
-    ? (CLASSIC_PAINTED[piece.kind] || paintedForPiece(piece))
+    ? (CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
     : artStyle === "painted"
-    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(piece))
+    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
     : null;
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out
-  const fit = (painting && !big) ? paintedFitFor(piece) : { h: 1, y: 0 };
+  const fit = (painting && !big) ? paintedFitFor(paintPiece) : { h: 1, y: 0 };
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
@@ -220,20 +225,20 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         // otherwise push that bias outward — so we pull it back by x·h.
         transform: (fit.h !== 1 || fit.y !== 0 || fit.x) ? `translate(${(-(fit.x || 0) * fit.h).toFixed(4)}em, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
         {painting
-          ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
+          ? <img src={painting} alt="" draggable={false} decoding="async" style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:
               // your golden court shines brighter, the steel foe a touch too
               objectFit: "contain", objectPosition: big ? "center" : "center bottom",
               filter: white
                 ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"
                   : isQueen ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
-                  : isBoss ? "brightness(1.32) saturate(1.1) hue-rotate(8deg)"
+                  : isBoss ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
                   : piece.hero ? "brightness(1.12) saturate(1) hue-rotate(8deg)"
                   : isPawn ? "brightness(0.97) saturate(0.82) hue-rotate(8deg)"
                   : "brightness(1.32) saturate(1.02) hue-rotate(8deg)")
                 : ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
                   : isQueen ? " brightness(1.42) saturate(1.18)"
-                  : isBoss ? " brightness(1.24) saturate(1.1)"
+                  : isBoss ? " brightness(1.42) saturate(1.18)"
                   : piece.hero ? " brightness(1)"
                   : isPawn ? " brightness(0.9) saturate(0.8)"
                   : " brightness(1.16) saturate(0.98)"),

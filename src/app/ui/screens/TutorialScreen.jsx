@@ -7,6 +7,7 @@ import { Button } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { SkullIc, BladesIc, HourglassIc, SkillStar, GoldCoin, HeartIc, GoldHeartIc, SwordsIc, HourglassGIc, GoldSkullIc, SkillIc, LevelIc, CoinIc } from "../icons.jsx";
+import { JewelIc } from "../board/PieceGlyph.jsx";
 
 const STEPS = [
   {
@@ -17,7 +18,7 @@ const STEPS = [
   {
     de: { title: "Ziehen & Kämpfen", text: "Figuren ziehen wie im Schach. Ein Zug auf ein gegnerisches Feld ist ein Angriff: Dein ⚔ trifft seine ♥. Überlebt der Gegner, bleibst du stehen — überlege also, wen du wohin schickst. Der König muss immer geschützt bleiben." },
     en: { title: "Move & fight", text: "Pieces move as in chess. Stepping onto an enemy square is an attack: your ⚔ strikes their ♥. If the defender survives, you hold your ground — so choose your targets well. The king must always be kept safe." },
-    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><GoldHeartIc size={28} /><SwordsIc size={28} /></div>,
+    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><JewelIc kind="life" size={26} /><JewelIc kind="power" size={26} /></div>,
   },
   {
     de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 ♥ (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },

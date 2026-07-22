@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.24.23
+- DAMEN-SLOT IN VOLLEM GLANZ: Meister im Damen-Slot leuchten jetzt EXAKT wie die Dame (eigene Seite 1.62, Gegner 1.42) — vorher hingen sie eine Lichtstufe darunter. Die Groessen waren bereits auf Damen-Format kalibriert.
+- VERHUELLTE MEISTER: Fremde Sonderfiguren im Damen-Slot erscheinen dem Gegner als gewoehnliche Dame — erst der eigene Feldherr sieht, wer die Krone wirklich traegt (dasselbe Prinzip wie die Maskerade des Gambit). Bewusster Kompromiss: Das Inspektions-Blatt nennt weiterhin den echten Namen.
+- DIE DAME FLANKIERT DEN KOENIG: Aufstellungen sind nur noch legal, wenn Dame (oder ihr Boss-Stellvertreter) direkt neben dem Koenig steht — das Kronenpaar trennt sich nie.
+- SCHATZKAMMER MIT AKKORDEON: Jeder Erfolg klappt per Tipp auf und zeigt "SO ERREICHST DU ES" — jede Stufe mit Ziel und Belohnung (Sterne + Gold), abgehakt was erreicht ist. Der Einloesen-Knopf toggelt das Akkordeon nicht mehr versehentlich.
+- LETZTE SCHWERT-SYMBOLE ERSETZT: Auch Online-Duell, Kampf-Buttons und Tutorial-Kopf sprechen jetzt die Juwelen-Sprache (JewelIc statt gekreuzter Schwerter/Herz-Icons).
+- BRETT-GEMAELDE ASYNCHRON DEKODIERT: decoding="async" am Figuren-Bild — das Brett blockiert beim Aufbau nicht mehr auf Bilddekodierung.
+
 ## 0.24.22
 - BUBBLES UNVERGIFTBAR — INS BUNDLE EINGEBETTET: Zweimal hat ein Deploy-Fenster eine Bild-URL mit der HTML-Ersatzseite beantwortet, und Browser-/Service-Worker-Caches hielten das Gift dauerhaft fest (Gegner zeigte nur Zahlen). Jetzt leben alle acht Kugel-Grafiken als Daten-URLs IM Bundle (generiertes Modul statAssets.js): Es gibt keine eigene Bild-URL mehr, die je wieder vergiftet werden koennte — mit jedem Build wandert alles unter neuem Namen aus.
 - ZIFFERN UEBERALL EXAKT GLEICH GROSS, ein- wie zweistellig (58 % der Kugel, feste Groesse ohne Sonderstufe).

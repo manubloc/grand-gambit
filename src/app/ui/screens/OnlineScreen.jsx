@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
 import crest3 from "../assets/crest-3.webp";
 import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc, TrophyIc } from "../icons.jsx";
+import { JewelIc } from "../board/PieceGlyph.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation, listSaves, fmtPlaytime } from "../../../meta/index.js";
 import { MAPS, mapById } from "../../../content/index.js";
@@ -275,7 +276,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
               </div>
               <div style={{ height: 8 }} />
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>
-                <BladesIc color={T.limeInk} size={13} /> {t("online.random")}
+                <JewelIc kind="power" size={13} /> {t("online.random")}
               </Button>
             </>) : (
               <div style={{ display: "grid", placeItems: "center", gap: 10, padding: "18px 10px 14px",
@@ -336,7 +337,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
                         onClick={() => { net.send({ t: "gift", to: f.id }); }}><PigeonIc color={T.limeInk} size={14} /></Button>
                 )}
                 {f.online && <Button variant="subtle" style={{ padding: "6px 11px", fontSize: 12.5 }}
-                  onClick={() => challengeFriend(f)}><BladesIc color={T.limeInk} size={12} /> {t("online.challenge")}</Button>}
+                  onClick={() => challengeFriend(f)}><JewelIc kind="power" size={12} /> {t("online.challenge")}</Button>}
               </Line>
             ))}
           </div>
@@ -438,7 +439,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
         <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "grid", placeItems: "center", background: "rgba(8,10,14,.7)", padding: 16 }}>
           <Panel style={{ maxWidth: 340, width: "100%" }}>
             <div className="gg-serif" style={{ fontSize: 17, color: T.gold, marginBottom: 6 }}>
-              <BladesIc size={13} /> {t("online.challengeFrom", { name: challenge.from.name })}
+              <JewelIc kind="power" size={13} /> {t("online.challengeFrom", { name: challenge.from.name })}
             </div>
             <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 12 }}>{t("online.score")}: {challenge.from.score}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>

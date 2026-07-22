@@ -270,6 +270,11 @@ export function formationLegalOn(formation, unlockedIds, map, ownedBosses = []) 
     if (required[id] === undefined) { if (!FORMATION_FLEX.has(id)) return false; flexN++; }
   }
   if (bossN > 1) return false;                      // one boss at most on the field
+  // THE QUEEN FLANKS THE KING — always. Her stand-in (a league boss) inherits
+  // the same duty: the crown pair never separates in the array.
+  const ki = formation.findIndex((id) => id === "king");
+  const qi = formation.findIndex((id) => id === "queen" || (id != null && isBossEntry(id)));
+  if (ki >= 0 && qi >= 0 && Math.abs(qi - ki) !== 1) return false;
   const c = formationCounts(formation.filter((id) => id != null && !isBossEntry(id)));
   for (const [id, n] of Object.entries(required)) {
     const need = id === "queen" ? n - bossN : n;    // the boss stands in for the queen
