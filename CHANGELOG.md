@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.19
+- REFACTORING DER WERTUNGS-KUGELN — Kugeln gehoeren zum FELD, nicht zur Figur: Bisher hingen die Streifen am Zeichenkasten der Figur, und dessen Geometrie ist je Figur anders (Bauer 0.98em, Hoffiguren 1.16em, Drache 1.48em). Deshalb sassen sie beim Bauern richtig und rutschten bei Turm, Dame & Co. unter das Feld — und jede Groessenkorrektur verschob heimlich die Hoehe. Jetzt rendert die ZELLE die Kugeln, verankert an der Feld-Unterkante mit fester Zell-Schriftbasis: identische Groesse und identischer Sitz fuer jede Figur, buendig mit dem Feld wie beim Bauern (nur der Drache im 2x2-Feld zeichnet seine weiterhin selbst, exakt gleich gross).
+- ZIFFERN NOCHMAL MINIMAL KLEINER (58 % statt 64 % der Kugel) und ZWEISTELLIGE WERTE (hochgelevelte Spielstaende: 12, 27, 46 ...) bekommen eine eigene kleinere Stufe (46 %), damit sie in der Kugel bleiben statt sie zu sprengen.
+
 ## 0.24.18
 - DIE EIGENTLICHE URSACHE DER FEHLENDEN BUBBLES — GEFUNDEN UND BEHOBEN: In Chrome Schritt fuer Schritt nachgewiesen. Der Server lieferte fuer strip-steel keine Bilddatei, sondern die HTML-Startseite (6 KB, beginnend mit "<!doctype html>") — mit Status 200. Grund: Waehrend eines Deploys kann das frische JS-Bundle schon live sein, bevor die zugehoerige Bilddatei fertig hochgeladen ist; die Seite antwortet dann mit ihrer Ersatzseite. Der Service-Worker legte diese HTML-Antwort brav als Bild ab — und damit blieb die Kugel fuer diesen Besucher DAUERHAFT unsichtbar, obwohl die Datei laengst korrekt online war. Deshalb sahen alle bisherigen Pruefungen (Abruf erfolgreich!) das Problem nicht.
 - SCHUTZ EINGEBAUT: Bilder wandern nicht mehr blind in den Vorrats-Cache. Sie werden erst beim Gebrauch gespeichert und NUR, wenn die Antwort wirklich ein Bild ist (Inhaltstyp-Pruefung). Eine untergeschobene HTML-Ersatzseite kann den Bild-Cache nicht mehr vergiften. Alte, bereits vergiftete Eintraege werden beim naechsten Start automatisch entsorgt.

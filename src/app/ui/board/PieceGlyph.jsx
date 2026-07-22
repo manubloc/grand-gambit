@@ -97,14 +97,15 @@ function StatStrip({ vals, steel, focus, shrink = 1 }) {
   // ends up exactly as small as a pawn's.
   const h = 0.33 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
   const w = h * (visW / STRIP_H);
-  return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
+  return <span style={{ position: "absolute", bottom: "-0.09em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
     width: w + "em", height: h + "em", pointerEvents: "none",
     backgroundImage: `url(${STRIP[steel ? "steel" : "gold"]})`,
     backgroundSize: `${(STRIP_W / visW) * 100}% 100%`, backgroundPosition: "left center", backgroundRepeat: "no-repeat",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
     {vals.map((v, i) => (
       <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
-        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.64 + "em") }}>{v}</span>
+        transform: "translate(-50%, -50%)",
+        ...numeralStyle(h * (String(v).length > 1 ? 0.46 : 0.58) + "em") }}>{v}</span>
     ))}
   </span>;
 }
@@ -114,11 +115,15 @@ export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * 0.64), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * (String(v).length > 1 ? 0.46 : 0.58)), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 
-function StatTriad({ piece, focus, shrink = 1 }) {
+// Exported: the CELL renders this now (BoardView), anchored to the SQUARE —
+// not to the piece's own em-box, whose size varies per figure (pawn 0.98em,
+// court 1.16em, dragon 1.48em) and silently shifted the orbs up and down.
+// Only the 2x2 dragon overlay still draws its own (no cell to sit in).
+export function StatTriad({ piece, focus, shrink = 1 }) {
   // one centred row riding just under the figure: [power] [life] [energy]
   const vals = [piece.atk, piece.hp];
   if (piece.maxEn > 0) vals.push(piece.en);
@@ -238,7 +243,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
           right — same jewel language, only the cold blue tells them apart.
           Level, strike and every richer detail live in the tap-to-inspect sheet. */}
-      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={0.98 / (big ? 1.48 : piece.kind === "P" ? 0.98 : 1.16)} />}
+      {big && hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={0.98 / 1.48} />}
 
 
       {!hpMode && piece.shield > 0 && (

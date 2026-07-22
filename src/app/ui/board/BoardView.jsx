@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useLayoutEffect, useRef } from "react";
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
-import { PieceGlyph } from "./PieceGlyph.jsx";
+import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { PieceArt } from "./PieceArt.jsx";
 
 const MOVE_DOT = "#c9a45c";
@@ -398,6 +398,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             filter: introSpot && !introSpot.has(i)
               ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...
               : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" /* the strangers stand sharp */ }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+          {/* the value orbs live on the SQUARE, not on the piece: one fixed
+              em-basis for every figure, so every strip is the same size and
+              sits flush with the square's bottom edge — pawn, rook or queen */}
+          {piece && !piece.big && piece.atk != null && piece.maxHp > 0 &&
+            <div aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 0,
+              display: "flex", justifyContent: "center", pointerEvents: "none",
+              zIndex: (isSel || isSpy) ? 61 : rr + 4 }}>
+              <StatTriad piece={piece} focus={isSel || isSpy} />
+            </div>}
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
