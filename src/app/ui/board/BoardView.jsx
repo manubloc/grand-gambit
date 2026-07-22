@@ -418,7 +418,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   let cell = 0;
   if (avail.w > 0) {
     const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
-    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / H : Infinity;
+    // Reserve HEADROOM above the top rank: the tall paintings deliberately rise
+    // ~a third of a cell over their square (lift + overhang + power-scale), and
+    // the zoom viewport clips — without this reserve the back rank loses heads.
+    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.36) : Infinity;
     cell = Math.max(8, Math.floor(Math.min(byW, byH)));
   }
   const bw = cell ? cell * W + (W - 1) * GAP : null;
@@ -584,6 +587,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       {death && <DeathFlyer death={death} disp={disp} W={W} H={H} pov={pov} artStyle={artStyle} />}
     </div>
   );
-  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>{board}</div>;
+  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", alignItems: "end", justifyItems: "center", paddingBottom: 2 }}>{board}</div>;
   return <div ref={wrapRef} style={{ width: "100%" }}>{board}</div>;
 }

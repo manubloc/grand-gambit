@@ -141,33 +141,33 @@ export const paintedById = (id) => PAINTED[id] || null;
 // the gambit and the big dragon keep their own size on purpose. MEASURED from
 // each painting's alpha bounding box.
 const PAINTED_FIT = {
-  "pawn": { h: 0.8977, y: -0.06, x: -0.0049 },
-  "gambit": { h: 0.94, y: -0.144, x: -0.0052 },
-  "knight": { h: 1.0498, y: -0.1427, x: -0.0252 },
-  "bishop": { h: 1.0616, y: -0.1396, x: -0.0077 },
-  "queen": { h: 1.1329, y: -0.1377, x: 0.0033 },
-  "rook": { h: 1.0826, y: -0.1336, x: -0.0028 },
-  "king": { h: 1.126, y: -0.1359, x: -0.0001 },
-  "chancellor": { h: 1.0393, y: -0.1456, x: -0.001 },
-  "archbishop": { h: 1.0509, y: -0.1293, x: 0.0173 },
-  "amazon": { h: 1.053, y: -0.1293, x: 0.018 },
-  "hawk": { h: 1.1044, y: -0.121, x: -0.0022 },
-  "seeress": { h: 1.0552, y: -0.1293, x: 0.0142 },
-  "assassin": { h: 1.0404, y: -0.1338, x: 0.0117 },
-  "guardian": { h: 1.0748, y: -0.1356, x: 0.0277 },
-  "captain": { h: 1.0488, y: -0.1417, x: 0.0139 },
-  "sorceress": { h: 1.0498, y: -0.1379, x: 0.0168 },
-  "pathfinder": { h: 1.0704, y: -0.1289, x: 0.0255 },
-  "mage": { h: 1.0456, y: -0.138, x: 0.0042 },
-  "alchemist": { h: 1.0332, y: -0.1513, x: -0.0091 },
-  "warlock": { h: 1.0425, y: -0.1439, x: 0.0064 },
-  "paladin": { h: 1.0562, y: -0.1378, x: 0.0029 },
-  "inquisitor": { h: 1.0605, y: -0.1378, x: -0.0134 },
-  "bard": { h: 1.066, y: -0.1444, x: 0.0215 },
-  "engineer": { h: 1.0584, y: -0.133, x: 0.0064 },
-  "standard": { h: 1.0446, y: -0.1295, x: -0.0409 },
-  "strategist": { h: 1.052, y: -0.1398, x: 0.0081 },
-  "dragon": { h: 1.0, y: 0.0, x: 0.0153 },
+  "pawn": { h: 0.8977, y: -0.06, x: -0.0054 },
+  "gambit": { h: 0.94, y: -0.144, x: -0.0061 },
+  "knight": { h: 1.0498, y: -0.1427, x: -0.0091 },
+  "bishop": { h: 1.0616, y: -0.1396, x: 0.0034 },
+  "queen": { h: 1.1329, y: -0.1377, x: 0.0041 },
+  "rook": { h: 1.0826, y: -0.1336, x: -0.0031 },
+  "king": { h: 1.126, y: -0.1359, x: -0.0033 },
+  "chancellor": { h: 1.0393, y: -0.1456, x: 0.0011 },
+  "archbishop": { h: 1.0509, y: -0.1293, x: -0.0013 },
+  "amazon": { h: 1.053, y: -0.1293, x: 0.0141 },
+  "hawk": { h: 1.1044, y: -0.121, x: -0.0091 },
+  "seeress": { h: 1.0552, y: -0.1293, x: 0.0132 },
+  "assassin": { h: 1.0404, y: -0.1338, x: 0.0005 },
+  "guardian": { h: 1.0748, y: -0.1356, x: -0.0024 },
+  "captain": { h: 1.0488, y: -0.1417, x: -0.0024 },
+  "sorceress": { h: 1.0498, y: -0.1379, x: -0.0025 },
+  "pathfinder": { h: 1.0704, y: -0.1289, x: 0.0133 },
+  "mage": { h: 1.0456, y: -0.138, x: -0.0055 },
+  "alchemist": { h: 1.0332, y: -0.1513, x: -0.0017 },
+  "warlock": { h: 1.0425, y: -0.1439, x: -0.0057 },
+  "paladin": { h: 1.0562, y: -0.1378, x: -0.002 },
+  "inquisitor": { h: 1.0605, y: -0.1378, x: -0.0001 },
+  "bard": { h: 1.066, y: -0.1444, x: -0.0006 },
+  "engineer": { h: 1.0584, y: -0.133, x: 0.004 },
+  "standard": { h: 1.0446, y: -0.1295, x: -0.0003 },
+  "strategist": { h: 1.052, y: -0.1398, x: -0.0017 },
+  "dragon": { h: 1.0, y: 0.0, x: 0.0136 },
 };
 /** Per-figure { h, y }: box-fit height scale + baseline shift (em). Default
  *  { h:1, y:0 } for bosses, big pieces and unknown ids. Mirrors
@@ -176,14 +176,15 @@ const PAINTED_FIT = {
 // Bosses measured per portrait: every master stands queen-tall (effective
 // 1.082) whatever share of the canvas the painting fills; y offsets the foot
 // gap so the base stays planted when the scale grows.
-const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001, x: 0.0017 }, "b01": { h: 1.11, y: 0.001, x: 0.01 }, "b02": { h: 1.42, y: 0.037, x: 0.0136 }, "b03": { h: 1.305, y: 0.024, x: 0.0083 }, "b04": { h: 1.507, y: 0.049, x: -0.0023 }, "b05": { h: 1.308, y: 0.03, x: -0.0037 }, "b06": { h: 1.383, y: 0.038, x: -0.0015 }, "b07": { h: 1.345, y: 0.037, x: -0.0099 }, "b08": { h: 1.399, y: 0.048, x: -0.0081 }, "b09": { h: 1.166, y: 0.006, x: -0.0009 }, "b10": { h: 1.471, y: 0.049, x: 0.0045 }, "b11": { h: 1.294, y: 0.027, x: 0.0069 }, "b12": { h: 1.248, y: 0.021, x: 0.0051 }, "b13": { h: 1.314, y: 0.028, x: 0.0049 }, "b14": { h: 1.147, y: 0.003, x: -0.001 }, "b15": { h: 1.132, y: 0.002, x: 0.0267 }, "b16": { h: 1.147, y: 0.003, x: -0.0035 }, "b17": { h: 1.096, y: 0.001, x: -0.0084 }, "b18": { h: 1.23, y: 0.01, x: -0.0039 }, "b19": { h: 1.182, y: 0.005, x: -0.0079 }, "b20": { h: 1.147, y: 0.004, x: -0.0096 }, "b21": { h: 1.132, y: 0.0, x: 0.0088 }, "b22": { h: 1.085, y: 0.0, x: -0.0151 }, "b23": { h: 1.089, y: 0.0, x: 0.0038 }, "b24": { h: 1.361, y: 0.029, x: 0.0131 }, "b25": { h: 1.188, y: 0.012, x: 0.0024 }, "beast": { h: 1.099, y: 0.001, x: 0.0108 }, "golem": { h: 1.099, y: 0.001, x: 0.0006 }, "leaguemaster": { h: 1.091, y: 0.0, x: -0.0008 }, "serpent": { h: 1.099, y: 0.001, x: 0.0103 }, "tyrant": { h: 1.102, y: 0.001, x: -0.0016 }, "wraith": { h: 1.096, y: 0.001, x: 0.0053 } };
+const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001, x: -0.0017 }, "b01": { h: 1.11, y: 0.001, x: -0.0006 }, "b02": { h: 1.42, y: 0.037, x: 0.0066 }, "b03": { h: 1.305, y: 0.024, x: -0.0012 }, "b04": { h: 1.507, y: 0.049, x: -0.0014 }, "b05": { h: 1.308, y: 0.03, x: 0.0069 }, "b06": { h: 1.383, y: 0.038, x: -0.0009 }, "b07": { h: 1.345, y: 0.037, x: -0.0014 }, "b08": { h: 1.399, y: 0.048, x: -0.0016 }, "b09": { h: 1.166, y: 0.006, x: -0.0077 }, "b10": { h: 1.471, y: 0.049, x: -0.0014 }, "b11": { h: 1.294, y: 0.027, x: -0.0008 }, "b12": { h: 1.248, y: 0.021, x: -0.001 }, "b13": { h: 1.314, y: 0.028, x: -0.0009 }, "b14": { h: 1.147, y: 0.003, x: -0.001 }, "b15": { h: 1.132, y: 0.002, x: 0.0021 }, "b16": { h: 1.147, y: 0.003, x: 0.0018 }, "b17": { h: 1.096, y: 0.001, x: -0.0086 }, "b18": { h: 1.23, y: 0.01, x: -0.0084 }, "b19": { h: 1.182, y: 0.005, x: 0.0021 }, "b20": { h: 1.147, y: 0.004, x: -0.004 }, "b21": { h: 1.132, y: 0.0, x: -0.0103 }, "b22": { h: 1.085, y: 0.0, x: -0.0132 }, "b23": { h: 1.089, y: 0.0, x: 0.002 }, "b24": { h: 1.361, y: 0.029, x: 0.0152 }, "b25": { h: 1.188, y: 0.012, x: 0.002 }, "beast": { h: 1.099, y: 0.001, x: -0.0049 }, "golem": { h: 1.099, y: 0.001, x: 0.0005 }, "leaguemaster": { h: 1.091, y: 0.0, x: -0.0014 }, "serpent": { h: 1.099, y: 0.001, x: -0.0021 }, "tyrant": { h: 1.102, y: 0.001, x: -0.0019 }, "wraith": { h: 1.096, y: 0.001, x: -0.0016 } };
 // A piece serving as a boss (pb_*) wears its own portrait, raised to the
 // same queen-tall stature.
-const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: -0.0091 }, "amazon": { h: 1.121, y: 0.003, x: 0.018 }, "archbishop": { h: 1.119, y: 0.003, x: 0.0173 }, "assassin": { h: 1.108, y: 0.002, x: 0.0117 }, "bard": { h: 1.135, y: 0.001, x: 0.0215 }, "bishop": { h: 1.131, y: 0.002, x: -0.0077 }, "captain": { h: 1.117, y: 0.002, x: 0.0139 }, "chancellor": { h: 1.107, y: 0.001, x: -0.001 }, "engineer": { h: 1.127, y: 0.003, x: 0.0064 }, "gambit": { h: 1.116, y: 0.001, x: -0.0052 }, "guardian": { h: 1.145, y: 0.003, x: 0.0277 }, "hawk": { h: 1.176, y: 0.006, x: -0.0022 }, "inquisitor": { h: 1.129, y: 0.002, x: -0.0134 }, "king": { h: 1.126, y: 0.002, x: -0.0001 }, "knight": { h: 1.118, y: 0.001, x: -0.0252 }, "mage": { h: 1.114, y: 0.002, x: 0.0042 }, "paladin": { h: 1.125, y: 0.002, x: 0.0029 }, "pathfinder": { h: 1.14, y: 0.004, x: 0.0255 }, "pawn": { h: 1.12, y: 0.001, x: -0.0049 }, "queen": { h: 1.133, y: 0.002, x: 0.0033 }, "rook": { h: 1.153, y: 0.003, x: -0.0028 }, "seeress": { h: 1.124, y: 0.003, x: 0.0142 }, "sorceress": { h: 1.118, y: 0.002, x: 0.0168 }, "standard": { h: 1.112, y: 0.003, x: -0.0409 }, "strategist": { h: 1.12, y: 0.002, x: 0.0081 }, "warlock": { h: 1.11, y: 0.001, x: 0.0064 } };
+const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: -0.0017 }, "amazon": { h: 1.121, y: 0.003, x: 0.0141 }, "archbishop": { h: 1.119, y: 0.003, x: -0.0013 }, "assassin": { h: 1.108, y: 0.002, x: 0.0005 }, "bard": { h: 1.135, y: 0.001, x: -0.0006 }, "bishop": { h: 1.131, y: 0.002, x: 0.0034 }, "captain": { h: 1.117, y: 0.002, x: -0.0024 }, "chancellor": { h: 1.107, y: 0.001, x: 0.0011 }, "engineer": { h: 1.127, y: 0.003, x: 0.004 }, "gambit": { h: 1.116, y: 0.001, x: -0.0061 }, "guardian": { h: 1.145, y: 0.003, x: -0.0024 }, "hawk": { h: 1.176, y: 0.006, x: -0.0091 }, "inquisitor": { h: 1.129, y: 0.002, x: -0.0001 }, "king": { h: 1.126, y: 0.002, x: -0.0033 }, "knight": { h: 1.118, y: 0.001, x: -0.0091 }, "mage": { h: 1.114, y: 0.002, x: -0.0055 }, "paladin": { h: 1.125, y: 0.002, x: -0.002 }, "pathfinder": { h: 1.14, y: 0.004, x: 0.0133 }, "pawn": { h: 1.12, y: 0.001, x: -0.0054 }, "queen": { h: 1.133, y: 0.002, x: 0.0041 }, "rook": { h: 1.153, y: 0.003, x: -0.0031 }, "seeress": { h: 1.124, y: 0.003, x: 0.0132 }, "sorceress": { h: 1.118, y: 0.002, x: -0.0025 }, "standard": { h: 1.112, y: 0.003, x: -0.0003 }, "strategist": { h: 1.12, y: 0.002, x: -0.0017 }, "warlock": { h: 1.11, y: 0.001, x: -0.0057 } };
 
 // The hero grows with his rank: tier 1 stands pawn-small, tier 6 queen-tall —
 // a straight climb between the two (pawn 0.898 → queen 1.133).
-const GAMBIT_TIER_X = [-0.0052, -0.0029, -0.0017, 0.0034, -0.0022, -0.0016];
+const GAMBIT_TIER_Y = [-0.0583, -0.069, -0.0938, -0.112, -0.1306, -0.1469];
+const GAMBIT_TIER_X = [-0.0061, -0.0031, -0.0025, 0.001, -0.002, -0.0023];
 const GAMBIT_TIER_H = [0.894, 0.944, 0.981, 1.027, 1.057, 1.096];
 
 export function paintedFitFor(piece) {
@@ -199,7 +200,7 @@ export function paintedFitFor(piece) {
   }
   if (piece.hero) {
     const t = Math.min(6, Math.max(1, piece.tier || 1));
-    return { h: GAMBIT_TIER_H[t - 1], y: (PAINTED_FIT.gambit || {}).y || 0, x: GAMBIT_TIER_X[t - 1] || 0 };
+    return { h: GAMBIT_TIER_H[t - 1], y: GAMBIT_TIER_Y[t - 1] || 0, x: GAMBIT_TIER_X[t - 1] || 0 };
   }
   const id = KIND2ID[piece.kind];
   return (id && PAINTED_FIT[id]) || { h: 1, y: 0, x: 0 };

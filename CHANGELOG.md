@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.24.8
+- ZENTRIERUNG RICHTIG GEMESSEN: Die x-Korrektur aus 0.24.7 nutzte den Masse-Schwerpunkt der Gemaelde — Staebe, Arme und Umhaenge zogen ihn zur Seite, obwohl der SOCKEL mittig sitzt; einige Figuren rutschten dadurch sogar nach links. Jetzt zaehlt die Sockelmitte (unterste 10% der Figur): neu vermessen fuer alle Figuren, Bosse, Figuren-Bosse und Gambit-Stufen — die Teller stehen damit exakt auf der Feldmitte.
+- GAMBIT-FUSSLINIE: Der Held schwebte deutlich ueber den Bauern (alter y-Wert aus der Vor-Kalibrierung). Seine Fusslinie folgt jetzt derselben Formel wie Bauer und Dame und wandert mit den Stufen sauber von Bauern- zu Damen-Hoehe (eigene y-Treppe je Stufe).
+- KOEPFE NICHT MEHR ABGESCHNITTEN: Das Brett reserviert in der Hoehenrechnung jetzt Kopffreiraum (~ein Drittel Zellhoehe) ueber der hintersten Reihe und richtet sich unten aus — die ueberstehenden Koepfe der 8. Reihe werden vom Zoom-Rahmen nicht mehr beschnitten (das Brett wird dafuer minimal kleiner).
+
 ## 0.24.7
 - FIGUREN-FEINSCHLIFF: Bauern nochmals dunkler und matter (weniger Glanz); alle uebrigen Figuren (ausser Held) spuerbar heller — klar unter Dame und Koenig, aber deutlich ueber den Bauern. Gilt gespiegelt auch fuer die Gegner-Seite.
 - RECHTS-VERSATZ BEHOBEN: Viele Gemaelde sitzen nicht exakt mittig im Bild (gemessen: Schwerpunkte von -4.1% bis +2.8% der Bildbreite, z.B. Waechter +2.8%, Barde +2.2%) — die Groessen-Skalierung schob diesen Versatz zusaetzlich nach aussen, weshalb die meisten Figuren etwas zu weit rechts standen. Jetzt traegt jedes Bild seinen gemessenen x-Versatz in den Fit-Karten (Figuren, Bosse, Figuren-Bosse, Gambit-Stufen), und der Renderer zieht den Schwerpunkt exakt auf die Feldmitte zurueck.
