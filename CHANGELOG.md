@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.6
+- GROESSEN-VOLLKALIBRIERUNG: Jedes Figuren- und Boss-Bild wurde vermessen (sichtbarer Anteil im Canvas) und auf einheitliche Ziel-Groessen gebracht: Bauer 0.867, Figuren 1.016, Koenigspaar/Bosse 1.082 (effektiv). Behebt drei Figuren-Ausreisser (Turm, Assassine, Warlock standen zu klein) und vor allem: ALLE Bosse stehen jetzt bildgenau in Damen-Groesse — Monster wie Figuren-Bosse (z.B. der Attentaeter an der Nebelfaehre, der bisher voellig unkalibriert in Normalgroesse stand). Fuss-Abstaende der Boss-Bilder werden pro Bild kompensiert, damit nichts schwebt. Gambits Stufen-Wachstum ist nun ebenfalls pro Stufen-Portrait vermessen (Bauer -> Dame ueber die Bilder t1-t6).
+
 ## 0.24.5
 - MACHT-SYSTEM (Licht + Groesse): Je maechtiger eine Figur, desto heller und glaenzender. Dame nochmals heller; Bauern UND Gambit dunkler gestuft; rekrutierbare Meister (anstelle der Dame) erhalten Boss-Glanz samt Schein — auch gegnerische Bosse in der Kampagne wirken damit imposanter. Der Gambit traegt jetzt schon ab Stufe 1 einen leisen Schimmer (gold im eigenen Heer, stahlkalt beim Gegner), der ihn trotz Bauern-Dunkelheit klar heraushebt.
 - GROESSEN: Gambit startet exakt in Bauern-Groesse und WAECHST mit seinen Stufen — Stufe VI steht in Damen-Groesse. Meister anstelle der Dame stehen immer in Damen-Groesse. Skalierung weiterhin vom Fusspunkt, Grundlinie bleibt exakt.

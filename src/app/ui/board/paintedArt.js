@@ -141,45 +141,61 @@ export const paintedById = (id) => PAINTED[id] || null;
 // the gambit and the big dragon keep their own size on purpose. MEASURED from
 // each painting's alpha bounding box.
 const PAINTED_FIT = {
-  "pawn": { h: 0.8976, y: -0.06 },
+  "pawn": { h: 0.8977, y: -0.06 },
   "gambit": { h: 0.94, y: -0.144 },
   "knight": { h: 1.0498, y: -0.1427 },
   "bishop": { h: 1.0616, y: -0.1396 },
-  "queen": { h: 1.1327, y: -0.1377 },
-  "rook": { h: 1.0292, y: -0.1336 },
-  "king": { h: 1.1258, y: -0.1359 },
-  "chancellor": { h: 1.04, y: -0.1456 },
-  "archbishop": { h: 1.0508, y: -0.1293 },
+  "queen": { h: 1.1329, y: -0.1377 },
+  "rook": { h: 1.0826, y: -0.1336 },
+  "king": { h: 1.126, y: -0.1359 },
+  "chancellor": { h: 1.0393, y: -0.1456 },
+  "archbishop": { h: 1.0509, y: -0.1293 },
   "amazon": { h: 1.053, y: -0.1293 },
-  "hawk": { h: 1.1048, y: -0.121 },
-  "seeress": { h: 1.0541, y: -0.1293 },
-  "assassin": { h: 1.0206, y: -0.1338 },
-  "guardian": { h: 1.0746, y: -0.1356 },
-  "captain": { h: 1.0487, y: -0.1417 },
-  "sorceress": { h: 1.0487, y: -0.1379 },
-  "pathfinder": { h: 1.0703, y: -0.1289 },
-  "mage": { h: 1.0444, y: -0.138 },
-  "alchemist": { h: 1.0336, y: -0.1513 },
-  "warlock": { h: 1.0228, y: -0.1439 },
-  "paladin": { h: 1.0552, y: -0.1378 },
-  "inquisitor": { h: 1.0595, y: -0.1378 },
+  "hawk": { h: 1.1044, y: -0.121 },
+  "seeress": { h: 1.0552, y: -0.1293 },
+  "assassin": { h: 1.0404, y: -0.1338 },
+  "guardian": { h: 1.0748, y: -0.1356 },
+  "captain": { h: 1.0488, y: -0.1417 },
+  "sorceress": { h: 1.0498, y: -0.1379 },
+  "pathfinder": { h: 1.0704, y: -0.1289 },
+  "mage": { h: 1.0456, y: -0.138 },
+  "alchemist": { h: 1.0332, y: -0.1513 },
+  "warlock": { h: 1.0425, y: -0.1439 },
+  "paladin": { h: 1.0562, y: -0.1378 },
+  "inquisitor": { h: 1.0605, y: -0.1378 },
   "bard": { h: 1.066, y: -0.1444 },
   "engineer": { h: 1.0584, y: -0.133 },
-  "standard": { h: 1.0444, y: -0.1295 },
-  "strategist": { h: 1.0508, y: -0.1398 },
+  "standard": { h: 1.0446, y: -0.1295 },
+  "strategist": { h: 1.052, y: -0.1398 },
   "dragon": { h: 1.0, y: 0.0 },
 };
 /** Per-figure { h, y }: box-fit height scale + baseline shift (em). Default
  *  { h:1, y:0 } for bosses, big pieces and unknown ids. Mirrors
  *  paintedForPiece's id resolution. */
+
+// Bosses measured per portrait: every master stands queen-tall (effective
+// 1.082) whatever share of the canvas the painting fills; y offsets the foot
+// gap so the base stays planted when the scale grows.
+const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001 }, "b01": { h: 1.11, y: 0.001 }, "b02": { h: 1.42, y: 0.037 }, "b03": { h: 1.305, y: 0.024 }, "b04": { h: 1.507, y: 0.049 }, "b05": { h: 1.308, y: 0.03 }, "b06": { h: 1.383, y: 0.038 }, "b07": { h: 1.345, y: 0.037 }, "b08": { h: 1.399, y: 0.048 }, "b09": { h: 1.166, y: 0.006 }, "b10": { h: 1.471, y: 0.049 }, "b11": { h: 1.294, y: 0.027 }, "b12": { h: 1.248, y: 0.021 }, "b13": { h: 1.314, y: 0.028 }, "b14": { h: 1.147, y: 0.003 }, "b15": { h: 1.132, y: 0.002 }, "b16": { h: 1.147, y: 0.003 }, "b17": { h: 1.096, y: 0.001 }, "b18": { h: 1.23, y: 0.01 }, "b19": { h: 1.182, y: 0.005 }, "b20": { h: 1.147, y: 0.004 }, "b21": { h: 1.132, y: 0.0 }, "b22": { h: 1.085, y: 0.0 }, "b23": { h: 1.089, y: 0.0 }, "b24": { h: 1.361, y: 0.029 }, "b25": { h: 1.188, y: 0.012 }, "beast": { h: 1.099, y: 0.001 }, "golem": { h: 1.099, y: 0.001 }, "leaguemaster": { h: 1.091, y: 0.0 }, "serpent": { h: 1.099, y: 0.001 }, "tyrant": { h: 1.102, y: 0.001 }, "wraith": { h: 1.096, y: 0.001 } };
+// A piece serving as a boss (pb_*) wears its own portrait, raised to the
+// same queen-tall stature.
+const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0 }, "amazon": { h: 1.121, y: 0.003 }, "archbishop": { h: 1.119, y: 0.003 }, "assassin": { h: 1.108, y: 0.002 }, "bard": { h: 1.135, y: 0.001 }, "bishop": { h: 1.131, y: 0.002 }, "captain": { h: 1.117, y: 0.002 }, "chancellor": { h: 1.107, y: 0.001 }, "engineer": { h: 1.127, y: 0.003 }, "gambit": { h: 1.116, y: 0.001 }, "guardian": { h: 1.145, y: 0.003 }, "hawk": { h: 1.176, y: 0.006 }, "inquisitor": { h: 1.129, y: 0.002 }, "king": { h: 1.126, y: 0.002 }, "knight": { h: 1.118, y: 0.001 }, "mage": { h: 1.114, y: 0.002 }, "paladin": { h: 1.125, y: 0.002 }, "pathfinder": { h: 1.14, y: 0.004 }, "pawn": { h: 1.12, y: 0.001 }, "queen": { h: 1.133, y: 0.002 }, "rook": { h: 1.153, y: 0.003 }, "seeress": { h: 1.124, y: 0.003 }, "sorceress": { h: 1.118, y: 0.002 }, "standard": { h: 1.112, y: 0.003 }, "strategist": { h: 1.12, y: 0.002 }, "warlock": { h: 1.11, y: 0.001 } };
+
 // The hero grows with his rank: tier 1 stands pawn-small, tier 6 queen-tall —
 // a straight climb between the two (pawn 0.898 → queen 1.133).
-const GAMBIT_TIER_H = [0.898, 0.945, 0.992, 1.039, 1.086, 1.133];
+const GAMBIT_TIER_H = [0.894, 0.944, 0.981, 1.027, 1.057, 1.096];
 
 export function paintedFitFor(piece) {
   if (!piece || piece.big) return { h: 1, y: 0 };
-  // A master in the queen's place stands queen-tall — power reads as size.
-  if (piece.bossId) return { h: 1.133, y: 0 };
+  if (piece.bossId) {
+    // Same lookup chain as paintedForPiece, so the fit always matches the
+    // portrait actually shown.
+    if (piece.bossId.startsWith("pb_")) return PIECE_BOSS_FIT[piece.bossId.slice(3)] || { h: 1.113, y: 0 };
+    return BOSS_FIT[piece.bossId]
+      || (piece.bossId === "b23" ? BOSS_FIT["archenemy"] : null)
+      || (piece.bossId === "b25" ? BOSS_FIT["leaguemaster"] : null)
+      || BOSS_FIT[piece.art || ""] || { h: 1.113, y: 0 };
+  }
   if (piece.hero) {
     const t = Math.min(6, Math.max(1, piece.tier || 1));
     return { h: GAMBIT_TIER_H[t - 1], y: (PAINTED_FIT.gambit || {}).y || 0 };
