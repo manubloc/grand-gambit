@@ -390,7 +390,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none",
             transform: `translateY(${pieceLift})` + ((isSel || isSpy) && !piece.big ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
             transformOrigin: PIECE_ORIGIN,
-            position: "relative", zIndex: rr + 3, // row-by-row layering ALWAYS: even grown, a back-rank piece never covers a nearer one
+            position: "relative", zIndex: (isSel || isSpy) ? 60 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
             fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide

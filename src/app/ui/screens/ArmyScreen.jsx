@@ -1,3 +1,4 @@
+import { StatOrbBadge as SheetOrb } from "../board/PieceGlyph.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
@@ -60,17 +61,6 @@ function StatPill({ icon, val, color }) {
 // THE STAT ORB — the very same sphere the pieces wear on the board, so the
 // character sheet speaks the game's own visual language (instant recognition).
 // power = gold, life = green, energy = blue.
-function SheetOrb({ kind, v, size = 26 }) {
-  const [core, mid, rim] = kind === "life" ? ["#3ee089", "#1f9a58", "#03210f"]
-    : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
-    : ["#ffd743", "#d19a1a", "#2a1c02"];
-  return <span style={{ width: size, height: size, borderRadius: "50%", display: "grid", placeItems: "center", flex: "0 0 auto",
-    background: `radial-gradient(circle at 38% 32%, ${core} 0%, ${mid} 70%, ${rim} 100%)`,
-    boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.8px rgba(0,0,0,.5)` }}>
-    <span style={{ fontSize: size * 0.5, fontWeight: 900, lineHeight: 1, color: "#0a1206",
-      textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
-  </span>;
-}
 
 // a dossier line: LABEL ........ value — the wanted-poster rhythm
 function SheetRow({ label, children }) {

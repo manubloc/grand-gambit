@@ -56,31 +56,56 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
 // three colours, BOTH armies alike. Each orb GROWS with its number (two digits
 // need a wider home) and grows again when the piece is pressed (focus). Rims
 // run to near-black with a vivid inner colour. Numbers live inside. ──
-function StatOrb({ v, kind, focus }) {
-  // vivid core, deep near-black rim
-  const [core, mid, rim] = kind === "life" ? ["#3ee089", "#1f9a58", "#03210f"]
-    : kind === "energy" ? ["#5bb6ff", "#1f6fc4", "#04162e"]
-    : ["#ffd743", "#d19a1a", "#2a1c02"];
-  const digits = String(v).length;
-  const size = (Math.min(0.44, 0.2 + digits * 0.062 + Math.min(v, 20) * 0.005)) * (focus ? 1.4 : 1);
-  return <span data-stat={kind} style={{ width: size + "em", height: size + "em", borderRadius: "50%",
-    display: "grid", placeItems: "center", flex: "0 0 auto",
-    // the colour OWNS the sphere — no white glint, just core deepening to rim
-    background: `radial-gradient(circle at 38% 32%, ${core} 0%, ${mid} 70%, ${rim} 100%)`,
-    boxShadow: `inset 0 -0.6px 1.2px ${rim}, 0 0.5px 1.6px rgba(0,0,0,.5)`,
+import "@fontsource/cinzel/600.css";
+import orbGoldPower from "../assets/stat/orb-gold-power.webp";
+import orbGoldLife from "../assets/stat/orb-gold-life.webp";
+import orbGoldEnergy from "../assets/stat/orb-gold-energy.webp";
+import orbSteelPower from "../assets/stat/orb-steel-power.webp";
+import orbSteelLife from "../assets/stat/orb-steel-life.webp";
+import orbSteelEnergy from "../assets/stat/orb-steel-energy.webp";
+const ORB = {
+  gold: { power: orbGoldPower, life: orbGoldLife, energy: orbGoldEnergy },
+  steel: { power: orbSteelPower, life: orbSteelLife, energy: orbSteelEnergy },
+};
+
+function StatOrb({ v, kind, focus, steel, shrink = 1 }) {
+  // Painted jewel orbs: gold rims for your court, steel for the foe. One fixed
+  // size for every piece and every value — scores stay single-digit (max 9),
+  // so the ring never has to grow. The numeral is Cinzel, parchment-cream with
+  // a hairline dark-umber edge and a faint embossed sheen below.
+  const size = 0.34 * (focus ? 1.4 : 1) * shrink;
+  return <span data-stat={kind} style={{ width: size + "em", height: size + "em", flex: "0 0 auto",
+    display: "grid", placeItems: "center",
+    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     transition: "width .15s ease, height .15s ease" }}>
-    <span style={{ fontSize: Math.max(0.1, size * 0.54) + "em", fontWeight: 900, lineHeight: 1,
-      color: "#0a1206", textShadow: "0 0.5px 0 rgba(255,255,255,.4)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+    <span style={{ fontFamily: "'Cinzel', Georgia, serif", fontWeight: 600, lineHeight: 1,
+      fontSize: Math.max(0.1, size * 0.56) + "em",
+      color: "#F5E8C8", WebkitTextStroke: "0.045em #15120D",
+      textShadow: "0 0.07em 0 rgba(255,245,216,.2)",
+      transform: "translateY(-0.04em)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
   </span>;
 }
-function StatTriad({ piece, focus }) {
+
+// px-based jewel badge for sheets & the court roster — same painted orbs.
+export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
+  return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
+    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
+    filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
+    <span style={{ fontFamily: "'Cinzel', Georgia, serif", fontWeight: 600, lineHeight: 1, fontSize: size * 0.52,
+      color: "#F5E8C8", WebkitTextStroke: "0.9px #15120D", textShadow: "0 1px 0 rgba(255,245,216,.2)",
+      transform: "translateY(-1px)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+  </span>;
+}
+
+function StatTriad({ piece, focus, shrink = 1 }) {
   // one centred row riding just under the figure: [power] [life] [energy]
+  const steel = piece.color !== "w";
   return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
     display: "flex", alignItems: "flex-end", justifyContent: "center", gap: "0.03em",
     pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
-    <StatOrb v={piece.atk} kind="power" focus={focus} />
-    <StatOrb v={piece.hp} kind="life" focus={focus} />
-    {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} />}
+    <StatOrb v={piece.atk} kind="power" focus={focus} steel={steel} shrink={shrink} />
+    <StatOrb v={piece.hp} kind="life" focus={focus} steel={steel} shrink={shrink} />
+    {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} steel={steel} shrink={shrink} />}
   </span>;
 }
 
@@ -197,7 +222,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
           right — same jewel language, only the cold blue tells them apart.
           Level, strike and every richer detail live in the tap-to-inspect sheet. */}
-      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} />}
+      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={big ? 0.68 : 1} />}
 
 
       {!hpMode && piece.shield > 0 && (

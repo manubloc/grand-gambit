@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.24.9
+- NEUE WERTUNGS-BUBBLES: Die drei Kennzahl-Kugeln unter jeder Figur (Staerke / Leben / Energie) sind jetzt gemalte Juwelen-Orbs — goldener Ring fuer den eigenen Hofstaat, stahlkalter Ring fuer den Gegner; Kern gelbgold, rubinrot und saphirblau. Einheitliche Groesse fuer alle Figuren (auch der Drache), da Wertungen einstellig bleiben (hoechste Wertung 9).
+- ZIFFERN IM PRAEGE-STIL: Cinzel SemiBold in Pergamentweiss (#F5E8C8) mit hauchduenner dunkelbrauner Kontur und leichtem Praegeschimmer — lokal gebuendelt, kein Netz-Font.
+- LESBARKEIT: Die angewaehlte Figur schwebt samt ihrer Bubbles jetzt ueber ALLEN anderen Reihen, damit die Wertigkeit nie verdeckt wird.
+- HOFSTAAT: Die Charakterbogen-Orbs (STK/LEB) nutzen dieselben gemalten Kugeln.
+- Nebenfix: playwright-core als Dev-Abhaengigkeit verankert (wurde von npm beim Font-Install entfernt und brach die Pruef-Batterie).
+
 ## 0.24.8
 - ZENTRIERUNG RICHTIG GEMESSEN: Die x-Korrektur aus 0.24.7 nutzte den Masse-Schwerpunkt der Gemaelde — Staebe, Arme und Umhaenge zogen ihn zur Seite, obwohl der SOCKEL mittig sitzt; einige Figuren rutschten dadurch sogar nach links. Jetzt zaehlt die Sockelmitte (unterste 10% der Figur): neu vermessen fuer alle Figuren, Bosse, Figuren-Bosse und Gambit-Stufen — die Teller stehen damit exakt auf der Feldmitte.
 - GAMBIT-FUSSLINIE: Der Held schwebte deutlich ueber den Bauern (alter y-Wert aus der Vor-Kalibrierung). Seine Fusslinie folgt jetzt derselben Formel wie Bauer und Dame und wandert mit den Stufen sauber von Bauern- zu Damen-Hoehe (eigene y-Treppe je Stufe).
