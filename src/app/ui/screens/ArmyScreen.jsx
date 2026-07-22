@@ -1185,7 +1185,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: "1px solid rgba(233,210,150,.4)", color: "#e9d296",
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "84vh", overflowY: "auto" }}>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto" }}>
             <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
               onZoom={onZoom} open bigArt />
           </div>

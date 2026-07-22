@@ -312,7 +312,7 @@ export default function App() {
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
-      {(!immersive || mapView) && (
+      {(
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",

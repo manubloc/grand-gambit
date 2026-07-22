@@ -1,5 +1,14 @@
 # Changelog — Grand Gambit
 
+## 0.24.14
+- BRETT NOCH ETWAS KLEINER — dafuer nichts mehr abgeschnitten: Die Hoehenrechnung reserviert jetzt fast eine Zellhoehe Kopfraum (eine ANGEWAEHLTE Figur waechst 1.58x und ragte sonst oben raus — im Test steht der Kopf der vergroesserten Dame jetzt 64 px unter der Rahmenkante) und zusaetzlich 0.3 Zellen Fussraum, damit die Wertungs-Kugeln der eigenen Grundreihe unten nicht mehr vom Rahmen verdeckt werden.
+- KOORDINATEN NUR NOCH IM KLASSISCHEN SCHACH: Die Raender a–h / 1–8 erscheinen nur, wenn der Spielmodus klassisches Schach ist — in Kampagne, HP-Gefecht und allen anderen Modi sind sie weg.
+- ZIFFERN-KONTUR VIEL DUENNER: Die dunkle Umrandung der Zahlen frass die Ziffer auf — von 0.05em auf 0.018em reduziert (Charakterkarten von 1 px auf 0.5 px). Die Zahl selbst bleibt in der Groesse von 0.24.12.
+- ZENTRIERUNG, DRITTE ITERATION: Die Glyph-Kaesten stehen nachweislich exakt zellmittig (gemessen: max 1.7 px, Mittel 0.5 px auf 1280 px Breite) — der wahrgenommene Versatz kommt aus der Bildkomposition. Der Ausrichtungspunkt ist jetzt das MITTEL aus Masse- und Sockel-Schwerpunkt je Gemaelde (frisch vermessen fuer alle Figuren, Bosse und Gambit-Stufen), was z. B. den Springer doppelt so stark nach rechts rueckt wie die reine Sockel-Metrik.
+- DESKTOP: Die Kopfleiste (SPIELEN / HOFSTAAT / ...) bleibt jetzt auch waehrend eines Kampfes sichtbar.
+- CHARAKTER-POPUP: Hoehe ist jetzt zoom-fest (84dvh durch den Interface-Zoom geteilt) — es waechst am Rechner nicht mehr aus dem Bildschirm, der Inhalt scrollt.
+- HINWEIS STAHL-KUGELN & STK/LEB & "Freie Figur": Im aktuellen Build nachgeprueft — die silbernen Streifen sind im Bundle verdrahtet, die Charakterkarte rendert alle drei Kugeln (Staerke/Leben/Energie) und "Freie Figur" steht als eigene Zeile unter dem Titel. Die Screenshots zeigen einen aelteren Live-Stand; nach diesem Deploy die App einmal neu laden (Service-Worker-Update).
+
 ## 0.24.13
 - KARTE AUF MENUEBREITE — RICHTIG: In 0.24.10 hatte ich die Karte am Rechner faelschlich auf die Handy-Dockbreite (536) gedeckelt, wodurch sie viel zu schmal wurde. Gemeint war die Kopfleiste, die am Rechner bis 1020 laeuft. Das Kartenfenster ist jetzt exakt so breit wie die Menueleiste darueber: gemessen bei 420, 900, 1000, 1400 und 1920 px Fensterbreite jeweils 0 px Unterschied in Breite UND linker Kante. Das Gemaelde deckt den gerundeten Rahmen weiterhin randlos (Farbsonde: 0.000 % Untergrund sichtbar).
 

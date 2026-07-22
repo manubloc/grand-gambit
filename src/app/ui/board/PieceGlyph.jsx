@@ -84,7 +84,7 @@ const STRIP_CY = (490 - 266) / STRIP_H;                 // 0.4978
 const NUM_FONT = "'Spectral', Georgia, serif";
 function numeralStyle(px) {
   return { fontFamily: NUM_FONT, fontWeight: 700, lineHeight: 1, fontSize: px,
-    color: "#F5E8C8", WebkitTextStroke: "0.05em #15120D",
+    color: "#F5E8C8", WebkitTextStroke: "0.018em #15120D",
     textShadow: "0 0.06em 0 rgba(255,245,216,.22)", fontVariantNumeric: "tabular-nums" };
 }
 
@@ -110,7 +110,7 @@ export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * 0.5), WebkitTextStroke: "1px #15120D", textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * 0.5), WebkitTextStroke: "0.5px #15120D", textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 

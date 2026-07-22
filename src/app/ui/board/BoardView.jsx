@@ -113,7 +113,7 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -350,8 +350,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       // Tiny coordinates on the rim squares (a–j / 1–10), chess-board style:
       // file letters along the bottom edge, rank numbers along the left edge.
       const coordCol = ground ? (dark ? "rgba(255,247,222,.92)" : "rgba(24,17,7,.88)") : (dark ? sqL : sqD);
-      const fileLbl = rr === H - 1 ? "abcdefghij"[f] : null;
-      const rankLbl = ff === 0 ? String(r + 1) : null;
+      const fileLbl = showCoords && rr === H - 1 ? "abcdefghij"[f] : null;
+      const rankLbl = showCoords && ff === 0 ? String(r + 1) : null;
       cells.push(
         <div key={i} onClick={() => tap(i)} style={{ position: "relative",
           // the flat colour + a soft diagonal light stand INSTANTLY — no loading
@@ -418,10 +418,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   let cell = 0;
   if (avail.w > 0) {
     const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
-    // Reserve HEADROOM above the top rank: the tall paintings deliberately rise
-    // ~a third of a cell over their square (lift + overhang + power-scale), and
-    // the zoom viewport clips — without this reserve the back rank loses heads.
-    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.36) : Infinity;
+    // Reserve HEADROOM above the top rank AND FOOTROOM below the first: a
+    // selected piece grows 1.58x from its footpoint, so its head rises almost a
+    // full cell over the square — and the value orbs ride a little UNDER the
+    // bottom rank. The zoom viewport clips both without this reserve.
+    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.95 + 0.3) : Infinity;
     cell = Math.max(8, Math.floor(Math.min(byW, byH)));
   }
   const bw = cell ? cell * W + (W - 1) * GAP : null;
@@ -587,6 +588,6 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       {death && <DeathFlyer death={death} disp={disp} W={W} H={H} pov={pov} artStyle={artStyle} />}
     </div>
   );
-  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", alignItems: "end", justifyItems: "center", paddingBottom: 2 }}>{board}</div>;
+  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", alignItems: "end", justifyItems: "center", paddingBottom: cell ? Math.round(cell * 0.3) : 2 }}>{board}</div>;
   return <div ref={wrapRef} style={{ width: "100%" }}>{board}</div>;
 }
