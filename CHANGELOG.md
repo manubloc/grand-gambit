@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.20
+- LETZTE SCHICHT DER BUBBLE-VERGIFTUNG: Selbst OHNE Service-Worker blieb strip-steel kaputt — Chromes HTTP-Festplatten-Cache haelt Asset-Antworten als "immutable" fuer immer, und die Datei trug seit 0.24.17 denselben Namens-Hash; genau in dessen Deploy-Fenster wurde die HTML-Ersatzseite unter dieser URL eingelagert. (Die in 0.24.16 neu erzeugten Kugeln bekamen neue Hashes — deshalb funktionierten die sofort.) Loesung: beide Streifen neu kodiert -> neue Bytes -> neuer Hash -> neue URL, am vergifteten Cache vorbei. Der 0.24.18-Waechter verhindert kuenftige Vergiftungen im Service-Worker; gegen den Browser-HTTP-Cache schuetzt ab jetzt das Wissen: Nach einem Deploy-Unfall genuegt ein Re-Encode der betroffenen Datei.
+
 ## 0.24.19
 - REFACTORING DER WERTUNGS-KUGELN — Kugeln gehoeren zum FELD, nicht zur Figur: Bisher hingen die Streifen am Zeichenkasten der Figur, und dessen Geometrie ist je Figur anders (Bauer 0.98em, Hoffiguren 1.16em, Drache 1.48em). Deshalb sassen sie beim Bauern richtig und rutschten bei Turm, Dame & Co. unter das Feld — und jede Groessenkorrektur verschob heimlich die Hoehe. Jetzt rendert die ZELLE die Kugeln, verankert an der Feld-Unterkante mit fester Zell-Schriftbasis: identische Groesse und identischer Sitz fuer jede Figur, buendig mit dem Feld wie beim Bauern (nur der Drache im 2x2-Feld zeichnet seine weiterhin selbst, exakt gleich gross).
 - ZIFFERN NOCHMAL MINIMAL KLEINER (58 % statt 64 % der Kugel) und ZWEISTELLIGE WERTE (hochgelevelte Spielstaende: 12, 27, 46 ...) bekommen eine eigene kleinere Stufe (46 %), damit sie in der Kugel bleiben statt sie zu sprengen.
