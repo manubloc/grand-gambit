@@ -6,6 +6,7 @@ import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { PieceArt } from "./PieceArt.jsx";
+import frameArt from "../assets/board-frame.webp";
 
 const MOVE_DOT = "#c9a45c";
 
@@ -458,6 +459,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${ground})`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         {cells}
+        {/* THE GILDED FRAME: an ornate rail laid around every board so the
+            field reads as a mounted plate, not a flat grid. Measured on the
+            art: the rail's inner edge sits 2.5% in from the image border, so
+            an inset of -2.6% lands that edge right on the board's rim — the
+            filigree tips kiss the outer squares, the rest blooms outward.
+            No z-index: squares beneath it, pieces (z1+), orbs and selection
+            above — the back rank stands IN the frame like a showcase. */}
+        <div aria-hidden style={{ position: "absolute", inset: "-2.6%", pointerEvents: "none",
+          backgroundImage: `url(${frameArt})`, backgroundSize: "100% 100%",
+          filter: "drop-shadow(0 2px 6px rgba(0,0,0,.45))" }} />
         {/* ── THE BIG DRAGON: one sprite over four squares ── */}
         {state.board.map((pc, a) => {
           if (!pc || !pc.big || pc.kind !== "D") return null;

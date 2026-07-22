@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.25
+- GOLDENER ZIERRAHMEN UM JEDES BRETT: Der neue Rahmen (frame1) liegt als Auflage um alle Schachbretter — vermessen auf die Leisten-Innenkante (2.5 %), sodass die Zierleiste exakt auf der Brettkante sitzt und die Filigran-Spitzen die Randfelder kuessen. Figuren, Kugeln und Auswahl stehen IM Rahmen (Schaukasten-Tiefe), ein weicher Schattenwurf hebt ihn vom Untergrund. Getrimmt und als 26-KB-WebP mit Alpha eingebunden.
+
 ## 0.24.24
 - POPUP-WERTE UNTEREINANDER: Im Charakter-Blatt stehen Angriffsstärke, Lebenspunkte und Energie jetzt gestapelt wie ein Kontobuch — eine Kugel pro Zeile, der Name daneben.
 - LETZTE SYMBOL-RESTE GETILGT (Restzählung: 0): Kampagnen-Boss-Vorschau (Stahl-Kugeln mit Zahl statt Herz/Schwert), Revanche-Knopf, Intro-Zeile, Tutorial-Kopfkarte 2 — alle sprechen jetzt Juwelen.
