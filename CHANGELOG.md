@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.13
+- KARTE AUF MENUEBREITE — RICHTIG: In 0.24.10 hatte ich die Karte am Rechner faelschlich auf die Handy-Dockbreite (536) gedeckelt, wodurch sie viel zu schmal wurde. Gemeint war die Kopfleiste, die am Rechner bis 1020 laeuft. Das Kartenfenster ist jetzt exakt so breit wie die Menueleiste darueber: gemessen bei 420, 900, 1000, 1400 und 1920 px Fensterbreite jeweils 0 px Unterschied in Breite UND linker Kante. Das Gemaelde deckt den gerundeten Rahmen weiterhin randlos (Farbsonde: 0.000 % Untergrund sichtbar).
+
 ## 0.24.12
 - ZIFFERN GROESSER UND LESBARER: Am gerenderten Brett nachgemessen waren die Zahlen auf dem Handy nur rund 8 px hoch. Die Ziffer fuellt die Kugel jetzt deutlich staerker (70 % statt 52 % des Durchmessers) — gemessen rund 9 px auf dem Handy und 14 px am Rechner, ohne dass die Zahl den Glasrand beruehrt.
 - KEINE UEBERLAPPUNG: Der Kugel-Streifen ist exakt so breit wie ein Brettfeld (gemessen 47 px bei 47er Zelle, 64 px bei 64er Zelle). Ein erster Versuch mit groesseren Kugeln haette die Streifen benachbarter Figuren um mehrere Pixel ueberlappen lassen; deshalb bleibt der Durchmesser innerhalb der Feldbreite und nur die Ziffer waechst.

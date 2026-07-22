@@ -20,6 +20,7 @@ import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
+import { useMedia } from "../../App.jsx";
 import { voiceFor } from "../../../content/index.js";
 import { placeFor } from "../../../meta/index.js";
 import { MP, GEO, buildCampaignScenery, themeForLeague, Pine, Leafy, Rock, RidgeCluster, Cloud, Keep, Cottage, Mill, Bridge, Field, Boat, Birds, Mist, Wisp, StoneCircle, Crystal, DeadTree, RuinArch, Cactus, Dune, Grass, SnowDrift, Palm, Wave, Isle, Lighthouse, SiteGlyph, siteTypeFor, WandererArt } from "../mapArt.jsx";
@@ -179,16 +180,19 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
 
   // camera target = the Grand Gambit's position (he leads, the map follows)
   const camNode = nodeById(token.at) || nodeById(cur);
+  const wide = useMedia("(min-width: 900px)");
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   // the frame is FIXED: even margins top and bottom (the dock gets its room on
   // phones); the painting scales and pans INSIDE this steady window
   const padTop = 12;
-  // the window matches the MENU on EVERY screen: same width as the dock (536
-  // max, 12px gutters). On desktop it used to stretch the full viewport, which
-  // made the map tower over the menu it belongs to.
+  // The window matches the MENU on every screen. On desktop that is the header
+  // bar and the content column (max 1020, 18px gutters); on phones it is the
+  // bottom dock (max 536, 12px gutters).
   const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 20 : 16;
-  const frameW = Math.min(vp.w, Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536)); // exactly the dock's width
+  const menuW = wide ? Math.min(vp.w, 1020)
+    : Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536);
+  const frameW = Math.min(vp.w, menuW);
   const frameH = Math.max(220, vp.h - padTop - dockPad);
   // The painting COVERS the frame at every size — scaled by whichever edge
   // needs more, never less. Rendering it smaller (as the desktop branch once
