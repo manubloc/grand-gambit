@@ -18,7 +18,6 @@ import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
-import { useMedia } from "../../App.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
 import { voiceFor } from "../../../content/index.js";
@@ -80,7 +79,6 @@ const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 10) + 1] |
 
 export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTree }) {
   const en = profile.lang === "en";
-  const wide = useMedia("(min-width: 900px)");
   const league = profile.campaign?.league || 1;
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
@@ -182,28 +180,21 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // camera target = the Grand Gambit's position (he leads, the map follows)
   const camNode = nodeById(token.at) || nodeById(cur);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const fit = Math.max(vp.h / HM, vp.w / WMAP);       // cover the viewport
-  // the painted worlds are 1796px wide — rendered any larger they go soft on
-  // hi-DPI screens, so the window sits a step back from full bleed
-  const z = fit * (wide ? 0.8 : 1.005); // phones: full bleed + a hair of cover reserve (no light seam at the rim)
   // the world lives inside a rounded frame; letterbox bars stay dark chrome
   // the frame is FIXED: even margins top and bottom (the dock gets its room on
   // phones); the painting scales and pans INSIDE this steady window
   const padTop = 12;
-  // the window now matches the MENU: same width as the dock (536 max, 12px
-  // gutters) and a fuller breath of air above it — the map is a framed
-  // painting over the chrome, not a full bleed
+  // the window matches the MENU on EVERY screen: same width as the dock (536
+  // max, 12px gutters). On desktop it used to stretch the full viewport, which
+  // made the map tower over the menu it belongs to.
   const dockPad = (typeof innerWidth !== "undefined" && innerWidth < 900) ? 20 : 16;
-  const frameW = wide ? Math.min(vp.w, WMAP * z)
-    : Math.min(vp.w, Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536)); // exactly the dock's width
+  const frameW = Math.min(vp.w, Math.min((typeof innerWidth !== "undefined" ? innerWidth : vp.w) - 24, 536)); // exactly the dock's width
   const frameH = Math.max(220, vp.h - padTop - dockPad);
-  // fit covers the FRAME (not the viewport). Rendering the painting a touch
-  // SMALLER than the frame keeps it crisp on hi-DPI phones (the soft look comes
-  // from upscaling), and leaves a slim margin the vignette fades into. Every
-  // waypoint and wanderer scales with it.
-  // the painting COVERS the frame (never smaller — a gap would show the black
-  // behind it). Waypoints and wanderers scale with it.
-  const zf = wide ? z : Math.max(frameH / HM, frameW / WMAP) * 1.02;
+  // The painting COVERS the frame at every size — scaled by whichever edge
+  // needs more, never less. Rendering it smaller (as the desktop branch once
+  // did) left bare backdrop inside the rounded window. Waypoints and wanderers
+  // scale with it.
+  const zf = Math.max(frameH / HM, frameW / WMAP) * 1.02;
   const frameX = Math.round((vp.w - frameW) / 2);
   const frameY = padTop; // pinned: same breath above as below
   const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);

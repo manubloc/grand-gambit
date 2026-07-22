@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.10
+- KARTE AUF DESKTOP: Das Kartenfenster war am Rechner so breit wie der ganze Bildschirm und ueberragte damit das Menue, zu dem es gehoert. Es sitzt jetzt auf JEDER Bildschirmgroesse exakt auf Menuebreite (wie der Dock-Balken, max 536).
+- KEIN LEERRAUM MEHR IM RAHMEN: Am Rechner wurde das Gemaelde kleiner als sein gerundeter Rahmen gerechnet (Faktor 0.8), wodurch der schwarze Untergrund an den Kanten durchschien. Jetzt deckt das Bild den Rahmen auf allen Groessen randlos ab — es waechst immer mit der Kante, die mehr verlangt. Mit einer Farbsonde hinter der Karte geprueft: bei 390, 1440 und 1920 px Breite ist der Untergrund zu 0.000 % sichtbar.
+
 ## 0.24.9
 - NEUE WERTUNGS-BUBBLES: Die drei Kennzahl-Kugeln unter jeder Figur (Staerke / Leben / Energie) sind jetzt gemalte Juwelen-Orbs — goldener Ring fuer den eigenen Hofstaat, stahlkalter Ring fuer den Gegner; Kern gelbgold, rubinrot und saphirblau. Einheitliche Groesse fuer alle Figuren (auch der Drache), da Wertungen einstellig bleiben (hoechste Wertung 9).
 - ZIFFERN IM PRAEGE-STIL: Cinzel SemiBold in Pergamentweiss (#F5E8C8) mit hauchduenner dunkelbrauner Kontur und leichtem Praegeschimmer — lokal gebuendelt, kein Netz-Font.
