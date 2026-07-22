@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.27
+- ZUWACHS-ZAHLEN JETZT IN DEN KUGELN: "+1", "+2" usw. stehen bei Ausbau-Vorschau, Familien-Boni und Energie-Regeneration nicht mehr NEBEN der Kugel, sondern IN ihr — dieselbe Praegeschrift wie auf dem Brett, die Kugeln eine Nummer groesser (19-21 px) und der Ziffernanteil auf 62 %, damit das Plus atmet.
+
 ## 0.24.26
 - SCHATZKAMMER-ABSTURZ BEHOBEN: Das Aufklappen eines Erfolgs stuerzte ab, weil evaluate() die Stufenliste (tiers) nie mit ans Item gab — das Akkordeon griff ins Leere. Jetzt reisen tiers UND die Beschreibungen mit (die waren aus demselben Grund nie sichtbar). Neuer Smoke-Fall "AchievementsScreen (open)" rendert genau diesen Pfad bei jedem Push.
 - BRETT WIEDER MITTIG (MOBIL): Der Zierrahmen ragt 2.6 % ueber jede Brettkante — ohne das im Breiten-Budget einzurechnen, sprengten Brett+Rahmen den Viewport und die Seite bekam Seitwaerts-Scroll (Brett wirkte verschoben). Die Zellrechnung teilt die verfuegbare Breite jetzt durch 1.052 — Rahmen und alles bleibt drin, sauber zentriert.

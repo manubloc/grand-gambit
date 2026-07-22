@@ -492,9 +492,11 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             return maxed
               ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
               : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
-                <span style={{ color: "#8fd6a0" }}> · <JewelIc kind="life" size={12} />+{hpAt(level + 1) - hpAt(level)}</span>
-                {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · <JewelIc kind="power" size={12} />+1</span>}
-                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <JewelIc kind="energy" size={12} />+1</span>}</span>;
+                {/* the gains live INSIDE the spheres now — same numerals as
+                    every orb on the board, sized up so the plus breathes */}
+                <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px 0 4px" }}><SheetOrb kind="life" v={"+" + (hpAt(level + 1) - hpAt(level))} size={21} num={0.62} /></span>
+                {atkAt(level + 1) > atkAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px" }}><SheetOrb kind="power" v="+1" size={21} num={0.62} /></span>}
+                {enAt(level + 1) > enAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px" }}><SheetOrb kind="energy" v="+1" size={21} num={0.62} /></span>}</span>;
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
@@ -695,8 +697,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
               <span style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 2, background: FAMILIES[f].color }} />
               {(en ? FAMILIES[f].en : FAMILIES[f].de)} {kin[f]}{label ? <> · {label}</> : null}
             </span>);
-          const cParts = <>{wall ? `${t("army.famWall")} ${wall}` : t("army.famNeedTwo")}{cHp ? <> · <JewelIc kind="life" size={11} />+{cHp}</> : null}</>;
-          const sParts = <>{rifts ? `${rifts} ⧗` : t("army.famNeedTwo")}{sAtk ? <> · <JewelIc kind="power" size={11} />+{sAtk}</> : null}</>;
+          const cParts = <>{wall ? `${t("army.famWall")} ${wall}` : t("army.famNeedTwo")}{cHp ? <> · <span style={{ display: "inline-flex", verticalAlign: "-0.3em" }}><SheetOrb kind="life" v={"+" + cHp} size={19} num={0.62} /></span></> : null}</>;
+          const sParts = <>{rifts ? `${rifts} ⧗` : t("army.famNeedTwo")}{sAtk ? <> · <span style={{ display: "inline-flex", verticalAlign: "-0.3em" }}><SheetOrb kind="power" v={"+" + sAtk} size={19} num={0.62} /></span></> : null}</>;
           return <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
             {chip("crown", cParts)}
             {chip("shadow", sParts)}

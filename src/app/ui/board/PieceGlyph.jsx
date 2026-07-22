@@ -112,11 +112,11 @@ export function JewelIc({ kind, size = 13, steel = false }) {
 }
 
 // px-based jewel badge for sheets & the court roster — the separately cut orbs.
-export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
+export function StatOrbBadge({ kind, v, size = 26, steel = false, num = 0.58 }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * 0.58), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * num), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 

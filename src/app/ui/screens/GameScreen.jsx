@@ -611,7 +611,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
                     {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#cfd8c9", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="life" v={pc.hp} size={17} steel={pc.color !== "w"} /> / {pc.maxHp}</span>}
-                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#a9c4de", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="energy" v={pc.en} size={17} steel={pc.color !== "w"} /> / {pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
+                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#a9c4de", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="energy" v={pc.en} size={17} steel={pc.color !== "w"} /> / {pc.maxEn}{pc.enRegen > 0 && <span style={{ display: "inline-flex", marginLeft: 3, opacity: 0.9 }}><StatOrbBadge kind="energy" v={"+" + pc.enRegen} size={16} num={0.62} steel={pc.color !== "w"} /></span>}</span>}
                     {pc.atk != null && <span style={{ display: "inline-flex" }}><StatOrbBadge kind="power" v={pc.atk} size={17} steel={pc.color !== "w"} /></span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
