@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.12
+- ZIFFERN GROESSER UND LESBARER: Am gerenderten Brett nachgemessen waren die Zahlen auf dem Handy nur rund 8 px hoch. Die Ziffer fuellt die Kugel jetzt deutlich staerker (70 % statt 52 % des Durchmessers) — gemessen rund 9 px auf dem Handy und 14 px am Rechner, ohne dass die Zahl den Glasrand beruehrt.
+- KEINE UEBERLAPPUNG: Der Kugel-Streifen ist exakt so breit wie ein Brettfeld (gemessen 47 px bei 47er Zelle, 64 px bei 64er Zelle). Ein erster Versuch mit groesseren Kugeln haette die Streifen benachbarter Figuren um mehrere Pixel ueberlappen lassen; deshalb bleibt der Durchmesser innerhalb der Feldbreite und nur die Ziffer waechst.
+
 ## 0.24.11
 - BRETT: Die drei Wertungs-Kugeln liegen jetzt als EIN ungeteiltes Bild unter der Figur — die Kugeln behalten ihre Ueberlappung und den gemeinsamen Schatten. Die Ziffern sind an den im Gemaelde ausgemessenen Kugelmitten platziert (18.6 % / 50 % / 81.4 % der Streifenbreite, halbe Hoehe); im Pruefstand nachgemessen: hoechstens 1 px Abweichung. Fuehrt eine Figur keine Energie, zeigt sie einen schmaleren Ausschnitt desselben Streifens (erste zwei Kugeln).
 - CHARAKTERKARTEN: Eigene, sauber freigestellte Einzel-Kugeln aus den dafuer gelieferten Bildern — gold fuer den Hofstaat, silbern fuer Monster und Schatten.

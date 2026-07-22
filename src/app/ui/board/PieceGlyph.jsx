@@ -91,7 +91,7 @@ function numeralStyle(px) {
 function StatStrip({ vals, steel, focus, shrink = 1 }) {
   const n = vals.length;                                   // 2 or 3
   const visW = ORB_CX[n - 1] + ORB_R;                      // strip window in source px
-  const h = 0.34 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
+  const h = 0.33 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
   const w = h * (visW / STRIP_H);
   return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
     width: w + "em", height: h + "em", pointerEvents: "none",
@@ -100,7 +100,7 @@ function StatStrip({ vals, steel, focus, shrink = 1 }) {
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
     {vals.map((v, i) => (
       <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
-        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.52 + "em") }}>{v}</span>
+        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.7 + "em") }}>{v}</span>
     ))}
   </span>;
 }
