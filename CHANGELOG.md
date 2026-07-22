@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.28
+- DIE SCHATZKAMMER GLAENZT: Jede Erfolgs-Karte ist jetzt eine Goldplatte — warmer Goldverlauf statt flacher Panels, Goldsaum mit innerer Lichtkante, eine stille Glanz-Straehne ueber der Platte, Medaillons mit goldenem Ring und satterem Schein, ein gegossener Gold-Fortschrittsbalken mit Gluehen statt der duennen Linie, gepraegte Gold-Rauten fuer eingeloeste Stufen, Zaehler und "SO ERREICHST DU ES" in Goldschrift. Unbegonnene Erfolge liegen gedaempft im Halbdunkel — Schaetze, die noch gehoben werden wollen.
+
 ## 0.24.27
 - ZUWACHS-ZAHLEN JETZT IN DEN KUGELN: "+1", "+2" usw. stehen bei Ausbau-Vorschau, Familien-Boni und Energie-Regeneration nicht mehr NEBEN der Kugel, sondern IN ihr — dieselbe Praegeschrift wie auf dem Brett, die Kugeln eine Nummer groesser (19-21 px) und der Ziffernanteil auf 62 %, damit das Plus atmet.
 

@@ -73,15 +73,26 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       const isOpen = openId === it.id;
       return (
         <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
-          style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer",
-          opacity: started || pct > 0 ? 1 : 0.55,
-          boxShadow: started ? `inset 3px 0 0 ${T.gold}bb, ${T.shadow}` : T.shadow }}>
-          <div style={{ width: 46, height: 46, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
-            background: started ? `radial-gradient(circle at 35% 30%, ${T.gold}33, ${T.panel2})` : T.panel2,
-            border: `1.5px solid ${started ? T.gold : T.line}`,
-            boxShadow: started ? `0 0 12px ${T.gold}44` : "none",
-            filter: started ? "none" : "grayscale(1)" }}>
-            <AchIcon id={it.id} color={started ? T.gold : T.faint} size={24} />
+          style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer", position: "relative",
+          opacity: started || pct > 0 ? 1 : 0.62,
+          background: started
+            ? "linear-gradient(160deg, rgba(74,58,28,.55), rgba(22,17,9,.94) 58%)"
+            : "linear-gradient(160deg, rgba(46,38,22,.4), rgba(18,14,8,.94) 58%)",
+          border: `1px solid ${started ? "rgba(233,207,138,.55)" : "rgba(180,150,90,.24)"}`,
+          boxShadow: started
+            ? `inset 0 1px 0 rgba(255,240,190,.3), inset 3px 0 0 ${T.gold}, 0 0 18px rgba(217,181,101,.16), ${T.shadow}`
+            : `inset 0 1px 0 rgba(255,240,190,.08), ${T.shadow}` }}>
+          {/* a still gleam sweeping the plate — treasure catches the light */}
+          <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
+            background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.10) 45%, transparent 58%)" }} />
+          <div style={{ width: 48, height: 48, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
+            background: started
+              ? "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)"
+              : "radial-gradient(circle at 32% 28%, rgba(120,100,60,.18), rgba(20,16,10,.95) 70%)",
+            border: `2px solid ${started ? "#e9cf8a" : "rgba(160,135,85,.35)"}`,
+            boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "inset 0 1px 1px rgba(255,246,214,.08)",
+            filter: started ? "none" : "grayscale(.8)" }}>
+            <AchIcon id={it.id} color={started ? "#f6e4a2" : T.faint} size={25} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
@@ -92,10 +103,10 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 {Array.from({ length: it.total }).map((_, i) => {
                   const cl = claimedTiers(profile, it.id);
                   const state = i < cl ? "claimed" : i < it.done ? "ready" : "locked";
-                  return <span key={i} style={{ width: 6, height: 6, transform: "rotate(45deg)", borderRadius: 1,
-                    background: state === "claimed" ? T.gold : state === "ready" ? T.lime : T.panel2,
-                    border: state === "locked" ? `1px solid ${T.line}` : "none",
-                    boxShadow: state === "claimed" ? `0 0 5px ${T.gold}88` : state === "ready" ? `0 0 6px ${T.lime}aa` : "none",
+                  return <span key={i} style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 1.5,
+                    background: state === "claimed" ? "linear-gradient(160deg, #f6e4a2, #d9b565 70%)" : state === "ready" ? T.lime : "rgba(30,24,13,.9)",
+                    border: state === "locked" ? "1px solid rgba(180,150,90,.3)" : "none",
+                    boxShadow: state === "claimed" ? "0 0 6px rgba(240,214,138,.75), inset 0 1px 0 rgba(255,246,214,.6)" : state === "ready" ? `0 0 6px ${T.lime}aa` : "inset 0 1px 1px rgba(0,0,0,.5)",
                     animation: state === "ready" ? "herePulse 1.6s ease-in-out infinite" : "none" }} />;
                 })}
               </span>
@@ -105,7 +116,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
               {/* the LEDGER of the goal: every tier, its target and its purse —
                   the character-card accordion, brought to the treasury */}
               <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 3 }}>
-                <div style={{ color: T.faint, letterSpacing: ".06em", fontSize: 10.5 }}>{en ? "HOW TO EARN IT" : "SO ERREICHST DU ES"}</div>
+                <div className="gg-serif" style={{ letterSpacing: ".22em", fontSize: 10.5, ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{en ? "HOW TO EARN IT" : "SO ERREICHST DU ES"}</div>
                 {(it.tiers || []).map((tr, i) => {
                   const cl = claimedTiers(profile, it.id);
                   const st = i < cl ? "✓" : i < it.done ? "◆" : "·";
@@ -118,9 +129,16 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 })}
               </div>
             </div>}
-            <div style={{ margin: "8px 0 5px" }}><Bar pct={pct} height={5} color={done ? T.green : T.gold} /></div>
+            <div style={{ margin: "8px 0 5px", height: 7, borderRadius: 999, position: "relative",
+              background: "rgba(12,9,5,.85)", boxShadow: "inset 0 1px 2px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,240,190,.06)" }}>
+              <div style={{ position: "absolute", inset: 0, width: `${pct * 100}%`, borderRadius: 999,
+                background: done
+                  ? "linear-gradient(90deg, #b8944e, #f6e4a2 55%, #e0bd72)"
+                  : "linear-gradient(90deg, #8a6d35, #f0d68a 60%, #d9b565)",
+                boxShadow: "0 0 9px rgba(217,181,101,.55), inset 0 1px 0 rgba(255,246,214,.5)" }} />
+            </div>
             <div style={{ fontSize: 11.5, color: T.faint, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-              <span>{done ? <span style={{ color: T.green }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
+              <span style={{ color: "#e6d09a" }}>{done ? <span style={{ color: "#f6e4a2", textShadow: "0 0 6px rgba(240,214,138,.5)" }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
               {(() => {
                 const cl = claimedTiers(profile, it.id);
                 if (cl >= it.done) return null;
