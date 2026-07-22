@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.24.17
+- GEGNERISCHE (SILBERNE) BUBBLES ERSCHEINEN ENDLICH: In Chrome direkt nachgewiesen — die Datei strip-steel wurde zwar fehlerfrei geladen (Abruf ok), aber vom Browser NICHT dekodiert; CSS zeigt dann still nichts an, waehrend die Ziffern darueber sichtbar blieben. Genau derselbe Fehler wie zuvor bei den gelben und roten Hofstaat-Kugeln. Beide Streifen aus den gelieferten Vorlagen mit der reparierten Bildpipeline neu erzeugt und der Decode geprueft.
+- ALLE BUBBLES GLEICH GROSS — SO KLEIN WIE BEIM BAUERN: Das Brett gibt Bauern 0.98em und allen anderen Figuren 1.16em Schriftmass (dem Drachen noch mehr); der Kugel-Streifen erbte das und wuchs bei jeder groesseren Figur um 18 %. Die Groesse rechnet dieses Mass jetzt heraus, sodass jede Figur — Bauer, Dame, Boss, Drache, Gambit — exakt dieselbe kleine Kugelgroesse traegt.
+- ZIFFERN MINIMAL KLEINER UND HELLER: Fuellgrad 70 % -> 64 % der Kugel, ueberall gleich (Brett und Charakterkarten), Farbe von #F5E8C8 auf das hellere #FCF5E2, Praegeschimmer eine Spur kraeftiger.
+
 ## 0.24.16
 - HOFSTAAT-KUGELN GELB & ROT: Live in Chrome nachgewiesen, dass die STK- und LEB-Kugelbilder dort mit einem Browser-Dekodierfehler scheiterten ("The source image cannot be decoded" — der HTTP-Abruf war ok, deshalb sahen alle frueheren Pruefungen sie als intakt). Alle sechs Einzel-Kugeln aus den frisch gelieferten Vorlagen neu geschnitten (Kreis exakt, WEBP q95/method6) und per libwebp-Decode verifiziert.
 

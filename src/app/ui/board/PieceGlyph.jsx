@@ -84,13 +84,17 @@ const STRIP_CY = (490 - 266) / STRIP_H;                 // 0.4978
 const NUM_FONT = "'Spectral', Georgia, serif";
 function numeralStyle(px) {
   return { fontFamily: NUM_FONT, fontWeight: 700, lineHeight: 1, fontSize: px,
-    color: "#F5E8C8", WebkitTextStroke: "0.018em #15120D",
-    textShadow: "0 0.06em 0 rgba(255,245,216,.22)", fontVariantNumeric: "tabular-nums" };
+    color: "#FCF5E2", WebkitTextStroke: "0.018em #15120D",
+    textShadow: "0 0.06em 0 rgba(255,248,226,.26)", fontVariantNumeric: "tabular-nums" };
 }
 
 function StatStrip({ vals, steel, focus, shrink = 1 }) {
   const n = vals.length;                                   // 2 or 3
   const visW = ORB_CX[n - 1] + ORB_R;                      // strip window in source px
+  // ONE size for every piece: the board gives pawns 0.98em and every other
+  // figure 1.16em (the dragon even more), so an em-based strip would silently
+  // grow with the piece. `shrink` divides that away — every orb on the board
+  // ends up exactly as small as a pawn's.
   const h = 0.33 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
   const w = h * (visW / STRIP_H);
   return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
@@ -100,7 +104,7 @@ function StatStrip({ vals, steel, focus, shrink = 1 }) {
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
     {vals.map((v, i) => (
       <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
-        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.7 + "em") }}>{v}</span>
+        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.64 + "em") }}>{v}</span>
     ))}
   </span>;
 }
@@ -110,7 +114,7 @@ export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * 0.7), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * 0.64), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 
@@ -234,7 +238,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
           right — same jewel language, only the cold blue tells them apart.
           Level, strike and every richer detail live in the tap-to-inspect sheet. */}
-      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={big ? 0.68 : 1} />}
+      {hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={0.98 / (big ? 1.48 : piece.kind === "P" ? 0.98 : 1.16)} />}
 
 
       {!hpMode && piece.shield > 0 && (
