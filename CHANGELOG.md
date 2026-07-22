@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.16
+- HOFSTAAT-KUGELN GELB & ROT: Live in Chrome nachgewiesen, dass die STK- und LEB-Kugelbilder dort mit einem Browser-Dekodierfehler scheiterten ("The source image cannot be decoded" — der HTTP-Abruf war ok, deshalb sahen alle frueheren Pruefungen sie als intakt). Alle sechs Einzel-Kugeln aus den frisch gelieferten Vorlagen neu geschnitten (Kreis exakt, WEBP q95/method6) und per libwebp-Decode verifiziert.
+
 ## 0.24.15
 - CHARAKTERKARTEN-ZIFFERN WIE AUF DEM BRETT: Live in Chrome verglichen — auf dem Brett fuellt die Zahl 70 % der Kugel mit 0.018em-Haarkontur, auf den Karten nur 50 % mit dickerer 0.5px-Kontur; dadurch wirkten die Karten-Zahlen mickrig. Jetzt identische Regel ueberall: 70 % Fuellgrad, gleiche Haarkontur.
 - LIVE-BEFUND (Chrome, grandgambit.win, v0.24.14): HP-Gefecht rendert 32 Streifen — 16 gold + 16 STAHL, alle Bilder laden; unterster Streifen der Grundreihe voll sichtbar; Hofstaat-Karte zeigt alle drei Kugeln in Spectral 700. Die frueher gemeldeten fehlenden Stahl-Kugeln/STK-LEB-Orbs waren der alte Service-Worker-Stand.
