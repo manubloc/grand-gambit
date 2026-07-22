@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.2
+- FIGUREN: Rang wird sichtbar. Koenig und Koenigin tragen jetzt einen weichen Schein (warm-golden im eigenen Hofstaat, kuehl-silbrig beim Gegner) und die hellste Malerei; alle uebrigen Figuren sind eine Spur dunkler und weniger gesaettigt, damit die Krone das Auge fuehrt. Der Gambit-Held behaelt seine eigene Stufen-Aura unveraendert.
+
 ## 0.24.1
 - FIGUREN: Groessen-Hierarchie auf dem Brett. Bauern etwas kleiner, alle anderen Figuren etwas groesser, Koenig und Koenigin am groessten. Umgesetzt ueber Skalierung der Figurenhoehen (vom Fusspunkt aus, daher bleibt die gemeinsame Grundlinie erhalten); der Gambit-Held und der Drache bleiben unveraendert.
 
