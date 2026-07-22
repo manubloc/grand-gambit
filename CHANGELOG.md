@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.25.1
+- HOFREIHE ENDLICH MITTIG — GEMESSEN, GEFUNDEN, GENAGELT: Im echten Chromium vermessen (Bildmitte gegen Zellmitte, jede Figur): Bauern +0.3 px, ALLE Hofreihen-Figuren +3.9 bis +5.5 px rechts. Ursache: Der Figuren-Layer lebt im groesseren Hofreihen-Font (1.16em), wurde damit BREITER als die Zelle und klebte an ihrer linken Kante — Versatz exakt (Kasten−Zelle)/2 = 4.22 px. Der Layer spannt sich jetzt absolut auf die Zelle (inset 0), der Ueberstand zentriert sich symmetrisch. Nachmessung: alle Figuren im Bereich −0.3 bis +0.3 px (Springer +1.2 px Layout, den sein Gemaelde visuell aufhebt).
+- BRETT VERTIKAL MITTIG: Das Spielfeld ruht jetzt mittig im Kampfbereich — oben wie unten gleich viel Luft.
+- KUGELN FAST BERUEHREND: Der Abstand der beiden Juwelen unter jeder Figur ist auf ein Haar reduziert (4.5 % statt 14 % des Durchmessers).
+
 ## 0.25.0
 - DIE GROSSE REGELWENDE, VOLLENDET UND VERSIEGELT: Energie ist restlos aus dem Spiel — jede Figur darf beliebig viele Faehigkeiten KOENNEN, aber pro Partie nur EINE ausfuehren. Der Kern trug die Regel bereits (jeder Spezialzug schreibt ins Buch der Figur, danach bleibt es zu); diese Version vollendet sie sichtbar und nagelt sie fest:
 - ZWEI JUWELEN UNTER JEDER FIGUR: Blau ist der neue ANGRIFF, Rot bleibt LEBEN — gleiche Groesse, gleiche Praegeschrift wie zuvor, fuer beide Seiten. Der Drei-Kugel-Streifen ist Geschichte (Bundle traegt nur noch die zwei Kugeln als eingebettete Daten).

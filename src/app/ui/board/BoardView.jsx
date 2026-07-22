@@ -388,10 +388,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
-          {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none",
+          {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none",
             transform: `translateY(${pieceLift})` + ((isSel || isSpy) && !piece.big ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
             transformOrigin: PIECE_ORIGIN,
-            position: "relative", zIndex: (isSel || isSpy) ? 60 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
+            // MEASURED, then nailed: this layer's 1em box lives in the piece font
+            // (court 1.16em), so it grew WIDER than the square and sat flush to
+            // its LEFT edge — every court figure drifted (em-cell)/2 = ~4-5px
+            // right while the slimmer pawns stayed true. Pinning the layer to
+            // the square (inset 0) makes the flex centre the overflow evenly.
+            position: "absolute", inset: 0, zIndex: (isSel || isSpy) ? 60 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
             fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide

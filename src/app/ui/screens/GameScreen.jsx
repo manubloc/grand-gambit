@@ -576,6 +576,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
         overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
         <div style={{ width: "100%", height: "100%",
+          display: "grid", placeItems: "center",   // the board rests mid-air: as much sky above as below
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
