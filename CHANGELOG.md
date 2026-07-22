@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.15
+- CHARAKTERKARTEN-ZIFFERN WIE AUF DEM BRETT: Live in Chrome verglichen — auf dem Brett fuellt die Zahl 70 % der Kugel mit 0.018em-Haarkontur, auf den Karten nur 50 % mit dickerer 0.5px-Kontur; dadurch wirkten die Karten-Zahlen mickrig. Jetzt identische Regel ueberall: 70 % Fuellgrad, gleiche Haarkontur.
+- LIVE-BEFUND (Chrome, grandgambit.win, v0.24.14): HP-Gefecht rendert 32 Streifen — 16 gold + 16 STAHL, alle Bilder laden; unterster Streifen der Grundreihe voll sichtbar; Hofstaat-Karte zeigt alle drei Kugeln in Spectral 700. Die frueher gemeldeten fehlenden Stahl-Kugeln/STK-LEB-Orbs waren der alte Service-Worker-Stand.
+
 ## 0.24.14
 - BRETT NOCH ETWAS KLEINER — dafuer nichts mehr abgeschnitten: Die Hoehenrechnung reserviert jetzt fast eine Zellhoehe Kopfraum (eine ANGEWAEHLTE Figur waechst 1.58x und ragte sonst oben raus — im Test steht der Kopf der vergroesserten Dame jetzt 64 px unter der Rahmenkante) und zusaetzlich 0.3 Zellen Fussraum, damit die Wertungs-Kugeln der eigenen Grundreihe unten nicht mehr vom Rahmen verdeckt werden.
 - KOORDINATEN NUR NOCH IM KLASSISCHEN SCHACH: Die Raender a–h / 1–8 erscheinen nur, wenn der Spielmodus klassisches Schach ist — in Kampagne, HP-Gefecht und allen anderen Modi sind sie weg.
