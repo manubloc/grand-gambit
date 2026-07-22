@@ -168,7 +168,10 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           base stays planted on the square. */}
       <div style={{ position: "relative", zIndex: 1, width: big ? "1.48em" : pieceSize, height: big ? "1.48em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
         marginTop: big ? 0 : "-0.16em",
-        transform: (fit.h !== 1 || fit.y !== 0) ? `translateY(${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
+        // the horizontal nudge re-centres each painting: its subject sits a
+        // touch off the image middle (measured per file), and scaling would
+        // otherwise push that bias outward — so we pull it back by x·h.
+        transform: (fit.h !== 1 || fit.y !== 0 || fit.x) ? `translate(${(-(fit.x || 0) * fit.h).toFixed(4)}em, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
         {painting
           ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:
@@ -179,14 +182,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : isQueen ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
                   : isBoss ? "brightness(1.32) saturate(1.1) hue-rotate(8deg)"
                   : piece.hero ? "brightness(1.12) saturate(1) hue-rotate(8deg)"
-                  : isPawn ? "brightness(1.06) saturate(0.88) hue-rotate(8deg)"
-                  : "brightness(1.2) saturate(0.95) hue-rotate(8deg)")
+                  : isPawn ? "brightness(0.97) saturate(0.82) hue-rotate(8deg)"
+                  : "brightness(1.32) saturate(1.02) hue-rotate(8deg)")
                 : ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
                   : isQueen ? " brightness(1.42) saturate(1.18)"
                   : isBoss ? " brightness(1.24) saturate(1.1)"
                   : piece.hero ? " brightness(1)"
-                  : isPawn ? " brightness(0.96) saturate(0.86)"
-                  : " brightness(1.06) saturate(0.9)"),
+                  : isPawn ? " brightness(0.9) saturate(0.8)"
+                  : " brightness(1.16) saturate(0.98)"),
               userSelect: "none", pointerEvents: "none" }} />
           : <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />}
       </div>

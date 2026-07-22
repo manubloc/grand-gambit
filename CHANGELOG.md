@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.7
+- FIGUREN-FEINSCHLIFF: Bauern nochmals dunkler und matter (weniger Glanz); alle uebrigen Figuren (ausser Held) spuerbar heller — klar unter Dame und Koenig, aber deutlich ueber den Bauern. Gilt gespiegelt auch fuer die Gegner-Seite.
+- RECHTS-VERSATZ BEHOBEN: Viele Gemaelde sitzen nicht exakt mittig im Bild (gemessen: Schwerpunkte von -4.1% bis +2.8% der Bildbreite, z.B. Waechter +2.8%, Barde +2.2%) — die Groessen-Skalierung schob diesen Versatz zusaetzlich nach aussen, weshalb die meisten Figuren etwas zu weit rechts standen. Jetzt traegt jedes Bild seinen gemessenen x-Versatz in den Fit-Karten (Figuren, Bosse, Figuren-Bosse, Gambit-Stufen), und der Renderer zieht den Schwerpunkt exakt auf die Feldmitte zurueck.
+
 ## 0.24.6
 - GROESSEN-VOLLKALIBRIERUNG: Jedes Figuren- und Boss-Bild wurde vermessen (sichtbarer Anteil im Canvas) und auf einheitliche Ziel-Groessen gebracht: Bauer 0.867, Figuren 1.016, Koenigspaar/Bosse 1.082 (effektiv). Behebt drei Figuren-Ausreisser (Turm, Assassine, Warlock standen zu klein) und vor allem: ALLE Bosse stehen jetzt bildgenau in Damen-Groesse — Monster wie Figuren-Bosse (z.B. der Attentaeter an der Nebelfaehre, der bisher voellig unkalibriert in Normalgroesse stand). Fuss-Abstaende der Boss-Bilder werden pro Bild kompensiert, damit nichts schwebt. Gambits Stufen-Wachstum ist nun ebenfalls pro Stufen-Portrait vermessen (Bauer -> Dame ueber die Bilder t1-t6).
 
