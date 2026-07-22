@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.21
+- FESTSITZENDE UPDATES LOESEN SICH JETZT SELBST: Live beobachtet — ein frisch installierter Service-Worker blieb dauerhaft im Zustand "waiting", und die Seite lieferte Reload um Reload den alten Stand ("ich lade neu und nichts aendert sich"). Der generierte Worker besitzt keinen Meldungs-Empfaenger, mit dem man ihn aktivieren koennte. Neu: Erkennt die App einen festsitzenden Worker, deregistriert sie ihn EINMALIG und laedt neu — der frische Worker uebernimmt sofort (skipWaiting + clientsClaim). Ein Sitzungs-Schutz verhindert Reload-Schleifen. Damit greifen kuenftige Deploys ohne Zutun des Spielers.
+
 ## 0.24.20
 - LETZTE SCHICHT DER BUBBLE-VERGIFTUNG: Selbst OHNE Service-Worker blieb strip-steel kaputt — Chromes HTTP-Festplatten-Cache haelt Asset-Antworten als "immutable" fuer immer, und die Datei trug seit 0.24.17 denselben Namens-Hash; genau in dessen Deploy-Fenster wurde die HTML-Ersatzseite unter dieser URL eingelagert. (Die in 0.24.16 neu erzeugten Kugeln bekamen neue Hashes — deshalb funktionierten die sofort.) Loesung: beide Streifen neu kodiert -> neue Bytes -> neuer Hash -> neue URL, am vergifteten Cache vorbei. Der 0.24.18-Waechter verhindert kuenftige Vergiftungen im Service-Worker; gegen den Browser-HTTP-Cache schuetzt ab jetzt das Wissen: Nach einem Deploy-Unfall genuegt ein Re-Encode der betroffenen Datei.
 

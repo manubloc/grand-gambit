@@ -66,6 +66,27 @@ registerSW({
   immediate: true,
   onRegisteredSW(_url, r) {
     if (!r) return;
+    // THE STUCK-UPDATE ESCAPE: we watched a fresh worker sit in `waiting`
+    // forever on a live tab — reload after reload kept serving the old build
+    // ("I refresh and nothing changes"). The generated sw has no SKIP_WAITING
+    // listener, so messaging it is futile. When a worker is stuck waiting we
+    // unregister ONCE and reload: the new sw.js registers fresh, activates
+    // immediately (skipWaiting + clientsClaim) and takes over. A session flag
+    // guards against reload loops.
+    const kick = () => {
+      if (!r.waiting || sessionStorage.getItem("gg-sw-kick")) return;
+      sessionStorage.setItem("gg-sw-kick", "1");
+      r.unregister().then(() => window.location.reload()).catch(() => {});
+    };
+    if (r.waiting) setTimeout(kick, 1500);     // stuck from a previous visit
+    r.addEventListener("updatefound", () => {
+      const w = r.installing;
+      if (!w) return;
+      w.addEventListener("statechange", () => {
+        // freshly installed but not activating? give it a grace period, then kick
+        if (w.state === "installed" && navigator.serviceWorker.controller) setTimeout(kick, 3000);
+      });
+    });
     const check = () => r.update().catch(() => {});
     check();                                   // once right away
     setInterval(check, 60_000);
