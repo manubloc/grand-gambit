@@ -8,6 +8,7 @@ import { claimableCount, retinueScore } from "../meta/index.js";
 import logoMenuUrl from "./ui/assets/logo-menu.webp";
 import emblemUrl from "./ui/assets/emblem.webp";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
+import { JewelIc } from "./ui/board/PieceGlyph.jsx";
 import { T } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
@@ -504,7 +505,7 @@ function GameIntro({ t, dispatch, onStart }) {
         </div>
         <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: T.dim }}>{t("intro.lead")}</div>
         <div style={{ display: "grid", gap: 11, margin: "15px 0 4px" }}>
-          <Row icon={<GoldHeartIc size={17} />}>{t("intro.p1")}</Row>
+          <Row icon={<JewelIc kind="life" size={17} />}>{t("intro.p1")}</Row>
           <Row icon={<SkillIc size={17} />}>{t("intro.p2")}</Row>
           <Row icon={<MapPinIc size={17} />}>{t("intro.p3")}</Row>
         </div>

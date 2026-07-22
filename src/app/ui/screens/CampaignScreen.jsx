@@ -18,6 +18,7 @@ import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
+import { StatOrbBadge } from "../board/PieceGlyph.jsx";
 import { MAP_BITMAPS } from "../mapBitmaps.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
 import { useMedia } from "../../App.jsx";
@@ -825,7 +826,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               <div style={{ minWidth: 0, paddingBottom: 3 }}>
                 <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
                 <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-                  <HeartIc color="#8a6f4d" size={12} /> {boss.hp} <span style={{ opacity: .55 }}>·</span> <BladesIc color="#8a6f4d" size={12} /> {boss.atk}
+                  <StatOrbBadge kind="life" v={boss.hp} size={16} steel /> <StatOrbBadge kind="power" v={boss.atk} size={16} steel />
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>

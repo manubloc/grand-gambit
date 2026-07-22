@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.24.24
+- POPUP-WERTE UNTEREINANDER: Im Charakter-Blatt stehen Angriffsstärke, Lebenspunkte und Energie jetzt gestapelt wie ein Kontobuch — eine Kugel pro Zeile, der Name daneben.
+- LETZTE SYMBOL-RESTE GETILGT (Restzählung: 0): Kampagnen-Boss-Vorschau (Stahl-Kugeln mit Zahl statt Herz/Schwert), Revanche-Knopf, Intro-Zeile, Tutorial-Kopfkarte 2 — alle sprechen jetzt Juwelen.
+- DELTAS IMMER MIT ZAHL: Ausbau-Vorschau zeigt einheitlich Kugel gefolgt von +N (auch Lebenspunkte, vorher nacktes Herz), Familien-Boni ebenso (Kugel +N statt "+2 ♥").
+- SYMBOLE AUCH AUS TEXTEN: Tutorial-Fliesstexte und Trank-Hinweis sagen "Lebenspunkte" und "Angriffsstärke" statt ♥/⚔ — eine Sprache ueberall.
+
 ## 0.24.23
 - DAMEN-SLOT IN VOLLEM GLANZ: Meister im Damen-Slot leuchten jetzt EXAKT wie die Dame (eigene Seite 1.62, Gegner 1.42) — vorher hingen sie eine Lichtstufe darunter. Die Groessen waren bereits auf Damen-Format kalibriert.
 - VERHUELLTE MEISTER: Fremde Sonderfiguren im Damen-Slot erscheinen dem Gegner als gewoehnliche Dame — erst der eigene Feldherr sieht, wer die Krone wirklich traegt (dasselbe Prinzip wie die Maskerade des Gambit). Bewusster Kompromiss: Das Inspektions-Blatt nennt weiterhin den echten Namen.

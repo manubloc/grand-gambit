@@ -11,24 +11,24 @@ import { JewelIc } from "../board/PieceGlyph.jsx";
 
 const STEPS = [
   {
-    de: { title: "Das Spiel", text: "Grand Gambit ist Schach mit Herz: Jede Figur hat Lebenspunkte ♥ und Angriff ⚔. Wer eine Figur angreift, richtet Schaden an — erst wenn die Herzen fallen, verlässt sie das Brett. Der Grand Gambit selbst, der goldene Bauer, ist der Held der Geschichte." },
-    en: { title: "The game", text: "Grand Gambit is chess with a heartbeat: every piece carries hearts ♥ and attack ⚔. Attacking deals damage — a piece only leaves the board once its hearts run out. The Grand Gambit himself, the golden pawn, is the hero of the tale." },
+    de: { title: "Das Spiel", text: "Grand Gambit ist Schach mit Herz: Jede Figur hat Lebenspunkte und Angriffsstärke. Wer eine Figur angreift, richtet Schaden an — erst wenn die Herzen fallen, verlässt sie das Brett. Der Grand Gambit selbst, der goldene Bauer, ist der Held der Geschichte." },
+    en: { title: "The game", text: "Grand Gambit is chess with a heartbeat: every piece carries life points and attack strength. Attacking deals damage — a piece only leaves the board once its hearts run out. The Grand Gambit himself, the golden pawn, is the hero of the tale." },
     art: <div style={{ width: 64, height: 64 }}><PieceArt kind="P" fill="#c9a45c" rim="#f0dfae" detail="#59421a" size="100%" level={1} hero /></div>,
   },
   {
-    de: { title: "Ziehen & Kämpfen", text: "Figuren ziehen wie im Schach. Ein Zug auf ein gegnerisches Feld ist ein Angriff: Dein ⚔ trifft seine ♥. Überlebt der Gegner, bleibst du stehen — überlege also, wen du wohin schickst. Der König muss immer geschützt bleiben." },
-    en: { title: "Move & fight", text: "Pieces move as in chess. Stepping onto an enemy square is an attack: your ⚔ strikes their ♥. If the defender survives, you hold your ground — so choose your targets well. The king must always be kept safe." },
+    de: { title: "Ziehen & Kämpfen", text: "Figuren ziehen wie im Schach. Ein Zug auf ein gegnerisches Feld ist ein Angriff: Deine Angriffsstärke trifft seine Lebenspunkte. Überlebt der Gegner, bleibst du stehen — überlege also, wen du wohin schickst. Der König muss immer geschützt bleiben." },
+    en: { title: "Move & fight", text: "Pieces move as in chess. Stepping onto an enemy square is an attack: your attack strikes their life points. If the defender survives, you hold your ground — so choose your targets well. The king must always be kept safe." },
     art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><JewelIc kind="life" size={26} /><JewelIc kind="power" size={26} /></div>,
   },
   {
-    de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 ♥ (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },
-    en: { title: "Draughts & time-turners", text: "The supply chest holds helpers: the healing draught restores 2 ♥ to a piece mid-battle (spends the turn). The time-turner takes back your last move — each reversal burns one hourglass. Both are bought with gold, both are scarce." },
+    de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 Lebenspunkte (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },
+    en: { title: "Draughts & time-turners", text: "The supply chest holds helpers: the healing draught restores 2 life points to a piece mid-battle (spends the turn). The time-turner takes back your last move — each reversal burns one hourglass. Both are bought with gold, both are scarce." },
     art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><ItemIcon id="potion" size={30} /><HourglassGIc size={28} /></div>,
   },
   {
     de: { title: "Die Kampagne", text: "Die Karte führt durch vier Kapitel zur Ligafeste. An den Stationen warten Herausforderer — besiege sie und sie treten deinem Hofstaat bei. Nur die großen Bosse mit dem Totenkopf sind reine Ungeheuer. Manche Pfade sind verschlossen und wollen Gold oder Ausrüstung." },
     en: { title: "The campaign", text: "The map winds through four chapters to the League Keep. Challengers await at the stations — beat them and they join your court. Only the great skull-marked bosses are pure monsters. Some paths are barred and demand gold or gear." },
-    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><SwordsIc size={26} /><GoldSkullIc size={26} /></div>,
+    art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><JewelIc kind="power" size={26} /><GoldSkullIc size={26} /></div>,
   },
   {
     de: { title: "Der Hofstaat", text: "Rekrutierte Figuren leveln mit Skillpunkten ✦ und lernen Fähigkeiten. Stelle im Hofstaat deine Formation zusammen und wähle die Position des Grand Gambit. Besiegst du einen Herausforderer erneut, wendet er sich als Abtrünniger gegen dich — der Doppelsieg schenkt einen Stern ★." },

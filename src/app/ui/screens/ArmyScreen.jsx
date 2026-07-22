@@ -453,8 +453,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             „{en ? char.flavorEn : char.flavorDe}“
           </div>
         )}
-        {/* THE ORBS — the same spheres the piece wears in battle */}
-        <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "10px 0 2px" }}>
+        {/* THE ORBS — the same spheres the piece wears in battle, stacked as a
+            ledger: one value per line, its name beside it */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, margin: "10px 0 2px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
           {hasEnergy && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="energy" v={enNow} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Energy" : "Energie"}</span></span>}
@@ -491,9 +492,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             return maxed
               ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
               : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
-                <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
+                <span style={{ color: "#8fd6a0" }}> · <JewelIc kind="life" size={12} />+{hpAt(level + 1) - hpAt(level)}</span>
                 {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · <JewelIc kind="power" size={12} />+1</span>}
-                {enAt(level + 1) > enAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.2em", marginLeft: 4 }}><JewelIc kind="energy" size={12} />&#8202;+1</span>}</span>;
+                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <JewelIc kind="energy" size={12} />+1</span>}</span>;
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
@@ -692,10 +693,10 @@ function FormationEditor({ profile, dispatch, t, en }) {
               borderRadius: 999, border: `1px solid ${FAMILIES[f].color}66`, background: `${FAMILIES[f].color}1c`,
               color: FAMILIES[f].color, fontSize: 11.5, fontWeight: 800 }}>
               <span style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 2, background: FAMILIES[f].color }} />
-              {(en ? FAMILIES[f].en : FAMILIES[f].de)} {kin[f]}{label ? ` · ${label}` : ""}
+              {(en ? FAMILIES[f].en : FAMILIES[f].de)} {kin[f]}{label ? <> · {label}</> : null}
             </span>);
-          const cParts = [wall ? `${t("army.famWall")} ${wall}` : t("army.famNeedTwo"), cHp ? `+${cHp} ♥` : null].filter(Boolean).join(" · ");
-          const sParts = [rifts ? `${rifts} ⧗` : t("army.famNeedTwo"), sAtk ? `+${sAtk} ⚔` : null].filter(Boolean).join(" · ");
+          const cParts = <>{wall ? `${t("army.famWall")} ${wall}` : t("army.famNeedTwo")}{cHp ? <> · <JewelIc kind="life" size={11} />+{cHp}</> : null}</>;
+          const sParts = <>{rifts ? `${rifts} ⧗` : t("army.famNeedTwo")}{sAtk ? <> · <JewelIc kind="power" size={11} />+{sAtk}</> : null}</>;
           return <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
             {chip("crown", cParts)}
             {chip("shadow", sParts)}

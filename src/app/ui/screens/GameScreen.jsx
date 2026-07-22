@@ -1026,10 +1026,10 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           ? <div style={{ display: "grid", gap: 8 }}>
               {pvpInfo.rated && <div style={{ fontSize: 13, color: T.gold, textAlign: "center", fontWeight: 800 }}>
                 {t("online.rated", { r: pvpInfo.rated.rating, d: (pvpInfo.rated.delta >= 0 ? "+" : "") + pvpInfo.rated.delta })}</div>}
-              {pvpInfo.rematch === "offer" && <div style={{ fontSize: 12.5, color: T.green, textAlign: "center" }}>⚔ {t("online.rematchOffer")}</div>}
+              {pvpInfo.rematch === "offer" && <div style={{ fontSize: 12.5, color: T.green, textAlign: "center" }}><JewelIc kind="power" size={12} /> {t("online.rematchOffer")}</div>}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <Button variant="primary" disabled={pvpInfo.rematch === "wait"} onClick={pvpInfo.onRematch}>
-                  {pvpInfo.rematch === "wait" ? t("online.rematchWait") : "⚔ " + t("online.rematch")}
+                  {pvpInfo.rematch === "wait" ? t("online.rematchWait") : <><JewelIc kind="power" size={13} /> {t("online.rematch")}</>}
                 </Button>
                 <Button variant="subtle" onClick={onNew}>{t("common.back")}</Button>
               </div>
