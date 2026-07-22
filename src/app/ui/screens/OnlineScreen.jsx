@@ -153,8 +153,8 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const [users, setUsers] = useState(null);          // admin: the whole roster
   // total playtime across this account's save slots (mirrored for the admin)
   useEffect(() => { let ok = true; (async () => {
-    try { const list = await listSaves(account.id); const tot = (list || []).reduce((a, s) => a + (s.playtimeSec || 0), 0); if (ok) setMyPlaytime(tot); } catch {}
-  })(); return () => { ok = false; }; }, [account.id]);
+    try { if (!account?.id) return; const list = await listSaves(account.id); const tot = (list || []).reduce((a, s) => a + (s.playtimeSec || 0), 0); if (ok) setMyPlaytime(tot); } catch {}
+  })(); return () => { ok = false; }; }, [account?.id]);
   // keep the Hall's mirror of my stats fresh while connected
   useEffect(() => {
     if (conn !== "on" || !net.open) return;

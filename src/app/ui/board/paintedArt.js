@@ -172,9 +172,19 @@ const PAINTED_FIT = {
 /** Per-figure { h, y }: box-fit height scale + baseline shift (em). Default
  *  { h:1, y:0 } for bosses, big pieces and unknown ids. Mirrors
  *  paintedForPiece's id resolution. */
+// The hero grows with his rank: tier 1 stands pawn-small, tier 6 queen-tall —
+// a straight climb between the two (pawn 0.898 → queen 1.133).
+const GAMBIT_TIER_H = [0.898, 0.945, 0.992, 1.039, 1.086, 1.133];
+
 export function paintedFitFor(piece) {
-  if (!piece || piece.bossId) return { h: 1, y: 0 };
-  const id = piece.hero ? "gambit" : KIND2ID[piece.kind];
+  if (!piece || piece.big) return { h: 1, y: 0 };
+  // A master in the queen's place stands queen-tall — power reads as size.
+  if (piece.bossId) return { h: 1.133, y: 0 };
+  if (piece.hero) {
+    const t = Math.min(6, Math.max(1, piece.tier || 1));
+    return { h: GAMBIT_TIER_H[t - 1], y: (PAINTED_FIT.gambit || {}).y || 0 };
+  }
+  const id = KIND2ID[piece.kind];
   return (id && PAINTED_FIT[id]) || { h: 1, y: 0 };
 }
 

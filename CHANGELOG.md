@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.24.5
+- MACHT-SYSTEM (Licht + Groesse): Je maechtiger eine Figur, desto heller und glaenzender. Dame nochmals heller; Bauern UND Gambit dunkler gestuft; rekrutierbare Meister (anstelle der Dame) erhalten Boss-Glanz samt Schein — auch gegnerische Bosse in der Kampagne wirken damit imposanter. Der Gambit traegt jetzt schon ab Stufe 1 einen leisen Schimmer (gold im eigenen Heer, stahlkalt beim Gegner), der ihn trotz Bauern-Dunkelheit klar heraushebt.
+- GROESSEN: Gambit startet exakt in Bauern-Groesse und WAECHST mit seinen Stufen — Stufe VI steht in Damen-Groesse. Meister anstelle der Dame stehen immer in Damen-Groesse. Skalierung weiterhin vom Fusspunkt, Grundlinie bleibt exakt.
+- BUGFIX (latent seit 0.22.80): OnlineScreen crashte, wenn kein Account uebergeben wurde (account.id in useEffect-Abhaengigkeit) — der Render-Smoke-Test deckte es auf; jetzt defensiv abgesichert. Ausserdem brach der Smoke-Bundler still ab (silent-Flag), wodurch vier Test-Suiten unbemerkt uebersprungen wurden — Ursache (doppelte Deklaration) behoben, alle 15 Suiten laufen wieder.
+
 ## 0.24.4
 - FIGUREN: Der Koenig strahlt jetzt wie die Dame. Sein Gemaelde ist von Haus aus deutlich dunkler gemalt (gemessen: Median 32 gegen 58 bei der Dame), weshalb er mit gleichem Filter blass neben ihr stand. Seine Helligkeit ist nun so angehoben, dass beide gleichauf liegen, und er traegt den breitesten Schein von allen.
 
