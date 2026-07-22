@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.3
+- BUGFIX HINTERGRUND: Die Halle mit dem Marmorbrett stand nicht mittig, sondern hing nach rechts aus dem Bild. Ursache: Die Zentrierung lief ueber transform: translateX(-50%), das vom CSS-zoom des App-Wurzelelements verschluckt wird (der Transform kam gar nicht an). Ersetzt durch einen negativen Rand von der halben Eigenbreite, der den Zoom uebersteht und auch dann traegt, wenn das Bild breiter als der Bildschirm ist. Am gebauten Stand gemessen: 0.0 px Abweichung bei 390, 820, 1440 und 1920 px Breite.
+
 ## 0.24.2
 - FIGUREN: Rang wird sichtbar. Koenig und Koenigin tragen jetzt einen weichen Schein (warm-golden im eigenen Hofstaat, kuehl-silbrig beim Gegner) und die hellste Malerei; alle uebrigen Figuren sind eine Spur dunkler und weniger gesaettigt, damit die Krone das Auge fuehrt. Der Gambit-Held behaelt seine eigene Stufen-Aura unveraendert.
 

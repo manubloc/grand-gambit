@@ -32,10 +32,18 @@ export function MysticBackground({ league = 1 }) {
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden",
       background: "radial-gradient(120% 100% at 50% 30%, #070a12 0%, #04060a 72%)" }}>
       {/* phones: the hall grows and lifts above the bottom menu — the marble
-          board in the picture stays in view instead of hiding behind the nav */}
-      <img src={bgHall} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: mob ? "7vh" : 0,
-        transform: "translateX(-50%)", width: mob ? "142%" : "min(96%, 1080px)", maxWidth: mob ? "none" : undefined, userSelect: "none",
-        WebkitMaskImage: mask, maskImage: mask, opacity: 0.9 }} />
+          board in the picture stays in view instead of hiding behind the nav.
+          CENTRING WITHOUT transform: the app root carries a CSS `zoom`, and a
+          translateX(-50%) on this layer is swallowed by it — the picture then
+          hangs off to the right. A negative margin of half its own width does
+          the same job and survives the zoom at any viewport width (even when
+          the image is wider than the screen, where auto margins would fail). */}
+      {(() => {
+        const W = mob ? "142%" : "min(96%, 1080px)";
+        return <img src={bgHall} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: mob ? "7vh" : 0,
+          width: W, marginLeft: `calc(${W} / -2)`, maxWidth: mob ? "none" : undefined, userSelect: "none",
+          WebkitMaskImage: mask, maskImage: mask, opacity: 0.9 }} />;
+      })()}
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />
