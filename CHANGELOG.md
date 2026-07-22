@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.18
+- DIE EIGENTLICHE URSACHE DER FEHLENDEN BUBBLES — GEFUNDEN UND BEHOBEN: In Chrome Schritt fuer Schritt nachgewiesen. Der Server lieferte fuer strip-steel keine Bilddatei, sondern die HTML-Startseite (6 KB, beginnend mit "<!doctype html>") — mit Status 200. Grund: Waehrend eines Deploys kann das frische JS-Bundle schon live sein, bevor die zugehoerige Bilddatei fertig hochgeladen ist; die Seite antwortet dann mit ihrer Ersatzseite. Der Service-Worker legte diese HTML-Antwort brav als Bild ab — und damit blieb die Kugel fuer diesen Besucher DAUERHAFT unsichtbar, obwohl die Datei laengst korrekt online war. Deshalb sahen alle bisherigen Pruefungen (Abruf erfolgreich!) das Problem nicht.
+- SCHUTZ EINGEBAUT: Bilder wandern nicht mehr blind in den Vorrats-Cache. Sie werden erst beim Gebrauch gespeichert und NUR, wenn die Antwort wirklich ein Bild ist (Inhaltstyp-Pruefung). Eine untergeschobene HTML-Ersatzseite kann den Bild-Cache nicht mehr vergiften. Alte, bereits vergiftete Eintraege werden beim naechsten Start automatisch entsorgt.
+
 ## 0.24.17
 - GEGNERISCHE (SILBERNE) BUBBLES ERSCHEINEN ENDLICH: In Chrome direkt nachgewiesen — die Datei strip-steel wurde zwar fehlerfrei geladen (Abruf ok), aber vom Browser NICHT dekodiert; CSS zeigt dann still nichts an, waehrend die Ziffern darueber sichtbar blieben. Genau derselbe Fehler wie zuvor bei den gelben und roten Hofstaat-Kugeln. Beide Streifen aus den gelieferten Vorlagen mit der reparierten Bildpipeline neu erzeugt und der Decode geprueft.
 - ALLE BUBBLES GLEICH GROSS — SO KLEIN WIE BEIM BAUERN: Das Brett gibt Bauern 0.98em und allen anderen Figuren 1.16em Schriftmass (dem Drachen noch mehr); der Kugel-Streifen erbte das und wuchs bei jeder groesseren Figur um 18 %. Die Groesse rechnet dieses Mass jetzt heraus, sodass jede Figur — Bauer, Dame, Boss, Drache, Gambit — exakt dieselbe kleine Kugelgroesse traegt.

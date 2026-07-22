@@ -34,7 +34,33 @@ export default defineConfig({
           { src: "icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       },
-      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,webp,webmanifest}"], globIgnores: ["**/painted-*"], skipWaiting: true, clientsClaim: true },
+      workbox: {
+        // WEBP is deliberately NOT precached: during a deploy an asset can be
+        // referenced by the fresh JS bundle a moment before its own file has
+        // finished uploading — the host then answers with the SPA fallback
+        // page, status 200, and Workbox would store that HTML under the
+        // image's URL. The picture is then permanently broken for that visitor
+        // (it "loads" but never decodes). Images are cached at runtime instead,
+        // and ONLY when the response really is an image.
+        globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"],
+        globIgnores: ["**/painted-*"], skipWaiting: true, clientsClaim: true,
+        runtimeCaching: [{
+          urlPattern: ({ request, url }) => request.destination === "image" || /\.webp$/.test(url.pathname),
+          handler: "CacheFirst",
+          options: {
+            cacheName: "gg-images",
+            expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 60 },
+            cacheableResponse: { statuses: [200] },
+            plugins: [{
+              // the guard: an HTML fallback never enters the image cache
+              cacheWillUpdate: async ({ response }) => {
+                const ct = response.headers.get("content-type") || "";
+                return ct.startsWith("image/") ? response : null;
+              },
+            }],
+          },
+        }],
+      },
     }),
   ],
 });
