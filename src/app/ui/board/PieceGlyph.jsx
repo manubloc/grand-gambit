@@ -57,64 +57,65 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
 // need a wider home) and grows again when the piece is pressed (focus). Rims
 // run to near-black with a vivid inner colour. Numbers live inside. ──
 import "@fontsource/spectral/700.css";
-import { ORB_GOLD_POWER as orbGoldPower, ORB_GOLD_LIFE as orbGoldLife, ORB_GOLD_ENERGY as orbGoldEnergy,
-  ORB_STEEL_POWER as orbSteelPower, ORB_STEEL_LIFE as orbSteelLife, ORB_STEEL_ENERGY as orbSteelEnergy,
-  STRIP_GOLD as stripGold, STRIP_STEEL as stripSteel } from "../assets/stat/statAssets.js";
-const ORB = {
-  gold: { power: orbGoldPower, life: orbGoldLife, energy: orbGoldEnergy },
-  steel: { power: orbSteelPower, life: orbSteelLife, energy: orbSteelEnergy },
-};
-// The board wears the painted TRIPLE as one piece of art — never cut apart, so
-// the orbs keep their overlap and shared shadow. Measured from the artwork
-// (1208x450 crop): the three glass centres sit at these x, half-height y; each
-// orb spans 450px. When a piece carries no energy we simply show a narrower
-// window of the same strip (first two orbs).
-const STRIP = { gold: stripGold, steel: stripSteel };
-const STRIP_W = 1208, STRIP_H = 450, ORB_R = 225, ORB_X0 = 169;
-const ORB_CX = [394, 773, 1152].map((x) => x - ORB_X0); // 225, 604, 983
-const STRIP_CY = (490 - 266) / STRIP_H;                 // 0.4978
-
-// The numeral: Spectral Bold — an old-style serif that stays legible at a few
-// pixels. Parchment cream, hairline dark-umber edge, faint embossed sheen.
-const NUM_FONT = "'Spectral', Georgia, serif";
+import { ORB_BLUE, ORB_RED } from "../assets/stat/statAssets.js";
+const ORB = { power: ORB_BLUE, life: ORB_RED }; // blue = attack, red = life
 function numeralStyle(px) {
   return { fontFamily: NUM_FONT, fontWeight: 700, lineHeight: 1, fontSize: px,
     color: "#FCF5E2", WebkitTextStroke: "0.018em #15120D",
     textShadow: "0 0.06em 0 rgba(255,248,226,.26)", fontVariantNumeric: "tabular-nums" };
 }
 
-function StatStrip({ vals, steel, focus, shrink = 1 }) {
-  const n = vals.length;                                   // 2 or 3
-  const visW = ORB_CX[n - 1] + ORB_R;                      // strip window in source px
-  // ONE size for every piece: the board gives pawns 0.98em and every other
-  // figure 1.16em (the dragon even more), so an em-based strip would silently
-  // grow with the piece. `shrink` divides that away — every orb on the board
-  // ends up exactly as small as a pawn's.
-  const h = 0.33 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
-  const w = h * (visW / STRIP_H);
+const NUM_FONT = "'Spectral', Georgia, serif";
+
+// THE SPELL STAR — one gold star hovering in the seam between the two orbs:
+// it burns while the piece still holds its single cast, and goes out the
+// moment any talent fires (one spell per game — the star IS the ledger).
+function SpellStar({ size }) {
+  return <svg viewBox="0 0 24 24" aria-hidden style={{ width: size, height: size, display: "block",
+    filter: "drop-shadow(0 0 3px rgba(240,214,138,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }}>
+    <defs><linearGradient id="ggStar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stopColor="#fdf0bd" /><stop offset=".55" stopColor="#e9c877" /><stop offset="1" stopColor="#a97f38" />
+    </linearGradient></defs>
+    <path d="M12 1.6 14.9 8.4 22.2 9 16.7 13.9 18.4 21.1 12 17.3 5.6 21.1 7.3 13.9 1.8 9 9.1 8.4Z"
+      fill="url(#ggStar)" stroke="#5d451c" strokeWidth="1.1" strokeLinejoin="round" />
+    <circle cx="9.6" cy="8.6" r="1.5" fill="rgba(255,250,225,.85)" />
+  </svg>;
+}
+
+// TWO JEWELS UNDER EVERY FIGHTER: blue attack left, red life right — the same
+// diameter and the same engraved numerals the old strip carried, for both
+// sides alike (the figure itself tells friend from foe).
+function StatDuo({ piece, focus, shrink = 1 }) {
+  const d = 0.32 * (focus ? 1.4 : 1) * shrink;   // orb diameter in em
+  const gap = d * 0.14;
+  // the star promises an ACT: only castable (live) talents count — a piece
+  // with purely passive gifts has nothing left to "use", so no star for it
+  const spell = (piece.abilities || []).some((id) => ABILITIES[id]?.live) && Object.keys(piece.used || {}).length === 0;
+  const orb = (img, v) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center",
+      backgroundImage: `url(${img})`, backgroundSize: "100% 100%" }}>
+    <span style={numeralStyle(d * 0.6 + "em")}>{v}</span>
+  </span>;
   return <span style={{ position: "absolute", bottom: "-0.09em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
-    width: w + "em", height: h + "em", pointerEvents: "none",
-    backgroundImage: `url(${STRIP[steel ? "steel" : "gold"]})`,
-    backgroundSize: `${(STRIP_W / visW) * 100}% 100%`, backgroundPosition: "left center", backgroundRepeat: "no-repeat",
+    display: "inline-flex", gap: gap + "em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
-    {vals.map((v, i) => (
-      <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
-        transform: "translate(-50%, -50%)",
-        ...numeralStyle(h * 0.58 + "em") }}>{v}</span>
-    ))}
+    {orb(ORB.power, piece.atk)}
+    {orb(ORB.life, piece.hp)}
+    {spell && <span style={{ position: "absolute", left: "50%", top: 0, transform: "translate(-50%, -58%)" }}>
+      <SpellStar size={d * 0.72 + "em"} />
+    </span>}
   </span>;
 }
 
 // bare jewel sphere as an ICON — replaces the old sword/heart/bolt glyphs
-export function JewelIc({ kind, size = 13, steel = false }) {
+export function JewelIc({ kind, size = 13 }) {
   return <span aria-hidden style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.15em",
-    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%" }} />;
+    backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%" }} />;
 }
 
 // px-based jewel badge for sheets & the court roster — the separately cut orbs.
-export function StatOrbBadge({ kind, v, size = 26, steel = false, num = 0.58 }) {
+export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
-    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
+    backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
     <span style={{ ...numeralStyle(size * num), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
@@ -125,10 +126,8 @@ export function StatOrbBadge({ kind, v, size = 26, steel = false, num = 0.58 }) 
 // court 1.16em, dragon 1.48em) and silently shifted the orbs up and down.
 // Only the 2x2 dragon overlay still draws its own (no cell to sit in).
 export function StatTriad({ piece, focus, shrink = 1 }) {
-  // one centred row riding just under the figure: [power] [life] [energy]
-  const vals = [piece.atk, piece.hp];
-  if (piece.maxEn > 0) vals.push(piece.en);
-  return <StatStrip vals={vals} steel={piece.color !== "w"} focus={focus} shrink={shrink} />;
+  // the board wears the DUO now: blue attack + red life, spell star between
+  return <StatDuo piece={piece} focus={focus} shrink={shrink} />;
 }
 
 export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }) {

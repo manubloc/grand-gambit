@@ -1,6 +1,6 @@
 import { other, WHITE, BLACK, BASE_HP, BASE_ATK } from "../domain/constants.js";
 import { cloneBoard, findKing } from "../domain/board.js";
-import { pseudoMoves, pieceMoves, ABILITY_COST } from "../rules/moves.js";
+import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
 import { familyOf, familyCount, crownWallSoak } from "../rules/families.js";
 
@@ -38,13 +38,6 @@ function repromote(piece, kind) {
  * attacker advances onto the square; if the target survives, the attacker stays
  * put (a "bump"). Either way the move costs a turn. Regicide ends the game.
  */
-/** Turn dawn: every caster-natured piece of the side NOW to move refills a spark. */
-function regenEnergyFor(state, color) {
-  for (const p of state.board)
-    if (p && p.color === color && p.enRegen > 0 && p.en != null && p.en < p.maxEn)
-      p.en = Math.min(p.maxEn, p.en + p.enRegen);
-}
-
 export function applyMove(state, move, opts) {
   const record = !!(opts && opts.record);
   const hp = state.rules === "hp";
@@ -80,7 +73,6 @@ export function applyMove(state, move, opts) {
     }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
-    regenEnergyFor(ns, ns.turn);
     ns.lastMove = { from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
     ns.moveCount = state.moveCount + 1;
     if (record) { ns.history = [...state.history, state]; }
@@ -129,7 +121,6 @@ export function applyMove(state, move, opts) {
     piece.hasMoved = true;
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
-    regenEnergyFor(ns, ns.turn);
     ns.lastMove = { from: move.from, to: settled ? move.to : move.from, color: piece.color, kind: piece.kind,
       capture: lethal, damaged, lethal, special: move.special, bounced: !settled };
     ns.moveCount = state.moveCount + 1;
@@ -160,7 +151,7 @@ export function applyMove(state, move, opts) {
       const force = afar ? Math.ceil((piece.atk || 1) / 2) : (piece.atk || 1);
       dmg = Math.max(1, force - soak);
       target.hp -= dmg;
-      if (move.consumes) { piece.used[move.consumes] = true; if (piece.en != null) piece.en = Math.max(0, piece.en - (ABILITY_COST[move.consumes] ?? 0)); }
+      if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
       if (has("lifesteal")) piece.hp = Math.min(piece.maxHp, piece.hp + Math.ceil(dmg / 2));
       if (target.hp <= 0) {                       // kill
         lethal = true;
@@ -177,19 +168,19 @@ export function applyMove(state, move, opts) {
       }
     } else {                                       // quiet move
       b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
-      if (move.consumes) { piece.used[move.consumes] = true; if (piece.en != null) piece.en = Math.max(0, piece.en - (ABILITY_COST[move.consumes] ?? 0)); }
+      if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
       if (move.promotion) repromote(piece, move.promotion);
     }
     if (has("regen")) piece.hp = Math.min(piece.maxHp, (piece.hp || 0) + 1);
   } else {
     if (target && target.shield > 0) {            // chess: shield absorbs the hit
       target.shield -= 1; bounced = true;
-      if (move.consumes) { piece.used[move.consumes] = true; if (piece.en != null) piece.en = Math.max(0, piece.en - (ABILITY_COST[move.consumes] ?? 0)); }
+      if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
     } else {
       if (target) ns.captured[piece.color].push(target.kind);
       if (dragonAnchor >= 0) clearDragon(dragonAnchor);
       b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
-      if (move.consumes) { piece.used[move.consumes] = true; if (piece.en != null) piece.en = Math.max(0, piece.en - (ABILITY_COST[move.consumes] ?? 0)); }
+      if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
       if (move.promotion) piece.kind = move.promotion;
     }
   }
@@ -198,7 +189,6 @@ export function applyMove(state, move, opts) {
   // an armed TIME RIFT (magic circle) lets this move keep the turn — once
   if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
   else ns.turn = other(state.turn);
-  regenEnergyFor(ns, ns.turn);
   ns.moveCount = state.moveCount + 1;
   ns.lastMove = {
     from: move.from, to: move.to, color: piece.color, kind: move.kind, byHero: !!piece.hero,

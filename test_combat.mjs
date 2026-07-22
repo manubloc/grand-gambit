@@ -157,45 +157,78 @@ import { bossSpec, bossById } from "./src/content/index.js";
   ok("noEnemyPotions aura: the Judge forbids hostile draughts", reduce(js, potCmd("b", hurtIx)).state === js);
 }
 
-// ── v0.22.4: ENERGY — the second resource ────────────────────────────────────
+// ── v0.25.0: ONE SPELL PER GAME — the single-cast law ────────────────────────
 {
   const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 5 });
-  ok("every hp piece carries energy", g.board.filter(Boolean).every((p) => p.kind === "D+" || (p.maxEn > 0 && p.en === p.maxEn)));
-  const { BASE_EN } = await import("./src/core/index.js");
-  ok("the mage brims, the colossus rations (class law)", (BASE_EN.M || 0) > (BASE_EN.G || 0));
-  // a pawn learns the ranged shot: with energy the move exists, drained it vanishes
+  ok("energy is gone: no piece carries a well", g.board.filter(Boolean).every((p) => p.maxEn == null && p.en == null && p.enRegen == null));
+  ok("hp pieces still carry blood and blade", g.board.filter(Boolean).every((p) => p.kind === "D+" || (p.maxHp > 0 && p.atk != null)));
+  const { hasAbility } = await import("./src/core/index.js");
+  // a pawn learns TWO talents; a clear lane left, a clear square right
   const pawns = g.board.map((p, j) => (p && p.kind === "P" && p.color === "w" ? j : -1)).filter((j) => j >= 2);
-  const pi = pawns[3]; // a mid-file pawn: room for a flat 2-square firing lane
-  g.board[pi].abilities = ["ranged_shot"]; g.board[pi].used = g.board[pi].used || {};
-  g.board[pi].en = 2; g.board[pi].maxEn = 3;
-  g.board[pi - 1] = null; // clear the lane ...
+  const pi = pawns[3];
+  g.board[pi].abilities = ["ranged_shot", "pawn_sidestep"]; g.board[pi].used = {};
+  g.board[pi - 1] = null; // firing lane ...
   g.board[pi - 2] = { kind: "P", color: "b", level: 1, abilities: [], used: {}, shield: 0,
-    hp: 2, maxHp: 2, atk: 1, en: 1, maxEn: 1 }; // ... and stand a target at range 2
+    hp: 2, maxHp: 2, atk: 1 }; // ... target at range 2
+  g.board[pi + 1] = null;      // room for the sidestep too
+  ok("a fresh book offers every talent", hasAbility(g.board[pi], "ranged_shot") && hasAbility(g.board[pi], "pawn_sidestep"));
   const shots = legalMovesFrom(g, pi).filter((m) => m.consumes === "ranged_shot");
-  ok("with 2 energy the 2-cost shot is offered", shots.length > 0);
+  ok("the shot is offered while the book is open", shots.length > 0);
+  const side0 = legalMovesFrom(g, pi).filter((m) => m.consumes === "pawn_sidestep");
+  ok("the sidestep is offered alongside it", side0.length > 0);
   if (shots.length) {
     const after = applyMove(g, shots[0]);
     const st2 = after.state ?? after;
-    const shooter = st2.board.find((p) => p && p.kind === "P" && p.color === "w" && p.used && p.used.ranged_shot);
-    ok("firing drains the cost (2 -> 0)", shooter && shooter.en === 0);
-    const dryShots = shooter ? legalMovesFrom(st2, st2.board.indexOf(shooter)).filter((m) => m.consumes === "ranged_shot") : [];
-    ok("drained pieces fall back to plain moves", dryShots.length === 0);
+    const si = st2.board.findIndex((p) => p && p.kind === "P" && p.color === "w" && p.used && p.used.ranged_shot);
+    const shooter = st2.board[si];
+    ok("the use is written into the ledger", !!shooter);
+    ok("one cast closes the WHOLE book (other talent too)", !hasAbility(shooter, "pawn_sidestep") && !hasAbility(shooter, "ranged_shot"));
+    ok("no second shot is offered", legalMovesFrom(st2, si).filter((m) => m.consumes === "ranged_shot").length === 0);
+    ok("no sidestep either — spent is spent", legalMovesFrom(st2, si).filter((m) => m.consumes === "pawn_sidestep").length === 0);
+    // ANOTHER piece with a talent keeps its own open book
+    const oj = st2.board.findIndex((p, j) => p && p.kind === "P" && p.color === "w" && j !== si);
+    st2.board[oj].abilities = ["pawn_sidestep"]; st2.board[oj].used = {};
+    ok("a sibling piece still holds its spell", hasAbility(st2.board[oj], "pawn_sidestep"));
   }
 }
 
-{ // energy REGENERATION: caster natures refill a spark at their turn's dawn
+{ // the ledger SURVIVES the game's cloning stream — spent stays spent
   const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 9 });
-  const qi = g.board.findIndex((p) => p && p.kind === "Q" && p.color === "w");
-  ok("the queen is caster-natured (regenerates)", g.board[qi].enRegen === 1);
-  g.board[qi].en = 0;
-  const s1r = applyMove(g, legalMoves(g)[0]);            // white moves -> black's dawn
-  const s1 = s1r.state ?? s1r;
-  const s2r = applyMove(s1, legalMoves(s1)[0]);          // black moves -> WHITE's dawn
-  const s2 = s2r.state ?? s2r;
-  const q2 = s2.board.find((p) => p && p.kind === "Q" && p.color === "w");
-  ok("her well refills +1 at her dawn", q2 && q2.en === 1);
-  const pw = s2.board.find((p) => p && p.kind === "P" && p.color === "w" && p.maxEn);
-  ok("the pawn owns no such well", pw && !pw.enRegen);
+  const pawns = g.board.map((p, j) => (p && p.kind === "P" && p.color === "w" ? j : -1)).filter((j) => j >= 2);
+  const pi = pawns[3];
+  g.board[pi].abilities = ["ranged_shot"]; g.board[pi].used = {};
+  g.board[pi - 1] = null;
+  g.board[pi - 2] = { kind: "P", color: "b", level: 1, abilities: [], used: {}, shield: 0, hp: 2, maxHp: 2, atk: 1 };
+  const shot = legalMovesFrom(g, pi).find((m) => m.consumes === "ranged_shot");
+  const s1r = applyMove(g, shot); const s1 = s1r.state ?? s1r;
+  const s2r = applyMove(s1, legalMoves(s1)[0]); const s2 = s2r.state ?? s2r; // black replies
+  const shooter = s2.board.find((p) => p && p.kind === "P" && p.color === "w" && p.used && p.used.ranged_shot);
+  ok("two plies later the ledger still reads: spent", !!shooter);
+  const { hasAbility } = await import("./src/core/index.js");
+  ok("and the book stays closed", shooter && !hasAbility(shooter, "ranged_shot"));
+  // a FRESH battle reopens every book
+  const g2 = createGame(a8, a8, { map: classic, rules: "hp", seed: 11 });
+  ok("a new game deals fresh pages", g2.board.filter(Boolean).every((p) => !p.used || Object.keys(p.used).length === 0));
+}
+
+
+// ── ONE SPELL PER GAME: the book closes after a single cast ──────────────────
+{
+  const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 7 });
+  const from = idx(1, 1, 8);
+  g.board[from].abilities = ["pawn_sidestep", "pawn_backstep"];
+  g.board[idx(0, 1, 8)] = null;             // clear a2 → sidestep is offered
+  g.board[idx(1, 0, 8)] = null;             // clear b1 → backstep is offered too
+  const offers = legalMovesFrom(g, from);
+  ok("two castable talents offer two special moves", offers.filter((m) => m.consumes).length === 2);
+  const side = offers.find((m) => m.consumes === "pawn_sidestep");
+  const r1 = applyMove(g, side); const s1 = r1.state ?? r1;
+  const cast = s1.board[idx(0, 1, 8)];
+  ok("the cast is written into the book", cast && cast.used && cast.used.pawn_sidestep === true);
+  const r2 = applyMove(s1, legalMoves(s1)[0]); const s2 = r2.state ?? r2; // black replies
+  const after = legalMovesFrom(s2, idx(0, 1, 8));
+  ok("after ONE cast every further talent is sealed", after.every((m) => !m.consumes));
+  ok("plain chess moves remain", after.length > 0);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

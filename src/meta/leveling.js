@@ -1,4 +1,4 @@
-import { KIND, VALUE, BASE_HP, BASE_ATK, BASE_EN } from "../core/index.js";
+import { KIND, VALUE, BASE_HP, BASE_ATK } from "../core/index.js";
 import { DEFAULT_BACK_RANK, FLANK_SLOTS } from "../core/index.js";
 import { bossById, bossSpec, LEAGUE_BOSSES } from "../content/bosses.js";
 import { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "../content/index.js";
@@ -156,13 +156,7 @@ export const dupeCount = (profile, charId) => (profile?.campaign?.dupes?.[charId
 function boostSpec(char, dupes) {
   const d = Math.min(dupes || 0, 2);
   if (!d) return {};
-  // energy temperament: named casters carry MORE of the second resource,
-  // the heavy line carries less — mirroring the mage/colossus law
-  const CASTERS = new Set(["mage", "sorceress", "seeress", "warlock", "alchemist", "bard"]);
-  const HEAVIES = new Set(["guardian", "paladin", "engineer", "captain"]);
-  const enTilt = CASTERS.has(char.id) ? 2 : HEAVIES.has(char.id) ? -1 : 0;
-  return { baseHp: (BASE_HP[char.kind] || 1) + d, baseAtk: (BASE_ATK[char.kind] || 1) + (d >= 2 ? 1 : 0),
-    baseEn: Math.max(1, (BASE_EN[char.kind] || 2) + enTilt + (d >= 2 ? 1 : 0)) };
+  return { baseHp: (BASE_HP[char.kind] || 1) + d, baseAtk: (BASE_ATK[char.kind] || 1) + (d >= 2 ? 1 : 0) };
 }
 
 // ── Formation (custom back rank) ──────────────────────────────────────────────

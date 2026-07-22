@@ -826,7 +826,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               <div style={{ minWidth: 0, paddingBottom: 3 }}>
                 <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
                 <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-                  <StatOrbBadge kind="life" v={boss.hp} size={16} steel /> <StatOrbBadge kind="power" v={boss.atk} size={16} steel />
+                  <StatOrbBadge kind="life" v={boss.hp} size={16} /> <StatOrbBadge kind="power" v={boss.atk} size={16} />
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>

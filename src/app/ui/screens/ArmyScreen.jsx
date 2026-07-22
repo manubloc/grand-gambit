@@ -12,8 +12,6 @@ import {
   itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
 import { T } from "../theme.js";
-import { BASE_EN, ABILITY_COST } from "../../../core/index.js";
-import { EnergyIc } from "../icons.jsx";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
@@ -93,10 +91,7 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
           <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".04em", textTransform: "uppercase",
             color: tg.color, background: tg.color + "1f", border: `1px solid ${tg.color}66`,
             padding: "1.5px 6px", borderRadius: 999 }}>{typeName}</span>
-          {/* cost — energy pips, always visible before unfolding */}
-          {cost > 0 && <span style={{ fontSize: 10.5, fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 2 }}>
-            <SheetOrb kind="energy" v={cost} size={15} /></span>}
-          {cost === 0 && <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", color: "#8a856f" }}>{en ? "passive" : "passiv"}</span>}
+          
         </span>
       </span>
       {owned && <span style={{ fontSize: 10, fontWeight: 800, color: tg.color, flex: "0 0 auto" }}>✓</span>}
@@ -403,8 +398,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
 
 
   const INK = "#cfc9b4"; // body text a notch brighter than T.dim — readability pass
-  const enNow = (BASE_EN[char.kind] || 2) + Math.floor((level - 1) / 2);
-  const hasEnergy = (BASE_EN[char.kind] || 0) > 0;
   const fam = familyOf(char.kind);
   return <Panel style={{ opacity: unlocked ? 1 : 0.74, height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
     {/* THE DOSSIER HEAD: a wanted-poster masthead — portrait to the side, name
@@ -458,7 +451,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, margin: "10px 0 2px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
-          {hasEnergy && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="energy" v={enNow} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Energy" : "Energie"}</span></span>}
         </div>
         {/* the ledger lines */}
         <div style={{ marginTop: 6 }}>
@@ -488,7 +480,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const k = char.kind, kingly = k === "K" ? 2 : 1;
             const hpAt = (l) => (BASE_HP[k] || 1) + (l - 1) * kingly;
             const atkAt = (l) => (BASE_ATK[k] || 1) + Math.floor((l - 1) / 2);
-            const enAt = (l) => (BASE_EN[k] || 2) + Math.floor((l - 1) / 2);
             return maxed
               ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
               : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
@@ -496,7 +487,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                     every orb on the board, sized up so the plus breathes */}
                 <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px 0 4px" }}><SheetOrb kind="life" v={"+" + (hpAt(level + 1) - hpAt(level))} size={21} num={0.62} /></span>
                 {atkAt(level + 1) > atkAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px" }}><SheetOrb kind="power" v="+1" size={21} num={0.62} /></span>}
-                {enAt(level + 1) > enAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px" }}><SheetOrb kind="energy" v="+1" size={21} num={0.62} /></span>}</span>;
+</span>;
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
@@ -558,7 +549,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           if (!ab) return null;
           const tg = TAGS[ab.tag] || { color: T.gold, nameDe: "Talent", nameEn: "Talent" };
           const price = abilityCost(rg.level);
-          const cost = ABILITY_COST[rg.id] ?? 0;
+          const cost = 0; // energy is gone — talents are once-per-game now
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
           return <AbilityAccordion key={rg.id} ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
             owned={owned} reach={reach} can={can} kind={char.kind} en={en}

@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.25.0
+- DIE GROSSE REGELWENDE, VOLLENDET UND VERSIEGELT: Energie ist restlos aus dem Spiel — jede Figur darf beliebig viele Faehigkeiten KOENNEN, aber pro Partie nur EINE ausfuehren. Der Kern trug die Regel bereits (jeder Spezialzug schreibt ins Buch der Figur, danach bleibt es zu); diese Version vollendet sie sichtbar und nagelt sie fest:
+- ZWEI JUWELEN UNTER JEDER FIGUR: Blau ist der neue ANGRIFF, Rot bleibt LEBEN — gleiche Groesse, gleiche Praegeschrift wie zuvor, fuer beide Seiten. Der Drei-Kugel-Streifen ist Geschichte (Bundle traegt nur noch die zwei Kugeln als eingebettete Daten).
+- DER ZAUBERSTERN: Mittig ueber den beiden Kugeln funkelt ein goldener Stern, solange die Figur noch eine EINSETZBARE Faehigkeit hat. Verfeinert: rein passive Gaben zaehlen nicht — kein Stern ohne echte Tat. Ist der eine Zauber gesprochen, erlischt er.
+- REGEL-TEST VERANKERT (4 neue Pruefungen): Zwei einsetzbare Talente bieten zwei Spezialzuege; EIN Wirken schreibt ins Buch; danach ist JEDES weitere Talent versiegelt, waehrend normale Schachzuege bleiben. Gesamtbatterie jetzt 466 gruen.
+- LETZTE ENERGIE-RESTE GETILGT: tote Energie-Importe und irrefuehrende Kommentare entfernt — der Begriff existiert im Spiel nicht mehr.
+
 ## 0.24.28
 - DIE SCHATZKAMMER GLAENZT: Jede Erfolgs-Karte ist jetzt eine Goldplatte — warmer Goldverlauf statt flacher Panels, Goldsaum mit innerer Lichtkante, eine stille Glanz-Straehne ueber der Platte, Medaillons mit goldenem Ring und satterem Schein, ein gegossener Gold-Fortschrittsbalken mit Gluehen statt der duennen Linie, gepraegte Gold-Rauten fuer eingeloeste Stufen, Zaehler und "SO ERREICHST DU ES" in Goldschrift. Unbegonnene Erfolge liegen gedaempft im Halbdunkel — Schaetze, die noch gehoben werden wollen.
 

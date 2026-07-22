@@ -3,7 +3,6 @@ import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftComm
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
-import { ABILITY_COST } from "../../../core/index.js";
 import { T } from "../theme.js";
 import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
@@ -78,7 +77,6 @@ const boardTexture = (match, profile) => {
   return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
 };
 import { PieceGlyph, StatOrbBadge, JewelIc } from "../board/PieceGlyph.jsx";
-import { EnergyIc } from "../icons.jsx";
 
 function Tray({ kinds, color }) {
   if (!kinds.length) return <span style={{ color: T.faint, fontSize: 13 }}>—</span>;
@@ -93,13 +91,13 @@ function forces(board) {
   for (const p of board) if (p) { const s = f[p.color]; s.hp += p.hp || 0; s.atk += p.atk || 0; }
   return f;
 }
-function ForceBadge({ hp, atk, neon, t, steel = false }) {
+function ForceBadge({ hp, atk, neon, t }) {
   // the army totals speak the SAME jewel language as every piece on the board
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", borderRadius: 999,
       background: "rgba(8,6,15,.55)", border: `1px solid ${neon}66`, boxShadow: `0 0 10px ${neon}30`, whiteSpace: "nowrap" }}>
-      <StatOrbBadge kind="power" v={atk} size={19} steel={steel} />
-      <StatOrbBadge kind="life" v={hp} size={19} steel={steel} />
+      <StatOrbBadge kind="power" v={atk} size={19} />
+      <StatOrbBadge kind="life" v={hp} size={19} />
     </span>
   );
 }
@@ -565,7 +563,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const enemyStrip = (<>
       {/* enemy strip */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
-        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} steel />}
+        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
         <div style={{ flex: 1 }} />
         <span data-gg-tray="w"><Tray kinds={state.captured.b} color="w" /></span>
       </div>
@@ -610,9 +608,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                   <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#cfd8c9", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="life" v={pc.hp} size={17} steel={pc.color !== "w"} /> / {pc.maxHp}</span>}
-                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#a9c4de", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="energy" v={pc.en} size={17} steel={pc.color !== "w"} /> / {pc.maxEn}{pc.enRegen > 0 && <span style={{ display: "inline-flex", marginLeft: 3, opacity: 0.9 }}><StatOrbBadge kind="energy" v={"+" + pc.enRegen} size={16} num={0.62} steel={pc.color !== "w"} /></span>}</span>}
-                    {pc.atk != null && <span style={{ display: "inline-flex" }}><StatOrbBadge kind="power" v={pc.atk} size={17} steel={pc.color !== "w"} /></span>}
+                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#cfd8c9", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="life" v={pc.hp} size={17} /> / {pc.maxHp}</span>}
+                    {pc.atk != null && <span style={{ display: "inline-flex" }}><StatOrbBadge kind="power" v={pc.atk} size={17} /></span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
                 </div>
@@ -623,8 +620,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                       // the fog of war: a foe's talent stays "???" until the piece has
                       // USED it before your eyes — unless a seer reads it for you
                       const seen = own || seerVision || !!(pc.used || {})[id];
-                      const cost = ABILITY_COST[id] ?? 0;
-                      const dry = pc.en != null && cost > 0 && pc.en < cost; // too spent to cast
+                      // ONE SPELL PER GAME: once any talent fired, the book is closed
+                      const dry = Object.keys(pc.used || {}).length > 0;
                       return (
                         <span key={id} title={dry ? t("ins.noEnergy") : undefined}
                           style={{ fontSize: 10.5, padding: "3px 8px", borderRadius: 999,
@@ -632,7 +629,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                           background: seen ? (dry ? "rgba(24,26,32,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
                           color: seen ? (dry ? T.faint : "#e9d296") : T.faint,
                           opacity: seen && dry ? 0.75 : 1 }}>
-                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ display: "inline-flex", verticalAlign: "-0.2em", marginLeft: 4, opacity: dry ? 0.55 : 1 }}><StatOrbBadge kind="energy" v={cost} size={15} /></span>}</>
+                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}</>
                             : t("ins.unknown")}
                         </span>
                       );
