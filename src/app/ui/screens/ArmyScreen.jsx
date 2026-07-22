@@ -1,4 +1,4 @@
-import { StatOrbBadge as SheetOrb } from "../board/PieceGlyph.jsx";
+import { StatOrbBadge as SheetOrb, JewelIc } from "../board/PieceGlyph.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
@@ -95,7 +95,7 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
             padding: "1.5px 6px", borderRadius: 999 }}>{typeName}</span>
           {/* cost — energy pips, always visible before unfolding */}
           {cost > 0 && <span style={{ fontSize: 10.5, fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 2 }}>
-            <EnergyIc size={10} /> {cost}</span>}
+            <SheetOrb kind="energy" v={cost} size={15} /></span>}
           {cost === 0 && <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".05em", textTransform: "uppercase", color: "#8a856f" }}>{en ? "passive" : "passiv"}</span>}
         </span>
       </span>
@@ -455,9 +455,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         )}
         {/* THE ORBS — the same spheres the piece wears in battle */}
         <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "10px 0 2px" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "PWR" : "STK"}</span></span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "LIFE" : "LEB"}</span></span>
-          {hasEnergy && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="energy" v={enNow} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "ENR" : "ENE"}</span></span>}
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
+          {hasEnergy && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="energy" v={enNow} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Energy" : "Energie"}</span></span>}
         </div>
         {/* the ledger lines */}
         <div style={{ marginTop: 6 }}>
@@ -492,8 +492,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
               : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
                 <span style={{ color: "#8fd6a0" }}> · ♥+{hpAt(level + 1) - hpAt(level)}</span>
-                {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · ⚔+1</span>}
-                {enAt(level + 1) > enAt(level) && <span style={{ color: "#8ec7f2" }}> · <EnergyIc size={10} />+1</span>}</span>;
+                {atkAt(level + 1) > atkAt(level) && <span style={{ color: "#e5975f" }}> · <JewelIc kind="power" size={12} />+1</span>}
+                {enAt(level + 1) > enAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.2em", marginLeft: 4 }}><JewelIc kind="energy" size={12} />&#8202;+1</span>}</span>;
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
@@ -982,7 +982,7 @@ function CharLightbox({ char, en, onClose }) {
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 80, background: "rgba(5, 8, 16, .88)",
       backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)", display: "grid", placeItems: "center",
-      cursor: "zoom-out", padding: 20, animation: "ggFade .18s ease-out" }}>
+      cursor: "zoom-out", padding: 20 }}>
       <div style={{ textAlign: "center", maxWidth: 520 }}>
         {src && <img src={src} alt="" style={{ height: "min(58vh, 470px)", maxWidth: "88vw", objectFit: "contain",
           filter: "drop-shadow(0 18px 40px rgba(0,0,0,.65))" }} />}
@@ -1156,14 +1156,14 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   const crownIn = CROWN_IDS.filter((c) => unlocked.has(c));
   const shadowIn = SHADOW_IDS.filter((c) => unlocked.has(c));
   const alliedIn = BOSSES.filter((b) => bribedSet.has(b.id));
-  if (!artReady) return <div style={{ animation: "rise .2s ease" }}>
+  if (!artReady) return <div style={{ }}>
     <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
     <div style={{ padding: "48px 0", display: "grid", placeItems: "center" }}>
       <div style={{ width: 26, height: 26, borderRadius: "50%", border: `2px solid ${T.line}`,
         borderTopColor: T.gold, animation: "spin .8s linear infinite" }} />
     </div>
   </div>;
-  return <div style={{ animation: "rise .32s ease" }}>
+  return <div style={{ }}>
     <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
     <H>{t("tree.court")}</H><div style={grid}>
       {COURT_IDS.map((c) => champTile(c))}
@@ -1177,10 +1177,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       ? <div key={f}><H>{en ? FAM_LABEL[f][1] : FAM_LABEL[f][0]}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null; })}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center", padding: 16, animation: "fade .18s ease" }}>
+        display: "grid", placeItems: "center", padding: 16 }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
           borderRadius: 22, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,.6)",
-          border: "1px solid rgba(233,210,150,.4)", animation: "rise .22s ease" }}>
+          border: "1px solid rgba(233,210,150,.4)" }}>
           <button onClick={() => setDetail(null)} aria-label="close" style={{ position: "absolute", top: 9, right: 9, zIndex: 4,
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: "1px solid rgba(233,210,150,.4)", color: "#e9d296",

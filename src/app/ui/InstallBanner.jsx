@@ -67,7 +67,7 @@ export function InstallBanner({ en = false }) {
       top: "calc(10px + env(safe-area-inset-top))", zIndex: 40, width: "min(94vw, 420px)",
       background: "linear-gradient(172deg, #141926, #0e1320)", border: `1px solid ${T.gold}55`,
       borderRadius: 14, padding: "12px 14px", boxShadow: "0 10px 30px rgba(0,0,0,.55)",
-      display: "flex", alignItems: "center", gap: 12, animation: "fade .25s ease" }}>
+      display: "flex", alignItems: "center", gap: 12 }}>
       {/* a tiny drawn "home screen" glyph — no emoji */}
       <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style={{ flex: "0 0 auto" }}>
         <rect x="4" y="2.5" width="16" height="19" rx="3.4" fill="none" stroke={T.gold} strokeWidth="1.7" />

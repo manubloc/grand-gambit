@@ -77,7 +77,7 @@ const boardTexture = (match, profile) => {
   const pool = lg >= 8 ? [1, 2, 3, 3] : lg >= 5 ? [0, 1, 2, 3] : [0, 0, 1, 2, 3];
   return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
 };
-import { PieceGlyph } from "../board/PieceGlyph.jsx";
+import { PieceGlyph, StatOrbBadge, JewelIc } from "../board/PieceGlyph.jsx";
 import { EnergyIc } from "../icons.jsx";
 
 function Tray({ kinds, color }) {
@@ -93,13 +93,13 @@ function forces(board) {
   for (const p of board) if (p) { const s = f[p.color]; s.hp += p.hp || 0; s.atk += p.atk || 0; }
   return f;
 }
-function ForceBadge({ hp, atk, neon, t }) {
+function ForceBadge({ hp, atk, neon, t, steel = false }) {
+  // the army totals speak the SAME jewel language as every piece on the board
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "3px 9px", borderRadius: 999,
-      background: "rgba(8,6,15,.55)", border: `1px solid ${neon}66`, boxShadow: `0 0 10px ${neon}30`, fontSize: 12, fontWeight: 900, whiteSpace: "nowrap" }}>
-      <span style={{ color: neon }}>♥ {hp}</span>
-      <span style={{ width: 1, height: 11, background: `${neon}55` }} />
-      <span style={{ color: neon }} title={t("game.power")}>⚔ {atk}</span>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", borderRadius: 999,
+      background: "rgba(8,6,15,.55)", border: `1px solid ${neon}66`, boxShadow: `0 0 10px ${neon}30`, whiteSpace: "nowrap" }}>
+      <StatOrbBadge kind="power" v={atk} size={19} steel={steel} />
+      <StatOrbBadge kind="life" v={hp} size={19} steel={steel} />
     </span>
   );
 }
@@ -565,7 +565,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const enemyStrip = (<>
       {/* enemy strip */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
-        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
+        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} steel />}
         <div style={{ flex: 1 }} />
         <span data-gg-tray="w"><Tray kinds={state.captured.b} color="w" /></span>
       </div>
@@ -605,15 +605,14 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                       : { left: 8, right: 8, top: 8, justifyContent: "center" }) }}>
               <div style={{ pointerEvents: "auto", maxWidth: 380, borderRadius: 12, padding: "8px 11px 8px",
                 background: "rgba(9, 12, 20, .88)", border: `1px solid ${own ? "rgba(233,210,150,.5)" : "rgba(167,139,250,.55)"}`,
-                boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
-                animation: "rise .18s ease" }}>
+                boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
                     <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
                     {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8fd6a0" }}>♥ {pc.hp}/{pc.maxHp}</span>}
-                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#8ec7f2", display: "inline-flex", alignItems: "center", gap: 3 }}><EnergyIc size={11} style={{ verticalAlign: 0 }} /> {pc.en}/{pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
-                    {pc.atk != null && <span style={{ fontSize: 12, fontWeight: 800, color: "#e5975f" }}>⚔ {pc.atk}</span>}
+                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#cfd8c9", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="life" v={pc.hp} size={17} steel={pc.color !== "w"} /> / {pc.maxHp}</span>}
+                    {pc.maxEn > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#a9c4de", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="energy" v={pc.en} size={17} steel={pc.color !== "w"} /> / {pc.maxEn}{pc.enRegen > 0 && <span style={{ color: "#6f96bd", fontWeight: 600 }}> (+{pc.enRegen})</span>}</span>}
+                    {pc.atk != null && <span style={{ display: "inline-flex" }}><StatOrbBadge kind="power" v={pc.atk} size={17} steel={pc.color !== "w"} /></span>}
                     {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
                   </div>
                 </div>
@@ -633,7 +632,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
                           background: seen ? (dry ? "rgba(24,26,32,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
                           color: seen ? (dry ? T.faint : "#e9d296") : T.faint,
                           opacity: seen && dry ? 0.75 : 1 }}>
-                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ color: dry ? "#5a6a80" : "#8ec7f2", fontWeight: 800 }}> · <EnergyIc size={10} />{cost}</span>}</>
+                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}{cost > 0 && <span style={{ display: "inline-flex", verticalAlign: "-0.2em", marginLeft: 4, opacity: dry ? 0.55 : 1 }}><StatOrbBadge kind="energy" v={cost} size={15} /></span>}</>
                             : t("ins.unknown")}
                         </span>
                       );
@@ -661,10 +660,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           const src = paintedForPiece({ kind: pc.kind, color: "w", hero: false });
           return (
             <div onClick={() => setFirstMeet(null)} style={{ position: "fixed", inset: 0, zIndex: 60, background: "rgba(4,6,10,.72)",
-              display: "grid", placeItems: "center", padding: 18, animation: "fade .2s ease" }}>
+              display: "grid", placeItems: "center", padding: 18 }}>
               <div onClick={(e) => e.stopPropagation()} style={{ width: "min(92vw, 360px)", borderRadius: 16, padding: "16px 16px 14px",
                 background: "linear-gradient(178deg, #141a28, #0d1119)", border: "1px solid rgba(233,210,150,.45)",
-                boxShadow: "0 18px 50px rgba(0,0,0,.6)", textAlign: "center", animation: "rise .25s ease" }}>
+                boxShadow: "0 18px 50px rgba(0,0,0,.6)", textAlign: "center" }}>
                 <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".16em", color: T.gold }}>{t("meet.title")}</div>
                 {src && <img src={src} alt="" style={{ height: 110, margin: "10px auto 6px", display: "block", objectFit: "contain",
                   filter: ENEMY_FILTER + " brightness(1.25) drop-shadow(0 4px 8px rgba(0,0,0,.6))" }} />}
@@ -937,7 +936,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
   const leveled = g.levelAfter > g.levelBefore;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "grid", placeItems: "center", background: "rgba(8,10,14,.72)", backdropFilter: "blur(2px)", padding: 14 }}>
-      <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", animation: "rise .25s ease", borderColor: color + "66" }}>
+      <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", borderColor: color + "66" }}>
         <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1 }}>{sub}</div>
         <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>
         {!banner.hotseat && <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
@@ -977,8 +976,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           const maxLv = (ch.ladder || []).reduce((a, r) => Math.max(a, r.level), 1);
           const pt = paintedById(unlockId);
           return <div style={{ margin: "2px 0 12px", padding: "12px 12px 11px", borderRadius: 12,
-            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
-            animation: "rise .35s ease" }}>
+            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))" }}>
             {/* redeemed: the portrait sheds the enemy blue and turns gold */}
             {pt && <img src={pt} alt="" draggable={false} style={{ width: 84, height: 84, objectFit: "contain",
               filter: "drop-shadow(0 3px 6px rgba(0,0,0,.5))", animation: "ggRedeem 1.5s ease .35s both", userSelect: "none" }} />}
@@ -995,8 +993,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
         })()}
         {newSkills.length > 0 && (
           <div style={{ margin: "2px 0 12px", padding: "11px 13px 10px", borderRadius: 12, textAlign: "left",
-            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
-            animation: "rise .35s ease" }}>
+            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))" }}>
             <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".16em", color: T.gold, textAlign: "center", marginBottom: 7 }}>
               {t("banner.learned")}</div>
             {newSkills.map((l, i) => (

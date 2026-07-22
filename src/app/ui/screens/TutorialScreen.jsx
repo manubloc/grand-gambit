@@ -111,8 +111,7 @@ export function TutorialScreen({ t, en, onDone }) {
         ))}
       </div>
       <div style={{ background: "#efe9da", color: "#2e2a20", border: "1px solid #c9bfa4", borderRadius: 16,
-        boxShadow: "0 14px 40px rgba(0,0,0,.45)", padding: "20px 18px 16px", textAlign: "center",
-        animation: "rise .22s ease" }} key={track + i}>
+        boxShadow: "0 14px 40px rgba(0,0,0,.45)", padding: "20px 18px 16px", textAlign: "center" }} key={track + i}>
         <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".22em", color: "#8a6f4d" }}>
           {(en ? "LESSON " : "LEKTION ")}{roman[i]} / {roman[PAGES.length - 1]}
         </div>

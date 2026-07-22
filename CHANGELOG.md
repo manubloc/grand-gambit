@@ -1,5 +1,14 @@
 # Changelog — Grand Gambit
 
+## 0.24.22
+- BUBBLES UNVERGIFTBAR — INS BUNDLE EINGEBETTET: Zweimal hat ein Deploy-Fenster eine Bild-URL mit der HTML-Ersatzseite beantwortet, und Browser-/Service-Worker-Caches hielten das Gift dauerhaft fest (Gegner zeigte nur Zahlen). Jetzt leben alle acht Kugel-Grafiken als Daten-URLs IM Bundle (generiertes Modul statAssets.js): Es gibt keine eigene Bild-URL mehr, die je wieder vergiftet werden koennte — mit jedem Build wandert alles unter neuem Namen aus.
+- ZIFFERN UEBERALL EXAKT GLEICH GROSS, ein- wie zweistellig (58 % der Kugel, feste Groesse ohne Sonderstufe).
+- POPUP-BEGRIFFE AUSGESCHRIEBEN: Angriffsstärke / Lebenspunkte / Energie statt STK / LEB / ENE (englisch Attack / Life / Energy), LVL -> Level.
+- EINE BILDSPRACHE — KUGELN STATT SYMBOLE: Herz, Schwerter und Blitz weichen den kleinen Juwelen-Kugeln: Armeesummen im Kampf-HUD (gold fuer dich, stahl fuer den Gegner), Figuren-Inspektion, Faehigkeits-Energiekosten, Ausbau-Voransicht. Neues JewelIc fuer die nackte Kugel als Symbol.
+- KARTE OHNE KAPITEL-SCHILD: Oben nur noch vor, zurueck und Weltkarte.
+- POPUPS OHNE ANIMATION: Alle Dialoge erscheinen sofort (rise/fade entfernt).
+- FAHRTEST VERSIONIERT: drive3.mjs lag nur im Arbeitscontainer und ging bei jedem frischen Klon verloren — jetzt fest im Repo (dist per HTTP, echter Chromium-Boot, Konsolen-Fehler = rot).
+
 ## 0.24.21
 - FESTSITZENDE UPDATES LOESEN SICH JETZT SELBST: Live beobachtet — ein frisch installierter Service-Worker blieb dauerhaft im Zustand "waiting", und die Seite lieferte Reload um Reload den alten Stand ("ich lade neu und nichts aendert sich"). Der generierte Worker besitzt keinen Meldungs-Empfaenger, mit dem man ihn aktivieren koennte. Neu: Erkennt die App einen festsitzenden Worker, deregistriert sie ihn EINMALIG und laedt neu — der frische Worker uebernimmt sofort (skipWaiting + clientsClaim). Ein Sitzungs-Schutz verhindert Reload-Schleifen. Damit greifen kuenftige Deploys ohne Zutun des Spielers.
 

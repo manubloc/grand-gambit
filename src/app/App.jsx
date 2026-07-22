@@ -494,7 +494,7 @@ function GameIntro({ t, dispatch, onStart }) {
       background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
       <div style={{ width: "100%", maxWidth: 420, background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
         border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
-        padding: "22px 20px 18px", textAlign: "center", animation: "rise .3s ease",
+        padding: "22px 20px 18px", textAlign: "center",
         maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
         <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em", color: T.goldBright }}>{t("intro.title")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 0" }}>
@@ -558,7 +558,7 @@ function TeachPopup({ which, t, dispatch }) {
     <div style={{ position: "fixed", inset: 0, zIndex: 62, display: "grid", placeItems: "center",
       background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
       <div style={{ width: "100%", maxWidth: 400, background: T.panel, border: `1px solid ${T.gold}77`,
-        borderRadius: T.radius, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "20px 18px 16px", animation: "rise .35s ease" }}>
+        borderRadius: T.radius, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "20px 18px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4 }}>
           <span style={{ width: 8, height: 8, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
           <div className="gg-serif" style={{ fontSize: 18.5, color: T.gold, letterSpacing: ".04em" }}>{t(tk)}</div>

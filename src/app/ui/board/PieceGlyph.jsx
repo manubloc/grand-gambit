@@ -57,14 +57,9 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
 // need a wider home) and grows again when the piece is pressed (focus). Rims
 // run to near-black with a vivid inner colour. Numbers live inside. ──
 import "@fontsource/spectral/700.css";
-import orbGoldPower from "../assets/stat/orb-gold-power.webp";
-import orbGoldLife from "../assets/stat/orb-gold-life.webp";
-import orbGoldEnergy from "../assets/stat/orb-gold-energy.webp";
-import orbSteelPower from "../assets/stat/orb-steel-power.webp";
-import orbSteelLife from "../assets/stat/orb-steel-life.webp";
-import orbSteelEnergy from "../assets/stat/orb-steel-energy.webp";
-import stripGold from "../assets/stat/strip-gold.webp";
-import stripSteel from "../assets/stat/strip-steel.webp";
+import { ORB_GOLD_POWER as orbGoldPower, ORB_GOLD_LIFE as orbGoldLife, ORB_GOLD_ENERGY as orbGoldEnergy,
+  ORB_STEEL_POWER as orbSteelPower, ORB_STEEL_LIFE as orbSteelLife, ORB_STEEL_ENERGY as orbSteelEnergy,
+  STRIP_GOLD as stripGold, STRIP_STEEL as stripSteel } from "../assets/stat/statAssets.js";
 const ORB = {
   gold: { power: orbGoldPower, life: orbGoldLife, energy: orbGoldEnergy },
   steel: { power: orbSteelPower, life: orbSteelLife, energy: orbSteelEnergy },
@@ -105,9 +100,15 @@ function StatStrip({ vals, steel, focus, shrink = 1 }) {
     {vals.map((v, i) => (
       <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
         transform: "translate(-50%, -50%)",
-        ...numeralStyle(h * (String(v).length > 1 ? 0.46 : 0.58) + "em") }}>{v}</span>
+        ...numeralStyle(h * 0.58 + "em") }}>{v}</span>
     ))}
   </span>;
+}
+
+// bare jewel sphere as an ICON — replaces the old sword/heart/bolt glyphs
+export function JewelIc({ kind, size = 13, steel = false }) {
+  return <span aria-hidden style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.15em",
+    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%" }} />;
 }
 
 // px-based jewel badge for sheets & the court roster — the separately cut orbs.
@@ -115,7 +116,7 @@ export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ ...numeralStyle(size * (String(v).length > 1 ? 0.46 : 0.58)), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * 0.58), textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 

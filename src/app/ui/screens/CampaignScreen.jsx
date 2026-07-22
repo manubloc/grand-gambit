@@ -605,13 +605,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         {bm && (() => {
           const cur = nodeById(token.at);
           const ch = CHAPTERS.find((c) => cur && cur.row >= c.fromRow && cur.row <= c.toRow) || CHAPTERS[0];
-          return <div className="gg-serif" style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center",
-            height: 40, padding: "0 15px", borderRadius: 999, background: "rgba(8, 11, 20, .48)",
-            border: "1px solid rgba(233, 210, 150, .42)", color: "#e9d296", fontSize: 11.5, letterSpacing: ".12em",
-            whiteSpace: "nowrap", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
-            backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
-            {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][ch.n - 1]} · {chapterTitle(viewLeague, ch.n, en).toUpperCase()}
-          </div>;
+          // the header stays bare: back, forward and the world-map button — the
+          // chapter name lives on the map itself, not in the chrome
+          return null;
         })()}
         {viewLeague < league && (
           <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague] || viewLeague + 1}
@@ -732,7 +728,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%",
                     transform: "translateX(-50%)", width: "min(92%, 340px)", top, bottom, zIndex: 6,
                     borderRadius: 14, border: "1px solid rgba(233,210,150,.4)", background: "rgba(12,15,22,.92)",
-                    padding: "12px 13px", animation: "rise .25s ease" }}>
+                    padding: "12px 13px" }}>
                     <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
                       {ROMAN[worldSel - 1]} · {wt.nameDe}</div>
                     <div className="gg-serif" style={{ color: "rgba(240,233,216,.85)", fontSize: 12.5, fontStyle: "italic",
@@ -762,7 +758,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div key={"vw" + sel} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
           WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
-          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px", animation: "rise .26s ease" }}>
+          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
             <span className="gg-serif" style={{ fontSize: 15.5, fontWeight: 700 }}>{placeFor(node, viewLeague)}</span>
             <span style={{ fontSize: 11, color: PP.dim }}>{en ? mapById(effectiveMap(node, viewLeague)).nameEn : mapById(effectiveMap(node, viewLeague)).nameDe}</span>
@@ -785,8 +781,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div key={sel + (token.at === sel ? "@" : "")} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
           WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
-          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px",
-          animation: "rise .26s ease" }}>
+          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px" }}>
           {(() => {
             const br = { a1: "blades", b1: "magic", c1: "order", d1: "power", e1: "wisdom" }[sel];
             return br ? <div className="gg-quill" style={{ fontSize: 12.5, color: PP.dim, marginBottom: 2 }}>
