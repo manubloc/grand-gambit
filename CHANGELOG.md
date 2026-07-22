@@ -1,5 +1,9 @@
 # Changelog — Grand Gambit
 
+## 0.24.26
+- SCHATZKAMMER-ABSTURZ BEHOBEN: Das Aufklappen eines Erfolgs stuerzte ab, weil evaluate() die Stufenliste (tiers) nie mit ans Item gab — das Akkordeon griff ins Leere. Jetzt reisen tiers UND die Beschreibungen mit (die waren aus demselben Grund nie sichtbar). Neuer Smoke-Fall "AchievementsScreen (open)" rendert genau diesen Pfad bei jedem Push.
+- BRETT WIEDER MITTIG (MOBIL): Der Zierrahmen ragt 2.6 % ueber jede Brettkante — ohne das im Breiten-Budget einzurechnen, sprengten Brett+Rahmen den Viewport und die Seite bekam Seitwaerts-Scroll (Brett wirkte verschoben). Die Zellrechnung teilt die verfuegbare Breite jetzt durch 1.052 — Rahmen und alles bleibt drin, sauber zentriert.
+
 ## 0.24.25
 - GOLDENER ZIERRAHMEN UM JEDES BRETT: Der neue Rahmen (frame1) liegt als Auflage um alle Schachbretter — vermessen auf die Leisten-Innenkante (2.5 %), sodass die Zierleiste exakt auf der Brettkante sitzt und die Filigran-Spitzen die Randfelder kuessen. Figuren, Kugeln und Auswahl stehen IM Rahmen (Schaukasten-Tiefe), ein weicher Schattenwurf hebt ihn vom Untergrund. Getrimmt und als 26-KB-WebP mit Alpha eingebunden.
 

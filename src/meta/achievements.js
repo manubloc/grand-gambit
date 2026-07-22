@@ -66,7 +66,10 @@ export function evaluate(stats) {
     let done = 0, earned = 0, nextN = null;
     for (const t of a.tiers) { if (val >= t.n) { done++; earned += t.pts; } else if (nextN === null) nextN = t.n; }
     points += earned;
-    items.push({ id: a.id, icon: a.icon, nameDe: a.nameDe, nameEn: a.nameEn, val, done, total: a.tiers.length, earned, nextN, maxN: a.tiers[a.tiers.length - 1].n, ptsAt: a.tiers.map((t) => t.pts) });
+    // tiers + descriptions travel WITH the item: the treasury accordion maps
+    // over it.tiers - omitting them here crashed the screen on first tap.
+    items.push({ id: a.id, icon: a.icon, nameDe: a.nameDe, nameEn: a.nameEn, descDe: a.descDe, descEn: a.descEn,
+      tiers: a.tiers, val, done, total: a.tiers.length, earned, nextN, maxN: a.tiers[a.tiers.length - 1].n, ptsAt: a.tiers.map((t) => t.pts) });
   }
   return { points, items };
 }

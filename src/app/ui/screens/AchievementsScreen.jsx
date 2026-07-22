@@ -18,8 +18,8 @@ const cornerDiamond = (pos) => (
     background: "linear-gradient(135deg, #f0d68a, #8a6d35)", boxShadow: "0 0 6px #d9b56588", ...pos }} />
 );
 
-export function AchievementsScreen({ profile, dispatch, t }) {
-  const [openId, setOpenId] = useState(null);
+export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null }) {
+  const [openId, setOpenId] = useState(initialOpenId);
   const en = profile.lang === "en";
   const { items } = evaluate(profile.stats);
   const tiersDone = items.reduce((a, i) => a + i.done, 0);
@@ -106,7 +106,7 @@ export function AchievementsScreen({ profile, dispatch, t }) {
                   the character-card accordion, brought to the treasury */}
               <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 3 }}>
                 <div style={{ color: T.faint, letterSpacing: ".06em", fontSize: 10.5 }}>{en ? "HOW TO EARN IT" : "SO ERREICHST DU ES"}</div>
-                {it.tiers.map((tr, i) => {
+                {(it.tiers || []).map((tr, i) => {
                   const cl = claimedTiers(profile, it.id);
                   const st = i < cl ? "✓" : i < it.done ? "◆" : "·";
                   const r = claimReward(it, i);

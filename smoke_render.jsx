@@ -54,5 +54,7 @@ step("GameScreen campaign piece-boss", () => renderToStaticMarkup(<GameScreen pr
 }
 step("OnlineScreen (disconnected)", () => renderToStaticMarkup(<OnlineScreen profile={prof} dispatch={() => {}} t={t} net={createNet()} onMatch={() => {}} />));
 step("AchievementsScreen", () => renderToStaticMarkup(<AchievementsScreen profile={prof} t={t} />));
+// the accordion OPEN: this exact path once crashed live (tiers missing on the item)
+step("AchievementsScreen (open)", () => renderToStaticMarkup(<AchievementsScreen profile={prof} t={t} initialOpenId="wins" />));
 step("ProfileScreen", () => renderToStaticMarkup(<ProfileScreen profile={prof} dispatch={() => {}} t={t} />));
 console.log("done");

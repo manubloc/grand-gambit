@@ -427,7 +427,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   const GAP = 2; // dark seams between the slabs — the board reads as separate stone plates
   let cell = 0;
   if (avail.w > 0) {
-    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
+    // THE FRAME OVERHANG: the gilded rail blooms 2.6 percent past each edge.
+    // Without carving that out of the width budget, board+frame overflow the
+    // viewport on phones - the page gains sideways scroll and the board reads
+    // as shoved off-centre. Dividing by 1.052 keeps rail and all inside.
+    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) / 1.052 - (W - 1) * GAP) / W;
     // Reserve HEADROOM above the top rank AND FOOTROOM below the first: a
     // selected piece grows 1.58x from its footpoint, so its head rises almost a
     // full cell over the square — and the value orbs ride a little UNDER the
