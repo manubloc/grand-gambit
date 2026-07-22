@@ -56,57 +56,69 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
 // three colours, BOTH armies alike. Each orb GROWS with its number (two digits
 // need a wider home) and grows again when the piece is pressed (focus). Rims
 // run to near-black with a vivid inner colour. Numbers live inside. ──
-import "@fontsource/cinzel/600.css";
+import "@fontsource/spectral/700.css";
 import orbGoldPower from "../assets/stat/orb-gold-power.webp";
 import orbGoldLife from "../assets/stat/orb-gold-life.webp";
 import orbGoldEnergy from "../assets/stat/orb-gold-energy.webp";
 import orbSteelPower from "../assets/stat/orb-steel-power.webp";
 import orbSteelLife from "../assets/stat/orb-steel-life.webp";
 import orbSteelEnergy from "../assets/stat/orb-steel-energy.webp";
+import stripGold from "../assets/stat/strip-gold.webp";
+import stripSteel from "../assets/stat/strip-steel.webp";
 const ORB = {
   gold: { power: orbGoldPower, life: orbGoldLife, energy: orbGoldEnergy },
   steel: { power: orbSteelPower, life: orbSteelLife, energy: orbSteelEnergy },
 };
+// The board wears the painted TRIPLE as one piece of art — never cut apart, so
+// the orbs keep their overlap and shared shadow. Measured from the artwork
+// (1208x450 crop): the three glass centres sit at these x, half-height y; each
+// orb spans 450px. When a piece carries no energy we simply show a narrower
+// window of the same strip (first two orbs).
+const STRIP = { gold: stripGold, steel: stripSteel };
+const STRIP_W = 1208, STRIP_H = 450, ORB_R = 225, ORB_X0 = 169;
+const ORB_CX = [394, 773, 1152].map((x) => x - ORB_X0); // 225, 604, 983
+const STRIP_CY = (490 - 266) / STRIP_H;                 // 0.4978
 
-function StatOrb({ v, kind, focus, steel, shrink = 1 }) {
-  // Painted jewel orbs: gold rims for your court, steel for the foe. One fixed
-  // size for every piece and every value — scores stay single-digit (max 9),
-  // so the ring never has to grow. The numeral is Cinzel, parchment-cream with
-  // a hairline dark-umber edge and a faint embossed sheen below.
-  const size = 0.34 * (focus ? 1.4 : 1) * shrink;
-  return <span data-stat={kind} style={{ width: size + "em", height: size + "em", flex: "0 0 auto",
-    display: "grid", placeItems: "center",
-    backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
-    transition: "width .15s ease, height .15s ease" }}>
-    <span style={{ fontFamily: "'Cinzel', Georgia, serif", fontWeight: 600, lineHeight: 1,
-      fontSize: Math.max(0.1, size * 0.56) + "em",
-      color: "#F5E8C8", WebkitTextStroke: "0.045em #15120D",
-      textShadow: "0 0.07em 0 rgba(255,245,216,.2)",
-      transform: "translateY(-0.04em)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+// The numeral: Spectral Bold — an old-style serif that stays legible at a few
+// pixels. Parchment cream, hairline dark-umber edge, faint embossed sheen.
+const NUM_FONT = "'Spectral', Georgia, serif";
+function numeralStyle(px) {
+  return { fontFamily: NUM_FONT, fontWeight: 700, lineHeight: 1, fontSize: px,
+    color: "#F5E8C8", WebkitTextStroke: "0.05em #15120D",
+    textShadow: "0 0.06em 0 rgba(255,245,216,.22)", fontVariantNumeric: "tabular-nums" };
+}
+
+function StatStrip({ vals, steel, focus, shrink = 1 }) {
+  const n = vals.length;                                   // 2 or 3
+  const visW = ORB_CX[n - 1] + ORB_R;                      // strip window in source px
+  const h = 0.34 * (focus ? 1.4 : 1) * shrink;             // orb diameter in em
+  const w = h * (visW / STRIP_H);
+  return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
+    width: w + "em", height: h + "em", pointerEvents: "none",
+    backgroundImage: `url(${STRIP[steel ? "steel" : "gold"]})`,
+    backgroundSize: `${(STRIP_W / visW) * 100}% 100%`, backgroundPosition: "left center", backgroundRepeat: "no-repeat",
+    filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
+    {vals.map((v, i) => (
+      <span key={i} style={{ position: "absolute", left: `${(ORB_CX[i] / visW) * 100}%`, top: `${STRIP_CY * 100}%`,
+        transform: "translate(-50%, -50%)", ...numeralStyle(h * 0.52 + "em") }}>{v}</span>
+    ))}
   </span>;
 }
 
-// px-based jewel badge for sheets & the court roster — same painted orbs.
+// px-based jewel badge for sheets & the court roster — the separately cut orbs.
 export function StatOrbBadge({ kind, v, size = 26, steel = false }) {
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
     backgroundImage: `url(${ORB[steel ? "steel" : "gold"][kind]})`, backgroundSize: "100% 100%",
     filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
-    <span style={{ fontFamily: "'Cinzel', Georgia, serif", fontWeight: 600, lineHeight: 1, fontSize: size * 0.52,
-      color: "#F5E8C8", WebkitTextStroke: "0.9px #15120D", textShadow: "0 1px 0 rgba(255,245,216,.2)",
-      transform: "translateY(-1px)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+    <span style={{ ...numeralStyle(size * 0.5), WebkitTextStroke: "1px #15120D", textShadow: "0 1px 0 rgba(255,245,216,.22)" }}>{v}</span>
   </span>;
 }
 
 function StatTriad({ piece, focus, shrink = 1 }) {
   // one centred row riding just under the figure: [power] [life] [energy]
-  const steel = piece.color !== "w";
-  return <span style={{ position: "absolute", bottom: "-0.12em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
-    display: "flex", alignItems: "flex-end", justifyContent: "center", gap: "0.03em",
-    pointerEvents: "none", filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
-    <StatOrb v={piece.atk} kind="power" focus={focus} steel={steel} shrink={shrink} />
-    <StatOrb v={piece.hp} kind="life" focus={focus} steel={steel} shrink={shrink} />
-    {piece.maxEn > 0 && <StatOrb v={piece.en} kind="energy" focus={focus} steel={steel} shrink={shrink} />}
-  </span>;
+  const vals = [piece.atk, piece.hp];
+  if (piece.maxEn > 0) vals.push(piece.en);
+  return <StatStrip vals={vals} steel={piece.color !== "w"} focus={focus} shrink={shrink} />;
 }
 
 export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }) {

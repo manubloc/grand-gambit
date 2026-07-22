@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.24.11
+- BRETT: Die drei Wertungs-Kugeln liegen jetzt als EIN ungeteiltes Bild unter der Figur — die Kugeln behalten ihre Ueberlappung und den gemeinsamen Schatten. Die Ziffern sind an den im Gemaelde ausgemessenen Kugelmitten platziert (18.6 % / 50 % / 81.4 % der Streifenbreite, halbe Hoehe); im Pruefstand nachgemessen: hoechstens 1 px Abweichung. Fuehrt eine Figur keine Energie, zeigt sie einen schmaleren Ausschnitt desselben Streifens (erste zwei Kugeln).
+- CHARAKTERKARTEN: Eigene, sauber freigestellte Einzel-Kugeln aus den dafuer gelieferten Bildern — gold fuer den Hofstaat, silbern fuer Monster und Schatten.
+- SCHRIFT: Ziffern jetzt Spectral Bold 700 statt Cinzel — deutlich besser lesbar bei kleiner Groesse; weiterhin Pergamentweiss mit dunkelbrauner Haarkontur und leichtem Praegeschimmer. Cinzel entfernt.
+
 ## 0.24.10
 - KARTE AUF DESKTOP: Das Kartenfenster war am Rechner so breit wie der ganze Bildschirm und ueberragte damit das Menue, zu dem es gehoert. Es sitzt jetzt auf JEDER Bildschirmgroesse exakt auf Menuebreite (wie der Dock-Balken, max 536).
 - KEIN LEERRAUM MEHR IM RAHMEN: Am Rechner wurde das Gemaelde kleiner als sein gerundeter Rahmen gerechnet (Faktor 0.8), wodurch der schwarze Untergrund an den Kanten durchschien. Jetzt deckt das Bild den Rahmen auf allen Groessen randlos ab — es waechst immer mit der Kante, die mehr verlangt. Mit einer Farbsonde hinter der Karte geprueft: bei 390, 1440 und 1920 px Breite ist der Untergrund zu 0.000 % sichtbar.
