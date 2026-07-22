@@ -120,13 +120,19 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     "drop-shadow(0 0 7px rgba(240,214,138,.66)) drop-shadow(0 0 15px rgba(240,214,138,.4))",
     "drop-shadow(0 0 8px rgba(246,224,150,.74)) drop-shadow(0 0 18px rgba(240,214,138,.46))",
   ];
-  // RANK READS AT A GLANCE: the crown pair (king & queen) carry a soft halo and
-  // the brightest paint; the rank and file are stepped back a shade so the
-  // royals lead the eye. The hero keeps his own tier aura, untouched.
-  const royal = !piece.hero && (piece.kind === "K" || piece.kind === "Q");
+  // RANK READS AT A GLANCE: the crown pair (king & queen) carry a halo and the
+  // brightest paint; the rank and file are stepped back a shade so the royals
+  // lead the eye. The king's portrait is painted far darker than the queen's
+  // (measured: median 32 against her 58), so he needs a heavier hand to stand
+  // beside her — and the widest halo of all, as befits the crown.
+  const isKing = !piece.hero && piece.kind === "K";
+  const isQueen = !piece.hero && piece.kind === "Q";
+  const royal = isKing || isQueen;
   const ROYAL_HALO = white
-    ? "drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
-    : "drop-shadow(0 0 5px rgba(214,228,242,.42)) drop-shadow(0 0 12px rgba(190,212,232,.24))";
+    ? (isKing ? "drop-shadow(0 0 6px rgba(248,228,158,.64)) drop-shadow(0 0 16px rgba(240,214,138,.4))"
+              : "drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))")
+    : (isKing ? "drop-shadow(0 0 6px rgba(218,232,246,.54)) drop-shadow(0 0 16px rgba(190,212,232,.32))"
+              : "drop-shadow(0 0 5px rgba(214,228,242,.42)) drop-shadow(0 0 12px rgba(190,212,232,.24))");
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
     + (royal ? " " + ROYAL_HALO : "");
@@ -162,10 +168,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
               // your golden court shines brighter, the steel foe a touch too
               objectFit: "contain", objectPosition: big ? "center" : "center bottom",
               filter: white
-                ? (royal ? "brightness(1.52) saturate(1.2) hue-rotate(8deg)"
+                ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"
+                  : isQueen ? "brightness(1.52) saturate(1.2) hue-rotate(8deg)"
                   : piece.hero ? "brightness(1.36) saturate(1.06) hue-rotate(8deg)"
                   : "brightness(1.2) saturate(0.95) hue-rotate(8deg)")
-                : ENEMY_FILTER + (royal ? " brightness(1.34) saturate(1.16)"
+                : ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
+                  : isQueen ? " brightness(1.34) saturate(1.16)"
                   : piece.hero ? " brightness(1.2)"
                   : " brightness(1.06) saturate(0.9)"),
               userSelect: "none", pointerEvents: "none" }} />

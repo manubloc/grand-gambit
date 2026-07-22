@@ -1,5 +1,8 @@
 # Changelog — Grand Gambit
 
+## 0.24.4
+- FIGUREN: Der Koenig strahlt jetzt wie die Dame. Sein Gemaelde ist von Haus aus deutlich dunkler gemalt (gemessen: Median 32 gegen 58 bei der Dame), weshalb er mit gleichem Filter blass neben ihr stand. Seine Helligkeit ist nun so angehoben, dass beide gleichauf liegen, und er traegt den breitesten Schein von allen.
+
 ## 0.24.3
 - BUGFIX HINTERGRUND: Die Halle mit dem Marmorbrett stand nicht mittig, sondern hing nach rechts aus dem Bild. Ursache: Die Zentrierung lief ueber transform: translateX(-50%), das vom CSS-zoom des App-Wurzelelements verschluckt wird (der Transform kam gar nicht an). Ersetzt durch einen negativen Rand von der halben Eigenbreite, der den Zoom uebersteht und auch dann traegt, wenn das Bild breiter als der Bildschirm ist. Am gebauten Stand gemessen: 0.0 px Abweichung bei 390, 820, 1440 und 1920 px Breite.
 
