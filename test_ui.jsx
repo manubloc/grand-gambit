@@ -609,5 +609,43 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("its sheet explains the ration per chapter", /je erreichtem Kapitel/.test(shardSheet));
 }
 
+// ── 20. THE MASTERS STAND AS CHESS PIECES ───────────────────────────────────
+// They were free-floating creatures with eyes and a mouth — one of them read
+// as a smiley. Every one is built on the SAME chess armature now (the queen's
+// skirt and collar, since a master takes her square); only the head tells them
+// apart. These checks hold that shape.
+{
+  const bosses = BOSSES.map((b) => BOSS_ART[b.id]).filter(Boolean);
+  ok("every master has a drawing", bosses.length === BOSSES.length);
+
+  // the shared armature: the queen's skirt and collar, literally the same path
+  const SKIRT = "M20 27 L28 27";
+  const COLLAR = "M18.4 23 L29.6 23";
+  const noStand = BOSSES.filter((b) => !(BOSS_ART[b.id] || "").includes(SKIRT)).map((b) => b.id);
+  ok("every master stands on a chess base",
+    noStand.length === 0 || console.log("     ", noStand.join(", ")));
+  const noCollar = BOSSES.filter((b) => !(BOSS_ART[b.id] || "").includes(COLLAR)).map((b) => b.id);
+  ok("and wears the collar of the piece", noCollar.length === 0 || console.log("     ", noCollar.join(", ")));
+
+  // no faces: circles were what made them smile
+  const faces = BOSSES.filter((b) => /<circle/.test(BOSS_ART[b.id] || "")).map((b) => b.id);
+  ok("none of them has eyes drawn on", faces.length === 0 || console.log("     ", faces.join(", ")));
+
+  // one path each — a silhouette, not an assembly
+  const multi = BOSSES.filter((b) => ((BOSS_ART[b.id] || "").match(/<path/g) || []).length !== 1).map((b) => b.id);
+  ok("each is a single silhouette", multi.length === 0 || console.log("     ", multi.join(", ")));
+
+  // the heads must actually differ — same skirt means the head carries the identity
+  const head = (id) => (BOSS_ART[id] || "").split("M18.4 23")[0];
+  const ids = BOSSES.map((b) => b.id);
+  const same = [];
+  for (let i = 0; i < ids.length; i++)
+    for (let j = i + 1; j < ids.length; j++)
+      if (head(ids[i]) === head(ids[j])) same.push(`${ids[i]}/${ids[j]}`);
+  ok("no two masters share a head", same.length === 0 || console.log("     ", same.join(", ")));
+
+  ok("the queen herself keeps the same stand", (PIECE_ART.Q || "").includes(SKIRT));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
