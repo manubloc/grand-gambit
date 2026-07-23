@@ -104,6 +104,74 @@ for (const [w, h, name] of [[390, 844, "iPhone"], [360, 800, "Android"], [414, 8
   await page.close();
 }
 
+
+// ── NO TAG EVER SITS BESIDE A NAME ──────────────────────────────────────────
+// Asked for repeatedly, and geometry is the only honest answer: for every
+// figure name on screen, nothing small may share its line to the right within
+// the same card. Checked across all four rooms of the court and in the opened
+// figure sheet.
+{
+  execFileSync("npx", ["esbuild", "court_harness.jsx", "--bundle", "--jsx=automatic",
+    `--outfile=${DIR}/app.js`, "--format=iife", "--loader:.jpg=dataurl", "--loader:.webp=dataurl",
+    "--loader:.css=text", "--log-level=error"], { stdio: "inherit" });
+  const page = await browser.newPage({ viewport: { width: 430, height: 1100 } });
+  await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(2500);
+
+  const SCAN = `(() => {
+    const out = [];
+    for (const el of document.querySelectorAll("div,span")) {
+      const fs = parseFloat(getComputedStyle(el).fontSize);
+      if (fs < 14) continue;
+      const txt = el.textContent.trim();
+      // a NAME is a leaf of real text — not a whole tile, and not the "???"
+      // placeholder a tile shows for a figure you have never met
+      if (!txt || txt.length > 40 || el.children.length > 1) continue;
+      if (/^[?\s]+$/.test(txt)) continue;
+      // a NAME carries letters and more than a syllable — this rules out the
+      // numerals inside the value orbs, whose labels are MEANT to sit beside
+      // them ("3 Angriffsstärke"), and arrows or other marks
+      if (!/[A-Za-z\u00C0-\u024F]{3}/.test(txt)) continue;
+      const r = el.getBoundingClientRect(); if (!r.height) continue;
+      // the card this name belongs to: the nearest ancestor under 260px wide
+      let card = el.parentElement, hops = 0;
+      while (card && hops < 5 && card.getBoundingClientRect().width > 260) { card = card.parentElement; hops++; }
+      if (!card) continue;
+      for (const o of card.querySelectorAll("div,span")) {
+        if (o === el || o.contains(el) || el.contains(o) || o.children.length) continue;
+        if (parseFloat(getComputedStyle(o).fontSize) > 12.5) continue;
+        const t2 = o.textContent.trim(); if (!t2 || t2.length > 30 || /^[?\s]+$/.test(t2)) continue;
+        const b = o.getBoundingClientRect(); if (!b.height) continue;
+        if (Math.abs(b.top - r.top) < r.height * 0.6 && b.left >= r.right - 6)
+          out.push(txt.slice(0, 20) + " ← " + t2.slice(0, 20));
+      }
+    }
+    return out;
+  })()`;
+
+  for (const room of ["tree", "formation", "gear", "chron"]) {
+    await page.evaluate((x) => document.getElementById("tab-" + x)?.click(), room);
+    await page.waitForTimeout(1500);
+    const hits = await page.evaluate(SCAN);
+    ok(`${room}: no caption sits beside a name`, hits.length === 0 || console.log("     ", hits.slice(0, 4).join(" | ")));
+  }
+  // and inside the opened figure sheet
+  await page.evaluate(() => document.getElementById("tab-tree")?.click());
+  await page.waitForTimeout(1500);
+  const opened = await page.evaluate(() => {
+    const t = [...document.querySelectorAll("div")].filter((d) => { const b = d.getBoundingClientRect();
+      return b.width > 60 && b.width < 190 && b.height > 70 && d.querySelector("img"); });
+    const h = t.find((d) => !/\?\?\?/.test(d.textContent));
+    if (h) { h.click(); return true; } return false;
+  });
+  await page.waitForTimeout(900);
+  ok("a figure sheet opens on tap", opened);
+  const sheetHits = await page.evaluate(SCAN);
+  ok("the opened sheet keeps its caption under the name",
+    sheetHits.length === 0 || console.log("     ", sheetHits.slice(0, 4).join(" | ")));
+  await page.close();
+}
+
 await browser.close(); srv.close();
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

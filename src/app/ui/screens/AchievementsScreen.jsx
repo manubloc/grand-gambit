@@ -154,9 +154,18 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                     // the paintings came out of the forge a shade dim for a
                     // treasury: lifted, warmed and given a touch more gold
                     filter: isOpen
-                      ? "brightness(1.35) saturate(1.25) contrast(1.06) sepia(.12)"
-                      : "brightness(1.16) saturate(1.14) sepia(.08)" }} />
+                      ? "brightness(1.5) saturate(1.34) contrast(1.08) sepia(.2)"
+                      : "brightness(1.28) saturate(1.22) sepia(.14)" }} />
               : <AchIcon id={it.id} color={isOpen ? "#fff6d8" : "#f6e4a2"} size={isOpen ? 52 : 28} />}
+            {/* A GLAZE OF GOLD over the painting: a warm wash lifts it into the
+                treasury's own metal, and a soft highlight rides the upper left
+                where the candle stands — the plate reads as polished, not flat. */}
+            <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "50%", pointerEvents: "none",
+              background: "radial-gradient(circle at 30% 24%, rgba(255,248,214,.42), rgba(255,226,150,.14) 42%, rgba(120,84,20,.16) 78%, rgba(60,40,10,.28) 100%)",
+              mixBlendMode: "screen", opacity: isOpen ? 0.95 : 0.7 }} />
+            <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "50%", pointerEvents: "none",
+              background: "linear-gradient(150deg, rgba(255,252,236,.5) 4%, rgba(255,252,236,0) 34%)",
+              opacity: isOpen ? 0.8 : 0.55 }} />
           </div>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
