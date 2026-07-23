@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.26.0
+- DAS BRETT RUHT ENDLICH IN DER MITTE — im Browser vermessen, nicht geschaetzt: Auf einem 390x844-Telefon standen 437 px Himmel ueber dem Brett und 47 px darunter. Zwei Ursachen: (1) der Brett-Rahmen richtete seinen Inhalt nach UNTEN aus, sodass aller freie Platz oben landete; (2) die Leiste oben (Zurueck + Gegnerzeile) ist hoeher als deine Zeile unten, was das Brett zusaetzlich nach unten schob. Jetzt zentriert der Rahmen, der Kopfraum wird nur noch reserviert wenn die Hoehe wirklich knapp ist, und die HUD-Hoehen werden zur Laufzeit gemessen und ausgeglichen. Ergebnis auf iPhone, Android, grossem Telefon und Tablet: 0 px Abweichung.
+- ALLE FIGUREN SCHARF: Die Eroeffnung legte zwei Sekunden lang einen Weichzeichner ueber das ganze Brett, um einen unbekannten Gegner hervorzuheben — und weil ein Meister im DAMEN-Feld steht, las sich das als "nur die Dame ist scharf". Der Weichzeichner ist raus; der Fremde meldet sich weiterhin mit seinem pulsierenden Ring.
+- KUGELN GROESSER: Die Wertkugeln unter jeder Figur wachsen um 17 % (Ziffern mit ihnen), die Armee-Summen von 30 auf 38 px.
+- DAS FELD BEKOMMT SEINE ORDNUNG: Erbeutete Figuren liegen oben LINKS am Brett (seine Beute) und unten rechts (deine), die Gesamtwerte halten die rechten Ecken oben und unten, die Ausruestung sitzt unten links — alles mit demselben Randabstand (12 px), auch das Inspektionsblatt.
+- NEUE PRUEFUNG test_layout.mjs: misst die Brettlage in echtem Chromium auf vier Geraetegroessen und faellt, wenn die Mitte um mehr als 8 px verfehlt wird. Die erste Pruefung im Projekt, die echte Geometrie misst statt Markup.
+
 ## 0.25.5
 - JEDE PLATTE LEUCHTET: Unbegonnene Erfolge lagen bisher auf einem dunkleren Grund und wirkten wie abgeschaltet. Jetzt tragen ALLE Karten denselben warmen Goldgrund und denselben Schein — was erreicht ist, sagen Medaillon, Balken und Rauten, nicht mehr das Abdunkeln der halben Schatzkammer. Auch die Medaillons unbegonnener Erfolge stehen im Licht (Graustufe von 80 % auf 35 % zurueckgenommen).
 - KONTUR RUNDUM GLEICH: Der goldene Saum lief als 3 px starker Balken NUR an der linken Kante — das las sich wie ein schiefer Rahmen statt wie ein Rand aus Gold. Er ist ersetzt durch eine gleichmaessige Kontur (1.5 px) mit umlaufender innerer Lichtkante.

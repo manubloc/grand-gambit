@@ -401,9 +401,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide
             transition: "transform .16s ease, opacity .18s ease, filter .45s ease",
-            filter: introSpot && !introSpot.has(i)
-              ? "blur(1.8px) brightness(.72) saturate(.75) drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" // the known world softens ...
-              : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" /* the strangers stand sharp */ }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+            // EVERY FIGURE STANDS SHARP. The opening used to soften the whole
+            // board for two seconds to spotlight an unknown foe — but since a
+            // champion stands in the QUEEN'S square, the effect read as "only
+            // the queen is in focus, everything else is out of focus". The
+            // stranger still announces himself with the pulsing ring below.
+            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {/* the value orbs live on the SQUARE, not on the piece: one fixed
               em-basis for every figure, so every strip is the same size and
               sits flush with the square's bottom edge — pawn, rook or queen */}
@@ -430,7 +433,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // fluid grid; the client snaps to exact pixels right after mount, so every
   // tile is the same size on every screen (no fr-track rounding drift).
   const GAP = 2; // dark seams between the slabs — the board reads as separate stone plates
-  let cell = 0;
+  let cell = 0, tight = false;   // tight = height is the binding constraint
   if (avail.w > 0) {
     // THE FRAME OVERHANG: the gilded rail blooms 2.6 percent past each edge.
     // Without carving that out of the width budget, board+frame overflow the
@@ -443,6 +446,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     // bottom rank. The zoom viewport clips both without this reserve.
     const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.95 + 0.3) : Infinity;
     cell = Math.max(8, Math.floor(Math.min(byW, byH)));
+    tight = byH <= byW;          // the reserves only need defending when height decides
   }
   const bw = cell ? cell * W + (W - 1) * GAP : null;
   const bh = cell ? cell * H + (H - 1) * GAP : null;
@@ -617,6 +621,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       {death && <DeathFlyer death={death} disp={disp} W={W} H={H} pov={pov} artStyle={artStyle} />}
     </div>
   );
-  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid", alignItems: "end", justifyItems: "center", paddingBottom: cell ? Math.round(cell * 0.3) : 2 }}>{board}</div>;
+  // MEASURED (390x844 phone): this box aligned its content to the END, so on a
+  // width-limited board every scrap of spare height piled up ABOVE it — 437px
+  // of sky over the board and 47px under it. The reserves are real (a selected
+  // piece grows 1.58x and its head clears almost a full cell; the value orbs
+  // ride under the bottom rank), so they stay — but as PADDING, with the board
+  // centred in what remains. Slack now falls evenly above and below.
+  // When HEIGHT is the binding constraint the reserves must be held as padding
+  // or a selected piece's head gets clipped. When WIDTH decides — every phone
+  // in portrait — there is slack to spare, so the board simply sits centred and
+  // the head room comes free. That is the difference between a board resting
+  // mid-screen and one shoved against the bottom rail.
+  if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid",
+    alignItems: "center", justifyItems: "center",
+    paddingTop: tight && cell ? Math.round(cell * 0.95) : 0,
+    paddingBottom: tight && cell ? Math.round(cell * 0.3) : 0 }}>{board}</div>;
   return <div ref={wrapRef} style={{ width: "100%" }}>{board}</div>;
 }

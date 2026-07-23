@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
@@ -91,6 +91,10 @@ function forces(board) {
   for (const p of board) if (p) { const s = f[p.color]; s.hp += p.hp || 0; s.atk += p.atk || 0; }
   return f;
 }
+// One breath of air between every HUD piece and the screen edge — the trays,
+// the totals and the item buttons all measure from this.
+const HUD_PAD = 12;
+
 function ForceBadge({ hp, atk, neon, t }) {
   // the army totals speak the SAME jewel language as every piece on the board
   // NO PILL: the jewels ARE the badge — a frame around them only fought the
@@ -98,8 +102,8 @@ function ForceBadge({ hp, atk, neon, t }) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 2, whiteSpace: "nowrap",
       filter: `drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 0 7px ${neon}44)` }}>
-      <StatOrbBadge kind="power" v={atk} size={30} />
-      <StatOrbBadge kind="life" v={hp} size={30} />
+      <StatOrbBadge kind="power" v={atk} size={38} />
+      <StatOrbBadge kind="life" v={hp} size={38} />
     </span>
   );
 }
@@ -166,6 +170,31 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   });
   const [desync, setDesync] = useState(false);
   const [potionArm, setPotionArm] = useState(false);
+  // THE BOARD BELONGS IN THE MIDDLE OF THE SCREEN — not in the middle of
+  // whatever is left over. Measured on a 390x844 phone, the chrome above (back
+  // bar + the foe's row) stood 75px tall while your row below took 34, so the
+  // board's own centring still left it sitting 20px low. We measure both ends
+  // live and hand the difference to the board box as padding, which pushes its
+  // free area back into symmetry with the viewport on any device.
+  const topChromeRef = useRef(null);
+  const botChromeRef = useRef(null);
+  const [chrome, setChrome] = useState({ top: 0, bottom: 0 });
+  useLayoutEffect(() => {
+    const measure = () => {
+      const t = topChromeRef.current?.getBoundingClientRect().height || 0;
+      const b = botChromeRef.current?.getBoundingClientRect().height || 0;
+      setChrome((c) => (Math.abs(c.top - t) < 0.5 && Math.abs(c.bottom - b) < 0.5 ? c : { top: t, bottom: b }));
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(measure);
+    if (topChromeRef.current) ro.observe(topChromeRef.current);
+    if (botChromeRef.current) ro.observe(botChromeRef.current);
+    return () => ro.disconnect();
+  }, []);
+  const boardPadTop = Math.max(0, Math.round(chrome.bottom - chrome.top));
+  const boardPadBottom = Math.max(0, Math.round(chrome.top - chrome.bottom));
+
   const potionsUsedRef = useRef(resume?.potionsUsed || 0);
   const hourglassUsedRef = useRef(resume?.hourglassUsed || 0);   // time-turners burned this match
   function usePotion(i) {
@@ -564,10 +593,14 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 </>);
   const enemyStrip = (<>
       {/* enemy strip */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 14px", minHeight: 24, flex: "0 0 auto" }}>
-        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
-        <div style={{ flex: 1 }} />
+      {/* THE RIM OF THE FIELD: what the foe has taken sits on the LEFT, close
+          to the board; his standing power holds the far RIGHT corner. Same law
+          mirrored below for you — so the eye always finds a total in a corner
+          and a spoils row by the board. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: `0 ${HUD_PAD}px`, minHeight: 30, flex: "0 0 auto" }}>
         <span data-gg-tray="w"><Tray kinds={state.captured.b} color="w" /></span>
+        <div style={{ flex: 1 }} />
+        {hpMode && <ForceBadge hp={F.b.hp} atk={F.b.atk} neon={T.magenta} t={t} />}
       </div>
 
 </>);
@@ -575,7 +608,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div ref={zoomBox} onPointerDown={zoomDown} onPointerMove={zoomMove} onPointerUp={zoomUp} onPointerCancel={zoomUp}
         onWheel={zoomWheel} onClickCapture={(e) => { if (zDragged.current) { e.stopPropagation(); e.preventDefault(); zDragged.current = false; } }}
-        style={{ flex: "1 1 auto", minHeight: 0, position: "relative", margin: "2px 4px",
+        // the balance rides on the MARGIN, not on padding: the board's own
+        // viewport is an absolutely positioned child, and those measure from
+        // the padding box — padding here would have been invisible to it.
+        style={{ flex: "1 1 auto", minHeight: 0, position: "relative",
+        margin: `${2 + boardPadTop}px 4px ${2 + boardPadBottom}px`,
         overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
         <div style={{ width: "100%", height: "100%",
           display: "grid", placeItems: "center",   // the board rests mid-air: as much sky above as below
@@ -602,8 +639,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <div style={{ position: "absolute", zIndex: 7, pointerEvents: "none", display: "flex",
               // the LAYOUT LAW: your own piece reports BELOW (the action zone),
               // the enemy's secrets pop up ABOVE the field
-              ...(own ? { left: 8, right: 58, bottom: 8, justifyContent: "flex-start" }
-                      : { left: 8, right: 8, top: 8, justifyContent: "center" }) }}>
+              ...(own ? { left: HUD_PAD, right: 58, bottom: HUD_PAD, justifyContent: "flex-start" }
+                      : { left: HUD_PAD, right: HUD_PAD, top: HUD_PAD, justifyContent: "center" }) }}>
               <div style={{ pointerEvents: "auto", maxWidth: 380, borderRadius: 12, padding: "8px 11px 8px",
                 background: "rgba(9, 12, 20, .88)", border: `1px solid ${own ? "rgba(233,210,150,.5)" : "rgba(167,139,250,.55)"}`,
                 boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
@@ -716,7 +753,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const yourStrip = (<>
       {/* your strip: badges · status · captured · undo */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
-        padding: "2px 14px calc(10px + env(safe-area-inset-bottom))" }}>
+        padding: `2px ${HUD_PAD}px calc(10px + env(safe-area-inset-bottom))` }}>
         <Chip color={hotseat && state.turn === BLACK ? T.magentaInk : T.limeInk} bg={hotseat && state.turn === BLACK ? T.magenta : T.lime}>{hotseat ? t(state.turn === WHITE ? "hs.white" : "hs.black") : t("game.you")}</Chip>
         {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
           <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
@@ -739,7 +776,6 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             ⧗ {state.shiftArmed === WHITE ? t("game.riftArmed") : (state.shifts?.w || 0)}
           </button>
         )}
-        {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
           textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
         <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
@@ -751,6 +787,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
               padding: "0 9px", opacity: !state.history.length || banner || hourglassLeft <= 0 ? 0.45 : 1 }}>
             <HourglassIc size={15} /> {hourglassLeft}</button>
         )}
+        {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
       </div>
 </>);
 
@@ -782,10 +819,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%",
       display: "flex", flexDirection: "column" }}>
-      {headerBar}
-      {enemyStrip}
+      <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
       {boardBlock}
-      {yourStrip}
+      <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
       {bannerEl}
     </div>
   );

@@ -93,7 +93,7 @@ function SpellStar({ size }) {
 // diameter and the same engraved numerals the old strip carried, for both
 // sides alike (the figure itself tells friend from foe).
 function StatDuo({ piece, focus, shrink = 1 }) {
-  const d = 0.32 * (focus ? 1.4 : 1) * shrink;   // orb diameter in em
+  const d = 0.375 * (focus ? 1.4 : 1) * shrink;  // orb diameter in em — a size up, numerals with it
   const gap = d * 0.045;                         // a hair apart — nearly kissing
   // the star promises an ACT: only castable (live) talents count — a piece
   // with purely passive gifts has nothing left to "use", so no star for it
