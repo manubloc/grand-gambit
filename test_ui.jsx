@@ -12,6 +12,10 @@ import { ABILITIES, BOSSES } from "./src/content/index.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
+import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
+import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
+import { buildStageMatch } from "./src/meta/index.js";
+import { CAMPAIGN } from "./src/content/index.js";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile, evaluate } from "./src/meta/index.js";
@@ -347,6 +351,37 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   // a monster renders its OWN shape on the board, not its family's
   const asBoss = (bossId, art) => html(<PieceGlyph piece={piece({ kind: "X", color: "b", bossId, art })} artStyle="svg" pov="w" />);
   ok("two monsters of one family draw differently", asBoss("b01", "golem") !== asBoss("b06", "golem"));
+}
+
+// ── 12. THE RULES MUST BE SAID OUT LOUD ─────────────────────────────────────
+// Two orbs decide every exchange, and an attacker springs BACK when the
+// defender survives — which reads as a bug to anyone who was never told. The
+// briefing must appear before a life battle, and must stay away once waved off.
+{
+  const hpNode = CAMPAIGN.find((n) => n.rules === "hp");
+  ok("the campaign has a life battle to brief for", !!hpNode);
+  const t = makeT("de");
+  // A campaign station tells its tale FIRST — the briefing waits behind the
+  // story card, so a quick life battle (no tale) is where it shows on sight.
+  const screen = (prof) => html(<GameScreen profile={prof} dispatch={() => {}} t={t}
+    quick={{ mapId: "classic", mode: "hp", difficulty: "easy" }} />);
+
+  const fresh = screen(defaultProfile());
+  ok("a life battle explains the blue orb", fresh.includes(t("hpb.atk").slice(0, 30)));
+  ok("a life battle explains the red orb", fresh.includes(t("hpb.hp").slice(0, 30)));
+  ok("and it explains the rebound", fresh.includes(t("hpb.bounce").slice(0, 40)));
+  ok("the briefing offers a way to silence it", fresh.includes(t("hpb.never")));
+
+  const quiet = screen({ ...defaultProfile(), notices: { hpBrief: true } });
+  ok("once waved off it stays away", !quiet.includes(t("hpb.bounce").slice(0, 40)));
+
+  // and the same lesson must be readable later, on demand — the academy is a
+  // stepper, so every page gets rendered and searched
+  const pages = Array.from({ length: 14 }, (_, n) =>
+    html(<TutorialScreen t={t} en={false} onDone={() => {}} startAt={n} />)).join("");
+  ok("the academy teaches the two orbs", pages.includes("Die zwei Kugeln") && pages.includes("Kampfkraft"));
+  ok("the academy teaches the rebound", pages.includes("Rückprall") && pages.includes("ZURÜCK"));
+  ok("the academy shows the actual orbs, not a stand-in", pages.includes("data:image/webp"));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

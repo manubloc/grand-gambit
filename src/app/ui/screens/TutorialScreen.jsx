@@ -7,7 +7,7 @@ import { Button } from "../primitives.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { SkullIc, BladesIc, HourglassIc, SkillStar, GoldCoin, HeartIc, GoldHeartIc, SwordsIc, HourglassGIc, GoldSkullIc, SkillIc, LevelIc, CoinIc } from "../icons.jsx";
-import { JewelIc } from "../board/PieceGlyph.jsx";
+import { JewelIc, StatOrbBadge } from "../board/PieceGlyph.jsx";
 
 const STEPS = [
   {
@@ -19,6 +19,16 @@ const STEPS = [
     de: { title: "Ziehen & Kämpfen", text: "Figuren ziehen wie im Schach. Ein Zug auf ein gegnerisches Feld ist ein Angriff: Deine Angriffsstärke trifft seine Lebenspunkte. Überlebt der Gegner, bleibst du stehen — überlege also, wen du wohin schickst. Der König muss immer geschützt bleiben." },
     en: { title: "Move & fight", text: "Pieces move as in chess. Stepping onto an enemy square is an attack: your attack strikes their life points. If the defender survives, you hold your ground — so choose your targets well. The king must always be kept safe." },
     art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><JewelIc kind="life" size={26} /><JewelIc kind="power" size={26} /></div>,
+  },
+  {
+    de: { title: "Die zwei Kugeln", text: "Unter jeder Figur liegen zwei Juwelen. BLAU ist die Kampfkraft: so viele Lebenspunkte reißt sie dem Gegner bei einem Angriff herunter. ROT sind ihre Lebenspunkte: so viel hält sie selbst aus. Ein goldener Stern darüber heißt, dass ihre eine Fähigkeit für diese Partie noch frei ist." },
+    en: { title: "The two orbs", text: "Two jewels sit beneath every piece. BLUE is attack strength: that many life points it tears off an enemy when it strikes. RED is its own life: that much it endures. A golden star above them means its one ability is still unspent this match." },
+    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><StatOrbBadge kind="power" v={3} size={30} /><StatOrbBadge kind="life" v={5} size={30} /></div>,
+  },
+  {
+    de: { title: "Angriff & Rückprall", text: "Ein Zug auf ein besetztes Feld ist ein Angriff: Deine Kampfkraft trifft seine Lebenspunkte. Hält der Gegner stand, springt deine Figur auf ihr Ausgangsfeld ZURÜCK — das ist kein Fehler, sondern die Regel. Erst wenn sein letzter Lebenspunkt fällt, rückst du auf sein Feld vor. Ein Angreifer mit 3 Kraft braucht gegen 5 Leben also zwei Angriffe." },
+    en: { title: "Strike & rebound", text: "Moving onto an occupied square is an attack: your force meets their life. If the defender holds, your piece springs BACK to where it came from — that is the rule, not a glitch. Only when their last life point falls do you advance onto their square. So a striker with 3 force needs two attacks to fell 5 life." },
+    art: <div style={{ display: "flex", gap: 8, alignItems: "center" }}><StatOrbBadge kind="power" v={3} size={26} /><span style={{ color: "#8a6f4d", fontSize: 18 }}>→</span><StatOrbBadge kind="life" v={5} size={26} /><span style={{ color: "#8a6f4d", fontSize: 18 }}>→</span><StatOrbBadge kind="life" v={2} size={26} /></div>,
   },
   {
     de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 Lebenspunkte (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },
@@ -92,13 +102,16 @@ const SCHOOL = [
     en: { title: "The king", text: "One square in any direction — slow but irreplaceable: lose the king, lose the game. In Grand Gambit as in chess, guarding him is task number one." } },
 ];
 
-export function TutorialScreen({ t, en, onDone }) {
+export function TutorialScreen({ t, en, onDone, startAt = 0 }) {
   const [track, setTrack] = useState("game");   // "game" | "chess"
-  const [i, setI] = useState(0);
+  const [i, setI] = useState(startAt);
   const PAGES = track === "game" ? STEPS : SCHOOL;
-  const step = PAGES[i];
+  // switching tracks can leave the cursor past the end of the shorter deck —
+  // and a page that does not exist used to take the whole screen down with it
+  const page = Math.min(Math.max(i, 0), PAGES.length - 1);
+  const step = PAGES[page];
   const L = en ? step.en : step.de;
-  const last = i === PAGES.length - 1;
+  const last = page === PAGES.length - 1;
   const roman = ["I", "II", "III", "IV", "V", "VI", "VII"];
   return (
     <div style={{ maxWidth: 460, margin: "0 auto" }}>
@@ -132,11 +145,11 @@ export function TutorialScreen({ t, en, onDone }) {
               background: k === i ? "#8a6f4d" : "#cfc5a8" }} />
           ))}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: i > 0 ? "1fr 2fr" : "1fr", gap: 8 }}>
-          {i > 0 && <button onClick={() => setI(i - 1)} style={{ padding: "11px 12px", borderRadius: 10, background: "none",
+        <div style={{ display: "grid", gridTemplateColumns: page > 0 ? "1fr 2fr" : "1fr", gap: 8 }}>
+          {page > 0 && <button onClick={() => setI(page - 1)} style={{ padding: "11px 12px", borderRadius: 10, background: "none",
             border: "1px solid #c9bfa4", color: "#6f6752", fontWeight: 700, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer" }}>
             ‹ {t("common.back")}</button>}
-          <button onClick={() => (last ? onDone() : setI(i + 1))} style={{ padding: "11px 14px", borderRadius: 10,
+          <button onClick={() => (last ? onDone() : setI(page + 1))} style={{ padding: "11px 14px", borderRadius: 10,
             background: "#1d2436", color: "#e9e2cf", fontWeight: 800, fontSize: 14, border: "none", fontFamily: "inherit",
             cursor: "pointer", letterSpacing: ".04em" }}>{last ? t("tut.done") : t("tut.next")} ›</button>
         </div>

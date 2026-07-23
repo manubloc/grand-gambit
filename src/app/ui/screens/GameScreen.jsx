@@ -91,6 +91,10 @@ function forces(board) {
   for (const p of board) if (p) { const s = f[p.color]; s.hp += p.hp || 0; s.atk += p.atk || 0; }
   return f;
 }
+// On the server there is no layout to measure, and React rightly warns that a
+// layout effect can do nothing there. Same hook in the browser, quiet in SSR.
+const useMeasureEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 // One breath of air between every HUD piece and the screen edge — the trays,
 // the totals and the item buttons all measure from this.
 const HUD_PAD = 12;
@@ -179,7 +183,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const topChromeRef = useRef(null);
   const botChromeRef = useRef(null);
   const [chrome, setChrome] = useState({ top: 0, bottom: 0 });
-  useLayoutEffect(() => {
+  useMeasureEffect(() => {
     const measure = () => {
       const t = topChromeRef.current?.getBoundingClientRect().height || 0;
       const b = botChromeRef.current?.getBoundingClientRect().height || 0;
@@ -209,6 +213,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [rematch, setRematch] = useState("");        // "" | "wait" | "offer"
   const [banner, setBanner] = useState(null);
   const [intro, setIntro] = useState(() => !resume && !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
+  // the life-battle briefing rides just behind the story card, every match,
+  // until the player waves it off for good
+  const [brief, setBrief] = useState(() => !resume && !profile.notices?.hpBrief);
   // THE SEERESS'S GAZE: with a seer actively fielded, the enemy array lies
   // open BEFORE the first horn — study it, or step back to rearrange.
   // ONLINE the gaze does more: the seer may SWAP own pieces on the spot,
@@ -499,7 +506,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       setFirstMeet({ piece: pc, seen: allowed });
     }
   };
-  useEffect(() => { if (!intro && !flyGo) setFlyGo(true); }, [intro]); // the curtain rises once the tale is told
+  useEffect(() => { if (!intro && !brief && !flyGo) setFlyGo(true); }, [intro, brief]); // the curtain rises once the tale is told and the rules are said
   useEffect(() => { if (!flyGo) return; const id = setTimeout(() => setFlyDone(true), 2000); return () => clearTimeout(id); }, [flyGo]); // one tap arms, the second concedes
   useEffect(() => {
     if (!armResign) return;
@@ -719,7 +726,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
         {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => { setIntro(false); if (foresight) setScout(true); }} timer={timer} />}
-        {scout && !intro && !banner && (
+        {brief && hpMode && !intro && !banner && <HpBriefing t={t}
+          onBegin={() => setBrief(false)}
+          onNever={() => { setBrief(false); dispatch({ type: "SET_NOTICE", key: "hpBrief" }); }} />}
+        {scout && !intro && !brief && !banner && (
           <div style={{ position: "absolute", left: 10, right: 10, bottom: 12, zIndex: 5,
             background: "rgba(10,13,20,.82)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
             border: "1px solid rgba(233,210,150,.45)", borderRadius: 14, padding: "12px 14px",
@@ -914,6 +924,47 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
 // Pre-battle story card for campaign stages: chapter, place, a line of lore,
 // and the boss you are about to face. The stage clock (if any) is announced
 // here — it starts ticking only once you step in.
+// THE FIRST LESSON OF THE HP RULES. Two orbs decide every exchange and the
+// game never said what they mean — worst of all the bounce, where an attacker
+// springs back to its own square because the defender still stands. That looks
+// like a bug until someone explains it. Shown before every life battle until
+// the player says "enough".
+function HpBriefing({ t, onBegin, onNever }) {
+  const Row = ({ orb, text }) => (
+    <div style={{ display: "flex", gap: 11, alignItems: "flex-start", margin: "10px 0" }}>
+      <span style={{ flex: "0 0 auto", marginTop: 1 }}>{orb}</span>
+      <span style={{ fontSize: 13, lineHeight: 1.5, textAlign: "left" }}>{text}</span>
+    </div>);
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(2px)", borderRadius: 12, padding: 14, zIndex: 6 }}>
+      <div style={{ background: "#efe9da", color: "#2e2a20", borderRadius: 14, padding: "18px 18px 14px",
+        maxWidth: 350, width: "100%", boxShadow: "0 14px 34px rgba(0,0,0,.5)", border: "1px solid #c9bfa4" }}>
+        <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".03em", textAlign: "center" }}>{t("hpb.title")}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "9px 0 4px" }}>
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+          <span style={{ width: 6, height: 6, background: "#8a6f4d", transform: "rotate(45deg)" }} />
+          <span style={{ flex: 1, height: 1, background: "#c9bfa4" }} />
+        </div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.5, textAlign: "center", color: "#5c5344" }}>{t("hpb.lead")}</div>
+        <Row orb={<StatOrbBadge kind="power" v={3} size={30} />} text={t("hpb.atk")} />
+        <Row orb={<StatOrbBadge kind="life" v={5} size={30} />} text={t("hpb.hp")} />
+        <div style={{ borderTop: "1px solid #d8cfb8", margin: "6px 0 0", paddingTop: 9, fontSize: 13, lineHeight: 1.5 }}>
+          {t("hpb.bounce")}
+        </div>
+        <div style={{ marginTop: 9, fontSize: 12.5, lineHeight: 1.5, color: "#5c5344" }}>{t("hpb.star")}</div>
+        <button onClick={onBegin} style={{ width: "100%", marginTop: 14, fontFamily: "inherit", fontWeight: 900,
+          fontSize: 14.5, borderRadius: 999, padding: "12px 18px", border: "none", cursor: "pointer",
+          background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a",
+          boxShadow: "0 0 14px rgba(217,181,101,.5), inset 0 1px 0 #fff6d8cc" }}>{t("hpb.ok")}</button>
+        <button onClick={onNever} style={{ width: "100%", marginTop: 7, fontFamily: "inherit", fontWeight: 700,
+          fontSize: 12.5, borderRadius: 999, padding: "8px 14px", border: "1px solid #c9bfa4",
+          background: "transparent", color: "#6b6152", cursor: "pointer" }}>{t("hpb.never")}</button>
+      </div>
+    </div>
+  );
+}
+
 function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
   const ch = chapterForRow(node.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
