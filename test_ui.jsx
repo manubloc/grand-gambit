@@ -243,5 +243,44 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("sigils and paintings pair up one for one", sigils === plates);
 }
 
+// ── 11. THE EMPTY MAP MUST STILL DRAW ───────────────────────────────────────
+// A painted chapter map brings its own scenery, so the generator hands back an
+// EMPTY_SCENERY object instead of computing hills and huts. If that object is
+// ever missing one field the map still reaches for, the campaign screen dies
+// with "Cannot read properties of undefined (reading 'map')" — which is exactly
+// the crash that came in from a phone on 22 July (a sibling of it, in the
+// treasury). This path gets hot the moment painted maps arrive, so it is
+// checked against the source itself.
+{
+  const src = readFileSync("src/app/ui/screens/CampaignScreen.jsx", "utf8");
+  const block = src.slice(src.indexOf("const EMPTY_SCENERY"), src.indexOf("function useScenery"));
+  const declared = new Set([...block.matchAll(/([a-zA-Z0-9_]+):/g)].map((m) => m[1]));
+  const used = new Set([...src.matchAll(/scenery\.([a-zA-Z0-9_]+)/g)].map((m) => m[1]));
+  const missing = [...used].filter((f) => !declared.has(f));
+  ok("the blank scenery declares every field the map draws",
+    missing.length === 0 || console.log("     fehlt:", missing.join(", ")));
+  ok("the blank scenery is not itself empty", declared.size > 20);
+}
+
+// ── 12. NOTHING RENDERS ON A THIN PROFILE ───────────────────────────────────
+// Save files from older builds lack fields that newer screens expect. Rendering
+// each screen against a profile stripped of its optional parts proves no screen
+// assumes more than it is given.
+{
+  const thin = defaultProfile();
+  delete thin.codex; delete thin.records; delete thin.loadout.boosts;
+  const t = makeT("de");
+  const cases = [
+    ["treasury", () => html(<AchievementsScreen profile={thin} t={t} dispatch={() => {}} initialOpenId="wins" />)],
+    ["court", () => html(<ArmyScreen profile={thin} dispatch={() => {}} t={t} />)],
+    ["chronicle", () => html(<ArmyScreen profile={thin} dispatch={() => {}} t={t} initialTab="chron" />)],
+  ];
+  for (const [name, fn] of cases) {
+    let survived = true;
+    try { fn(); } catch (e) { survived = false; console.log("     ", name, "→", e.message); }
+    ok(`${name} survives a profile with missing optional parts`, survived);
+  }
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
