@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.26.2
+- DIE SCHATZKAMMER TRAEGT IHRE GEMALTEN EMBLEME: Alle 14 Erfolge haben jetzt ihr eigenes Bild — Siegeskranz, gestuerzte Krone, gefluegelte Sanduhr, Monsterschaedel und die uebrigen. 14 Erfolge, 14 Embleme, kein Ueberhang auf keiner Seite.
+- FREIGESTELLT UND NEU GEGOSSEN: Die Vorlagen kamen als undurchsichtige Quadrate auf fast schwarzem Grund. Zuerst per Leuchtdichte-Matte freigestellt (Grund abgezogen, Farbe zurueckgerechnet, damit keine dunklen Saeume bleiben) — auf hellem Untergrund blieb aber ein feiner Kasten vom Vignetten-Schleier sichtbar. Deshalb sind sie als RUNDE Medaillons neu gegossen: die Scheibe traegt das warme Dunkel der Goldplatten, das Emblem sitzt mittig darin. So gibt es auf keinem Untergrund eine Kante — geprueft auf hellem Gold wie auf dunklem Grund.
+- Das Medaillon waechst von 48 auf 54 px, damit die Zeichnung atmet; der goldene Ring, sein Schein und die gedaempfte Darstellung unbegonnener Erfolge bleiben. Fuer alles ohne Gemaelde steht weiterhin das gezeichnete Zeichen bereit.
+- DREI NEUE WACHEN: jeder Erfolg hat sein Emblem, kein Emblem ist verwaist, und alle sind quadratisch und gross genug fuer eine scharfe Praegung (aus den WebP-Kopfdaten gelesen). Gesamtbatterie: 557 gruen.
+
 ## 0.26.1
 - DIE CHRONIK LIEGT DEM ADMIN OFFEN: Als Admin siehst du jede Figur und jedes Monster sofort — mit Namen, Grundzuegen und Faehigkeiten, ohne etwas freizuschalten oder umzustellen. Gemessen: Beim Spieler bleiben 45 Eintraege verhuellt, beim Admin keiner (alle 27 Figuren namentlich, dazu die Monster). Fuer Spieler bleibt die Chronik unveraendert eine Seite-fuer-Seite verdiente Sammlung.
 - BEIDE GESICHTER JEDER FIGUR: Neben dem gemalten Portrait steht in der Chronik jetzt das schlichte Vektor-Zeichen — die Silhouette, die man auf dem Brett in einer Sekunde liest. Bei Figuren wie bei Monstern, 52 Zeilen, jedes Paar vollstaendig.

@@ -6,6 +6,7 @@ import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../me
 import { T } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
 import { AchIcon, SkillStar, GoldCoin } from "../icons.jsx";
+import { ACH_ART } from "../assets/ach/index.js";
 import { useMedia } from "../../App.jsx";
 
 // MEASURED, then lifted: on the gilded plates T.faint came in at 2.9:1 against
@@ -98,14 +99,23 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           {/* a still gleam sweeping the plate — treasure catches the light */}
           <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
             background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.10) 45%, transparent 58%)" }} />
-          <div style={{ width: 48, height: 48, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
+          {/* THE STRUCK MEDALLION: each achievement now wears its own painted
+              emblem, already cast as a round plate in the treasury's warm dark
+              — so it seats itself in the gold rim with no seam and no cut-out
+              work at runtime. The drawn icon still stands in for anything that
+              has no painting yet. */}
+          <div style={{ width: 54, height: 54, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
+            overflow: "hidden", position: "relative",
             background: started
               ? "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)"
               : "radial-gradient(circle at 32% 28%, rgba(200,176,110,.3), rgba(30,24,13,.95) 70%)",
             border: `2px solid ${started ? "#e9cf8a" : "rgba(214,186,124,.6)"}`,
             boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "0 0 8px rgba(217,181,101,.2), inset 0 1px 2px rgba(255,246,214,.25)",
-            filter: started ? "none" : "grayscale(.35)" }}>
-            <AchIcon id={it.id} color={started ? "#f6e4a2" : VELLUM_DIM} size={25} />
+            filter: started ? "none" : "grayscale(.35) brightness(.85)" }}>
+            {ACH_ART[it.id]
+              ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              : <AchIcon id={it.id} color={started ? "#f6e4a2" : VELLUM_DIM} size={27} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>

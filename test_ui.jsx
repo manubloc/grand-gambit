@@ -13,7 +13,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
-import { defaultProfile } from "./src/meta/index.js";
+import { defaultProfile, evaluate } from "./src/meta/index.js";
 import { makeT } from "./src/app/i18n/strings.js";
 
 let pass = 0, fail = 0;
@@ -145,6 +145,19 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const shallow = files.map((f) => ({ f, d: dims(`${dir}/${f}`) })).filter((x) => x.d && x.d.h < 280);
   ok("every painting has the rows to stay sharp when it fills the frame",
     shallow.length === 0 || console.log("     ", shallow.map((x) => `${x.f} ${x.d.w}x${x.d.h}`).join(", ")));
+
+  // THE TREASURY'S EMBLEMS: one painted medallion per achievement, square (they
+  // are cast as discs) and big enough for the 54px rim on a 2x screen.
+  const achDir = "src/app/ui/assets/ach";
+  const achFiles = readdirSync(achDir).filter((f) => f.endsWith(".webp"));
+  const achIds = evaluate({}).items.map((i) => i.id);
+  const missing = achIds.filter((id) => !achFiles.includes(`ach-${id}.webp`));
+  ok("every achievement has its own painted emblem", missing.length === 0 || console.log("     ", missing.join(", ")));
+  ok("no emblem is orphaned", achFiles.every((f) => achIds.includes(f.slice(4, -5))));
+  const badMedal = achFiles.map((f) => ({ f, d: dims(`${achDir}/${f}`) }))
+    .filter((x) => !x.d || x.d.w !== x.d.h || x.d.w < 128);
+  ok("emblems are square and large enough for a crisp medallion",
+    badMedal.length === 0 || console.log("     ", badMedal.map((x) => x.f).join(", ")));
 }
 
 // ── 8. THE TREASURY MUST BE READABLE ────────────────────────────────────────
