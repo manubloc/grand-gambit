@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.26.10
+- AUFSTELLUNG BEI RUHENDEM KAMPF: GEPRUEFT — KEIN FEHLER, aber ab jetzt gesagt. Nachgerechnet: Ein pausierter Kampagnenkampf wird aus seinem eigenen Schnappschuss fortgesetzt, deine laufende Partie behaelt also exakt ihre Aufstellung; was du im Hofstaat aenderst, wirkt ab dem NAECHSTEN Kampf. Beides ist jetzt als Dauertest verankert (Brett unveraendert UND naechste Schlacht mit der neuen Reihe). Neu ist ein Hinweis im Aufstellungs-Editor, sobald ein Kampf ruht — damit niemand fuerchten muss, gerade einen Spielstand zerschossen zu haben.
+- DIE SCHATZKAMMER SETZT IHR EMBLEM IN SZENE: Wird eine Platte geoeffnet, stellt sie sich auf — das Medaillon steigt nach oben in die Mitte, waechst von 56 auf 104 px, leuchtet heller (kraeftigerer Rand, satterer Schein, das Bild eine Spur heller und farbiger). Um den Kreis wandert ein rotierender Lichtring, und aus seiner hellsten Stelle spruehen fuenf Funken TANGENTIAL davon — jeder auf seiner eigenen Bahn, mit eigenem Takt und Versatz. Geschlossene Platten bleiben still.
+- NEUN NEUE WACHEN: aufgestellte Platte, gewachsenes Emblem, aufsteigende Bewegung, drehender Ring, Funken auf eigenen Tangenten, Ruhe im geschlossenen Zustand — und der Hinweis erscheint nur, wenn wirklich ein Kampf ruht. Gesamtbatterie: 615 gruen.
+
 ## 0.26.9
 - DER ZUSATZ STEHT JETZT UNTER DEM NAMEN — endlich, und diesmal nachgemessen: Auf den Kacheln der Chronik klebte "Krone" / "Schatten" als winzige Zeile in der OBEREN RECHTEN ECKE. Er sitzt nun als Bildunterschrift direkt unter dem Figurennamen. Im Browser vermessen: 20 Zusaetze unter dem Namen, KEINER daneben.
 - JEDE KACHEL TRAEGT IHRE VEKTORFIGUR: Oben rechts steht jetzt die simple Figur selbst (28 px, blank, ohne Ring oder Rahmen) — bei Kronen- und Schattenfiguren wie bei jedem Monster mit seiner eigenen Silhouette. Gemessen: 27 von 27 Kacheln.

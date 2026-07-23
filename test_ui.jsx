@@ -433,5 +433,32 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("no caption is pinned to a tile corner", !/top:4px;right:6px/.test(tree));
 }
 
+// ── 15. THE OPENED PLATE PUTS ITS EMBLEM ON STAGE ───────────────────────────
+{
+  const t = makeT("de");
+  const prof = { ...defaultProfile(), stats: { wins: 30, games: 60 } };
+  const open = html(<AchievementsScreen profile={prof} t={t} initialOpenId="wins" />);
+  const shut = html(<AchievementsScreen profile={prof} t={t} />);
+
+  ok("opening stands the plate upright (emblem on top)", open.includes("flex-direction:column"));
+  ok("the emblem grows when opened", /width:104px/.test(open) && !/width:104px/.test(shut));
+  ok("it rises into place", open.includes("ggMedalRise"));
+  ok("its ring of light turns", open.includes("ggRingSpin"));
+  ok("sparks leave the rim", (open.match(/ggSpark/g) || []).length >= 4);
+  ok("each spark rides its own tangent", /--a:\s*\d+deg/.test(open));
+  ok("a closed plate stays quiet", !shut.includes("ggSpark") && !shut.includes("ggRingSpin"));
+}
+
+// ── 16. THE COURT WARNS WHILE A FIGHT RESTS ─────────────────────────────────
+{
+  const t = makeT("de");
+  const base = withProgressPct(defaultProfile(), 100, 5);
+  const resting = { ...base, pausedMatch: { v: 1, nodeId: "n03", enc: "x", potionsUsed: 0, hourglassUsed: 0 } };
+  const withWarn = html(<ArmyScreen profile={resting} dispatch={() => {}} t={t} initialTab="formation" />);
+  const without = html(<ArmyScreen profile={base} dispatch={() => {}} t={t} initialTab="formation" />);
+  ok("a resting fight is announced in the formation editor", withWarn.includes(t("army.pausedHint").slice(0, 30)));
+  ok("with no fight resting the note stays away", !without.includes(t("army.pausedHint").slice(0, 30)));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

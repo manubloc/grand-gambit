@@ -10,6 +10,7 @@ import { CAMPAIGN, BOSSES, CHARACTERS, ITEMS, mapById } from "./src/content/inde
 import { BASE_HP, BASE_ATK } from "./src/core/index.js";
 import { leagueFinalBossPiece } from "./src/meta/campaign.js";
 import { crownSlots, formationLegalOn, unlockedCharacterIds, buildArmy, defaultProfile, withProgressPct } from "./src/meta/index.js";
+import { createGame, encodeState, decodeState } from "./src/core/index.js";
 import { MAPS, CHARACTER_LIST } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
@@ -233,6 +234,32 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
   let survived = true;
   try { buildArmy(broken, mapById("classic"), null, "hp"); } catch { survived = false; }
   ok("a corrupt formation cannot break the match", survived);
+}
+
+// ── 12. A RESTING FIGHT KEEPS ITS RANKS ─────────────────────────────────────
+// Rearranging the court while a campaign match is paused must not reach into
+// that match — it resumes from its own snapshot — and the new arrangement must
+// take effect from the next battle on. Both halves are asserted, because
+// either one breaking silently would look like a corrupted save.
+{
+  const prof = withProgressPct(defaultProfile(), 100, 5);
+  const map = mapById("classic");
+  const g = createGame(buildArmy(prof, map, null, "hp"), buildArmy(prof, map, null, "hp"),
+    { map, rules: "hp", seed: 5 });
+  const before = g.board.map((p) => (p ? p.kind : ".")).join("");
+
+  const swap = CHARACTER_LIST.find((c) => c.flank && (prof.campaign?.unlocked || []).includes(c.id));
+  const changed = [...map.defaultFormation]; changed[0] = swap.id;
+  const after = { ...prof,
+    pausedMatch: { v: 1, nodeId: "n03", enc: encodeState(g), potionsUsed: 0, hourglassUsed: 0, clock: null },
+    loadout: { ...(prof.loadout || {}), formations: { classic: changed } } };
+
+  ok("the paused fight resumes exactly as it stood",
+    decodeState(after.pausedMatch.enc).board.map((p) => (p ? p.kind : ".")).join("") === before);
+  const next = buildArmy(after, map, null, "hp");
+  ok("and the NEXT battle fields the new arrangement",
+    (next.back || next)[0]?.kind === swap.kind);
+  ok("the untouched flank of the running board is still the old piece", before[0] === "R");
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

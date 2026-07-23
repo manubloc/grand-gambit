@@ -62,6 +62,17 @@ export const GLOBAL_CSS = `
   .gg-serif { font-family: ${T.serif}; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes ggGlow { 0%,100% { box-shadow: 0 0 5px rgba(201,164,92,.22); } 50% { box-shadow: 0 0 14px rgba(201,164,92,.5); } }
+  /* THE TREASURY'S MEDALLION, once its plate is opened: the ring of light
+     turns around the emblem, and sparks fly off TANGENTIALLY from the brightest
+     point — each spark rides its own orbit, so they leave the rim sideways
+     rather than shooting straight out. */
+  @keyframes ggRingSpin { to { transform: rotate(360deg); } }
+  @keyframes ggSpark {
+    0%   { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)) scale(.5); }
+    12%  { opacity: 1; }
+    100% { opacity: 0; transform: rotate(calc(var(--a) + 46deg)) translateX(calc(var(--r) + 26px)) scale(.2); }
+  }
+  @keyframes ggMedalRise { from { transform: translateY(6px) scale(.86); } to { transform: none; } }
   @keyframes ggGlint { 0%, 86%, 100% { opacity: 0; } 90% { opacity: .85; } 95% { opacity: 0; } }
   @keyframes rise { from { opacity: 0; } to { opacity: 1; } }
   @keyframes glow { 0%,100% { box-shadow: 0 0 0 2px ${T.danger}; } 50% { box-shadow: 0 0 0 2px ${T.danger}66; } }

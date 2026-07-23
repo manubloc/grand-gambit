@@ -83,7 +83,12 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       const ready = claimedTiers(profile, it.id) < it.done;
       return (
         <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
-          style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer", position: "relative",
+          style={{ display: "flex", gap: 13, cursor: "pointer", position: "relative",
+          // OPENED, THE EMBLEM TAKES THE STAGE: the plate turns into a column,
+          // the medallion rises to the top at nearly twice its size, its ring
+          // of light turns, and sparks leave the brightest point sideways.
+          flexDirection: isOpen ? "column" : "row",
+          alignItems: isOpen ? "stretch" : "center",
           // EVERY PLATE IS LIT. Dimming the untouched ones made half the
           // treasury look switched off; the medallion and the bar already say
           // what is earned. And the rim is EVEN now: the old look carried a
@@ -103,20 +108,42 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
               — so it seats itself in the gold rim with no seam and no cut-out
               work at runtime. The drawn icon still stands in for anything that
               has no painting yet. */}
-          <div style={{ width: 56, height: 56, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
-            overflow: "hidden", position: "relative",
+          <div style={{ position: "relative", flex: "none", alignSelf: isOpen ? "center" : "auto",
+            width: isOpen ? 104 : 56, height: isOpen ? 104 : 56, margin: isOpen ? "2px 0 10px" : 0,
+            animation: isOpen ? "ggMedalRise .34s cubic-bezier(.2,.9,.3,1) both" : "none" }}>
+          {isOpen && <>
+            {/* the ring of light, turning */}
+            <span aria-hidden style={{ position: "absolute", inset: -9, borderRadius: "50%", pointerEvents: "none",
+              background: "conic-gradient(from 0deg, rgba(255,246,214,0) 0deg, rgba(255,246,214,.85) 38deg, rgba(240,214,138,.25) 96deg, rgba(255,246,214,0) 190deg, rgba(255,246,214,0) 360deg)",
+              filter: "blur(2.5px)", animation: "ggRingSpin 5.5s linear infinite" }} />
+            {/* sparks off the brightest point, each on its own tangent */}
+            {[0, 1, 2, 3, 4].map((n) => (
+              <span key={n} aria-hidden style={{ position: "absolute", left: "50%", top: "50%",
+                width: 3.5, height: 3.5, marginLeft: -1.75, marginTop: -1.75, borderRadius: "50%",
+                background: "radial-gradient(circle, #fffdf2, #f0d68a 60%, rgba(240,214,138,0))",
+                boxShadow: "0 0 6px rgba(255,244,200,.9)", pointerEvents: "none",
+                "--a": `${34 + n * 7}deg`, "--r": "56px",
+                animation: `ggSpark ${1.5 + n * 0.24}s ease-out ${n * 0.32}s infinite` }} />
+            ))}
+          </>}
+          <div style={{ position: "absolute", inset: 0, borderRadius: "50%", display: "grid", placeItems: "center",
+            overflow: "hidden",
             // THE EMBLEM IS SHOWN AS PAINTED. It used to be greyed and darkened
             // until the achievement was under way, which read as "the picture
             // is half transparent" — you could not make out what it showed. The
             // painting now stands at full strength on every plate; what is
             // earned is told by the bar, the diamonds and the tally.
             background: "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)",
-            border: "2.5px solid #f6e4a2",
-            boxShadow: "0 0 16px rgba(240,214,138,.55), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,250,228,.55)" }}>
+            border: isOpen ? "3px solid #fff6d8" : "2.5px solid #f6e4a2",
+            boxShadow: isOpen
+              ? "0 0 34px rgba(255,240,190,.75), 0 2px 6px rgba(0,0,0,.6), inset 0 2px 4px rgba(255,252,236,.7)"
+              : "0 0 16px rgba(240,214,138,.55), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,250,228,.55)" }}>
             {ACH_ART[it.id]
               ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              : <AchIcon id={it.id} color="#f6e4a2" size={28} />}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block",
+                    filter: isOpen ? "brightness(1.22) saturate(1.12)" : "none" }} />
+              : <AchIcon id={it.id} color={isOpen ? "#fff6d8" : "#f6e4a2"} size={isOpen ? 52 : 28} />}
+          </div>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>

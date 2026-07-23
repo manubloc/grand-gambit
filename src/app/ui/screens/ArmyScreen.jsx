@@ -707,6 +707,16 @@ function FormationEditor({ profile, dispatch, t, en }) {
   <Panel>
     <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
     <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
+    {/* A RESTING FIGHT KEEPS ITS RANKS. Verified: resuming decodes the board
+        from its snapshot, so nothing you do here can reach into a match that
+        is already under way — but nobody was told, which invites the fear of
+        having just broken a saved game. */}
+    {profile.pausedMatch?.v === 1 && (
+      <div style={{ fontSize: 12, lineHeight: 1.5, color: "#e6d09a", marginBottom: 10, padding: "8px 11px",
+        borderRadius: 10, background: "rgba(74,58,28,.32)", border: "1px solid rgba(233,207,138,.45)" }}>
+        {t("army.pausedHint")}
+      </div>
+    )}
 
     {/* STACKED, not side-by-side: the intro text sits ABOVE, the formation
         gets the FULL width below — room for properly big figures */}
