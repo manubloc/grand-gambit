@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap } from "../../../meta/index.js";
-import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES } from "../../../content/index.js";
+import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
@@ -950,7 +950,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
 }
 
 // Gear & supplies — its own room now (tab 2), no longer part of one long scroll.
-function GearPanel({ profile, dispatch, t, en }) {
+function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
+  const [gearInfo, setGearInfo] = useState(initialGearInfo);   // ein angetipptes Stück zeigt sein Blatt
   return (
     <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase", marginBottom: 8 }}>{t("army.supplies")}</div>
@@ -964,25 +965,23 @@ function GearPanel({ profile, dispatch, t, en }) {
           const bought = profile.spShards || 0;
           const left = Math.max(0, cap - bought);
           const can = left > 0 && (profile.gold || 0) >= SP_SHARD_GOLD;
-          return <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: 10,
-            border: "1px solid #8a6d3566", background: `linear-gradient(165deg, rgba(43, 36, 16, .4), ${T.panel2})`,
-            position: "relative", overflow: "hidden" }}>
-            <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "40%", pointerEvents: "none",
-              background: "linear-gradient(90deg, transparent, rgba(255,240,190,.06), transparent)",
-              animation: "ggShine 12s ease-in-out 3.4s infinite" }} />
-            <span style={{ width: 24, display: "grid", placeItems: "center", position: "relative" }}><SkillStar size={22} /></span>
-            <div style={{ flex: 1, minWidth: 0, position: "relative" }}>
+          // NO PEDESTAL. The shard used to sit on its own gilded plate with a
+          // travelling shine, which made it shout across the whole chest. It is
+          // a ware like any other now — what is special about it (the ration
+          // per chapter) is said in its sheet, where it belongs.
+          return <div onClick={() => setGearInfo("shard")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+            <span style={{ width: 24, display: "grid", placeItems: "center" }}><SkillStar size={22} /></span>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 800 }}>
-                <span className="gg-serif" style={{ letterSpacing: ".04em", ...goldText }}>{en ? "Star shard" : "Sternensplitter"}</span>
+                {en ? "Star shard" : "Sternensplitter"}
                 <span style={{ color: T.dim, fontWeight: 700 }}> · {bought}/{cap}</span>
               </div>
               <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.5 }}>
-                {en
-                  ? `A captured spark of insight, ground into a skill point. The court keeps ${"" + 2} per league in its vault.`
-                  : "Ein gebannter Funke Erleuchtung, zu einem Skillpunkt geschliffen. Der Hof verwahrt zwei je erreichter Liga."}
+                {en ? "A spark of insight, ground into a skill point."
+                    : "Ein Funke Erleuchtung, zu einem Skillpunkt geschliffen."}
               </div>
             </div>
-            <button onClick={() => dispatch({ type: "BUY_SP_SHARD" })} disabled={!can}
+            <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "BUY_SP_SHARD" }); }} disabled={!can}
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
                 position: "relative", border: "none", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 5,
                 background: can ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : T.panel,
@@ -997,7 +996,8 @@ function GearPanel({ profile, dispatch, t, en }) {
           const owned = it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0);
           const full = it.kind === "key" ? owned : owned >= (it.max || 99);
           const can = !full && (profile.gold || 0) >= it.gold;
-          return <div key={it.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          return <div key={it.id} onClick={() => setGearInfo(it.id)}
+            style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
             <span style={{ width: 24, display: "grid", placeItems: "center" }}><ItemIcon id={it.id} size={22} /></span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 800 }}>
@@ -1007,7 +1007,7 @@ function GearPanel({ profile, dispatch, t, en }) {
               </div>
               <div style={{ fontSize: 11.5, color: T.dim }}>{en ? it.textEn : it.textDe}</div>
             </div>
-            <button onClick={() => dispatch({ type: "BUY_ITEM", id: it.id })} disabled={!can}
+            <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "BUY_ITEM", id: it.id }); }} disabled={!can}
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
                 border: `1.5px solid ${can ? T.gold : T.line}`, background: can ? T.gold : T.panel,
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default", whiteSpace: "nowrap" }}>
@@ -1027,6 +1027,70 @@ function GearPanel({ profile, dispatch, t, en }) {
           </div>;
         })()}
       </div>
+      {/* THE SHEET OF A SINGLE PIECE OF GEAR: its painting large at the top,
+          then what it does, then the longer word — several of these are only
+          half the story without the piece they need at your side. */}
+      {gearInfo && (() => {
+        const shard = gearInfo === "shard";
+        const it = shard ? null : ITEMS[gearInfo];
+        if (!shard && !it) return null;
+        const cap = spShardCap(profile), bought = profile.spShards || 0;
+        const left = Math.max(0, cap - bought);
+        const owned = it ? (it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0)) : 0;
+        const full = it ? (it.kind === "key" ? owned : owned >= (it.max || 99)) : left === 0;
+        const price = it ? it.gold : SP_SHARD_GOLD;
+        const can = !full && (profile.gold || 0) >= price;
+        return <div onClick={() => setGearInfo(null)} style={{ position: "fixed", inset: 0, zIndex: 56,
+          background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center", padding: 16 }}>
+          <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
+            maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
+            background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: "1px solid rgba(233,210,150,.42)",
+            boxShadow: "0 18px 50px rgba(0,0,0,.6)" }}>
+            <div style={{ display: "grid", placeItems: "center", marginBottom: 10 }}>
+              {shard ? <SkillStar size={92} /> : <ItemIcon id={it.id} size={116} />}
+            </div>
+            <div className="gg-serif" style={{ fontSize: 19, letterSpacing: ".03em", color: T.goldBright, textAlign: "center" }}>
+              {shard ? (en ? "Star shard" : "Sternensplitter") : (en ? it.nameEn : it.nameDe)}
+            </div>
+            <div style={{ fontSize: 12, color: T.dim, textAlign: "center", marginTop: 3 }}>
+              {shard ? `${bought}/${cap}`
+                : it.kind === "consumable" ? `${owned}/${it.max}` : (owned ? (en ? "In your supplies" : "In deinem Vorrat") : (en ? "Not yet bought" : "Noch nicht gekauft"))}
+            </div>
+            <div style={{ height: 1, background: "rgba(233,210,150,.22)", margin: "12px 0 11px" }} />
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: "#ded7c0" }}>
+              {shard ? (en ? "A spark of insight, ground into a skill point. Spend it in the court to raise a piece a level."
+                           : "Ein Funke Erleuchtung, zu einem Skillpunkt geschliffen. Im Hofstaat hebst du damit eine Figur um eine Stufe.")
+                     : (en ? it.textEn : it.textDe)}
+            </div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.6, color: T.dim, marginTop: 9 }}>
+              {shard ? (en ? `The court's vault holds two shards per chapter you have reached — ${cap} so far, ${bought} of them taken.`
+                           : `Der Tresor des Hofes verwahrt zwei Splitter je erreichtem Kapitel — bisher ${cap}, davon ${bought} gehoben.`)
+                     : (en ? it.loreEn : it.loreDe)}
+            </div>
+            {shard && left === 0 && (
+              <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "#e6d09a", marginTop: 10, padding: "9px 11px",
+                borderRadius: 10, background: "rgba(74,58,28,.32)", border: "1px solid rgba(233,207,138,.45)" }}>
+                {en ? "This chapter's shards are all taken. The next ones wait in the chapter beyond."
+                    : "Die Splitter dieses Kapitels sind alle gehoben. Die nächsten warten im nächsten Kapitel."}
+              </div>
+            )}
+            <button onClick={() => { if (!can) return; dispatch(shard ? { type: "BUY_SP_SHARD" } : { type: "BUY_ITEM", id: it.id }); setGearInfo(null); }}
+              disabled={!can} style={{ width: "100%", marginTop: 14, fontFamily: "inherit", fontWeight: 900, fontSize: 14,
+                borderRadius: 999, padding: "12px 16px", border: "none", whiteSpace: "nowrap",
+                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                background: can ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : T.panel2,
+                color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default",
+                outline: can ? "none" : `1px solid ${T.line}` }}>
+              {full ? (en ? "Nothing more to take" : "Nichts mehr zu holen")
+                    : <><GoldCoin size={14} /> {price}</>}
+            </button>
+            <button onClick={() => setGearInfo(null)} style={{ width: "100%", marginTop: 7, fontFamily: "inherit",
+              fontWeight: 700, fontSize: 12.5, borderRadius: 999, padding: "8px 14px", border: `1px solid ${T.line}`,
+              background: "transparent", color: T.dim, cursor: "pointer" }}>{t("tree.cancel")}</button>
+          </div>
+        </div>;
+      })()}
+    
     </div>
   );
 }
@@ -1286,7 +1350,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   </div>;
 }
 
-export function ArmyScreen({ profile, dispatch, t, initialTab, account = null }) {
+export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, initialGearInfo = null }) {
   const [zoomChar, setZoomChar] = useState(null);
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
@@ -1320,6 +1384,6 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null })
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
-    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
+    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
   </div>;
 }

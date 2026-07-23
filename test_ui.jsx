@@ -568,5 +568,46 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("it names the four gambits", ["Quick Gambit", "Rush Gambit", "Prime Gambit", "Classic Gambit"].every((x) => pages.includes(x)));
 }
 
+// ── 19. EVERY PIECE OF GEAR OPENS ITS SHEET ─────────────────────────────────
+// The sheet reads ITEMS at render time — and a missing import there crashed
+// the whole court the moment a row was tapped, while build, smoke and SSR all
+// stayed green because nothing ever OPENED it. So each sheet is rendered here.
+{
+  const t = makeT("de");
+  const prof = withProgressPct(defaultProfile(), 100, 5);
+  const ids = Object.keys(ITEMS);
+  const broken = [];
+  for (const id of [...ids, "shard"]) {
+    try {
+      const m = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo={id} />);
+      if (m.length < 500) broken.push(id + " (leer)");
+    } catch (e) { broken.push(id + ": " + e.message.slice(0, 40)); }
+  }
+  ok(`every sheet opens without crashing (${ids.length + 1})`,
+    broken.length === 0 || console.log("     ", broken.join(" | ")));
+
+  const sheet = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo="bergschluessel" />);
+  ok("the sheet shows the painting large", sheet.includes("width:116px"));
+  ok("it carries the short line", sheet.includes(ITEMS.bergschluessel.textDe.slice(0, 24)));
+  ok("and the longer word beneath", sheet.includes(ITEMS.bergschluessel.loreDe.slice(0, 30)));
+
+  ok("every item has a longer word in both tongues",
+    ids.every((id) => ITEMS[id].loreDe && ITEMS[id].loreEn));
+  const needsHelper = ["bergschluessel", "kriegsaxt", "donnerpulver", "sternenkompass", "anker", "boat"];
+  ok("the pieces that need a companion say so",
+    needsHelper.every((id) => /ACHTUNG|NOTE/.test(ITEMS[id].loreDe + ITEMS[id].loreEn)));
+  ok("no heart glyph is left in the gear texts",
+    ids.every((id) => !/[♥⚔]/.test(ITEMS[id].textDe + ITEMS[id].loreDe)));
+
+  // the shard sits among the wares now, with no pedestal of its own
+  const gear = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" />);
+  // (a shine elsewhere on the page is fine — what mattered was the shard's OWN
+  // gilded plate: its border, its ground and its gold lettering)
+  ok("the star shard no longer sits on its own gilded plate",
+    !gear.includes("rgba(43, 36, 16, .4)") && !gear.includes("1px solid #8a6d3566"));
+  const shardSheet = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo="shard" />);
+  ok("its sheet explains the ration per chapter", /je erreichtem Kapitel/.test(shardSheet));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
