@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.26.1
+- DIE CHRONIK LIEGT DEM ADMIN OFFEN: Als Admin siehst du jede Figur und jedes Monster sofort — mit Namen, Grundzuegen und Faehigkeiten, ohne etwas freizuschalten oder umzustellen. Gemessen: Beim Spieler bleiben 45 Eintraege verhuellt, beim Admin keiner (alle 27 Figuren namentlich, dazu die Monster). Fuer Spieler bleibt die Chronik unveraendert eine Seite-fuer-Seite verdiente Sammlung.
+- BEIDE GESICHTER JEDER FIGUR: Neben dem gemalten Portrait steht in der Chronik jetzt das schlichte Vektor-Zeichen — die Silhouette, die man auf dem Brett in einer Sekunde liest. Bei Figuren wie bei Monstern, 52 Zeilen, jedes Paar vollstaendig.
+- ZUG-VORSCHAU IN DER FARBE IHRER ARMEE: Die Zielfelder tragen jetzt dieselbe Legierung wie Knoepfe, Kugeln und Figuren — deine Zuege als geschliffene GOLD-Perle, die eines vom Seher gelesenen Gegners in poliertem STAHL. Ein Schlagzug bleibt ein Ring, ein Schritt eine Perle: die Form sagt was, das Metall sagt wessen. Der Ring entsteht aus einem einzigen Farbverlauf mit klarer Mitte — ohne Masken, damit er auf jeder Darstellungsmaschine gleich aussieht.
+- SIEBEN NEUE PRUEFUNGEN halten das fest: dass der Admin nichts verborgen sieht, der Spieler weiterhin schon, und dass Portrait und Vektor-Zeichen in jeder Zeile paarweise auftreten. Gesamtbatterie: 554 gruen.
+
 ## 0.26.0
 - DAS BRETT RUHT ENDLICH IN DER MITTE — im Browser vermessen, nicht geschaetzt: Auf einem 390x844-Telefon standen 437 px Himmel ueber dem Brett und 47 px darunter. Zwei Ursachen: (1) der Brett-Rahmen richtete seinen Inhalt nach UNTEN aus, sodass aller freie Platz oben landete; (2) die Leiste oben (Zurueck + Gegnerzeile) ist hoeher als deine Zeile unten, was das Brett zusaetzlich nach unten schob. Jetzt zentriert der Rahmen, der Kopfraum wird nur noch reserviert wenn die Hoehe wirklich knapp ist, und die HUD-Hoehen werden zur Laufzeit gemessen und ausgeglichen. Ergebnis auf iPhone, Android, grossem Telefon und Tablet: 0 px Abweichung.
 - ALLE FIGUREN SCHARF: Die Eroeffnung legte zwei Sekunden lang einen Weichzeichner ueber das ganze Brett, um einen unbekannten Gegner hervorzuheben — und weil ein Meister im DAMEN-Feld steht, las sich das als "nur die Dame ist scharf". Der Weichzeichner ist raus; der Fremde meldet sich weiterhin mit seinem pulsierenden Ring.

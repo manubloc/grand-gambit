@@ -15,6 +15,7 @@ import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
+import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedById, paintedForPiece } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -257,13 +258,17 @@ function MoveDiagram({ kind, moveSpec, extra = null }) {
 const MOVE_LEGEND = { de: "Blau: Gleiten · Gelb: Sprung · ✦ die Figur", en: "Blue: slide · Yellow: leap · ✦ the piece" };
 const MOVE_LEGEND_ABILITY = { de: "Grün: neue Felder durch diese Fähigkeit", en: "Green: squares this ability adds" };
 
-function ChroniclePanel({ profile, t, en }) {
+function ChroniclePanel({ profile, t, en, account = null }) {
   const [openId, setOpenId] = useState(null);
   const met = new Set(profile.codex?.met || []);
+  // THE KEEPER OF THE RECORD sees the whole record. For a player the chronicle
+  // is earned page by page; for an admin it is a working reference — every
+  // figure legible at once, with nothing to unlock or toggle first.
+  const isAdmin = !!account?.isAdmin;
   // seen = recruited OR met in battle. Base moves are only revealed once you
   // have actually LIVED the piece — recruited, or faced across the board.
-  const seenChar = (ch) => isUnlocked(ch, profile) || met.has(ch.kind);
-  const seenBoss = (b) => met.has("X:" + b.id) || (profile.campaign?.bribedBosses || []).includes(b.id)
+  const seenChar = (ch) => isAdmin || isUnlocked(ch, profile) || met.has(ch.kind);
+  const seenBoss = (b) => isAdmin || met.has("X:" + b.id) || (profile.campaign?.bribedBosses || []).includes(b.id)
     || ownedLeagueBosses(profile).includes(b.id);
   const figures = CHARACTER_LIST;
   const FAM = { golem: ["Golems", "Golems"], beast: ["Bestien", "Beasts"], serpent: ["Schlangen", "Serpents"], wraith: ["Schemen", "Wraiths"], tyrant: ["Tyrannen", "Tyrants"] };
@@ -278,11 +283,20 @@ function ChroniclePanel({ profile, t, en }) {
         background: "linear-gradient(180deg, rgba(24,32,58,.5), rgba(12,16,30,.6))", overflow: "hidden" }}>
         <button onClick={() => seen && setOpenId(open ? null : ch.id)} style={{ display: "flex", alignItems: "center", gap: 10,
           width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: seen ? "pointer" : "default", textAlign: "left" }}>
-          <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
-            {paintedById(ch.id)
-              ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
-                  filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
-              : <Glyph kind={ch.kind} color="w" size={30} />}
+          {/* BOTH FACES OF A FIGURE: the painting as she appears in battle and,
+              beside it, the plain vector sigil — the shape you read at a glance
+              on the board. The chronicle is a reference, so it shows both. */}
+          <span style={{ display: "flex", alignItems: "flex-end", gap: 6, flex: "0 0 auto" }}>
+            <span style={{ width: 40, height: 50, display: "grid", placeItems: "center" }}>
+              {paintedById(ch.id)
+                ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+                    filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
+                : <PieceArt kind={ch.kind} size={32} level={1} />}
+            </span>
+            <span title={en ? "vector sigil" : "Vektor-Zeichen"} style={{ width: 30, height: 50, display: "grid", placeItems: "center",
+              opacity: seen ? 0.95 : 0.4, filter: seen ? "none" : "grayscale(1) brightness(.5)" }}>
+              <PieceArt kind={ch.kind} size={28} level={1} />
+            </span>
           </span>
           <span style={{ flex: 1, minWidth: 0 }}>
             <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: seen ? T.text : "#79735f" }}>{seen ? (en ? ch.nameEn : ch.nameDe) : "???"}</span>
@@ -330,6 +344,11 @@ function ChroniclePanel({ profile, t, en }) {
               ? <img src={paintedById("boss-" + b.id) || paintedById("boss-" + b.art)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
                   filter: seen ? "none" : "grayscale(1) brightness(.35)" }} />
               : <span style={{ fontSize: 24, filter: seen ? "none" : "grayscale(1) brightness(.4)" }}>👁</span>}
+          </span>
+          {/* the monster's vector sigil beside its portrait, same as the court */}
+          <span title={en ? "vector sigil" : "Vektor-Zeichen"} style={{ width: 30, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center",
+            opacity: seen ? 0.95 : 0.4, filter: seen ? "none" : "grayscale(1) brightness(.5)" }}>
+            <PieceArt kind={b.kind} art={b.art} size={28} level={1} fill="#5b2f3f" rim="#e7b7c9" detail="#c58fa6" />
           </span>
           <span style={{ flex: 1, minWidth: 0 }}>
             <span className="gg-quill" style={{ display: "block", fontSize: 14.5, color: seen ? "#e7b7c9" : "#79735f" }}>{seen ? (en ? b.nameEn : b.nameDe) : "???"}</span>
@@ -1209,7 +1228,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
   </div>;
 }
 
-export function ArmyScreen({ profile, dispatch, t, initialTab }) {
+export function ArmyScreen({ profile, dispatch, t, initialTab, account = null }) {
   const [zoomChar, setZoomChar] = useState(null);
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
@@ -1241,7 +1260,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab }) {
       { value: "chron", label: t("army.tabChron") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
-    {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} />}
+    {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />}
   </div>;

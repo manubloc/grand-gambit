@@ -236,7 +236,7 @@ export default function App() {
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} onTutorial={() => setView("tutorial")} />
       )
-      : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} />
+      : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
         : tab === "ach" ? <div>
           <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
             {[["ach", t("ranks.tabAch")], ["lb", t("ranks.tabLb")]].map(([id, lbl]) => (

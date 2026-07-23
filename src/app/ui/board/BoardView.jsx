@@ -8,7 +8,22 @@ import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { PieceArt } from "./PieceArt.jsx";
 import frameArt from "../assets/board-frame.webp";
 
-const MOVE_DOT = "#c9a45c";
+// THE MOVE MARKERS WEAR THE ARMY'S METAL: your own moves are struck in the
+// same gold as the buttons and the jewels, a foe's (read by a seer) in the
+// polished steel his pieces wear. Shape still carries the meaning — a filled
+// bead is a step, a ring is a strike — but the metal says WHOSE move it is.
+const MOVE_METAL = {
+  gold: {
+    face: "radial-gradient(circle at 33% 27%, #fff6d8, #f0d68a 40%, #c9a45c 72%, #8a6a2e)",
+    ring: "radial-gradient(circle, transparent 55%, #fff6d8 56%, #f0d68a 63%, #c9a45c 78%, #7d5f28 100%)",
+    rim: "#5d451c", glow: "rgba(240,214,138,.55)",
+  },
+  steel: {
+    face: "radial-gradient(circle at 33% 27%, #ffffff, #e2e9ef 40%, #a9b6c2 72%, #6d7885)",
+    ring: "radial-gradient(circle, transparent 55%, #ffffff 56%, #dfe7ee 63%, #a9b6c2 78%, #5f6a76 100%)",
+    rim: "#232a33", glow: "rgba(206,220,233,.5)",
+  },
+};
 
 // THE FALLEN, in flight: a captured piece doesn't just fade in a rough
 // direction — it spins off the board and lands EXACTLY on its captor's tray
@@ -343,6 +358,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       if (isWing || isBigAnchor) piece = null;     // drawn by the 2x2 overlay instead
       const dark = (f + r) % 2 === 1;
       const tgt = targets.get(i);
+      // whose moves are on show? your own piece, or a foe read by the seer
+      const movingPiece = sel != null ? state.board[sel] : null;
+      const metal = MOVE_METAL[movingPiece && movingPiece.color !== pov ? "steel" : "gold"];
       const isSel = sel === i;
       const isSpy = spy === i;
       const spyT = spyTargets.has(i);
@@ -419,11 +437,17 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {tgt && (tgt.capture
             ? <>
                 <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
-                <div style={{ position: "absolute", inset: "7%", border: `0.22em solid ${tgt.special ? T.gold : T.danger}`, borderRadius: "50%", boxShadow: "0 0 6px rgba(0,0,0,.5)", pointerEvents: "none" }} />
+                {/* a strike: the same metal drawn as a polished ring around the
+                    prey. Built from one radial gradient with a clear centre —
+                    no masks, so it renders identically on every engine. */}
+                <div style={{ position: "absolute", inset: "7%", borderRadius: "50%", pointerEvents: "none",
+                  background: metal.ring,
+                  boxShadow: `0 0 9px ${metal.glow}, 0 1px 4px rgba(0,0,0,.5)` }} />
               </>
-            : <div style={{ position: "absolute", width: "34%", height: "34%", borderRadius: "50%",
-                background: MOVE_DOT, border: `2px solid ${tgt.special ? T.goldBright : "#17110a"}`,
-                boxShadow: "0 1px 5px rgba(0,0,0,.55)", pointerEvents: "none" }} />)}
+            : <div style={{ position: "absolute", width: "30%", height: "30%", borderRadius: "50%",
+                background: metal.face, border: `1.5px solid ${tgt.special ? "#f6e4a2" : metal.rim}`,
+                boxShadow: `0 1px 4px rgba(0,0,0,.6), 0 0 8px ${metal.glow}, inset 0 1px 1px rgba(255,255,255,.5)`,
+                pointerEvents: "none" }} />)}
         </div>
       );
     }

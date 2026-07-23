@@ -11,6 +11,8 @@ import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js
 import { ABILITIES } from "./src/content/index.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
+import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
+import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile } from "./src/meta/index.js";
 import { makeT } from "./src/app/i18n/strings.js";
 
@@ -199,6 +201,33 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("an untouched treasury offers nothing to claim", !bare.includes("padding:19px"));
   ok("the claim button is full width with air above it",
     rich.includes("padding:13px 18px 12px") && rich.includes("margin-top:9px"));
+}
+
+// ── 10. THE CHRONICLE ───────────────────────────────────────────────────────
+// For a player the record is earned page by page. For an admin it is a working
+// reference: every figure legible at once, nothing to unlock first. And each
+// entry shows BOTH faces — the battle painting and the plain vector sigil.
+{
+  const t = makeT("de");
+  const chron = (account) => html(<ArmyScreen profile={defaultProfile()} dispatch={() => {}}
+    t={t} initialTab="chron" account={account} />);
+  const player = chron(null);
+  const admin = chron({ id: "a", name: "Admin", isAdmin: true });
+
+  const veiled = (m) => (m.match(/>\?\?\?</g) || []).length;
+  const named = (m) => CHARACTER_LIST.filter((c) => m.includes(">" + c.nameDe + "<")).length;
+
+  ok("a fresh player's chronicle still keeps its secrets", veiled(player) > 20);
+  ok("the admin's chronicle hides nothing", veiled(admin) === 0);
+  ok("the admin sees every figure by name", named(admin) === CHARACTER_LIST.length);
+  ok("the player does not", named(player) < CHARACTER_LIST.length);
+
+  // both faces, on every row — paintings are <img>, sigils are inline <svg>
+  const sigils = (admin.match(/Vektor-Zeichen/g) || []).length;
+  const plates = (admin.match(/<img/g) || []).length;
+  ok("every chronicle row carries a vector sigil", sigils >= CHARACTER_LIST.length);
+  ok("the paintings are there too, one per row", plates >= CHARACTER_LIST.length);
+  ok("sigils and paintings pair up one for one", sigils === plates);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
