@@ -54,8 +54,9 @@ export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
   const on = color === T.gold;
   return <img src={NAV_ART[id] || NAV_PLAY} alt="" aria-hidden draggable={false}
     style={{ width: size, height: size, display: "block", objectFit: "contain",
-      filter: on ? "drop-shadow(0 1px 2px rgba(0,0,0,.45))"
-                 : "grayscale(.9) brightness(.82) opacity(.72) drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} />;
+      transform: "scale(1.12)", transformOrigin: "center",
+      filter: on ? "drop-shadow(0 0 5px rgba(246,222,150,.65)) drop-shadow(0 1px 2px rgba(0,0,0,.45))"
+                 : "grayscale(.85) brightness(.88) opacity(.78) drop-shadow(0 0 3px rgba(246,222,150,.3)) drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} />;
 }
 
 // ── Currency v3 — an order star and a crowned coin, drawn as insignia rather
@@ -83,14 +84,16 @@ export function EnergyIc({ size = 18, style }) {
 
 export function SkillStar({ size = 18, style }) {
   return <img src={IC_SKILL} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.14em",
-      objectFit: "contain", ...style }} />;
+    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.16em",
+      transform: "scale(1.18)", transformOrigin: "center", objectFit: "contain",
+      filter: "drop-shadow(0 0 4px rgba(246,222,150,.55)) drop-shadow(0 1px 1px rgba(0,0,0,.4))", ...style }} />;
 }
 
 export function GoldCoin({ size = 18, style, shine = false }) {
   return <img src={IC_COIN} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.14em",
-      objectFit: "contain", ...style }} />;
+    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.16em",
+      transform: "scale(1.18)", transformOrigin: "center", objectFit: "contain",
+      filter: "drop-shadow(0 0 4px rgba(246,222,150,.55)) drop-shadow(0 1px 1px rgba(0,0,0,.4))", ...style }} />;
 }
 
 // ── small in-house UI glyphs (v0.19): every icon drawn, no emoji anywhere ────
@@ -229,14 +232,15 @@ const G = ({ id }) => (
   </defs>
 );
 const drop = { filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" };
+const glowDrop = { filter: "drop-shadow(0 0 5px rgba(246,222,150,.6)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" };
 
-export function CoinIc({ size = 15 }) {
+export function CoinIc({ size = 18 }) {
   return <img src={IC_COIN} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...glowDrop }} />;
 }
-export function SkillIc({ size = 15 }) {
+export function SkillIc({ size = 18 }) {
   return <img src={IC_SKILL} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...glowDrop }} />;
 }
 export function LevelIc({ size = 15 }) {
   return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
@@ -251,9 +255,9 @@ export function LevelIc({ size = 15 }) {
     <path d="M3.2 17.6 L3.2 8.4 L7.6 11.6 L11 4.6 L14.4 11.6 L18.8 8.4 L18.8 17.6 Z" fill="url(#ggLvls)" />
   </svg>;
 }
-export function CrestIc({ size = 15 }) {
+export function CrestIc({ size = 18 }) {
   return <img src={IC_CREST} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...glowDrop }} />;
 }
 
 /** A folded field map with a waypin — hand-drawn, house gold. */
@@ -405,7 +409,7 @@ export function HourglassGIc({ size = 16 }) {
   </svg>;
 }
 /** A fallen foe's skull, gilded. */
-export function GoldSkullIc({ size = 16 }) {
+export function GoldSkullIc({ size = 19 }) {
   return <img src={IC_SKULL} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...glowDrop }} />;
 }

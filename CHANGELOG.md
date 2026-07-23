@@ -1,5 +1,32 @@
 # Changelog — Grand Gambit
 
+## 0.28.2
+
+SICHTBARKEIT FUER DIE INSIGNIEN. Die gemalten Goldstuecke aus 0.28.1 waren
+zu leise -- jetzt treten sie vor:
+
+- HELLER GEBACKEN: alle zehn Bilder laufen neu durch die Werkbank mit
+  +16 Prozent Helligkeit, etwas mehr Saettigung und einer sanften
+  Kontrastkurve -- das Gold traegt jetzt auf dunklem Filz.
+- DER SCHEIN: jedes Insignienbild steht auf einem gelb-weisslichen
+  Lichthauch (warmer drop-shadow-Glow) -- Dock, Kopfchips, Muenzen auf
+  Preisschildern, Skillfunken, Splitter, Brettstern.
+- GROESSER: Dock-Bilder von 22 auf rund 29 Punkt (echte 26 plus sanfte
+  Skalierung), Kopfleisten-Chips von 15 auf 20 mit groesserer Zahl,
+  Muenze und Funke in den Zeilen 18 Prozent groesser, Splitter-Zeile 24,
+  Splitter-Blatt 124, Brettstern 14 Prozent groesser mit doppeltem Schein.
+- DIE SCHATZKAMMER IST WIEDER KLAR: die Gold-Glasur und das Ecklicht,
+  die UEBER den Erfolgs-Gemaelden lagen, sind ersatzlos gestrichen --
+  sie lasen sich als milchiger Schleier. Die Bilder stehen blank und
+  einen Hauch heller.
+- DIE WEISSE KONTUR IST GEZAEHMT: Plattenrand von Fast-Weiss auf ruhiges
+  Gold (1.5px statt 2), Medaillonring von Weissgold auf sattes Gold,
+  die hellen Innenschimmer halbiert.
+- DER GLANZ UEBER DEN BRETTKACHELN ZIEHT JETZT UEBER DAS GANZE: das
+  Lichtband der freundlichen Tische war ein schmaler 16-Prozent-Streifen
+  und las sich als duenne Linie -- jetzt ein breiter, weicher Schein
+  (rund zwei Drittel der Laufflaeche), etwas kraeftiger und langsamer.
+
 ## 0.28.1
 
 DIE GEMALTEN INSIGNIEN. Zehn Goldbilder aus der Werkstatt ersetzen die

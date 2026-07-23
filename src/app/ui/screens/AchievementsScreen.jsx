@@ -98,10 +98,10 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           // frame rather than a rim of gold.
           padding: ready ? 19 : 16,
           background: "linear-gradient(160deg, rgba(96,74,34,.62), rgba(28,21,11,.95) 62%)",
-          border: `2px solid ${ready ? "#f8ecc0" : "rgba(246,228,162,.78)"}`,
+          border: `1.5px solid ${ready ? "rgba(240,214,138,.8)" : "rgba(214,176,96,.5)"}`,
           boxShadow: ready
-            ? "inset 0 1px 0 rgba(255,248,214,.4), inset 0 0 0 1px rgba(255,240,190,.3), 0 0 30px rgba(240,214,138,.4), " + T.shadow
-            : "inset 0 1px 0 rgba(255,248,214,.28), inset 0 0 0 1px rgba(255,240,190,.16), 0 0 20px rgba(240,214,138,.22), " + T.shadow }}>
+            ? "inset 0 1px 0 rgba(255,248,214,.18), 0 0 26px rgba(240,214,138,.32), " + T.shadow
+            : "inset 0 1px 0 rgba(255,248,214,.1), 0 0 16px rgba(240,214,138,.16), " + T.shadow }}>
           {/* THE GLEAM NOW MOVES: it used to be a fixed band painted across the
               plate. Tapping a plate sends it sweeping once, left to right —
               gold catching the light as the card turns. The key on the wrapper
@@ -144,28 +144,23 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
             // painting now stands at full strength on every plate; what is
             // earned is told by the bar, the diamonds and the tally.
             background: "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)",
-            border: isOpen ? "3px solid #fff6d8" : "2.5px solid #f6e4a2",
+            border: isOpen ? "2.5px solid #e9cf8a" : "2px solid #d9b565",
             boxShadow: isOpen
-              ? "0 0 34px rgba(255,240,190,.75), 0 2px 6px rgba(0,0,0,.6), inset 0 2px 4px rgba(255,252,236,.7)"
-              : "0 0 16px rgba(240,214,138,.55), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,250,228,.55)" }}>
+              ? "0 0 30px rgba(255,240,190,.6), 0 2px 6px rgba(0,0,0,.6), inset 0 1px 2px rgba(255,252,236,.3)"
+              : "0 0 14px rgba(240,214,138,.45), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 1px rgba(255,250,228,.25)" }}>
             {ACH_ART[it.id]
               ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block",
                     // the paintings came out of the forge a shade dim for a
                     // treasury: lifted, warmed and given a touch more gold
                     filter: isOpen
-                      ? "brightness(1.5) saturate(1.34) contrast(1.08) sepia(.2)"
-                      : "brightness(1.28) saturate(1.22) sepia(.14)" }} />
+                      ? "brightness(1.58) saturate(1.3) contrast(1.1) sepia(.14)"
+                      : "brightness(1.38) saturate(1.22) contrast(1.06) sepia(.1)" }} />
               : <AchIcon id={it.id} color={isOpen ? "#fff6d8" : "#f6e4a2"} size={isOpen ? 52 : 28} />}
-            {/* A GLAZE OF GOLD over the painting: a warm wash lifts it into the
-                treasury's own metal, and a soft highlight rides the upper left
-                where the candle stands — the plate reads as polished, not flat. */}
-            <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "50%", pointerEvents: "none",
-              background: "radial-gradient(circle at 30% 24%, rgba(255,248,214,.42), rgba(255,226,150,.14) 42%, rgba(120,84,20,.16) 78%, rgba(60,40,10,.28) 100%)",
-              mixBlendMode: "screen", opacity: isOpen ? 0.95 : 0.7 }} />
-            <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "50%", pointerEvents: "none",
-              background: "linear-gradient(150deg, rgba(255,252,236,.5) 4%, rgba(255,252,236,0) 34%)",
-              opacity: isOpen ? 0.8 : 0.55 }} />
+            {/* NO GLAZE ANY MORE. The gold wash and the corner light that used
+                to ride ON TOP of the painting read as a milky film — the
+                emblems looked veiled. The paintings now stand bare and clear;
+                brightness lives in the image filter alone. */}
           </div>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>

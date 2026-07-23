@@ -323,7 +323,7 @@ export default function App() {
         borderRadius: 14, cursor: "pointer", fontFamily: "inherit",
         padding: wide ? "11px 14px" : "9px 4px 8px", color: on ? T.goldBright : T.faint,
         transition: "background .18s, color .18s" }}>
-        <NavIcon id={tb.id} color={on ? T.gold : T.faint} size={wide ? 21 : 22} />
+        <NavIcon id={tb.id} color={on ? T.gold : T.faint} size={wide ? 25 : 26} />
         <span className="gg-serif" style={{ fontSize: wide ? 13 : 9.5, fontWeight: 700, marginTop: wide ? 0 : 3,
           letterSpacing: ".09em", textTransform: "uppercase" }}>{t(tb.key)}</span>
         {badge && <span style={{ position: "absolute", top: wide ? 7 : 4, right: wide ? 8 : "calc(50% - 17px)",
@@ -338,13 +338,13 @@ export default function App() {
     <span title={title} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px",
       borderRadius: 10, background: "linear-gradient(172deg, rgba(240,206,122,.13), rgba(240,206,122,.05))",
       border: "1px solid rgba(214,176,96,.5)", boxShadow: "inset 0 0.5px 0 rgba(255,243,196,.35), 0 1px 4px rgba(0,0,0,.35)",
-      color: T.goldBright, fontSize: 12.5, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
+      color: T.goldBright, fontSize: 13.5, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
       fontVariantNumeric: "tabular-nums" }}>{icon} {val}</span>
   );
   const currencyRow = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: "0 0 auto", alignItems: "center", justifyContent: "flex-end" }}>
-      {coinChip(<CoinIc />, profile.gold || 0, t("army.balance"))}
-      {coinChip(<CrestIc />, retinueScore(profile), t("online.score"))}
+      {coinChip(<CoinIc size={20} />, profile.gold || 0, t("army.balance"))}
+      {coinChip(<CrestIc size={20} />, retinueScore(profile), t("online.score"))}
     </div>
   );
   const headerBar = (

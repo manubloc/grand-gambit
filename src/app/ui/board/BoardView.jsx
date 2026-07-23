@@ -546,8 +546,8 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             <div style={{ position: "absolute", left: "-60%", top: "-60%", width: "220%", height: "220%",
               "--sx0": `${(-wave.dx * 55).toFixed(1)}%`, "--sy0": `${(wave.dy * 55).toFixed(1)}%`,
               "--sx1": `${(wave.dx * 55).toFixed(1)}%`, "--sy1": `${(-wave.dy * 55).toFixed(1)}%`,
-              background: `linear-gradient(${g.toFixed(0)}deg, transparent 42%, rgba(242,217,140,.04) 47%, rgba(242,217,140,.10) 50%, rgba(242,217,140,.04) 53%, transparent 58%)`,
-              animation: "ggSweep 3.6s ease-in-out both" }} />
+              background: `linear-gradient(${g.toFixed(0)}deg, transparent 18%, rgba(242,217,140,.05) 34%, rgba(242,217,140,.13) 50%, rgba(242,217,140,.05) 66%, transparent 82%)`,
+              animation: "ggSweep 4.6s ease-in-out both" }} />
           </div>;
         })()}
       </div>

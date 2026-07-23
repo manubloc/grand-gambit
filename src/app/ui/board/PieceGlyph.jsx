@@ -82,7 +82,8 @@ const NUM_FONT = "'Spectral', Georgia, serif";
 function SpellStar({ size }) {
   return <img src={IC_SPELLSTAR} alt="" aria-hidden draggable={false}
     style={{ width: size, height: size, display: "block", objectFit: "contain",
-      filter: "drop-shadow(0 0 3px rgba(240,214,138,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }} />;
+      transform: "scale(1.14)", transformOrigin: "center",
+      filter: "drop-shadow(0 0 4px rgba(246,222,150,.95)) drop-shadow(0 0 9px rgba(240,214,138,.5)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }} />;
 }
 
 // TWO JEWELS UNDER EVERY FIGHTER: blue attack left, red life right — the same

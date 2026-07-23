@@ -233,7 +233,10 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   // the picture showed at all.
   ok("no emblem is greyed or dimmed", !bare.includes("grayscale") && !rich.includes("grayscale"));
   ok("every emblem is drawn at full strength", (bare.match(/<img/g) || []).length >= 14);
-  ok("the rim is drawn strongly enough to read", bare.includes("2.5px solid #f6e4a2"));
+  // the rim was tamed on request: quiet gold instead of near-white — it must
+  // still be there, just no longer shouting
+  ok("the rim is drawn strongly enough to read", bare.includes("2px solid #d9b565"));
+  ok("the near-white rim is gone for good", !bare.includes("#f6e4a2") && !bare.includes("#fff6d8"));
 }
 
 // ── 10. THE CHRONICLE ───────────────────────────────────────────────────────
