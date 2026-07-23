@@ -1,5 +1,38 @@
 # Changelog — Grand Gambit
 
+## 0.28.1
+
+DIE GEMALTEN INSIGNIEN. Zehn Goldbilder aus der Werkstatt ersetzen die
+gezeichneten Zunftzeichen, ueberall wo dieselbe Sache gemeint ist -- die
+Aufrufstellen blieben unangetastet, nur die Icon-Bausteine selbst tragen
+jetzt Gemaelde:
+
+- DAS DOCK: Springer (Spielen), gekreuzte Schwerter (Hofstaat), Pokal
+  (Schatzkammer) und Helm (Profil) als gemalte Goldstuecke. Der aktive Reiter
+  leuchtet voll, die anderen treten entsaettigt und gedimmt zurueck -- ein
+  Gemaelde laesst sich nicht umfaerben, also uebernimmt der Filter die Arbeit
+  der alten Strichfarbe.
+- DIE KOPFLEISTE: Muenze (Goldstand) und Schachbrett-Wappen (Hofwert) als
+  gemalte Chips; dieselbe Muenze prangt nun auf jedem Preisschild, jeder
+  Belohnung und jedem Kaufknopf (GoldCoin/CoinIc), der gemalte Funke auf
+  allen Skillpunkt-Angaben (SkillStar/SkillIc), der vergoldete Totenkopf
+  im Tutorial (GoldSkullIc).
+- DER FAEHIGKEITSSTERN AM BRETT: der schwebende Stern ueber Figuren mit
+  ungezuendetem Talent ist jetzt das gelieferte Gemaelde, der Glutschein
+  bleibt. Wie die Orbs reist er als Daten-URL IM Buendel -- kein
+  Cache-Fenster kann das Brett je aushungern.
+- DER STERNENSPLITTER: die seltenste Ware der Schatzkammer traegt endlich
+  ihr eigenes Bild -- der facettierte Kristall in der Truhenzeile (22px)
+  und gross auf dem Warenblatt (116px), wie jede andere Ware.
+- HANDWERK: 1024er-Originale per Alpha-Beschnitt freigestellt, quadratisch
+  gefasst und auf 64-232px webp gepackt; die kleinen Insignien leben als
+  generierte Daten-URLs in iconAssets.js (34 KB), der Splitter als eigenes
+  Item-Asset. In Chromium nachgemessen: Dock 96px echt, Chips quadratisch,
+  Splitter-Zeile und -Blatt geladen, keine Seitenfehler.
+- NICHT ANGETASTET: der kleine farbcodierte Boss-Totenkopf (SkullIc, dient
+  als 8px-Silhouette in drei Farben), die drei gemalten Wappen der Wege
+  (crest-1/2/3) und alle uebrigen gezeichneten Glyphen.
+
 ## 0.28.0
 - FERNSCHACH KOMPLETT — DIE BENACHRICHTIGUNG IST DA: Classic Gambit hatte schon das erste Standbein (Partien leben auf dem Server: Seed, beide Armeen, jede Zugliste — sie ueberleben, wenn beide die App schliessen). Jetzt steht das zweite: Web-Push. Ziehst du, waehrend dein Gegner die App geschlossen hat, klopft eine Benachrichtigung an sein Geraet — "Dein Zug gegen …".
 - DIE GLOCKE IN DER LOBBY: Unter den Fernpartien (und auf der Classic-Gambit-Karte) sitzt ein Opt-in-Knopf. Zustaende sauber getrennt: an (mit Aus-Schalter), blockiert (Hinweis auf Seiten-Einstellungen), iPhone/iPad ohne Installation (Hinweis auf "Zum Home-Bildschirm"). Bei jedem Verbinden wird die Adresse still aufgefrischt, denn Push-Endpunkte rotieren.

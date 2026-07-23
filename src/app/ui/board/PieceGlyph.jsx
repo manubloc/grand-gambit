@@ -3,6 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
+import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -74,19 +75,14 @@ const ORB_TRUE_CENTER = { x: -0.004, y: -0.018 };
 
 const NUM_FONT = "'Spectral', Georgia, serif";
 
-// THE SPELL STAR — one gold star hovering in the seam between the two orbs:
-// it burns while the piece still holds its single cast, and goes out the
-// moment any talent fires (one spell per game — the star IS the ledger).
+// THE SPELL STAR — the painted gold spark hovering in the seam between the
+// two orbs: it burns while the piece still holds its single cast, and goes out
+// the moment any talent fires (one spell per game — the star IS the ledger).
+// Inline data URL like the orbs, so no cache window can ever starve the board.
 function SpellStar({ size }) {
-  return <svg viewBox="0 0 24 24" aria-hidden style={{ width: size, height: size, display: "block",
-    filter: "drop-shadow(0 0 3px rgba(240,214,138,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }}>
-    <defs><linearGradient id="ggStar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stopColor="#fdf0bd" /><stop offset=".55" stopColor="#e9c877" /><stop offset="1" stopColor="#a97f38" />
-    </linearGradient></defs>
-    <path d="M12 1.6 14.9 8.4 22.2 9 16.7 13.9 18.4 21.1 12 17.3 5.6 21.1 7.3 13.9 1.8 9 9.1 8.4Z"
-      fill="url(#ggStar)" stroke="#5d451c" strokeWidth="1.1" strokeLinejoin="round" />
-    <circle cx="9.6" cy="8.6" r="1.5" fill="rgba(255,250,225,.85)" />
-  </svg>;
+  return <img src={IC_SPELLSTAR} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain",
+      filter: "drop-shadow(0 0 3px rgba(240,214,138,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }} />;
 }
 
 // TWO JEWELS UNDER EVERY FIGHTER: blue attack left, red life right — the same

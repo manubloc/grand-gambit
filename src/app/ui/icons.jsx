@@ -1,4 +1,6 @@
 import { T } from "./theme.js";
+import { NAV_PLAY, NAV_ARMY, NAV_ACH, NAV_PROFILE, IC_COIN, IC_SKILL, IC_SKULL, IC_CREST }
+  from "./assets/icons/iconAssets.js";
 
 // Minimalist outline nav icons with a small accent. `color` carries the active
 // (neon) vs inactive state; the accent stays subtle.
@@ -44,20 +46,16 @@ export function AchIcon({ id, color = "#c9a45c", size = 22 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>{shapes[id] || shapes.xp}</svg>;
 }
 
-// ── Navigation icons — same family, for the dock / rail ─────────────────────
+// ── Navigation icons — the painted gold set from the asset drop. The callers
+// keep passing `color` (T.gold when the tab is on): a painting cannot be
+// re-inked, so the OFF state dims and desaturates the very same image. ──────
+const NAV_ART = { play: NAV_PLAY, army: NAV_ARMY, ach: NAV_ACH, profile: NAV_PROFILE };
 export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
-  const s = { fill: "none", stroke: color, strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
-  const shapes = {
-    play:    <><path d="M4.8 3.8 L15.3 14.3 M19.2 3.8 L8.7 14.3" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-    <path d="M13.1 16.5 L17.5 12.1 M6.5 12.1 L10.9 16.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" fill="none" />
-    <path d="M16.3 15.3 L18.5 17.5 M7.7 15.3 L5.5 17.5" stroke={color} strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    <circle cx="19.2" cy="18.4" r="1.3" fill={color} />
-    <circle cx="4.8" cy="18.4" r="1.3" fill={color} /></>,
-    army:    <><path d="M12 3.5 C14.8 5 17.4 5.4 19 5 C19.4 12 17 17.5 12 20.5 C7 17.5 4.6 12 5 5 C6.6 5.4 9.2 5 12 3.5 Z" {...s} /><path d="M12 7 L12 16.5 M8 11.5 L16 11.5" {...s} strokeWidth="1.6" /></>,
-    ach:     <><path d="M8 4 L16 4 L16 9 A4 4 0 0 1 8 9 Z" {...s} /><path d="M8 5.5 L4.5 5.5 A3.5 3.5 0 0 0 8 9.8 M16 5.5 L19.5 5.5 A3.5 3.5 0 0 1 16 9.8" {...s} /><path d="M12 13 L12 16.5 M9 20 L15 20 L14.2 16.5 L9.8 16.5 Z" {...s} /></>,
-    profile: <><circle cx="12" cy="8" r="3.6" {...s} /><path d="M4.8 20 C5.4 15.4 8.2 13.2 12 13.2 C15.8 13.2 18.6 15.4 19.2 20" {...s} /></>,
-  };
-  return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>{shapes[id] || shapes.play}</svg>;
+  const on = color === T.gold;
+  return <img src={NAV_ART[id] || NAV_PLAY} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain",
+      filter: on ? "drop-shadow(0 1px 2px rgba(0,0,0,.45))"
+                 : "grayscale(.9) brightness(.82) opacity(.72) drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} />;
 }
 
 // ── Currency v3 — an order star and a crowned coin, drawn as insignia rather
@@ -84,51 +82,15 @@ export function EnergyIc({ size = 18, style }) {
 }
 
 export function SkillStar({ size = 18, style }) {
-  const fine = size >= 16;
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
-      style={{ display: "inline-block", verticalAlign: "-0.14em", ...style }}>
-      <defs>
-        <linearGradient id="ggStarG3" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f7e5ac" /><stop offset=".55" stopColor="#d3ac5c" /><stop offset="1" stopColor="#96742f" />
-        </linearGradient>
-      </defs>
-      {/* four-ray order star: long N/S rays, shorter E/W, slim diagonals */}
-      <path d="M12 0.8 L14 9.2 L12 12 L10 9.2 Z M12 23.2 L10 14.8 L12 12 L14 14.8 Z M0.8 12 L8.4 10.3 L12 12 L8.4 13.7 Z M23.2 12 L15.6 13.7 L12 12 L15.6 10.3 Z"
-        fill="url(#ggStarG3)" stroke="#59461e" strokeWidth={fine ? 0.8 : 1.1} strokeLinejoin="round" />
-      <path d="M12 2.6 L12 12 L10.6 10 Z M2.8 12 L12 12 L9.6 10.9 Z" fill="#fff7dc" opacity=".5" />
-      {fine && <path d="M5.9 5.9 L10.4 10.4 M18.1 5.9 L13.6 10.4 M5.9 18.1 L10.4 13.6 M18.1 18.1 L13.6 13.6"
-        stroke="#d3ac5c" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />}
-      <circle cx="12" cy="12" r={fine ? 1.7 : 2} fill="#f7e5ac" stroke="#59461e" strokeWidth=".7" />
-    </svg>
-  );
+  return <img src={IC_SKILL} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.14em",
+      objectFit: "contain", ...style }} />;
 }
 
 export function GoldCoin({ size = 18, style, shine = false }) {
-  const fine = size >= 16;
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" shapeRendering="geometricPrecision"
-      style={{ display: "inline-block", verticalAlign: "-0.14em", ...style }}>
-      <defs>
-        <linearGradient id="ggCoinG3" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f2dfa2" /><stop offset=".55" stopColor="#cfa254" /><stop offset="1" stopColor="#8d6b2a" />
-        </linearGradient>
-      </defs>
-      <circle cx="12" cy="12" r="10.6" fill="url(#ggCoinG3)" stroke="#59461e" strokeWidth={fine ? 0.9 : 1.2} />
-      <circle cx="12" cy="12" r="8.2" fill="none" stroke="#6e5423" strokeWidth={fine ? 0.8 : 1.1} opacity=".9" />
-      <path d="M4.4 8.2 A8.6 8.6 0 0 1 19.6 8.2" fill="none" stroke="#fff4d2" strokeWidth="1" opacity=".5" strokeLinecap="round" />
-      {shine && <ellipse cx="9.5" cy="7.6" rx="4.6" ry="1.8" fill="#fffbe6"
-        transform="rotate(-24 9.5 7.6)" style={{ animation: "ggGlint 9s ease-in-out infinite" }} opacity="0" />}
-      {/* crowned coinage — three points, jewelled band */}
-      <path d="M7.6 14.6 L7 9.4 L9.8 11.6 L12 8.4 L14.2 11.6 L17 9.4 L16.4 14.6 Z"
-        fill={fine ? "#6e5423" : "#6e5423"} stroke={fine ? "#59461e" : "none"} strokeWidth=".5" strokeLinejoin="round" />
-      <path d="M7.7 15.6 h8.6 v1.5 h-8.6 Z" fill="#6e5423" />
-      {fine && <path d="M7.3 9.7 L9.9 11.8 L12 8.8 L14.1 11.8 L16.7 9.7" fill="none" stroke="#f2dfa2" strokeWidth=".7" opacity=".7" />}
-      {fine && <circle cx="9.8" cy="16.35" r=".55" fill="#f2dfa2" />}
-      {fine && <circle cx="12" cy="16.35" r=".55" fill="#f2dfa2" />}
-      {fine && <circle cx="14.2" cy="16.35" r=".55" fill="#f2dfa2" />}
-    </svg>
-  );
+  return <img src={IC_COIN} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "inline-block", verticalAlign: "-0.14em",
+      objectFit: "contain", ...style }} />;
 }
 
 // ── small in-house UI glyphs (v0.19): every icon drawn, no emoji anywhere ────
@@ -269,25 +231,12 @@ const G = ({ id }) => (
 const drop = { filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" };
 
 export function CoinIc({ size = 15 }) {
-  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
-    <G id="ggCoin" />
-    <circle cx="11" cy="11" r="9.4" fill="url(#ggCoin)" stroke="#6f5526" strokeWidth="1" />
-    <circle cx="11" cy="11" r="6.7" fill="none" stroke="#8a6830" strokeWidth="1" opacity=".9" />
-    <circle cx="11" cy="11" r="6.7" fill="none" stroke="#fff3c4" strokeWidth="0.5" opacity=".5" />
-    <path d="M11 6.7 L12.2 9.9 L15.4 9.9 L12.9 12 L13.9 15.2 L11 13.3 L8.1 15.2 L9.1 12 L6.6 9.9 L9.8 9.9 Z"
-      fill="#7a5c26" stroke="#5c4318" strokeWidth="0.4" />
-    <circle cx="11" cy="11" r="9.4" fill="url(#ggCoins)" />
-  </svg>;
+  return <img src={IC_COIN} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
 }
 export function SkillIc({ size = 15 }) {
-  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
-    <G id="ggSkill" />
-    <path d="M11 1.6 L13.4 8.6 L20.4 11 L13.4 13.4 L11 20.4 L8.6 13.4 L1.6 11 L8.6 8.6 Z"
-      fill="url(#ggSkill)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
-    <path d="M11 1.6 L11 20.4 M1.6 11 L20.4 11" stroke="#8a6830" strokeWidth="0.5" opacity=".55" />
-    <path d="M11 5 L9.4 9.4 L5 11" fill="none" stroke="#fff6d8" strokeWidth="1.2" strokeLinecap="round" opacity=".9" />
-    <path d="M11 1.6 L13.4 8.6 L20.4 11 L13.4 13.4 L11 20.4 L8.6 13.4 L1.6 11 L8.6 8.6 Z" fill="url(#ggSkills)" />
-  </svg>;
+  return <img src={IC_SKILL} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
 }
 export function LevelIc({ size = 15 }) {
   return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
@@ -303,16 +252,8 @@ export function LevelIc({ size = 15 }) {
   </svg>;
 }
 export function CrestIc({ size = 15 }) {
-  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
-    <G id="ggCrest" />
-    <path d="M11 1.9 L18.6 4.4 L18.6 11 C18.6 15.5 15.5 18.6 11 20.2 C6.5 18.6 3.4 15.5 3.4 11 L3.4 4.4 Z"
-      fill="url(#ggCrest)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
-    <path d="M11 3.4 L17.2 5.4 L17.2 11 C17.2 14.7 14.7 17.3 11 18.7 C7.3 17.3 4.8 14.7 4.8 11 L4.8 5.4 Z"
-      fill="none" stroke="#fff3c4" strokeWidth="0.5" opacity=".5" />
-    <path d="M11 6 L12.1 8.9 L15 8.9 L12.7 10.8 L13.6 13.7 L11 12 L8.4 13.7 L9.3 10.8 L7 8.9 L9.9 8.9 Z"
-      fill="#7a5c26" stroke="#5c4318" strokeWidth="0.4" />
-    <path d="M11 1.9 L18.6 4.4 L18.6 11 C18.6 15.5 15.5 18.6 11 20.2 C6.5 18.6 3.4 15.5 3.4 11 L3.4 4.4 Z" fill="url(#ggCrests)" />
-  </svg>;
+  return <img src={IC_CREST} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
 }
 
 /** A folded field map with a waypin — hand-drawn, house gold. */
@@ -465,13 +406,6 @@ export function HourglassGIc({ size = 16 }) {
 }
 /** A fallen foe's skull, gilded. */
 export function GoldSkullIc({ size = 16 }) {
-  return <svg width={size} height={size} viewBox="0 0 22 22" aria-hidden style={{ display: "block", ...drop }}>
-    <G id="ggSkl" />
-    <path d="M11 2.8 C6.6 2.8 3.8 5.8 3.8 9.6 C3.8 12 5 13.8 6.6 14.8 L6.6 17.4 C6.6 18.2 7.2 18.8 8 18.8 L14 18.8 C14.8 18.8 15.4 18.2 15.4 17.4 L15.4 14.8 C17 13.8 18.2 12 18.2 9.6 C18.2 5.8 15.4 2.8 11 2.8 Z"
-      fill="url(#ggSkl)" stroke="#6f5526" strokeWidth="1" strokeLinejoin="round" />
-    <circle cx="8.2" cy="9.8" r="1.9" fill="#3d2f12" /><circle cx="13.8" cy="9.8" r="1.9" fill="#3d2f12" />
-    <path d="M11 12 L10 14 L12 14 Z" fill="#3d2f12" />
-    <path d="M9 16 L9 18.4 M13 16 L13 18.4" stroke="#6f5526" strokeWidth="1" strokeLinecap="round" />
-    <path d="M5.6 6.4 C6.2 5.2 7.2 4.4 8.4 4.1" fill="none" stroke="#fff6d8" strokeWidth="1.1" strokeLinecap="round" opacity=".85" />
-  </svg>;
+  return <img src={IC_SKULL} alt="" aria-hidden draggable={false}
+    style={{ width: size, height: size, display: "block", objectFit: "contain", ...drop }} />;
 }

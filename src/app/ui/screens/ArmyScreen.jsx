@@ -20,6 +20,7 @@ import { paintedById, paintedForPiece } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
+import imgShard from "../assets/items/item-sternensplitter.webp";
 
 const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
@@ -970,7 +971,7 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
           // a ware like any other now — what is special about it (the ration
           // per chapter) is said in its sheet, where it belongs.
           return <div onClick={() => setGearInfo("shard")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
-            <span style={{ width: 24, display: "grid", placeItems: "center" }}><SkillStar size={22} /></span>
+            <span style={{ width: 24, display: "grid", placeItems: "center" }}><img src={imgShard} alt="" aria-hidden draggable={false} style={{ width: 22, height: 22, objectFit: "contain", display: "block", filter: "drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} /></span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 800 }}>
                 {en ? "Star shard" : "Sternensplitter"}
@@ -1047,7 +1048,7 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
             background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: "1px solid rgba(233,210,150,.42)",
             boxShadow: "0 18px 50px rgba(0,0,0,.6)" }}>
             <div style={{ display: "grid", placeItems: "center", marginBottom: 10 }}>
-              {shard ? <SkillStar size={92} /> : <ItemIcon id={it.id} size={116} />}
+              {shard ? <img src={imgShard} alt="" aria-hidden draggable={false} style={{ width: 116, height: 116, objectFit: "contain", display: "block", filter: "drop-shadow(0 2px 5px rgba(0,0,0,.5))" }} /> : <ItemIcon id={it.id} size={116} />}
             </div>
             <div className="gg-serif" style={{ fontSize: 19, letterSpacing: ".03em", color: T.goldBright, textAlign: "center" }}>
               {shard ? (en ? "Star shard" : "Sternensplitter") : (en ? it.nameEn : it.nameDe)}

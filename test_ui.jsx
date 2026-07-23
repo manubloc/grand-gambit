@@ -80,7 +80,8 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 
 // ── 4. THE SPELL STAR IS AN HONEST PROMISE ──────────────────────────────────
 // One spell per game: the star must mean "you may still act", nothing else.
-const star = (m) => m.includes("<svg") || m.includes("<path");
+// the star is a painting now — its data-URL fingerprint is the promise
+const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
 {
   const live = Object.keys(ABILITIES).find((id) => ABILITIES[id].live);
   const passive = Object.keys(ABILITIES).find((id) => !ABILITIES[id].live);
@@ -256,7 +257,9 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
 
   // both faces, on every row — paintings are <img>, sigils are inline <svg>
   const sigils = (admin.match(/Vektor-Zeichen/g) || []).length;
-  const plates = (admin.match(/<img/g) || []).length;
+  const chipMarks = [IC_COIN, IC_SKILL].map((u) => u.slice(40, 104));
+  const chips = chipMarks.reduce((n, mark) => n + (admin.split(mark).length - 1), 0);
+  const plates = (admin.match(/<img/g) || []).length - chips;
   ok("every chronicle row carries a vector sigil", sigils >= CHARACTER_LIST.length);
   ok("the paintings are there too, one per row", plates >= CHARACTER_LIST.length);
   ok("sigils and paintings pair up one for one", sigils === plates);
@@ -570,6 +573,7 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
 
 // ── 19. EVERY PIECE OF GEAR OPENS ITS SHEET ─────────────────────────────────
 // The sheet reads ITEMS at render time — and a missing import there crashed
+import { IC_SPELLSTAR, IC_COIN, IC_SKILL } from "./src/app/ui/assets/icons/iconAssets.js";
 // the whole court the moment a row was tapped, while build, smoke and SSR all
 // stayed green because nothing ever OPENED it. So each sheet is rendered here.
 {
