@@ -109,7 +109,7 @@ export function nodeBossSpec(node, league = 1) {
   if (!node.boss) return null;
   const override = node.id === "n22" ? leagueFinalBossPiece(league) : null;
   if (node.boss.pure && !override) {
-    // the League Keep fields THIS league's boss — ten finales, ten auras;
+    // the Citadel fields THIS league's boss — ten finales, ten auras;
     // monster stations rotate their champion by league
     if (node.id === "n22") return bossSpec(bossById(leagueBossId(league)) || bossById(node.boss.pure));
     const rot = node.boss.rotation;
@@ -266,7 +266,7 @@ export function advanceCampaign(profile, id) {
   const spGain = spForXpJump(profile.xpEarned || 0, xpEarned);
   let items = profile.items;
   if (node.grant === "potion") items = { ...(items || {}), potion: Math.min(3, ((items || {}).potion || 0) + 1) };
-  const finished = id === "n22"; // the League Keep falls — the MAP STAYS; the
+  const finished = id === "n22"; // the Citadel falls — the MAP STAYS; the
   // gate to the next league opens up in the corner (advanceLeague), no rematch
   if (finished) stats.leaguesWon = (stats.leaguesWon || 0) + 1;
   return {
@@ -317,7 +317,7 @@ export const leagueRewardMult = (league) => 1 + 0.5 * ((league || 1) - 1);
 export const leagueBump = (league) => 2 * ((league || 1) - 1);
 
 /** Which boards a league fields: Liga I is (almost) pure classic chess — only
- *  the League Keep keeps its arena. New boards then enter one league at a
+ *  the Citadel keeps its arena. New boards then enter one league at a
  *  time (II: skirmish · III: courtyard & gauntlet · IV+: everything). */
 export function effectiveMap(node, league = 1) {
   if (!node) return "classic";
@@ -340,7 +340,7 @@ const BEND_8X8 = {
 };
 
 /** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
- *  the monster milestones (pure bosses, incl. the League Keep) grant a total
+ *  the monster milestones (pure bosses, incl. the Citadel) grant a total
  *  time budget, the elite piece bosses (bump ≥ 2) a per-move limit. Both
  *  tighten each league but stay bounded, so they remain winnable. The clock
  *  is UI-side only (a flagged loss on timeout); the deterministic core stays

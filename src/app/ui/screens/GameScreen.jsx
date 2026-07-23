@@ -851,7 +851,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
               border: `1px solid ${hourglassLeft > 0 ? T.gold + "88" : T.line}`, background: T.panel,
               color: T.gold, fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
               padding: "0 9px", opacity: !state.history.length || banner || hourglassLeft <= 0 ? 0.45 : 1 }}>
-            <HourglassIc size={15} /> {hourglassLeft}</button>
+            <ItemIcon id="hourglass" size={16} /> {hourglassLeft}</button>
         )}
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
       </div>

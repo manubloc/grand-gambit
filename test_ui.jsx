@@ -11,6 +11,9 @@ import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js
 import { ABILITIES, BOSSES } from "./src/content/index.js";
 import { ACHIEVEMENTS } from "./src/meta/achievements.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
+import { ITEM_ART } from "./src/app/ui/assets/items/itemArt.js";
+import { ITEMS } from "./src/content/index.js";
+import { ItemIcon } from "./src/app/ui/ItemIcon.jsx";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
@@ -529,6 +532,40 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("correspondence explains itself in both tongues",
     TIME_MODES.some((m) => m.id === "daily" && m.noteDe && m.noteEn));
   ok("no gambit is left merely announced", TIME_MODES.every((m) => !m.pending));
+}
+
+// ── 18. THE CHEST IS PAINTED ────────────────────────────────────────────────
+// Every item shows its painting wherever it appears — chest, battle HUD, a
+// barred path, the academy — because they all pass through ONE component.
+{
+  const ids = Object.keys(ITEMS);
+  const painted = ids.filter((id) => ITEM_ART[id]);
+  ok(`most of the chest is painted (${painted.length}/${ids.length})`, painted.length >= 12);
+  const missing = ids.filter((id) => !ITEM_ART[id]);
+  ok("what is missing falls back rather than breaking",
+    missing.every((id) => html(<ItemIcon id={id} size={22} />).length > 20));
+  if (missing.length) console.log("      noch ungemalt:", missing.join(", "));
+
+  const potion = html(<ItemIcon id="potion" size={22} />);
+  // (the test bundle inlines assets, so the src is a data URL rather than a
+  // hashed filename — what matters is that an IMAGE is drawn, not a glyph)
+  ok("a painted item renders as an image", potion.includes("<img") && /src="(data:image|[^"]*\.webp)/.test(potion));
+  ok("it is sized as asked", potion.includes("width:22px") && potion.includes("height:22px"));
+  ok("and it keeps its aspect", potion.includes("object-fit:contain"));
+
+  // the academy must show the paintings too, not a stray vector
+  const t = makeT("de");
+  const pages = Array.from({ length: 12 }, (_, n) =>
+    html(<TutorialScreen t={t} en={false} onDone={() => {}} startAt={n} />)).join("");
+  const imgs = (pages.match(/<img/g) || []).length;
+  ok(`the academy shows painted items (${imgs} images drawn)`, imgs >= 2);
+
+  // and its campaign card must match the story as it stands today
+  ok("the academy no longer speaks of a League Keep",
+    !pages.includes("Ligafeste") && !pages.includes("League Keep"));
+  ok("it names the citadel and the grandmaster", pages.includes("Zitadelle") && pages.includes("Großmeister"));
+  ok("it teaches the one-spell rule", /pro Partie nur EINE/.test(pages));
+  ok("it names the four gambits", ["Quick Gambit", "Rush Gambit", "Prime Gambit", "Classic Gambit"].every((x) => pages.includes(x)));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

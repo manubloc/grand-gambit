@@ -33,16 +33,16 @@ const STEPS = [
   {
     de: { title: "Tränke & Zeitenwender", text: "In der Vorratstruhe warten Helfer: Der Lebenstrank heilt im Kampf eine Figur um 2 Lebenspunkte (kostet den Zug). Der Zeitenwender nimmt deinen letzten Zug zurück — jede Umkehr verbrennt eine Sanduhr. Beides wird mit Gold gekauft und ist begrenzt." },
     en: { title: "Draughts & time-turners", text: "The supply chest holds helpers: the healing draught restores 2 life points to a piece mid-battle (spends the turn). The time-turner takes back your last move — each reversal burns one hourglass. Both are bought with gold, both are scarce." },
-    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><ItemIcon id="potion" size={30} /><HourglassGIc size={28} /></div>,
+    art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><ItemIcon id="potion" size={34} /><ItemIcon id="hourglass" size={34} /></div>,
   },
   {
-    de: { title: "Die Kampagne", text: "Die Karte führt durch vier Kapitel zur Ligafeste. An den Stationen warten Herausforderer — besiege sie und sie treten deinem Hofstaat bei. Nur die großen Bosse mit dem Totenkopf sind reine Ungeheuer. Manche Pfade sind verschlossen und wollen Gold oder Ausrüstung." },
-    en: { title: "The campaign", text: "The map winds through four chapters to the League Keep. Challengers await at the stations — beat them and they join your court. Only the great skull-marked bosses are pure monsters. Some paths are barred and demand gold or gear." },
+    de: { title: "Die Kampagne", text: "Jede Welt führt über vier Kapitel — Der Aufbruch, Die drei Pfade, Die Prüfungen, Der Aufstieg — bis zur Zitadelle, wo der Großmeister wartet. An den 51 Stationen stehen Herausforderer: Besiege sie, und sie treten deinem Hofstaat bei. Nur die Gegner mit dem Totenkopf sind reine Ungeheuer. Manche Pfade sind verschlossen und wollen Gold oder Ausrüstung. Und hinter der Zitadelle liegt die nächste Welt." },
+    en: { title: "The campaign", text: "Every world runs through four chapters — The Setting Out, The Three Paths, The Trials, The Ascent — up to the Citadel, where the Grandmaster waits. Challengers hold the 51 stations: beat them and they join your court. Only the skull-marked foes are pure monsters. Some paths are barred and demand gold or gear. And beyond the Citadel lies the next world." },
     art: <div style={{ display: "flex", gap: 12, alignItems: "center" }}><JewelIc kind="power" size={26} /><GoldSkullIc size={26} /></div>,
   },
   {
-    de: { title: "Der Hofstaat", text: "Rekrutierte Figuren leveln mit Skillpunkten ✦ und lernen Fähigkeiten. Stelle im Hofstaat deine Formation zusammen und wähle die Position des Grand Gambit. Besiegst du einen Herausforderer erneut, wendet er sich als Abtrünniger gegen dich — der Doppelsieg schenkt einen Stern ★." },
-    en: { title: "The court", text: "Recruited pieces level up with skill points ✦ and learn abilities. Arrange your formation in the court and choose the Grand Gambit's file. Beat a challenger a second time and they face you as a turncoat — the double victory grants a star ★." },
+    de: { title: "Der Hofstaat", text: "Rekrutierte Figuren steigen mit Skillpunkten ✦ auf und lernen dabei Fähigkeiten. Eine Figur darf mehrere KÖNNEN — aber pro Partie nur EINE wirken; der goldene Stern über ihren Kugeln zeigt, dass sie ihren Zauber noch frei hat. In der Aufstellung wählst du deine Reihe und den Platz des Grand Gambit; König und Dame stehen dabei immer auf denselben Feldern, und nur ein Meister darf den Platz der Dame einnehmen. Besiegst du einen Herausforderer erneut, tritt er als Abtrünniger gegen dich an — der Doppelsieg schenkt einen Stern ★." },
+    en: { title: "The court", text: "Recruited pieces rise with skill points ✦ and learn abilities along the way. A piece may KNOW several — but casts only ONE per match; the golden star above its orbs means its spell is still unspent. In the formation you choose your rank and the Grand Gambit's file; king and queen always hold the same squares, and only a master may take the queen's place. Beat a challenger a second time and they face you as a turncoat — the double victory grants a star ★." },
     art: <div style={{ display: "flex", gap: 10, alignItems: "center" }}><SkillIc size={26} /><LevelIc size={26} /></div>,
   },
   {
@@ -51,8 +51,8 @@ const STEPS = [
     art: <CoinIc size={30} />,
   },
   {
-    de: { title: "Schnell & zu zweit", text: "Im Schnellen Spiel wartet die KI in drei Stufen — oder ihr spielt zu zweit an einem Gerät: Das Brett dreht sich nach jedem Zug zum Ziehenden. Online-Duelle mit Freunden gibt es obendrein. Und nun: Ein Reich wartet auf seinen Strategen." },
-    en: { title: "Quick & together", text: "Quick play offers the AI in three tiers — or two players share one device: the board turns to face whoever moves. Online duels with friends await as well. And now: a realm awaits its strategist." },
+    de: { title: "Schnell & zu zweit", text: "Im Schnellen Spiel wartet die KI in drei Stufen — oder ihr spielt zu zweit an einem Gerät: Das Brett dreht sich nach jedem Zug zum Ziehenden. Online wählst du dein Tempo: Quick Gambit für pure Reflexe, Rush Gambit als schneller Wettkampf, Prime Gambit für ruhige Berechnung und Classic Gambit über Tage hinweg. Und nun: Ein Reich wartet auf seinen Strategen." },
+    en: { title: "Quick & together", text: "Quick play offers the AI in three tiers — or two players share one device: the board turns to face whoever moves. Online you pick your pace: Quick Gambit for pure reflex, Rush Gambit for a fast contest, Prime Gambit for calm calculation and Classic Gambit across days. And now: a realm awaits its strategist." },
     art: <div style={{ width: 56, height: 56 }}><PieceArt kind="K" fill="#c9a45c" rim="#f0dfae" detail="#59421a" size="100%" level={1} /></div>,
   },
 ];
