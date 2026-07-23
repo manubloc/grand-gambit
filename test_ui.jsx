@@ -176,5 +176,30 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("nothing is faded past legibility", faded.every((o) => o >= 0.55));
 }
 
+// ── 9. THE TREASURY LOOKS LIKE TREASURE ─────────────────────────────────────
+// Two defects this pins down: half the plates were dimmed to "switched off",
+// and the lit ones carried a 3px gold bar down the LEFT edge only, reading as
+// a lopsided frame instead of a rim of gold.
+{
+  const bare = html(<AchievementsScreen profile={defaultProfile()} t={makeT("de")} />);
+  const rich = html(<AchievementsScreen
+    profile={{ ...defaultProfile(), stats: { wins: 30, checkmates: 12, games: 60, captures: 200 } }}
+    t={makeT("de")} />);
+
+  ok("no plate wears a one-sided rim", !bare.includes("inset 3px") && !rich.includes("inset 3px"));
+
+  // the dim plate variant must be gone entirely — every card is lit
+  const dimPlate = "rgba(46,38,22,.4)";
+  ok("no card is left in the dark", !bare.includes(dimPlate) && !rich.includes(dimPlate));
+  const litPlate = (m) => (m.match(/rgba\(74,58,28,\.55\)/g) || []).length;
+  ok("untouched and earned plates share the same lit ground", litPlate(bare) > 5 && litPlate(bare) === litPlate(rich));
+
+  // a waiting purse enlarges its plate and its button
+  ok("a claimable plate sits roomier than the rest", rich.includes("padding:19px") && bare.includes("padding:16px"));
+  ok("an untouched treasury offers nothing to claim", !bare.includes("padding:19px"));
+  ok("the claim button is full width with air above it",
+    rich.includes("padding:13px 18px 12px") && rich.includes("margin-top:9px"));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.25.5
+- JEDE PLATTE LEUCHTET: Unbegonnene Erfolge lagen bisher auf einem dunkleren Grund und wirkten wie abgeschaltet. Jetzt tragen ALLE Karten denselben warmen Goldgrund und denselben Schein — was erreicht ist, sagen Medaillon, Balken und Rauten, nicht mehr das Abdunkeln der halben Schatzkammer. Auch die Medaillons unbegonnener Erfolge stehen im Licht (Graustufe von 80 % auf 35 % zurueckgenommen).
+- KONTUR RUNDUM GLEICH: Der goldene Saum lief als 3 px starker Balken NUR an der linken Kante — das las sich wie ein schiefer Rahmen statt wie ein Rand aus Gold. Er ist ersetzt durch eine gleichmaessige Kontur (1.5 px) mit umlaufender innerer Lichtkante.
+- WARTENDE BELOHNUNG BEKOMMT RAUM: Steht eine Belohnung bereit, sitzt die Platte spuerbar grosszuegiger (19 statt 16 px Innenabstand), leuchtet kraeftiger, und der Einfordern-Knopf bricht auf eine eigene Zeile: volle Breite, eine Schriftgroesse groesser (14 statt 12) und mit echter Luft nach oben (9 px Abstand plus 13 px Innenabstand oben), damit er nie mehr am Text klebt.
+- DREI NEUE WACHEN dazu: keine einseitige Kontur, keine dunkle Karte, und die Einfordern-Platte muss messbar geraeumiger sein als die uebrigen. Gesamtbatterie: 547 gruen.
+
 ## 0.25.4
 - DIE KRONE HAELT IHRE PLAETZE: Koenig und Dame starten jetzt auf JEDEM Brett an derselben Stelle — Koenig auf der Mitte-Rechts-Position, seine Gemahlin links daneben (10 Felder → 5/4, 8 Felder → 4/3 wie im Schach, 6 Felder → 3/2). Ein Liga-Boss uebernimmt exakt ihr Feld. Vorher mussten die beiden nur nebeneinander stehen und konnten durch die ganze Reihe wandern; das machte jede Karte unnoetig fremd.
 - IM AUFSTELLUNGS-EDITOR MITGEZOGEN: Das Koenigsfeld ist gesperrt (mit Hinweis), das Damenfeld bietet nur Dame oder Boss, und in allen anderen Feldern taucht die Krone gar nicht mehr auf. Der Boss-Bereich der Auswahl erscheint nur noch am Damenplatz.

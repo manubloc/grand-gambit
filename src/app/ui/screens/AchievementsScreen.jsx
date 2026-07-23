@@ -79,27 +79,32 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       const started = it.done > 0;
       const pct = done ? 1 : Math.min(1, it.val / it.nextN);
       const isOpen = openId === it.id;
+      // is there a purse waiting on this one? that plate gets the full treatment
+      const ready = claimedTiers(profile, it.id) < it.done;
       return (
         <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
           style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer", position: "relative",
-          opacity: started || pct > 0 ? 1 : 0.9,
-          background: started
-            ? "linear-gradient(160deg, rgba(74,58,28,.55), rgba(22,17,9,.94) 58%)"
-            : "linear-gradient(160deg, rgba(46,38,22,.4), rgba(18,14,8,.94) 58%)",
-          border: `1px solid ${started ? "rgba(233,207,138,.55)" : "rgba(180,150,90,.24)"}`,
-          boxShadow: started
-            ? `inset 0 1px 0 rgba(255,240,190,.3), inset 3px 0 0 ${T.gold}, 0 0 18px rgba(217,181,101,.16), ${T.shadow}`
-            : `inset 0 1px 0 rgba(255,240,190,.08), ${T.shadow}` }}>
+          // EVERY PLATE IS LIT. Dimming the untouched ones made half the
+          // treasury look switched off; the medallion and the bar already say
+          // what is earned. And the rim is EVEN now: the old look carried a
+          // 3px gold bar down the left edge only, which read as a lopsided
+          // frame rather than a rim of gold.
+          padding: ready ? 19 : 16,
+          background: "linear-gradient(160deg, rgba(74,58,28,.55), rgba(22,17,9,.94) 58%)",
+          border: `1.5px solid ${ready ? "rgba(246,228,162,.85)" : "rgba(233,207,138,.55)"}`,
+          boxShadow: ready
+            ? "inset 0 0 0 1px rgba(255,240,190,.22), 0 0 26px rgba(217,181,101,.34), " + T.shadow
+            : "inset 0 0 0 1px rgba(255,240,190,.12), 0 0 18px rgba(217,181,101,.16), " + T.shadow }}>
           {/* a still gleam sweeping the plate — treasure catches the light */}
           <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
             background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.10) 45%, transparent 58%)" }} />
           <div style={{ width: 48, height: 48, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
             background: started
               ? "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)"
-              : "radial-gradient(circle at 32% 28%, rgba(120,100,60,.18), rgba(20,16,10,.95) 70%)",
-            border: `2px solid ${started ? "#e9cf8a" : "rgba(160,135,85,.35)"}`,
-            boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "inset 0 1px 1px rgba(255,246,214,.08)",
-            filter: started ? "none" : "grayscale(.8)" }}>
+              : "radial-gradient(circle at 32% 28%, rgba(200,176,110,.3), rgba(30,24,13,.95) 70%)",
+            border: `2px solid ${started ? "#e9cf8a" : "rgba(214,186,124,.6)"}`,
+            boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "0 0 8px rgba(217,181,101,.2), inset 0 1px 2px rgba(255,246,214,.25)",
+            filter: started ? "none" : "grayscale(.35)" }}>
             <AchIcon id={it.id} color={started ? "#f6e4a2" : VELLUM_DIM} size={25} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -145,18 +150,24 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                   : "linear-gradient(90deg, #8a6d35, #f0d68a 60%, #d9b565)",
                 boxShadow: "0 0 9px rgba(217,181,101,.55), inset 0 1px 0 rgba(255,246,214,.5)" }} />
             </div>
-            <div style={{ fontSize: 11.5, color: VELLUM, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            {/* WHEN A PURSE IS WAITING the row breaks apart: the tally keeps its
+                line and the claim drops beneath it, full width and a size up,
+                with real air above so it never crowds the text. */}
+            <div style={{ fontSize: 11.5, color: VELLUM, display: "flex", gap: 8,
+              flexDirection: ready ? "column" : "row", alignItems: ready ? "stretch" : "center",
+              justifyContent: ready ? "flex-start" : "space-between" }}>
               <span style={{ color: "#e6d09a" }}>{done ? <span style={{ color: "#f6e4a2", textShadow: "0 0 6px rgba(240,214,138,.5)" }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
               {(() => {
                 const cl = claimedTiers(profile, it.id);
                 if (cl >= it.done) return null;
                 const r = claimReward(it, cl);
                 return <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "CLAIM_ACH", id: it.id }); }}
-                  style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12, borderRadius: 999, padding: "7px 13px",
+                  style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 14, borderRadius: 999, padding: "13px 18px 12px",
+                    marginTop: 9, width: "100%",
                     border: "none", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
-                    boxShadow: `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa`, whiteSpace: "nowrap",
-                    display: "inline-flex", alignItems: "center", gap: 5 }}>
-                  {t("ach.claim")} · <SkillStar size={12} />{r.sp} <GoldCoin size={12} />{r.gold}
+                    boxShadow: `0 0 16px ${T.gold}88, inset 0 1px 0 #fff6d8cc`, whiteSpace: "nowrap",
+                    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                  {t("ach.claim")} · <SkillStar size={13} />{r.sp} <GoldCoin size={13} />{r.gold}
                 </button>;
               })()}
             </div>
