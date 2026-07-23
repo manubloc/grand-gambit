@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.26.8
+- DAS HAUPTMENUE IM KAMPF WAR EINE SACKGASSE: Auf breiten Bildschirmen bleibt die Menueleiste waehrend einer Partie sichtbar — ein Klick darauf bewirkte jedoch GAR NICHTS, weil das Brett einfach ueber dem gewaehlten Bereich weiter gezeichnet wurde. Jetzt fragt das Spiel nach: "Kampf verlassen?" — und es sagt ehrlich, was es kostet. Ein Kampagnenkampf wird gesichert und laesst sich an derselben Station fortsetzen; ein Schnelles Spiel oder ein Online-Duell laeuft ohne Sicherung und waere verloren. Dazu ein Weg zurueck zum Brett.
+- UND ER WIRD JETZT WIRKLICH GESICHERT: Bisher sicherte sich ein Kampagnenkampf nur beim Wegblenden der App und ueber den Zurueck-Pfeil. Wer ihn anders verliess — Menue, Browser-Geste — verlor ihn. Das Verlassen selbst sichert jetzt, genau wie der Pfeil (eine beendete Partie bleibt unberuehrt).
+- AUFSTELLUNG: NACHGEWIESEN, NICHT VERSPROCHEN. Auf deine Frage hin geprueft und als Dauertest verankert: Was du im Hofstaat je Karte aufstellst, wird auf JEDER Karte auch wirklich ins Feld geschickt — und der Koenig steht dabei weiterhin auf seinem festen Feld. Eine beschaedigte gespeicherte Reihe kann den Kampf nicht sprengen.
+- ZEHN NEUE WACHEN und ein Durchlauf im echten Browser (Kampf → Menue → Rueckfrage → zurueck zum Brett → wechseln). Gesamtbatterie: 599 gruen.
+
 ## 0.26.7
 - DIE WICHTIGSTE REGEL WIRD ENDLICH ERKLAERT: Vor jedem Lebenskampf erscheint eine Einweisung — BLAU ist die Kampfkraft (so viele Lebenspunkte reisst die Figur beim Angriff herunter), ROT sind die Lebenspunkte (so viel haelt sie selbst aus) — und vor allem der RUECKPRALL: Haelt der Verteidiger stand, springt der Angreifer auf sein Ausgangsfeld zurueck; erst mit dem letzten Lebenspunkt rueckt man vor. Das sah bisher wie ein Fehler aus, weil es nirgends stand. Auch der goldene Stern wird erklaert (die eine Faehigkeit dieser Partie ist noch frei).
 - MIT "NICHT MEHR ANZEIGEN": Die Einweisung kommt vor jedem Lebenskampf, bis man sie einmal wegwinkt — dann bleibt sie fuer immer fort. Bei Kampagnenstationen erscheint sie hinter der Erzaehlkarte, damit die Geschichte den Vortritt hat.

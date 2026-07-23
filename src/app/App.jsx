@@ -100,6 +100,32 @@ function reducer(state, a) {
 }
 
 
+// Asked when the menu is used mid-fight. It names the price honestly: a
+// campaign fight survives the switch, a quick or online game does not.
+export function LeaveMatchAsk({ t, resumable, onLeave, onStay }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+      <div style={{ background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
+        borderRadius: 18, boxShadow: T.shadow, padding: "18px 18px 15px", maxWidth: 340, width: "100%" }}>
+        <div className="gg-serif" style={{ fontSize: 18, color: T.goldBright, textAlign: "center" }}>{t("leave.title")}</div>
+        <div style={{ fontSize: 13, color: T.dim, lineHeight: 1.55, margin: "10px 2px 14px", textAlign: "center" }}>
+          {resumable ? t("leave.pause") : t("leave.quit")}
+        </div>
+        <button onClick={onLeave} style={{ width: "100%", fontFamily: "inherit", fontWeight: 900, fontSize: 14,
+          borderRadius: 999, padding: "12px 16px", border: "none", cursor: "pointer", color: "#17110a",
+          background: resumable ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : `linear-gradient(160deg, ${T.danger}, #a3313f)`,
+          boxShadow: "0 0 14px rgba(217,181,101,.4), inset 0 1px 0 #fff6d8aa" }}>
+          {resumable ? t("leave.pauseGo") : t("leave.quitGo")}
+        </button>
+        <button onClick={onStay} style={{ width: "100%", marginTop: 8, fontFamily: "inherit", fontWeight: 700,
+          fontSize: 12.5, borderRadius: 999, padding: "9px 14px", border: `1px solid ${T.line}`,
+          background: "transparent", color: T.dim, cursor: "pointer" }}>{t("leave.stay")}</button>
+      </div>
+    </div>
+  );
+}
+
 const TABS = [
   { id: "play", key: "nav.play" },
   { id: "army", key: "nav.army" },
@@ -116,6 +142,11 @@ export default function App() {
   const [match, setMatch] = useState(null);
   const [pvp, setPvp] = useState(null);
   const [quick, setQuick] = useState(null);   // running quick match (config decided in QuickSetup)
+  // THE MENU DURING A FIGHT: on desktop the rail stays on screen while a match
+  // runs, and tapping it did nothing at all — the match simply kept rendering
+  // over the tab you chose. It asks now, and it says what leaving costs: a
+  // campaign fight is saved and resumable, a quick or online game is not.
+  const [leaveTo, setLeaveTo] = useState(null);
   const lastQuick = useRef(null);             // remembered setup for the next visit
   const wide = useMedia("(min-width: 900px)");
   const netRef = useRef(null);
@@ -265,7 +296,10 @@ export default function App() {
     const on = tab === tb.id;
     const badge = tb.id === "ach" && claimable > 0;
     return (
-      <button key={tb.id} onClick={() => { setTab(tb.id); setView("hub"); }} style={{ position: "relative",
+      <button key={tb.id} onClick={() => {
+        if (inMatch && tb.id !== tab) { setLeaveTo(tb.id); return; }
+        setTab(tb.id); setView("hub");
+      }} style={{ position: "relative",
         display: "flex", alignItems: "center", gap: wide ? 12 : 0, flexDirection: wide ? "row" : "column",
         justifyContent: wide ? "flex-start" : "center", width: wide ? "auto" : "100%",
         background: on ? `linear-gradient(135deg, ${T.lime}26, ${T.lime}10)` : "none",
@@ -313,6 +347,9 @@ export default function App() {
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
+      {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
+        onStay={() => setLeaveTo(null)}
+        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {(
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -344,6 +381,9 @@ export default function App() {
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
+      {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
+        onStay={() => setLeaveTo(null)}
+        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,

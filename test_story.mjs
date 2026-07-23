@@ -9,8 +9,8 @@
 import { CAMPAIGN, BOSSES, CHARACTERS, ITEMS, mapById } from "./src/content/index.js";
 import { BASE_HP, BASE_ATK } from "./src/core/index.js";
 import { leagueFinalBossPiece } from "./src/meta/campaign.js";
-import { crownSlots, formationLegalOn, unlockedCharacterIds } from "./src/meta/index.js";
-import { MAPS } from "./src/content/index.js";
+import { crownSlots, formationLegalOn, unlockedCharacterIds, buildArmy, defaultProfile, withProgressPct } from "./src/meta/index.js";
+import { MAPS, CHARACTER_LIST } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
 const ok = (n, c) => { if (c) { pass++; console.log("  ok  -", n); } else { fail++; console.log(" FAIL -", n); } };
@@ -200,6 +200,39 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
   }
   ok("every map seats the crown on its fixed squares and enforces it",
     wrong.length === 0 || console.log("     ", wrong.join(", ")));
+}
+
+// ── 11. WHAT YOU ARRANGE IS WHAT YOU FIELD ──────────────────────────────────
+// The court screen lets you build a back rank per map. That promise is only
+// worth anything if the match actually deploys it — on every map, and through
+// the same call the game itself makes.
+{
+  const prof = withProgressPct(defaultProfile(), 100, 5);
+  const owned = new Set(prof.campaign?.unlocked || []);
+  const swap = CHARACTER_LIST.find((c) => c.flank && owned.has(c.id));
+  ok("a recruited flank piece exists to arrange", !!swap);
+
+  const mismatched = [];
+  for (const m of MAPS) {
+    const wanted = [...m.defaultFormation];
+    wanted[0] = swap.id;                       // the far wing is always flex
+    const p2 = { ...prof, loadout: { ...(prof.loadout || {}), formations: { [m.id]: wanted } } };
+    const army = buildArmy(p2, mapById(m.id), null, "hp");
+    const back = army.back || army;
+    const kinds = back.map((x) => x && (x.kind || x));
+    if (kinds[0] !== swap.kind) mismatched.push(`${m.id}: wanted ${swap.kind}, fielded ${kinds[0]}`);
+    // and the crown must still stand where the law puts it
+    const cs = crownSlots(m.w);
+    if (kinds[cs.king] !== "K") mismatched.push(`${m.id}: king not on his square`);
+  }
+  ok("every map deploys the rank you arranged",
+    mismatched.length === 0 || console.log("     ", mismatched.join(" | ")));
+
+  // an unlawful saved rank must not reach the board — it falls back, it never crashes
+  const broken = { ...prof, loadout: { formations: { classic: ["king", "king", "king", "king", "king", "king", "king", "king"] } } };
+  let survived = true;
+  try { buildArmy(broken, mapById("classic"), null, "hp"); } catch { survived = false; }
+  ok("a corrupt formation cannot break the match", survived);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

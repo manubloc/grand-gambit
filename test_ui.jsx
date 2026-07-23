@@ -13,6 +13,7 @@ import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
+import { LeaveMatchAsk } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch } from "./src/meta/index.js";
 import { CAMPAIGN } from "./src/content/index.js";
@@ -382,6 +383,31 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("the academy teaches the two orbs", pages.includes("Die zwei Kugeln") && pages.includes("Kampfkraft"));
   ok("the academy teaches the rebound", pages.includes("Rückprall") && pages.includes("ZURÜCK"));
   ok("the academy shows the actual orbs, not a stand-in", pages.includes("data:image/webp"));
+}
+
+// ── 13. THE MENU MUST NOT BE A DEAD END ─────────────────────────────────────
+// On a wide screen the main rail stays visible during a match, and tapping it
+// did nothing whatsoever — the fight simply kept rendering over the tab you
+// picked. It asks now, and it must say the TRUTH about the cost: a campaign
+// fight is saved, a quick or online game is forfeited.
+{
+  const t = makeT("de");
+  const paused = html(<LeaveMatchAsk t={t} resumable onLeave={() => {}} onStay={() => {}} />);
+  const lost = html(<LeaveMatchAsk t={t} resumable={false} onLeave={() => {}} onStay={() => {}} />);
+
+  ok("leaving a campaign fight promises it is saved", paused.includes(t("leave.pause").slice(0, 30)));
+  ok("leaving a quick game warns that it is lost", lost.includes(t("leave.quit").slice(0, 30)));
+  ok("the two cases do not read the same", paused !== lost);
+  ok("both offer a way back to the board", paused.includes(t("leave.stay")) && lost.includes(t("leave.stay")));
+  // rendered markup escapes "&" — compare like for like
+  const esc = (x) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  ok("the campaign button speaks of pausing", paused.includes(esc(t("leave.pauseGo"))));
+  ok("the quick-game button speaks of forfeiting", lost.includes(esc(t("leave.quitGo"))));
+
+  // the warning must exist in both tongues, or an English player gets nothing
+  const te = makeT("en");
+  ok("the question is asked in English too",
+    html(<LeaveMatchAsk t={te} resumable onLeave={() => {}} onStay={() => {}} />).includes(esc(te("leave.pauseGo"))));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

@@ -533,7 +533,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (!campaign || pvp) return;
     const fn = () => { if (document.visibilityState === "hidden") pauseNow(); };
     document.addEventListener("visibilitychange", fn);
-    return () => document.removeEventListener("visibilitychange", fn);
+    // AND ON THE WAY OUT: leaving through anything other than the back arrow —
+    // the desktop menu, the browser's back gesture — used to drop the fight on
+    // the floor. Unmounting now saves it exactly as the arrow does. A finished
+    // match is ignored inside pauseNow, so a win is never resurrected.
+    return () => { document.removeEventListener("visibilitychange", fn); pauseNow(); };
   }, []); // eslint-disable-line
 
   const hsFlip = quick?.hotseatFlip !== false;        // optional: keep the board fixed (phone stays in hand)
