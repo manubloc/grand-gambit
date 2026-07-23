@@ -203,17 +203,26 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
 
   ok("no plate wears a one-sided rim", !bare.includes("inset 3px") && !rich.includes("inset 3px"));
 
-  // the dim plate variant must be gone entirely — every card is lit
-  const dimPlate = "rgba(46,38,22,.4)";
-  ok("no card is left in the dark", !bare.includes(dimPlate) && !rich.includes(dimPlate));
-  const litPlate = (m) => (m.match(/rgba\(74,58,28,\.55\)/g) || []).length;
-  ok("untouched and earned plates share the same lit ground", litPlate(bare) > 5 && litPlate(bare) === litPlate(rich));
+  // Every card must be lit, and lit THE SAME — asserted without naming a
+  // colour, so a repaint cannot quietly reintroduce a dim variant.
+  // plates are painted in rgba; the gold claim button is a solid gradient
+  const grounds = (m) => [...new Set((m.match(/background:linear-gradient\(160deg, rgba[^;"]*/g) || []))];
+  ok("all plates share one ground, untouched or earned", grounds(bare).length === 1);
+  ok("earned plates use that very same ground", grounds(rich).length === 1 && grounds(rich)[0] === grounds(bare)[0]);
+  ok("the treasury actually draws its plates", (bare.match(/background:linear-gradient\(160deg, rgba/g) || []).length >= 14);
 
   // a waiting purse enlarges its plate and its button
   ok("a claimable plate sits roomier than the rest", rich.includes("padding:19px") && bare.includes("padding:16px"));
   ok("an untouched treasury offers nothing to claim", !bare.includes("padding:19px"));
   ok("the claim button is full width with air above it",
     rich.includes("padding:13px 18px 12px") && rich.includes("margin-top:9px"));
+
+  // THE EMBLEMS ARE SHOWN AS PAINTED. They were greyed and darkened until an
+  // achievement was under way, and at that strength you could not make out what
+  // the picture showed at all.
+  ok("no emblem is greyed or dimmed", !bare.includes("grayscale") && !rich.includes("grayscale"));
+  ok("every emblem is drawn at full strength", (bare.match(/<img/g) || []).length >= 14);
+  ok("the rim is drawn strongly enough to read", bare.includes("2.5px solid #f6e4a2"));
 }
 
 // ── 10. THE CHRONICLE ───────────────────────────────────────────────────────

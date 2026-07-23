@@ -14,8 +14,8 @@ import { useMedia } from "../../App.jsx";
 // at 62% opacity on top of that, sinking it near 2:1. Nothing was readable.
 // These two warm tones sit at 6.8:1 and 9.0:1 on the same plates, and cards
 // now go quiet through COLOUR, not through fading their own text away.
-const VELLUM = "#d3c6a2";        // labels, tier rows, hints
-const VELLUM_DIM = "#b9ad8e";    // the faintest tier still legible
+const VELLUM = "#eadfc0";        // labels, tier rows, hints
+const VELLUM_DIM = "#cec2a0";    // the faintest tier still legible
 
 // Gold that reads as gold: gradient-filled serif numerals.
 const goldText = {
@@ -77,7 +77,6 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
 
     {items.map((it) => {
       const done = it.nextN === null;
-      const started = it.done > 0;
       const pct = done ? 1 : Math.min(1, it.val / it.nextN);
       const isOpen = openId === it.id;
       // is there a purse waiting on this one? that plate gets the full treatment
@@ -91,35 +90,38 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           // 3px gold bar down the left edge only, which read as a lopsided
           // frame rather than a rim of gold.
           padding: ready ? 19 : 16,
-          background: "linear-gradient(160deg, rgba(74,58,28,.55), rgba(22,17,9,.94) 58%)",
-          border: `1.5px solid ${ready ? "rgba(246,228,162,.85)" : "rgba(233,207,138,.55)"}`,
+          background: "linear-gradient(160deg, rgba(96,74,34,.62), rgba(28,21,11,.95) 62%)",
+          border: `2px solid ${ready ? "#f8ecc0" : "rgba(246,228,162,.78)"}`,
           boxShadow: ready
-            ? "inset 0 0 0 1px rgba(255,240,190,.22), 0 0 26px rgba(217,181,101,.34), " + T.shadow
-            : "inset 0 0 0 1px rgba(255,240,190,.12), 0 0 18px rgba(217,181,101,.16), " + T.shadow }}>
+            ? "inset 0 1px 0 rgba(255,248,214,.4), inset 0 0 0 1px rgba(255,240,190,.3), 0 0 30px rgba(240,214,138,.4), " + T.shadow
+            : "inset 0 1px 0 rgba(255,248,214,.28), inset 0 0 0 1px rgba(255,240,190,.16), 0 0 20px rgba(240,214,138,.22), " + T.shadow }}>
           {/* a still gleam sweeping the plate — treasure catches the light */}
           <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-            background: "linear-gradient(115deg, transparent 30%, rgba(255,240,190,.10) 45%, transparent 58%)" }} />
+            background: "linear-gradient(115deg, transparent 24%, rgba(255,244,200,.20) 44%, rgba(255,244,200,.05) 52%, transparent 64%)" }} />
           {/* THE STRUCK MEDALLION: each achievement now wears its own painted
               emblem, already cast as a round plate in the treasury's warm dark
               — so it seats itself in the gold rim with no seam and no cut-out
               work at runtime. The drawn icon still stands in for anything that
               has no painting yet. */}
-          <div style={{ width: 54, height: 54, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
+          <div style={{ width: 56, height: 56, flex: "none", borderRadius: "50%", display: "grid", placeItems: "center",
             overflow: "hidden", position: "relative",
-            background: started
-              ? "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)"
-              : "radial-gradient(circle at 32% 28%, rgba(200,176,110,.3), rgba(30,24,13,.95) 70%)",
-            border: `2px solid ${started ? "#e9cf8a" : "rgba(214,186,124,.6)"}`,
-            boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "0 0 8px rgba(217,181,101,.2), inset 0 1px 2px rgba(255,246,214,.25)",
-            filter: started ? "none" : "grayscale(.35) brightness(.85)" }}>
+            // THE EMBLEM IS SHOWN AS PAINTED. It used to be greyed and darkened
+            // until the achievement was under way, which read as "the picture
+            // is half transparent" — you could not make out what it showed. The
+            // painting now stands at full strength on every plate; what is
+            // earned is told by the bar, the diamonds and the tally.
+            background: "radial-gradient(circle at 32% 28%, rgba(240,214,138,.5), rgba(36,28,14,.96) 70%)",
+            border: "2.5px solid #f6e4a2",
+            boxShadow: "0 0 16px rgba(240,214,138,.55), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,250,228,.55)" }}>
             {ACH_ART[it.id]
               ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              : <AchIcon id={it.id} color={started ? "#f6e4a2" : VELLUM_DIM} size={27} />}
+              : <AchIcon id={it.id} color="#f6e4a2" size={28} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-              <span className="gg-serif" style={{ fontSize: 15, letterSpacing: ".03em", color: started ? T.text : T.dim }}>
+              <span className="gg-serif" style={{ fontSize: 15.5, letterSpacing: ".03em",
+                color: "#fdf6e2", textShadow: "0 1px 2px rgba(0,0,0,.6)" }}>
                 {en ? it.nameEn : it.nameDe}
               </span>
               <span style={{ display: "flex", gap: 3 }}>
@@ -166,7 +168,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
             <div style={{ fontSize: 11.5, color: VELLUM, display: "flex", gap: 8,
               flexDirection: ready ? "column" : "row", alignItems: ready ? "stretch" : "center",
               justifyContent: ready ? "flex-start" : "space-between" }}>
-              <span style={{ color: "#e6d09a" }}>{done ? <span style={{ color: "#f6e4a2", textShadow: "0 0 6px rgba(240,214,138,.5)" }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
+              <span style={{ color: "#f4e3ab", fontWeight: 800 }}>{done ? <span style={{ color: "#f6e4a2", textShadow: "0 0 6px rgba(240,214,138,.5)" }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
               {(() => {
                 const cl = claimedTiers(profile, it.id);
                 if (cl >= it.done) return null;

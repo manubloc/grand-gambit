@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.26.4
+- DIE EMBLEME ZEIGEN SICH, WIE SIE GEMALT SIND: Bis ein Erfolg begonnen war, lag ein Graufilter samt Abdunklung auf dem Medaillon — bei dieser Staerke war schlicht nicht mehr zu erkennen, WAS das Bild zeigt. Der Filter ist ersatzlos weg; jedes Emblem steht auf jeder Platte in voller Staerke. Was erreicht ist, sagen weiterhin Balken, Rauten und Zaehler.
+- MEHR GOLD, KRAEFTIGERE KONTUR: Der Plattengrund ist waermer und heller (rgba 96,74,34), der Saum von 1.5 auf 2 px verstaerkt und aufgehellt, der Medaillonring auf 2.5 px in hellem Gold mit staerkerem Schein. Die Glanzstraehne ueber der Platte ist doppelt so praesent.
+- SCHRIFT KONTRASTREICHER (nachgerechnet): Titel jetzt 12.5:1 statt 6.1:1, Beschreibungen 10.2:1, die blasseste Stufe noch 7.6:1 — WCAG verlangt 4.5. Der Titel traegt zusaetzlich einen feinen Schattenriss, damit er sich vom Gold abhebt.
+- DREI NEUE WACHEN: kein Emblem darf je wieder ausgegraut oder abgedunkelt werden, alle 14 muessen in voller Staerke gezeichnet sein, und die Kontur muss kraeftig genug bleiben. Der Platten-Test prueft jetzt farbunabhaengig, dass alle Karten denselben Grund tragen — so kann ein Neuanstrich keine dunkle Sonderfassung zurueckschmuggeln. Gesamtbatterie: 566 gruen.
+
 ## 0.26.3
 - FEHLERBERICHT VOM 22. JULI AUFGEKLAERT (Android, v0.24.25, "Cannot read properties of undefined (reading 'map')"): Das war der Schatzkammer-Absturz beim Antippen eines Erfolgs. Nachgestellt am alten Stand — der Absturz tritt Wort fuer Wort auf, sobald ein Erfolg aufgeklappt ist; auf dem heutigen Stand nicht mehr. Behoben wurde er in 0.24.26 (evaluate reicht die Stufenliste mit, dazu ein Rueckfall auf eine leere Liste), gedeckt vom Smoke-Fall "AchievementsScreen (open)".
 - VIER NEUE WACHEN gegen dieselbe Fehlerklasse: (1) Die leere Kulisse fuer GEMALTE Kapitelkarten muss jedes Feld erklaeren, das die Karte zeichnet — genau dieser Pfad wird heiss, sobald die gemalten Karten kommen, und ein fehlendes Feld dort wuerde exakt denselben Absturz ausloesen. (2–4) Schatzkammer, Hofstaat und Chronik werden gegen einen Spielstand gerendert, dem optionale Teile fehlen (wie bei alten Speicherstaenden), und muessen das ueberleben. Gesamtbatterie: 562 gruen.
