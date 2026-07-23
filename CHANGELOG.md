@@ -1,5 +1,12 @@
 # Changelog — Grand Gambit
 
+## 0.25.4
+- DIE KRONE HAELT IHRE PLAETZE: Koenig und Dame starten jetzt auf JEDEM Brett an derselben Stelle — Koenig auf der Mitte-Rechts-Position, seine Gemahlin links daneben (10 Felder → 5/4, 8 Felder → 4/3 wie im Schach, 6 Felder → 3/2). Ein Liga-Boss uebernimmt exakt ihr Feld. Vorher mussten die beiden nur nebeneinander stehen und konnten durch die ganze Reihe wandern; das machte jede Karte unnoetig fremd.
+- IM AUFSTELLUNGS-EDITOR MITGEZOGEN: Das Koenigsfeld ist gesperrt (mit Hinweis), das Damenfeld bietet nur Dame oder Boss, und in allen anderen Feldern taucht die Krone gar nicht mehr auf. Der Boss-Bereich der Auswahl erscheint nur noch am Damenplatz.
+- KEINE SACKGASSE FUER ALTE AUFSTELLUNGEN: Eine gespeicherte Reihe mit wanderndem Koenig waere unrettbar geworden (das Feld laesst sich ja nicht mehr bearbeiten) — solche Reihen fallen jetzt sauber auf die Standardaufstellung der Karte zurueck.
+- SCHATZKAMMER ENDLICH LESBAR (vermessen): Die Schrift stand mit 2.9:1 auf den Goldplatten — unter dem Mindestwert selbst fuer grosse Schrift — und unbegonnene Karten liefen zusaetzlich auf 62 % Deckkraft, was den Kontrast Richtung 2:1 drueckte. Neue warme Pergamenttoene liegen bei 6.8:1 und 9.0:1, unbegonnene Karten treten jetzt ueber FARBE zurueck statt ihre eigene Schrift wegzublenden (90 % statt 62 %), Beschreibungen eine Spur groesser.
+- ZWEI NEUE WACHEN: Der Kronen-Vertrag prueft auf jeder Karte, dass Koenig und Dame auf ihren festen Feldern sitzen UND dass ein Verschieben abgelehnt wird. Der Kontrast-Vertrag rechnet die WCAG-Kontraste jeder Textfarbe der Schatzkammer gegen die dunkelste Platte nach und schlaegt Alarm, bevor wieder etwas im Dunkeln verschwindet. Gesamtbatterie: 541 gruen.
+
 ## 0.25.3
 - CHAMPIONS FUELLEN DAS KARTEN-POPUP: Der Bilderrahmen war 84x108 — hoeher als breit. Ein quadratisches Gemaelde wurde darin von der BREITE begrenzt und nur 84 px hoch gezeigt: ein Viertel des Rahmens blieb leer. Der Rahmen ist jetzt quadratisch und waechst mit der Panelbreite mit (96-148 px), die Figuren stehen rund 60 % groesser und fuellen die volle Hoehe.
 - VERMESSEN STATT GERATEN: Ueber alle 70 Gemaelde geprueft, wie breit eine Figur bei voller Hoehenfuellung wird — Maximum 0.918 der Hoehe (ein ausladendes Monster). Ein quadratischer Rahmen fasst damit jede Figur, ohne dass etwas ueber den Namen daneben ragt.

@@ -8,6 +8,14 @@ import { Panel, Bar, Chip } from "../primitives.jsx";
 import { AchIcon, SkillStar, GoldCoin } from "../icons.jsx";
 import { useMedia } from "../../App.jsx";
 
+// MEASURED, then lifted: on the gilded plates T.faint came in at 2.9:1 against
+// the card — under the 3.0 floor even for large text — and unstarted cards ran
+// at 62% opacity on top of that, sinking it near 2:1. Nothing was readable.
+// These two warm tones sit at 6.8:1 and 9.0:1 on the same plates, and cards
+// now go quiet through COLOUR, not through fading their own text away.
+const VELLUM = "#d3c6a2";        // labels, tier rows, hints
+const VELLUM_DIM = "#b9ad8e";    // the faintest tier still legible
+
 // Gold that reads as gold: gradient-filled serif numerals.
 const goldText = {
   backgroundImage: "linear-gradient(168deg, #f8e6ab 8%, #d9b565 45%, #a17f3e 78%, #e9cf8a 100%)",
@@ -62,7 +70,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           <Chip color={T.dim} bg={T.panel2}>{tiersDone} / {tiersTotal} {t("ach.tiers")}</Chip>
           {claimable > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("ach.claimable", { n: claimable })}</Chip>}
         </div>
-        <div style={{ fontSize: 11.5, color: T.faint, marginTop: 9 }}><SkillStar size={11} /> {t("ach.spHint")}</div>
+        <div style={{ fontSize: 11.5, color: VELLUM, marginTop: 9 }}><SkillStar size={11} /> {t("ach.spHint")}</div>
       </div>
     </div>
 
@@ -74,7 +82,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       return (
         <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
           style={{ display: "flex", gap: 13, alignItems: "center", cursor: "pointer", position: "relative",
-          opacity: started || pct > 0 ? 1 : 0.62,
+          opacity: started || pct > 0 ? 1 : 0.9,
           background: started
             ? "linear-gradient(160deg, rgba(74,58,28,.55), rgba(22,17,9,.94) 58%)"
             : "linear-gradient(160deg, rgba(46,38,22,.4), rgba(18,14,8,.94) 58%)",
@@ -92,7 +100,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
             border: `2px solid ${started ? "#e9cf8a" : "rgba(160,135,85,.35)"}`,
             boxShadow: started ? "0 0 15px rgba(217,181,101,.5), inset 0 1px 2px rgba(255,246,214,.45)" : "inset 0 1px 1px rgba(255,246,214,.08)",
             filter: started ? "none" : "grayscale(.8)" }}>
-            <AchIcon id={it.id} color={started ? "#f6e4a2" : T.faint} size={25} />
+            <AchIcon id={it.id} color={started ? "#f6e4a2" : VELLUM_DIM} size={25} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
@@ -111,7 +119,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 })}
               </span>
             </div>
-            {isOpen && <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.5, margin: "4px 0 3px" }}>
+            {isOpen && <div style={{ fontSize: 12, color: VELLUM, lineHeight: 1.55, margin: "4px 0 3px" }}>
               {(en ? it.descEn : it.descDe) || null}
               {/* the LEDGER of the goal: every tier, its target and its purse —
                   the character-card accordion, brought to the treasury */}
@@ -122,7 +130,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                   const st = i < cl ? "✓" : i < it.done ? "◆" : "·";
                   const r = claimReward(it, i);
                   return <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 8,
-                    color: i < it.done ? T.text : T.faint }}>
+                    color: i < it.done ? "#f6ecd2" : VELLUM }}>
                     <span>{st} {en ? "Tier" : "Stufe"} {i + 1}: {tr.n} ×</span>
                     <span style={{ whiteSpace: "nowrap" }}><SkillStar size={10} /> {r.sp} · <GoldCoin size={10} /> {r.gold}</span>
                   </div>;
@@ -137,7 +145,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                   : "linear-gradient(90deg, #8a6d35, #f0d68a 60%, #d9b565)",
                 boxShadow: "0 0 9px rgba(217,181,101,.55), inset 0 1px 0 rgba(255,246,214,.5)" }} />
             </div>
-            <div style={{ fontSize: 11.5, color: T.faint, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <div style={{ fontSize: 11.5, color: VELLUM, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
               <span style={{ color: "#e6d09a" }}>{done ? <span style={{ color: "#f6e4a2", textShadow: "0 0 6px rgba(240,214,138,.5)" }}>✓ {t("ach.done")}</span> : `${it.val} / ${it.nextN}`}</span>
               {(() => {
                 const cl = claimedTiers(profile, it.id);

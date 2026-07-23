@@ -10,6 +10,9 @@ import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGly
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
 import { ABILITIES } from "./src/content/index.js";
 import { readFileSync, readdirSync } from "node:fs";
+import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
+import { defaultProfile } from "./src/meta/index.js";
+import { makeT } from "./src/app/i18n/strings.js";
 
 let pass = 0, fail = 0;
 const ok = (n, c) => { if (c) { pass++; console.log("  ok  -", n); } else { fail++; console.log(" FAIL -", n); } };
@@ -140,6 +143,37 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const shallow = files.map((f) => ({ f, d: dims(`${dir}/${f}`) })).filter((x) => x.d && x.d.h < 280);
   ok("every painting has the rows to stay sharp when it fills the frame",
     shallow.length === 0 || console.log("     ", shallow.map((x) => `${x.f} ${x.d.w}x${x.d.h}`).join(", ")));
+}
+
+// ── 8. THE TREASURY MUST BE READABLE ────────────────────────────────────────
+// The gilding once left text at 2.9:1 on its own plates — with unstarted cards
+// faded to 62% on top, effectively invisible. Contrast is arithmetic, so it
+// can simply be asserted: every colour the screen prints is measured against
+// the darkest plate it can sit on.
+{
+  const lin = (v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  const lum = (hex) => {
+    const h = hex.replace("#", "");
+    const [r, g, b] = [0, 2, 4].map((i) => lin(parseInt(h.slice(i, i + 2), 16) / 255));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)]; return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  ok("the contrast maths is sound (white on black is 21:1)", Math.round(ratio("#ffffff", "#000000")) === 21);
+
+  const markup = html(<AchievementsScreen profile={defaultProfile()} t={makeT("de")} initialOpenId="wins" />);
+  const PLATE = "#2e2413";                       // the lit half of a card's gradient — the worst case
+  const colours = [...new Set((markup.match(/color:\s*(#[0-9a-fA-F]{6})/g) || [])
+    .map((c) => c.split(":")[1].trim()))];
+  ok("the treasury actually prints text colours", colours.length >= 3);
+
+  const dark = colours.filter((c) => ratio(c, PLATE) < 3);
+  // ink on gold BUTTONS is meant to be dark — those sit on a bright pill, not the plate
+  const onPlate = dark.filter((c) => ratio(c, "#e8c96a") < 4.5);
+  ok("no text colour falls below the readable floor on the plates",
+    onPlate.length === 0 || console.log("     ", onPlate.map((c) => `${c} = ${ratio(c, PLATE).toFixed(1)}:1`).join(", ")));
+
+  const faded = (markup.match(/opacity:\s*0?\.\d+/g) || []).map((o) => Number(o.split(":")[1]));
+  ok("nothing is faded past legibility", faded.every((o) => o >= 0.55));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

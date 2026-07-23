@@ -200,6 +200,9 @@ export function formationLegal(formation, unlockedIds) {
     }
   }
   if (wingIdx >= 0 && formation[wingIdx] != null) return false;
+  // the crown keeps its squares here too (same law, fixed 10-wide rank)
+  const cs10 = crownSlots(BACK_SIZE);
+  if (formation[cs10.king] !== "king" || formation[cs10.queen] !== "queen") return false;
   const c = formationCounts(formation);
   for (const [id, n] of Object.entries(FORMATION_REQUIRED)) if ((c[id] || 0) !== n) return false;
   return flex === FORMATION_FLEX_COUNT - (wingIdx >= 0 ? 1 : 0);
@@ -238,6 +241,14 @@ export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boos
 
 // ── Map-aware formation & army ────────────────────────────────────────────────
 const ARENA = () => mapById("arena");
+/** THE CROWN SITS STILL. King and queen always occupy the same two squares —
+ *  centre-right for the king, his consort to his left — on every board width.
+ *  Wandering royals made each map feel like a new game; a fixed pair is what
+ *  makes a formation readable at a glance. A league boss standing in for the
+ *  queen inherits her square exactly. Matches every shipped default: w10 → 5/4,
+ *  w8 → 4/3 (the chess standard), w6 → 3/2. */
+export const crownSlots = (size) => ({ king: Math.floor(size / 2), queen: Math.floor(size / 2) - 1 });
+
 export const formationSpec = (map) => ({ required: map.formation.required, flex: map.formation.flex, size: map.w });
 
 /** Map-aware legality: required composition + size come from the map. */
@@ -264,11 +275,15 @@ export function formationLegalOn(formation, unlockedIds, map, ownedBosses = []) 
     if (required[id] === undefined) { if (!FORMATION_FLEX.has(id)) return false; flexN++; }
   }
   if (bossN > 1) return false;                      // one boss at most on the field
-  // THE QUEEN FLANKS THE KING — always. Her stand-in (a league boss) inherits
-  // the same duty: the crown pair never separates in the array.
-  const ki = formation.findIndex((id) => id === "king");
-  const qi = formation.findIndex((id) => id === "queen" || (id != null && isBossEntry(id)));
-  if (ki >= 0 && qi >= 0 && Math.abs(qi - ki) !== 1) return false;
+  // THE CROWN KEEPS ITS SQUARES: not merely adjacent — fixed. The king may sit
+  // nowhere else, and the queen's square holds either the queen or the one
+  // league boss standing in for her.
+  const cs = crownSlots(size);
+  if (formation[cs.king] !== "king") return false;
+  if (formation.some((id, i) => id === "king" && i !== cs.king)) return false;
+  const qHere = formation[cs.queen];
+  if (!(qHere === "queen" || (qHere != null && isBossEntry(qHere)))) return false;
+  if (formation.some((id, i) => i !== cs.queen && (id === "queen" || (id != null && isBossEntry(id))))) return false;
   const c = formationCounts(formation.filter((id) => id != null && !isBossEntry(id)));
   for (const [id, n] of Object.entries(required)) {
     const need = id === "queen" ? n - bossN : n;    // the boss stands in for the queen

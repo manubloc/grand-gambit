@@ -7,7 +7,7 @@ import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, 
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
-  formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId,
+  formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId, crownSlots,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
   itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
@@ -588,12 +588,21 @@ function FormationEditor({ profile, dispatch, t, en }) {
   const map = mapById(mapId);
   const required = map.formation.required;
   const flexNeed = map.formation.flex;
-  const saved = profile.loadout.formations?.[mapId] || map.defaultFormation;
+  // NO DEAD ENDS: a rank saved before the crown was pinned would load with the
+  // king off his square — and since that square can no longer be edited, the
+  // player could never make it legal again. Anything unlawful falls back to
+  // the map's own default, which always seats the crown correctly.
+  const loadFormation = (id) => {
+    const m = mapById(id);
+    const f = profile.loadout.formations?.[id];
+    return f && formationLegalOn(f, unlockedIds, m, ownedLeagueBosses(profile)) ? f : m.defaultFormation;
+  };
+  const saved = loadFormation(mapId);
 
   const [draft, setDraft] = useState(saved);
   const [pick, setPick] = useState(null);
   // Load the selected map's saved formation when the map changes.
-  useEffect(() => { setDraft(profile.loadout.formations?.[mapId] || mapById(mapId).defaultFormation); setPick(null); }, [mapId]); // eslint-disable-line
+  useEffect(() => { setDraft(loadFormation(mapId)); setPick(null); }, [mapId]); // eslint-disable-line
 
   const legal = formationLegalOn(draft, unlockedIds, map, ownedLeagueBosses(profile));
   const changed = JSON.stringify(draft) !== JSON.stringify(saved);
@@ -601,6 +610,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
   const dragonFielded = draft[0] === "dragon" || draft[draft.length - 1] === "dragon";
   const flexCount = draft.filter((id) => id != null && required[id] === undefined).length;
   // the wing eats one flex slot: show the reduced requirement so the chip stays honest
+
+  // THE CROWN'S OWN SQUARES: the king never moves, and his consort's square
+  // takes only the queen or the one boss standing in for her. Everything else
+  // is yours to arrange — that fixed pair is what makes a rank readable.
+  const crown = crownSlots(map.w);
 
   const [dragonAsk, setDragonAsk] = useState(null); // { slot, wing } awaiting consent
   const pickerRef = useRef(null);
@@ -744,8 +758,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
           // the dragon is drawn by the centred 2x2 overlay instead — its two
           // squares here stay empty of art (but keep their tap targets)
           const dragonSquare = isDragon || (isWing && dragonAt >= 0);
-          return <button key={i} onClick={() => { if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
-            style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: "pointer",
+          const isKingSlot = i === crown.king;
+          return <button key={i} disabled={isKingSlot}
+            title={isKingSlot ? (en ? "The king holds this square" : "Der König hält diesen Platz") : undefined}
+            onClick={() => { if (isKingSlot) return; if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
+            style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: isKingSlot ? "default" : "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
               background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,
               border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
@@ -805,7 +822,10 @@ function FormationEditor({ profile, dispatch, t, en }) {
     {pick !== null && (
       <div ref={pickerRef} style={{ background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, padding: 8, marginBottom: 10 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 7 }}>
-          {pieces.map((c) => {
+          {pieces.filter((c) => (pick === crown.queen
+              ? c.id === "queen"          // her square: the queen or a boss (below)
+              : c.id !== "queen" && c.id !== "king"))  // the crown never wanders
+            .map((c) => {
             const on = draft[pick] === c.id;
             return <button key={c.id} onClick={() => setSlot(pick, c.id)}
               style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 13px", borderRadius: 11, cursor: "pointer", fontFamily: "inherit",
@@ -823,7 +843,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
         {(() => {
           // league bosses — trophies of finished leagues; ONE may take the queen's place
           const owned = ownedLeagueBosses(profile);
-          if (!owned.length) return null;
+          if (!owned.length || pick !== crown.queen) return null;   // a boss stands in for the QUEEN, nowhere else
           const usedElsewhere = draft.some((d, j) => j !== pick && isBossEntry(d));
           return <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px dashed ${T.gold}44` }}>
             <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".1em", color: T.gold, marginBottom: 6 }}>

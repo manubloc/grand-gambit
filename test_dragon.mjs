@@ -90,10 +90,12 @@ const mk = (lvl = 5, rules = "hp") => createGame(
 // ── formation law ────────────────────────────────────────────────────────────
 {
   const owned = [...unlockedCharacterIds({ campaign: { unlocked: Object.keys(CHARACTERS) } })];
-  // required counts (K/Q/2R/2B) must survive: the dragon eats two FLEX slots
-  const f1 = ["dragon", null, "rook", "rook", "bishop", "queen", "king", "bishop", "knight", "knight"];
-  const f2 = ["rook", "knight", "knight", "bishop", "dragon", "king", "bishop", "queen", "rook", "knight"];
-  const f3 = ["dragon", "knight", "rook", "rook", "bishop", "queen", "king", "bishop", "knight", "knight"];
+  // required counts (K/Q/2R/2B) must survive: the dragon eats two FLEX slots.
+  // The crown sits on its fixed squares here (5/4 on a 10-wide rank) so these
+  // cases test the DRAGON law alone, not the seating of the royals.
+  const f1 = ["dragon", null, "rook", "rook", "queen", "king", "bishop", "bishop", "knight", "knight"];
+  const f2 = ["rook", "knight", "knight", "bishop", "queen", "king", "bishop", "dragon", "rook", "knight"];
+  const f3 = ["dragon", "knight", "rook", "rook", "queen", "king", "bishop", "bishop", "knight", "knight"];
   ok("dragon at the edge with an empty wing is lawful", formationLegal(f1, owned) === true);
   ok("a dragon in the middle is turned away", formationLegal(f2, owned) === false);
   ok("without the empty wing slot he may not deploy", formationLegal(f3, owned) === false);

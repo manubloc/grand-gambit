@@ -9,6 +9,8 @@
 import { CAMPAIGN, BOSSES, CHARACTERS, ITEMS, mapById } from "./src/content/index.js";
 import { BASE_HP, BASE_ATK } from "./src/core/index.js";
 import { leagueFinalBossPiece } from "./src/meta/campaign.js";
+import { crownSlots, formationLegalOn, unlockedCharacterIds } from "./src/meta/index.js";
+import { MAPS } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
 const ok = (n, c) => { if (c) { pass++; console.log("  ok  -", n); } else { fail++; console.log(" FAIL -", n); } };
@@ -166,6 +168,38 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
       drops.push(`${spine[i - 1].id}(${spine[i - 1].reward.xp}) → ${spine[i].id}(${spine[i].reward.xp})`);
   ok("the main road's rewards never fall back", drops.length === 0 || console.log("     ", drops.join(", ")));
   ok("the spine actually climbs", spine.length > 3 && spine[spine.length - 1].reward.xp > spine[0].reward.xp * 2);
+}
+
+// ── 10. THE CROWN KEEPS ITS SQUARES ─────────────────────────────────────────
+// King and queen must start on the same two squares on every board, so a rank
+// stays readable at a glance. A boss standing in for the queen inherits hers.
+{
+  const owned = [...unlockedCharacterIds({ campaign: { unlocked: Object.values(CHARACTERS).map((c) => c.id) } })];
+  ok("the crown formula matches chess on an 8-wide rank",
+    crownSlots(8).king === 4 && crownSlots(8).queen === 3);
+  ok("the consort always stands beside the king",
+    [6, 8, 10].every((n) => Math.abs(crownSlots(n).king - crownSlots(n).queen) === 1));
+
+  const wrong = [];
+  for (const m of MAPS) {
+    const cs = crownSlots(m.w);
+    const def = m.defaultFormation;
+    if (def[cs.king] !== "king" || def[cs.queen] !== "queen") wrong.push(m.id);
+    if (!formationLegalOn(def, owned, m, [])) wrong.push(m.id + " (illegal)");
+
+    // moving the king one square must be rejected outright
+    const moved = [...def];
+    [moved[cs.king], moved[cs.king + 1 < m.w ? cs.king + 1 : cs.king - 2]] =
+      [moved[cs.king + 1 < m.w ? cs.king + 1 : cs.king - 2], moved[cs.king]];
+    if (formationLegalOn(moved, owned, m, [])) wrong.push(m.id + " (king may wander!)");
+
+    // and so must moving the queen off her square
+    const qMoved = [...def];
+    [qMoved[cs.queen], qMoved[0]] = [qMoved[0], qMoved[cs.queen]];
+    if (formationLegalOn(qMoved, owned, m, [])) wrong.push(m.id + " (queen may wander!)");
+  }
+  ok("every map seats the crown on its fixed squares and enforces it",
+    wrong.length === 0 || console.log("     ", wrong.join(", ")));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
