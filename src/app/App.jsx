@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
-import { nodeById, chapterForRow, buyItem, CHARACTER_LIST } from "../content/index.js";
+import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
@@ -169,7 +169,9 @@ export default function App() {
   useEffect(() => netRef.current.on("gift", (m) => dispatch({ type: "GIFT_GOLD", n: m.gold || 10 })), []);
   useEffect(() => netRef.current.on("match", (m) => {
     setMatch(null);
-    setPvp({ matchId: m.matchId, seed: m.seed, mapId: m.map, color: m.youAre,
+    setPvp({ matchId: m.matchId, seed: m.seed, mapId: m.map, color: m.youAre, rules: m.rules,
+      // the clock both sides agreed on in the lobby, handed to the board
+      tc: m.tc || "rush", clock: clockFor(m.tc || "rush"),
       oppName: m.opp?.name || "?", oppScore: m.opp?.score || 0, oppArmy: m.oppArmy, net: netRef.current });
   }), []);
 

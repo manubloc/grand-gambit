@@ -17,7 +17,7 @@ import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
 import { LeaveMatchAsk, GameIntro } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
-import { CAMPAIGN } from "./src/content/index.js";
+import { CAMPAIGN, TIME_MODES, timeModeById, clockFor } from "./src/content/index.js";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile, evaluate } from "./src/meta/index.js";
@@ -499,6 +499,33 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const m = html(<AchievementsScreen profile={prof} t={t} initialOpenId="wins" />);
   ok("the plate carries a sweep of light", m.includes("ggPlateSheen") || m.includes("translateX(-120%)"));
   ok("the emblems are lifted brighter", /brightness\(1\.[23]/.test(m));
+}
+
+// ── 17. THE FOUR GAMBITS ────────────────────────────────────────────────────
+// A duel is only fair if both sides start on the same budget, so the table of
+// clocks is one source of truth for lobby, board and matchmaker.
+{
+  ok("there are four gambits", TIME_MODES.length === 4);
+  ok("every one names itself in both tongues",
+    TIME_MODES.every((m) => m.de.name && m.en.name && m.de.blurb && m.en.blurb));
+  ok("every one shows its clock at a glance", TIME_MODES.every((m) => m.de.tag && m.en.tag));
+  ok("every one carries a colour and a mark", TIME_MODES.every((m) => /^#/.test(m.color) && m.glyph));
+
+  const ids = TIME_MODES.map((m) => m.id);
+  ok("the ids are unique", new Set(ids).size === 4);
+  ok("exactly one is featured", TIME_MODES.filter((m) => m.featured).length === 1);
+
+  // the clocks must climb: bullet < blitz < rapid < correspondence
+  const secs = ["quick", "rush", "prime", "daily"].map((id) => timeModeById(id).base);
+  ok("the budgets rise from bullet to correspondence",
+    secs.every((v, i) => i === 0 || v > secs[i - 1]));
+  ok("the fast formats hand time back", timeModeById("quick").inc > 0 && timeModeById("rush").inc > 0);
+
+  const c = clockFor("rush");
+  ok("a clock arrives in the board's own shape", c.type === "total" && c.seconds === 180 && c.inc === 2);
+  ok("correspondence is a per-move deadline", clockFor("daily").type === "move");
+  ok("an unknown clock falls back rather than crashing", clockFor("nonsense").seconds > 0);
+  ok("the format still in preparation says so", TIME_MODES.some((m) => m.pending && m.pendingDe && m.pendingEn));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

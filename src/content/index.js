@@ -10,3 +10,5 @@ export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } fro
 
 export { ITEMS, ITEM_LIST, hasItem, buyItem } from "./items.js";
 export { VOICES, voiceFor } from "./voices.js";
+
+export { TIME_MODES, timeModeById, timeModeKey, clockFor } from "./timeModes.js";

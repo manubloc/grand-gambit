@@ -8,7 +8,7 @@ import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc, TrophyIc } from "../icon
 import { JewelIc } from "../board/PieceGlyph.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
 import { retinueScore, mapUnlocked, buildArmy, buildArmyFromFormation, listSaves, fmtPlaytime } from "../../../meta/index.js";
-import { MAPS, mapById } from "../../../content/index.js";
+import { MAPS, mapById, TIME_MODES, timeModeById, clockFor } from "../../../content/index.js";
 import { SERVER_URL } from "../../config.js";
 import { hasItem } from "../../../content/index.js";
 import { serializeSave, parseSave, getAdminToken } from "../../../meta/index.js";
@@ -68,6 +68,17 @@ function buildStats(profile, playtimeSec) {
     xp: profile.xpEarned || 0, playtimeSec: playtimeSec || 0,
   };
 }
+// one small mark per gambit — bolt, clock, shield, crown
+function ModeGlyph({ glyph, color }) {
+  const p = { fill: "none", stroke: color, strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" };
+  return <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
+    {glyph === "bolt" && <path d="M13 2 L5 13.5 L11 13.5 L10 22 L19 10 L13 10 Z" fill={color} stroke="none" />}
+    {glyph === "clock" && <><circle cx="12" cy="13" r="8.2" {...p} /><path d="M12 8.6 L12 13 L15.2 14.8" {...p} /><path d="M9 2.6 L15 2.6" {...p} /></>}
+    {glyph === "shield" && <path d="M12 2.6 L20 5.6 C20 13.4 16.6 19 12 21.4 C7.4 19 4 13.4 4 5.6 Z" {...p} />}
+    {glyph === "crown" && <path d="M3.5 8 L7 13 L12 4.6 L17 13 L20.5 8 L19 19.4 L5 19.4 Z" {...p} />}
+  </svg>;
+}
+
 export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
@@ -76,6 +87,9 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   const armyFor = (mapId) => buildArmy(profile, mapById(mapId));
   // classic online: pure standard chess — the plain level-1 side, mate rules
   const [duelMode, setDuelMode] = useState("duel"); // duel | classic
+  // THE FOUR GAMBITS: how long a duel is given. The choice travels with the
+  // queue entry, so two players only meet when they asked for the same clock.
+  const [timeMode, setTimeMode] = useState("rush");
   const [duelMapChoice, setDuelMapChoice] = useState("random"); // "random" | a map id from myMaps
   const classicSide = () => buildArmyFromFormation(() => 1, mapById("classic").defaultFormation);
   const queueMaps = () => {
@@ -176,10 +190,10 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   }
   function findRandom() {
     if (searching) { net.send({ t: "dequeue" }); setSearching(false); return; }
-    net.send({ t: "queue", maps: queueMaps(), army: queueArmy(), armies: queueArmies(), mode: duelMode });
+    net.send({ t: "queue", maps: queueMaps(), army: queueArmy(), armies: queueArmies(), mode: duelMode, tc: timeMode });
     setSearching(true);
   }
-  const challengeFriend = (f) => { const maps = queueMaps(); net.send({ t: "challenge", targetId: f.id, maps, army: duelMode === "classic" ? classicSide() : armyFor(maps[0]), armies: armiesFor(maps), mode: duelMode }); };
+  const challengeFriend = (f) => { const maps = queueMaps(); net.send({ t: "challenge", targetId: f.id, maps, army: duelMode === "classic" ? classicSide() : armyFor(maps[0]), armies: armiesFor(maps), mode: duelMode, tc: timeMode }); };
 
   const Line = ({ children }) => <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>{children}</div>;
   const input = { flex: 1, minWidth: 120, background: T.bg2, border: `1px solid ${T.line}`, color: T.text,
@@ -261,6 +275,48 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
             {!searching ? (<>
               <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
                 options={[{ value: "duel", label: t("online.duel") }, { value: "classic", label: t("mode.classic") }]} />
+
+              {/* THE FOUR GAMBITS, as cards: name, clock and one line on what
+                  the format asks of you. Rush stands a little taller — that is
+                  where most duels are actually played. */}
+              <div style={{ display: "grid", gap: 7, marginTop: 10 }}>
+                {TIME_MODES.map((m) => {
+                  const txt = en ? m.en : m.de;
+                  const on = timeMode === m.id;
+                  return (
+                    <button key={m.id} disabled={m.pending}
+                      onClick={() => { if (m.pending) return; if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setTimeMode(m.id); }}
+                      style={{ textAlign: "left", fontFamily: "inherit", cursor: m.pending ? "default" : "pointer",
+                        display: "flex", alignItems: "flex-start", gap: 11, width: "100%",
+                        padding: m.featured ? "13px 13px" : "11px 13px", borderRadius: 13,
+                        background: on ? `linear-gradient(150deg, ${m.color}2e, rgba(12,16,26,.9) 62%)`
+                          : "linear-gradient(150deg, rgba(30,36,54,.5), rgba(10,12,20,.75))",
+                        border: `1.5px solid ${on ? m.color : "rgba(120,130,160,.28)"}`,
+                        boxShadow: on ? `0 0 16px ${m.color}44` : "none",
+                        opacity: m.pending ? 0.62 : 1 }}>
+                      <span aria-hidden style={{ width: 30, height: 30, flex: "0 0 auto", borderRadius: "50%",
+                        display: "grid", placeItems: "center", background: `${m.color}22`, border: `1px solid ${m.color}77` }}>
+                        <ModeGlyph glyph={m.glyph} color={m.color} />
+                      </span>
+                      <span style={{ minWidth: 0, flex: 1 }}>
+                        <span style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+                          <span className="gg-serif" style={{ fontSize: m.featured ? 15.5 : 14.5, color: on ? "#fdf6e2" : T.text,
+                            letterSpacing: ".03em" }}>{txt.name}</span>
+                          <span style={{ fontSize: 11.5, fontWeight: 800, color: m.color, whiteSpace: "nowrap" }}>{txt.tag}</span>
+                        </span>
+                        <span style={{ display: "block", fontSize: 11.5, lineHeight: 1.45, color: T.dim, marginTop: 3 }}>
+                          {m.pending ? (en ? m.pendingEn : m.pendingDe) : txt.blurb}
+                        </span>
+                        {on && (en ? m.warnEn : m.warnDe) && (
+                          <span style={{ display: "block", fontSize: 11, color: m.color, marginTop: 4 }}>
+                            {en ? m.warnEn : m.warnDe}
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
               {duelMode === "duel" && myMaps.length > 1 && (
                 <div style={{ marginTop: 8 }}>
                   <div style={{ fontSize: 11.5, color: T.faint, marginBottom: 5 }}>{t("online.mapChoice")}</div>

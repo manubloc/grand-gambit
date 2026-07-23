@@ -250,11 +250,36 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // pressure — a total budget (bosses) or a per-move limit (hard stages).
   // The clock only runs on YOUR move and pauses for story intro and banner;
   // hitting zero flags the game, chess-style.
-  const timer = campaign ? match.timer : null;
+  // A DUEL BRINGS ITS OWN CLOCK. Campaign stages carry a timer from the node;
+  // an online duel carries the one both players agreed on in the lobby, and
+  // there BOTH sides burn time — so the foe's budget is tracked too, and every
+  // completed move hands its owner the increment back (Fischer).
+  const timer = campaign ? match.timer : (pvp?.clock || null);
   const [clock, setClock] = useState(resume?.clock ?? (timer ? timer.seconds : null));
+  const [foeClock, setFoeClock] = useState(timer && pvp ? timer.seconds : null);
+  const lastTurn = useRef(state?.turn);
   useEffect(() => {
     if (timer?.type === "move" && state.turn === myColor) setClock(timer.seconds);
   }, [state, timer, myColor]);
+  useEffect(() => {
+    // the turn changed: whoever just moved gets the increment
+    if (!timer || !pvp || state.turn === lastTurn.current) { lastTurn.current = state?.turn; return; }
+    const moved = lastTurn.current;
+    lastTurn.current = state.turn;
+    const inc = timer.inc || 0;
+    if (!inc) return;
+    if (moved === myColor) setClock((c) => (c == null ? c : c + inc));
+    else setFoeClock((c) => (c == null ? c : c + inc));
+  }, [state.turn]); // eslint-disable-line
+  useEffect(() => {
+    // the foe's glass runs while it is his move
+    if (!timer || !pvp || banner || state.turn === myColor) return;
+    const id = setInterval(() => setFoeClock((c) => (c == null ? c : c - 1)), 1000);
+    return () => clearInterval(id);
+  }, [timer, pvp, state.turn, myColor, banner]);
+  useEffect(() => {
+    if (pvp && timer && foeClock != null && foeClock <= 0 && !finished.current) finish("win", "time");
+  }, [foeClock]); // eslint-disable-line
   useEffect(() => {
     if (!timer || clock == null || banner || intro || scout || scoutWaitOpp || state.turn !== myColor) return;
     const id = setInterval(() => setClock((c) => (c == null ? c : c - 1)), 1000);
@@ -549,6 +574,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const statusText = banner ? "" : st.check ? t("game.check") : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
   const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
+  // in a duel the FOE's glass hangs beside your own, so you can see him burn
+  const foeLbl = foeClock != null ? `${Math.floor(Math.max(0, foeClock) / 60)}:${String(Math.max(0, foeClock) % 60).padStart(2, "0")}` : null;
 
   const [wideMatch, setWideMatch] = useState(typeof window !== "undefined" && window.innerWidth >= 940);
   useEffect(() => {
@@ -584,6 +611,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           <span className="gg-serif" style={pill({ cursor: "default",
             border: `1.5px solid ${T.gold}${clockHot ? "cc" : "55"}`, color: clockHot ? T.goldBright : T.gold,
             letterSpacing: ".06em", fontSize: 14, gap: 5 })}><HourglassIc size={14} color={clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
+        )}
+        {foeLbl && (
+          <span className="gg-serif" title={t("online.foeClock")} style={pill({ cursor: "default",
+            border: `1.5px solid ${T.magenta}55`, color: T.magenta, letterSpacing: ".06em", fontSize: 13, gap: 5,
+            opacity: state.turn === myColor ? 0.65 : 1 })}>
+            <HourglassIc size={13} color={T.magenta} /> {foeLbl}</span>
         )}
         {armResign ? (
           <span style={pill({ cursor: "default", border: `1.5px solid ${T.gold}`, color: T.goldBright, gap: 9,

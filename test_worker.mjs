@@ -211,5 +211,25 @@ function mkHall(t0 = 1000) {
   ok("oppArmy shown to each side is also the map-correct one", msgs.every((mm) => mm.oppArmy[0] === "GAUNTLET_ARMY_E1" || mm.oppArmy[0] === "GAUNTLET_ARMY_E2"));
 }
 
+// ── ONE CLOCK ONLY EVER MEETS ITS OWN ───────────────────────────────────────
+// A bullet player pulled into a rapid game would lose on time through no fault
+// of their own — the matchmaker must keep the formats apart, and must tell the
+// board which clock was agreed.
+{
+  const { hall, last } = mkHall();
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "A", score: 500 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "B", score: 500 });
+  hall.handle("a", { t: "queue", maps: ["classic"], army: ["p"], tc: "quick" });
+  hall.handle("b", { t: "queue", maps: ["classic"], army: ["q"], tc: "prime" });
+  ok("a bullet player is not thrown into a rapid game", Object.keys(hall.matches).length === 0);
+
+  hall.handle("b", { t: "dequeue" });
+  hall.handle("b", { t: "queue", maps: ["classic"], army: ["q"], tc: "quick" });
+  ok("two players on the same clock are paired", Object.keys(hall.matches).length === 1);
+  const ma = last("match", "a"), mb = last("match", "b");
+  ok("the match names that clock", ma && ma.tc === "quick");
+  ok("both sides are told the same clock", ma && mb && ma.tc === mb.tc);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

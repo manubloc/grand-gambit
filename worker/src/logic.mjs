@@ -117,6 +117,7 @@ export class HallCore {
       const waited = this.now() - Math.min(a.since, b.since);
       if (Math.abs(a.score - b.score) > BAND(waited)) continue;
       if ((a.mode || "duel") !== (b.mode || "duel")) continue; // classic meets classic, duel meets duel
+      if ((a.tc || "rush") !== (b.tc || "rush")) continue;      // and one clock only ever meets its own
       const maps = a.maps.filter((m) => b.maps.includes(m));
       if (!maps.length) continue;
       q.splice(j, 1); q.splice(i, 1); this.queue = q;
@@ -139,7 +140,10 @@ export class HallCore {
     ms[matchId] = { w: w.id, b: bl.id, armyW, armyB, map, n: 0, mode };
     this.matches = ms;
     // classic rooms play pure mate chess; duels keep the HP arena
-    const base = { t: "match", matchId, seed, map, rules: mode === "classic" ? "chess" : "hp", mode };
+    // the clock both sides asked for travels with the match, so neither can
+    // start on a different budget than the other
+    const tc = a.tc || b.tc || "rush";
+    const base = { t: "match", matchId, seed, map, rules: mode === "classic" ? "chess" : "hp", mode, tc };
     this.send(w.id, { ...base, youAre: "w", opp: { name: this.player(bl.id).name, score: bl.score }, oppArmy: armyB });
     this.send(bl.id, { ...base, youAre: "b", opp: { name: this.player(w.id).name, score: w.score }, oppArmy: armyW });
     return matchId;
@@ -258,7 +262,7 @@ export class HallCore {
     if (msg.t === "queue") {
       this.dropFromQueue(me);
       const q = this.queue;
-      q.push({ id: me, since: this.now(), maps: msg.maps || ["classic"], army: msg.army, armies: msg.armies || null, score: p.score, mode: msg.mode || "duel" });
+      q.push({ id: me, since: this.now(), maps: msg.maps || ["classic"], army: msg.army, armies: msg.armies || null, score: p.score, mode: msg.mode || "duel", tc: msg.tc || "rush" });
       this.queue = q;
       this.tryMatch(); return me;
     }
