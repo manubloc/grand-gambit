@@ -31,6 +31,11 @@ function cleanStats(s) {
   return Object.keys(out).length ? out : null;
 }
 
+// A correspondence player owes a move within three days; miss it and the game
+// is lost on time. Long enough for a holiday weekend, short enough that a game
+// cannot rot forever.
+const DAILY_MS = 3 * 24 * 60 * 60 * 1000;
+
 export class HallCore {
   constructor({ store, send, now = () => Date.now(), adminToken = "" }) {
     this.store = store; this.send = send; this.now = now;
@@ -51,6 +56,14 @@ export class HallCore {
   set challenges(v) { this._put("challenges", v); }
   get finished() { return this._blob("finished", {}); }   // matchId → {…, want:[], until}
   set finished(v) { this._put("finished", v); }
+  // ── CORRESPONDENCE (Classic Gambit) ────────────────────────────────────────
+  // A live match is a relay between two open sockets: close one and the game is
+  // over. A daily game must outlive both players closing the app, so it is kept
+  // HERE in full — seed, both armies and the ordered list of commands. The board
+  // is deterministic (same seed + same commands = same position), so a returning
+  // player replays the list instead of the server having to understand chess.
+  get daily() { return this._blob("daily", {}); }
+  set daily(v) { this._put("daily", v); }
   nextId(prefix) { const n = (Number(this.store.kvGet("seq")) || 0) + 1; this.store.kvSet("seq", String(n)); return prefix + n; }
 
   player(id) { return this.store.getPlayer(id); }
@@ -63,7 +76,7 @@ export class HallCore {
     if (!id) return;
     this.online.delete(id);
     this.dropFromQueue(id);
-    this.endMatchFor(id, "oppLeft");
+    this.endMatchFor(id, "oppLeft");   // live matches only — daily games sleep on
     this.notifyFriends(id);
   }
 
@@ -137,6 +150,20 @@ export class HallCore {
     // never accidentally uses the arrangement someone saved for "arena".
     const armyOf = (side) => (side.armies && side.armies[map]) || side.army;
     const armyW = armyOf(w), armyB = armyOf(bl);
+    const tcPick = a.tc || b.tc || "rush";
+    if (tcPick === "daily") {
+      // CORRESPONDENCE: no live seat is opened at all. The game is filed, both
+      // players are told it exists, and it waits — days if it must.
+      const gid = this.nextId("d");
+      const g = this.daily;
+      g[gid] = { id: gid, w: w.id, b: bl.id, armyW, armyB, map, seed,
+        rules: mode === "classic" ? "chess" : "hp", mode,
+        moves: [], turn: "w", createdAt: this.now(), lastAt: this.now(),
+        deadline: this.now() + DAILY_MS, done: null };
+      this.daily = g;
+      for (const side of [w, bl]) this.send(side.id, { t: "daily:new", gameId: gid });
+      return gid;
+    }
     ms[matchId] = { w: w.id, b: bl.id, armyW, armyB, map, n: 0, mode };
     this.matches = ms;
     // classic rooms play pure mate chess; duels keep the HP arena
@@ -148,6 +175,42 @@ export class HallCore {
     this.send(bl.id, { ...base, youAre: "b", opp: { name: this.player(w.id).name, score: w.score }, oppArmy: armyW });
     return matchId;
   }
+  // ── correspondence: the long game ──────────────────────────────────────────
+  /** Anyone who touches the shelf first also sweeps it: a game whose deadline
+   *  has passed is decided against whoever owed the move. */
+  sweepDaily() {
+    const g = this.daily; let changed = false;
+    for (const rec of Object.values(g)) {
+      if (rec.done || rec.deadline > this.now()) continue;
+      const loser = rec.turn === "w" ? rec.w : rec.b;
+      rec.done = { winner: rec.turn === "w" ? "b" : "w", reason: "time" };
+      rec.lastAt = this.now(); changed = true;
+      this.rateDaily(rec);
+      for (const pid of [rec.w, rec.b]) this.send(pid, { t: "daily:over", gameId: rec.id, winner: rec.done.winner, reason: "time", lost: pid === loser });
+    }
+    if (changed) this.daily = g;
+  }
+  rateDaily(rec) {
+    // reuse the ladder the live duels use: 1 = white won, 0 = black won
+    const score = rec.done.winner === "w" ? 1 : rec.done.winner === "b" ? 0 : 0.5;
+    try { this.settle(rec.id, { w: rec.w, b: rec.b, mode: rec.mode }, score); } catch { /* rating is a courtesy, never a blocker */ }
+  }
+  dailyFor(id) {
+    this.sweepDaily();
+    const out = [];
+    for (const rec of Object.values(this.daily)) {
+      if (rec.w !== id && rec.b !== id) continue;
+      const mySide = rec.w === id ? "w" : "b";
+      const oppId = rec.w === id ? rec.b : rec.w;
+      out.push({ gameId: rec.id, youAre: mySide, yourTurn: !rec.done && rec.turn === mySide,
+        opp: { name: this.player(oppId)?.name || "?", online: this.isOnline(oppId) },
+        moves: rec.moves.length, deadline: rec.deadline, lastAt: rec.lastAt,
+        done: rec.done, map: rec.map, rules: rec.rules, mode: rec.mode });
+    }
+    out.sort((x, y) => (y.yourTurn ? 1 : 0) - (x.yourTurn ? 1 : 0) || y.lastAt - x.lastAt);
+    return out;
+  }
+
   endMatchFor(id, reason) {
     const ms = this.matches;
     for (const [mid, m] of Object.entries(ms)) if (m.w === id || m.b === id) {
@@ -329,6 +392,52 @@ export class HallCore {
       const m = this.matches[msg.matchId]; if (!m) return me;
       const opp = m.w === me ? m.b : m.w;
       this.send(opp, { t: "scoutDone", matchId: msg.matchId, swaps: Array.isArray(msg.swaps) ? msg.swaps.slice(0, 32) : [] });
+      return me;
+    }
+    if (msg.t === "daily:list") { this.send(me, { t: "daily:list", games: this.dailyFor(me) }); return me; }
+    if (msg.t === "daily:open") {
+      this.sweepDaily();
+      const rec = this.daily[msg.gameId];
+      if (!rec || (rec.w !== me && rec.b !== me)) return me;
+      const oppId = rec.w === me ? rec.b : rec.w;
+      this.send(me, { t: "daily:game", game: { gameId: rec.id, youAre: rec.w === me ? "w" : "b",
+        seed: rec.seed, map: rec.map, rules: rec.rules, mode: rec.mode,
+        armyW: rec.armyW, armyB: rec.armyB, moves: rec.moves, turn: rec.turn,
+        deadline: rec.deadline, done: rec.done,
+        opp: { name: this.player(oppId)?.name || "?", score: this.player(oppId)?.score || 0 } } });
+      return me;
+    }
+    if (msg.t === "daily:move") {
+      this.sweepDaily();
+      const g = this.daily; const rec = g[msg.gameId];
+      if (!rec || rec.done) return me;
+      const mySide = rec.w === me ? "w" : rec.b === me ? "b" : null;
+      if (!mySide || rec.turn !== mySide) return me;      // not yours to move
+      if (!msg.cmd || typeof msg.cmd !== "object") return me;
+      if (rec.moves.length > 600) return me;              // a sane ceiling
+      rec.moves.push(msg.cmd);
+      rec.turn = mySide === "w" ? "b" : "w";
+      rec.lastAt = this.now();
+      rec.deadline = this.now() + DAILY_MS;
+      if (msg.result) rec.done = { winner: msg.result.winner || null, reason: msg.result.reason || "end" };
+      g[rec.id] = rec; this.daily = g;
+      if (rec.done) this.rateDaily(rec);
+      const oppId = rec.w === me ? rec.b : rec.w;
+      // the nudge: if he is here, he learns at once; if not, he finds it in his
+      // list the moment he returns
+      this.send(oppId, { t: "daily:turn", gameId: rec.id, moves: rec.moves.length, done: rec.done });
+      this.send(me, { t: "daily:ok", gameId: rec.id, moves: rec.moves.length, done: rec.done });
+      return me;
+    }
+    if (msg.t === "daily:resign") {
+      const g = this.daily; const rec = g[msg.gameId];
+      if (!rec || rec.done) return me;
+      const mySide = rec.w === me ? "w" : rec.b === me ? "b" : null;
+      if (!mySide) return me;
+      rec.done = { winner: mySide === "w" ? "b" : "w", reason: "resign" };
+      rec.lastAt = this.now(); g[rec.id] = rec; this.daily = g;
+      this.rateDaily(rec);
+      for (const pid of [rec.w, rec.b]) this.send(pid, { t: "daily:over", gameId: rec.id, winner: rec.done.winner, reason: "resign", lost: pid === me });
       return me;
     }
     if (msg.t === "resign") { this.endMatchFor(me, "oppResign"); return me; }

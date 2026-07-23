@@ -46,9 +46,11 @@ export const TIME_MODES = [
     // Honest state: correspondence needs the match to survive both players
     // closing the app, plus a nudge when it is your turn. The live relay does
     // neither yet, so the card announces the format instead of pretending.
-    pending: true,
-    pendingDe: "In Vorbereitung — dieses Format braucht Partien, die offline weiterlaufen, und eine Benachrichtigung, wenn du am Zug bist.",
-    pendingEn: "In preparation — this format needs games that survive going offline, and a nudge when it is your turn.",
+    // The game now lives on the server: seed, both armies and every command,
+    // so it outlasts both players closing the app. What is still missing is the
+    // push notification — that needs signing keys and a subscription store.
+    noteDe: "Deine Fernpartien warten auf dem Server und stehen in der Lobby unter Fernpartien. Wer drei Tage nicht zieht, verliert auf Zeit.",
+    noteEn: "Your correspondence games wait on the server and appear in the lobby. Three days without a move loses on time.",
   },
 ];
 

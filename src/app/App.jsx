@@ -148,6 +148,10 @@ export default function App() {
   // over the tab you chose. It asks now, and it says what leaving costs: a
   // campaign fight is saved and resumable, a quick or online game is not.
   const [leaveTo, setLeaveTo] = useState(null);
+  // A CORRESPONDENCE GAME OPENED FROM THE SHELF. The server hands back seed,
+  // both armies and every command played so far; the board replays them and
+  // hands the single next move back. Nothing here lives in a socket.
+  const [dailyGame, setDailyGame] = useState(null);
   const lastQuick = useRef(null);             // remembered setup for the next visit
   const wide = useMedia("(min-width: 900px)");
   const netRef = useRef(null);
@@ -167,6 +171,11 @@ export default function App() {
       meta: { league: p.campaign?.league || 1, gold: p.gold || 0 } });
   }), []);
   useEffect(() => netRef.current.on("gift", (m) => dispatch({ type: "GIFT_GOLD", n: m.gold || 10 })), []);
+  useEffect(() => netRef.current.on("daily:game", (m) => {
+    if (!m.game) return;
+    setMatch(null); setPvp(null); setQuick(null);
+    setDailyGame({ ...m.game, net: netRef.current });
+  }), []);
   useEffect(() => netRef.current.on("match", (m) => {
     setMatch(null);
     setPvp({ matchId: m.matchId, seed: m.seed, mapId: m.map, color: m.youAre, rules: m.rules,
@@ -222,12 +231,12 @@ export default function App() {
   // ANDROID/PWA BACK: inside a match the back gesture must fall back to the
   // hall, never kill the app. This hook lives ABOVE the login early-returns —
   // hooks must run in the same order on every render (React #310).
-  const inMatchNow = !!match || !!pvp || !!quick;
+  const inMatchNow = !!match || !!pvp || !!quick || !!dailyGame;
   useEffect(() => {
     if (!inMatchNow) return;
     try { window.history.pushState({ gg: "match" }, ""); } catch {}
     const onPop = () => {
-      if (pvp) setPvp(null); else if (match) setMatch(null); else if (quick) setQuick(null);
+      if (pvp) setPvp(null); else if (match) setMatch(null); else if (quick) setQuick(null); else if (dailyGame) setDailyGame(null);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -255,6 +264,9 @@ export default function App() {
         onArmy={() => { setMatch(null); setTab("army"); }} />
     : quick
     ? <GameScreen key={"q" + quick.n} profile={profile} dispatch={dispatch} t={t} quick={quick} onExit={() => setQuick(null)} />
+    : dailyGame
+    ? <GameScreen key={"daily" + dailyGame.gameId} profile={profile} dispatch={dispatch} t={t}
+        daily={dailyGame} onExit={() => setDailyGame(null)} />
     : tab === "play" ? (
         view === "quick" ? sub(t("hub.quick"), <QuickSetup profile={profile} dispatch={dispatch} t={t} initial={lastQuick.current}
           onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
@@ -266,7 +278,8 @@ export default function App() {
           if (!faced.includes(id)) dispatch({ type: "REPLACE", profile: { ...profile, campaign: { ...profile.campaign, faced: [...faced, id] } } });
           setMatch(buildStageMatch(id, profile));
         }} onOpenTree={() => { setArmyTab({ tab: "tree", n: Date.now() }); setTab("army"); }} />
-        : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account} />)
+        : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account}
+            onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} onTutorial={() => setView("tutorial")} />
       )
@@ -287,7 +300,7 @@ export default function App() {
               onSwitchSave={() => setSlot(null)}
               onLogout={hardLogout} />;
 
-  const inMatch = !!match || !!pvp || !!quick;
+  const inMatch = !!match || !!pvp || !!quick || !!dailyGame;
   // map & match immersion (v0.3/v0.4): the campaign map and every running
   // match fill the screen — the shell locks to 100dvh, UI floats above
   const immersive = inMatch || (tab === "play" && view === "camp");
@@ -352,7 +365,7 @@ export default function App() {
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
-        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
+        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {(
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
@@ -386,7 +399,7 @@ export default function App() {
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
-        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
+        onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           <div style={{ background: `${T.panel}e8`, backdropFilter: "blur(10px)", border: `1px solid ${T.line}`,

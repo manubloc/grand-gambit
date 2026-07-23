@@ -525,7 +525,10 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("a clock arrives in the board's own shape", c.type === "total" && c.seconds === 180 && c.inc === 2);
   ok("correspondence is a per-move deadline", clockFor("daily").type === "move");
   ok("an unknown clock falls back rather than crashing", clockFor("nonsense").seconds > 0);
-  ok("the format still in preparation says so", TIME_MODES.some((m) => m.pending && m.pendingDe && m.pendingEn));
+  // correspondence is playable now — its card explains how the format behaves
+  ok("correspondence explains itself in both tongues",
+    TIME_MODES.some((m) => m.id === "daily" && m.noteDe && m.noteEn));
+  ok("no gambit is left merely announced", TIME_MODES.every((m) => !m.pending));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

@@ -1,5 +1,8 @@
 // The Hall (Durable-Object multiplayer core) — protocol tests on the memory store.
 import { HallCore, memoryStore } from "./worker/src/logic.mjs";
+import { createGame, reduce, moveCommand, legalMoves } from "./src/core/index.js";
+import { mapById } from "./src/content/index.js";
+import { buildArmyFromFormation } from "./src/meta/index.js";
 
 let pass = 0, fail = 0;
 const ok = (name, cond) => { if (cond) { pass++; console.log("  ok  -", name); } else { fail++; console.log(" FAIL -", name); } };
@@ -229,6 +232,134 @@ function mkHall(t0 = 1000) {
   const ma = last("match", "a"), mb = last("match", "b");
   ok("the match names that clock", ma && ma.tc === "quick");
   ok("both sides are told the same clock", ma && mb && ma.tc === mb.tc);
+}
+
+// ── CORRESPONDENCE: THE GAME THAT SURVIVES GOING OFFLINE ────────────────────
+// This is the whole point of Classic Gambit: a live match dies when a socket
+// closes, a daily game must not. It is filed with seed, both armies and the
+// ordered commands, so a returning player replays it exactly.
+{
+  const { hall, last, tick } = mkHall();
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 500 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 500 });
+  hall.handle("a", { t: "queue", maps: ["classic"], army: ["p"], tc: "daily" });
+  hall.handle("b", { t: "queue", maps: ["classic"], army: ["q"], tc: "daily" });
+
+  ok("a daily pairing opens no live seat", Object.keys(hall.matches).length === 0);
+  const nw = last("daily:new", "a");
+  ok("both players are told a game was filed", !!nw && !!last("daily:new", "b"));
+  const gid = nw.gameId;
+
+  hall.handle("a", { t: "daily:list" });
+  const list = last("daily:list", "a");
+  ok("the shelf lists the game", list && list.games.length === 1 && list.games[0].gameId === gid);
+  const mine = list.games[0];
+  ok("it says whose move it is", mine.yourTurn === (mine.youAre === "w"));
+  ok("it names the opponent", mine.opp.name === "Bo");
+  ok("it carries a deadline in the future", mine.deadline > 0);
+
+  // THE DISCONNECT that would kill a live match
+  hall.close("a"); hall.close("b");
+  ok("closing both sockets does NOT end the game", !hall.daily[gid].done);
+
+  // the player to move returns and plays
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 500 });
+  const g0 = hall.daily[gid];
+  const mover = g0.turn === "w" ? g0.w : g0.b;
+  const other = mover === g0.w ? g0.b : g0.w;
+  hall.handle(mover, { t: "daily:open", gameId: gid });
+  const opened = last("daily:game", mover);
+  ok("opening returns everything needed to rebuild the board",
+    opened && opened.game.seed != null && opened.game.armyW && opened.game.armyB && Array.isArray(opened.game.moves));
+
+  hall.handle(mover, { t: "daily:move", gameId: gid, cmd: { t: "move", from: 8, to: 16 } });
+  ok("the move is filed", hall.daily[gid].moves.length === 1);
+  ok("and the turn passes", hall.daily[gid].turn !== g0.turn);
+  ok("the mover is acknowledged", !!last("daily:ok", mover));
+
+  // the WRONG player may not move
+  const before = hall.daily[gid].moves.length;
+  hall.handle(mover, { t: "daily:move", gameId: gid, cmd: { t: "move", from: 9, to: 17 } });
+  ok("nobody may move twice in a row", hall.daily[gid].moves.length === before);
+  hall.handle("zz", { t: "daily:move", gameId: gid, cmd: { t: "move", from: 9, to: 17 } });
+  ok("a stranger cannot touch the game", hall.daily[gid].moves.length === before);
+
+  // the deadline decides an abandoned game
+  tick(4 * 24 * 60 * 60 * 1000);
+  hall.handle(mover, { t: "daily:list" });
+  ok("a game left past its deadline is decided", !!hall.daily[gid].done);
+  ok("and it is decided against whoever owed the move", hall.daily[gid].done.reason === "time");
+  ok("both players are told", !!last("daily:over", mover) && !!last("daily:over", other));
+}
+
+// ── correspondence: resigning ───────────────────────────────────────────────
+{
+  const { hall, last } = mkHall();
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "A", score: 100 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "B", score: 100 });
+  hall.handle("a", { t: "queue", maps: ["classic"], army: ["p"], tc: "daily" });
+  hall.handle("b", { t: "queue", maps: ["classic"], army: ["q"], tc: "daily" });
+  const gid = last("daily:new", "a").gameId;
+  hall.handle("a", { t: "daily:resign", gameId: gid });
+  ok("resigning ends a daily game", !!hall.daily[gid].done && hall.daily[gid].done.reason === "resign");
+  ok("the winner is the other side", hall.daily[gid].done.winner === (hall.daily[gid].w === "a" ? "b" : "w"));
+  ok("a finished game accepts no further moves", (() => {
+    const n = hall.daily[gid].moves.length;
+    hall.handle("b", { t: "daily:move", gameId: gid, cmd: { t: "move", from: 8, to: 16 } });
+    return hall.daily[gid].moves.length === n;
+  })());
+}
+
+// ── THE LONG GAME, PLAYED FOR REAL ──────────────────────────────────────────
+// Not a mock: four half-moves are played through the actual rules engine, on
+// four different days, with BOTH players offline in between. What is stored is
+// only seed + armies + commands, so the proof that matters is that each side,
+// rebuilding independently, lands on the identical position.
+{
+  const { hall, last, tick } = mkHall();
+  const army = () => buildArmyFromFormation(() => 1, mapById("classic").defaultFormation);
+  const rebuild = (g) => {
+    let st = createGame(g.armyW, g.armyB, { map: mapById(g.map), rules: g.rules, seed: g.seed >>> 0 });
+    for (const c of g.moves) st = reduce(st, c).state;
+    return st;
+  };
+  const sig = (st) => st.board.map((p) => p && p.kind + p.color + (p.hp ?? "")).join(",");
+
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 500 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 500 });
+  hall.handle("a", { t: "queue", maps: ["classic"], army: army(), tc: "daily" });
+  hall.handle("b", { t: "queue", maps: ["classic"], army: army(), tc: "daily" });
+  const gid = last("daily:new", "a").gameId;
+  hall.close("a"); hall.close("b");
+
+  let played = 0;
+  for (let i = 0; i < 4; i++) {
+    tick(20 * 60 * 60 * 1000);                       // a day (nearly) passes
+    const rec = hall.daily[gid];
+    const who = rec.turn === "w" ? rec.w : rec.b;
+    hall.handle(null, { t: "hello", id: who, secret: "s", name: who, score: 500 });
+    hall.handle(who, { t: "daily:open", gameId: gid });
+    const g = last("daily:game", who).game;
+    const st = rebuild(g);
+    const mv = legalMoves(st)[0];
+    if (!mv) break;
+    hall.handle(who, { t: "daily:move", gameId: gid, cmd: moveCommand(mv) });
+    hall.close(who);                                  // and away again
+    played++;
+  }
+  ok("four half-moves are played across four days offline", played === 4);
+  ok("the server holds exactly those commands", hall.daily[gid].moves.length === 4);
+  ok("the game is still open", !hall.daily[gid].done);
+
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 500 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 500 });
+  hall.handle("a", { t: "daily:open", gameId: gid });
+  hall.handle("b", { t: "daily:open", gameId: gid });
+  const sa = rebuild(last("daily:game", "a").game);
+  const sb = rebuild(last("daily:game", "b").game);
+  ok("both players rebuild the IDENTICAL position", sig(sa) === sig(sb));
+  ok("and agree whose move it is", sa.turn === sb.turn);
+  ok("the position really moved on from the start", sig(sa) !== sig(rebuild({ ...last("daily:game", "a").game, moves: [] })));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

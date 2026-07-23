@@ -79,7 +79,7 @@ function ModeGlyph({ glyph, color }) {
   </svg>;
 }
 
-export function OnlineScreen({ profile, dispatch, t, net, account }) {
+export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = null }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
   const score = useMemo(() => retinueScore(profile), [profile]);
@@ -90,6 +90,8 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
   // THE FOUR GAMBITS: how long a duel is given. The choice travels with the
   // queue entry, so two players only meet when they asked for the same clock.
   const [timeMode, setTimeMode] = useState("rush");
+  // the correspondence shelf: games that wait for you, however long that takes
+  const [daily, setDaily] = useState([]);
   const [duelMapChoice, setDuelMapChoice] = useState("random"); // "random" | a map id from myMaps
   const classicSide = () => buildArmyFromFormation(() => 1, mapById("classic").defaultFormation);
   const queueMaps = () => {
@@ -124,13 +126,18 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
 
   useEffect(() => {
     const subs = [
-      net.on("welcome", (m) => { setConn("on"); setOnlineN(m.online || 0); }),
+      net.on("welcome", (m) => { setConn("on"); setOnlineN(m.online || 0); net.send({ t: "daily:list" }); }),
       net.on("friends", (m) => { setFriends(m.friends || []); setRequests(m.requests || []); }),
       net.on("challenge", (m) => setChallenge(m)),
       net.on("challengeDeclined", () => flash(t("online.decline"))),
       net.on("info", (m) => flash(m.info === "requestSent" ? t("online.requestSent") : t("online.challengeSent"))),
       net.on("error", (m) => flash(t("online.err", { e: m.error }))),
       net.on("match", () => { setSearching(false); setChallenge(null); }),
+      net.on("daily:list", (m) => setDaily(m.games || [])),
+      net.on("daily:new", () => { setSearching(false); net.send({ t: "daily:list" }); flash(t("daily.opened")); }),
+      net.on("daily:turn", () => net.send({ t: "daily:list" })),
+      net.on("daily:ok", () => net.send({ t: "daily:list" })),
+      net.on("daily:over", (m) => { net.send({ t: "daily:list" }); flash(m.lost ? t("daily.lost") : t("daily.won")); }),
       net.on("leaderboard", (m) => setLb(m)),
       net.on("vault", (m) => setVault(m.list || [])),
       net.on("admin", (m) => { if (m.cmd === "dump") setUsers(Array.isArray(m.players) ? m.players : Object.values(m.players || {})); }),
@@ -305,11 +312,11 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
                           <span style={{ fontSize: 11.5, fontWeight: 800, color: m.color, whiteSpace: "nowrap" }}>{txt.tag}</span>
                         </span>
                         <span style={{ display: "block", fontSize: 11.5, lineHeight: 1.45, color: T.dim, marginTop: 3 }}>
-                          {m.pending ? (en ? m.pendingEn : m.pendingDe) : txt.blurb}
+                          {txt.blurb}
                         </span>
-                        {on && (en ? m.warnEn : m.warnDe) && (
+                        {on && (en ? (m.warnEn || m.noteEn) : (m.warnDe || m.noteDe)) && (
                           <span style={{ display: "block", fontSize: 11, color: m.color, marginTop: 4 }}>
-                            {en ? m.warnEn : m.warnDe}
+                            {en ? (m.warnEn || m.noteEn) : (m.warnDe || m.noteDe)}
                           </span>
                         )}
                       </span>
@@ -330,6 +337,45 @@ export function OnlineScreen({ profile, dispatch, t, net, account }) {
                   duelMapChoice === "random" ? t("online.infoRandomMap") :
                   t("online.infoFixedMap", { map: en ? mapById(duelMapChoice).nameEn : mapById(duelMapChoice).nameDe })}
               </div>
+              {/* THE CORRESPONDENCE SHELF: every long game you have running,
+                  the ones waiting on YOU first. This list is the whole point of
+                  the format — it is what you come back to, days later. */}
+              {daily.length > 0 && (
+                <div style={{ marginTop: 12 }}>
+                  <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginBottom: 6 }}>
+                    {t("daily.title").toUpperCase()}
+                  </div>
+                  <div style={{ display: "grid", gap: 6 }}>
+                    {daily.map((g) => {
+                      const days = Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000));
+                      const mine = g.yourTurn && !g.done;
+                      return (
+                        <button key={g.gameId} onClick={() => onDaily && onDaily(g.gameId)}
+                          style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left",
+                            fontFamily: "inherit", cursor: "pointer", padding: "10px 12px", borderRadius: 12,
+                            background: mine ? "linear-gradient(150deg, rgba(167,139,250,.26), rgba(12,16,26,.9) 62%)"
+                              : "linear-gradient(150deg, rgba(30,36,54,.5), rgba(10,12,20,.75))",
+                            border: `1.5px solid ${mine ? "#a78bfa" : "rgba(120,130,160,.28)"}`,
+                            opacity: g.done ? 0.6 : 1 }}>
+                          <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
+                            background: mine ? "#a78bfa" : "rgba(150,160,190,.5)",
+                            boxShadow: mine ? "0 0 8px #a78bfa" : "none" }} />
+                          <span style={{ flex: 1, minWidth: 0 }}>
+                            <span style={{ display: "block", fontWeight: 800, fontSize: 13.5, color: T.text }}>{g.opp.name}</span>
+                            <span style={{ display: "block", fontSize: 11.5, color: mine ? "#c9b8ff" : T.dim, marginTop: 1 }}>
+                              {g.done ? t("daily.done") : mine ? t("daily.yourTurn") : t("daily.waiting")}
+                              {!g.done && ` · ${t("daily.left", { d: days + (en ? (days === 1 ? " day" : " days") : (days === 1 ? " Tag" : " Tage")) })}`}
+                            </span>
+                          </span>
+                          <span style={{ fontSize: 11.5, color: T.faint, whiteSpace: "nowrap" }}>{g.moves} ×</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div style={{ fontSize: 11, color: T.faint, marginTop: 6, lineHeight: 1.45 }}>{t("daily.hint")}</div>
+                </div>
+              )}
+
               <div style={{ height: 8 }} />
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>
                 <JewelIc kind="power" size={13} /> {t("online.random")}

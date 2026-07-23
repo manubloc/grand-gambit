@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.27.1
+- CLASSIC GAMBIT IST GEBAUT — FERNSCHACH, DAS OFFLINE WEITERLEBT: Ein Live-Duell ist eine Bruecke zwischen zwei offenen Verbindungen; schliesst einer die App, ist die Partie tot. Eine Fernpartie liegt jetzt VOLLSTAENDIG auf dem Server: Saat, beide Armeen und die geordnete Liste aller Zuege. Weil das Brett deterministisch ist (gleiche Saat + gleiche Zuege = gleiche Stellung), spielt der zurueckkehrende Spieler die Liste einfach nach — der Server muss kein Schach verstehen und keine Stellung serialisieren.
+- BEWIESEN, NICHT BEHAUPTET: Ein Test spielt VIER Halbzuege ueber vier Tage durch den echten Regelkern, beide Spieler zwischendurch offline — danach bauen beide Seiten unabhaengig nach und landen auf der IDENTISCHEN Stellung, einig darueber, wer am Zug ist.
+- DIE FERNPARTIEN-LISTE in der Lobby: jede laufende Partie mit Gegner, Zugzahl und Restfrist; die, in denen DU am Zug bist, stehen oben und leuchten violett. Ein Tipp oeffnet sie, ein Zug legt sie zurueck ins Regal — mit einer ruhigen Karte, die sagt, dass der Gegner nun dran ist.
+- FRIST UND FAIRNESS: Wer drei Tage nicht zieht, verliert auf Zeit; jeder Zugriff auf das Regal raeumt abgelaufene Partien ab und wertet sie. Niemand kann zweimal hintereinander ziehen, ein Fremder kann eine Partie nicht anfassen, eine beendete Partie nimmt keinen Zug mehr an, und Aufgeben entscheidet sie sofort. Die Wertung laeuft ueber dieselbe Leiter wie die Live-Duelle.
+- KEINE KI IN FERNPARTIEN: Die Maschine schweigt — hier schuldet ein Mensch die Antwort.
+- OFFEN BLEIBT EINZIG DIE PUSH-BENACHRICHTIGUNG: Solange der Gegner online ist, erfaehrt er den Zug sofort; sonst findet er ihn beim naechsten Oeffnen in der Liste. Echtes Push braucht Signaturschluessel (VAPID) und einen Abo-Speicher — das ist ein eigener Schritt, kein Teil dieses Umbaus. Gesamtbatterie: 671 gruen (26 neue Pruefungen im Saal).
+
 ## 0.27.0
 - DIE VIER GAMBITS: Online-Duelle haben jetzt Zeitformate, als Karten in der Lobby — QUICK GAMBIT (1 Min +1, rotes Blitzzeichen, "Kugelschnell und pure Reflexe"), RUSH GAMBIT (3 Min +2, gelbe Stoppuhr, hervorgehoben als der Modus, in dem die meisten Duelle laufen), PRIME GAMBIT (10 Min, blaues Schild, mit der Vorwarnung "eine Partie kann 20-30 Minuten dauern") und CLASSIC GAMBIT (1-3 Tage, violette Krone).
 - EINE ECHTE DUELL-UHR: Bisher tickte nur in Kampagnenstationen eine Uhr, und nur auf deiner Seite. Im Duell laufen jetzt BEIDE Uhren — deine auf deinem Zug, seine auf seinem — und jeder Zug gibt seinem Urheber den Zuschlag zurueck (Fischer). Die Bedenkzeit des Gegners haengt neben deiner im Kopfbereich und tritt zurueck, solange du am Zug bist. Faellt seine Uhr auf null, gewinnst du; faellt deine, verlierst du.

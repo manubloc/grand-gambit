@@ -119,11 +119,11 @@ const pill = (extra) => ({ display: "inline-flex", alignItems: "center", gap: 6,
   fontSize: 13, boxShadow: "0 3px 10px rgba(0,0,0,.4)", whiteSpace: "nowrap", flex: "0 0 auto",
   backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", ...extra });
 
-export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null, onArmy = null }) {
+export function GameScreen({ profile, dispatch, t, match = null, onExit = null, pvp = null, quick = null, onArmy = null, daily = null }) {
   const campaign = !!match;
   const en = profile.lang === "en";
   const hotseat = !pvp && !match && !!quick?.hotseat;   // two players, one device
-  const myColor = pvp && pvp.color === "b" ? BLACK : WHITE;
+  const myColor = (daily ? daily.youAre === "b" : pvp && pvp.color === "b") ? BLACK : WHITE;
   const oppColor = myColor === WHITE ? BLACK : WHITE;
   // Match settings are decided BEFORE the match (QuickSetup / campaign node /
   // pvp lobby) — in here they are fixed; the screen is the board, nothing else.
@@ -132,8 +132,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const mode = quick?.mode || "chess";
   // CLASSIC: pure standard chess — plain level-1 armies, classic art, Elo bot
   const classic = mode === "classic" || (pvp && pvp.rules === "chess");
-  const map = pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
-  const rules = pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
+  const map = daily ? mapById(daily.map) : pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
+  const rules = daily ? (daily.rules || "hp") : pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
   const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
   const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null, rules), [profile, map]); // eslint-disable-line
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
@@ -144,6 +144,14 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const resume = campaign && !pvp && profile.pausedMatch?.v === 1
     && profile.pausedMatch.nodeId === match.nodeId ? profile.pausedMatch : null;
   const [state, setState] = useState(() => {
+    if (daily) {
+      // THE LONG GAME, REBUILT: the server keeps no board, only the seed, both
+      // armies and every command played. Replaying them lands on exactly the
+      // position both players last saw — no state was ever serialised.
+      const g0 = createGame(daily.armyW, daily.armyB,
+        { map: mapById(daily.map), rules: daily.rules || "hp", seed: daily.seed >>> 0 });
+      return (daily.moves || []).reduce((st, cmd) => { try { return reduce(st, cmd).state; } catch { return st; } }, g0);
+    }
     if (resume) { try { return decodeState(resume.enc); } catch { /* corrupt → fresh */ } }
     if (pvp) {
       const mine = classic ? buildArmyFromFormation(() => 1, mapById("classic").defaultFormation) : playerArmy;
@@ -215,6 +223,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [intro, setIntro] = useState(() => !resume && !!(match && match.node && (match.node.storyDe || match.node.storyEn)));
   // the life-battle briefing rides just behind the story card, every match,
   // until the player waves it off for good
+  const [dailySent, setDailySent] = useState(false);
   const [brief, setBrief] = useState(() => !resume && !profile.notices?.hpBrief);
   // THE SEERESS'S GAZE: with a seer actively fielded, the enemy array lies
   // open BEFORE the first horn — study it, or step back to rearrange.
@@ -381,6 +390,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       const cmd = moveCommand(move);
       const next = reduce(s, cmd).state;
       if (pvp) pvp.net.send({ t: "cmd", matchId: pvp.matchId, cmd, n: next.log.length, hash: stateHash(encodeState(next)) });
+      if (daily) {
+        // ONE MOVE, THEN THE GAME GOES BACK ON THE SHELF. The command is filed
+        // with the server; if this move ended the game, the outcome rides along
+        // so the ladder is settled without a second round trip.
+        const st = status(next);
+        const over = st.mate || st.stale || (next.rules === "hp" && st.kingDown);
+        daily.net.send({ t: "daily:move", gameId: daily.gameId, cmd,
+          result: over ? { winner: st.stale ? null : (next.turn === WHITE ? "b" : "w"), reason: st.stale ? "draw" : "mate" } : null });
+        setDailySent(true);
+      }
       return next;
     });
   }
@@ -395,7 +414,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       else finish("draw", st.result);
       return;
     }
-    if (!pvp && !hotseat && state.turn === BLACK) {
+    if (!pvp && !daily && !hotseat && state.turn === BLACK) {   // no engine in a correspondence game — a human owes the reply
       setThinking(true);
       const id = setTimeout(() => {
         const mv = chooseMove(state, depth);
@@ -567,7 +586,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   const hsFlip = quick?.hotseatFlip !== false;        // optional: keep the board fixed (phone stays in hand)
   const viewColor = hotseat ? (hsFlip ? state.turn : WHITE) : myColor; // the board faces whoever moves
-  const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp;
+  const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp && !(daily && dailySent);
   const st = status(state);
   const hpMode = state.rules === "hp";
   const F = hpMode ? forces(state.board) : null;
@@ -840,6 +859,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   // the victory/defeat banner lives at the TOP of the screen tree (not inside
   // the zoomable board), so it always floats OVER every piece and overlay
+  // THE GAME GOES BACK ON THE SHELF: after your one move there is nothing more
+  // to do here — the card says so plainly and the way back is one tap.
+  const dailyDoneEl = daily && dailySent && !banner ? (
+    <div style={{ position: "absolute", inset: 0, zIndex: 8, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 16 }}>
+      <div style={{ background: "#efe9da", color: "#2e2a20", borderRadius: 14, padding: "20px 18px 16px",
+        maxWidth: 330, width: "100%", textAlign: "center", boxShadow: "0 14px 34px rgba(0,0,0,.5)" }}>
+        <div className="gg-serif" style={{ fontSize: 19 }}>{t("daily.moveSent")}</div>
+        <div style={{ fontSize: 12.5, color: "#5c5344", lineHeight: 1.5, margin: "9px 0 14px" }}>{t("daily.hint")}</div>
+        <button onClick={() => onExit && onExit()} style={{ width: "100%", fontFamily: "inherit", fontWeight: 900,
+          fontSize: 14.5, borderRadius: 999, padding: "12px 16px", border: "none", cursor: "pointer",
+          background: "linear-gradient(160deg, #c9b8ff, #a78bfa 55%, #7a5ab0)", color: "#17110a" }}>
+          {t("daily.title")}
+        </button>
+      </div>
+    </div>
+  ) : null;
+
   const bannerEl = banner ? <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit} boss={match?.boss || null}
     onSettings={!campaign && !pvp ? onExit : null}
     pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
@@ -859,6 +896,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <div style={{ flex: 1, minHeight: 14 }} />
         {yourStrip}
       </aside>
+      {dailyDoneEl}
       {bannerEl}
     </div>
   );
@@ -869,6 +907,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
+      {dailyDoneEl}
       {bannerEl}
     </div>
   );
