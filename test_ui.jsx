@@ -9,6 +9,7 @@ import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
 import { ABILITIES } from "./src/content/index.js";
+import { readFileSync, readdirSync } from "node:fs";
 
 let pass = 0, fail = 0;
 const ok = (n, c) => { if (c) { pass++; console.log("  ok  -", n); } else { fail++; console.log(" FAIL -", n); } };
@@ -101,6 +102,44 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   ok("a pawn renders too", html(<PieceGlyph piece={piece({ kind: "P", hp: 2, maxHp: 2, atk: 1 })} />).length > 200);
   ok("the hero renders", html(<PieceGlyph piece={piece({ kind: "P", hero: true, tier: 3 })} />).length > 200);
   ok("a nulled piece renders nothing rather than crashing", html(<PieceGlyph piece={null} />) === "");
+}
+
+// ── 7. THE ART CONTRACT — every painting fits a square frame ────────────────
+// The campaign popup shows champions in a SQUARE frame so they fill its full
+// height (the old 84x108 box was width-limited and wasted a quarter of it).
+// That only holds while no painting is markedly wider than tall — a future
+// wide canvas would spill over the name beside it. Dimensions are read from
+// the WebP header on disk, so a new file is checked the moment it lands.
+{
+  const dims = (file) => {
+    const b = readFileSync(file);
+    if (b.toString("latin1", 0, 4) !== "RIFF" || b.toString("latin1", 8, 12) !== "WEBP") return null;
+    const chunk = b.toString("latin1", 12, 16);
+    if (chunk === "VP8X") return { w: b.readUIntLE(24, 3) + 1, h: b.readUIntLE(27, 3) + 1 };
+    if (chunk === "VP8 ") return { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff };
+    if (chunk === "VP8L") {                       // 14 bits each, packed after the 0x2f signature
+      const bits = b.readUInt32LE(21);
+      return { w: (bits & 0x3fff) + 1, h: ((bits >> 14) & 0x3fff) + 1 };
+    }
+    return null;
+  };
+  const dir = "src/app/ui/assets/painted";
+  const files = readdirSync(dir).filter((f) => f.endsWith(".webp"));
+  ok("the gallery is on disk and readable", files.length > 30);
+
+  const unreadable = files.filter((f) => !dims(`${dir}/${f}`));
+  ok("every painting's header parses", unreadable.length === 0 || console.log("     ", unreadable.join(", ")));
+
+  const tooWide = files.map((f) => ({ f, d: dims(`${dir}/${f}`) })).filter((x) => x.d && x.d.w / x.d.h > 1.1);
+  ok("no painting is wider than its frame allows (aspect <= 1.1)",
+    tooWide.length === 0 || console.log("     ", tooWide.map((x) => `${x.f} ${x.d.w}x${x.d.h}`).join(", ")));
+
+  // In a height-filling frame only the HEIGHT is ever upscaled — several
+  // figures are legitimately narrow (a queen is 198x384). The popup draws at
+  // ~139 CSS px, so 280+ rows keep it sharp even on a 2x screen.
+  const shallow = files.map((f) => ({ f, d: dims(`${dir}/${f}`) })).filter((x) => x.d && x.d.h < 280);
+  ok("every painting has the rows to stay sharp when it fills the frame",
+    shallow.length === 0 || console.log("     ", shallow.map((x) => `${x.f} ${x.d.w}x${x.d.h}`).join(", ")));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

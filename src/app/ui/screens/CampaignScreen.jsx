@@ -808,10 +808,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <Chip className="gg-serif" color={"#3c4a22"} bg={"#d3deb2"}>+{Math.round((node.reward?.xp || 0) * mult * (friendly ? 0.25 : 1))} XP</Chip>
             <Chip className="gg-serif" color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{Math.round((5 + 2 * node.row + (node.boss ? 6 : 0)) * mult / (friendly ? 2 : 1))}</Chip>
           </div>
-          {boss && (status === "cleared" || facedSet.has(sel)) && (
+          {boss && (status === "cleared" || facedSet.has(sel)) && (() => {
+            // room for the name and the two value orbs (60px) stays reserved
+            const bossArtS = Math.round(Math.max(96, Math.min(148, (panelW - 50) * 0.46)));
+            return (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
-              <div style={{ width: 84, height: 108, flex: "0 0 auto" }}>
+              {/* THE PORTRAIT FILLS ITS HEIGHT: the box used to be 84x108 —
+                  taller than wide — so a square painting was WIDTH-limited by
+                  `contain` and rendered only 84px tall, wasting a quarter of
+                  the frame. Measured across all 70 paintings: at full height
+                  the widest figure (a sprawling monster) spans 0.918 of that
+                  height, so a SQUARE frame holds every one of them without
+                  clipping. Sized off the panel so it breathes on phones too. */}
+              <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto" }}>
                 {(() => {
                   const painting = paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
                   return painting
@@ -838,7 +848,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     {v[en ? "heraldEn" : "heraldDe"]}</div> : null; })()}
               </div>
             </div>
-          )}
+            );
+          })()}
           {/* the aftermath, told on the spot: joined the retinue, fled again (with tally), or simply done */}
           {status === "cleared" && (() => {
             const nm = unlockCh ? unlockCh[en ? "nameEn" : "nameDe"] : null;

@@ -1,5 +1,10 @@
 # Changelog — Grand Gambit
 
+## 0.25.3
+- CHAMPIONS FUELLEN DAS KARTEN-POPUP: Der Bilderrahmen war 84x108 — hoeher als breit. Ein quadratisches Gemaelde wurde darin von der BREITE begrenzt und nur 84 px hoch gezeigt: ein Viertel des Rahmens blieb leer. Der Rahmen ist jetzt quadratisch und waechst mit der Panelbreite mit (96-148 px), die Figuren stehen rund 60 % groesser und fuellen die volle Hoehe.
+- VERMESSEN STATT GERATEN: Ueber alle 70 Gemaelde geprueft, wie breit eine Figur bei voller Hoehenfuellung wird — Maximum 0.918 der Hoehe (ein ausladendes Monster). Ein quadratischer Rahmen fasst damit jede Figur, ohne dass etwas ueber den Namen daneben ragt.
+- KUNST-VERTRAG ALS DAUERWACHE (4 Pruefungen): Die Testbatterie liest jetzt die WebP-Kopfdaten aller Gemaelde direkt von der Platte — kuenftige Bilder muessen das Seitenverhaeltnis einhalten (max 1.1) und genug Bildzeilen mitbringen (280+), sonst faellt der Test, bevor etwas im Popup ueberlaeuft oder unscharf wird. Gesamtbatterie: 534 gruen.
+
 ## 0.25.2
 - MEIN FEHLER, ZURUECKGENOMMEN: Gegnerische Meister im Damen-Slot wurden seit 0.24.23 als DAME gemalt — ich hatte "treten beim Gegner in Form der Dame zum Vorschein" als Verhuellung gelesen, gemeint war der Damen-PLATZ. Jeder Champion zeigt wieder sein wahres Gesicht; genau darum tritt man ja gegen ihn an.
 - STORY-WIDERSPRUECHE BEHOBEN (belegt, nicht geraten): Die Klingenschlucht kuendigte namentlich "den Zerreisser" an, schickte aber vier verschiedene Wesen ins Feld — ebenso das Geisterfeld mit dreien. Beide Texte sagen jetzt die Wahrheit. Drei Stationen nannten die FALSCHE Figur: Karawanenrast und Verborgener Schrein sprachen vom "Spaeher", obwohl der Kundschafter wartet (zwei verschiedene Figuren!), und der Schrein nannte eine "Zauberin" statt der Hexerin. Ankerbucht benennt ihren Spaeher jetzt beim Namen.
