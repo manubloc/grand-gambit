@@ -2,5 +2,5 @@
 <path d="M21.4 7.8 L26.6 7.8 L26.6 9.9 L25.4 9.9 L25.4 16.6 L31.9 31.3 C33.5 35.1 30.9 40 26.5 40 L21.5 40 C17.1 40 14.5 35.1 16.1 31.3 L22.6 16.6 L22.6 9.9 L21.4 9.9 Z
       M22.4 32.2 A1.5 1.5 0 1 1 22.39 32.2 Z
       M26.2 29.8 A1.15 1.15 0 1 1 26.19 29.8 Z
-      M24.4 35.4 A0.95 0.95 0 1 1 24.39 35.4 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none)"></path>
+      M24.4 35.4 A0.95 0.95 0 1 1 24.39 35.4 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none);stroke-width:var(--rimW, 1);paint-order:stroke fill"></path>
 </svg>

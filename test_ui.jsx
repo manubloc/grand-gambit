@@ -9,6 +9,7 @@ import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
 import { ABILITIES } from "./src/content/index.js";
+import { PIECE_ART } from "./src/app/ui/art.generated.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
@@ -289,6 +290,34 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
     try { fn(); } catch (e) { survived = false; console.log("     ", name, "→", e.message); }
     ok(`${name} survives a profile with missing optional parts`, survived);
   }
+}
+
+// ── 10. THE SIMPLE PIECES MUST BE READABLE AND COMPLETE ─────────────────────
+// The vector set exists for one reason: recognition at a glance. That means a
+// shape for EVERY figure (the Gambit borrowed the pawn's for months) and a
+// contour on BOTH sides (gold pieces carried none at all and melted into a
+// light square).
+{
+  const kinds = [...new Set(CHARACTER_LIST.map((c) => c.kind))];
+  const missing = kinds.filter((k) => !PIECE_ART[k]);
+  ok("every figure kind owns a vector shape",
+    missing.length === 0 || console.log("     ", missing.join(", ")));
+  ok("the Gambit has a silhouette of its own", !!PIECE_ART.GAMBIT);
+  ok("and it is not simply the pawn's", PIECE_ART.GAMBIT !== PIECE_ART.P);
+
+  const svg = (p) => html(<PieceGlyph piece={piece(p)} artStyle="svg" />);
+  const mine = svg({ color: "w", kind: "N" });
+  const foe = svg({ color: "b", kind: "N" });
+  const rimOf = (m) => (m.match(/--rim:\s*([^;"]+)/) || [])[1];
+  ok("your pieces wear a contour", !!rimOf(mine));
+  ok("the enemy's pieces wear one too", !!rimOf(foe));
+  ok("the two contours are opposites, not the same tone", rimOf(mine) !== rimOf(foe));
+  ok("the contour has real weight", mine.includes("--rimW"));
+
+  // the Gambit must actually render its own shape, not the pawn's
+  const gambit = html(<PieceGlyph piece={piece({ color: "w", kind: "P", hero: true })} artStyle="svg" pov="w" />);
+  const pawn = html(<PieceGlyph piece={piece({ color: "w", kind: "P" })} artStyle="svg" pov="w" />);
+  ok("the Gambit draws its own figure on the board", gambit !== pawn);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

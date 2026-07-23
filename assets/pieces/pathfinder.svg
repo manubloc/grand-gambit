@@ -4,5 +4,5 @@
       M22 17.2 L26 17.2 L26 20.8 L22 20.8 Z
       M18.1 15.6 A2 2 0 1 1 18.09 15.6 Z
       M29.9 15.6 A2 2 0 1 1 29.89 15.6 Z
-      M20.6 31.4 L27.4 31.4 L28.6 40 L19.4 40 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none)"></path>
+      M20.6 31.4 L27.4 31.4 L28.6 40 L19.4 40 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none);stroke-width:var(--rimW, 1);paint-order:stroke fill"></path>
 </svg>

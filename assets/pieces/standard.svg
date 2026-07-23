@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="6 0 36 42" data-gg="piece:F">
 <path d="M20.5 5.6 L22 5.6 L22 40 L20.5 40 Z
       M22.1 7.6 C26.8 6 29.9 9.8 35 8 L33.9 12.4 L36.4 16.4 C31.3 18.3 28.2 14.6 22.1 16.4 Z
-      M16.8 35.6 L25.4 35.6 L26.6 40 L15.6 40 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none)"></path>
+      M16.8 35.6 L25.4 35.6 L26.6 40 L15.6 40 Z" fill-rule="evenodd" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" style="fill:var(--fill, #c9a45c);stroke:var(--rim, none);stroke-width:var(--rimW, 1);paint-order:stroke fill"></path>
 </svg>

@@ -1,5 +1,11 @@
 # Changelog — Grand Gambit
 
+## 0.26.5
+- KONTUREN FUER DIE SIMPLEN FIGUREN (Kontraste gerechnet): Die goldenen Figuren trugen bisher GAR KEINE Kante und verschmolzen auf hellen Feldern mit dem Untergrund, die Haarlinie des Gegners war auf dunklen Feldern zu duenn. Jetzt traegt jede Seite ihr Gegenteil — fast schwarze Kontur ums Gold (7.8:1 zur eigenen Fuellung, 7.4:1 zum hellen Feld), fast weisse ums Marineblau (12.4:1 und 6.6:1). Die Kontur wird UNTER die Flaeche gemalt (paint-order), sie schaerft also den Umriss ohne Details zu fressen, und ihre Staerke ist ueber eine Variable regelbar (alle 34 Figuren-Dateien entsprechend erweitert).
+- DER GRAND GAMBIT HAT ENDLICH EINE EIGENE SILHOUETTE: Er teilt sich die Figurenart mit dem Bauern und lieh sich darum dessen Umriss — als einzige Figur im Spiel ohne eigene Gestalt. Neu gezeichnet als Bauer, der weitergegangen ist: derselbe runde Kopf und Kragen, aber breitere Schultern zum Umhang und eine Klinge im Ruecken. Sein Wappen reitet weiterhin obenauf.
+- UMSCHALTER KLARER BENANNT: "Simpel" und "Detailreich gemalt" (englisch "Simple" / "Painted in detail") statt "Simpel (Vektor)" und "Gemalt"; der Hinweistext nennt jetzt die Kontur.
+- ACHT NEUE WACHEN: jede Figurenart besitzt eine Vektorgestalt, der Gambit eine eigene (und nicht die des Bauern), beide Seiten tragen eine Kontur, und die beiden Konturen sind Gegensaetze. Gesamtbatterie: 574 gruen.
+
 ## 0.26.4
 - DIE EMBLEME ZEIGEN SICH, WIE SIE GEMALT SIND: Bis ein Erfolg begonnen war, lag ein Graufilter samt Abdunklung auf dem Medaillon — bei dieser Staerke war schlicht nicht mehr zu erkennen, WAS das Bild zeigt. Der Filter ist ersatzlos weg; jedes Emblem steht auf jeder Platte in voller Staerke. Was erreicht ist, sagen weiterhin Balken, Rauten und Zaehler.
 - MEHR GOLD, KRAEFTIGERE KONTUR: Der Plattengrund ist waermer und heller (rgba 96,74,34), der Saum von 1.5 auf 2 px verstaerkt und aufgehellt, der Medaillonring auf 2.5 px in hellem Gold mit staerkerem Schein. Die Glanzstraehne ueber der Platte ist doppelt so praesent.

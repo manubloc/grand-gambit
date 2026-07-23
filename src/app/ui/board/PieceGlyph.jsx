@@ -150,7 +150,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
   // Grand Gambit faction colors: the player is antique gold, the enemy deep navy.
   const fill = white ? "#c9a45c" : "#1a2233";
-  const rim = white ? null : "#7e8dab";      // solid gold needs no edge; navy gets a hairline
+  // A CONTOUR ON BOTH SIDES. Gold pieces used to carry no edge at all, so on a
+  // light square they melted into it; the enemy's hairline was too thin to help
+  // on a dark one. Now each side wears its OPPOSITE: near-black around the gold
+  // (7.8:1 against its own fill, 7.4:1 against a light square) and near-white
+  // around the navy (12.4:1 and 6.6:1). The stroke is painted UNDER the fill,
+  // so it sharpens the outline without eating any detail.
+  const rim = white ? "#1b1408" : "#dbe4f5";
+  const rimW = 1.6;
   const detail = white ? "#7a5c26" : "#8fa0bb";
   const accent = piece.accent || T.gold;
   const lvl = piece.level || 1;
@@ -255,7 +262,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : isPawn ? " brightness(0.9) saturate(0.8)"
                   : " brightness(1.16) saturate(0.98)"),
               userSelect: "none", pointerEvents: "none" }} />
-          : <PieceArt kind={piece.kind} fill={fill} rim={rim} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />}
+          : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
