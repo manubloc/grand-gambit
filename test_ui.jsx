@@ -9,11 +9,12 @@ import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
 import { ABILITIES, BOSSES } from "./src/content/index.js";
+import { ACHIEVEMENTS } from "./src/meta/achievements.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
-import { LeaveMatchAsk } from "./src/app/App.jsx";
+import { LeaveMatchAsk, GameIntro } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN } from "./src/content/index.js";
@@ -458,6 +459,46 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const without = html(<ArmyScreen profile={base} dispatch={() => {}} t={t} initialTab="formation" />);
   ok("a resting fight is announced in the formation editor", withWarn.includes(t("army.pausedHint").slice(0, 30)));
   ok("with no fight resting the note stays away", !without.includes(t("army.pausedHint").slice(0, 30)));
+}
+
+// ── 17. THE FIRST TWO QUESTIONS ─────────────────────────────────────────────
+// Piece style and difficulty lived in the profile screen, where a newcomer
+// never looks. They are asked once, at the door — and the door must also say
+// that nothing is locked in.
+{
+  const t = makeT("de");
+  const intro = html(<GameIntro t={t} dispatch={() => {}} onStart={() => {}} />);
+  ok("the door asks which figures you want", intro.includes(t("setup.style").toUpperCase()));
+  ok("both piece styles are offered", intro.includes(t("profile.styleSvg")) && intro.includes(t("profile.stylePainted")));
+  ok("the door asks how hard it should be", intro.includes(t("setup.diff").toUpperCase()));
+  ok("all three difficulties are offered",
+    [t("diff.easy"), t("diff.normal"), t("diff.hard")].every((d) => intro.includes(d)));
+  ok("it says the campaign climbs on its own", intro.includes(t("setup.diffHint").slice(0, 30)));
+  ok("and that both can be changed later", intro.includes(t("setup.lead").slice(0, 30)));
+}
+
+// ── 18. FACTS IN THE TREASURY'S OWN WORDS ───────────────────────────────────
+// The descriptions must match what the code actually counts. Two were wrong:
+// the lightning mate never named its limit, and forgecraft spoke of a "forge"
+// the game does not have.
+{
+  const byId = Object.fromEntries(ACHIEVEMENTS.map((a) => [a.id, a]));
+  ok("the lightning mate names its move limit", /40/.test(byId.fast.descDe) && /40/.test(byId.fast.descEn));
+  ok("no description invents a forge", !/Schmiede|at the forge/.test(byId.upgrades.descDe + byId.upgrades.descEn));
+  ok("forgecraft names the currency it costs", /Skillpunkte|skill points/.test(byId.upgrades.descDe + byId.upgrades.descEn));
+  ok("the wayfarer names how many stations exist", /51/.test(byId.stages.descDe));
+  ok("every achievement explains itself in both tongues",
+    ACHIEVEMENTS.every((a) => a.descDe.length > 40 && a.descEn.length > 40));
+  ok("captures make clear whose captures count", /DU|YOU/.test(byId.captures.descDe + byId.captures.descEn));
+}
+
+// ── 19. A TAPPED PLATE CATCHES THE LIGHT ────────────────────────────────────
+{
+  const t = makeT("de");
+  const prof = { ...defaultProfile(), stats: { wins: 30, games: 60 } };
+  const m = html(<AchievementsScreen profile={prof} t={t} initialOpenId="wins" />);
+  ok("the plate carries a sweep of light", m.includes("ggPlateSheen") || m.includes("translateX(-120%)"));
+  ok("the emblems are lifted brighter", /brightness\(1\.[23]/.test(m));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

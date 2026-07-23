@@ -29,6 +29,8 @@ const cornerDiamond = (pos) => (
 
 export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null }) {
   const [openId, setOpenId] = useState(initialOpenId);
+  // one counter per plate — a tap bumps it and replays the sweep of light
+  const [sheenAt, setSheenAt] = useState({});
   const en = profile.lang === "en";
   const { items } = evaluate(profile.stats);
   const tiersDone = items.reduce((a, i) => a + i.done, 0);
@@ -82,7 +84,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       // is there a purse waiting on this one? that plate gets the full treatment
       const ready = claimedTiers(profile, it.id) < it.done;
       return (
-        <Panel key={it.id} onClick={() => setOpenId(isOpen ? null : it.id)}
+        <Panel key={it.id} onClick={() => { setSheenAt((m) => ({ ...m, [it.id]: (m[it.id] || 0) + 1 })); setOpenId(isOpen ? null : it.id); }}
           style={{ display: "flex", gap: 13, cursor: "pointer", position: "relative",
           // OPENED, THE EMBLEM TAKES THE STAGE: the plate turns into a column,
           // the medallion rises to the top at nearly twice its size, its ring
@@ -100,9 +102,17 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           boxShadow: ready
             ? "inset 0 1px 0 rgba(255,248,214,.4), inset 0 0 0 1px rgba(255,240,190,.3), 0 0 30px rgba(240,214,138,.4), " + T.shadow
             : "inset 0 1px 0 rgba(255,248,214,.28), inset 0 0 0 1px rgba(255,240,190,.16), 0 0 20px rgba(240,214,138,.22), " + T.shadow }}>
-          {/* a still gleam sweeping the plate — treasure catches the light */}
-          <span aria-hidden style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-            background: "linear-gradient(115deg, transparent 24%, rgba(255,244,200,.20) 44%, rgba(255,244,200,.05) 52%, transparent 64%)" }} />
+          {/* THE GLEAM NOW MOVES: it used to be a fixed band painted across the
+              plate. Tapping a plate sends it sweeping once, left to right —
+              gold catching the light as the card turns. The key on the wrapper
+              restarts the run on every tap, open or closed. */}
+          <span key={`sheen-${it.id}-${sheenAt[it.id] || 0}`} aria-hidden style={{ position: "absolute", inset: 0,
+            borderRadius: "inherit", pointerEvents: "none", overflow: "hidden" }}>
+            <span style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "62%",
+              background: "linear-gradient(115deg, transparent 6%, rgba(255,247,214,.34) 42%, rgba(255,247,214,.10) 58%, transparent 92%)",
+              animation: sheenAt[it.id] ? "ggPlateSheen .72s cubic-bezier(.3,.7,.4,1) both" : "none",
+              transform: sheenAt[it.id] ? undefined : "translateX(-120%)" }} />
+          </span>
           {/* THE STRUCK MEDALLION: each achievement now wears its own painted
               emblem, already cast as a round plate in the treasury's warm dark
               — so it seats itself in the gold rim with no seam and no cut-out
@@ -141,7 +151,11 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
             {ACH_ART[it.id]
               ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block",
-                    filter: isOpen ? "brightness(1.22) saturate(1.12)" : "none" }} />
+                    // the paintings came out of the forge a shade dim for a
+                    // treasury: lifted, warmed and given a touch more gold
+                    filter: isOpen
+                      ? "brightness(1.35) saturate(1.25) contrast(1.06) sepia(.12)"
+                      : "brightness(1.16) saturate(1.14) sepia(.08)" }} />
               : <AchIcon id={it.id} color={isOpen ? "#fff6d8" : "#f6e4a2"} size={isOpen ? 52 : 28} />}
           </div>
           </div>

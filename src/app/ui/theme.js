@@ -66,6 +66,8 @@ export const GLOBAL_CSS = `
      turns around the emblem, and sparks fly off TANGENTIALLY from the brightest
      point — each spark rides its own orbit, so they leave the rim sideways
      rather than shooting straight out. */
+  /* one sweep of light across a treasury plate, run once when it is tapped */
+  @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
   @keyframes ggRingSpin { to { transform: rotate(360deg); } }
   @keyframes ggSpark {
     0%   { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)) scale(.5); }

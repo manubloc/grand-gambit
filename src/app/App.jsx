@@ -72,6 +72,7 @@ function reducer(state, a) {
     case "SET_LANG": return { ...state, lang: a.lang };
     case "SET_PIN": return { ...state, pin: a.pin };
     case "SET_DIFFICULTY": return { ...state, difficulty: a.difficulty };
+    case "SET_PIECE_STYLE": return { ...state, pieceStyle: a.style };
     case "SET_CAMP_DIFFICULTY": return { ...state, campDifficulty: a.difficulty };
     case "SET_CLASSIC_ELO": return { ...state, classicElo: a.elo };
     case "SET_HERO_COL": return { ...state, loadout: { ...state.loadout, heroCols: { ...(state.loadout.heroCols || {}), [a.mapId]: a.col } } };
@@ -521,7 +522,13 @@ function Lock({ t, profile, onUnlock, onBack }) {
 
 // ── first-run game intro (once): what Grand Gambit IS and what makes it
 // special — a parchment card in the world's own voice. ───────────────────────
-function GameIntro({ t, dispatch, onStart }) {
+export function GameIntro({ t, dispatch, onStart }) {
+  const [style, setStyle] = useState("svg");        // crisp shapes read best for a newcomer
+  const [diff, setDiff] = useState("easy");
+  const pick = (on) => ({ flex: 1, padding: "9px 6px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+    fontWeight: 800, fontSize: 12.5, letterSpacing: ".02em",
+    background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent",
+    border: `1px solid ${on ? "rgba(255,240,200,.55)" : T.line}`, color: on ? "#17110a" : T.dim });
   // Dark and quiet like the privacy notice before it — night blue, gold serif,
   // drawn glyphs. The parchment look stays on the campaign map where it lives.
   const Row = ({ icon, children }) => (
@@ -549,11 +556,37 @@ function GameIntro({ t, dispatch, onStart }) {
           <Row icon={<SkillIc size={17} />}>{t("intro.p2")}</Row>
           <Row icon={<MapPinIc size={17} />}>{t("intro.p3")}</Row>
         </div>
-        <button onClick={() => { dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart(); }}
+        {/* THE TWO CHOICES, ASKED ONCE AND UP FRONT: which figures you want to
+            look at, and how hard the opponent should think. Both were buried in
+            the profile screen, where a new player never looks. Both stay
+            changeable there — the note says so, so nobody feels locked in. */}
+        <div style={{ marginTop: 16, textAlign: "left" }}>
+          <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold }}>{t("setup.style").toUpperCase()}</div>
+          <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>
+            {[["svg", t("profile.styleSvg")], ["painted", t("profile.stylePainted")]].map(([v, label]) => (
+              <button key={v} onClick={() => setStyle(v)} style={pick(style === v)}>{label}</button>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.styleHint")}</div>
+
+          <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginTop: 14 }}>{t("setup.diff").toUpperCase()}</div>
+          <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>
+            {[["easy", t("diff.easy")], ["normal", t("diff.normal")], ["hard", t("diff.hard")]].map(([v, label]) => (
+              <button key={v} onClick={() => setDiff(v)} style={pick(diff === v)}>{label}</button>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.diffHint")}</div>
+          <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, marginTop: 12 }}>{t("setup.lead")}</div>
+        </div>
+        <button onClick={() => {
+            dispatch({ type: "SET_PIECE_STYLE", style });
+            dispatch({ type: "SET_DIFFICULTY", difficulty: diff });
+            dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart();
+          }}
           style={{ marginTop: 15, width: "100%", padding: "12px 14px", borderRadius: 10,
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
-            cursor: "pointer", letterSpacing: ".04em" }}>{t("intro.ok")} ›</button>
+            cursor: "pointer", letterSpacing: ".04em" }}>{t("setup.go")} ›</button>
       </div>
     </div>
   );
