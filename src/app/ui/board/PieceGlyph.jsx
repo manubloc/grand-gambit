@@ -262,7 +262,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : isPawn ? " brightness(0.9) saturate(0.8)"
                   : " brightness(1.16) saturate(0.98)"),
               userSelect: "none", pointerEvents: "none" }} />
-          : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} hero={showHero} />}
+          : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} bossId={piece.bossId} hero={showHero} />}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the

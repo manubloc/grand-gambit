@@ -35,8 +35,14 @@ const artVars = (fill, rim, detail, accent, rimW) => {
 };
 const ArtG = ({ html, style }) => <g style={style} dangerouslySetInnerHTML={{ __html: html || "" }} />;
 
-export function PieceArt({ kind, fill = T.lime, rim = null, detail = "#7a5c26", accent = T.gold, size = "1em", level = 1, art = null, hero = false, rimW = 0 }) {
+export function PieceArt({ kind, fill = T.lime, rim = null, detail = "#7a5c26", accent = T.gold, size = "1em", level = 1, art = null, hero = false, rimW = 0, bossId = null }) {
   const boss = kind === "X";
+  // EVERY MONSTER ITS OWN SHAPE. For a long while twenty-five monsters shared
+  // five family silhouettes — the Warden, the Bulwark, the Cannoneer, the
+  // Colossus and Ironfist were literally the same figure. Each now has a
+  // drawing of its own; the family shape stays as the fallback for anything
+  // new (and for the campaign's own piece-bosses).
+  const bossShape = (bossId && BOSS_ART[bossId]) || BOSS_ART[art] || BOSS_ART._default;
   // The Gambit shares the pawn's KIND, so for a long while it also borrowed the
   // pawn's silhouette — the one figure in the game without a shape of its own.
   // It has one now; the crest still rides on top.
@@ -44,7 +50,7 @@ export function PieceArt({ kind, fill = T.lime, rim = null, detail = "#7a5c26", 
   return (
     <svg viewBox="0 0 48 48" width={size} height={size} style={{ display: "block", overflow: "visible" }} aria-hidden="true">
       {boss
-        ? <ArtG html={BOSS_ART[art] || BOSS_ART._default} style={artVars(fill, rim, detail, accent, rimW)} />
+        ? <ArtG html={bossShape} style={artVars(fill, rim, detail, accent, rimW)} />
         : <>
             <ArtG html={shape} style={artVars(fill, rim, detail, accent, rimW)} />
             {plinth(fill, rim, detail, level)}

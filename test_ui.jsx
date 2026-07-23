@@ -8,8 +8,8 @@
 import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
-import { ABILITIES } from "./src/content/index.js";
-import { PIECE_ART } from "./src/app/ui/art.generated.js";
+import { ABILITIES, BOSSES } from "./src/content/index.js";
+import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
 import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
@@ -318,6 +318,35 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const gambit = html(<PieceGlyph piece={piece({ color: "w", kind: "P", hero: true })} artStyle="svg" pov="w" />);
   const pawn = html(<PieceGlyph piece={piece({ color: "w", kind: "P" })} artStyle="svg" pov="w" />);
   ok("the Gambit draws its own figure on the board", gambit !== pawn);
+}
+
+// ── 11. EVERY MONSTER ITS OWN FACE ──────────────────────────────────────────
+// Twenty-five monsters once shared five family silhouettes: in simple mode the
+// Warden, the Bulwark, the Cannoneer, the Colossus and Ironfist were the same
+// drawing. A campaign of champions cannot have five faces.
+{
+  const missing = BOSSES.filter((b) => !BOSS_ART[b.id]).map((b) => b.id);
+  ok("every monster owns a silhouette of its own",
+    missing.length === 0 || console.log("     ", missing.join(", ")));
+
+  const shapes = new Set(BOSSES.map((b) => BOSS_ART[b.id] || BOSS_ART[b.art]));
+  ok(`all ${BOSSES.length} monsters look different from one another`, shapes.size === BOSSES.length);
+
+  ok("the family shapes survive as a fallback for anything new",
+    ["golem", "beast", "serpent", "wraith", "tyrant"].every((f) => !!BOSS_ART[f]) && !!BOSS_ART._default);
+
+  // each drawing must actually carry the theme variables, or it cannot be
+  // recoloured for the enemy and would render as a flat default
+  const flat = BOSSES.filter((b) => BOSS_ART[b.id] && !BOSS_ART[b.id].includes("var(--fill")).map((b) => b.id);
+  ok("every monster drawing takes the board's colours",
+    flat.length === 0 || console.log("     ", flat.join(", ")));
+  const noRim = BOSSES.filter((b) => BOSS_ART[b.id] && !BOSS_ART[b.id].includes("var(--rim")).map((b) => b.id);
+  ok("and every one of them wears the contour",
+    noRim.length === 0 || console.log("     ", noRim.join(", ")));
+
+  // a monster renders its OWN shape on the board, not its family's
+  const asBoss = (bossId, art) => html(<PieceGlyph piece={piece({ kind: "X", color: "b", bossId, art })} artStyle="svg" pov="w" />);
+  ok("two monsters of one family draw differently", asBoss("b01", "golem") !== asBoss("b06", "golem"));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
