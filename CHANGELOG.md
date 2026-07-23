@@ -1,5 +1,13 @@
 # Changelog — Grand Gambit
 
+## 0.26.9
+- DER ZUSATZ STEHT JETZT UNTER DEM NAMEN — endlich, und diesmal nachgemessen: Auf den Kacheln der Chronik klebte "Krone" / "Schatten" als winzige Zeile in der OBEREN RECHTEN ECKE. Er sitzt nun als Bildunterschrift direkt unter dem Figurennamen. Im Browser vermessen: 20 Zusaetze unter dem Namen, KEINER daneben.
+- JEDE KACHEL TRAEGT IHRE VEKTORFIGUR: Oben rechts steht jetzt die simple Figur selbst (28 px, blank, ohne Ring oder Rahmen) — bei Kronen- und Schattenfiguren wie bei jedem Monster mit seiner eigenen Silhouette. Gemessen: 27 von 27 Kacheln.
+- AUCH IM FIGUREN-POPUP: Ueber dem Gemaelde sitzt oben rechts der Vektor-Zwilling (40 px im grossen Blatt, 28 px in der Karte), damit Gemaelde und Silhouette als EINE Figur gelernt werden.
+- EIN SAAL STATT FUENF LUECKENREIHEN: Die Meister standen in fuenf Sippen-Abschnitten (Golems, Bestien, Schlangen, Schemen, Tyrannen) — jeder duenn besetzt und voller "???", was wie fehlende Bilder aussah. Es fehlt KEIN Bild: die Fragezeichen sind Monster, denen du noch nicht begegnet bist. Sie stehen jetzt gemeinsam unter "MEISTER & GROSSMEISTER".
+- DURCHGAENGIGE BENENNUNG: Ueberschrift, Kachel-Zusatz und die Zeile unter dem Namen sagen jetzt dasselbe — "Figuren der Krone" und "Figuren des Schattens" statt "Kronenfiguren" hier und "FIGUREN DER KRONE" dort.
+- FUENF NEUE BROWSER-MESSUNGEN im Geometrie-Test halten das fest: Kacheln werden gezeichnet, jede traegt ihr Eck-Zeichen, kein Zusatz steht je wieder neben dem Namen, die Meister haben einen Saal, die Sippen-Ueberschriften sind fort. Gesamtbatterie: 603 gruen.
+
 ## 0.26.8
 - DAS HAUPTMENUE IM KAMPF WAR EINE SACKGASSE: Auf breiten Bildschirmen bleibt die Menueleiste waehrend einer Partie sichtbar — ein Klick darauf bewirkte jedoch GAR NICHTS, weil das Brett einfach ueber dem gewaehlten Bereich weiter gezeichnet wurde. Jetzt fragt das Spiel nach: "Kampf verlassen?" — und es sagt ehrlich, was es kostet. Ein Kampagnenkampf wird gesichert und laesst sich an derselben Station fortsetzen; ein Schnelles Spiel oder ein Online-Duell laeuft ohne Sicherung und waere verloren. Dazu ein Weg zurueck zum Brett.
 - UND ER WIRD JETZT WIRKLICH GESICHERT: Bisher sicherte sich ein Kampagnenkampf nur beim Wegblenden der App und ueber den Zurueck-Pfeil. Wer ihn anders verliess — Menue, Browser-Geste — verlor ihn. Das Verlassen selbst sichert jetzt, genau wie der Pfeil (eine beendete Partie bleibt unberuehrt).

@@ -15,7 +15,7 @@ import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx"
 import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
 import { LeaveMatchAsk } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
-import { buildStageMatch } from "./src/meta/index.js";
+import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN } from "./src/content/index.js";
 import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
@@ -408,6 +408,29 @@ const star = (m) => m.includes("<svg") || m.includes("<path");
   const te = makeT("en");
   ok("the question is asked in English too",
     html(<LeaveMatchAsk t={te} resumable onLeave={() => {}} onStay={() => {}} />).includes(esc(te("leave.pauseGo"))));
+}
+
+// ── 14. THE REGISTER READS LIKE A CHRONICLE ─────────────────────────────────
+// Three things were asked for repeatedly and kept slipping: the house caption
+// belongs UNDER a figure's name (it sat in the tile's top-right corner), every
+// tile should carry its bare vector figure in that corner instead, and the
+// twenty-five masters should stand in ONE hall rather than five thin rows of
+// question marks.
+{
+  const t = makeT("de");
+  const prof = withProgressPct(defaultProfile(), 100, 5);
+  const tree = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="tree" />);
+
+  ok("the register opens", tree.length > 1000);
+  // the chronicle waits for its paintings, so the grid itself is proven in the
+  // browser (test_layout); what SSR can prove is the NAMING and the card
+  ok("the register knows a single hall for the masters", !!t("tree.masters") && t("tree.masters") !== "tree.masters");
+  ok("nothing still says the old house names",
+    !tree.includes("Kronenfiguren") && !tree.includes("Schattenwesen"));
+
+  // The tiles themselves need loaded paintings, so their geometry is proven in
+  // the browser (test_layout). Here we hold the naming and the corner rule.
+  ok("no caption is pinned to a tile corner", !/top:4px;right:6px/.test(tree));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

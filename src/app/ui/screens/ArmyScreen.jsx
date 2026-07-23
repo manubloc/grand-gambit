@@ -436,6 +436,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 94 : 68} /></div>}
+        {/* the vector twin, riding the top-right corner of the plate: the same
+            shape the board draws, so painting and silhouette are learned as
+            one figure. Bare — no ring, no frame. */}
+        <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: bigArt ? 40 : 28, height: bigArt ? 40 : 28,
+          display: "grid", placeItems: "center", pointerEvents: "none",
+          filter: "drop-shadow(0 1px 2px rgba(0,0,0,.7))" }}>
+          <PieceArt kind={char.kind} hero={epic} size={bigArt ? 40 : 28} level={1}
+            fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />
+        </span>
       </div>
       {/* masthead + orbs + ledger */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
@@ -1031,9 +1040,12 @@ function CharLightbox({ char, en, onClose }) {
 }
 
 // ── the three HOUSES: colors & names for badges and the muster line ──────────
+// ONE NAME PER HOUSE, everywhere: the register's headings, the caption under
+// a tile and the line under a name all say the same thing now — no more
+// "Kronenfiguren" here and "FIGUREN DER KRONE" there.
 const FAMILIES = {
-  crown:  { de: "Kronenfiguren", en: "Crown", color: "#c9a45c" },
-  shadow: { de: "Schattenwesen", en: "Shadows", color: "#8a7ab8" },
+  crown:  { de: "Figuren der Krone", en: "Pieces of the Crown", color: "#c9a45c" },
+  shadow: { de: "Figuren des Schattens", en: "Pieces of the Shadow", color: "#8a7ab8" },
 };
 
 
@@ -1116,18 +1128,24 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen }) => (
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null }) => (
     <div onClick={onOpen} style={{ position: "relative", background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`,
       borderRadius: 11, padding: "10px 7px 9px", textAlign: "center", minWidth: 0, cursor: onOpen ? "pointer" : "default",
       boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : undefined }}>
-      {origin && <span className="gg-serif" style={{ position: "absolute", top: 4, right: 6, fontSize: 8.5,
-        letterSpacing: ".08em", color: T.dim }}>{origin}</span>}
+      {/* THE CORNER SIGIL: the piece's own vector figure, bare — no ring, no
+          plate, just the silhouette, so the tile says at a glance WHICH figure
+          this is even before the painting has loaded. The house name no longer
+          sits up here; it belongs under the name, where it reads as a caption. */}
+      {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
+        display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
       {img ? <img src={img} alt="" style={{ width: 68, height: 68, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: 68, height: 68, display: "grid", placeItems: "center", margin: "0 auto", fontSize: 30, color: T.faint }}>?</div>}
       <div className="gg-serif" style={{ fontSize: 11.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
+      {origin && <div className="gg-serif" style={{ fontSize: 9, letterSpacing: ".1em", marginTop: 1,
+        color: T.dim, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>}
       {action}
     </div>
   );
@@ -1138,10 +1156,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
     const own = unlocked.has(cid) || COURT_IDS.includes(cid);
     const seen = met.has(ch.kind);
     const wins = bossWinsFor(profile, cid) || 0;
-    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} onOpen={() => setDetail(cid)} />;
+    const sig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={28} level={1}
+      fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
+    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
-      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} onOpen={() => setDetail(cid)}
+      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} origin={origin} onOpen={() => setDetail(cid)}
         action={wins >= 1 ? <button onClick={(e) => { e.stopPropagation(); bribe(ch); }} disabled={gold < price}
           title={t("tree.bribeHint")}
           style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
@@ -1149,16 +1169,18 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)", color: "#17110a" }}>
           {t("tree.bribe", { g: price })}</button> : null} />;
     }
-    return <Tile key={cid} img={img} dark name={"???"} />;
+    return <Tile key={cid} img={img} dark name={"???"} sigil={sig} />;
   };
   const monsterTile = (b) => {
     const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
     const k = "X:" + b.id;
-    if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow
+    const sig = <PieceArt kind="X" bossId={b.id} art={b.art} size={28} level={1}
+      fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
+    if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow sigil={sig}
       name={en ? b.nameEn : b.nameDe} origin={bribedSet.has(b.id) ? t("tree.allied") : t("tree.inCourt")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);
-      return <Tile key={b.id} img={img} dim name={en ? b.nameEn : b.nameDe}
+      return <Tile key={b.id} img={img} dim sigil={sig} name={en ? b.nameEn : b.nameDe} origin={t("tree.masters")}
         action={can ? (sacrificeFor === b.id
           ? <div style={{ marginTop: 5 }}>
               <div style={{ fontSize: 9.5, color: T.gold, marginBottom: 3 }}>{t("tree.pickSacrifice")}</div>
@@ -1206,8 +1228,14 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
     </div>
     <H>{t("tree.crown")}</H><div style={grid}>{CROWN_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
     <H>{t("tree.shadow")}</H><div style={grid}>{SHADOW_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
-    {fams.map((f) => { const list = BOSSES.filter((b) => b.art === f && !bribedSet.has(b.id)); return list.length
-      ? <div key={f}><H>{en ? FAM_LABEL[f][1] : FAM_LABEL[f][0]}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null; })}
+    {/* ONE HALL FOR THE MASTERS. Five family headings (Golems, Beasts,
+        Serpents, Wraiths, Tyrants) split twenty-five monsters into five thin
+        rows of mostly "???" — the register read as a list of holes rather than
+        a chronicle. They stand together now, in the order you meet them. */}
+    {(() => {
+      const list = BOSSES.filter((b) => !bribedSet.has(b.id) && !ownedBossSet.has(b.id));
+      return list.length ? <div><H>{t("tree.masters")}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null;
+    })()}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
         display: "grid", placeItems: "center", padding: 16 }}>
