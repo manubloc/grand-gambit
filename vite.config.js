@@ -44,6 +44,10 @@ export default defineConfig({
         // and ONLY when the response really is an image.
         globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"],
         globIgnores: ["**/painted-*"], skipWaiting: true, clientsClaim: true,
+        // web push lives in its own small file, pulled into the generated sw.
+        // Its hash sits in the precache manifest, so editing it rolls a normal
+        // sw update — the stuck-update escape in main.jsx keeps working.
+        importScripts: ["push-sw.js"],
         runtimeCaching: [{
           urlPattern: ({ request, url }) => request.destination === "image" || /\.webp$/.test(url.pathname),
           handler: "CacheFirst",

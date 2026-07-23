@@ -32,3 +32,16 @@ als Referenz liegen) — Client und Online-Screen brauchten keine Änderung.
 Matchmaking-Bänder, Elo (K=32), Rematch-Fenster (2 min, Seitenwechsel),
 Vault (5 Snapshots), Freunde/Geschenke/Privatsphäre: alles identisch, jetzt
 mit 29 eigenen Protokoll-Tests (`node test_worker.mjs`).
+
+## Web-Push (Fernpartien)
+Der Worker erzeugt sein VAPID-Schluesselpaar SELBST beim ersten Start und
+legt es in seinen eigenen Speicher — kein Secret, kein Dashboard-Schritt,
+nichts geht bei einem Redeploy verloren. Der oeffentliche Schluessel reist im
+`welcome` zum Browser; die Glocke in der Online-Lobby abonniert damit.
+
+* Zug gegen geschlossene App → verschluesselte Nachricht (RFC 8291) an alle
+  registrierten Geraete des Spielers (max. 5, aelteste faellt raus)
+* 24 h vor Fristablauf erinnert ein Durable-Object-Alarm den Saeumigen —
+  der Hall weckt sich dafuer selbst, auch wenn niemand verbunden ist
+* Tote Postfaecher (410/404) werden automatisch vergessen
+* Protokoll: `push:subscribe` / `push:off`; Texte de/en je nach `hello.lang`

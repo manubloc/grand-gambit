@@ -4,7 +4,8 @@
 // no filesystem, no timers. Everything the protocol needs comes injected:
 //
 //   store  — persistence:   getPlayer/putPlayer/playerIds, kvGet/kvSet,
-//                            vaultList/vaultPush/vaultGet
+//                            vaultList/vaultPush/vaultGet,
+//                            pushPut/pushList/pushDelete/pushClear (web push)
 //   send   — delivery:      send(playerId, obj)
 //   now    — the clock      (injectable for tests)
 //
@@ -35,10 +36,20 @@ function cleanStats(s) {
 // is lost on time. Long enough for a holiday weekend, short enough that a game
 // cannot rot forever.
 const DAILY_MS = 3 * 24 * 60 * 60 * 1000;
+// One day before the deadline the absent player gets a last tap on the
+// shoulder — enough to save a game over a busy weekend.
+const REMIND_MS = 24 * 60 * 60 * 1000;
 
 export class HallCore {
-  constructor({ store, send, now = () => Date.now(), adminToken = "" }) {
+  constructor({ store, send, now = () => Date.now(), adminToken = "", notify = () => {}, pushKey = null }) {
     this.store = store; this.send = send; this.now = now;
+    // the second voice: `send` reaches an OPEN socket, `notify` reaches a
+    // CLOSED app — the adapter turns it into a Web Push. Injected like `send`,
+    // so the tests can listen in without any crypto or network.
+    this.notify = notify;
+    // the VAPID applicationServerKey the browser needs to subscribe; the
+    // adapter fills it in once its key pair is loaded
+    this.pushKey = pushKey || null;
     this.adminToken = String(adminToken || "");
     this.adminOn = this.adminToken.length >= 24;
     this.online = new Map();          // playerId → true (presence; sockets live in the adapter)
@@ -162,6 +173,9 @@ export class HallCore {
         deadline: this.now() + DAILY_MS, done: null };
       this.daily = g;
       for (const side of [w, bl]) this.send(side.id, { t: "daily:new", gameId: gid });
+      // white owes the first move; if he slipped away in the very moment the
+      // pairing landed, the push brings him back
+      if (!this.isOnline(w.id)) this.notify(w.id, { kind: "new", gameId: gid, opp: this.player(bl.id)?.name || "?" });
       return gid;
     }
     ms[matchId] = { w: w.id, b: bl.id, armyW, armyB, map, n: 0, mode };
@@ -181,14 +195,43 @@ export class HallCore {
   sweepDaily() {
     const g = this.daily; let changed = false;
     for (const rec of Object.values(g)) {
-      if (rec.done || rec.deadline > this.now()) continue;
-      const loser = rec.turn === "w" ? rec.w : rec.b;
-      rec.done = { winner: rec.turn === "w" ? "b" : "w", reason: "time" };
-      rec.lastAt = this.now(); changed = true;
-      this.rateDaily(rec);
-      for (const pid of [rec.w, rec.b]) this.send(pid, { t: "daily:over", gameId: rec.id, winner: rec.done.winner, reason: "time", lost: pid === loser });
+      if (rec.done) continue;
+      if (rec.deadline <= this.now()) {
+        const loser = rec.turn === "w" ? rec.w : rec.b;
+        rec.done = { winner: rec.turn === "w" ? "b" : "w", reason: "time" };
+        rec.lastAt = this.now(); changed = true;
+        this.rateDaily(rec);
+        for (const pid of [rec.w, rec.b]) {
+          const lost = pid === loser;
+          this.send(pid, { t: "daily:over", gameId: rec.id, winner: rec.done.winner, reason: "time", lost });
+          if (!this.isOnline(pid)) this.notify(pid, { kind: "over", gameId: rec.id,
+            opp: this.player(pid === rec.w ? rec.b : rec.w)?.name || "?", won: !lost, reason: "time" });
+        }
+        continue;
+      }
+      // the last-day reminder: fires ONCE per owed move, aimed only at the
+      // player who is actually holding the game up — and only if he is away
+      if (!rec.reminded && rec.deadline - this.now() <= REMIND_MS) {
+        rec.reminded = true; changed = true;
+        const owe = rec.turn === "w" ? rec.w : rec.b;
+        if (!this.isOnline(owe)) this.notify(owe, { kind: "deadline", gameId: rec.id,
+          opp: this.player(rec.turn === "w" ? rec.b : rec.w)?.name || "?",
+          hours: Math.max(1, Math.round((rec.deadline - this.now()) / 3600000)) });
+      }
     }
     if (changed) this.daily = g;
+  }
+  /** When must the Hall wake itself, even with every socket closed? The
+   *  earliest of any open game's T-24h reminder mark or its deadline. The
+   *  adapter turns this into a Durable Object alarm; null means sleep on. */
+  nextAlarmAt() {
+    let at = null;
+    for (const rec of Object.values(this.daily)) {
+      if (rec.done) continue;
+      const t = rec.reminded ? rec.deadline : rec.deadline - REMIND_MS;
+      if (at == null || t < at) at = t;
+    }
+    return at;
   }
   rateDaily(rec) {
     // reuse the ladder the live duels use: 1 = white won, 0 = black won
@@ -271,11 +314,13 @@ export class HallCore {
       this.savePlayer({ ...(ex || { friends: [], pending: [] }), id, secret,
         name: String(name).slice(0, 20), score: score | 0,
         privacy: privacy === "friends" ? "friends" : "public",
+        lang: msg.lang === "en" ? "en" : (ex?.lang || "de"),
         seen: this.now(), stats: cleanStats(msg.stats) || ex?.stats || null });
       me = id;
       this.connect(me);
       const p = this.player(me);
-      this.send(me, { t: "welcome", you: { id, name: p.name, score: p.score, privacy: p.privacy }, online: this.online.size });
+      this.send(me, { t: "welcome", you: { id, name: p.name, score: p.score, privacy: p.privacy },
+        online: this.online.size, push: this.pushKey || null });
       this.pushFriends(me); this.notifyFriends(me);
       return me;
     }
@@ -346,6 +391,21 @@ export class HallCore {
       this.send(me, { t: "vaultSave", ts: e.ts, save: e.data });
       return me;
     }
+    if (msg.t === "push:subscribe") {
+      // one browser hands over its push address; a player may register up to
+      // five devices (phone, tablet, desk …), oldest falls off. Never trust
+      // the wire: https endpoint, string keys, sane lengths.
+      const sub = msg.sub || {};
+      const ep = String(sub.endpoint || "");
+      const k = sub.keys || {};
+      if (!/^https:\/\/./.test(ep) || ep.length > 1000) throw new Error("bad endpoint");
+      if (typeof k.p256dh !== "string" || typeof k.auth !== "string" || !k.p256dh || !k.auth
+        || k.p256dh.length > 200 || k.auth.length > 60) throw new Error("bad keys");
+      this.store.pushPut(me, { endpoint: ep, keys: { p256dh: k.p256dh, auth: k.auth } }, 5);
+      this.send(me, { t: "push:ok", on: true });
+      return me;
+    }
+    if (msg.t === "push:off") { this.store.pushClear(me); this.send(me, { t: "push:ok", on: false }); return me; }
     if (msg.t === "gift") {
       if (!(p.friends || []).includes(msg.to)) throw new Error("not friends");
       if (!this.isOnline(msg.to)) throw new Error("offline");
@@ -360,7 +420,9 @@ export class HallCore {
       if (target.privacy === "friends" && !isFriend) throw new Error("friends only");
       const challengeId = this.nextId("c");
       const cs = this.challenges;
-      cs[challengeId] = { from: me, to: msg.targetId, maps: msg.maps || ["classic"], army: msg.army, armies: msg.armies || null, mode: msg.mode || "duel" };
+      // the clock travels WITH the challenge: without it, a friend asking for a
+      // correspondence game would silently land in a rush duel
+      cs[challengeId] = { from: me, to: msg.targetId, maps: msg.maps || ["classic"], army: msg.army, armies: msg.armies || null, mode: msg.mode || "duel", tc: msg.tc || "rush" };
       this.challenges = cs;
       this.send(msg.targetId, { t: "challenge", challengeId, mode: msg.mode || "duel", from: { id: me, name: p.name, score: p.score } });
       this.send(me, { t: "info", info: "challengeSent" });
@@ -373,8 +435,8 @@ export class HallCore {
       if (!c || c.to !== me) return me;
       if (!msg.accept) { this.send(c.from, { t: "challengeDeclined" }); return me; }
       const maps = c.maps.filter((m) => (msg.maps || ["classic"]).includes(m));
-      this.startMatch({ id: c.from, army: c.army, armies: c.armies, score: this.player(c.from).score, mode: c.mode },
-                      { id: me, army: msg.army, armies: msg.armies || null, score: p.score, mode: c.mode },
+      this.startMatch({ id: c.from, army: c.army, armies: c.armies, score: this.player(c.from).score, mode: c.mode, tc: c.tc },
+                      { id: me, army: msg.army, armies: msg.armies || null, score: p.score, mode: c.mode, tc: c.tc },
                       maps[0] || "classic");
       return me;
     }
@@ -419,13 +481,17 @@ export class HallCore {
       rec.turn = mySide === "w" ? "b" : "w";
       rec.lastAt = this.now();
       rec.deadline = this.now() + DAILY_MS;
+      rec.reminded = false;                               // a fresh move, a fresh clock, a fresh reminder
       if (msg.result) rec.done = { winner: msg.result.winner || null, reason: msg.result.reason || "end" };
       g[rec.id] = rec; this.daily = g;
       if (rec.done) this.rateDaily(rec);
       const oppId = rec.w === me ? rec.b : rec.w;
-      // the nudge: if he is here, he learns at once; if not, he finds it in his
-      // list the moment he returns
+      // the nudge: if he is here, he learns at once; if not, the Web Push
+      // knocks on his closed app — that is the whole point of the format
       this.send(oppId, { t: "daily:turn", gameId: rec.id, moves: rec.moves.length, done: rec.done });
+      if (!this.isOnline(oppId)) this.notify(oppId, rec.done
+        ? { kind: "over", gameId: rec.id, opp: p.name, won: rec.done.winner === (rec.w === oppId ? "w" : "b"), reason: rec.done.reason }
+        : { kind: "turn", gameId: rec.id, opp: p.name });
       this.send(me, { t: "daily:ok", gameId: rec.id, moves: rec.moves.length, done: rec.done });
       return me;
     }
@@ -438,6 +504,8 @@ export class HallCore {
       rec.lastAt = this.now(); g[rec.id] = rec; this.daily = g;
       this.rateDaily(rec);
       for (const pid of [rec.w, rec.b]) this.send(pid, { t: "daily:over", gameId: rec.id, winner: rec.done.winner, reason: "resign", lost: pid === me });
+      const oppId = rec.w === me ? rec.b : rec.w;
+      if (!this.isOnline(oppId)) this.notify(oppId, { kind: "over", gameId: rec.id, opp: p.name, won: true, reason: "resign" });
       return me;
     }
     if (msg.t === "resign") { this.endMatchFor(me, "oppResign"); return me; }
@@ -485,8 +553,15 @@ export class HallCore {
 
 /** In-memory store — used by the test suite and handy for local runs. */
 export function memoryStore() {
-  const players = new Map(), kv = new Map(), vault = new Map();
+  const players = new Map(), kv = new Map(), vault = new Map(), push = new Map();
   return {
+    pushPut: (owner, sub, keep = 5) => {
+      const list = [sub, ...(push.get(owner) || []).filter((s) => s.endpoint !== sub.endpoint)].slice(0, keep);
+      push.set(owner, list);
+    },
+    pushList: (owner) => [...(push.get(owner) || [])],
+    pushDelete: (owner, endpoint) => push.set(owner, (push.get(owner) || []).filter((s) => s.endpoint !== endpoint)),
+    pushClear: (owner) => push.delete(owner),
     getPlayer: (id) => players.get(id) ? JSON.parse(JSON.stringify(players.get(id))) : undefined,
     putPlayer: (p) => players.set(p.id, JSON.parse(JSON.stringify(p))),
     playerIds: () => [...players.keys()],

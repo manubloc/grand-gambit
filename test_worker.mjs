@@ -9,14 +9,19 @@ const ok = (name, cond) => { if (cond) { pass++; console.log("  ok  -", name); }
 
 function mkHall(t0 = 1000) {
   const outbox = [];
+  const pings = [];   // every notify() the core fired — the web-push mailbox
   let clock = t0;
   const hall = new HallCore({
     store: memoryStore(),
     send: (id, obj) => outbox.push({ ...obj, _to: id }),
     now: () => clock,
     adminToken: "super-secret-admin-token-24chars",
+    notify: (id, data) => pings.push({ ...data, _to: id }),
+    pushKey: "TEST-VAPID-KEY",
   });
-  return { hall, outbox, tick: (ms) => { clock += ms; }, last: (t, to) => [...outbox].reverse().find((m) => m.t === t && (!to || m._to === to)) };
+  return { hall, outbox, pings, tick: (ms) => { clock += ms; },
+    last: (t, to) => [...outbox].reverse().find((m) => m.t === t && (!to || m._to === to)),
+    lastPing: (kind, to) => [...pings].reverse().find((m) => m.kind === kind && (!to || m._to === to)) };
 }
 
 // ── hello / identity ─────────────────────────────────────────────────────────
@@ -360,6 +365,223 @@ function mkHall(t0 = 1000) {
   ok("both players rebuild the IDENTICAL position", sig(sa) === sig(sb));
   ok("and agree whose move it is", sa.turn === sb.turn);
   ok("the position really moved on from the start", sig(sa) !== sig(rebuild({ ...last("daily:game", "a").game, moves: [] })));
+}
+
+// ═════════════════════════ WEB PUSH — the knock on the closed app ═══════════
+import { generateVapid, vapidAuth, encryptPayload, sendPush, deliverPushes, pushText, b64u, unb64u }
+  from "./worker/src/webpush.mjs";
+
+const subtle = globalThis.crypto.subtle;
+const te2 = new TextEncoder();
+const cat2 = (...parts) => { const n = parts.reduce((a, p) => a + p.length, 0); const out = new Uint8Array(n); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out; };
+const hmac2 = async (key, data) => { const k = await subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]); return new Uint8Array(await subtle.sign("HMAC", k, data)); };
+
+// ── VAPID: a self-made pair really signs a token the push service can check ──
+{
+  const vapid = await generateVapid();
+  const rawPub = unb64u(vapid.publicKey);
+  ok("vapid public key is a 65-byte uncompressed P-256 point", rawPub.length === 65 && rawPub[0] === 4);
+  const auth = await vapidAuth("https://fcm.googleapis.com/fcm/send/abc123", vapid, { nowSec: 1_700_000_000 });
+  ok("authorization header carries the vapid scheme and the key", /^vapid t=[^,]+, k=/.test(auth) && auth.endsWith(vapid.publicKey));
+  const token = auth.slice("vapid t=".length, auth.indexOf(", k="));
+  const [h, c, s] = token.split(".");
+  const header = JSON.parse(Buffer.from(h, "base64url").toString());
+  const claims = JSON.parse(Buffer.from(c, "base64url").toString());
+  ok("token claims: ES256, audience is the endpoint ORIGIN, exp in the future", header.alg === "ES256" && claims.aud === "https://fcm.googleapis.com" && claims.exp === 1_700_000_000 + 12 * 3600);
+  const verifyKey = await subtle.importKey("jwk", vapid.publicJwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+  const good = await subtle.verify({ name: "ECDSA", hash: "SHA-256" }, verifyKey, unb64u(s), te2.encode(`${h}.${c}`));
+  ok("the ES256 signature verifies against the public key", good === true);
+}
+
+// ── RFC 8291: an INDEPENDENT decryptor (built here from the RFC's prose, not
+//    from webpush.mjs) recovers the plaintext byte for byte ─────────────────
+{
+  // the browser's side of the handshake, played by the test
+  const ua = await subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const uaPubRaw = new Uint8Array(await subtle.exportKey("raw", ua.publicKey));
+  const authSecret = globalThis.crypto.getRandomValues(new Uint8Array(16));
+  const sub = { p256dh: b64u(uaPubRaw), auth: b64u(authSecret) };
+  // a FIXED sender pair + salt so the run is reproducible
+  const as = await subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const asJwk = { ...(await subtle.exportKey("jwk", as.privateKey)), publicRaw: b64u(new Uint8Array(await subtle.exportKey("raw", as.publicKey))) };
+  const salt = globalThis.crypto.getRandomValues(new Uint8Array(16));
+  const plain = te2.encode("When I grow up, I want to be a watermelon");
+  const body = await encryptPayload(sub, plain, { asJwk, salt: b64u(salt) });
+
+  // header anatomy straight from RFC 8188: salt(16) | rs(4) | idlen(1) | keyid
+  const rs = (body[16] << 24 | body[17] << 16 | body[18] << 8 | body[19]) >>> 0;
+  const idlen = body[20];
+  const asPubFromHeader = body.slice(21, 21 + idlen);
+  ok("record header: our salt, rs=4096, a 65-byte sender key id", body.slice(0, 16).join() === salt.join() && rs === 4096 && idlen === 65 && asPubFromHeader.join() === unb64u(asJwk.publicRaw).join());
+
+  // now decrypt with NOTHING but the RFC text: ECDH, the two-step HKDF, AES-GCM
+  const asPubKey = await subtle.importKey("raw", asPubFromHeader, { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const ecdh = new Uint8Array(await subtle.deriveBits({ name: "ECDH", public: asPubKey }, ua.privateKey, 256));
+  const prkKey = await hmac2(authSecret, ecdh);
+  const keyInfo = cat2(te2.encode("WebPush: info"), new Uint8Array([0]), uaPubRaw, asPubFromHeader);
+  const ikm = (await hmac2(prkKey, cat2(keyInfo, new Uint8Array([1])))).slice(0, 32);
+  const prk = await hmac2(body.slice(0, 16), ikm);
+  const cek = (await hmac2(prk, cat2(te2.encode("Content-Encoding: aes128gcm"), new Uint8Array([0, 1])))).slice(0, 16);
+  const nonce = (await hmac2(prk, cat2(te2.encode("Content-Encoding: nonce"), new Uint8Array([0, 1])))).slice(0, 12);
+  const aes = await subtle.importKey("raw", cek, "AES-GCM", false, ["decrypt"]);
+  const opened = new Uint8Array(await subtle.decrypt({ name: "AES-GCM", iv: nonce }, aes, body.slice(21 + idlen)));
+  ok("the last record ends with the 0x02 delimiter", opened[opened.length - 1] === 2);
+  ok("the independent decryptor recovers the plaintext byte for byte",
+    new TextDecoder().decode(opened.slice(0, -1)) === "When I grow up, I want to be a watermelon");
+  let tampered = false;
+  try { const bad = body.slice(); bad[bad.length - 1] ^= 1; await subtle.decrypt({ name: "AES-GCM", iv: nonce }, aes, bad.slice(21 + idlen)); tampered = true; } catch {}
+  ok("a flipped ciphertext bit is rejected by the GCM tag", tampered === false);
+}
+
+// ── sendPush: headers, encoding, and the 410 funeral ─────────────────────────
+{
+  const vapid = await generateVapid();
+  const ua = await subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const sub = { endpoint: "https://push.example.com/box/1",
+    keys: { p256dh: b64u(new Uint8Array(await subtle.exportKey("raw", ua.publicKey))), auth: b64u(globalThis.crypto.getRandomValues(new Uint8Array(16))) } };
+  let seen = null;
+  const fetch201 = async (url, init) => { seen = { url, init }; return { status: 201 }; };
+  const r1 = await sendPush(sub, { title: "x" }, vapid, { fetchFn: fetch201 });
+  ok("a payload push is ok on 201 and aes128gcm-encoded with a vapid pass",
+    r1.ok && !r1.gone && seen.url === sub.endpoint
+    && seen.init.headers["Content-Encoding"] === "aes128gcm"
+    && /^vapid t=/.test(seen.init.headers.Authorization)
+    && seen.init.body instanceof Uint8Array && seen.init.body.length > 86);
+  const r2 = await sendPush(sub, null, vapid, { fetchFn: fetch201 });
+  ok("a bare wake-up carries no body and no content-encoding", r2.ok && seen.init.body === null && !("Content-Encoding" in seen.init.headers));
+  const r3 = await sendPush(sub, { title: "x" }, vapid, { fetchFn: async () => ({ status: 410 }) });
+  ok("410 marks the subscription as gone", !r3.ok && r3.gone === true);
+  const r4 = await sendPush({ endpoint: "http://insecure" }, null, vapid, { fetchFn: fetch201 });
+  ok("a non-https endpoint is buried before any network call", !r4.ok && r4.gone === true);
+  const two = [sub, { ...sub, endpoint: "https://push.example.com/box/dead" }];
+  const seq = [{ status: 201 }, { status: 410 }]; let i = 0;
+  const { sent, gone } = await deliverPushes(two, { title: "x" }, vapid, { fetchFn: async () => seq[i++] });
+  ok("deliverPushes fans out and returns the dead endpoint", sent === 1 && gone.length === 1 && gone[0].endsWith("/dead"));
+}
+
+// ── pushText: words in both tongues for every kind ───────────────────────────
+{
+  const kinds = ["turn", "new", "deadline", "over"];
+  let good = true;
+  for (const k of kinds) for (const lang of ["de", "en"]) {
+    const { title, body } = pushText(k, { opp: "Bo", hours: 5, won: true, reason: "time" }, lang);
+    if (!title || !body) good = false;
+  }
+  ok("every kind yields a title and body in de and en", good);
+  ok("the turn nudge names the opponent", pushText("turn", { opp: "Bo" }, "de").title.includes("Bo") && pushText("turn", { opp: "Bo" }, "en").title.includes("Bo"));
+  ok("a lost game on time says so", pushText("over", { opp: "Bo", won: false, reason: "time" }, "de").body.includes("auf Zeit"));
+}
+
+// ── the Hall speaks push: key in the welcome, subscribe, off ─────────────────
+{
+  const { hall, last } = mkHall();
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 100, lang: "en" });
+  ok("welcome hands the browser the vapid key", last("welcome", "a").push === "TEST-VAPID-KEY");
+  ok("hello remembers the player's language", hall.player("a").lang === "en");
+  hall.handle("a", { t: "push:subscribe", sub: { endpoint: "https://push.example.com/a1", keys: { p256dh: "P", auth: "A" } } });
+  ok("push:subscribe files the address and answers on:true", hall.store.pushList("a").length === 1 && last("push:ok", "a").on === true);
+  hall.handle("a", { t: "push:subscribe", sub: { endpoint: "https://push.example.com/a2", keys: { p256dh: "P", auth: "A" } } });
+  ok("a second device lives alongside the first", hall.store.pushList("a").length === 2);
+  for (let i = 3; i <= 7; i++) hall.handle("a", { t: "push:subscribe", sub: { endpoint: "https://push.example.com/a" + i, keys: { p256dh: "P", auth: "A" } } });
+  ok("the cap keeps five devices, oldest falls off", hall.store.pushList("a").length === 5 && !hall.store.pushList("a").some((s) => s.endpoint.endsWith("/a1")));
+  let threw = null;
+  try { hall.handle("a", { t: "push:subscribe", sub: { endpoint: "http://plain.example.com/x", keys: { p256dh: "P", auth: "A" } } }); } catch (e) { threw = e.message; }
+  ok("an insecure endpoint is refused", threw === "bad endpoint");
+  threw = null;
+  try { hall.handle("a", { t: "push:subscribe", sub: { endpoint: "https://ok.example.com/x", keys: { p256dh: "P" } } }); } catch (e) { threw = e.message; }
+  ok("missing keys are refused", threw === "bad keys");
+  hall.handle("a", { t: "push:off" });
+  ok("push:off clears every device and answers on:false", hall.store.pushList("a").length === 0 && last("push:ok", "a").on === false);
+}
+
+// ── the nudges: who is knocked on, and when ──────────────────────────────────
+{
+  const { hall, pings, lastPing, tick, last } = mkHall(50_000);
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 100 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 100 });
+  // a daily challenge between friends-to-be: pair via challenge with tc daily
+  hall.handle("a", { t: "challenge", targetId: "b", maps: ["classic"], army: { x: 1 }, mode: "classic", tc: "daily" });
+  const ch = last("challenge", "b");
+  hall.handle("b", { t: "challengeRespond", challengeId: ch.challengeId, accept: true, maps: ["classic"], army: { x: 1 } });
+  const gid = last("daily:new", "a").gameId;
+  ok("a daily challenge files a correspondence game, no live match", gid && Object.keys(hall.matches).length === 0);
+  ok("both being online, the pairing sent NO push", pings.length === 0);
+
+  const rec0 = hall.daily[gid];
+  const whiteId = rec0.w, blackId = rec0.b;
+  const oppOf = (id) => (id === "a" ? "b" : "a");
+  // black leaves; the pairing already happened, so only moves nudge from here
+  hall.close(blackId);
+  hall.handle(whiteId, { t: "daily:move", gameId: gid, cmd: { k: "mv", n: 1 } });
+  ok("a move against a CLOSED app fires the turn nudge, naming the mover",
+    lastPing("turn", blackId) && lastPing("turn", blackId).gameId === gid && lastPing("turn", blackId).opp === hall.player(whiteId).name);
+  ok("the game itself is untouched by the nudge", hall.daily[gid].moves.length === 1 && hall.daily[gid].turn !== rec0.turn);
+
+  // black returns and answers while white stays online: no push for white
+  hall.connect(blackId);
+  const before = pings.length;
+  hall.handle(blackId, { t: "daily:move", gameId: gid, cmd: { k: "mv", n: 2 } });
+  ok("a move against an OPEN app sends only the socket message", pings.length === before && last("daily:turn", whiteId).moves === 2);
+
+  // the reminder: 24h before the deadline, aimed at whoever owes the move
+  const rec1 = hall.daily[gid];
+  const owe = rec1.turn === "w" ? rec1.w : rec1.b;
+  hall.close(owe);
+  tick(2 * 24 * 60 * 60 * 1000 + 60 * 1000);   // into the final day
+  hall.sweepDaily();
+  ok("the last-day reminder knocks once on the player who owes the move",
+    lastPing("deadline", owe) && lastPing("deadline", owe).hours <= 24 && hall.daily[gid].reminded === true);
+  const n1 = pings.length;
+  hall.sweepDaily();
+  ok("the reminder does not repeat", pings.length === n1);
+
+  // the deadline passes: the ower loses on time, both absentees are told
+  hall.close(oppOf(owe));
+  tick(24 * 60 * 60 * 1000 + 60 * 1000);
+  hall.sweepDaily();
+  const done = hall.daily[gid].done;
+  ok("the game is decided against whoever owed the move", done && done.reason === "time" && done.winner === (rec1.turn === "w" ? "b" : "w"));
+  ok("the loser's nudge says lost, the winner's says won",
+    lastPing("over", owe) && lastPing("over", owe).won === false && lastPing("over", oppOf(owe)) && lastPing("over", oppOf(owe)).won === true);
+  ok("the ladder settled the time loss", last("rated", owe) && last("rated", oppOf(owe)));
+}
+
+// ── resign nudge + a fresh move resets the reminder ──────────────────────────
+{
+  const { hall, lastPing, tick, last } = mkHall(10_000);
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 100 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 100 });
+  hall.handle("a", { t: "challenge", targetId: "b", maps: ["classic"], army: {}, mode: "classic", tc: "daily" });
+  hall.handle("b", { t: "challengeRespond", challengeId: last("challenge", "b").challengeId, accept: true, maps: ["classic"], army: {} });
+  const gid = last("daily:new", "a").gameId;
+  const w = hall.daily[gid].w, b = hall.daily[gid].b;
+  tick(2 * 24 * 60 * 60 * 1000 + 5000);
+  hall.sweepDaily();
+  ok("reminder armed on the first owed move", hall.daily[gid].reminded === true);
+  hall.handle(w, { t: "daily:move", gameId: gid, cmd: { k: "mv" } });
+  ok("a fresh move resets clock AND reminder", hall.daily[gid].reminded === false && hall.daily[gid].deadline > hall.now());
+  hall.close(w);
+  hall.handle(b, { t: "daily:resign", gameId: gid });
+  ok("resigning nudges the absent opponent with the win", lastPing("over", w) && lastPing("over", w).won === true && lastPing("over", w).reason === "resign");
+}
+
+// ── nextAlarmAt: the Hall knows when to wake itself ──────────────────────────
+{
+  const { hall, tick, last } = mkHall(1_000_000);
+  ok("no open games, no alarm", hall.nextAlarmAt() === null);
+  hall.handle(null, { t: "hello", id: "a", secret: "s", name: "Ana", score: 100 });
+  hall.handle(null, { t: "hello", id: "b", secret: "s", name: "Bo", score: 100 });
+  hall.handle("a", { t: "challenge", targetId: "b", maps: ["classic"], army: {}, mode: "classic", tc: "daily" });
+  hall.handle("b", { t: "challengeRespond", challengeId: last("challenge", "b").challengeId, accept: true, maps: ["classic"], army: {} });
+  const gid = last("daily:new", "a").gameId;
+  const rec = hall.daily[gid];
+  ok("with a fresh game the alarm aims at the T-24h reminder", hall.nextAlarmAt() === rec.deadline - 24 * 60 * 60 * 1000);
+  tick(2 * 24 * 60 * 60 * 1000 + 5000);
+  hall.sweepDaily();
+  ok("once reminded, the alarm aims at the deadline itself", hall.nextAlarmAt() === hall.daily[gid].deadline);
+  tick(24 * 60 * 60 * 1000);
+  hall.sweepDaily();
+  ok("a finished game asks for no alarm", hall.nextAlarmAt() === null);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

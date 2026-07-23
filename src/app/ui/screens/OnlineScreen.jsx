@@ -124,9 +124,81 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
   const noteT = useRef(null);
   const flash = (msg) => { setNote(msg); clearTimeout(noteT.current); noteT.current = setTimeout(() => setNote(""), 3200); };
 
+  // ── THE BELL: web push for correspondence games. The Hall hands its VAPID
+  // key in the welcome; the browser subscribes; from then on a closed app is
+  // knocked on the moment it is your move. ──────────────────────────────────
+  const [pushKey, setPushKey] = useState(null);           // applicationServerKey from the Hall
+  const [pushMode, setPushMode] = useState("idle");       // idle | unsupported | denied | off | on | busy
+  const pushSupported = typeof window !== "undefined" && "Notification" in window
+    && "serviceWorker" in navigator && "PushManager" in window;
+  const b64uToU8 = (s) => { const q = s.replace(/-/g, "+").replace(/_/g, "/");
+    const raw = atob(q + "=".repeat((4 - (q.length % 4)) % 4));
+    const out = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i); return out; };
+  const syncPush = async () => {
+    // silent housekeeping on every connect: push endpoints rotate, the Hall
+    // must always hold the CURRENT address — never asks, never nags
+    if (!pushSupported) { setPushMode("unsupported"); return; }
+    if (Notification.permission === "denied") { setPushMode("denied"); return; }
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub && Notification.permission === "granted") { net.send({ t: "push:subscribe", sub: sub.toJSON() }); setPushMode("on"); }
+      else setPushMode("off");
+    } catch { setPushMode("off"); }
+  };
+  const enablePush = async () => {
+    if (!pushKey || !pushSupported || pushMode === "busy") return;
+    setPushMode("busy");
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") { setPushMode(perm === "denied" ? "denied" : "off"); return; }
+      const reg = await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription())
+        || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToU8(pushKey) }));
+      net.send({ t: "push:subscribe", sub: sub.toJSON() });
+      setPushMode("on"); flash(t("push.enabled"));
+    } catch { setPushMode("off"); flash(t("push.fail")); }
+  };
+  const disablePush = async () => {
+    if (pushMode === "busy") return;
+    setPushMode("busy");
+    try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch {}
+    net.send({ t: "push:off" }); setPushMode("off");
+  };
+  const pushRow = (mt) => {
+    if (!pushKey || conn !== "on") return null;
+    const bell = (c) => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flex: "0 0 auto" }}>
+        <path d="M12 3c-3.2 0-5.2 2.4-5.2 5.4 0 3.8-1.3 5.3-2.3 6.3-.4.4-.1 1.3.6 1.3h13.8c.7 0 1-.9.6-1.3-1-1-2.3-2.5-2.3-6.3C17.2 5.4 15.2 3 12 3Z" stroke={c} strokeWidth="1.7" strokeLinejoin="round"/>
+        <path d="M10 18.6a2.1 2.1 0 0 0 4 0" stroke={c} strokeWidth="1.7" strokeLinecap="round"/>
+      </svg>
+    );
+    if (pushMode === "unsupported") return (
+      <div style={{ marginTop: mt, fontSize: 11, color: T.faint, lineHeight: 1.45 }}>{t("push.unsupported")}</div>);
+    if (pushMode === "denied") return (
+      <div style={{ marginTop: mt, fontSize: 11, color: T.faint, lineHeight: 1.45 }}>{t("push.denied")}</div>);
+    if (pushMode === "on") return (
+      <div style={{ marginTop: mt, display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#c9b8ff" }}>
+        {bell("#a78bfa")}<span style={{ flex: 1 }}>{t("push.on")}</span>
+        <button onClick={disablePush} style={{ fontFamily: "inherit", fontSize: 11, color: T.faint, background: "none",
+          border: "1px solid rgba(120,130,160,.35)", borderRadius: 8, padding: "3px 9px", cursor: "pointer" }}>{t("push.offBtn")}</button>
+      </div>);
+    return (
+      <button onClick={enablePush} disabled={pushMode === "busy"}
+        style={{ marginTop: mt, display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left",
+          fontFamily: "inherit", cursor: "pointer", padding: "10px 12px", borderRadius: 12,
+          background: "linear-gradient(150deg, rgba(167,139,250,.14), rgba(12,16,26,.85) 62%)",
+          border: "1.5px solid rgba(167,139,250,.55)", color: "#e6ddff", fontSize: 12.5,
+          opacity: pushMode === "busy" ? 0.6 : 1 }}>
+        {bell("#a78bfa")}<span>{t("push.cta")}</span>
+      </button>);
+  };
+
   useEffect(() => {
     const subs = [
-      net.on("welcome", (m) => { setConn("on"); setOnlineN(m.online || 0); net.send({ t: "daily:list" }); }),
+      net.on("welcome", (m) => { setConn("on"); setOnlineN(m.online || 0); net.send({ t: "daily:list" });
+        if (m.push) { setPushKey(m.push); syncPush(); } }),
+      net.on("push:ok", (m) => setPushMode(m.on ? "on" : "off")),
       net.on("friends", (m) => { setFriends(m.friends || []); setRequests(m.requests || []); }),
       net.on("challenge", (m) => setChallenge(m)),
       net.on("challengeDeclined", () => flash(t("online.decline"))),
@@ -188,7 +260,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
     setConn("busy");
     dispatch({ type: "SET_ONLINE", online: { ...o, server } });
     try {
-      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public", stats: buildStats(profile, myPlaytime) });
+      await net.connect(server, { id: o.id, secret: o.secret, name, score, privacy: o.privacy || "public", stats: buildStats(profile, myPlaytime), lang: en ? "en" : "de" });
     } catch { setConn("fail"); }
   }
   function setPrivacy(privacy) {
@@ -372,9 +444,11 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
                       );
                     })}
                   </div>
+                  {pushRow(8)}
                   <div style={{ fontSize: 11, color: T.faint, marginTop: 6, lineHeight: 1.45 }}>{t("daily.hint")}</div>
                 </div>
               )}
+              {daily.length === 0 && timeMode === "daily" && pushRow(10)}
 
               <div style={{ height: 8 }} />
               <Button variant="primary" onClick={findRandom} style={{ padding: "14px", fontSize: 15.5 }}>

@@ -11,6 +11,7 @@
 // The game connects to  wss://<worker-host>/ws  — see DEPLOY-WORKER.md.
 import { DurableObject } from "cloudflare:workers";
 import { HallCore } from "./logic.mjs";
+import { generateVapid, deliverPushes, pushText } from "./webpush.mjs";
 
 export default {
   async fetch(request, env) {
@@ -42,6 +43,8 @@ export class Hall extends DurableObject {
       CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY AUTOINCREMENT,
         ts INTEGER NOT NULL, version TEXT, ua TEXT, url TEXT, kind TEXT,
         message TEXT, stack TEXT, account TEXT, note TEXT, log TEXT);
+      CREATE TABLE IF NOT EXISTS push (owner TEXT NOT NULL, endpoint TEXT NOT NULL,
+        ts INTEGER NOT NULL, doc TEXT NOT NULL, PRIMARY KEY (owner, endpoint));
     `);
     const sql = this.sql;
     const store = {
@@ -67,17 +70,82 @@ export class Hall extends DurableObject {
         return r.length ? { ts: r[0].ts, data: r[0].data } : null;
       },
       vaultCount: () => [...this.sql.exec("SELECT COUNT(*) AS n FROM vault")][0].n,
+      // web push: a player may register several devices; the cap keeps the
+      // table honest and the oldest address falls off first
+      pushPut: (owner, sub, keep = 5) => {
+        sql.exec("INSERT OR REPLACE INTO push (owner, endpoint, ts, doc) VALUES (?, ?, ?, ?)",
+          owner, sub.endpoint, Date.now(), JSON.stringify(sub));
+        sql.exec(`DELETE FROM push WHERE owner = ? AND endpoint NOT IN
+          (SELECT endpoint FROM push WHERE owner = ? ORDER BY ts DESC LIMIT ?)`, owner, owner, keep);
+      },
+      pushList: (owner) => [...sql.exec("SELECT doc FROM push WHERE owner = ?", owner)].map((r) => JSON.parse(r.doc)),
+      pushDelete: (owner, endpoint) => { sql.exec("DELETE FROM push WHERE owner = ? AND endpoint = ?", owner, endpoint); },
+      pushClear: (owner) => { sql.exec("DELETE FROM push WHERE owner = ?", owner); },
     };
+    this.store = store;
+    // nudges queue here; kick() drains them AFTER the handler returns, so the
+    // synchronous protocol core never waits on crypto or the network
+    this.pushJobs = [];
     this.core = new HallCore({
       store,
       send: (id, obj) => this.deliver(id, obj),
       adminToken: env.ADMIN_TOKEN || "",
+      notify: (id, data) => { this.pushJobs.push({ id, data }); },
+    });
+    // The VAPID pair is born ONCE inside this very Hall and kept in its own
+    // storage — no dashboard secret, nothing to provision, nothing to lose on
+    // a redeploy. blockConcurrencyWhile holds all events until it is ready.
+    this.vapid = null;
+    this.ctx.blockConcurrencyWhile(async () => {
+      let v = null;
+      try { v = JSON.parse(store.kvGet("vapid") || "null"); } catch {}
+      if (!v?.privateJwk || !v?.publicKey) { v = await generateVapid(); store.kvSet("vapid", JSON.stringify(v)); }
+      this.vapid = v;
+      this.core.pushKey = v.publicKey;
     });
     // after hibernation: re-seat everyone who is still connected
     for (const ws of this.ctx.getWebSockets()) {
       const att = ws.deserializeAttachment();
       if (att?.id) this.core.online.set(att.id, true);
     }
+  }
+
+  // ── the push pump ──────────────────────────────────────────────────────────
+  async flushPush() {
+    const jobs = this.pushJobs.splice(0);
+    for (const { id, data } of jobs) {
+      try {
+        const subs = this.store.pushList(id);
+        if (!subs.length) continue;
+        const lang = this.store.getPlayer(id)?.lang || "de";
+        const { title, body } = pushText(data.kind, data, lang);
+        const payload = { title, body, tag: "gg-" + (data.gameId || "daily"), url: "./" };
+        const { gone } = await deliverPushes(subs, payload, this.vapid, {});
+        for (const ep of gone) this.store.pushDelete(id, ep);   // dead letter boxes are forgotten
+      } catch { /* a failed nudge must never take the Hall down */ }
+    }
+  }
+  /** Fire-and-forget after every entry point: drain nudges, re-arm the alarm. */
+  kick() {
+    if (this.pushJobs.length) {
+      const run = this.flushPush().catch(() => {});
+      try { this.ctx.waitUntil(run); } catch { /* runtime without waitUntil: run floats */ }
+    }
+    this.armAlarm();
+  }
+  armAlarm() {
+    const at = this.core.nextAlarmAt();
+    if (at != null && at !== this._alarmAt) {
+      this._alarmAt = at;
+      try { this.ctx.storage.setAlarm(at); } catch {}
+    }
+  }
+  /** The Hall wakes itself: sweep deadlines & reminders, push, sleep again. */
+  async alarm() {
+    try { this.core.sweepDaily(); } catch {}
+    this._alarmAt = null;
+    await this.flushPush().catch(() => {});
+    this.armAlarm();
   }
 
   wsFor(id) {
@@ -155,6 +223,8 @@ export class Hall extends DurableObject {
     } catch (e) {
       if (preSeat) ws.serializeAttachment(att); // a rejected hello must not hijack the seat
       try { ws.send(JSON.stringify({ t: "error", error: String(e.message || e) })); } catch {}
+    } finally {
+      this.kick();   // nudges born in this handler leave the house now
     }
   }
 

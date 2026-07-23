@@ -43,14 +43,12 @@ export const TIME_MODES = [
     en: { name: "Classic Gambit", tag: "1–3 days",
       blurb: "The grandmaster's format for the road. Move whenever you have a moment and study the board over days." },
     base: 86400, inc: 0, perMove: true, color: "#a78bfa", glyph: "crown",
-    // Honest state: correspondence needs the match to survive both players
-    // closing the app, plus a nudge when it is your turn. The live relay does
-    // neither yet, so the card announces the format instead of pretending.
-    // The game now lives on the server: seed, both armies and every command,
-    // so it outlasts both players closing the app. What is still missing is the
-    // push notification — that needs signing keys and a subscription store.
-    noteDe: "Deine Fernpartien warten auf dem Server und stehen in der Lobby unter Fernpartien. Wer drei Tage nicht zieht, verliert auf Zeit.",
-    noteEn: "Your correspondence games wait on the server and appear in the lobby. Three days without a move loses on time.",
+    // Both legs of the format stand now: the game lives on the server (seed,
+    // both armies, every command — it outlasts both players closing the app),
+    // and Web Push knocks on the closed app when it is your move. The Hall
+    // signs with its own self-made VAPID pair; the bell in the lobby opts in.
+    noteDe: "Deine Fernpartien warten auf dem Server und stehen in der Lobby unter Fernpartien. Erlaube die Benachrichtigung, dann meldet sich das Spiel, sobald du am Zug bist. Wer drei Tage nicht zieht, verliert auf Zeit.",
+    noteEn: "Your correspondence games wait on the server and appear in the lobby. Allow the notification and the game will call the moment it is your move. Three days without a move loses on time.",
   },
 ];
 
