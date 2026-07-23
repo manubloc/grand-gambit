@@ -138,7 +138,10 @@ for (const [w, h, name] of [[390, 844, "iPhone"], [360, 800, "Android"], [414, 8
       while (card && hops < 5 && card.getBoundingClientRect().width > 260) { card = card.parentElement; hops++; }
       if (!card) continue;
       for (const o of card.querySelectorAll("div,span")) {
-        if (o === el || o.contains(el) || el.contains(o) || o.children.length) continue;
+        // a caption may itself hold a small mark beside its text (the house
+        // diamond) — skipping every element with children was the hole that let
+        // "Läufer Freie Figur" through for weeks
+        if (o === el || o.contains(el) || el.contains(o) || o.children.length > 2) continue;
         if (parseFloat(getComputedStyle(o).fontSize) > 12.5) continue;
         const t2 = o.textContent.trim(); if (!t2 || t2.length > 30 || /^[?\s]+$/.test(t2)) continue;
         const b = o.getBoundingClientRect(); if (!b.height) continue;
@@ -169,6 +172,55 @@ for (const [w, h, name] of [[390, 844, "iPhone"], [360, 800, "Android"], [414, 8
   const sheetHits = await page.evaluate(SCAN);
   ok("the opened sheet keeps its caption under the name",
     sheetHits.length === 0 || console.log("     ", sheetHits.slice(0, 4).join(" | ")));
+
+  // THE LINE BREAK, MEASURED DIRECTLY. Name and house were both inline-flex for
+  // weeks, so they flowed onto ONE line ("Läufer Freie Figur") — a pairing the
+  // scan above missed because the house line carries a small mark of its own.
+  // This looks straight at the two boxes instead.
+  const sheets = [];
+  for (let i = 0; i < 5; i++) {
+    const opened2 = await page.evaluate((n) => {
+      const t = [...document.querySelectorAll("div")].filter((d) => { const b = d.getBoundingClientRect();
+        return b.width > 60 && b.width < 190 && b.height > 70 && d.querySelector("img"); });
+      const list = t.filter((d) => !/\?\?\?/.test(d.textContent));
+      if (list[n]) { list[n].click(); return true; } return false;
+    }, i);
+    if (!opened2) break;
+    await page.waitForTimeout(500);
+    const m = await page.evaluate(() => {
+      for (const el of document.querySelectorAll("div.gg-serif")) {
+        if (Math.round(parseFloat(getComputedStyle(el).fontSize)) !== 17) continue;
+        const nx = el.nextElementSibling; if (!nx) continue;
+        const a = el.getBoundingClientRect(), b = nx.getBoundingClientRect();
+        if (!a.height || !b.height) continue;
+        return { name: el.textContent.trim().slice(0, 16), below: b.top >= a.bottom - 1 };
+      }
+      return null;
+    });
+    if (m) sheets.push(m);
+    await page.evaluate(() => { const c = [...document.querySelectorAll("button")].find((b) => b.getAttribute("aria-label") === "close"); c && c.click(); });
+    await page.waitForTimeout(300);
+  }
+  ok(`figure sheets were opened and measured (${sheets.length})`, sheets.length >= 3);
+  const beside = sheets.filter((x) => !x.below).map((x) => x.name);
+  ok("every sheet breaks the line before its house",
+    beside.length === 0 || console.log("     ", beside.join(", ")));
+
+  // AND NEVER A QUESTION MARK WHERE A FIGURE BELONGS
+  await page.evaluate(() => document.getElementById("tab-tree")?.click());
+  await page.waitForTimeout(2500);
+  const art = await page.evaluate(() => {
+    const tiles = [...document.querySelectorAll("div")].filter((d) => { const b = d.getBoundingClientRect();
+      return b.width > 60 && b.width < 190 && b.height > 70 && (d.querySelector("img") || d.querySelector("svg")); });
+    let empty = 0;
+    for (const t of tiles) {
+      const hasArt = t.querySelector("img") || t.querySelector("svg");
+      const lone = t.innerText.split("\n").some((l) => l.trim() === "?");
+      if (!hasArt || lone) empty++;
+    }
+    return { tiles: tiles.length, empty };
+  });
+  ok(`every tile carries a figure, none a question mark (${art.tiles} tiles)`, art.tiles > 20 && art.empty === 0);
   await page.close();
 }
 

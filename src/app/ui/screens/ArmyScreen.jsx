@@ -451,14 +451,18 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8,
           paddingRight: bigArt ? 26 : 0 }}>
           <div style={{ minWidth: 0 }}>
+            {/* THE LINE BREAK THAT KEPT NOT HAPPENING: name and house were BOTH
+                inline-flex, and two inline boxes in a block simply flow side by
+                side — which is why the card read "Läufer Freie Figur" on one
+                line. Block-level flex gives each its own row, always. */}
             <div className="gg-serif" style={{ fontWeight: 800, fontSize: 17, letterSpacing: ".02em", color: "#f0e8cc",
-              display: "inline-flex", alignItems: "center", gap: 7, lineHeight: 1.15 }}>
+              display: "flex", alignItems: "center", gap: 7, lineHeight: 1.15 }}>
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{en ? char.nameEn : char.nameDe}</span>
               {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint, flex: "0 0 auto",
                 transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}>▸</span>}
             </div>
             {/* the house line, poster-style */}
-            <div style={{ fontSize: 11, color: "#9a8f6f", letterSpacing: ".05em", marginTop: 2, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <div style={{ fontSize: 11, color: "#9a8f6f", letterSpacing: ".05em", marginTop: 2, display: "flex", alignItems: "center", gap: 6 }}>
               {fam && <span aria-hidden style={{ width: 8, height: 8, transform: "rotate(45deg)", borderRadius: 2, flex: "0 0 auto",
                 background: FAMILIES[fam].color, boxShadow: `0 0 4px ${FAMILIES[fam].color}88` }} />}
               {epic ? t("army.gambitTag") : fam ? (en ? FAMILIES[fam].en : FAMILIES[fam].de) : (en ? "Free piece" : "Freie Figur")}
@@ -1105,7 +1109,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       const ch = CHARACTERS[cid];
       if (ch) push(paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: 1 }));
     }
-    for (const b of BOSSES) push(paintedById["boss-" + b.id] || paintedById["boss-" + b.art]);
+    for (const b of BOSSES) push(paintedById("boss-" + b.id) || paintedById("boss-" + b.art));
     const list = [...urls];
     if (!list.length) { codexArtReady = true; setArtReady(true); return; }
     let done = 0, cancelled = false;
@@ -1138,7 +1142,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null }) => (
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null }) => (
     <div onClick={onOpen} style={{ position: "relative", background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`,
       borderRadius: 11, padding: "10px 7px 9px", textAlign: "center", minWidth: 0, cursor: onOpen ? "pointer" : "default",
       boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : undefined }}>
@@ -1151,7 +1155,16 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       {img ? <img src={img} alt="" style={{ width: 68, height: 68, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
-        : <div style={{ width: 68, height: 68, display: "grid", placeItems: "center", margin: "0 auto", fontSize: 30, color: T.faint }}>?</div>}
+        : <div style={{ width: 68, height: 68, display: "grid", placeItems: "center", margin: "0 auto" }}>
+            {/* NEVER A QUESTION MARK WHERE A FIGURE BELONGS. If no painting is
+                at hand, the tile shows the piece's own shape as a black
+                silhouette — a shadow you can still recognise. The NAME may stay
+                "???" until you have met it; the shape does not have to. */}
+            {sigil
+              ? <span style={{ display: "grid", placeItems: "center", width: 58, height: 58,
+                  filter: "brightness(0) opacity(.62)" }}>{sigilBig || sigil}</span>
+              : <span style={{ fontSize: 26, color: T.faint }}>◆</span>}
+          </div>}
       <div className="gg-serif" style={{ fontSize: 11.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
       {origin && <div className="gg-serif" style={{ fontSize: 9, letterSpacing: ".1em", marginTop: 1,
@@ -1168,10 +1181,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
     const wins = bossWinsFor(profile, cid) || 0;
     const sig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={28} level={1}
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
-    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} onOpen={() => setDetail(cid)} />;
+    const sigBig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={58} level={1}
+      fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
+    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
-      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} origin={origin} onOpen={() => setDetail(cid)}
+      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}
         action={wins >= 1 ? <button onClick={(e) => { e.stopPropagation(); bribe(ch); }} disabled={gold < price}
           title={t("tree.bribeHint")}
           style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
@@ -1179,18 +1194,23 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)", color: "#17110a" }}>
           {t("tree.bribe", { g: price })}</button> : null} />;
     }
-    return <Tile key={cid} img={img} dark name={"???"} sigil={sig} />;
+    return <Tile key={cid} img={img} dark name={"???"} sigil={sig} sigilBig={sigBig} />;
   };
   const monsterTile = (b) => {
-    const img = paintedById["boss-" + b.id] || paintedById["boss-" + b.art];
+    // paintedById is a FUNCTION — reading it with brackets returned undefined
+    // every single time, which is why every master stood as a question mark
+    // while its painting sat right there in the gallery.
+    const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
     const k = "X:" + b.id;
     const sig = <PieceArt kind="X" bossId={b.id} art={b.art} size={28} level={1}
       fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
-    if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow sigil={sig}
+    const sigBig = <PieceArt kind="X" bossId={b.id} art={b.art} size={58} level={1}
+      fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
+    if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow sigil={sig} sigilBig={sigBig}
       name={en ? b.nameEn : b.nameDe} origin={bribedSet.has(b.id) ? t("tree.allied") : t("tree.inCourt")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);
-      return <Tile key={b.id} img={img} dim sigil={sig} name={en ? b.nameEn : b.nameDe} origin={t("tree.masters")}
+      return <Tile key={b.id} img={img} dim sigil={sig} sigilBig={sigBig} name={en ? b.nameEn : b.nameDe} origin={t("tree.masters")}
         action={can ? (sacrificeFor === b.id
           ? <div style={{ marginTop: 5 }}>
               <div style={{ fontSize: 9.5, color: T.gold, marginBottom: 3 }}>{t("tree.pickSacrifice")}</div>
@@ -1211,7 +1231,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
                 background: "linear-gradient(165deg, #b78de0, #7a5ab0)", border: "1px solid rgba(226,205,255,.5)", color: "#17110a" }}>
               {t("tree.bribe", { g: MONSTER_BRIBE_GOLD })}</button>) : null} />;
     }
-    if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark name={en ? b.nameEn : b.nameDe} origin={t("tree.sighted")} />;
+    if (sighted.has(b.id)) return <Tile key={b.id} img={img} dark sigil={sig} sigilBig={sigBig} name={en ? b.nameEn : b.nameDe} origin={t("tree.sighted")} />;
     return <Tile key={b.id} img={img} dark name={"???"} />;
   };
   const grid = { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))", gap: 7 };
