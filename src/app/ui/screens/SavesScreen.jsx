@@ -11,7 +11,7 @@ import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave,
 
 const STR = {
   de: { hello: "Willkommen", pick: "Wähle deinen Spielstand", new: "+ Neuer Spielstand", play: "Weiterspielen",
-    league: "Liga", time: "Spielzeit", last: "Zuletzt", del: "Löschen", delSure: "Wirklich löschen?", rename: "Umbenennen",
+    league: "Kapitel", time: "Spielzeit", last: "Zuletzt", del: "Löschen", delSure: "Wirklich löschen?", rename: "Umbenennen",
     empty: "Noch kein Spielstand — beginne deine erste Reise.", logout: "Abmelden",
     admin: "Admin · Spielfortschritt", adminHint: "Setzt den gewählten Spielstand auf einen Fortschritt (Reihenfolge der Reise).",
     apply: "Anwenden", zero: "0 %", full: "100 %", namePh: "Name des Spielstands", },

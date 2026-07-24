@@ -1,5 +1,33 @@
 # Changelog - Grand Gambit
 
+## 0.30.0
+
+DIE ZEHN WELTEN HEISSEN JETZT NACH IHREM GELAENDE, NICHT NACH JAHRESZEITEN:
+
+- UMBENANNT: Fruehling -> KRONLAND (die Kronenstadt und ihre gruenen Heimfelder),
+  Sommer -> KORNMARK (fruchtbares Bauernland), Herbst -> EICHWALD (dichter Wald),
+  Winter -> GEBIRGE. Damit liest sich die Reise als Weg durchs Land statt als
+  Kalenderjahr: Heimat, Aecker, Wald, Berge, Hochgebirge, Oedland, Steppe,
+  Roter Canyon, Wueste, Endloses Meer.
+- DIE ORTSNAMEN PASSTEN SCHON: Kapitel II trug immer bereits Bauernland-Namen
+  (Sichelmark, Kapelle im Korn, Garbenwall), Kapitel III Wald-Namen
+  (Kastanienhall, Der Rehpfad, Klingenwald). Nur die Etiketten waren
+  Jahreszeiten. Im Gebirge wurden zehn reine Kalender-Namen auf Hoehe
+  umgestellt (Polarnacht -> Nachtwand, Koenigsfrost -> Koenigsgrat, Letzte
+  Flocke -> Letzter Steig, Kerzenmesse -> Kluftmesse und weitere); der
+  Dubletten-Test ueber alle 510 Ortsnamen bleibt gruen.
+- ALLE 40 KAPITELTITEL neu gesetzt, wo sie eine Jahreszeit meinten: Kornmark
+  Ins hohe Korn / Wege zwischen den Aeckern / Die Zehntwaage / Der Erntethron;
+  Eichwald Unter das Blaetterdach / Der Nebelscheid / Ins Dickicht / Der Herr
+  der Eichen; Gebirge Der erste Anstieg / Drei kalte Paesse / Die Steinprobe /
+  Der Sattel des Winds. Wueste beginnt jetzt mit DER GLUEHENDE SAND.
+- DAS WORT LIGA IST VERSCHWUNDEN. Es stand noch in der Bestenliste, im
+  Online-Bildschirm, in der Spielstand-Liste und im Teilen-Text; ueberall steht
+  jetzt Kapitel. Auch der Rueckblick heisst bereits gemeisterte Kapitel.
+- MEISTER STATT ENDBOSS: der Gegner am Ende eines Kapitels heisst jetzt MEISTER,
+  die Aufforderung Meister fordern. Grossmeister bleibt Osric allein
+  vorbehalten.
+
 ## 0.29.1
 
 SCHLEIER WEG - KORREKTUR ZU 0.29.0:

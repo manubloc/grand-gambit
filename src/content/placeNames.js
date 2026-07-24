@@ -1,5 +1,5 @@
 // ── Place names, per league, tied to the Chronicle of the Rift ───────────────
-// League I keeps the authored homeland names from campaign.js. Leagues II–X
+// Kronland keeps the authored homeland names from campaign.js. Chapters II-X
 // each get their OWN full set of 51 hand-written names, drawn from that biome's
 // chapter of the saga (the Judge's supervised wheat, the amber oaths that
 // turned, the Keeper's bolted doors, Osric's bleeding sea …).
@@ -28,7 +28,7 @@ const zip = (names) => {
 };
 
 export const PLACE_NAMES = {
-  // ── II · Sommer — the golden fields; the Judge holds court in the wheat ──────
+  // ── II · Kornmark — the golden fields; the Judge holds court in the wheat ──────
   2: zip([
     "Sichelmark",
     "Zehntwacht",
@@ -83,7 +83,7 @@ export const PLACE_NAMES = {
     "Mäusekirche",
   ]),
 
-  // ── III · Herbst — the amber woods where the first oaths turned ─────────────
+  // ── III · Eichwald — the amber woods where the first oaths turned ─────────────
   3: zip([
     "Erstes Rot",
     "Rostlaube",
@@ -138,9 +138,9 @@ export const PLACE_NAMES = {
     "Rost und Reue",
   ]),
 
-  // ── IV · Winter — the cold preserves what the rift changes; the Shadowlord ──
+  // ── IV · Gebirge — the cold preserves what the rift changes; the Shadowlord ──
   4: zip([
-    "Erster Frost",
+    "Der erste Anstieg",
     "Klammglocke",
     "Vereister Altar",
     "Jägersitz",
@@ -148,10 +148,10 @@ export const PLACE_NAMES = {
     "Die Wolfsspur",
     "Wo der Atem gefror",
     "Eisnadel",
-    "Kerzenmesse",
-    "Polarnacht",
+    "Kluftmesse",
+    "Nachtwand",
     "Raureifgitter",
-    "Blaue Stunde",
+    "Blaue Wand",
     "Wächtenwall",
     "Eisburg",
     "Schneelinde",
@@ -165,8 +165,8 @@ export const PLACE_NAMES = {
     "Verwaiste Hütte",
     "Lawinenhang",
     "Barfußspur",
-    "Königsfrost",
-    "Grabesschnee",
+    "Königsgrat",
+    "Grabesgeröll",
     "Der Fürst im Halbschatten",
     "Jägersteig",
     "Das Erfrorene Tor",
@@ -181,16 +181,16 @@ export const PLACE_NAMES = {
     "Knirschsteg",
     "Fallenstellerlager",
     "Der Erstarrte Hain",
-    "Reifrosen",
+    "Steinrosen",
     "Firnscharte",
     "Frostglockenturm",
     "Wächtenkamm",
     "Wolfsgrube",
-    "Rabenwinter",
+    "Rabenkanzel",
     "Quellen unterm Eis",
-    "Weißer Schlaf",
+    "Steinerner Schlaf",
     "Schneeblinde",
-    "Letzte Flocke",
+    "Letzter Steig",
   ]),
 
   // ── V · Hochgebirge — over these passes fled the court; the Keeper's keys ────

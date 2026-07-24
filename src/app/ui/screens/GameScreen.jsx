@@ -55,7 +55,7 @@ const WEAR_TEX = [texWear1, texWear2, texWear3, texWear4];
 const texHash = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
 // Every board has lived its own life: each station deals its finish
 // deterministically from a pool that grows rougher with the league — even
-// Liga I mixes fresh wood with the odd scarred veteran table.
+// Kronland mixes fresh wood with the odd scarred veteran table.
 // classic chess: the chosen Elo sets the bot's search depth
 const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 3;
 

@@ -316,7 +316,7 @@ export const seaAccessible = (profile) =>
 export const leagueRewardMult = (league) => 1 + 0.5 * ((league || 1) - 1);
 export const leagueBump = (league) => 2 * ((league || 1) - 1);
 
-/** Which boards a league fields: Liga I is (almost) pure classic chess — only
+/** Which boards a league fields: Kronland is (almost) pure classic chess — only
  *  the Citadel keeps its arena. New boards then enter one league at a
  *  time (II: skirmish · III: courtyard & gauntlet · IV+: everything). */
 export function effectiveMap(node, league = 1) {

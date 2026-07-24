@@ -13,10 +13,10 @@ import { progressPct, totalBestMoves, fmtMs, fmtPlaytime, fetchBoard, submitScor
 const STR = {
   de: { own: "Dein Spielfortschritt", boards: { progress: "Fortschritt", fastrun: "Schnellster Durchlauf", moves: "Wenigste Züge" },
     share: "Bestwert teilen", shared: "Geteilt ✓", copy: "Als Text kopieren", copied: "Kopiert ✓",
-    league: "Liga", time: "Spielzeit", run: "Durchlauf (Liga I)", movesSum: "Züge gesamt (Bestwerte)", stages: "Stationen",
+    league: "Kapitel", time: "Spielzeit", run: "Durchlauf (Kapitel I)", movesSum: "Züge gesamt (Bestwerte)", stages: "Stationen",
     empty: "Noch keine Einträge — teile deinen Bestwert als Erster!",
     offline: "Diese Liste gilt bisher nur auf diesem Gerät. Sobald das Online-Konto eingerichtet ist (SUPABASE-SETUP.md), vergleichen sich hier alle Spieler.",
-    noRun: "Beende Liga I für deine Durchlauf-Zeit.", you: "du" },
+    noRun: "Beende Kapitel I für deine Durchlauf-Zeit.", you: "du" },
   en: { own: "Your progress", boards: { progress: "Progress", fastrun: "Fastest run", moves: "Fewest moves" },
     share: "Share best", shared: "Shared ✓", copy: "Copy as text", copied: "Copied ✓",
     league: "League", time: "Playtime", run: "Run (League I)", movesSum: "Total moves (bests)", stages: "stages",
@@ -55,7 +55,7 @@ export function LeaderboardSection({ profile, playtimeSec = 0 }) {
   };
   const copyText = async () => {
     const txt = lang === "de"
-      ? `Grand Gambit — ${name}: ${pct} % (Liga ${ROMAN[league - 1] || league}), Durchlauf ${fmtMs(runMs)}, ${bm.sum || "–"} Züge · grandgambit.win`
+      ? `Grand Gambit — ${name}: ${pct} % (Kapitel ${ROMAN[league - 1] || league}), Durchlauf ${fmtMs(runMs)}, ${bm.sum || "–"} Züge · grandgambit.win`
       : `Grand Gambit — ${name}: ${pct}% (League ${ROMAN[league - 1] || league}), run ${fmtMs(runMs)}, ${bm.sum || "–"} moves · grandgambit.win`;
     try { if (navigator.share) { await navigator.share({ text: txt }); } else { await navigator.clipboard.writeText(txt); } setNote(s.copied); }
     catch {}

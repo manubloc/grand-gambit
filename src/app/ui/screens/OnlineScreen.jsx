@@ -597,7 +597,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
                       {u.rating != null && <span style={{ fontWeight: 900, color: T.gold, fontSize: 13 }}>ELO {u.rating}</span>}
                     </div>
                     <div style={{ fontSize: 11.5, color: T.dim, marginTop: 3, display: "flex", flexWrap: "wrap", gap: "2px 9px" }}>
-                      <span>{en ? "League" : "Liga"} {st.league || 1}</span>
+                      <span>{en ? "Chapter" : "Kapitel"} {st.league || 1}</span>
                       <span>· {fmtPlaytime(st.playtimeSec || 0)}</span>
                       <span>· {st.games || 0} {en ? "games" : "Spiele"}</span>
                       <span>· {u.wins}/{u.losses}/{u.draws} {en ? "duels" : "Duelle"}</span>
