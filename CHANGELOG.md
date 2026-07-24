@@ -1,5 +1,18 @@
 # Changelog — Grand Gambit
 
+## 0.28.3
+
+NACHSCHLIFF UND WERKZEUGKASTEN:
+
+- ADAPTIVE HELLIGKEIT: die Insignien werden nicht mehr pauschal aufgehellt,
+  sondern je Bild auf eine Ziel-Leuchtdichte von etwa 78 normalisiert -- die
+  dunkelsten Gemaelde (Helm, Pokal, Totenkopf) bekommen den staerksten Schub
+  (gedeckelt bei +42 Prozent), helle bleiben unangetastet.
+- DESIGN-WERKZEUGKASTEN: unter design/ liegen der komplette Prompt-Katalog
+  "Chunky Masterpiece" (182 Bloecke) und der OpenAI-Bildgenerator gen.py --
+  damit kann jede frische Sitzung die Neugestaltung ohne Anlauf fortsetzen.
+  Der Generator liest den Key NUR aus der Umgebung, nie aus Dateien.
+
 ## 0.28.2
 
 SICHTBARKEIT FUER DIE INSIGNIEN. Die gemalten Goldstuecke aus 0.28.1 waren
