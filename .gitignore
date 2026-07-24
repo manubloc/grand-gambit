@@ -19,3 +19,6 @@ server/data.json
 gambit-handy.html
 assets/map-export/
 server/backups/
+
+# Bildgenerator-Ausgaben (nie committen)
+design/out/

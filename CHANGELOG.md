@@ -1,5 +1,22 @@
 # Changelog — Grand Gambit
 
+## 0.28.4
+
+HELLERE INSIGNIEN:
+
+- AUFGEHELLT: alle zehn gemalten Icons (Dock-Navigation, Muenze, Skillfunke,
+  Gold-Totenkopf, Wappen, Faehigkeitsstern, Sternensplitter) liegen jetzt
+  einheitlich auf einer mittleren Leuchtdichte von 118 statt 48 bis 102. Der
+  Lift laeuft ueber eine Gammakurve statt ueber einen Multiplikator: der
+  Weisspunkt bleibt stehen, die Glanzlichter brennen nicht aus, die Mitten
+  kommen hoch. Dazu ein angehobener Schwarzpunkt, damit die Konturen nicht
+  absaufen, und leicht mehr Saettigung, damit das Gold golden bleibt.
+- DOCK-AUS-ZUSTAND: das inaktive Tab-Symbol war mit Graustufe 85 Prozent und
+  88 Prozent Helligkeit fast ausgeloescht; jetzt Graustufe 50 Prozent bei
+  voller Helligkeit -- erkennbar, aber weiter klar hinter dem aktiven Tab.
+- WERKZEUG: tools/lift-icons.py backt die Icons reproduzierbar neu und ist
+  idempotent (liegt ein Bild schon auf Ziel, bleibt es unberuehrt).
+
 ## 0.28.3
 
 NACHSCHLIFF UND WERKZEUGKASTEN:

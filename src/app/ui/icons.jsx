@@ -56,7 +56,7 @@ export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
     style={{ width: size, height: size, display: "block", objectFit: "contain",
       transform: "scale(1.12)", transformOrigin: "center",
       filter: on ? "drop-shadow(0 0 5px rgba(246,222,150,.65)) drop-shadow(0 1px 2px rgba(0,0,0,.45))"
-                 : "grayscale(.85) brightness(.88) opacity(.78) drop-shadow(0 0 3px rgba(246,222,150,.3)) drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} />;
+                 : "grayscale(.5) brightness(1.04) opacity(.88) drop-shadow(0 0 3px rgba(246,222,150,.34)) drop-shadow(0 1px 2px rgba(0,0,0,.45))" }} />;
 }
 
 // ── Currency v3 — an order star and a crowned coin, drawn as insignia rather
