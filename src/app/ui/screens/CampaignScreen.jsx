@@ -70,10 +70,10 @@ const LABEL_TINT = {
   2: "178,152,83",    // Sommer - Olivgold der Felder
   3: "211,155,82",    // Herbst - Ocker
   4: "220,229,243",   // Winter - Eisgrau
-  5: "199,198,194",   // Hochgebirge - Felsgrau
+  5: "199,198,194",   // Wolkenjoch - Felsgrau
   6: "179,146,104",   // Oedland - Erdbraun
   7: "236,196,127",   // Steppe - Grassand
-  8: "241,155,91",    // Roter Canyon - Terrakotta
+  8: "241,155,91",    // Die Wunde - Terrakotta
   9: "255,212,127",   // Wueste - Sandgold
   10: "228,236,238",  // Endloses Meer - heller Dunst statt Graublau, damit die Plakette wie an Land verschwindet
 };

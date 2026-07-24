@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 0.30.1
+
+DIE SECHS WILDEN KAPITEL TRAGEN JETZT EIGENE NAMEN STATT GELAENDEETIKETTEN:
+
+- Gebirge -> GRAUWACHT (die letzten grauen Wachtuerme vor dem Anstieg)
+- Hochgebirge -> WOLKENJOCH (die Paesse ueber den Wolken, ueber die der Hof floh)
+- Oedland -> ASCHGRUND (der erste Preis, den der Riss trank)
+- Steppe -> SATTELWEITE (wo der Lanzenmeister seine Turniere ritt)
+- Roter Canyon -> DIE WUNDE (der Riss selbst, die Treppe hinab)
+- Wueste -> SONNENSCHLUND (verschluckt Spuren, Namen und Absichten)
+
+Kronland, Kornmark, Eichwald und Endloses Meer bleiben.
+
+- ALLE SICHTBAREN TEXTE NACHGEZOGEN, nicht nur die Kartenbeschriftung: die zehn
+  Kapitel-Lore-Texte auf der Weltkarte (deutsch und englisch), die Warentexte
+  von Bergschluessel, Kriegsaxt, Kamel und Sternenkompass, dazu die Kommentare
+  im Kartenschirm und in der Kapiteltitel-Tabelle. Die Lore liest sich an zwei
+  Stellen jetzt sogar besser: Die Wunde traegt ihren Namen zu Recht statt Der
+  rote Canyon ist die Wunde selbst.
+- KEIN KOLLISIONSFALL: alle sechs neuen Namen wurden gegen die 510
+  Stationsnamen geprueft, keiner war vergeben.
+
 ## 0.30.0
 
 DIE ZEHN WELTEN HEISSEN JETZT NACH IHREM GELAENDE, NICHT NACH JAHRESZEITEN:
