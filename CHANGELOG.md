@@ -1,4 +1,29 @@
-# Changelog — Grand Gambit
+# Changelog - Grand Gambit
+
+## 0.29.0
+
+HELLERES BILDWERK IN DER GANZEN APP:
+
+- ALLE VIER BILDFAMILIEN AUFGEHELLT, nicht mehr nur die Insignien. 48 gemalte
+  Bilder liegen jetzt auf definierten Ziel-Leuchtdichten statt irgendwo
+  zwischen 30 und 118:
+  - Insignien (9 Dock- und Kopfleisten-Symbole): 36 bis 88 -> 160
+  - Waren der Schatzkammer (13): 30 bis 118 -> 140
+  - Erfolgs-Embleme (14): 51 bis 63 -> 132
+  - Orbs und Werteleisten (8): 37 bis 109 -> 104
+  - Wappen und Emblem (4): 55 bis 92 -> 118
+- INSIGNIEN AUS DEM ORIGINAL NEU GERECHNET statt ein zweites Mal ueber die
+  bereits gehobene Fassung: die Ausgangsbilder aus 0.28.1 wurden aus der
+  Historie geholt und in EINEM Schritt auf 160 gezogen. Damit faellt die
+  doppelte webp-Verlustrunde von 0.28.3 und 0.28.4 weg.
+- VERFAHREN unveraendert und bewusst konservativ: Gammakurve haelt den
+  Weisspunkt (keine ausgebrannten Glanzlichter), angehobener Schwarzpunkt
+  haelt die Konturen ueber dem Navy, leichte Saettigung haelt das Gold golden.
+  Die Orbs bekommen bewusst nur wenig Saettigung, damit Rot und Blau ihre
+  Bedeutung als Leben und Energie behalten.
+- WERKZEUG: tools/lift-art.py loest tools/lift-icons.py ab. Ziele stehen als
+  Tabelle im Kopf, Probelauf ueber --dry, idempotent (was schon auf Ziel liegt,
+  wird nicht angefasst). Nachgemessen bei 24, 32 und 44 px auf App-Navy.
 
 ## 0.28.4
 
