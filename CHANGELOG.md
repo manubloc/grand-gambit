@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.30.2
+
+WERKZEUG FUER DIE NEUEN WELTKARTEN:
+
+- tools/detect-stations.py liest die Stationsmarker aus einer gemalten Karte
+  automatisch aus, statt 51 Punkte je Welt von Hand nachzumessen. Verfahren:
+  Schwellenwert auf sehr dunkel und sehr unbunt, Zwei-Durchgang-Markierung der
+  zusammenhaengenden Flaechen, Filter auf Groesse und Rundheit, Schwerpunkt je
+  Marker. Am Ende Abgleich gegen die erwartete Anzahl, damit ein Fehlschlag
+  auffaellt statt still durchzurutschen.
+- NACHGEMESSEN am gerechneten Wegeplan: 51 von 51 Markern gefunden, groesster
+  Versatz zur wahren Koordinate 1,4 Pixel, im Mittel 0,8.
+- DABEI AUFGEFALLEN: sechs Stationspaare liegen in den heutigen Positionen
+  praktisch aufeinander - b2 und r1 sind auf einer 4096 Pixel breiten Leinwand
+  nur 5 Pixel auseinander, dazu c3/u3, c3/o1, o1/u3, a1/s1 und d1/s2. Beim
+  ersten Testlauf verschmolzen sie zu einem Marker und die Erkennung lieferte
+  46 statt 51. Fuer die neuen Karten sind die Punkte deshalb auf mindestens
+  78 Pixel Abstand entzerrt.
+
 ## 0.30.1
 
 DIE SECHS WILDEN KAPITEL TRAGEN JETZT EIGENE NAMEN STATT GELAENDEETIKETTEN:
