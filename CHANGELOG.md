@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.29.1
+
+SCHLEIER WEG - KORREKTUR ZU 0.29.0:
+
+- URSACHE: 0.29.0 hat den Schwarzpunkt ANGEHOBEN, jeder Pixel bekam einen Boden
+  von 14. Das macht ein Bild heller, legt aber einen milchigen Schleier darueber:
+  die Tiefen sind nicht mehr schwarz. Bei den Waren der Schatzkammer stieg das
+  fuenfte Perzentil von 13 auf 32, der Median von 53 auf 117 - genau das hat man
+  als Schleier gesehen. Glanz ist Kontrast, nicht Helligkeit.
+- WAREN, ERFOLGE, ORBS, WERTELEISTEN, WAPPEN UND EMBLEM sind vollstaendig auf den
+  Stand vor 0.29.0 zurueckgesetzt. Sie waren nie das Problem und haetten gar nicht
+  angefasst werden duerfen.
+- INSIGNIEN bleiben aufgehellt, aber ueber den umgekehrten Griff: ein EINGANGS-
+  Schwarzpunkt bei 0.12 klemmt die Tiefen auf echtes Schwarz, danach zieht eine
+  Gammakurve die Mitten und Lichter hoch. Ergebnis am Beispiel des Dock-Symbols
+  Spielen: fuenftes Perzentil 10 -> 0, Median 45 -> 166, Mittel 67 -> 150. Heller
+  als je zuvor UND tiefer im Schwarz als im Original.
+- WERKZEUG tools/lift-art.py entsprechend umgebaut: nur noch die Insignien, ein
+  Verfahren, Zielwerte als Konstanten im Kopf, --dry fuer den Probelauf.
+
 ## 0.29.0
 
 HELLERES BILDWERK IN DER GANZEN APP:
