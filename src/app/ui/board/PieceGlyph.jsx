@@ -253,7 +253,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
               // the gallery hangs in a dim hall — lift the paintings a step:
               // your golden court shines brighter, the steel foe a touch too
               objectFit: "contain", objectPosition: big ? "center" : "center bottom",
-              filter: white
+              // A CARVING BRINGS ITS OWN COLOUR. The navy team and the cream
+              // team are two separate cuts of stone (tools/carve-light.py), so
+              // neither the gold lift nor the steel filter may touch them —
+              // both would repaint the inlaid gold. Only the rank gets a
+              // whisper of light, so kings and queens still read first.
+              filter: carving
+                ? (isKing ? "brightness(1.12)" : isQueen ? "brightness(1.06)" : "none")
+                : white
                 ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"
                   : isQueen ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
                   : isBoss ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
