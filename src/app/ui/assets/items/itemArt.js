@@ -1,6 +1,6 @@
 // The chest, painted. Each item enters as its own asset (hashed by the
 // build), and the drawn icon stays as the fallback for anything not yet
-// painted — today that is the star compass alone.
+// painted — the set is complete since the carved repaint, star compass included.
 
 import imgAnker from "./item-anker.webp";
 import imgBergschluessel from "./item-bergschluessel.webp";
@@ -14,6 +14,7 @@ import imgKriegsaxt from "./item-kriegsaxt.webp";
 import imgMachete from "./item-machete.webp";
 import imgPotion from "./item-potion.webp";
 import imgTorch from "./item-torch.webp";
+import imgSternenkompass from "./item-sternenkompass.webp";
 
 export const ITEM_ART = {
   anker: imgAnker,
@@ -28,4 +29,5 @@ export const ITEM_ART = {
   machete: imgMachete,
   potion: imgPotion,
   torch: imgTorch,
+  sternenkompass: imgSternenkompass,
 };
