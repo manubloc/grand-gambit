@@ -1,32 +1,23 @@
-// The CARVED set — the third piece style, next to "simpel" (SVG) and the
-// painted gallery. Every figure is one object cut from stone with an inlay that
-// grows with rank: the pawn wears a single band, the king roughly a third of his
-// surface. Faces are only suggested — three cuts for eye hollows, nose ridge and
-// mouth line — so the pieces stay adult and quiet rather than cute, and every
-// figure must still read as a pure black silhouette.
+// The CARVED set — the third piece style, next to "simpel" (SVG) and the older
+// painted gallery. Every figure is a small object cut from stone-clay: visible
+// tool facets, hard-edged colour, a face suggested with three cuts and nothing
+// more. What makes the set readable on a board is COLOUR BY CHARACTER — the
+// knight is red, the mage violet, the guardian green — because at 44 pixels the
+// silhouette alone could not tell twenty-seven figures apart. The colours are
+// grouped by guild, so the hue also hints at what a piece does.
 //
-// TWO STONES, NOT A FILTER. Only one set is ever generated: a mid-tone slate
-// body with yellow gold inlay, rose-brown skin and emerald rank stones, cut so
-// that every material meets the next along a hard edge. tools/carve-teams.py
-// takes the two sides out of it:
-//   *-light  warm ivory stone, the gold left standing        -> the good side
-//   *-dark   cold basalt, the gold polished to silver, the
-//            skin drained to ash                             -> the other one
-// Three of the four materials therefore differ between the teams, which is what
-// makes them tell apart at board distance. A CSS filter could only tint the
-// whole figure and would drag inlay, skin and stones along with it. (Purple is
-// deliberately unused here — it is reserved for the monsters.)
+// ONE SET, TWO SIDES. Both players field the SAME figure in full colour; the
+// enemy's copy is the corrupted one. tools/carve-build.py drains its stone to
+// near-grey, lets the edge catch violet light and sends fine bolts crawling up
+// out of the base, clipped to the silhouette so they live ON the figure rather
+// than in front of it. That reads faster across a board than light-against-dark
+// ever did, and — unlike a hue filter — it costs the piece none of its identity:
+// a red knight stays a red knight, he is just no longer his own.
 //
-// The whole roster is carved now — the six basic ranks, the twenty court
-// figures, the Gambit, and all twenty-five bosses.
-//
-// THE MONSTERS FOLLOW THEIR OWN LAW. Their body is black basalt, never the
-// kingdom's slate, and they carry NO gold — gold belongs to the kingdom. Each
-// one wears the signature colour the game already gives it in content/bosses.js
-// as its only inlay, and the same colour glows in its eye hollows. That glow is
-// the one detail that survives to 24 pixels, so a monster stays a monster even
-// on the smallest square. Because a boss is only ever the foe, it is not split
-// into two stones: the same carving serves both sides.
+// Every figure also shares ONE BASE WIDTH. Scaling them to equal height (the
+// obvious thing) was wrong: it inflates the pawn and shrinks the king, and the
+// plinths end up all different sizes. Normalising the standing surface instead
+// makes them sit on the board like a real set.
 import lPawn from "../assets/carved/carved-pawn-light.webp";
 import lKnight from "../assets/carved/carved-knight-light.webp";
 import lBishop from "../assets/carved/carved-bishop-light.webp";
@@ -81,33 +72,58 @@ import dStandard from "../assets/carved/carved-standard-dark.webp";
 import dStrategist from "../assets/carved/carved-strategist-dark.webp";
 import dPathfinder from "../assets/carved/carved-pathfinder-dark.webp";
 import dGambit from "../assets/carved/carved-gambit-dark.webp";
-import xB01 from "../assets/carved/carved-boss-b01.webp";
-import xB02 from "../assets/carved/carved-boss-b02.webp";
-import xB03 from "../assets/carved/carved-boss-b03.webp";
-import xB04 from "../assets/carved/carved-boss-b04.webp";
-import xB05 from "../assets/carved/carved-boss-b05.webp";
-import xB06 from "../assets/carved/carved-boss-b06.webp";
-import xB07 from "../assets/carved/carved-boss-b07.webp";
-import xB08 from "../assets/carved/carved-boss-b08.webp";
-import xB09 from "../assets/carved/carved-boss-b09.webp";
-import xB10 from "../assets/carved/carved-boss-b10.webp";
-import xB11 from "../assets/carved/carved-boss-b11.webp";
-import xB12 from "../assets/carved/carved-boss-b12.webp";
-import xB13 from "../assets/carved/carved-boss-b13.webp";
-import xB14 from "../assets/carved/carved-boss-b14.webp";
-import xB15 from "../assets/carved/carved-boss-b15.webp";
-import xB16 from "../assets/carved/carved-boss-b16.webp";
-import xB17 from "../assets/carved/carved-boss-b17.webp";
-import xB18 from "../assets/carved/carved-boss-b18.webp";
-import xB19 from "../assets/carved/carved-boss-b19.webp";
-import xB20 from "../assets/carved/carved-boss-b20.webp";
-import xB21 from "../assets/carved/carved-boss-b21.webp";
-import xB22 from "../assets/carved/carved-boss-b22.webp";
-import xB23 from "../assets/carved/carved-boss-b23.webp";
-import xB24 from "../assets/carved/carved-boss-b24.webp";
-import xB25 from "../assets/carved/carved-boss-b25.webp";
+import xL01 from "../assets/carved/carved-boss-b01-light.webp";
+import xL02 from "../assets/carved/carved-boss-b02-light.webp";
+import xL03 from "../assets/carved/carved-boss-b03-light.webp";
+import xL04 from "../assets/carved/carved-boss-b04-light.webp";
+import xL05 from "../assets/carved/carved-boss-b05-light.webp";
+import xL06 from "../assets/carved/carved-boss-b06-light.webp";
+import xL07 from "../assets/carved/carved-boss-b07-light.webp";
+import xL08 from "../assets/carved/carved-boss-b08-light.webp";
+import xL09 from "../assets/carved/carved-boss-b09-light.webp";
+import xL10 from "../assets/carved/carved-boss-b10-light.webp";
+import xL11 from "../assets/carved/carved-boss-b11-light.webp";
+import xL12 from "../assets/carved/carved-boss-b12-light.webp";
+import xL13 from "../assets/carved/carved-boss-b13-light.webp";
+import xL14 from "../assets/carved/carved-boss-b14-light.webp";
+import xL15 from "../assets/carved/carved-boss-b15-light.webp";
+import xL16 from "../assets/carved/carved-boss-b16-light.webp";
+import xL17 from "../assets/carved/carved-boss-b17-light.webp";
+import xL18 from "../assets/carved/carved-boss-b18-light.webp";
+import xL19 from "../assets/carved/carved-boss-b19-light.webp";
+import xL20 from "../assets/carved/carved-boss-b20-light.webp";
+import xL21 from "../assets/carved/carved-boss-b21-light.webp";
+import xL22 from "../assets/carved/carved-boss-b22-light.webp";
+import xL23 from "../assets/carved/carved-boss-b23-light.webp";
+import xL24 from "../assets/carved/carved-boss-b24-light.webp";
+import xL25 from "../assets/carved/carved-boss-b25-light.webp";
+import xD01 from "../assets/carved/carved-boss-b01-dark.webp";
+import xD02 from "../assets/carved/carved-boss-b02-dark.webp";
+import xD03 from "../assets/carved/carved-boss-b03-dark.webp";
+import xD04 from "../assets/carved/carved-boss-b04-dark.webp";
+import xD05 from "../assets/carved/carved-boss-b05-dark.webp";
+import xD06 from "../assets/carved/carved-boss-b06-dark.webp";
+import xD07 from "../assets/carved/carved-boss-b07-dark.webp";
+import xD08 from "../assets/carved/carved-boss-b08-dark.webp";
+import xD09 from "../assets/carved/carved-boss-b09-dark.webp";
+import xD10 from "../assets/carved/carved-boss-b10-dark.webp";
+import xD11 from "../assets/carved/carved-boss-b11-dark.webp";
+import xD12 from "../assets/carved/carved-boss-b12-dark.webp";
+import xD13 from "../assets/carved/carved-boss-b13-dark.webp";
+import xD14 from "../assets/carved/carved-boss-b14-dark.webp";
+import xD15 from "../assets/carved/carved-boss-b15-dark.webp";
+import xD16 from "../assets/carved/carved-boss-b16-dark.webp";
+import xD17 from "../assets/carved/carved-boss-b17-dark.webp";
+import xD18 from "../assets/carved/carved-boss-b18-dark.webp";
+import xD19 from "../assets/carved/carved-boss-b19-dark.webp";
+import xD20 from "../assets/carved/carved-boss-b20-dark.webp";
+import xD21 from "../assets/carved/carved-boss-b21-dark.webp";
+import xD22 from "../assets/carved/carved-boss-b22-dark.webp";
+import xD23 from "../assets/carved/carved-boss-b23-dark.webp";
+import xD24 from "../assets/carved/carved-boss-b24-dark.webp";
+import xD25 from "../assets/carved/carved-boss-b25-dark.webp";
 
-/** the good side: warm ivory stone, gold inlay, living skin. */
+/** the kingdom, in full colour — the player's side. */
 export const CARVED_LIGHT = {
   pawn: lPawn, knight: lKnight, bishop: lBishop, rook: lRook, queen: lQueen, king: lKing,
   archbishop: lArchbishop, chancellor: lChancellor, hawk: lHawk, amazon: lAmazon,
@@ -117,7 +133,7 @@ export const CARVED_LIGHT = {
   engineer: lEngineer, standard: lStandard, strategist: lStrategist, pathfinder: lPathfinder,
   gambit: lGambit
 };
-/** the other side: cold basalt, silver inlay, ashen skin. */
+/** the same figures, corrupted — the enemy's side. */
 export const CARVED_DARK = {
   pawn: dPawn, knight: dKnight, bishop: dBishop, rook: dRook, queen: dQueen, king: dKing,
   archbishop: dArchbishop, chancellor: dChancellor, hawk: dHawk, amazon: dAmazon,
@@ -127,17 +143,21 @@ export const CARVED_DARK = {
   engineer: dEngineer, standard: dStandard, strategist: dStrategist, pathfinder: dPathfinder,
   gambit: dGambit
 };
-
-/** the monsters: one carving each, black basalt with its own signature colour. */
-export const CARVED_BOSS = {
-  b01: xB01, b02: xB02, b03: xB03, b04: xB04, b05: xB05, b06: xB06, b07: xB07, b08: xB08,
-  b09: xB09, b10: xB10, b11: xB11, b12: xB12, b13: xB13, b14: xB14, b15: xB15, b16: xB16,
-  b17: xB17, b18: xB18, b19: xB19, b20: xB20, b21: xB21, b22: xB22, b23: xB23, b24: xB24,
-  b25: xB25
+/** the monsters. Sickly, bruised colour and no gold — gold is the kingdom's. */
+export const CARVED_BOSS_LIGHT = {
+  b01: xL01, b02: xL02, b03: xL03, b04: xL04, b05: xL05, b06: xL06, b07: xL07, b08: xL08,
+  b09: xL09, b10: xL10, b11: xL11, b12: xL12, b13: xL13, b14: xL14, b15: xL15, b16: xL16,
+  b17: xL17, b18: xL18, b19: xL19, b20: xL20, b21: xL21, b22: xL22, b23: xL23, b24: xL24,
+  b25: xL25
+};
+export const CARVED_BOSS_DARK = {
+  b01: xD01, b02: xD02, b03: xD03, b04: xD04, b05: xD05, b06: xD06, b07: xD07, b08: xD08,
+  b09: xD09, b10: xD10, b11: xD11, b12: xD12, b13: xD13, b14: xD14, b15: xD15, b16: xD16,
+  b17: xD17, b18: xD18, b19: xD19, b20: xD20, b21: xD21, b22: xD22, b23: xD23, b24: xD24,
+  b25: xD25
 };
 
-// Kind letter -> character id. The pawn wins the shared "P"; the hero flag
-// picks the Gambit out of it. Mirrors the gallery's own table.
+// Kind letter -> character id; mirrors the gallery's own table.
 const KIND2ID = {
   P: "pawn", N: "knight", B: "bishop", R: "rook", Q: "queen", K: "king",
   A: "archbishop", C: "chancellor", H: "hawk", M: "amazon", V: "captain", S: "assassin", SE: "seeress",
@@ -145,24 +165,34 @@ const KIND2ID = {
   U: "paladin", I: "inquisitor", J: "bard", T: "engineer", F: "standard", Y: "strategist", O: "pathfinder",
 };
 
-/** Carving for a live board piece — or null when this set has none yet.
- *  Anything without a carving falls through to the painted gallery, so
- *  switching the style never leaves a square empty. */
+/** Carving for a character id — used by every screen outside the board (the
+ *  court, the chronicle, the pop-ups), which look pieces up by name. */
+export function carvedById(id, korrupt = false) {
+  if (!id) return null;
+  if (id.startsWith("boss-")) {
+    const b = id.slice(5);
+    return (korrupt ? CARVED_BOSS_DARK : CARVED_BOSS_LIGHT)[b] || null;
+  }
+  // the Gambit's tiers all wear the one hero carving
+  const grund = id.startsWith("gambit") ? "gambit" : id;
+  return (korrupt ? CARVED_DARK : CARVED_LIGHT)[grund] || null;
+}
+
+/** Carving for a live board piece — or null when the set has none. */
 export function carvedForPiece(piece) {
   if (!piece) return null;
-  // The campaign's own piece-bosses ("pb_<id>") are ordinary figures wearing a
-  // boss role — they keep their kingdom carving. Only the named monsters of the
-  // road get a basalt one.
+  const korrupt = piece.color !== "w";
   if (piece.bossId) {
-    if (piece.bossId.startsWith("pb_")) return CARVED_DARK[piece.bossId.slice(3)] || null;
-    return CARVED_BOSS[piece.bossId] || null;
+    // The campaign's own piece-bosses ("pb_<id>") are ordinary court figures in
+    // a boss role — they keep their kingdom carving rather than a monster's.
+    if (piece.bossId.startsWith("pb_")) return carvedById(piece.bossId.slice(3), korrupt);
+    return (korrupt ? CARVED_BOSS_DARK : CARVED_BOSS_LIGHT)[piece.bossId] || null;
   }
   const id = piece.hero ? "gambit" : KIND2ID[piece.kind];
   if (!id) return null;
-  return (piece.color === "w" ? CARVED_LIGHT : CARVED_DARK)[id] || null;
+  return (korrupt ? CARVED_DARK : CARVED_LIGHT)[id] || null;
 }
 
-// Every carving was cropped to its own silhouette and scaled to one common
-// height, with the base sitting on the bottom edge — so unlike the painted
-// gallery they need no per-file fit table. The board just plants them.
+// Each carving already sits on the shared canvas with its base bottom-aligned
+// and levelled to one standing width, so the board needs no per-file fit table.
 export const CARVED_FIT = { h: 1, y: 0, x: 0 };

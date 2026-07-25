@@ -38,6 +38,7 @@ const CrestArt = ({ src }) => (
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
+import { setPieceStyle } from "./ui/board/paintedArt.js";
 
 // viewport hook for the responsive shell (mobile dock ↔ desktop rail)
 export function useMedia(q) {
@@ -248,6 +249,10 @@ export default function App() {
     onLogout={hardLogout}
     onOpen={(sl, prof) => { dispatch({ type: "HYDRATE", profile: prof }); setLocked(!!prof.pin); setSlot(sl); setReady(true); }} />;
   if (!ready || !profile) return null;
+  // The chosen piece style is announced to the gallery ONCE, here. Every screen
+  // that looks a figure up by id — the court, the chronicle, the unlock pop-ups
+  // — then answers in that style without knowing anything about it.
+  setPieceStyle(profile.pieceStyle);
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   // onboarding lessons appear between battles, never over a running match

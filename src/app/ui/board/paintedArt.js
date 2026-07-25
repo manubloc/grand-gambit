@@ -1,3 +1,4 @@
+import { carvedForPiece, carvedById } from "./carvedArt.js";
 // The gallery: painted piece artworks (user-generated, gold & navy). Explicit
 // imports — esbuild-friendly — and a resolver from a live board piece to its
 // painting. Pieces without a painting yet fall back to the drawn SVG silently,
@@ -95,6 +96,17 @@ export const PAINTED = {
   "boss-b17": pbb17, "boss-b18": pbb18, "boss-b19": pbb19, "boss-b20": pbb20, "boss-b21": pbb21, "boss-b22": pbb22, "boss-b23": pbb23, "boss-b24": pbb24, "boss-b25": pbb25,
 };
 
+// ── the active piece style ──────────────────────────────────────────────────
+// The carved set has to replace the gallery EVERYWHERE, not just on the board:
+// the court, the chronicle, the unlock pop-ups and the army list all reach for
+// a painting by id, from a dozen call sites. Rather than thread a style flag
+// through all of them, the gallery itself knows which set is in play. App.jsx
+// sets this once from the profile; every lookup below then answers in the
+// chosen style, and falls back to the painting whenever no carving exists.
+let STIL = "painted";
+export function setPieceStyle(stil) { STIL = stil === "carved" ? "carved" : "painted"; }
+export function pieceStyle() { return STIL; }
+
 // kind letter -> character id (pawn wins the shared "P"; the hero flag decides gambit)
 const KIND2ID = {
   P: "pawn", N: "knight", B: "bishop", R: "rook", Q: "queen", K: "king",
@@ -106,6 +118,10 @@ const KIND2ID = {
 /** Painting for a live board piece — or null when the gallery has none yet. */
 export function paintedForPiece(piece) {
   if (!piece) return null;
+  if (STIL === "carved") {
+    const geschnitzt = carvedForPiece(piece);
+    if (geschnitzt) return geschnitzt;
+  }
   if (piece.bossId) {
     if (piece.bossId.startsWith("pb_")) return PAINTED[piece.bossId.slice(3)] || null;
     // dedicated portrait first (painted-boss-<id>.webp), then the two named
@@ -127,7 +143,8 @@ export function paintedForPiece(piece) {
 }
 
 /** Painting by character id — for the court's character cards. */
-export const paintedById = (id) => PAINTED[id] || null;
+export const paintedById = (id) =>
+  (STIL === "carved" ? carvedById(id) : null) || PAINTED[id] || null;
 
 // ── Base-width normalisation ────────────────────────────────────────────────
 // Every painting is 1024x1024, but each figure fills a different share of it,
