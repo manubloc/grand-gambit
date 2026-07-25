@@ -415,15 +415,19 @@ export default function App() {
             borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
         </header>
       )}
-      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 14px 108px",
+      {/* ONE flush edge: header card, screen panels and dock all sit 10px from
+          the viewport — before this, header ran at 10, dock at 12, content at
+          14, three different alignments (the profile looked narrower than the
+          menu). */}
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {(!immersive || mapView) && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
-          padding: "0 12px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
-          <div style={{ maxWidth: 536, margin: "0 auto", pointerEvents: "auto",
+          padding: "0 10px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
+          <div style={{ maxWidth: 540, margin: "0 auto", pointerEvents: "auto",
             background: `${T.panel}ec`, backdropFilter: "blur(12px)", border: `1px solid ${T.line}`,
             borderRadius: 22, boxShadow: "0 12px 32px rgba(0,0,0,.55)",
             display: "grid", gridTemplateColumns: `repeat(${TABS.length}, 1fr)`, padding: "6px 8px" }}>

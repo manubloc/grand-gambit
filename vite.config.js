@@ -8,12 +8,31 @@ import pkg from "./package.json";
 // base: "./" makes the build portable (Cloudflare/GitHub Pages, itch.io,
 // any subfolder, TWA/Capacitor wrapper).
 export default defineConfig({
-  define: { __GG_VERSION__: JSON.stringify(GG_VERSION) },
+  // ONE define block. There used to be two `define:` keys in this object —
+  // the second silently replaced the first (last key wins in a JS object
+  // literal), so __GG_VERSION__ never reached the build and the Login and
+  // Saves screens showed "vdev" in production.
+  define: {
+    __GG_VERSION__: JSON.stringify(GG_VERSION),
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   build: { assetsInlineLimit: (file, content) => file.endsWith(".webp") ? false : content.length < 400 * 1024 },
   base: "./",
-  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     react(),
+    // version.json next to the bundle: the deployed truth. The profile
+    // fetches it with cache "no-store" and compares against __APP_VERSION__ —
+    // that is the version check that tells stale service-worker builds apart
+    // from a deploy that never happened. Not precached (json is outside the
+    // workbox glob), so it can never lie from the cache.
+    {
+      name: "gg-version-json",
+      apply: "build",
+      generateBundle() {
+        this.emitFile({ type: "asset", fileName: "version.json",
+          source: JSON.stringify({ version: pkg.version, builtAt: new Date().toISOString() }) });
+      },
+    },
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: false, // registration lives in main.jsx (update loop + auto-reload)

@@ -21,7 +21,30 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
   const [canPrompt, setCanPrompt] = useState(() => !!getDeferredInstall());
   const [showIosHint, setShowIosHint] = useState(false);
   useEffect(() => onInstallReady(() => setCanPrompt(true)), []);
+  // the version check: what the server is serving RIGHT NOW, next to what this
+  // device is running. cache:"no-store" skips the http cache, and version.json
+  // sits outside the sw precache glob — the answer is always the deployed
+  // truth. This is how "did the deploy land?" and "is my phone stuck on an old
+  // build?" become two different, visible answers instead of one guess.
+  const [srvVer, setSrvVer] = useState(null); // null = unknown (offline/dev)
+  useEffect(() => {
+    let on = true;
+    fetch("./version.json", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (on && j && typeof j.version === "string") setSrvVer(j.version); })
+      .catch(() => {});
+    return () => { on = false; };
+  }, []);
   const s = profile.stats;
+
+  // the stuck-cache hammer: drop the service worker, then reload — the fresh
+  // sw registers and activates immediately (skipWaiting + clientsClaim), and
+  // the page comes back on the server's build.
+  async function hardReload() {
+    try { sessionStorage.removeItem("gg-sw-kick"); } catch {}
+    try { const r = await navigator.serviceWorker?.getRegistration?.(); if (r) await r.unregister(); } catch {}
+    window.location.reload();
+  }
 
   async function setPinProtect() {
     if (pin.length < 4) return;
@@ -216,7 +239,13 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
     </Panel>
 
     <div style={{ textAlign: "center", fontSize: 11.5, color: T.faint, padding: "4px 0 10px" }}>
-      Grand Gambit v{typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev"} ·{" "}
+      Grand Gambit v{typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev"}
+      {srvVer && (srvVer === (typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev")
+        ? <> · Server v{srvVer} ✓</>
+        : <> · <span style={{ color: T.gold }}>Server v{srvVer}</span> —{" "}
+            <span onClick={hardReload} style={{ color: T.gold, textDecoration: "underline", cursor: "pointer" }}>
+              {t("profile.srvReload")}</span></>)}
+      {" "}·{" "}
       <a href="./privacy.html" target="_blank" rel="noreferrer" style={{ color: T.dim }}>{t("profile.privacy")}</a> ·{" "}
       <a href="./terms.html" target="_blank" rel="noreferrer" style={{ color: T.dim }}>{t("profile.terms")}</a>
     </div>
