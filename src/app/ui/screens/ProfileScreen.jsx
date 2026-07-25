@@ -48,6 +48,11 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
         options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "carved", label: t("profile.styleCarved") }, { value: "svg", label: t("profile.styleSvg") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
+      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.design")}</div>
+      <Segmented value={profile.design === "carved" ? "carved" : "classic"}
+        onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, design: v } })}
+        options={[{ value: "classic", label: t("profile.designClassic") }, { value: "carved", label: t("profile.designCarved") }]} />
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.designHint")}</div>
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />

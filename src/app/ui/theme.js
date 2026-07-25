@@ -3,7 +3,14 @@
 // navy side rimmed in steel. Elegance over flash: serif brandmarks, diamond
 // flourishes, crisp 1px lines. (Token keys kept stable: `lime` = player/primary
 // accent, `magenta` = enemy accent.)
-export const T = {
+// TWO LIVERIES, ONE TOKEN SET. The app now dresses in either of two designs:
+// the CLASSIC deep-navy night it has always worn, or the CARVED daylight that
+// matches the painted stone piece set — lighter slate, stone-coloured panels,
+// the same antique gold. Every component keeps reading `T.bg`, `T.panel`, … at
+// render time, so switching is a single in-place palette swap plus a re-render;
+// no component knows two designs exist. Classic stays the default: the old
+// design is a promise, not a leftover.
+const CLASSIC = {
   bg: "#0c111e", bg2: "#101828", panel: "#131b2d", panel2: "#1a2338", line: "#28324e",
   text: "#f0e9d8", dim: "#a9a48e", faint: "#6f6b5e",
   lime: "#d1ad55", limeDim: "#b08f3a", limeInk: "#17110a",          // player / primary accent (gold)
@@ -15,6 +22,22 @@ export const T = {
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
 };
+// The carved liveries' stone: everything one to two steps lighter and warmer,
+// as if the whole app were cut from the same slate as the figures. Accents,
+// radii and type stay identical so nothing jumps when switching.
+const CARVED = { ...CLASSIC,
+  bg: "#202b40", bg2: "#283550", panel: "#2c3a57", panel2: "#354464", line: "#4a5a80",
+  text: "#f6efdf", dim: "#c2b89e", faint: "#948c7a",
+  magenta: "#9fb0d0", magentaDim: "#76849f",
+  shadow: "0 10px 24px rgba(0,0,0,.38)",
+  sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
+};
+export const T = { ...CLASSIC };
+/** Swap the whole app's livery in place. Called once from App.jsx per render
+ *  of a hydrated profile — every T.* read after it sees the chosen design. */
+export function setDesign(design) {
+  Object.assign(T, design === "carved" ? CARVED : CLASSIC);
+}
 
 export const GLOBAL_CSS = `
   /* Desktop: bei 100% Browser-Zoom soll die App nicht verloren wirken —
