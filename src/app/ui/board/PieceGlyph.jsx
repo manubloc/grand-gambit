@@ -3,6 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
+import { carvedForPiece, CARVED_FIT } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -215,14 +216,21 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
 
   // Resolve the painting up-front (if any) so we can level its base width. The
   // enemy's gallery is turned to steel; the risen Gambit wears his tier portrait.
-  const painting = artStyle === "classic"
+  // The carved set only covers the six basic ranks; anything it has no figure
+  // for (court, bosses, the risen Gambit) drops through to the gallery, so the
+  // style switch never leaves a square empty.
+  const carving = artStyle === "carved" ? carvedForPiece(paintPiece) : null;
+  const painting = carving
+    ? carving
+    : artStyle === "classic"
     ? (CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
-    : artStyle === "painted"
+    : (artStyle === "painted" || artStyle === "carved")
     ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
     : null;
   // every painting fitted to one box (uniform height) and dropped onto one
-  // baseline; big pieces and the drawn SVG opt out
-  const fit = (painting && !big) ? paintedFitFor(paintPiece) : { h: 1, y: 0 };
+  // baseline; big pieces and the drawn SVG opt out. The carvings were already
+  // cropped and levelled at build time, so they need no per-file fit.
+  const fit = (painting && !big) ? (carving ? CARVED_FIT : paintedFitFor(paintPiece)) : { h: 1, y: 0 };
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
