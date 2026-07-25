@@ -15,7 +15,7 @@ export const ADMIN_EMAILS = [];             // e.g. ["you@example.com"]
 // ── The house design ────────────────────────────────────────────────────────
 // "classic" is the deep-navy night with the original paintings; "carved" is
 // the painted-stone livery of the new piece set. This ships to EVERY player —
-// changing it here and deploying restyles the whole app for everyone. A
-// signed-in admin can preview either livery live from the profile workbench
-// without touching this value.
-export const APP_DESIGN = "classic";
+// changing it here and deploying restyles the whole app for everyone — and once
+// the Hall worker is deployed, the admin can flip it LIVE for all players from
+// the profile workbench (the app asks the Hall on boot and caches the answer).
+export const APP_DESIGN = "carved";

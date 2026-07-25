@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
 import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
+import { setHouseDesign } from "../livery.js";
 import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
 
 const inApp = () =>
@@ -123,10 +124,15 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
 
     {account?.isAdmin && <Panel>
       <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim }}>{t("profile.design")}</div>
-      <Segmented value={profile.design === "carved" ? "carved" : "classic"}
+      <Segmented value={profile.design === "carved" ? "carved" : profile.design === "classic" ? "classic" : "carved"}
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, design: v } })}
         options={[{ value: "classic", label: t("profile.designClassic") }, { value: "carved", label: t("profile.designCarved") }]} />
-      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 10px", lineHeight: 1.45 }}>{t("profile.designHint")}</div>
+      <Button kind="ghost" style={{ marginTop: 8 }} onClick={async () => {
+        const wahl = profile.design === "classic" ? "classic" : "carved";
+        try { await setHouseDesign(wahl, getAdminToken()); alert(t("profile.designGlobalOk")); }
+        catch { alert(t("profile.designGlobalFail")); }
+      }}>{t("profile.designGlobalBtn")}</Button>
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "7px 2px 10px", lineHeight: 1.45 }}>{t("profile.designHint")}</div>
       <PanelTitle tag="Admin">{t("profile.saveTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.saveHint")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>

@@ -5,7 +5,7 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore } from "../meta/index.js";
-import { setLivery, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
+import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
@@ -135,6 +135,9 @@ const TABS = [
 
 export default function App() {
   const [profile, dispatch] = useReducer(reducer, null);
+  // which livery the house wears — asked from the Hall once per boot
+  const [houseDesign, setHouseDesign] = useState(null);
+  useEffect(() => { fetchHouseDesign().then((d) => { if (d) setHouseDesign(d); }); }, []);
   const [ready, setReady] = useState(false);
   const [locked, setLocked] = useState(false);
   const [tab, setTab] = useState("play");
@@ -250,9 +253,10 @@ export default function App() {
   // The chosen piece style is announced to the gallery ONCE, here. Every screen
   // that looks a figure up by id — the court, the chronicle, the unlock pop-ups
   // — then answers in that style without knowing anything about it.
-  // The livery is the HOUSE's choice, not the player's: APP_DESIGN ships to
-  // everyone, and only an admin may override it live to preview the other one.
-  setLivery(account?.isAdmin && profile.design ? profile.design : APP_DESIGN);
+  // The livery is the HOUSE's choice, not the player's. Priority: the admin's
+  // local preview override, then the Hall's live answer (cached), then the
+  // shipped APP_DESIGN. houseDesign state re-renders us when the Hall differs.
+  setLivery((account?.isAdmin && profile.design) || houseDesign || APP_DESIGN);
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   // onboarding lessons appear between battles, never over a running match

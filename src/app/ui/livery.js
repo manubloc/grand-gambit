@@ -17,6 +17,7 @@
 import { setDesign as setThemeDesign } from "./theme.js";
 import { applyInsigniaDesign } from "./assets/icons/iconAssets.js";
 import { setPieceStyle } from "./board/paintedArt.js";
+import { APP_DESIGN, HALL_HTTP } from "../config.js";
 
 import hallC from "./assets/bg-hall.webp";
 import hallK from "./assets/bg-hall.carved.webp";
@@ -48,7 +49,11 @@ import g08C from "./assets/ground-08.webp"; import g08K from "./assets/ground-08
 import g09C from "./assets/ground-09.webp"; import g09K from "./assets/ground-09.carved.webp";
 import g10C from "./assets/ground-10.webp"; import g10K from "./assets/ground-10.carved.webp";
 
-let DESIGN = "classic";
+// The house answer is cached, so even the LOGIN screen (rendered before any
+// profile exists) already wears the right livery on the second visit.
+const CACHE_KEY = "gg-house-design";
+const cached = (() => { try { return localStorage.getItem(CACHE_KEY); } catch { return null; } })();
+let DESIGN = cached === "carved" || cached === "classic" ? cached : APP_DESIGN;
 
 /** The one entry point: dress the app. Called from App.jsx (and the login
  *  screens' module scope) with the effective design. */
@@ -59,6 +64,30 @@ export function setLivery(design) {
   setPieceStyle(DESIGN);
 }
 export const livery = () => DESIGN;
+
+/** Ask the Hall which livery the house wears; falls back silently offline.
+ *  Returns the design so App.jsx can re-render when the answer differs. */
+export async function fetchHouseDesign() {
+  try {
+    const r = await fetch(HALL_HTTP + "/design");
+    const d = (await r.json()).design;
+    if (d === "carved" || d === "classic") {
+      try { localStorage.setItem(CACHE_KEY, d); } catch {}
+      return d;
+    }
+  } catch {}
+  return null;
+}
+
+/** The admin's hand on the house switch: persists in the Hall for everyone. */
+export async function setHouseDesign(design, token) {
+  const r = await fetch(HALL_HTTP + "/design", { method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ design, token }) });
+  if (!r.ok) throw new Error("unauthorized");
+  try { localStorage.setItem(CACHE_KEY, design); } catch {}
+  return design;
+}
 const pick = (c, k) => (DESIGN === "carved" ? k : c);
 
 export const bgHall = () => pick(hallC, hallK);

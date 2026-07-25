@@ -21,7 +21,7 @@ export default {
       return env.HALL.get(id).fetch(request);
     }
     // health + the error-report endpoints all live in the one Hall
-    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports") {
+    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design") {
       const id = env.HALL.idFromName("hall");
       return env.HALL.get(id).fetch(request);
     }
@@ -173,8 +173,24 @@ export class Hall extends DurableObject {
       "access-control-allow-methods": "GET, POST, OPTIONS",
       "access-control-allow-headers": "content-type",
     };
-    if (request.method === "OPTIONS" && (url.pathname === "/report" || url.pathname === "/reports")) {
+    if (request.method === "OPTIONS" && (url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design")) {
       return new Response(null, { status: 204, headers: cors });
+    }
+    // ── THE HOUSE DESIGN: which livery every player gets. Reading is open
+    //    (the app asks on boot, pre-login); writing needs the admin token.
+    //    Survives deploys and sleep like everything else in the Hall's SQLite.
+    if (url.pathname === "/design" && request.method === "GET") {
+      const r = [...this.sql.exec("SELECT v FROM kv WHERE k = 'design'")];
+      return new Response(JSON.stringify({ design: r.length ? r[0].v : null }),
+        { headers: { "content-type": "application/json", ...cors } });
+    }
+    if (url.pathname === "/design" && request.method === "POST") {
+      let b = {}; try { b = await request.json(); } catch {}
+      const admin = this.core.adminToken;
+      if (!admin || b.token !== admin) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json", ...cors } });
+      const design = b.design === "carved" ? "carved" : "classic";
+      this.sql.exec("INSERT INTO kv (k, v) VALUES ('design', ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v", design);
+      return new Response(JSON.stringify({ ok: true, design }), { headers: { "content-type": "application/json", ...cors } });
     }
     if (url.pathname === "/report" && request.method === "POST") {
       let b = {}; try { b = await request.json(); } catch {}
