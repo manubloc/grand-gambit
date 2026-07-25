@@ -44,15 +44,10 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
         style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceStyle")}</div>
-      <Segmented value={profile.pieceStyle === "svg" ? "svg" : profile.pieceStyle === "carved" ? "carved" : "painted"}
+      <Segmented value={profile.pieceStyle === "svg" ? "svg" : "painted"}
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
-        options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "carved", label: t("profile.styleCarved") }, { value: "svg", label: t("profile.styleSvg") }]} />
+        options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
-      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.design")}</div>
-      <Segmented value={profile.design === "carved" ? "carved" : "classic"}
-        onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, design: v } })}
-        options={[{ value: "classic", label: t("profile.designClassic") }, { value: "carved", label: t("profile.designCarved") }]} />
-      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.designHint")}</div>
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />
@@ -127,6 +122,11 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
     </Panel>
 
     {account?.isAdmin && <Panel>
+      <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim }}>{t("profile.design")}</div>
+      <Segmented value={profile.design === "carved" ? "carved" : "classic"}
+        onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, design: v } })}
+        options={[{ value: "classic", label: t("profile.designClassic") }, { value: "carved", label: t("profile.designCarved") }]} />
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 10px", lineHeight: 1.45 }}>{t("profile.designHint")}</div>
       <PanelTitle tag="Admin">{t("profile.saveTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.saveHint")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>

@@ -3,7 +3,7 @@
 // players by retinue score, or challenge an online friend directly.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { T } from "../theme.js";
-import crest3 from "../assets/crest-3.webp";
+import { crestArt } from "../livery.js";
 import { LaurelIc, PigeonIc, CloudIc, BladesIc, DiceIc, TrophyIc } from "../icons.jsx";
 import { JewelIc } from "../board/PieceGlyph.jsx";
 import { Button, Chip, Panel, Segmented, PanelTitle } from "../primitives.jsx";
@@ -288,7 +288,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
             <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 10 }}>{t("online.sub")}</div>
           </div>
           {/* the crest of the keep watches over every online bout */}
-          <img src={crest3} alt="" aria-hidden style={{ width: 52, height: 62, objectFit: "contain", flex: "0 0 auto",
+          <img src={crestArt(3)} alt="" aria-hidden style={{ width: 52, height: 62, objectFit: "contain", flex: "0 0 auto",
             marginTop: -2, filter: "drop-shadow(0 3px 7px rgba(0,0,0,.5))" }} />
         </div>
         {!o.tagSet ? (

@@ -1,35 +1,33 @@
-// GENERATED — the treasury's painted emblems, one per achievement.
-// Each is already cast as a round medallion in the plates' own warm dark, so
-// it needs no cutting-out at runtime and shows no seam on any background.
-
-import a_bosses from "./ach-bosses.webp";
-import a_captures from "./ach-captures.webp";
-import a_checkmates from "./ach-checkmates.webp";
-import a_fast from "./ach-fast.webp";
-import a_flawless from "./ach-flawless.webp";
-import a_games from "./ach-games.webp";
-import a_hpwins from "./ach-hpwins.webp";
-import a_promotions from "./ach-promotions.webp";
-import a_recruits from "./ach-recruits.webp";
-import a_stages from "./ach-stages.webp";
-import a_streak from "./ach-streak.webp";
-import a_upgrades from "./ach-upgrades.webp";
-import a_wins from "./ach-wins.webp";
-import a_xp from "./ach-xp.webp";
-
-export const ACH_ART = {
-  bosses: a_bosses,
-  captures: a_captures,
-  checkmates: a_checkmates,
-  fast: a_fast,
-  flawless: a_flawless,
-  games: a_games,
-  hpwins: a_hpwins,
-  promotions: a_promotions,
-  recruits: a_recruits,
-  stages: a_stages,
-  streak: a_streak,
-  upgrades: a_upgrades,
-  wins: a_wins,
-  xp: a_xp,
-};
+// Every deed carries two medals: the classic painting and the carved one.
+import { livery } from "../../livery.js";
+import c_bosses from "./ach-bosses.webp";
+import k_bosses from "./ach-bosses.carved.webp";
+import c_captures from "./ach-captures.webp";
+import k_captures from "./ach-captures.carved.webp";
+import c_checkmates from "./ach-checkmates.webp";
+import k_checkmates from "./ach-checkmates.carved.webp";
+import c_fast from "./ach-fast.webp";
+import k_fast from "./ach-fast.carved.webp";
+import c_flawless from "./ach-flawless.webp";
+import k_flawless from "./ach-flawless.carved.webp";
+import c_games from "./ach-games.webp";
+import k_games from "./ach-games.carved.webp";
+import c_hpwins from "./ach-hpwins.webp";
+import k_hpwins from "./ach-hpwins.carved.webp";
+import c_promotions from "./ach-promotions.webp";
+import k_promotions from "./ach-promotions.carved.webp";
+import c_recruits from "./ach-recruits.webp";
+import k_recruits from "./ach-recruits.carved.webp";
+import c_stages from "./ach-stages.webp";
+import k_stages from "./ach-stages.carved.webp";
+import c_streak from "./ach-streak.webp";
+import k_streak from "./ach-streak.carved.webp";
+import c_upgrades from "./ach-upgrades.webp";
+import k_upgrades from "./ach-upgrades.carved.webp";
+import c_wins from "./ach-wins.webp";
+import k_wins from "./ach-wins.carved.webp";
+import c_xp from "./ach-xp.webp";
+import k_xp from "./ach-xp.carved.webp";
+const CLASSIC = { bosses: c_bosses, captures: c_captures, checkmates: c_checkmates, fast: c_fast, flawless: c_flawless, games: c_games, hpwins: c_hpwins, promotions: c_promotions, recruits: c_recruits, stages: c_stages, streak: c_streak, upgrades: c_upgrades, wins: c_wins, xp: c_xp };
+const CARVED = { bosses: k_bosses, captures: k_captures, checkmates: k_checkmates, fast: k_fast, flawless: k_flawless, games: k_games, hpwins: k_hpwins, promotions: k_promotions, recruits: k_recruits, stages: k_stages, streak: k_streak, upgrades: k_upgrades, wins: k_wins, xp: k_xp };
+export const achArt = (id) => (livery() === "carved" ? CARVED : CLASSIC)[id] || null;

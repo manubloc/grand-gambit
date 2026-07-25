@@ -5,8 +5,8 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore } from "../meta/index.js";
-import logoMenuUrl from "./ui/assets/logo-menu.webp";
-import emblemUrl from "./ui/assets/emblem.webp";
+import { setLivery, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
+import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
 import { T } from "./ui/theme.js";
@@ -25,9 +25,7 @@ import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
-import crest1 from "./ui/assets/crest-1.webp";
-import crest2 from "./ui/assets/crest-2.webp";
-import crest3 from "./ui/assets/crest-3.webp";
+
 
 // the painted crests of the three roads: the wanderer's star for the campaign,
 // crossed blades for a quick bout, the keep for duels across the realm
@@ -38,8 +36,7 @@ const CrestArt = ({ src }) => (
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
-import { setPieceStyle } from "./ui/board/paintedArt.js";
-import { setDesign } from "./ui/theme.js";
+
 
 // viewport hook for the responsive shell (mobile dock ↔ desktop rail)
 export function useMedia(q) {
@@ -253,8 +250,9 @@ export default function App() {
   // The chosen piece style is announced to the gallery ONCE, here. Every screen
   // that looks a figure up by id — the court, the chronicle, the unlock pop-ups
   // — then answers in that style without knowing anything about it.
-  setPieceStyle(profile.pieceStyle);
-  setDesign(profile.design);
+  // The livery is the HOUSE's choice, not the player's: APP_DESIGN ships to
+  // everyone, and only an admin may override it live to preview the other one.
+  setLivery(account?.isAdmin && profile.design ? profile.design : APP_DESIGN);
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
   // onboarding lessons appear between battles, never over a running match
@@ -356,7 +354,7 @@ export default function App() {
   );
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-      <img src={emblemUrl} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
+      <img src={emblemArt()} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
         filter: "drop-shadow(0 0 6px rgba(240,200,110,.45))" }} />
       <div style={{ flex: 1 }} />
       {currencyRow}
@@ -378,7 +376,7 @@ export default function App() {
           background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
-          <img src={emblemUrl} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
+          <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
             filter: "drop-shadow(0 0 7px rgba(240,200,110,.45))" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
@@ -490,12 +488,12 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
-        art={<CrestArt src={crest1} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
+        art={<CrestArt src={crestArt(1)} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<CrestArt src={crest2} />} />
+        art={<CrestArt src={crestArt(2)} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
-        art={<CrestArt src={crest3} />} />
+        art={<CrestArt src={crestArt(3)} />} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
           cursor: "pointer", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`,

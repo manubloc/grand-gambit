@@ -1,33 +1,35 @@
-// The chest, painted. Each item enters as its own asset (hashed by the
-// build), and the drawn icon stays as the fallback for anything not yet
-// painted — the set is complete since the carved repaint, star compass included.
-
-import imgAnker from "./item-anker.webp";
-import imgBergschluessel from "./item-bergschluessel.webp";
-import imgBoat from "./item-boat.webp";
-import imgBrieftaube from "./item-brieftaube.webp";
-import imgDonnerpulver from "./item-donnerpulver.webp";
-import imgGrapnel from "./item-grapnel.webp";
-import imgHourglass from "./item-hourglass.webp";
-import imgKamel from "./item-kamel.webp";
-import imgKriegsaxt from "./item-kriegsaxt.webp";
-import imgMachete from "./item-machete.webp";
-import imgPotion from "./item-potion.webp";
-import imgTorch from "./item-torch.webp";
-import imgSternenkompass from "./item-sternenkompass.webp";
-
-export const ITEM_ART = {
-  anker: imgAnker,
-  bergschluessel: imgBergschluessel,
-  boat: imgBoat,
-  brieftaube: imgBrieftaube,
-  donnerpulver: imgDonnerpulver,
-  grapnel: imgGrapnel,
-  hourglass: imgHourglass,
-  kamel: imgKamel,
-  kriegsaxt: imgKriegsaxt,
-  machete: imgMachete,
-  potion: imgPotion,
-  torch: imgTorch,
-  sternenkompass: imgSternenkompass,
-};
+// The chest, painted TWICE over: the classic paintings restored from history,
+// and the carved repaint beside them. itemArt() answers in the app's current
+// livery; anything a livery lacks falls back to the drawn vector icon (in
+// classic that is still the star compass, which was never painted).
+import { livery } from "../../livery.js";
+import cAnker from "./item-anker.webp";
+import cBergschluessel from "./item-bergschluessel.webp";
+import cBoat from "./item-boat.webp";
+import cBrieftaube from "./item-brieftaube.webp";
+import cDonnerpulver from "./item-donnerpulver.webp";
+import cGrapnel from "./item-grapnel.webp";
+import cHourglass from "./item-hourglass.webp";
+import cKamel from "./item-kamel.webp";
+import cKriegsaxt from "./item-kriegsaxt.webp";
+import cMachete from "./item-machete.webp";
+import cPotion from "./item-potion.webp";
+import cSternensplitter from "./item-sternensplitter.webp";
+import cTorch from "./item-torch.webp";
+import kAnker from "./item-anker.carved.webp";
+import kBergschluessel from "./item-bergschluessel.carved.webp";
+import kBoat from "./item-boat.carved.webp";
+import kBrieftaube from "./item-brieftaube.carved.webp";
+import kDonnerpulver from "./item-donnerpulver.carved.webp";
+import kGrapnel from "./item-grapnel.carved.webp";
+import kHourglass from "./item-hourglass.carved.webp";
+import kKamel from "./item-kamel.carved.webp";
+import kKriegsaxt from "./item-kriegsaxt.carved.webp";
+import kMachete from "./item-machete.carved.webp";
+import kPotion from "./item-potion.carved.webp";
+import kSternenkompass from "./item-sternenkompass.carved.webp";
+import kSternensplitter from "./item-sternensplitter.carved.webp";
+import kTorch from "./item-torch.carved.webp";
+const CLASSIC = { anker: cAnker, bergschluessel: cBergschluessel, boat: cBoat, brieftaube: cBrieftaube, donnerpulver: cDonnerpulver, grapnel: cGrapnel, hourglass: cHourglass, kamel: cKamel, kriegsaxt: cKriegsaxt, machete: cMachete, potion: cPotion, sternensplitter: cSternensplitter, torch: cTorch };
+const CARVED = { anker: kAnker, bergschluessel: kBergschluessel, boat: kBoat, brieftaube: kBrieftaube, donnerpulver: kDonnerpulver, grapnel: kGrapnel, hourglass: kHourglass, kamel: kKamel, kriegsaxt: kKriegsaxt, machete: kMachete, potion: kPotion, sternenkompass: kSternenkompass, sternensplitter: kSternensplitter, torch: kTorch };
+export const itemArt = (id) => (livery() === "carved" ? CARVED : CLASSIC)[id] || null;

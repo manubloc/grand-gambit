@@ -4,11 +4,11 @@
 // wherever an item appears — supply chest, battle HUD, a barred path on the
 // map, the academy — it wears the same face.
 import { ICON_ART } from "./art.generated.js";
-import { ITEM_ART } from "./assets/items/itemArt.js";
+import { itemArt } from "./assets/items/itemArt.js";
 import { ITEMS } from "../../content/index.js";
 
 export function ItemIcon({ id, size = 22, style = null }) {
-  const painted = ITEM_ART[id];
+  const painted = itemArt(id);
   if (painted) {
     return <img src={painted} alt="" draggable={false} decoding="async" aria-hidden="true"
       style={{ width: size, height: size, objectFit: "contain", display: "block",

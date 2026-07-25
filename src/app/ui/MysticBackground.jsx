@@ -1,5 +1,5 @@
 // (hooks no longer needed — the hall stands still)
-import bgHall from "./assets/bg-hall.webp";
+import { bgHall } from "./livery.js";
 
 // ── The hall behind everything ────────────────────────────────────────────────
 // A dark marble board fades out of pure black (the image is embedded, not
@@ -40,7 +40,7 @@ export function MysticBackground({ league = 1 }) {
           the image is wider than the screen, where auto margins would fail). */}
       {(() => {
         const W = mob ? "142%" : "min(96%, 1080px)";
-        return <img src={bgHall} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: mob ? "7vh" : 0,
+        return <img src={bgHall()} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: mob ? "7vh" : 0,
           width: W, marginLeft: `calc(${W} / -2)`, maxWidth: mob ? "none" : undefined, userSelect: "none",
           WebkitMaskImage: mask, maskImage: mask, opacity: 0.9 }} />;
       })()}

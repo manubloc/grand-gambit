@@ -4,6 +4,7 @@ import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS a
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
+import { groundArt, livery } from "../livery.js";
 import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
@@ -16,16 +17,6 @@ import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
 import texWear3 from "../assets/tex-wear-3.webp";
 import texWear4 from "../assets/tex-wear-4.webp";
-import ground01 from "../assets/ground-01.webp";
-import ground02 from "../assets/ground-02.webp";
-import ground03 from "../assets/ground-03.webp";
-import ground04 from "../assets/ground-04.webp";
-import ground05 from "../assets/ground-05.webp";
-import ground06 from "../assets/ground-06.webp";
-import ground07 from "../assets/ground-07.webp";
-import ground08 from "../assets/ground-08.webp";
-import ground09 from "../assets/ground-09.webp";
-import ground10 from "../assets/ground-10.webp";
 
 // ── THE LAND BLEEDS INTO THE BOARD ──────────────────────────────────────────
 // Square tints sampled from each league's world painting: light = the open
@@ -62,12 +53,11 @@ const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 
 // the painted GROUND under a campaign board, per league world (01 = spring
 // meadow). Classic boards keep their bare wood; more worlds follow as their
 // paintings arrive.
-const GROUNDS = { 1: ground01, 2: ground02, 3: ground03, 4: ground04, 5: ground05,
-  6: ground06, 7: ground07, 8: ground08, 9: ground09, 10: ground10 }; // every world carries its own land under the board
+ // every world carries its own land under the board
 const boardGround = (match, profile) => {
   if (!match) return null; // quick play & duels keep their bare tables
   const lg = (((profile?.campaign?.league || 1) - 1) % 10) + 1;
-  return GROUNDS[lg] || null;
+  return groundArt(lg);
 };
 const boardTexture = (match, profile) => {
   if (!match) return WEAR_TEX[0];
@@ -687,7 +677,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
-          texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : profile.pieceStyle === "carved" ? "carved" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
+          texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : livery() === "carved" ? "carved" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />

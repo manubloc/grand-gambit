@@ -11,7 +11,7 @@ import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js
 import { ABILITIES, BOSSES } from "./src/content/index.js";
 import { ACHIEVEMENTS } from "./src/meta/achievements.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
-import { ITEM_ART } from "./src/app/ui/assets/items/itemArt.js";
+import { itemArt } from "./src/app/ui/assets/items/itemArt.js";
 import { ITEMS } from "./src/content/index.js";
 import { ItemIcon } from "./src/app/ui/ItemIcon.jsx";
 import { readFileSync, readdirSync } from "node:fs";
@@ -164,7 +164,9 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   const achIds = evaluate({}).items.map((i) => i.id);
   const missing = achIds.filter((id) => !achFiles.includes(`ach-${id}.webp`));
   ok("every achievement has its own painted emblem", missing.length === 0 || console.log("     ", missing.join(", ")));
-  ok("no emblem is orphaned", achFiles.every((f) => achIds.includes(f.slice(4, -5))));
+  // Every emblem may wear TWO liveries since the carved repaint — "ach-x.webp"
+  // (classic) and "ach-x.carved.webp". Both must belong to a real deed.
+  ok("no emblem is orphaned", achFiles.every((f) => achIds.includes(f.slice(4, -5).replace(/\.carved$/, ""))));
   const badMedal = achFiles.map((f) => ({ f, d: dims(`${achDir}/${f}`) }))
     .filter((x) => !x.d || x.d.w !== x.d.h || x.d.w < 128);
   ok("emblems are square and large enough for a crisp medallion",
@@ -545,9 +547,9 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
 // barred path, the academy — because they all pass through ONE component.
 {
   const ids = Object.keys(ITEMS);
-  const painted = ids.filter((id) => ITEM_ART[id]);
+  const painted = ids.filter((id) => itemArt(id));
   ok(`most of the chest is painted (${painted.length}/${ids.length})`, painted.length >= 12);
-  const missing = ids.filter((id) => !ITEM_ART[id]);
+  const missing = ids.filter((id) => !itemArt(id));
   ok("what is missing falls back rather than breaking",
     missing.every((id) => html(<ItemIcon id={id} size={22} />).length > 20));
   if (missing.length) console.log("      noch ungemalt:", missing.join(", "));

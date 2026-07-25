@@ -6,7 +6,7 @@ import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../me
 import { T } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
 import { AchIcon, SkillStar, GoldCoin } from "../icons.jsx";
-import { ACH_ART } from "../assets/ach/index.js";
+import { achArt } from "../assets/ach/index.js";
 import { useMedia } from "../../App.jsx";
 
 // MEASURED, then lifted: on the gilded plates T.faint came in at 2.9:1 against
@@ -148,8 +148,8 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
             boxShadow: isOpen
               ? "0 0 30px rgba(255,240,190,.6), 0 2px 6px rgba(0,0,0,.6), inset 0 1px 2px rgba(255,252,236,.3)"
               : "0 0 14px rgba(240,214,138,.45), 0 1px 3px rgba(0,0,0,.55), inset 0 1px 1px rgba(255,250,228,.25)" }}>
-            {ACH_ART[it.id]
-              ? <img src={ACH_ART[it.id]} alt="" draggable={false} decoding="async"
+            {achArt(it.id)
+              ? <img src={achArt(it.id)} alt="" draggable={false} decoding="async"
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block",
                     // the paintings came out of the forge a shade dim for a
                     // treasury: lifted, warmed and given a touch more gold

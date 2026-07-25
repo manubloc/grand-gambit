@@ -11,3 +11,11 @@ export const APP_VERSION = "2.0";
 
 // Cloud accounts (Supabase) whose e-mail addresses get admin powers.
 export const ADMIN_EMAILS = [];             // e.g. ["you@example.com"]
+
+// ── The house design ────────────────────────────────────────────────────────
+// "classic" is the deep-navy night with the original paintings; "carved" is
+// the painted-stone livery of the new piece set. This ships to EVERY player —
+// changing it here and deploying restyles the whole app for everyone. A
+// signed-in admin can preview either livery live from the profile workbench
+// without touching this value.
+export const APP_DESIGN = "classic";
