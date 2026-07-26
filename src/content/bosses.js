@@ -59,8 +59,8 @@ export const bossById = (id) => BOSSES.find((b) => b.id === id) || null;
  *  wins you its boss: he may then march for YOU, in place of the queen (one
  *  boss at most). Every league boss carries an AURA that bends the whole
  *  match, not just his square. */
-export const LEAGUE_BOSSES = ["b25", "b12", "b10", "b19", "b20", "b16", "b17", "b18", "b08", "b14"];
-export const leagueBossId = (league) => LEAGUE_BOSSES[(((league || 1) - 1) % 10)];
+export const LEAGUE_BOSSES = ["b25", "b12", "b10", "b02", "b19", "b20", "b16", "b17", "b18", "b08", "b14"];
+export const leagueBossId = (league) => LEAGUE_BOSSES[(((league || 1) - 1) % 11)];
 export const bossName = (b, en) => (en ? b.nameEn : b.nameDe);
 
 /** Army-spec entry for a boss piece (drops into a back-rank slot). */

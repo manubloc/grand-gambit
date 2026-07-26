@@ -95,7 +95,7 @@ function loneBoss(boss) {
     && nodeBossSpec(nA5("n03"), 5).bossId === "b24" && nodeBossSpec(nA5("e2"), 3).bossId === "b15");
   ok("the League Keep fields THIS league's boss with his aura", nodeBossSpec(nA5("n22"), 1).bossId === "b25"
     && nodeBossSpec(nA5("n22"), 2).bossId === "b12" && nodeBossSpec(nA5("n22"), 2).aura.type === "noEnemyPotions"
-    && nodeBossSpec(nA5("n22"), 10).bossId === "b14" && nodeBossSpec(nA5("n22"), 11).bossId === "b25");
+    && nodeBossSpec(nA5("n22"), 4).bossId === "b02" && nodeBossSpec(nA5("n22"), 11).bossId === "b14" && nodeBossSpec(nA5("n22"), 12).bossId === "b25");
   ok("every rotated monster resolves to a real boss", ["n03","a5","b5","c5","e2"].every((id) =>
     (nA5(id).boss.rotation || []).every((b) => bossById(b))));
 }

@@ -138,8 +138,26 @@ export const PLACE_NAMES = {
     "Rost und Reue",
   ]),
 
-  // ── IV · Gebirge — the cold preserves what the rift changes; the Shadowlord ──
+  // ── V · Grauwacht — the cold preserves what the rift changes; the Shadowlord ──
+  // ── IV · Krummholz — where the Eichwald thins and the bare crests begin; the
+  // twisted trees of the treeline gave the land its name ──
   4: zip([
+    "Über die Baumgrenze", "Latschenfeld", "Die Windflüchter", "Almrast",
+    "Steinmandl", "Der Krumme Hain", "Hirtenkanzel", "Wetterbaum",
+    "Zwieselgrund", "Die letzte Alm", "Käserast", "Hochleger",
+    "Marchstein", "Gamswechsel", "Die Schindelhütte", "Windkamm",
+    "Lärchentor", "Wurzelstieg", "Der Zerzauste Wald", "Almglocken",
+    "Bergahornhof", "Die Kahle Kuppe", "Hüttenrauch", "Sennenwacht",
+    "Der Steile Anger", "Wildheuplatz", "Felsenfenster", "Zundermoos",
+    "Die Wolkenweide", "Salzleck", "Der Geduckte Forst", "Gratrast",
+    "Murmelfeld", "Die Zwei Wetterfichten", "Hangdorf", "Steinrose",
+    "Der Letzte Schatten", "Adlerstein", "Kammweg", "Die Stumme Glocke",
+    "Almabtrieb", "Der Schiefe Zaun", "Nebelweide", "Hochjochrast",
+    "Die Verwachsene Pforte", "Quellmoos", "Der Kalte Anger", "Zirbenwacht",
+    "Flechtenstein", "Die Oberste Hütte", "Kammfeuer",
+  ]),
+
+  5: zip([
     "Der erste Anstieg",
     "Klammglocke",
     "Vereister Altar",
@@ -193,8 +211,8 @@ export const PLACE_NAMES = {
     "Letzter Steig",
   ]),
 
-  // ── V · Hochgebirge — over these passes fled the court; the Keeper's keys ────
-  5: zip([
+  // ── VI · Wolkenjoch — over these passes fled the court; the Keeper's keys ────
+  6: zip([
     "Erster Grat",
     "Meißelschlag",
     "Gipfelaltar",
@@ -248,8 +266,8 @@ export const PLACE_NAMES = {
     "Zwölf Türen",
   ]),
 
-  // ── VI · Ödland — the first price the rift drank; the Bloodmaid's chalice ────
-  6: zip([
+  // ── VII · Aschgrund — the first price the rift drank; the Bloodmaid's chalice ────
+  7: zip([
     "Erster Riss",
     "Staubglocke",
     "Wundaltar",
@@ -303,8 +321,8 @@ export const PLACE_NAMES = {
     "Stimmen im Staub",
   ]),
 
-  // ── VII · Steppe — tourneys were ridden here; the Lancemaster rides them yet ─
-  7: zip([
+  // ── VIII · Sattelweite — tourneys were ridden here; the Lancemaster rides them yet ─
+  8: zip([
     "Weites Rund",
     "Hufdonner",
     "Reiteraltar",
@@ -358,8 +376,8 @@ export const PLACE_NAMES = {
     "Lied der Weite",
   ]),
 
-  // ── VIII · Roter Canyon — the wound itself; the last stair down; Ironfist ────
-  8: zip([
+  // ── IX · Die Wunde — the wound itself; the last stair down; Ironfist ────
+  9: zip([
     "Oberkante",
     "Hammerschlag",
     "Zinnoberaltar",
@@ -413,8 +431,8 @@ export const PLACE_NAMES = {
     "Atem der Wunde",
   ]),
 
-  // ── IX · Wüste — swallows names; only the oasis remembers; the Cannoneer ─────
-  9: zip([
+  // ── X · Sonnenschlund — swallows names; only the oasis remembers; the Cannoneer ─────
+  10: zip([
     "Trockentor",
     "Karawanenglocke",
     "Dünenaltar",
@@ -468,8 +486,8 @@ export const PLACE_NAMES = {
     "Stille vor Mittag",
   ]),
 
-  // ── X · Endloses Meer — where the rift bleeds out; Osric waits; the Captain ──
-  10: zip([
+  // ── XI · Endloses Meer — where the rift bleeds out; Osric waits; the Captain ──
+  11: zip([
     "Erste Gischt",
     "Tidenglocke",
     "Wrackaltar",

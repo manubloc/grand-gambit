@@ -98,16 +98,17 @@ const CHAPTER_TITLES = [
   /* I Kronland   */ [["Der Aufbruch","The Departure"],["Die drei Pfade","The Three Paths"],["Die Prüfungen","The Trials"],["Der Aufstieg","The Ascent"]],
   /* II Kornmark  */ [["Ins hohe Korn","Into the High Corn"],["Wege zwischen den Äckern","Roads Between the Fields"],["Die Zehntwaage","The Tithe Scales"],["Der Erntethron","The Harvest Throne"]],
   /* III Eichwald */ [["Unter das Blätterdach","Under the Canopy"],["Der Nebelscheid","The Mist Divide"],["Ins Dickicht","Into the Thicket"],["Der Herr der Eichen","The Lord of the Oaks"]],
-  /* IV Grauwacht */ [["Der erste Anstieg","The First Climb"],["Drei kalte Pässe","Three Cold Passes"],["Die Steinprobe","The Trial of Stone"],["Der Sattel des Winds","The Saddle of Winds"]],
-  /* V Wolkenjoch */ [["Am Fuß der Wand","At the Foot of the Wall"],["Grate und Scharten","Ridges and Notches"],["Die Seilprobe","The Rope Trial"],["Zum Gipfelthron","To the Summit Throne"]],
-  /* VI Aschgrund */ [["In die Asche","Into the Ash"],["Drei tote Flüsse","Three Dead Rivers"],["Das Knochenfeld","The Bonefield"],["Der Herr der Öde","The Lord of the Waste"]],
-  /* VII Sattelw. */ [["Unter weitem Himmel","Under the Wide Sky"],["Die Reiterpfade","The Rider Trails"],["Feuer im Gras","Fire in the Grass"],["Der Khan der Steppe","The Khan of the Steppe"]],
-  /* VIII Wunde   */ [["In die Schlucht","Into the Gorge"],["Die drei Klammen","The Three Clefts"],["Echo und Absturz","Echo and Fall"],["Über der Felskante","Above the Rim"]],
-  /* IX Sonnenschl*/ [["Der glühende Sand","The Glowing Sand"],["Karawanenwege","Caravan Roads"],["Die Glutprobe","The Ember Trial"],["Der Dünenthron","The Dune Throne"]],
-  /* X Meer       */ [["Ablegen","Casting Off"],["Drei Strömungen","Three Currents"],["Die Sturmfahrt","The Storm Passage"],["Der Herr der Wellen","The Lord of the Waves"]],
+  /* IV Krummholz */ [["Über die Baumgrenze","Above the Treeline"],["Krummholzpfade","Krummholz Trails"],["Die letzte Alm","The Last Pasture"],["Der kahle Kamm","The Bare Crest"]],
+  /* V Grauwacht  */ [["Der erste Anstieg","The First Climb"],["Drei kalte Pässe","Three Cold Passes"],["Die Steinprobe","The Trial of Stone"],["Der Sattel des Winds","The Saddle of Winds"]],
+  /* VI Wolkenjoch*/ [["Am Fuß der Wand","At the Foot of the Wall"],["Grate und Scharten","Ridges and Notches"],["Die Seilprobe","The Rope Trial"],["Zum Gipfelthron","To the Summit Throne"]],
+  /* VII Aschgrund*/ [["In die Asche","Into the Ash"],["Drei tote Flüsse","Three Dead Rivers"],["Das Knochenfeld","The Bonefield"],["Der Herr der Öde","The Lord of the Waste"]],
+  /* VIII Sattelw.*/ [["Unter weitem Himmel","Under the Wide Sky"],["Die Reiterpfade","The Rider Trails"],["Feuer im Gras","Fire in the Grass"],["Der Khan der Steppe","The Khan of the Steppe"]],
+  /* IX Wunde     */ [["In die Schlucht","Into the Gorge"],["Die drei Klammen","The Three Clefts"],["Echo und Absturz","Echo and Fall"],["Über der Felskante","Above the Rim"]],
+  /* X Sonnenschl.*/ [["Der glühende Sand","The Glowing Sand"],["Karawanenwege","Caravan Roads"],["Die Glutprobe","The Ember Trial"],["Der Dünenthron","The Dune Throne"]],
+  /* XI Meer      */ [["Ablegen","Casting Off"],["Drei Strömungen","Three Currents"],["Die Sturmfahrt","The Storm Passage"],["Der Herr der Wellen","The Lord of the Waves"]],
 ];
 export const chapterTitle = (league, n, en = false) => {
-  const world = ((Math.max(1, league) - 1) % 10);
+  const world = ((Math.max(1, league) - 1) % 11);
   const set = CHAPTER_TITLES[world] || CHAPTER_TITLES[0];
   const pair = set[Math.max(0, Math.min(3, n - 1))];
   return en ? pair[1] : pair[0];

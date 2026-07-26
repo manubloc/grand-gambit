@@ -1,5 +1,31 @@
 # Changelog - Grand Gambit
 
+## 0.32.2
+
+ELFTES KAPITEL: KRUMMHOLZ - DIE BAUMGRENZE ZWISCHEN EICHWALD UND GRAUWACHT:
+
+- NEUES KAPITEL IV eingeschoben, alle folgenden ruecken um eins: Kronland,
+  Kornmark, Eichwald, KRUMMHOLZ, Grauwacht, Wolkenjoch, Aschgrund, Sattelweite,
+  Die Wunde, Sonnenschlund, Endloses Meer. Der Sprung vom Wald direkt ins
+  Gebirge war zu hart - das Krummholz ist der Uebergang, benannt nach den
+  windschiefen Baeumen an der Baumgrenze.
+- 51 NEUE ORTSNAMEN fuer das Kapitel (Ueber die Baumgrenze, Die Windfluechter,
+  Die letzte Alm, Gamswechsel, Der Zerzauste Wald, Die Zwei Wetterfichten,
+  Zirbenwacht ...), Dublettenpruefung ueber alle 561 Namen gruen.
+- VIER KAPITELTITEL: Ueber die Baumgrenze / Krummholzpfade / Die letzte Alm /
+  Der kahle Kamm.
+- MEISTER des Krummholz ist der SPRINGBOCK (b02) - der Fels-zu-Fels-Springer
+  gehoert an die Baumgrenze; die Meisterliste zaehlt jetzt elf.
+- WELTKARTE: neuer Anker und neuer Lore-Text (die Stille zwischen zwei
+  Glockenschlaegen) auf Deutsch und Englisch; alle folgenden Kapitel-Lore-
+  Schluessel verschoben.
+- TECHNIK: der Weltzyklus laeuft ueberall auf Modulo 11 statt 10 (Themen,
+  Hintergrund-Tints, Brettfarben, Beschriftungs-Tints, Titel, Ortsnamen,
+  Meister, Speicher-Biome). Der Kapitaen ist jetzt Meister von Kapitel X,
+  das Meer ist Kapitel XI; roemische Ziffern bis XI, Warentexte (Bergschluessel
+  VI, Schwarzes Tor VII, Duerrgras VIII, Schrein X) nachgezogen. Kartenbild:
+  vorerst das Wolkenjoch-Bild als Platzhalter, bis die V5-Karte kommt.
+
 ## 0.30.2
 
 WERKZEUG FUER DIE NEUEN WELTKARTEN:

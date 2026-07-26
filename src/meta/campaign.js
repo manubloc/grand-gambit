@@ -33,7 +33,7 @@ const PREDS = (() => {
 })();
 export const predsOf = (id) => PREDS[id] || [];
 
-export const leagueNo = (league) => ((Math.max(1, league || 1) - 1) % 10) + 1;
+export const leagueNo = (league) => ((Math.max(1, league || 1) - 1) % 11) + 1;
 /** League-bound sites (the combo paths) only exist in their own climate. */
 export const nodeInLeague = (node, league) => !node.league || node.league === leagueNo(league);
 /** Gates come as "item", { item, piece } or { gold } (a toll) — normalize. */
@@ -136,10 +136,10 @@ export function nodeBossSpec(node, league = 1) {
  *  BROODMOTHER — the ancient heart has not hatched yet. */
 
 /** The station's name in the given league — unique across the whole journey.
- *  League I uses the homeland names from CAMPAIGN; II–X draw from PLACE_NAMES,
+ *  League I uses the homeland names from CAMPAIGN; II–XI draw from PLACE_NAMES,
  *  each set hand-written from that biome's lore (see content/placeNames.js). */
 export function placeFor(node, league = 1) {
-  const lg = Math.max(1, Math.min(10, leagueNo(league)));
+  const lg = Math.max(1, Math.min(11, leagueNo(league)));
   if (lg === 1) return node?.place || "";
   return (PLACE_NAMES[lg] && PLACE_NAMES[lg][node?.id]) || node?.place || "";
 }
@@ -293,7 +293,7 @@ export function advanceLeague(profile) {
 
 /** League-specific finale: the Desert league (IX) ends at the Captain, whose
  *  recruitment (plus a boat) is the only way onto the Endless Sea (X). */
-export const leagueFinalBossPiece = (league) => (((league - 1) % 10) + 1 === 9 ? "captain" : null);
+export const leagueFinalBossPiece = (league) => (((league - 1) % 11) + 1 === 10 ? "captain" : null);
 export const bossPieceFor = (node, league) =>
   (node.id === "n22" && leagueFinalBossPiece(league)) || effectiveNodeBoss(node, league)?.piece || null;
 

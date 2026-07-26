@@ -26,17 +26,18 @@ const LEAGUE_BOARD = {
   1: { sqLight: "#d6c79d", sqDark: "#716844" },
   2: { sqLight: "#ac9250", sqDark: "#433d1e" },
   3: { sqLight: "#ca954f", sqDark: "#5d3915" },
-  4: { sqLight: "#d2dae7", sqDark: "#687485" },
-  5: { sqLight: "#bfbeb9", sqDark: "#696864" },
-  6: { sqLight: "#ac8b64", sqDark: "#54412c" },
-  7: { sqLight: "#e1bc7b", sqDark: "#896429" },
-  8: { sqLight: "#e59558", sqDark: "#7d3f22" },
-  9: { sqLight: "#f8ca79", sqDark: "#a97c40" },
-  10: { sqLight: "#98a6a8", sqDark: "#315360" },
+  4: { sqLight: "#c2c4a2", sqDark: "#5f6b50" },
+  5: { sqLight: "#d2dae7", sqDark: "#687485" },
+  6: { sqLight: "#bfbeb9", sqDark: "#696864" },
+  7: { sqLight: "#ac8b64", sqDark: "#54412c" },
+  8: { sqLight: "#e1bc7b", sqDark: "#896429" },
+  9: { sqLight: "#e59558", sqDark: "#7d3f22" },
+  10: { sqLight: "#f8ca79", sqDark: "#a97c40" },
+  11: { sqLight: "#98a6a8", sqDark: "#315360" },
 };
 const boardPalette = (profile) => {
   const lg = profile?.campaign?.league || 1;
-  return LEAGUE_BOARD[((lg - 1) % 10) + 1] || LEAGUE_BOARD[1];
+  return LEAGUE_BOARD[((lg - 1) % 11) + 1] || LEAGUE_BOARD[1];
 };
 
 // The board's material ages with the journey: leagues I–IV play on cared-for
@@ -56,7 +57,7 @@ const eloDepth = (elo) => (elo || 1000) < 1000 ? 1 : (elo || 1000) < 1600 ? 2 : 
  // every world carries its own land under the board
 const boardGround = (match, profile) => {
   if (!match) return null; // quick play & duels keep their bare tables
-  const lg = (((profile?.campaign?.league || 1) - 1) % 10) + 1;
+  const lg = (((profile?.campaign?.league || 1) - 1) % 11) + 1;
   return groundArt(lg);
 };
 const boardTexture = (match, profile) => {

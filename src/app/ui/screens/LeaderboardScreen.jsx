@@ -24,7 +24,7 @@ const STR = {
     offline: "This board is device-local for now. Once the online account is configured (SUPABASE-SETUP.md), every player compares here.",
     noRun: "Finish League I for your run time.", you: "you" },
 };
-const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI"];
 
 export function LeaderboardSection({ profile, playtimeSec = 0 }) {
   const lang = profile.lang === "en" ? "en" : "de";

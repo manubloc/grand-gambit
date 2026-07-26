@@ -39,7 +39,7 @@ export function leagueOrder(league = 1) {
 export function withProgressPct(profile, pct, league = 1) {
   const p = Math.max(0, Math.min(100, Math.round(pct)));
   const lg = Math.max(1, Math.round(league));
-  const biome = ((lg - 1) % 10) + 1;
+  const biome = ((lg - 1) % 11) + 1;
   const base = defaultProfile();
   const keep = { name: profile.name, lang: profile.lang, online: profile.online, notices: profile.notices, difficulty: profile.difficulty };
   // the Endless Sea (X) sits behind its toll: captain + boat travel along

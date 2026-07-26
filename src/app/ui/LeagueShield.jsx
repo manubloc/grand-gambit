@@ -4,7 +4,7 @@
 import { T } from "./theme.js";
 import { leagueShield } from "./livery.js";
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"];
 const AR = 258 / 420; // artwork width/height
 
 export function LeagueShield({ league = 1, size = 58, dim = false, style }) {

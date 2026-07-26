@@ -192,10 +192,10 @@ gp = advanceCampaign(gp, "g1");
 ok("the secret guardian recruits its heavyweight early", gp.campaign.unlocked.includes("dragon"));
 const lg9 = { v: 2, sp: 0, gold: 0, xp: 0, xpEarned: 0, stats: {}, pieces: { levels: {}, abilities: {} }, items: {}, claims: {},
   loadout: { flank: ["knight", "knight"], formations: {} },
-  campaign: { league: 9, cleared: ["n01","n02","n03","a1","a2","a3","a4","a5","n16","n17","d1","d2","n20","n21"], unlocked: [], dupes: {} } };
-ok("league IX finale is the Captain", bsm2("n22", lg9).boss.unlocks === "captain");
+  campaign: { league: 10, cleared: ["n01","n02","n03","a1","a2","a3","a4","a5","n16","n17","d1","d2","n20","n21"], unlocked: [], dupes: {} } };
+ok("league X finale is the Captain", bsm2("n22", lg9).boss.unlocks === "captain");
 const sailed = advanceLeague(advanceCampaign(lg9, "n22"));
-ok("beating him recruits the Captain and opens league X", sailed.campaign.unlocked.includes("captain") && sailed.campaign.league === 10);
+ok("beating him recruits the Captain and opens league XI", sailed.campaign.unlocked.includes("captain") && sailed.campaign.league === 11);
 ok("but the sea still wants a boat (and the boat wants a fortune)", !seaAccessible(sailed) && !seaAccessible(buyItem({ ...sailed, gold: 200 }, "boat")) && seaAccessible(buyItem({ ...sailed, gold: 2500 }, "boat")));
 
 // ── The Grand Gambit: the eponymous hero pawn ────────────────────────────────

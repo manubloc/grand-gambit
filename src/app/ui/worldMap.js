@@ -7,10 +7,10 @@ import worldUrl from "./assets/weltkarte.webp";
 export const WORLD_MAP = {
   url: worldUrl,
   w: 836, h: 1881,
-  // league → [x%, y%] along the corridor; L10 sits on the lighthouse isle
+  // league → [x%, y%] along the corridor; L11 sits on the lighthouse isle
   anchors: {
-    1: [49, 93], 2: [52, 82], 3: [45.5, 70], 4: [50, 60], 5: [52, 49.5],
-    6: [55.5, 40], 7: [55, 32.5], 8: [48.5, 24.5], 9: [50, 16], 10: [74, 5.5],
+    1: [49, 93], 2: [52, 82], 3: [45.5, 70], 4: [48, 65], 5: [50, 60], 6: [52, 49.5],
+    7: [55.5, 40], 8: [55, 32.5], 9: [48.5, 24.5], 10: [50, 16], 11: [74, 5.5],
   },
 };
 
@@ -34,30 +34,34 @@ export const LEAGUE_LORE = {
     en: "Two bodies, one vow: the Twin Knight swore it to the last Gambit — loyalty to the gate, and not one step further down. One of them remembers her voice, neither recalls the name. So the vow guards a gate and no longer knows for whom. In the amber leaves, they say, oaths turn like foliage.",
   },
   4: {
+    de: "Wo der Eichwald dünner wird, wachsen die Bäume krumm — der Wind erlaubt kein aufrechtes Stehen mehr. Hirten sagen, an der Baumgrenze hört man den Riss zum ersten Mal: nicht als Laut, sondern als Stille zwischen zwei Glockenschlägen. Der Springbock springt dort von Fels zu Fels, als suche er einen Namen, den er auf keiner Weide fand.",
+    en: "Where the Eichwald thins, the trees grow crooked — the wind no longer permits standing upright. Herders say the treeline is where you first hear the rift: not as a sound, but as the silence between two bell strokes. The Springbok leaps there from rock to rock, as if searching for a name it found on no pasture.",
+  },
+  5: {
     de: "In einem Winter vor Jahren kam jemand aus dem Riss zurück — barfuß, ohne Namen, mit dem Gedächtnis eines ganzen Hofes. Der Schnee bewahrte die Spur, die Kälte hielt sie still. Der Schattenfürst folgte ihr drei Nächte und sah zu lange hin; seither ist er halb Mensch, halb das, was der Riss aus Menschen macht. Die Spur endete am Archiv.",
     en: "One winter years ago someone came back out of the rift — barefoot, nameless, carrying a whole court's memory. The snow kept the trail, the cold kept it still. The Shadowlord followed it three nights and looked too long; he has been half a man, half what the rift makes of men, ever since. The trail ended at the archive.",
   },
-  5: {
+  6: {
     de: "Über diese Pässe floh, was vom Hof übrig war, und verriegelte hinter sich jede Tür. Der Hüter trägt die Schlüssel noch — nur eine Tür findet er bis heute: das Archiv der Krone. Dort lag Vesnas verbotenes Verzeichnis, Name um Name, bis zu jenem Winter. Seither bewacht der Hüter ein leeres Regal, so streng wie je.",
     en: "Over these passes fled what remained of the court, bolting every door behind it. The Keeper still carries the keys — only one door he can find to this day: the Crown's archive. There lay Vesna's forbidden register, name upon name, until that winter. Ever since, the Keeper guards an empty shelf, as strictly as ever.",
   },
-  6: {
+  7: {
     de: "Der Aschgrund war der erste Preis: Wo der Riss trank, blieben rissige Erde und totes Geäst. Hier liest die Blutmagd den Ritus — ein Kelch, der nie geleert und nie gefüllt wird, für den letzten Schluck vor dem Abstieg. Asra trank daraus, und sie soll gelächelt haben. Die Blutmagd schenkt seither niemandem mehr nach.",
     en: "The Aschgrund was the first price: where the rift drank, cracked earth and dead boughs remained. Here the Bloodmaid keeps the rite — a chalice never emptied and never filled, for the last sip before the descent. Asra drank from it, and they say she smiled. The Bloodmaid has refilled no cup since.",
   },
-  7: {
+  8: {
     de: "Auf der Sattelweite ritt der Lanzenmeister einst Turniere für den ganzen Hof — und einen letzten Gang für Asra, seine beste Schülerin, am Vorabend ihres Abstiegs. Er reitet ihn noch immer, Gang um Gang, gegen eine Gegnerin, die nur er sieht. Er weiß, dass etwas zurückgekehrt ist. Er weigert sich zu sehen, was.",
     en: "On the Sattelweite the Lancemaster once rode tourneys for the whole court — and one last tilt for Asra, his finest student, on the eve of her descent. He rides it still, tilt after tilt, against an opponent only he can see. He knows something has returned. He refuses to see what.",
   },
-  8: {
+  9: {
     de: "Die Wunde trägt ihren Namen zu Recht: Hier führt die Treppe hinab, die jeder Gambit zuletzt geht — die Stufen glatt von bloßen Füßen. Am Grund liegt der Riss offen und atmet. Eisenfaust hält seit dem ersten Tag die Wache, die Faust um einen Namen geballt, den er nicht mehr aussprechen kann. Wer hier lauscht, hört den Riss flüstern: Er übt Namen, wie andere Klingen wetzen.",
     en: "The Wunde carries its name for a reason: here run the steps every Gambit walks last — worn smooth by bare feet. At the bottom the rift lies open, breathing. Ironfist has stood watch since the first day, his fist clenched around a name he can no longer speak. Listen here and you will hear the rift whisper: practising names the way others whet blades.",
   },
-  9: {
+  10: {
     de: "Der Sonnenschlund verschluckt Spuren, Namen und Absichten; nur die Oase erinnert sich. Hierher kam Vesna, die Seherin, als selbst sie Asras Namen vergessen hatte — denn sie war es, die ihn dem Riss genannt hat, um den Hof zu retten. Das Verzeichnis ist fort; Asra sammelt darin keine Rache, sondern Namen: Sie will jeden einzelnen zurückgeben, und wenn der Hof daran zerbricht. Eines trägt Vesna noch bei sich — den Namen des jungen Gambit, aufgeschrieben vor dem Ritus, gegen jede Regel: Corvin.",
     en: "The Sonnenschlund swallows tracks, names and intentions; only the oasis remembers. Here came Vesna the seeress when even she had forgotten Asra's name — for it was she who spoke it to the rift, to save the court. The register is gone; Asra collects no revenge in it, only names: she means to give every one of them back, though the court should break on it. One thing Vesna still carries — the young Gambit's name, written down before the rite, against every rule: Corvin.",
   },
-  10: {
+  11: {
     de: "Das Endlose Meer ist, wohin der Riss ausblutet: Was er nicht behalten will, spült er hier an. Der Kapitän fährt die Habseligkeiten der Genommenen hinaus — Fracht ohne Empfänger, seit Osrics erster Nacht. Irgendwo auf diesem Wasser wartet der alte König als Großmeister: Der Riss holt sich zuletzt den, der ihn geöffnet hat. Und zum ersten Mal steigt ein Gambit mit Namen herab — diesmal weiß der Riss, wen er nimmt. Vielleicht macht genau das den Unterschied.",
     en: "The Endless Sea is where the rift bleeds out: what it will not keep, it washes up here. The Captain ferries out the belongings of the taken — cargo with no recipient, since Osric's first night. Somewhere on this water the old king waits as Grandmaster: the rift comes last for the one who opened it. And for the first time a Gambit walks down carrying a name — this time the rift knows whom it takes. Perhaps that is exactly what makes the difference.",
   },

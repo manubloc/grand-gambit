@@ -13,15 +13,16 @@ const LEAGUE_TINTS = [
   { s: [46, 58, 76],  a: [196, 150, 84] },   // I    night & gold
   { s: [56, 48, 70],  a: [172, 122, 188] },  // II   violet haze
   { s: [36, 62, 56],  a: [112, 190, 150] },  // III  fen green
-  { s: [60, 44, 60],  a: [200, 112, 140] },  // IV   nightrose
-  { s: [40, 56, 74],  a: [122, 170, 210] },  // V    steel
-  { s: [66, 42, 42],  a: [210, 112, 90] },   // VI   ember
-  { s: [36, 58, 64],  a: [112, 190, 200] },  // VII  petrol
-  { s: [64, 54, 36],  a: [220, 172, 92] },   // VIII amber
-  { s: [66, 58, 44],  a: [230, 192, 132] },  // IX   desert
-  { s: [30, 40, 66],  a: [152, 182, 230] },  // X    deep sea silver
+  { s: [44, 54, 42],  a: [150, 176, 118] },  // IV   treeline green
+  { s: [60, 44, 60],  a: [200, 112, 140] },  // V    nightrose
+  { s: [40, 56, 74],  a: [122, 170, 210] },  // VI   steel
+  { s: [66, 42, 42],  a: [210, 112, 90] },   // VII  ember
+  { s: [36, 58, 64],  a: [112, 190, 200] },  // VIII petrol
+  { s: [64, 54, 36],  a: [220, 172, 92] },   // IX   amber
+  { s: [66, 58, 44],  a: [230, 192, 132] },  // X    desert
+  { s: [30, 40, 66],  a: [152, 182, 230] },  // XI   deep sea silver
 ];
-const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 10)];
+const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 11)];
 
 export function MysticBackground({ league = 1 }) {
   // the ember/smoke canvas is retired — the hall stands still and clear
