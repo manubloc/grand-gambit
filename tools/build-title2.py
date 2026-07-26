@@ -148,7 +148,7 @@ def randdunkel(im, seite=0.13, unten=0.34, oben=0.10, ziel=(0, 0, 0)):
     return im
 
 
-ZIEL = (0x20, 0x2b, 0x40)      # T.loginBg der geschnitzten Livree
+ZIEL = (0x00, 0x00, 0x00)      # T.loginBg - die Eingangsstrecke ist schwarz
 
 
 def platte():

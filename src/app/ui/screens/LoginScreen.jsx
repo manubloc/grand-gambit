@@ -85,7 +85,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
       {/* the artwork carries its own night sky — no vignette, no glow, nothing
           between the eye and the wordmark at its base */}
-      <img src={logoArt()} alt="Grand Gambit" style={{ width: "min(98vw, 720px)", maxHeight: "36vh", objectFit: "contain", display: "block", marginTop: 0, marginBottom: 42 }} />
+      <img src={logoArt()} alt="Grand Gambit" style={{ width: "min(100vw, 800px)", maxHeight: "41vh", objectFit: "contain", display: "block", marginTop: 0, marginBottom: 42 }} />
       <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 14px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>

@@ -28,7 +28,11 @@ const CLASSIC = {
   // values, so switching to classic is still byte-for-byte the old screen.
   // NOTE: the social buttons (Google, Apple, Discord) are deliberately NOT
   // tokenised - their colours are brand requirements, not our palette.
-  input: "#0d1017", loginBg: "#000", errText: "#e08f8f",
+  // The ENTRY STRETCH - login and save picking - stays black in both liveries:
+  // the title art sits on it and the whole opening reads as one dark curtain.
+  // Only what comes AFTER logging in wears the lightened carved stone. Classic
+  // keeps its exact former values here (login was #000, saves inherited T.bg).
+  input: "#0d1017", loginBg: "#000", savesBg: "#0c111e", errText: "#e08f8f",
   radius: 14, radiusSm: 10,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
@@ -49,11 +53,11 @@ const CARVED = { ...CLASSIC,
   // and paired with a stronger blur so text keeps its contrast: anything
   // thinner and the hint lines start fighting the background.
   glass: "d9", glassBlur: "18px",
-  // Sunken field one step under the carved ground, and the login ground itself
-  // lifted off pure black onto the same slate as the rest of the app. The
-  // title art has to fade into THIS colour now, not into #000, or a black
-  // rectangle shows up behind it - see tools/build-title2.py.
-  input: "#1a2334", loginBg: "#202b40", errText: "#e8a6a6",
+  // Fields and accents DO take the lighter carved blue here, so the entry
+  // already matches what comes after - but the ground itself stays pure black.
+  // An earlier attempt lifted loginBg to #202b40; that was my reading, not the
+  // owner's call, and it also forced the title art to fade into slate.
+  input: "#1a2334", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
   sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
 };
 export const T = { ...CLASSIC };
