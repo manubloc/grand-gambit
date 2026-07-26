@@ -3,7 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
-import { carvedForPiece, CARVED_FIT } from "./carvedArt.js";
+import { carvedForPiece, carvedFitFor } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -230,7 +230,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out. The carvings were already
   // cropped and levelled at build time, so they need no per-file fit.
-  const fit = (painting && !big) ? (carving ? CARVED_FIT : paintedFitFor(paintPiece)) : { h: 1, y: 0 };
+  const fit = (painting && !big) ? (carving ? carvedFitFor(paintPiece) : paintedFitFor(paintPiece)) : { h: 1, y: 0 };
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",

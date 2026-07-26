@@ -45,6 +45,11 @@ import lStandard from "../assets/carved/carved-standard-light.webp";
 import lStrategist from "../assets/carved/carved-strategist-light.webp";
 import lPathfinder from "../assets/carved/carved-pathfinder-light.webp";
 import lGambit from "../assets/carved/carved-gambit-light.webp";
+import lGambitT2 from "../assets/carved/carved-gambit-t2-light.webp";
+import lGambitT3 from "../assets/carved/carved-gambit-t3-light.webp";
+import lGambitT4 from "../assets/carved/carved-gambit-t4-light.webp";
+import lGambitT5 from "../assets/carved/carved-gambit-t5-light.webp";
+import lGambitT6 from "../assets/carved/carved-gambit-t6-light.webp";
 import dPawn from "../assets/carved/carved-pawn-dark.webp";
 import dKnight from "../assets/carved/carved-knight-dark.webp";
 import dBishop from "../assets/carved/carved-bishop-dark.webp";
@@ -72,6 +77,11 @@ import dStandard from "../assets/carved/carved-standard-dark.webp";
 import dStrategist from "../assets/carved/carved-strategist-dark.webp";
 import dPathfinder from "../assets/carved/carved-pathfinder-dark.webp";
 import dGambit from "../assets/carved/carved-gambit-dark.webp";
+import dGambitT2 from "../assets/carved/carved-gambit-t2-dark.webp";
+import dGambitT3 from "../assets/carved/carved-gambit-t3-dark.webp";
+import dGambitT4 from "../assets/carved/carved-gambit-t4-dark.webp";
+import dGambitT5 from "../assets/carved/carved-gambit-t5-dark.webp";
+import dGambitT6 from "../assets/carved/carved-gambit-t6-dark.webp";
 import xL01 from "../assets/carved/carved-boss-b01-light.webp";
 import xL02 from "../assets/carved/carved-boss-b02-light.webp";
 import xL03 from "../assets/carved/carved-boss-b03-light.webp";
@@ -131,7 +141,9 @@ export const CARVED_LIGHT = {
   dragon: lDragon, mage: lMage, sorceress: lSorceress, alchemist: lAlchemist,
   warlock: lWarlock, paladin: lPaladin, inquisitor: lInquisitor, bard: lBard,
   engineer: lEngineer, standard: lStandard, strategist: lStrategist, pathfinder: lPathfinder,
-  gambit: lGambit
+  gambit: lGambit,
+  "gambit-t2": lGambitT2, "gambit-t3": lGambitT3, "gambit-t4": lGambitT4,
+  "gambit-t5": lGambitT5, "gambit-t6": lGambitT6
 };
 /** the same figures, corrupted — the enemy's side. */
 export const CARVED_DARK = {
@@ -141,7 +153,9 @@ export const CARVED_DARK = {
   dragon: dDragon, mage: dMage, sorceress: dSorceress, alchemist: dAlchemist,
   warlock: dWarlock, paladin: dPaladin, inquisitor: dInquisitor, bard: dBard,
   engineer: dEngineer, standard: dStandard, strategist: dStrategist, pathfinder: dPathfinder,
-  gambit: dGambit
+  gambit: dGambit,
+  "gambit-t2": dGambitT2, "gambit-t3": dGambitT3, "gambit-t4": dGambitT4,
+  "gambit-t5": dGambitT5, "gambit-t6": dGambitT6
 };
 /** the monsters. Sickly, bruised colour and no gold — gold is the kingdom's. */
 export const CARVED_BOSS_LIGHT = {
@@ -173,9 +187,12 @@ export function carvedById(id, korrupt = false) {
     const b = id.slice(5);
     return (korrupt ? CARVED_BOSS_DARK : CARVED_BOSS_LIGHT)[b] || null;
   }
-  // the Gambit's tiers all wear the one hero carving
-  const grund = id.startsWith("gambit") ? "gambit" : id;
-  return (korrupt ? CARVED_DARK : CARVED_LIGHT)[grund] || null;
+  // The Gambit WEARS his rank: every tier has its own carving. They are edits
+  // of one base image, not separate drawings, so the man underneath stays the
+  // same - measured at the face, 0.80-0.98 overlap and 0.99-1.00 colour match.
+  const satz = korrupt ? CARVED_DARK : CARVED_LIGHT;
+  if (id.startsWith("gambit")) return satz[id] || satz.gambit || null;
+  return satz[id] || null;
 }
 
 /** Carving for a live board piece — or null when the set has none. */
@@ -188,11 +205,55 @@ export function carvedForPiece(piece) {
     if (piece.bossId.startsWith("pb_")) return carvedById(piece.bossId.slice(3), korrupt);
     return (korrupt ? CARVED_BOSS_DARK : CARVED_BOSS_LIGHT)[piece.bossId] || null;
   }
-  const id = piece.hero ? "gambit" : KIND2ID[piece.kind];
+  if (piece.hero) {
+    const t = Math.min(6, Math.max(1, piece.tier || 1));
+    const satz = korrupt ? CARVED_DARK : CARVED_LIGHT;
+    return (t > 1 && satz["gambit-t" + t]) || satz.gambit || null;
+  }
+  const id = KIND2ID[piece.kind];
   if (!id) return null;
   return (korrupt ? CARVED_DARK : CARVED_LIGHT)[id] || null;
 }
 
-// Each carving already sits on the shared canvas with its base bottom-aligned
-// and levelled to one standing width, so the board needs no per-file fit table.
+// Each carving sits on the shared canvas with its base bottom-aligned and
+// levelled to one standing WIDTH (see tools/carve-build.py) - deliberately not
+// to one height, so a pawn stays smaller than a king. The side effect was that
+// natural height ran against chess convention. Measured source heights:
+//
+//   Laeufer 672 | Springer 622 | Dame 608 | Koenig 585 | Bauer 583 | Turm 527
+//
+// The bishop towered 15% over the king. Rather than shrink the bishop hard -
+// which would eat into its base and break the shared standing width - the
+// crown pieces are lifted and the bishop trimmed a touch. Resulting heights:
+//
+//   Koenig 667 | Dame 663 | Laeufer 632 | Springer 622 | Turm 614 | Bauer 597
+//
+// The rook was the shortest piece of all at 527, below the pawn - against both
+// chess convention and the owner's call ("der Turm muss nicht kleiner sein").
+// It is lifted to sit between knight and pawn.
+//
+// Scaling is anchored at the foot (transformOrigin 50% 100% in PieceGlyph), so
+// a piece grows upward and its base stays planted on the square.
+const CARVED_FIT_MAP = {
+  king:   { h: 1.14, y: 0, x: 0 },
+  queen:  { h: 1.09, y: 0, x: 0 },
+  bishop: { h: 0.94, y: 0, x: 0 },
+  rook:   { h: 1.20, y: 0, x: 0 },
+};
+
 export const CARVED_FIT = { h: 1, y: 0, x: 0 };
+
+// The six Gambit tiers are all the SAME image height by construction (each is
+// forced to the pawn's 597 px in tools/set-einbau.py), so the ladder lives here
+// and nowhere else. Tier 1 is exactly pawn-sized: it IS the pawn figure, told
+// apart only by its hue (82 vs 100 degrees). The rank shows in size and gear.
+const GAMBIT_LEITER = [1.00, 1.05, 1.10, 1.15, 1.20, 1.25];
+
+export function carvedFitFor(piece) {
+  if (!piece) return CARVED_FIT;
+  if (piece.hero) {
+    const t = Math.min(6, Math.max(1, piece.tier || 1));
+    return { h: GAMBIT_LEITER[t - 1], y: 0, x: 0 };
+  }
+  return CARVED_FIT_MAP[KIND2ID[piece.kind]] || CARVED_FIT;
+}
