@@ -22,6 +22,13 @@ const CLASSIC = {
   // alpha appended to `panel`, plus its backdrop blur. Classic stays nearly
   // solid: on the deep navy night a translucent bar just reads as muddy.
   glass: "ec", glassBlur: "12px",
+  // The login screen used to hardwire these three. That was invisible while
+  // classic was the only livery, and wrong the moment carved arrived: the
+  // fields stayed night-navy on a daylight app. Classic keeps the exact old
+  // values, so switching to classic is still byte-for-byte the old screen.
+  // NOTE: the social buttons (Google, Apple, Discord) are deliberately NOT
+  // tokenised - their colours are brand requirements, not our palette.
+  input: "#0d1017", loginBg: "#000", errText: "#e08f8f",
   radius: 14, radiusSm: 10,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
@@ -42,6 +49,11 @@ const CARVED = { ...CLASSIC,
   // and paired with a stronger blur so text keeps its contrast: anything
   // thinner and the hint lines start fighting the background.
   glass: "d9", glassBlur: "18px",
+  // Sunken field one step under the carved ground, and the login ground itself
+  // lifted off pure black onto the same slate as the rest of the app. The
+  // title art has to fade into THIS colour now, not into #000, or a black
+  // rectangle shows up behind it - see tools/build-title2.py.
+  input: "#1a2334", loginBg: "#202b40", errText: "#e8a6a6",
   sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
 };
 export const T = { ...CLASSIC };

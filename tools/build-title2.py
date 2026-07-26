@@ -111,8 +111,13 @@ def gruppe(lw, teile, mitte=W // 2, ueberlapp=0.16):
         setze(lw, fig(n, s), pos[i], h, tiefe=t)
 
 
-def randdunkel(im, seite=0.13, unten=0.34, oben=0.10):
-    """Von allen vier Seiten ins Schwarz — kraeftiger als in der ersten Runde."""
+def randdunkel(im, seite=0.13, unten=0.34, oben=0.10, ziel=(0, 0, 0)):
+    """Von allen vier Seiten in `ziel` auslaufen.
+
+    `ziel` MUSS der Anmeldegrund der jeweiligen Livree sein (T.loginBg), sonst
+    sitzt hinter dem Titelbild eine sichtbare Kachel. Classic = #000, carved =
+    #202b40. Frueher war Schwarz fest eingebaut, weil es nur eine Livree gab.
+    """
     px = im.load()
     w, h = im.size
     su, so, sr = int(h * (1 - unten)), int(h * oben), int(w * seite)
@@ -137,23 +142,29 @@ def randdunkel(im, seite=0.13, unten=0.34, oben=0.10):
             if f >= 0.999:
                 continue
             r, g, b = px[x, y]
-            px[x, y] = (int(r * f), int(g * f), int(b * f))
+            px[x, y] = (int(r * f + ziel[0] * (1 - f)),
+                        int(g * f + ziel[1] * (1 - f)),
+                        int(b * f + ziel[2] * (1 - f)))
     return im
 
 
+ZIEL = (0x20, 0x2b, 0x40)      # T.loginBg der geschnitzten Livree
+
+
 def platte():
-    return Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    return Image.new("RGBA", (W, H), ZIEL + (255,))
 
 
 def fertig(lw, name):
-    out = randdunkel(lw.convert("RGB"))
+    out = randdunkel(lw.convert("RGB"), ziel=ZIEL)
     out.save("/tmp/titel/%s.webp" % name, "WEBP", quality=92, method=6)
     out.save("/mnt/user-data/outputs/titelbild-%s.png" % name, "PNG")
     # Nachweis: wie schwarz ist der Rand wirklich?
     px = out.load()
     ecken = [px[2, 2], px[W - 3, 2], px[2, H - 3], px[W - 3, H - 3]]
-    print("  %-14s Ecken max %d/255, Randmitte unten %d/255"
-          % (name, max(max(c) for c in ecken), max(px[W // 2, H - 3])))
+    ab = max(max(abs(c[i] - ZIEL[i]) for i in range(3)) for c in ecken)
+    print("  %-14s Ecken weichen um max %d/255 von %s ab  %s"
+          % (name, ab, "#%02x%02x%02x" % ZIEL, "ok" if ab <= 2 else "<== KANTE SICHTBAR"))
 
 
 os.makedirs("/tmp/titel", exist_ok=True)

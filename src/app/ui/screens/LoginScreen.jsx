@@ -36,7 +36,7 @@ const STR = {
 const SHOW_EXTRA_PROVIDERS = false;
 
 const field = {
-  width: "100%", boxSizing: "border-box", background: "#0d1017", border: `1px solid ${T.line}`,
+  width: "100%", boxSizing: "border-box", background: T.input, border: `1px solid ${T.line}`,
   color: T.text, borderRadius: 12, padding: "10px 13px", fontSize: 15, fontFamily: "inherit", outline: "none",
 };
 
@@ -77,7 +77,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
-      padding: "16px 18px", background: "#000" }}>
+      padding: "16px 18px", background: T.loginBg }}>
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
@@ -93,10 +93,10 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
           onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} />
         <input style={field} type="password" placeholder={s.pass} value={pass} autoComplete={mode === "signup" ? "new-password" : "current-password"}
           onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} />
-        {err && <div style={{ color: "#e08f8f", fontSize: 13, padding: "0 3px" }}>{err}</div>}
+        {err && <div style={{ color: T.errText, fontSize: 13, padding: "0 3px" }}>{err}</div>}
 
         <button disabled={busy} onClick={submit} style={{ position: "relative", overflow: "hidden",
-          background: "rgba(201,164,92,.8)", border: "1px solid rgba(255,240,200,.55)", color: "#17110a",
+          background: `${T.lime}cc`, border: "1px solid rgba(255,240,200,.55)", color: T.limeInk,
           borderRadius: 12, padding: "11px 14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5,
           cursor: "pointer", boxShadow: "0 0 16px rgba(201,164,92,.25)", opacity: busy ? 0.6 : 1 }}>
           <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
