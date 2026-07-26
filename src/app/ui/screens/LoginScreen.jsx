@@ -97,8 +97,8 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
 
         <button disabled={busy} onClick={submit} style={{ position: "relative", overflow: "hidden",
           background: `linear-gradient(180deg, ${T.goldBright} 0%, ${T.gold} 46%, ${T.lime} 100%)`,
-          border: "1px solid rgba(255,244,214,.75)", color: T.limeInk,
-          boxShadow: "0 6px 18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5)",
+          border: `1.5px solid ${T.goldBright}`, color: T.limeInk,
+          boxShadow: `0 6px 18px rgba(0,0,0,.45), 0 0 14px ${T.gold}55`,
           borderRadius: 12, padding: "11px 14px", fontFamily: "inherit", fontWeight: 800, fontSize: 14.5,
           cursor: "pointer", boxShadow: "0 0 16px rgba(201,164,92,.25)", opacity: busy ? 0.6 : 1 }}>
           <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",

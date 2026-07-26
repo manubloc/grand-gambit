@@ -92,9 +92,9 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
                 background: i === 0
                   ? `linear-gradient(180deg, ${T.goldBright} 0%, ${T.gold} 46%, ${T.lime} 100%)`
                   : "rgba(201,164,92,.24)",
-                border: i === 0 ? "1px solid rgba(255,244,214,.75)" : `1px solid ${T.line}`,
+                border: i === 0 ? `1.5px solid ${T.goldBright}` : `1px solid ${T.line}`,
                 color: i === 0 ? T.limeInk : T.text, borderRadius: 11,
-                boxShadow: i === 0 ? "0 6px 18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5)" : "none",
+                boxShadow: i === 0 ? `0 6px 18px rgba(0,0,0,.45), 0 0 14px ${T.gold}55` : "none",
                 padding: "13px 14px", fontFamily: "inherit", fontWeight: 800, fontSize: 15, cursor: "pointer" }}>
                 {i === 0 && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.3), transparent)",

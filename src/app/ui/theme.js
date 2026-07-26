@@ -117,7 +117,13 @@ export const GLOBAL_CSS = `
      point — each spark rides its own orbit, so they leave the rim sideways
      rather than shooting straight out. */
   /* one sweep of light across a treasury plate, run once when it is tapped */
-  @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+  /* Der Streifen ist 62 % so breit wie die Platte. translateX rechnet in der
+     EIGENEN Breite, also brachte das alte Ziel von 120 % seine linke Kante
+     nur auf 0.62*120 = 74 % der Platte - und weil die Animation mit both
+     stehen bleibt, lag der Rest des Verlaufs danach fuer immer im letzten
+     Viertel. Das war die harte Kante. Damit er vollstaendig hinauslaeuft,
+     muss die linke Kante ueber 100 % kommen: 100/62 = 161 %. 175 % gibt Luft. */
+  @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(175%); } }
   @keyframes ggRingSpin { to { transform: rotate(360deg); } }
   @keyframes ggSpark {
     0%   { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)) scale(.5); }
