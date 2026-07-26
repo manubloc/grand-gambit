@@ -41,25 +41,23 @@ const CLASSIC = {
 // as if the whole app were cut from the same slate as the figures. Accents,
 // radii and type stay identical so nothing jumps when switching.
 const CARVED = { ...CLASSIC,
-  // PERGAMENT. Die vorige Fassung war als "one to two steps lighter" gebaut und
-  // lag damit bei einer Leuchtdichte von 0,024 - rechnerisch praktisch schwarz,
-  // nur zwei Schritte ueber classic. Der Besitzer wollte durchgehend HELL; das
-  // ist es jetzt: Grund 0,743, Tafel 0,852, also echtes Papier statt Nachtblau.
-  // Jede Paarung ist gegen 4,5:1 fuer Fliesstext und 3:1 fuer Begrenzungen
-  // durchgerechnet, die Akzente wurden dafuer abgedunkelt statt aufgehellt -
-  // Gold leuchtet auf Schwarz, auf Pergament muss es tragen.
-  bg: "#e9dfc9", bg2: "#f1e8d6", panel: "#f5eddd", panel2: "#fbf5e8", line: "#87724e",
-  text: "#2b2418", dim: "#5a4f3b", faint: "#6d6149",
-  lime: "#7d5c12", limeDim: "#684d0f", limeInk: "#fdf8ec",
-  gold: "#7a5c11", goldBright: "#6f5410",
-  danger: "#a32b3a", green: "#1f7a4a", blue: "#2f4f86",
-  magenta: "#4a5f8c", magentaDim: "#39496c", magentaInk: "#fdf8ec",
-  shadow: "0 10px 24px rgba(60,48,26,.22)",
-  glass: "e6", glassBlur: "18px",
-  sqLight: "#e2d5ba", sqDark: "#c3b193", grid: "#a3906f",
-  // Die Eingangsstrecke bleibt schwarz - Anmelden und Spielstaende sind der
-  // dunkle Vorhang, erst dahinter faengt das Pergament an.
-  input: "#fbf5e8", loginBg: "#000", savesBg: "#000", errText: "#a32b3a",
+  // Zurueck auf das Blau - v0.33.0 hatte daraus Pergament gemacht, das war zu
+  // weit. Gemeint war: dasselbe Blau, nur luftiger. Deshalb hier drei gezielte
+  // Aenderungen gegen den Stand davor:
+  //   1. GRUND dunkler (#202b40 -> #151d2c), damit das Schachbrett im
+  //      Hintergrund darin verschwinden kann statt darauf zu liegen.
+  //   2. TAFELN eine Stufe heller (#2c3a57 -> #35456a), damit sie sich vom
+  //      dunkleren Grund weiter abheben als vorher.
+  //   3. TAFELN leicht durchscheinend (Alpha e8 = 91 %), damit das Brett
+  //      darunter zu ahnen ist. Die Kontraste sind gegen die GEMISCHTE Farbe
+  //      gerechnet, nicht gegen die reine - sonst luegt die Rechnung.
+  bg: "#151d2c", bg2: "#1d2739", panel: "#35456ae8", panel2: "#3d4f78e8", line: "#54679' + '2",
+  text: "#f6efdf", dim: "#c6bca2", faint: "#c0b8a4",
+  magenta: "#9fb0d0", magentaDim: "#76849f",
+  shadow: "0 10px 24px rgba(0,0,0,.45)",
+  glass: "d9", glassBlur: "18px",
+  sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
+  input: "#111827", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
 };
 export const T = { ...CLASSIC };
 /** Swap the whole app's livery in place. Called once from App.jsx per render
