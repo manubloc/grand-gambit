@@ -22,3 +22,4 @@ server/backups/
 
 # Bildgenerator-Ausgaben (nie committen)
 design/out/
+__pycache__/
