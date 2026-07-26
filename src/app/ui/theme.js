@@ -41,24 +41,25 @@ const CLASSIC = {
 // as if the whole app were cut from the same slate as the figures. Accents,
 // radii and type stay identical so nothing jumps when switching.
 const CARVED = { ...CLASSIC,
-  bg: "#202b40", bg2: "#283550", panel: "#2c3a57", panel2: "#354464", line: "#4a5a80",
-  // `faint` carries the hint lines under every setting. At #948c7a it sat at
-  // 3.4:1 on the carved panel — under the 4.5:1 needed to read small text.
-  // Lifted to 4.8:1; `dim` (5.8:1) and `text` (9.9:1) were already sound.
-  text: "#f6efdf", dim: "#c2b89e", faint: "#b0a894",
-  magenta: "#9fb0d0", magentaDim: "#76849f",
-  shadow: "0 10px 24px rgba(0,0,0,.38)",
-  // Carved lets the land breathe through the chrome — the league painting
-  // behind the app stays faintly readable under header and dock. Held at 85%
-  // and paired with a stronger blur so text keeps its contrast: anything
-  // thinner and the hint lines start fighting the background.
-  glass: "d9", glassBlur: "18px",
-  // Fields and accents DO take the lighter carved blue here, so the entry
-  // already matches what comes after - but the ground itself stays pure black.
-  // An earlier attempt lifted loginBg to #202b40; that was my reading, not the
-  // owner's call, and it also forced the title art to fade into slate.
-  input: "#1a2334", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
-  sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
+  // PERGAMENT. Die vorige Fassung war als "one to two steps lighter" gebaut und
+  // lag damit bei einer Leuchtdichte von 0,024 - rechnerisch praktisch schwarz,
+  // nur zwei Schritte ueber classic. Der Besitzer wollte durchgehend HELL; das
+  // ist es jetzt: Grund 0,743, Tafel 0,852, also echtes Papier statt Nachtblau.
+  // Jede Paarung ist gegen 4,5:1 fuer Fliesstext und 3:1 fuer Begrenzungen
+  // durchgerechnet, die Akzente wurden dafuer abgedunkelt statt aufgehellt -
+  // Gold leuchtet auf Schwarz, auf Pergament muss es tragen.
+  bg: "#e9dfc9", bg2: "#f1e8d6", panel: "#f5eddd", panel2: "#fbf5e8", line: "#87724e",
+  text: "#2b2418", dim: "#5a4f3b", faint: "#6d6149",
+  lime: "#7d5c12", limeDim: "#684d0f", limeInk: "#fdf8ec",
+  gold: "#7a5c11", goldBright: "#6f5410",
+  danger: "#a32b3a", green: "#1f7a4a", blue: "#2f4f86",
+  magenta: "#4a5f8c", magentaDim: "#39496c", magentaInk: "#fdf8ec",
+  shadow: "0 10px 24px rgba(60,48,26,.22)",
+  glass: "e6", glassBlur: "18px",
+  sqLight: "#e2d5ba", sqDark: "#c3b193", grid: "#a3906f",
+  // Die Eingangsstrecke bleibt schwarz - Anmelden und Spielstaende sind der
+  // dunkle Vorhang, erst dahinter faengt das Pergament an.
+  input: "#fbf5e8", loginBg: "#000", savesBg: "#000", errText: "#a32b3a",
 };
 export const T = { ...CLASSIC };
 /** Swap the whole app's livery in place. Called once from App.jsx per render
