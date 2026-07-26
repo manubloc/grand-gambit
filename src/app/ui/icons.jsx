@@ -1,4 +1,5 @@
 import { T } from "./theme.js";
+import { livery } from "./livery.js";
 import { NAV_PLAY, NAV_ARMY, NAV_ACH, NAV_PROFILE, IC_COIN, IC_SKILL, IC_SKULL, IC_CREST }
   from "./assets/icons/iconAssets.js";
 
@@ -46,11 +47,63 @@ export function AchIcon({ id, color = "#c9a45c", size = 22 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>{shapes[id] || shapes.xp}</svg>;
 }
 
-// ── Navigation icons — the painted gold set from the asset drop. The callers
-// keep passing `color` (T.gold when the tab is on): a painting cannot be
-// re-inked, so the OFF state dims and desaturates the very same image. ──────
+// ── Navigation icons ────────────────────────────────────────────────────────
+// CLASSIC keeps the painted gold set from the asset drop: the callers pass
+// `color` (T.gold when the tab is on), and since a painting cannot be re-inked,
+// the OFF state dims and desaturates the very same image.
+//
+// CARVED draws them instead. Twice a generated set came back with a rounded
+// PLATE baked in behind the symbol — 92-100% of the bounding box filled — so at
+// 26px the dock read as four tiles rather than four signs. Vector removes the
+// failure mode entirely: these are built from primitives only (rects, polygons,
+// circles), they take the tab colour directly so ON/OFF needs no filter trick,
+// and they stay crisp at any size. Each shape is one silhouette, nothing behind
+// it. Chessboard = Spielen, three pawns = Hofstaat, rook = Schatzkammer,
+// crown = Profil; four outlines you can tell apart at a glance.
 const NAV_ART = { play: NAV_PLAY, army: NAV_ARMY, ach: NAV_ACH, profile: NAV_PROFILE };
+
+function CarvedNav({ id, color, size }) {
+  const pawn = (cx, kopfY, r, koerperY) => <g key={cx}>
+    <circle cx={cx} cy={kopfY} r={r} />
+    <polygon points={`${cx-r+1},${koerperY} ${cx+r-1},${koerperY} ${cx+r+3},46 ${cx-r-3},46`} />
+    <rect x={cx - r - 5} y={45} width={2 * r + 10} height={5} rx={1.5} />
+  </g>;
+
+  const formen = {
+    // Spielen — ein Brett: vier mal vier Felder, jedes zweite gesetzt
+    play: <g>
+      {[0,1,2,3].flatMap((r) => [0,1,2,3].filter((c) => (r + c) % 2 === 0)
+        .map((c) => <rect key={r+"-"+c} x={12 + c*10} y={12 + r*10} width={10} height={10} />))}
+      <path d="M10 10h44v44h-44z" fill="none" stroke={color} strokeWidth="3" />
+    </g>,
+    // Hofstaat — drei Bauern, der mittlere groesser
+    army: <g>{[pawn(15, 27, 4.5, 31), pawn(49, 27, 4.5, 31), pawn(32, 20, 5.5, 25)]}</g>,
+    // Schatzkammer — der Turm: Zinnen, Schaft, Sockel
+    ach: <g>
+      <rect x="16" y="12" width="8" height="9" /><rect x="28" y="12" width="8" height="9" />
+      <rect x="40" y="12" width="8" height="9" />
+      <rect x="16" y="19" width="32" height="6" />
+      <polygon points="20,25 44,25 47,44 17,44" />
+      <rect x="13" y="43" width="38" height="7" rx="2" />
+    </g>,
+    // Profil — die Krone mit drei Zacken
+    profile: <g>
+      <polygon points="14,44 14,25 23,34 32,18 41,34 50,25 50,44" />
+      <rect x="12" y="43" width="40" height="7" rx="2" />
+      <circle cx="14" cy="23" r="2.6" /><circle cx="32" cy="16" r="2.9" /><circle cx="50" cy="23" r="2.6" />
+    </g>,
+  };
+  const on = color === T.gold;
+  return <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true"
+    style={{ display: "block", fill: color,
+      filter: on ? "drop-shadow(0 0 5px rgba(246,222,150,.55)) drop-shadow(0 1px 2px rgba(0,0,0,.45))"
+                 : "drop-shadow(0 1px 2px rgba(0,0,0,.4))" }}>
+    {formen[id] || formen.play}
+  </svg>;
+}
+
 export function NavIcon({ id, color = "#a9a48e", size = 22 }) {
+  if (livery() === "carved") return <CarvedNav id={id} color={color} size={size} />;
   const on = color === T.gold;
   return <img src={NAV_ART[id] || NAV_PLAY} alt="" aria-hidden draggable={false}
     style={{ width: size, height: size, display: "block", objectFit: "contain",
