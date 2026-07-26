@@ -6,7 +6,7 @@ import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { PieceArt } from "./PieceArt.jsx";
-import { boardFrame } from "../livery.js";
+import { boardFrame, livery } from "../livery.js";
 
 // THE MOVE MARKERS WEAR THE ARMY'S METAL: your own moves are struck in the
 // same gold as the buttons and the jewels, a foe's (read by a seer) in the
@@ -136,13 +136,28 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // With a painted GROUND the land itself is the board: squares become pure
   // light/dark veils (no theme colour, no stone) so the meadow stays the star,
   // and the existing bevel layers make each tile read as gently RAISED.
-  // ORGANIC tiles on painted ground: each veil is a radial breath — strong at
-  // the heart of the square, fading out toward the seams so neighbouring tiles
-  // melt into one another over the land instead of meeting at a hard edge.
-  const sqL = ground
+  //
+  // TWO LAWS, ONE FOR EACH LIVERY.
+  // CLASSIC keeps the organic breath it was designed with: each veil is a
+  // radial breath, strong at the heart of the square and fading toward the
+  // seams so neighbouring tiles melt into one another over the land.
+  // CARVED does the opposite, on purpose. Its grounds carry far more of their
+  // own contrast, and a veil that fades out at the seam left the board
+  // unreadable — the chess squares dissolved into the texture. So the carved
+  // veil covers the WHOLE square evenly and meets its neighbour at a real
+  // edge; a hairline seam (dark outside, one light catch inside) then draws
+  // the grid the way a carved board would actually part. The ground still
+  // shows through — it is calmer art now (tools/calm-grounds.py) — so the
+  // squares stay clearly separated without losing the carved surface.
+  const carvedBoard = ground && livery() === "carved";
+  const sqL = carvedBoard
+    ? "rgba(255,255,255,.24)"
+    : ground
     ? "radial-gradient(circle at 50% 50%, rgba(255,255,255,.27) 0%, rgba(255,255,255,.20) 52%, rgba(255,255,255,.06) 96%)"
     : texture ? hexA(sqL0, 0.82, 0.34) : sqL0;
-  const sqD = ground
+  const sqD = carvedBoard
+    ? "rgba(0,0,0,.34)"
+    : ground
     ? "radial-gradient(circle at 50% 50%, rgba(0,0,0,.37) 0%, rgba(0,0,0,.29) 52%, rgba(0,0,0,.09) 96%)"
     : texture ? hexA(sqD0, 0.84, 0.07) : sqD0;
   const [sel, setSel] = useState(null);
@@ -386,7 +401,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />}
           {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            boxShadow: "inset 4px 4px 10px -4px rgba(255,252,236,.14), inset -4px -4px 10px -4px rgba(0,0,0,.18)" }} />}
+            boxShadow: carvedBoard
+              // the parting line: every square owns a real edge again
+              ? "inset 0 0 0 1px rgba(10,14,24,.52), inset 1.5px 1.5px 0 rgba(255,248,226,.18), inset -3px -3px 8px -3px rgba(0,0,0,.30)"
+              : "inset 4px 4px 10px -4px rgba(255,252,236,.14), inset -4px -4px 10px -4px rgba(0,0,0,.18)" }} />}
 
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
             color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}

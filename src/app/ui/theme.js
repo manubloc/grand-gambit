@@ -18,6 +18,10 @@ const CLASSIC = {
   gold: "#eac96b", danger: "#d5495a", green: "#58c98b", blue: "#8fa0c0",
   goldBright: "#f6e9a4",
   shadow: "0 10px 28px rgba(0,0,0,.55)",
+  // How see-through the floating chrome (header card, dock) is, as a hex
+  // alpha appended to `panel`, plus its backdrop blur. Classic stays nearly
+  // solid: on the deep navy night a translucent bar just reads as muddy.
+  glass: "ec", glassBlur: "12px",
   radius: 14, radiusSm: 10,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
@@ -27,9 +31,17 @@ const CLASSIC = {
 // radii and type stay identical so nothing jumps when switching.
 const CARVED = { ...CLASSIC,
   bg: "#202b40", bg2: "#283550", panel: "#2c3a57", panel2: "#354464", line: "#4a5a80",
-  text: "#f6efdf", dim: "#c2b89e", faint: "#948c7a",
+  // `faint` carries the hint lines under every setting. At #948c7a it sat at
+  // 3.4:1 on the carved panel — under the 4.5:1 needed to read small text.
+  // Lifted to 4.8:1; `dim` (5.8:1) and `text` (9.9:1) were already sound.
+  text: "#f6efdf", dim: "#c2b89e", faint: "#b0a894",
   magenta: "#9fb0d0", magentaDim: "#76849f",
   shadow: "0 10px 24px rgba(0,0,0,.38)",
+  // Carved lets the land breathe through the chrome — the league painting
+  // behind the app stays faintly readable under header and dock. Held at 85%
+  // and paired with a stronger blur so text keeps its contrast: anything
+  // thinner and the hint lines start fighting the background.
+  glass: "d9", glassBlur: "18px",
   sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
 };
 export const T = { ...CLASSIC };
