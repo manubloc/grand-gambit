@@ -16,13 +16,14 @@ const LEAGUE_TINTS = [
   { s: [44, 54, 42],  a: [150, 176, 118] },  // IV   treeline green
   { s: [60, 44, 60],  a: [200, 112, 140] },  // V    nightrose
   { s: [40, 56, 74],  a: [122, 170, 210] },  // VI   steel
-  { s: [66, 42, 42],  a: [210, 112, 90] },   // VII  ember
-  { s: [36, 58, 64],  a: [112, 190, 200] },  // VIII petrol
-  { s: [64, 54, 36],  a: [220, 172, 92] },   // IX   amber
+  { s: [64, 54, 36],  a: [220, 172, 92] },   // VII  Sattelweite: amber
+  { s: [66, 42, 42],  a: [210, 112, 90] },   // VIII Aschgrund: ember
+  { s: [36, 58, 64],  a: [112, 190, 200] },  // IX   Die Wunde: petrol
   { s: [66, 58, 44],  a: [230, 192, 132] },  // X    desert
-  { s: [30, 40, 66],  a: [152, 182, 230] },  // XI   deep sea silver
+  { s: [38, 52, 50],  a: [150, 200, 184] },  // XI   Die Kueste: Gischt
+  { s: [30, 40, 66],  a: [152, 182, 230] },  // XII  Endloses Meer: deep sea silver
 ];
-const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 11)];
+const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 12)];
 
 export function MysticBackground({ league = 1 }) {
   // the ember/smoke canvas is retired — the hall stands still and clear

@@ -10,6 +10,8 @@ export const CAMPAIGN12 = [
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
@@ -29,6 +31,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
@@ -44,10 +48,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L01s02",
   "league": 1,
-  "place": "Vergessener Schrein",
+  "place": "Verlassene Ruinen",
   "col": 3,
   "row": 2,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -56,16 +61,18 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Vergessener Schrein.",
-  "storyEn": "A side path branches toward Vergessener Schrein."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Verlassene Ruinen.",
+  "storyEn": "A side path branches toward Verlassene Ruinen."
  },
  {
   "id": "L01s03",
   "league": 1,
-  "place": "Nordwacht",
+  "place": "Vergessener Schrein",
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -76,8 +83,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 42
   },
-  "storyDe": "Nordwacht: die alte Magie erwacht - Figuren bluten, Figuren halten stand.",
-  "storyEn": "Nordwacht: the old magic wakes - pieces bleed, pieces endure.",
+  "storyDe": "Vergessener Schrein: die alte Magie erwacht - Figuren bluten, Figuren halten stand.",
+  "storyEn": "Vergessener Schrein: the old magic wakes - pieces bleed, pieces endure.",
   "boss": {
    "pure": "b01",
    "rotation": [
@@ -91,10 +98,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L01s04",
   "league": 1,
-  "place": "Schattenklippe",
+  "place": "Nordwacht",
   "col": 1,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -104,16 +113,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 45
   },
-  "storyDe": "Der Weg beginnt bei Schattenklippe.",
-  "storyEn": "The road begins at Schattenklippe."
+  "storyDe": "Der Weg beginnt bei Nordwacht.",
+  "storyEn": "The road begins at Nordwacht."
  },
  {
   "id": "L01s05",
   "league": 1,
-  "place": "Wolfspass",
+  "place": "Sturmfeste",
   "col": 3,
   "row": 2,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -123,16 +133,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wolfspass.",
-  "storyEn": "A side path branches toward Wolfspass."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Sturmfeste.",
+  "storyEn": "A side path branches toward Sturmfeste."
  },
  {
   "id": "L01s06",
   "league": 1,
-  "place": "Drachenhort",
+  "place": "Schattenklippe",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -142,16 +154,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 48
   },
-  "storyDe": "Der Weg beginnt bei Drachenhort.",
-  "storyEn": "The road begins at Drachenhort."
+  "storyDe": "Der Weg beginnt bei Schattenklippe.",
+  "storyEn": "The road begins at Schattenklippe."
  },
  {
   "id": "L01s07",
   "league": 1,
-  "place": "Klingenschlucht",
+  "place": "Mondwarte",
   "col": 1,
   "row": 3,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -161,16 +174,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 52
   },
-  "storyDe": "Ein stiller Umweg führt zu Klingenschlucht.",
-  "storyEn": "A quiet detour leads to Klingenschlucht."
+  "storyDe": "Ein stiller Umweg führt zu Mondwarte.",
+  "storyEn": "A quiet detour leads to Mondwarte.",
+  "gate": {
+   "gold": 25
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L01s08",
   "league": 1,
-  "place": "Sonnenheiligtum",
+  "place": "Krähenfels",
   "col": 3,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -180,16 +199,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Sonnenheiligtum.",
-  "storyEn": "A side path branches toward Sonnenheiligtum."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Krähenfels.",
+  "storyEn": "A side path branches toward Krähenfels."
  },
  {
   "id": "L01s09",
   "league": 1,
-  "place": "Alte Sternwarte",
+  "place": "Wolfspass",
   "col": 2,
   "row": 3,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -199,16 +220,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 51
   },
-  "storyDe": "Der Weg beginnt bei Alte Sternwarte.",
-  "storyEn": "The road begins at Alte Sternwarte."
+  "storyDe": "Der Weg beginnt bei Wolfspass.",
+  "storyEn": "The road begins at Wolfspass."
  },
  {
   "id": "L01s10",
   "league": 1,
-  "place": "Hexenmoor",
+  "place": "Steinernes Tor",
   "col": 2,
   "row": 3,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -218,16 +241,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 54
   },
-  "storyDe": "Der Pfad führt weiter über Hexenmoor.",
-  "storyEn": "The path leads on across Hexenmoor."
+  "storyDe": "Der Pfad führt weiter über Steinernes Tor.",
+  "storyEn": "The path leads on across Steinernes Tor."
  },
  {
   "id": "L01s11",
   "league": 1,
-  "place": "Nebelmoor",
+  "place": "Furt am Grauen Bach",
   "col": 3,
   "row": 3,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -237,16 +261,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 52
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Nebelmoor.",
-  "storyEn": "A side path branches toward Nebelmoor."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Furt am Grauen Bach.",
+  "storyEn": "A side path branches toward Furt am Grauen Bach."
  },
  {
   "id": "L01s12",
   "league": 1,
-  "place": "Geisterfeld",
+  "place": "Zehntscheune",
   "col": 1,
   "row": 4,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -256,16 +281,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Abseits des Weges liegt Geisterfeld.",
-  "storyEn": "Off the road lies Geisterfeld."
+  "storyDe": "Abseits des Weges liegt Zehntscheune.",
+  "storyEn": "Off the road lies Zehntscheune."
  },
  {
   "id": "L01s13",
   "league": 1,
-  "place": "Waldfeste",
+  "place": "Klingenschlucht",
   "col": 2,
   "row": 4,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -275,16 +302,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 57
   },
-  "storyDe": "Der Pfad führt weiter über Waldfeste.",
-  "storyEn": "The path leads on across Waldfeste."
+  "storyDe": "Der Pfad führt weiter über Klingenschlucht.",
+  "storyEn": "The path leads on across Klingenschlucht."
  },
  {
   "id": "L01s14",
   "league": 1,
-  "place": "Lindenhain",
+  "place": "Sonnenheiligtum",
   "col": 3,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -295,8 +324,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Der Pfad führt weiter über Lindenhain.",
-  "storyEn": "The path leads on across Lindenhain.",
+  "storyDe": "Der Pfad führt weiter über Sonnenheiligtum.",
+  "storyEn": "The path leads on across Sonnenheiligtum.",
   "boss": {
    "piece": "mage",
    "wins": 1
@@ -306,10 +335,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L01s15",
   "league": 1,
-  "place": "Kronenstadt",
+  "place": "Mühlensteg",
   "col": 5,
   "row": 4,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -318,16 +348,17 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Abseits des Weges liegt Kronenstadt.",
-  "storyEn": "Off the road lies Kronenstadt."
+  "storyDe": "Abseits des Weges liegt Mühlensteg.",
+  "storyEn": "Off the road lies Mühlensteg."
  },
  {
   "id": "L01s16",
   "league": 1,
-  "place": "Eisenbollwerk",
+  "place": "Alter Markt",
   "col": 1,
   "row": 4,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -338,16 +369,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein stiller Umweg führt zu Eisenbollwerk.",
-  "storyEn": "A quiet detour leads to Eisenbollwerk."
+  "storyDe": "Ein stiller Umweg führt zu Alter Markt.",
+  "storyEn": "A quiet detour leads to Alter Markt."
  },
  {
   "id": "L01s17",
   "league": 1,
-  "place": "Grenzwall",
+  "place": "Alte Sternwarte",
   "col": 3,
   "row": 5,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -357,16 +390,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 63
   },
-  "storyDe": "Der Pfad führt weiter über Grenzwall.",
-  "storyEn": "The path leads on across Grenzwall."
+  "storyDe": "Der Pfad führt weiter über Alte Sternwarte.",
+  "storyEn": "The path leads on across Alte Sternwarte."
  },
  {
   "id": "L01s18",
   "league": 1,
-  "place": "Hohes Heiligtum",
+  "place": "Wachtbaum",
   "col": 1,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -375,16 +409,17 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Abseits des Weges liegt Hohes Heiligtum.",
-  "storyEn": "Off the road lies Hohes Heiligtum."
+  "storyDe": "Abseits des Weges liegt Wachtbaum.",
+  "storyEn": "Off the road lies Wachtbaum."
  },
  {
   "id": "L01s19",
   "league": 1,
-  "place": "Ratshalle",
+  "place": "Kalkhöhle",
   "col": 5,
   "row": 5,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -394,16 +429,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein stiller Umweg führt zu Ratshalle.",
-  "storyEn": "A quiet detour leads to Ratshalle."
+  "storyDe": "Ein stiller Umweg führt zu Kalkhöhle.",
+  "storyEn": "A quiet detour leads to Kalkhöhle."
  },
  {
   "id": "L01s20",
   "league": 1,
-  "place": "Schmiedegrund",
+  "place": "Hexenmoor",
   "col": 3,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -413,16 +450,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Der Pfad führt weiter über Schmiedegrund.",
-  "storyEn": "The path leads on across Schmiedegrund."
+  "storyDe": "Der Pfad führt weiter über Hexenmoor.",
+  "storyEn": "The path leads on across Hexenmoor."
  },
  {
   "id": "L01s21",
   "league": 1,
-  "place": "Bannerhöhe",
+  "place": "Grenzstein",
   "col": 4,
   "row": 5,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -432,16 +470,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Abseits des Weges liegt Bannerhöhe.",
-  "storyEn": "Off the road lies Bannerhöhe."
+  "storyDe": "Abseits des Weges liegt Grenzstein.",
+  "storyEn": "Off the road lies Grenzstein."
  },
  {
   "id": "L01s22",
   "league": 1,
-  "place": "Verlassene Ruinen",
+  "place": "Nebelmoor",
   "col": 3,
   "row": 5,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -452,16 +492,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Die Prüfung wartet bei Verlassene Ruinen.",
-  "storyEn": "The trial waits at Verlassene Ruinen."
+  "storyDe": "Die Prüfung wartet bei Nebelmoor.",
+  "storyEn": "The trial waits at Nebelmoor."
  },
  {
   "id": "L01s23",
   "league": 1,
-  "place": "Sturmfeste",
+  "place": "Jagdrast",
   "col": 1,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -471,16 +512,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Sturmfeste.",
-  "storyEn": "A side path branches toward Sturmfeste."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Jagdrast.",
+  "storyEn": "A side path branches toward Jagdrast."
  },
  {
   "id": "L01s24",
   "league": 1,
-  "place": "Mondwarte",
+  "place": "Sonnenhang",
   "col": 4,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -491,16 +533,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 52
   },
-  "storyDe": "Abseits des Weges liegt Mondwarte.",
-  "storyEn": "Off the road lies Mondwarte."
+  "storyDe": "Abseits des Weges liegt Sonnenhang.",
+  "storyEn": "Off the road lies Sonnenhang."
  },
  {
   "id": "L01s25",
   "league": 1,
-  "place": "Krähenfels",
+  "place": "Geisterfeld",
   "col": 3,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -510,16 +554,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Die Prüfung wartet bei Krähenfels.",
-  "storyEn": "The trial waits at Krähenfels."
+  "storyDe": "Die Prüfung wartet bei Geisterfeld.",
+  "storyEn": "The trial waits at Geisterfeld."
  },
  {
   "id": "L01s26",
   "league": 1,
-  "place": "Furt am Grauen Bach",
+  "place": "Waldfeste",
   "col": 4,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -530,16 +576,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Die Prüfung wartet bei Furt am Grauen Bach.",
-  "storyEn": "The trial waits at Furt am Grauen Bach."
+  "storyDe": "Die Prüfung wartet bei Waldfeste.",
+  "storyEn": "The trial waits at Waldfeste."
  },
  {
   "id": "L01s27",
   "league": 1,
-  "place": "Zehntscheune",
+  "place": "Talsperre",
   "col": 1,
   "row": 6,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -549,16 +596,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Abseits des Weges liegt Zehntscheune.",
-  "storyEn": "Off the road lies Zehntscheune."
+  "storyDe": "Abseits des Weges liegt Talsperre.",
+  "storyEn": "Off the road lies Talsperre."
  },
  {
   "id": "L01s28",
   "league": 1,
-  "place": "Mühlensteg",
+  "place": "Brackwasserbrücke",
   "col": 3,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -569,16 +617,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 52
   },
-  "storyDe": "Ein stiller Umweg führt zu Mühlensteg.",
-  "storyEn": "A quiet detour leads to Mühlensteg."
+  "storyDe": "Ein stiller Umweg führt zu Brackwasserbrücke.",
+  "storyEn": "A quiet detour leads to Brackwasserbrücke."
  },
  {
   "id": "L01s29",
   "league": 1,
-  "place": "Alter Markt",
+  "place": "Steinkreis",
   "col": 3,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -587,16 +636,18 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Alter Markt.",
-  "storyEn": "A side path branches toward Alter Markt."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Steinkreis.",
+  "storyEn": "A side path branches toward Steinkreis."
  },
  {
   "id": "L01s30",
   "league": 1,
-  "place": "Wachtbaum",
+  "place": "Lindenhain",
   "col": 4,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -606,16 +657,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Die Prüfung wartet bei Wachtbaum.",
-  "storyEn": "The trial waits at Wachtbaum."
+  "storyDe": "Die Prüfung wartet bei Lindenhain.",
+  "storyEn": "The trial waits at Lindenhain."
  },
  {
   "id": "L01s31",
   "league": 1,
-  "place": "Kalkhöhle",
+  "place": "Hirtenruh",
   "col": 5,
   "row": 6,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -624,16 +676,17 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 27
   },
-  "storyDe": "Ein stiller Umweg führt zu Kalkhöhle.",
-  "storyEn": "A quiet detour leads to Kalkhöhle."
+  "storyDe": "Ein stiller Umweg führt zu Hirtenruh.",
+  "storyEn": "A quiet detour leads to Hirtenruh."
  },
  {
   "id": "L01s32",
   "league": 1,
-  "place": "Grenzstein",
+  "place": "Königsallee",
   "col": 1,
   "row": 6,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -642,16 +695,17 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Grenzstein.",
-  "storyEn": "A side path branches toward Grenzstein."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Königsallee.",
+  "storyEn": "A side path branches toward Königsallee."
  },
  {
   "id": "L01s33",
   "league": 1,
-  "place": "Jagdrast",
+  "place": "Pilgerpfad",
   "col": 5,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -661,16 +715,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Abseits des Weges liegt Jagdrast.",
-  "storyEn": "Off the road lies Jagdrast."
+  "storyDe": "Abseits des Weges liegt Pilgerpfad.",
+  "storyEn": "Off the road lies Pilgerpfad."
  },
  {
   "id": "L01s34",
   "league": 1,
-  "place": "Sonnenhang",
+  "place": "Rabenstieg",
   "col": 5,
   "row": 7,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -680,16 +735,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 52
   },
-  "storyDe": "Ein stiller Umweg führt zu Sonnenhang.",
-  "storyEn": "A quiet detour leads to Sonnenhang."
+  "storyDe": "Ein stiller Umweg führt zu Rabenstieg.",
+  "storyEn": "A quiet detour leads to Rabenstieg."
  },
  {
   "id": "L01s35",
   "league": 1,
-  "place": "Talsperre",
+  "place": "Kronenstadt",
   "col": 4,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -700,8 +757,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Die Prüfung wartet bei Talsperre.",
-  "storyEn": "The trial waits at Talsperre.",
+  "storyDe": "Die Prüfung wartet bei Kronenstadt.",
+  "storyEn": "The trial waits at Kronenstadt.",
   "boss": {
    "piece": "paladin",
    "wins": 1
@@ -711,10 +768,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L01s36",
   "league": 1,
-  "place": "Brackwasserbrücke",
+  "place": "Feldkapelle",
   "col": 3,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -724,16 +782,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Abseits des Weges liegt Brackwasserbrücke.",
-  "storyEn": "Off the road lies Brackwasserbrücke."
+  "storyDe": "Abseits des Weges liegt Feldkapelle.",
+  "storyEn": "Off the road lies Feldkapelle."
  },
  {
   "id": "L01s37",
   "league": 1,
-  "place": "Steinkreis",
+  "place": "Eisenbollwerk",
   "col": 4,
   "row": 7,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -743,16 +803,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der letzte Anstieg:  Steinkreis.",
-  "storyEn": "The final ascent:  Steinkreis."
+  "storyDe": "Der letzte Anstieg:  Eisenbollwerk.",
+  "storyEn": "The final ascent:  Eisenbollwerk."
  },
  {
   "id": "L01s38",
   "league": 1,
-  "place": "Hirtenruh",
+  "place": "Heckenrondell",
   "col": 3,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -762,16 +823,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Hirtenruh.",
-  "storyEn": "A side path branches toward Hirtenruh."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Heckenrondell.",
+  "storyEn": "A side path branches toward Heckenrondell."
  },
  {
   "id": "L01s39",
   "league": 1,
-  "place": "Königsallee",
+  "place": "Grenzwall",
   "col": 4,
   "row": 7,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -781,16 +844,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der letzte Anstieg:  Königsallee.",
-  "storyEn": "The final ascent:  Königsallee."
+  "storyDe": "Der letzte Anstieg:  Grenzwall.",
+  "storyEn": "The final ascent:  Grenzwall."
  },
  {
   "id": "L01s40",
   "league": 1,
-  "place": "Pilgerpfad",
+  "place": "Hohes Heiligtum",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -800,16 +865,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der letzte Anstieg:  Pilgerpfad.",
-  "storyEn": "The final ascent:  Pilgerpfad."
+  "storyDe": "Der letzte Anstieg:  Hohes Heiligtum.",
+  "storyEn": "The final ascent:  Hohes Heiligtum."
  },
  {
   "id": "L01s41",
   "league": 1,
-  "place": "Rabenstieg",
+  "place": "Torfstich",
   "col": 3,
   "row": 8,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -818,16 +884,18 @@ export const CAMPAIGN12 = [
    "xp": 60,
    "gold": 48
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Rabenstieg.",
-  "storyEn": "A side path branches toward Rabenstieg."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Torfstich.",
+  "storyEn": "A side path branches toward Torfstich."
  },
  {
   "id": "L01s42",
   "league": 1,
-  "place": "Feldkapelle",
+  "place": "Ratshalle",
   "col": 5,
   "row": 8,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -837,16 +905,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der letzte Anstieg:  Feldkapelle.",
-  "storyEn": "The final ascent:  Feldkapelle."
+  "storyDe": "Der letzte Anstieg:  Ratshalle.",
+  "storyEn": "The final ascent:  Ratshalle."
  },
  {
   "id": "L01s43",
   "league": 1,
-  "place": "Heckenrondell",
+  "place": "Schmiedegrund",
   "col": 5,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -856,16 +926,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der letzte Anstieg:  Heckenrondell.",
-  "storyEn": "The final ascent:  Heckenrondell."
+  "storyDe": "Der letzte Anstieg:  Schmiedegrund.",
+  "storyEn": "The final ascent:  Schmiedegrund."
  },
  {
   "id": "L01s44",
   "league": 1,
-  "place": "Torfstich",
+  "place": "Bannerhöhe",
   "col": 5,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -874,8 +946,9 @@ export const CAMPAIGN12 = [
    "xp": 99,
    "gold": 24
   },
-  "storyDe": "Torfstich: Hier wartet der Meister von Kapitel I.",
-  "storyEn": "Torfstich: here waits the master of chapter I.",
+  "storyDe": "Bannerhöhe: Hier wartet der Meister von Kapitel I.",
+  "storyEn": "Bannerhöhe: here waits the master of chapter I.",
+  "final": true,
   "boss": {
    "pure": "b25"
   },
@@ -888,6 +961,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -903,10 +978,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L02s01",
   "league": 2,
-  "place": "Zehntwacht",
+  "place": "Waage und Wort",
   "col": 3,
   "row": 2,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -915,16 +991,18 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 32
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Zehntwacht.",
-  "storyEn": "A side path branches toward Zehntwacht."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Waage und Wort.",
+  "storyEn": "A side path branches toward Waage und Wort."
  },
  {
   "id": "L02s02",
   "league": 2,
-  "place": "Kapelle im Korn",
+  "place": "Zehntwacht",
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -935,16 +1013,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 45
   },
-  "storyDe": "Der Weg beginnt bei Kapelle im Korn.",
-  "storyEn": "The road begins at Kapelle im Korn."
+  "storyDe": "Der Weg beginnt bei Zehntwacht.",
+  "storyEn": "The road begins at Zehntwacht."
  },
  {
   "id": "L02s03",
   "league": 2,
-  "place": "Garbenwall",
+  "place": "Kapelle im Korn",
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -955,16 +1035,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 48
   },
-  "storyDe": "Der Weg beginnt bei Garbenwall.",
-  "storyEn": "The road begins at Garbenwall."
+  "storyDe": "Der Weg beginnt bei Kapelle im Korn.",
+  "storyEn": "The road begins at Kapelle im Korn."
  },
  {
   "id": "L02s04",
   "league": 2,
-  "place": "Krähenschreck",
+  "place": "Glutstoppel",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -974,16 +1055,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 58
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Krähenschreck.",
-  "storyEn": "A side path branches toward Krähenschreck."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Glutstoppel.",
+  "storyEn": "A side path branches toward Glutstoppel.",
+  "gate": {
+   "gold": 35
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L02s05",
   "league": 2,
-  "place": "Der lange Acker",
+  "place": "Fronburg",
   "col": 3,
   "row": 3,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -993,16 +1080,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Abseits des Weges liegt Der lange Acker.",
-  "storyEn": "Off the road lies Der lange Acker."
+  "storyDe": "Abseits des Weges liegt Fronburg.",
+  "storyEn": "Off the road lies Fronburg."
  },
  {
   "id": "L02s06",
   "league": 2,
-  "place": "Wo die Sense ruht",
+  "place": "Garbenwall",
   "col": 1,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -1012,16 +1101,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 51
   },
-  "storyDe": "Der Weg beginnt bei Wo die Sense ruht.",
-  "storyEn": "The road begins at Wo die Sense ruht."
+  "storyDe": "Der Weg beginnt bei Garbenwall.",
+  "storyEn": "The road begins at Garbenwall."
  },
  {
   "id": "L02s07",
   "league": 2,
-  "place": "Spreugericht",
+  "place": "Krähenschreck",
   "col": 2,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -1031,16 +1122,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 54
   },
-  "storyDe": "Der Weg beginnt bei Spreugericht.",
-  "storyEn": "The road begins at Spreugericht."
+  "storyDe": "Der Weg beginnt bei Krähenschreck.",
+  "storyEn": "The road begins at Krähenschreck."
  },
  {
   "id": "L02s08",
   "league": 2,
-  "place": "Mittsommerbank",
+  "place": "Leere Scheune",
   "col": 3,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1050,16 +1142,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 58
   },
-  "storyDe": "Abseits des Weges liegt Mittsommerbank.",
-  "storyEn": "Off the road lies Mittsommerbank."
+  "storyDe": "Abseits des Weges liegt Leere Scheune.",
+  "storyEn": "Off the road lies Leere Scheune."
  },
  {
   "id": "L02s09",
   "league": 2,
-  "place": "Lerchenhorst",
+  "place": "Wetterhahnturm",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1069,16 +1162,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein stiller Umweg führt zu Lerchenhorst.",
-  "storyEn": "A quiet detour leads to Lerchenhorst."
+  "storyDe": "Ein stiller Umweg führt zu Wetterhahnturm.",
+  "storyEn": "A quiet detour leads to Wetterhahnturm."
  },
  {
   "id": "L02s10",
   "league": 2,
-  "place": "Dreschhof",
+  "place": "Der lange Acker",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -1088,8 +1183,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 57
   },
-  "storyDe": "Der Pfad führt weiter über Dreschhof.",
-  "storyEn": "The path leads on across Dreschhof.",
+  "storyDe": "Der Pfad führt weiter über Der lange Acker.",
+  "storyEn": "The path leads on across Der lange Acker.",
   "boss": {
    "pure": "b02",
    "rotation": [
@@ -1102,10 +1197,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L02s11",
   "league": 2,
-  "place": "Schwelrain",
+  "place": "Wende des Lichts",
   "col": 5,
   "row": 4,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1114,16 +1210,18 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 32
   },
-  "storyDe": "Abseits des Weges liegt Schwelrain.",
-  "storyEn": "Off the road lies Schwelrain."
+  "storyDe": "Abseits des Weges liegt Wende des Lichts.",
+  "storyEn": "Off the road lies Wende des Lichts."
  },
  {
   "id": "L02s12",
   "league": 2,
-  "place": "Brandblatt",
+  "place": "Wo die Sense ruht",
   "col": 2,
   "row": 4,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1134,16 +1232,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Der Pfad führt weiter über Brandblatt.",
-  "storyEn": "The path leads on across Brandblatt."
+  "storyDe": "Der Pfad führt weiter über Wo die Sense ruht.",
+  "storyEn": "The path leads on across Wo die Sense ruht."
  },
  {
   "id": "L02s13",
   "league": 2,
-  "place": "Volle Scheuer",
+  "place": "Königsstroh",
   "col": 1,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1154,16 +1253,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Volle Scheuer.",
-  "storyEn": "A side path branches toward Volle Scheuer."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Königsstroh.",
+  "storyEn": "A side path branches toward Königsstroh."
  },
  {
   "id": "L02s14",
   "league": 2,
-  "place": "Lindensitz",
+  "place": "Aschengarbe",
   "col": 1,
   "row": 4,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1172,16 +1272,18 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 56
   },
-  "storyDe": "Abseits des Weges liegt Lindensitz.",
-  "storyEn": "Off the road lies Lindensitz."
+  "storyDe": "Abseits des Weges liegt Aschengarbe.",
+  "storyEn": "Off the road lies Aschengarbe."
  },
  {
   "id": "L02s15",
   "league": 2,
-  "place": "Fürstenmahd",
+  "place": "Spreugericht",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1191,16 +1293,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 63
   },
-  "storyDe": "Der Pfad führt weiter über Fürstenmahd.",
-  "storyEn": "The path leads on across Fürstenmahd."
+  "storyDe": "Der Pfad führt weiter über Spreugericht.",
+  "storyEn": "The path leads on across Spreugericht."
  },
  {
   "id": "L02s16",
   "league": 2,
-  "place": "Der Steinerne Pflug",
+  "place": "Osrics Speicher",
   "col": 4,
   "row": 5,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1210,16 +1313,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der Steinerne Pflug.",
-  "storyEn": "A side path branches toward Der Steinerne Pflug."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Osrics Speicher.",
+  "storyEn": "A side path branches toward Osrics Speicher."
  },
  {
   "id": "L02s17",
   "league": 2,
-  "place": "Grenzmark",
+  "place": "Mittsommerbank",
   "col": 3,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1229,16 +1334,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Der Pfad führt weiter über Grenzmark.",
-  "storyEn": "The path leads on across Grenzmark."
+  "storyDe": "Der Pfad führt weiter über Mittsommerbank.",
+  "storyEn": "The path leads on across Mittsommerbank."
  },
  {
   "id": "L02s18",
   "league": 2,
-  "place": "Kanzel im Weizen",
+  "place": "Fuhrmannsrast",
   "col": 1,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1248,16 +1354,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein stiller Umweg führt zu Kanzel im Weizen.",
-  "storyEn": "A quiet detour leads to Kanzel im Weizen."
+  "storyDe": "Ein stiller Umweg führt zu Fuhrmannsrast.",
+  "storyEn": "A quiet detour leads to Fuhrmannsrast."
  },
  {
   "id": "L02s19",
   "league": 2,
-  "place": "Waage und Wort",
+  "place": "Dürretor",
   "col": 4,
   "row": 5,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1267,16 +1374,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 58
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Waage und Wort.",
-  "storyEn": "A side path branches toward Waage und Wort."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Dürretor.",
+  "storyEn": "A side path branches toward Dürretor."
  },
  {
   "id": "L02s20",
   "league": 2,
-  "place": "Glutstoppel",
+  "place": "Dreschhof",
   "col": 3,
   "row": 5,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1286,8 +1395,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Die Prüfung wartet bei Glutstoppel.",
-  "storyEn": "The trial waits at Glutstoppel.",
+  "storyDe": "Die Prüfung wartet bei Dreschhof.",
+  "storyEn": "The trial waits at Dreschhof.",
   "boss": {
    "piece": "hawk",
    "wins": 1
@@ -1297,10 +1406,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L02s21",
   "league": 2,
-  "place": "Fronburg",
+  "place": "Lerchenhorst",
   "col": 3,
   "row": 5,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1311,16 +1422,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Die Prüfung wartet bei Fronburg.",
-  "storyEn": "The trial waits at Fronburg."
+  "storyDe": "Die Prüfung wartet bei Lerchenhorst.",
+  "storyEn": "The trial waits at Lerchenhorst."
  },
  {
   "id": "L02s22",
   "league": 2,
-  "place": "Leere Scheune",
+  "place": "Schwelrain",
   "col": 4,
   "row": 6,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1331,16 +1444,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Die Prüfung wartet bei Leere Scheune.",
-  "storyEn": "The trial waits at Leere Scheune."
+  "storyDe": "Die Prüfung wartet bei Schwelrain.",
+  "storyEn": "The trial waits at Schwelrain."
  },
  {
   "id": "L02s23",
   "league": 2,
-  "place": "Wetterhahnturm",
+  "place": "Erntewiege",
   "col": 1,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1350,16 +1464,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Abseits des Weges liegt Wetterhahnturm.",
-  "storyEn": "Off the road lies Wetterhahnturm."
+  "storyDe": "Abseits des Weges liegt Erntewiege.",
+  "storyEn": "Off the road lies Erntewiege."
  },
  {
   "id": "L02s24",
   "league": 2,
-  "place": "Wende des Lichts",
+  "place": "Brandblatt",
   "col": 4,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1369,16 +1485,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Die Prüfung wartet bei Wende des Lichts.",
-  "storyEn": "The trial waits at Wende des Lichts."
+  "storyDe": "Die Prüfung wartet bei Brandblatt.",
+  "storyEn": "The trial waits at Brandblatt."
  },
  {
   "id": "L02s25",
   "league": 2,
-  "place": "Königsstroh",
+  "place": "Mohnwerder",
   "col": 3,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1389,16 +1506,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 58
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Königsstroh.",
-  "storyEn": "A side path branches toward Königsstroh."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Mohnwerder.",
+  "storyEn": "A side path branches toward Mohnwerder."
  },
  {
   "id": "L02s26",
   "league": 2,
-  "place": "Aschengarbe",
+  "place": "Gebeugte Kapelle",
   "col": 5,
   "row": 6,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1407,16 +1525,17 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 32
   },
-  "storyDe": "Abseits des Weges liegt Aschengarbe.",
-  "storyEn": "Off the road lies Aschengarbe."
+  "storyDe": "Abseits des Weges liegt Gebeugte Kapelle.",
+  "storyEn": "Off the road lies Gebeugte Kapelle."
  },
  {
   "id": "L02s27",
   "league": 2,
-  "place": "Osrics Speicher",
+  "place": "Sichelbucht",
   "col": 3,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1426,16 +1545,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein stiller Umweg führt zu Osrics Speicher.",
-  "storyEn": "A quiet detour leads to Osrics Speicher."
+  "storyDe": "Ein stiller Umweg führt zu Sichelbucht.",
+  "storyEn": "A quiet detour leads to Sichelbucht."
  },
  {
   "id": "L02s28",
   "league": 2,
-  "place": "Fuhrmannsrast",
+  "place": "Flammenfurt",
   "col": 1,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1443,8 +1563,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Fuhrmannsrast.",
-  "storyEn": "A side path branches toward Fuhrmannsrast.",
+  "storyDe": "Ein Seitenpfad zweigt ab nach Flammenfurt.",
+  "storyEn": "A side path branches toward Flammenfurt.",
   "boss": {
    "piece": "bard",
    "wins": 1
@@ -1454,10 +1574,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L02s29",
   "league": 2,
-  "place": "Dürretor",
+  "place": "Halmbruch",
   "col": 5,
   "row": 6,
   "map": "arena",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1467,16 +1588,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Abseits des Weges liegt Dürretor.",
-  "storyEn": "Off the road lies Dürretor."
+  "storyDe": "Abseits des Weges liegt Halmbruch.",
+  "storyEn": "Off the road lies Halmbruch."
  },
  {
   "id": "L02s30",
   "league": 2,
-  "place": "Erntewiege",
+  "place": "Volle Scheuer",
   "col": 4,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1486,16 +1609,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Die Prüfung wartet bei Erntewiege.",
-  "storyEn": "The trial waits at Erntewiege."
+  "storyDe": "Die Prüfung wartet bei Volle Scheuer.",
+  "storyEn": "The trial waits at Volle Scheuer."
  },
  {
   "id": "L02s31",
   "league": 2,
-  "place": "Mohnwerder",
+  "place": "Dörrkammer",
   "col": 3,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1505,16 +1629,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Mohnwerder.",
-  "storyEn": "A side path branches toward Mohnwerder."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Dörrkammer.",
+  "storyEn": "A side path branches toward Dörrkammer."
  },
  {
   "id": "L02s32",
   "league": 2,
-  "place": "Gebeugte Kapelle",
+  "place": "Windfähre",
   "col": 2,
   "row": 7,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1523,16 +1648,17 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 56
   },
-  "storyDe": "Abseits des Weges liegt Gebeugte Kapelle.",
-  "storyEn": "Off the road lies Gebeugte Kapelle."
+  "storyDe": "Abseits des Weges liegt Windfähre.",
+  "storyEn": "Off the road lies Windfähre."
  },
  {
   "id": "L02s33",
   "league": 2,
-  "place": "Sichelbucht",
+  "place": "Mautbalken",
   "col": 5,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -1542,16 +1668,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 58
   },
-  "storyDe": "Ein stiller Umweg führt zu Sichelbucht.",
-  "storyEn": "A quiet detour leads to Sichelbucht."
+  "storyDe": "Ein stiller Umweg führt zu Mautbalken.",
+  "storyEn": "A quiet detour leads to Mautbalken."
  },
  {
   "id": "L02s34",
   "league": 2,
-  "place": "Flammenfurt",
+  "place": "Lindensitz",
   "col": 4,
   "row": 7,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1562,16 +1690,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der letzte Anstieg:  Flammenfurt.",
-  "storyEn": "The final ascent:  Flammenfurt."
+  "storyDe": "Der letzte Anstieg:  Lindensitz.",
+  "storyEn": "The final ascent:  Lindensitz."
  },
  {
   "id": "L02s35",
   "league": 2,
-  "place": "Halmbruch",
+  "place": "Bei den Schnittern",
   "col": 3,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1581,16 +1710,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Abseits des Weges liegt Halmbruch.",
-  "storyEn": "Off the road lies Halmbruch."
+  "storyDe": "Abseits des Weges liegt Bei den Schnittern.",
+  "storyEn": "Off the road lies Bei den Schnittern."
  },
  {
   "id": "L02s36",
   "league": 2,
-  "place": "Dörrkammer",
+  "place": "Fürstenmahd",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1600,16 +1731,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der letzte Anstieg:  Dörrkammer.",
-  "storyEn": "The final ascent:  Dörrkammer."
+  "storyDe": "Der letzte Anstieg:  Fürstenmahd.",
+  "storyEn": "The final ascent:  Fürstenmahd."
  },
  {
   "id": "L02s37",
   "league": 2,
-  "place": "Windfähre",
+  "place": "Der Schweigende Halm",
   "col": 3,
   "row": 8,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1619,16 +1751,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Windfähre.",
-  "storyEn": "A side path branches toward Windfähre."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Schweigende Halm.",
+  "storyEn": "A side path branches toward Der Schweigende Halm."
  },
  {
   "id": "L02s38",
   "league": 2,
-  "place": "Mautbalken",
+  "place": "Der Steinerne Pflug",
   "col": 4,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1638,16 +1772,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der letzte Anstieg:  Mautbalken.",
-  "storyEn": "The final ascent:  Mautbalken."
+  "storyDe": "Der letzte Anstieg:  Der Steinerne Pflug.",
+  "storyEn": "The final ascent:  Der Steinerne Pflug."
  },
  {
   "id": "L02s39",
   "league": 2,
-  "place": "Bei den Schnittern",
+  "place": "Welkgart",
   "col": 2,
   "row": 8,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1656,16 +1791,18 @@ export const CAMPAIGN12 = [
    "xp": 66,
    "gold": 56
   },
-  "storyDe": "Ein stiller Umweg führt zu Bei den Schnittern.",
-  "storyEn": "A quiet detour leads to Bei den Schnittern."
+  "storyDe": "Ein stiller Umweg führt zu Welkgart.",
+  "storyEn": "A quiet detour leads to Welkgart."
  },
  {
   "id": "L02s40",
   "league": 2,
-  "place": "Der Schweigende Halm",
+  "place": "Grenzmark",
   "col": 5,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1675,16 +1812,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der letzte Anstieg:  Der Schweigende Halm.",
-  "storyEn": "The final ascent:  Der Schweigende Halm."
+  "storyDe": "Der letzte Anstieg:  Grenzmark.",
+  "storyEn": "The final ascent:  Grenzmark."
  },
  {
   "id": "L02s41",
   "league": 2,
-  "place": "Welkgart",
+  "place": "Kanzel im Weizen",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -1693,8 +1832,9 @@ export const CAMPAIGN12 = [
    "xp": 96,
    "gold": 28
   },
-  "storyDe": "Welkgart: Hier wartet der Meister von Kapitel II.",
-  "storyEn": "Welkgart: here waits the master of chapter II.",
+  "storyDe": "Kanzel im Weizen: Hier wartet der Meister von Kapitel II.",
+  "storyEn": "Kanzel im Weizen: here waits the master of chapter II.",
+  "final": true,
   "boss": {
    "pure": "b12"
   },
@@ -1707,6 +1847,8 @@ export const CAMPAIGN12 = [
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1722,10 +1864,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L03s01",
   "league": 3,
-  "place": "Rostlaube",
+  "place": "Laubpresse",
   "col": 2,
   "row": 1,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -1734,16 +1877,18 @@ export const CAMPAIGN12 = [
    "xp": 72,
    "gold": 37
   },
-  "storyDe": "Abseits des Weges liegt Rostlaube.",
-  "storyEn": "Off the road lies Rostlaube."
+  "storyDe": "Abseits des Weges liegt Laubpresse.",
+  "storyEn": "Off the road lies Laubpresse."
  },
  {
   "id": "L03s02",
   "league": 3,
-  "place": "Bernsteinaltar",
+  "place": "Rostlaube",
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1753,16 +1898,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 51
   },
-  "storyDe": "Der Weg beginnt bei Bernsteinaltar.",
-  "storyEn": "The road begins at Bernsteinaltar."
+  "storyDe": "Der Weg beginnt bei Rostlaube.",
+  "storyEn": "The road begins at Rostlaube."
  },
  {
   "id": "L03s03",
   "league": 3,
-  "place": "Kastanienhall",
+  "place": "Wipfelkanzel",
   "col": 5,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1771,16 +1917,17 @@ export const CAMPAIGN12 = [
    "xp": 72,
    "gold": 64
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Kastanienhall.",
-  "storyEn": "A side path branches toward Kastanienhall."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Wipfelkanzel.",
+  "storyEn": "A side path branches toward Wipfelkanzel."
  },
  {
   "id": "L03s04",
   "league": 3,
-  "place": "Ockergrund",
+  "place": "Halle der zwei Schwüre",
   "col": 1,
   "row": 2,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1791,16 +1938,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 64
   },
-  "storyDe": "Abseits des Weges liegt Ockergrund.",
-  "storyEn": "Off the road lies Ockergrund."
+  "storyDe": "Abseits des Weges liegt Halle der zwei Schwüre.",
+  "storyEn": "Off the road lies Halle der zwei Schwüre."
  },
  {
   "id": "L03s05",
   "league": 3,
-  "place": "Der Rehpfad",
+  "place": "Harzträne",
   "col": 2,
   "row": 2,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -1810,16 +1958,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein stiller Umweg führt zu Der Rehpfad.",
-  "storyEn": "A quiet detour leads to Der Rehpfad."
+  "storyDe": "Ein stiller Umweg führt zu Harzträne.",
+  "storyEn": "A quiet detour leads to Harzträne."
  },
  {
   "id": "L03s06",
   "league": 3,
-  "place": "Wo der Eid brach",
+  "place": "Bernsteinaltar",
   "col": 1,
   "row": 3,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1829,16 +1979,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 54
   },
-  "storyDe": "Der Weg beginnt bei Wo der Eid brach.",
-  "storyEn": "The road begins at Wo der Eid brach."
+  "storyDe": "Der Weg beginnt bei Bernsteinaltar.",
+  "storyEn": "The road begins at Bernsteinaltar."
  },
  {
   "id": "L03s07",
   "league": 3,
-  "place": "Klingenwald",
+  "place": "Kastanienhall",
   "col": 2,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1848,16 +2000,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 57
   },
-  "storyDe": "Der Weg beginnt bei Klingenwald.",
-  "storyEn": "The road begins at Klingenwald."
+  "storyDe": "Der Weg beginnt bei Kastanienhall.",
+  "storyEn": "The road begins at Kastanienhall."
  },
  {
   "id": "L03s08",
   "league": 3,
-  "place": "Erntedank",
+  "place": "Pilzring",
   "col": 2,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -1867,16 +2020,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 64
   },
-  "storyDe": "Ein stiller Umweg führt zu Erntedank.",
-  "storyEn": "A quiet detour leads to Erntedank."
+  "storyDe": "Ein stiller Umweg führt zu Pilzring.",
+  "storyEn": "A quiet detour leads to Pilzring."
  },
  {
   "id": "L03s09",
   "league": 3,
-  "place": "Drosselsang",
+  "place": "Morschenburg",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1886,16 +2040,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Drosselsang.",
-  "storyEn": "A side path branches toward Drosselsang."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Morschenburg.",
+  "storyEn": "A side path branches toward Morschenburg."
  },
  {
   "id": "L03s10",
   "league": 3,
-  "place": "Schwelnest",
+  "place": "Sturmlaub",
   "col": 5,
   "row": 4,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1905,16 +2060,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Abseits des Weges liegt Schwelnest.",
-  "storyEn": "Off the road lies Schwelnest."
+  "storyDe": "Abseits des Weges liegt Sturmlaub.",
+  "storyEn": "Off the road lies Sturmlaub."
  },
  {
   "id": "L03s11",
   "league": 3,
-  "place": "Falbes Licht",
+  "place": "Ockergrund",
   "col": 2,
   "row": 4,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1925,16 +2082,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 60
   },
-  "storyDe": "Der Pfad führt weiter über Falbes Licht.",
-  "storyEn": "The path leads on across Falbes Licht."
+  "storyDe": "Der Pfad führt weiter über Ockergrund.",
+  "storyEn": "The path leads on across Ockergrund."
  },
  {
   "id": "L03s12",
   "league": 3,
-  "place": "Fallendes Laub",
+  "place": "Dämmerlaube",
   "col": 1,
   "row": 4,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1944,16 +2102,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Fallendes Laub.",
-  "storyEn": "A side path branches toward Fallendes Laub."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Dämmerlaube.",
+  "storyEn": "A side path branches toward Dämmerlaube."
  },
  {
   "id": "L03s13",
   "league": 3,
-  "place": "Zwillingsfeste",
+  "place": "Der Rehpfad",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -1963,8 +2123,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 63
   },
-  "storyDe": "Der Pfad führt weiter über Zwillingsfeste.",
-  "storyEn": "The path leads on across Zwillingsfeste.",
+  "storyDe": "Der Pfad führt weiter über Der Rehpfad.",
+  "storyEn": "The path leads on across Der Rehpfad.",
   "boss": {
    "pure": "b24",
    "rotation": [
@@ -1977,10 +2137,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L03s14",
   "league": 3,
-  "place": "Lindenschatten",
+  "place": "Königslaub",
   "col": 5,
   "row": 4,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -1990,16 +2151,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein stiller Umweg führt zu Lindenschatten.",
-  "storyEn": "A quiet detour leads to Lindenschatten."
+  "storyDe": "Ein stiller Umweg führt zu Königslaub.",
+  "storyEn": "A quiet detour leads to Königslaub."
  },
  {
   "id": "L03s15",
   "league": 3,
-  "place": "Amselthron",
+  "place": "Wo der Eid brach",
   "col": 2,
   "row": 5,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -2009,16 +2172,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Der Pfad führt weiter über Amselthron.",
-  "storyEn": "The path leads on across Amselthron."
+  "storyDe": "Der Pfad führt weiter über Wo der Eid brach.",
+  "storyEn": "The path leads on across Wo der Eid brach."
  },
  {
   "id": "L03s16",
   "league": 3,
-  "place": "Der Rostige Riegel",
+  "place": "Gilbfeuer",
   "col": 1,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2028,16 +2192,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Abseits des Weges liegt Der Rostige Riegel.",
-  "storyEn": "Off the road lies Der Rostige Riegel."
+  "storyDe": "Abseits des Weges liegt Gilbfeuer.",
+  "storyEn": "Off the road lies Gilbfeuer."
  },
  {
   "id": "L03s17",
   "league": 3,
-  "place": "Laubpresse",
+  "place": "Klingenwald",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -2048,16 +2214,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Der Pfad führt weiter über Laubpresse.",
-  "storyEn": "The path leads on across Laubpresse."
+  "storyDe": "Der Pfad führt weiter über Klingenwald.",
+  "storyEn": "The path leads on across Klingenwald."
  },
  {
   "id": "L03s18",
   "league": 3,
-  "place": "Wipfelkanzel",
+  "place": "Der geteilte Schwur",
   "col": 5,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2067,16 +2234,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wipfelkanzel.",
-  "storyEn": "A side path branches toward Wipfelkanzel."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der geteilte Schwur.",
+  "storyEn": "A side path branches toward Der geteilte Schwur."
  },
  {
   "id": "L03s19",
   "league": 3,
-  "place": "Halle der zwei Schwüre",
+  "place": "Köhlersitz",
   "col": 2,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2086,16 +2254,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 64
   },
-  "storyDe": "Abseits des Weges liegt Halle der zwei Schwüre.",
-  "storyEn": "Off the road lies Halle der zwei Schwüre."
+  "storyDe": "Abseits des Weges liegt Köhlersitz.",
+  "storyEn": "Off the road lies Köhlersitz."
  },
  {
   "id": "L03s20",
   "league": 3,
-  "place": "Harzträne",
+  "place": "Erntedank",
   "col": 3,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -2105,16 +2275,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Die Prüfung wartet bei Harzträne.",
-  "storyEn": "The trial waits at Harzträne."
+  "storyDe": "Die Prüfung wartet bei Erntedank.",
+  "storyEn": "The trial waits at Erntedank."
  },
  {
   "id": "L03s21",
   "league": 3,
-  "place": "Pilzring",
+  "place": "Moderpforte",
   "col": 1,
   "row": 6,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2123,16 +2294,17 @@ export const CAMPAIGN12 = [
    "xp": 72,
    "gold": 64
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Pilzring.",
-  "storyEn": "A side path branches toward Pilzring."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Moderpforte.",
+  "storyEn": "A side path branches toward Moderpforte."
  },
  {
   "id": "L03s22",
   "league": 3,
-  "place": "Morschenburg",
+  "place": "Wandererrast",
   "col": 5,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2143,16 +2315,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Abseits des Weges liegt Morschenburg.",
-  "storyEn": "Off the road lies Morschenburg."
+  "storyDe": "Abseits des Weges liegt Wandererrast.",
+  "storyEn": "Off the road lies Wandererrast."
  },
  {
   "id": "L03s23",
   "league": 3,
-  "place": "Sturmlaub",
+  "place": "Drosselsang",
   "col": 3,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -2163,8 +2337,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Die Prüfung wartet bei Sturmlaub.",
-  "storyEn": "The trial waits at Sturmlaub.",
+  "storyDe": "Die Prüfung wartet bei Drosselsang.",
+  "storyEn": "The trial waits at Drosselsang.",
   "boss": {
    "piece": "alchemist",
    "wins": 1
@@ -2174,10 +2348,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L03s24",
   "league": 3,
-  "place": "Dämmerlaube",
+  "place": "Eichelschatz",
   "col": 2,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2187,16 +2362,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Dämmerlaube.",
-  "storyEn": "A side path branches toward Dämmerlaube."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Eichelschatz.",
+  "storyEn": "A side path branches toward Eichelschatz."
  },
  {
   "id": "L03s25",
   "league": 3,
-  "place": "Königslaub",
+  "place": "Verhüllter Altar",
   "col": 5,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2206,16 +2382,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Abseits des Weges liegt Königslaub.",
-  "storyEn": "Off the road lies Königslaub."
+  "storyDe": "Abseits des Weges liegt Verhüllter Altar.",
+  "storyEn": "Off the road lies Verhüllter Altar."
  },
  {
   "id": "L03s26",
   "league": 3,
-  "place": "Gilbfeuer",
+  "place": "Treibholzufer",
   "col": 4,
   "row": 6,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2225,16 +2402,23 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 64
   },
-  "storyDe": "Ein stiller Umweg führt zu Gilbfeuer.",
-  "storyEn": "A quiet detour leads to Gilbfeuer."
+  "storyDe": "Ein stiller Umweg führt zu Treibholzufer.",
+  "storyEn": "A quiet detour leads to Treibholzufer.",
+  "gate": {
+   "gold": 45
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L03s27",
   "league": 3,
-  "place": "Der geteilte Schwur",
+  "place": "Schwelnest",
   "col": 4,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -2244,16 +2428,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Die Prüfung wartet bei Der geteilte Schwur.",
-  "storyEn": "The trial waits at Der geteilte Schwur."
+  "storyDe": "Die Prüfung wartet bei Schwelnest.",
+  "storyEn": "The trial waits at Schwelnest."
  },
  {
   "id": "L03s28",
   "league": 3,
-  "place": "Köhlersitz",
+  "place": "Fuchsfurt",
   "col": 3,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2263,16 +2448,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 64
   },
-  "storyDe": "Abseits des Weges liegt Köhlersitz.",
-  "storyEn": "Off the road lies Köhlersitz."
+  "storyDe": "Abseits des Weges liegt Fuchsfurt.",
+  "storyEn": "Off the road lies Fuchsfurt."
  },
  {
   "id": "L03s29",
   "league": 3,
-  "place": "Moderpforte",
+  "place": "Wurzelgewölbe",
   "col": 2,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2282,130 +2468,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein stiller Umweg führt zu Moderpforte.",
-  "storyEn": "A quiet detour leads to Moderpforte."
- },
- {
-  "id": "L03s30",
-  "league": 3,
-  "place": "Wandererrast",
-  "col": 5,
-  "row": 6,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 2,
-  "next": [],
-  "reward": {
-   "xp": 72,
-   "gold": 64
-  },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wandererrast.",
-  "storyEn": "A side path branches toward Wandererrast."
- },
- {
-  "id": "L03s31",
-  "league": 3,
-  "place": "Eichelschatz",
-  "col": 4,
-  "row": 7,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 2,
-  "next": [
-   "L03s26",
-   "L03s34"
-  ],
-  "reward": {
-   "xp": 81
-  },
-  "storyDe": "Die Prüfung wartet bei Eichelschatz.",
-  "storyEn": "The trial waits at Eichelschatz."
- },
- {
-  "id": "L03s32",
-  "league": 3,
-  "place": "Verhüllter Altar",
-  "col": 2,
-  "row": 7,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 2,
-  "next": [
-   "L03s36"
-  ],
-  "reward": {
-   "xp": 72
-  },
-  "storyDe": "Ein stiller Umweg führt zu Verhüllter Altar.",
-  "storyEn": "A quiet detour leads to Verhüllter Altar."
- },
- {
-  "id": "L03s33",
-  "league": 3,
-  "place": "Treibholzufer",
-  "col": 3,
-  "row": 7,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 2,
-  "next": [
-   "L03s35"
-  ],
-  "reward": {
-   "xp": 72
-  },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Treibholzufer.",
-  "storyEn": "A side path branches toward Treibholzufer."
- },
- {
-  "id": "L03s34",
-  "league": 3,
-  "place": "Fuchsfurt",
-  "col": 4,
-  "row": 7,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 2,
-  "next": [
-   "L03s37"
-  ],
-  "reward": {
-   "xp": 84
-  },
-  "storyDe": "Der letzte Anstieg:  Fuchsfurt.",
-  "storyEn": "The final ascent:  Fuchsfurt."
- },
- {
-  "id": "L03s35",
-  "league": 3,
-  "place": "Wurzelgewölbe",
-  "col": 3,
-  "row": 7,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 2,
-  "next": [
-   "L03s38"
-  ],
-  "reward": {
-   "xp": 72
-  },
   "storyDe": "Ein stiller Umweg führt zu Wurzelgewölbe.",
   "storyEn": "A quiet detour leads to Wurzelgewölbe."
  },
  {
-  "id": "L03s36",
+  "id": "L03s30",
   "league": 3,
   "place": "Eulenwarte",
-  "col": 2,
-  "row": 7,
-  "map": "skirmish",
+  "col": 5,
+  "row": 6,
+  "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2418,12 +2491,136 @@ export const CAMPAIGN12 = [
   "storyEn": "A side path branches toward Eulenwarte."
  },
  {
-  "id": "L03s37",
+  "id": "L03s31",
+  "league": 3,
+  "place": "Falbes Licht",
+  "col": 4,
+  "row": 7,
+  "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 2,
+  "next": [
+   "L03s26",
+   "L03s34"
+  ],
+  "reward": {
+   "xp": 81
+  },
+  "storyDe": "Die Prüfung wartet bei Falbes Licht.",
+  "storyEn": "The trial waits at Falbes Licht."
+ },
+ {
+  "id": "L03s32",
   "league": 3,
   "place": "Blätterkahn",
+  "col": 2,
+  "row": 7,
+  "map": "courtyard",
+  "chapter": 2,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 2,
+  "next": [
+   "L03s36"
+  ],
+  "reward": {
+   "xp": 72
+  },
+  "storyDe": "Ein stiller Umweg führt zu Blätterkahn.",
+  "storyEn": "A quiet detour leads to Blätterkahn."
+ },
+ {
+  "id": "L03s33",
+  "league": 3,
+  "place": "Ahornbrück",
+  "col": 3,
+  "row": 7,
+  "map": "gauntlet",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 2,
+  "next": [
+   "L03s35"
+  ],
+  "reward": {
+   "xp": 72
+  },
+  "storyDe": "Ein Seitenpfad zweigt ab nach Ahornbrück.",
+  "storyEn": "A side path branches toward Ahornbrück."
+ },
+ {
+  "id": "L03s34",
+  "league": 3,
+  "place": "Fallendes Laub",
+  "col": 4,
+  "row": 7,
+  "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 2,
+  "next": [
+   "L03s37"
+  ],
+  "reward": {
+   "xp": 84
+  },
+  "storyDe": "Der letzte Anstieg:  Fallendes Laub.",
+  "storyEn": "The final ascent:  Fallendes Laub."
+ },
+ {
+  "id": "L03s35",
+  "league": 3,
+  "place": "Marderschlupf",
+  "col": 3,
+  "row": 7,
+  "map": "classic",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 2,
+  "next": [
+   "L03s38"
+  ],
+  "reward": {
+   "xp": 72
+  },
+  "storyDe": "Ein stiller Umweg führt zu Marderschlupf.",
+  "storyEn": "A quiet detour leads to Marderschlupf."
+ },
+ {
+  "id": "L03s36",
+  "league": 3,
+  "place": "Der Stumme Hain",
+  "col": 2,
+  "row": 7,
+  "map": "skirmish",
+  "chapter": 2,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 2,
+  "next": [],
+  "reward": {
+   "xp": 72,
+   "gold": 64
+  },
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Stumme Hain.",
+  "storyEn": "A side path branches toward Der Stumme Hain."
+ },
+ {
+  "id": "L03s37",
+  "league": 3,
+  "place": "Zwillingsfeste",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2433,16 +2630,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der letzte Anstieg:  Blätterkahn.",
-  "storyEn": "The final ascent:  Blätterkahn."
+  "storyDe": "Der letzte Anstieg:  Zwillingsfeste.",
+  "storyEn": "The final ascent:  Zwillingsfeste."
  },
  {
   "id": "L03s38",
   "league": 3,
-  "place": "Ahornbrück",
+  "place": "Modergraben",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2452,16 +2650,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Ein stiller Umweg führt zu Ahornbrück.",
-  "storyEn": "A quiet detour leads to Ahornbrück."
+  "storyDe": "Ein stiller Umweg führt zu Modergraben.",
+  "storyEn": "A quiet detour leads to Modergraben."
  },
  {
   "id": "L03s39",
   "league": 3,
-  "place": "Marderschlupf",
+  "place": "Lindenschatten",
   "col": 4,
   "row": 8,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2471,16 +2671,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der letzte Anstieg:  Marderschlupf.",
-  "storyEn": "The final ascent:  Marderschlupf."
+  "storyDe": "Der letzte Anstieg:  Lindenschatten.",
+  "storyEn": "The final ascent:  Lindenschatten."
  },
  {
   "id": "L03s40",
   "league": 3,
-  "place": "Der Stumme Hain",
+  "place": "Reisigschneise",
   "col": 3,
   "row": 8,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2489,16 +2690,18 @@ export const CAMPAIGN12 = [
    "xp": 72,
    "gold": 64
   },
-  "storyDe": "Abseits des Weges liegt Der Stumme Hain.",
-  "storyEn": "Off the road lies Der Stumme Hain."
+  "storyDe": "Abseits des Weges liegt Reisigschneise.",
+  "storyEn": "Off the road lies Reisigschneise."
  },
  {
   "id": "L03s41",
   "league": 3,
-  "place": "Modergraben",
+  "place": "Amselthron",
   "col": 4,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2508,16 +2711,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der letzte Anstieg:  Modergraben.",
-  "storyEn": "The final ascent:  Modergraben."
+  "storyDe": "Der letzte Anstieg:  Amselthron.",
+  "storyEn": "The final ascent:  Amselthron."
  },
  {
   "id": "L03s42",
   "league": 3,
-  "place": "Reisigschneise",
+  "place": "Der Rostige Riegel",
   "col": 4,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -2526,8 +2731,9 @@ export const CAMPAIGN12 = [
    "xp": 96,
    "gold": 32
   },
-  "storyDe": "Reisigschneise: Hier wartet der Meister von Kapitel III.",
-  "storyEn": "Reisigschneise: here waits the master of chapter III.",
+  "storyDe": "Der Rostige Riegel: Hier wartet der Meister von Kapitel III.",
+  "storyEn": "Der Rostige Riegel: here waits the master of chapter III.",
+  "final": true,
   "boss": {
    "pure": "b10"
   },
@@ -2540,6 +2746,8 @@ export const CAMPAIGN12 = [
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2559,6 +2767,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 1,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2578,6 +2788,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2593,10 +2805,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L04s03",
   "league": 4,
-  "place": "Almrast",
+  "place": "Die Kahle Kuppe",
   "col": 4,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2606,16 +2819,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Abseits des Weges liegt Almrast.",
-  "storyEn": "Off the road lies Almrast."
+  "storyDe": "Abseits des Weges liegt Die Kahle Kuppe.",
+  "storyEn": "Off the road lies Die Kahle Kuppe."
  },
  {
   "id": "L04s04",
   "league": 4,
-  "place": "Steinmandl",
+  "place": "Almrast",
   "col": 1,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2625,16 +2840,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 63
   },
-  "storyDe": "Der Weg beginnt bei Steinmandl.",
-  "storyEn": "The road begins at Steinmandl."
+  "storyDe": "Der Weg beginnt bei Almrast.",
+  "storyEn": "The road begins at Almrast."
  },
  {
   "id": "L04s05",
   "league": 4,
-  "place": "Der Krumme Hain",
+  "place": "Hüttenrauch",
   "col": 4,
   "row": 3,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2644,16 +2860,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der Krumme Hain.",
-  "storyEn": "A side path branches toward Der Krumme Hain."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Hüttenrauch.",
+  "storyEn": "A side path branches toward Hüttenrauch."
  },
  {
   "id": "L04s06",
   "league": 4,
-  "place": "Hirtenkanzel",
+  "place": "Steinmandl",
   "col": 2,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2663,16 +2881,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Der Weg beginnt bei Hirtenkanzel.",
-  "storyEn": "The road begins at Hirtenkanzel."
+  "storyDe": "Der Weg beginnt bei Steinmandl.",
+  "storyEn": "The road begins at Steinmandl."
  },
  {
   "id": "L04s07",
   "league": 4,
-  "place": "Wetterbaum",
+  "place": "Sennenwacht",
   "col": 3,
   "row": 4,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2682,16 +2901,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Ein stiller Umweg führt zu Wetterbaum.",
-  "storyEn": "A quiet detour leads to Wetterbaum."
+  "storyDe": "Ein stiller Umweg führt zu Sennenwacht.",
+  "storyEn": "A quiet detour leads to Sennenwacht."
  },
  {
   "id": "L04s08",
   "league": 4,
-  "place": "Zwieselgrund",
+  "place": "Der Krumme Hain",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2701,16 +2922,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Der Pfad führt weiter über Zwieselgrund.",
-  "storyEn": "The path leads on across Zwieselgrund."
+  "storyDe": "Der Pfad führt weiter über Der Krumme Hain.",
+  "storyEn": "The path leads on across Der Krumme Hain."
  },
  {
   "id": "L04s09",
   "league": 4,
-  "place": "Die letzte Alm",
+  "place": "Der Steile Anger",
   "col": 3,
   "row": 4,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2720,16 +2942,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Abseits des Weges liegt Die letzte Alm.",
-  "storyEn": "Off the road lies Die letzte Alm."
+  "storyDe": "Abseits des Weges liegt Der Steile Anger.",
+  "storyEn": "Off the road lies Der Steile Anger."
  },
  {
   "id": "L04s10",
   "league": 4,
-  "place": "Käserast",
+  "place": "Hirtenkanzel",
   "col": 2,
   "row": 4,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -2740,8 +2964,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Der Pfad führt weiter über Käserast.",
-  "storyEn": "The path leads on across Käserast.",
+  "storyDe": "Der Pfad führt weiter über Hirtenkanzel.",
+  "storyEn": "The path leads on across Hirtenkanzel.",
   "boss": {
    "pure": "b09",
    "rotation": [
@@ -2754,10 +2978,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L04s11",
   "league": 4,
-  "place": "Hochleger",
+  "place": "Wetterbaum",
   "col": 2,
   "row": 4,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2767,16 +2993,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Der Pfad führt weiter über Hochleger.",
-  "storyEn": "The path leads on across Hochleger."
+  "storyDe": "Der Pfad führt weiter über Wetterbaum.",
+  "storyEn": "The path leads on across Wetterbaum."
  },
  {
   "id": "L04s12",
   "league": 4,
-  "place": "Marchstein",
+  "place": "Käserast",
   "col": 3,
   "row": 4,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2787,16 +3015,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Die Prüfung wartet bei Marchstein.",
-  "storyEn": "The trial waits at Marchstein."
+  "storyDe": "Die Prüfung wartet bei Käserast.",
+  "storyEn": "The trial waits at Käserast."
  },
  {
   "id": "L04s13",
   "league": 4,
-  "place": "Gamswechsel",
+  "place": "Zwieselgrund",
   "col": 2,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2807,16 +3037,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Der Pfad führt weiter über Gamswechsel.",
-  "storyEn": "The path leads on across Gamswechsel."
+  "storyDe": "Der Pfad führt weiter über Zwieselgrund.",
+  "storyEn": "The path leads on across Zwieselgrund."
  },
  {
   "id": "L04s14",
   "league": 4,
-  "place": "Die Schindelhütte",
+  "place": "Die letzte Alm",
   "col": 3,
   "row": 4,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2826,16 +3058,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Der Pfad führt weiter über Die Schindelhütte.",
-  "storyEn": "The path leads on across Die Schindelhütte."
+  "storyDe": "Der Pfad führt weiter über Die letzte Alm.",
+  "storyEn": "The path leads on across Die letzte Alm."
  },
  {
   "id": "L04s15",
   "league": 4,
-  "place": "Windkamm",
+  "place": "Hochleger",
   "col": 3,
   "row": 5,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2845,8 +3079,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Die Prüfung wartet bei Windkamm.",
-  "storyEn": "The trial waits at Windkamm.",
+  "storyDe": "Die Prüfung wartet bei Hochleger.",
+  "storyEn": "The trial waits at Hochleger.",
   "boss": {
    "piece": "sorceress",
    "wins": 1
@@ -2856,10 +3090,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L04s16",
   "league": 4,
-  "place": "Lärchentor",
+  "place": "Marchstein",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2869,16 +3105,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Die Prüfung wartet bei Lärchentor.",
-  "storyEn": "The trial waits at Lärchentor."
+  "storyDe": "Die Prüfung wartet bei Marchstein.",
+  "storyEn": "The trial waits at Marchstein."
  },
  {
   "id": "L04s17",
   "league": 4,
-  "place": "Wurzelstieg",
+  "place": "Wildheuplatz",
   "col": 5,
   "row": 5,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2887,16 +3124,17 @@ export const CAMPAIGN12 = [
    "xp": 78,
    "gold": 72
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wurzelstieg.",
-  "storyEn": "A side path branches toward Wurzelstieg."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Wildheuplatz.",
+  "storyEn": "A side path branches toward Wildheuplatz."
  },
  {
   "id": "L04s18",
   "league": 4,
-  "place": "Der Zerzauste Wald",
+  "place": "Felsenfenster",
   "col": 1,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2906,16 +3144,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Abseits des Weges liegt Der Zerzauste Wald.",
-  "storyEn": "Off the road lies Der Zerzauste Wald."
+  "storyDe": "Abseits des Weges liegt Felsenfenster.",
+  "storyEn": "Off the road lies Felsenfenster."
  },
  {
   "id": "L04s19",
   "league": 4,
-  "place": "Almglocken",
+  "place": "Zundermoos",
   "col": 5,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2925,16 +3164,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Ein stiller Umweg führt zu Almglocken.",
-  "storyEn": "A quiet detour leads to Almglocken."
+  "storyDe": "Ein stiller Umweg führt zu Zundermoos.",
+  "storyEn": "A quiet detour leads to Zundermoos."
  },
  {
   "id": "L04s20",
   "league": 4,
-  "place": "Bergahornhof",
+  "place": "Die Wolkenweide",
   "col": 2,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2943,16 +3183,18 @@ export const CAMPAIGN12 = [
    "xp": 78,
    "gold": 42
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Bergahornhof.",
-  "storyEn": "A side path branches toward Bergahornhof."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Die Wolkenweide.",
+  "storyEn": "A side path branches toward Die Wolkenweide."
  },
  {
   "id": "L04s21",
   "league": 4,
-  "place": "Die Kahle Kuppe",
+  "place": "Gamswechsel",
   "col": 4,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -2963,16 +3205,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Die Prüfung wartet bei Die Kahle Kuppe.",
-  "storyEn": "The trial waits at Die Kahle Kuppe."
+  "storyDe": "Die Prüfung wartet bei Gamswechsel.",
+  "storyEn": "The trial waits at Gamswechsel."
  },
  {
   "id": "L04s22",
   "league": 4,
-  "place": "Hüttenrauch",
+  "place": "Salzleck",
   "col": 5,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -2983,16 +3226,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Ein stiller Umweg führt zu Hüttenrauch.",
-  "storyEn": "A quiet detour leads to Hüttenrauch."
+  "storyDe": "Ein stiller Umweg führt zu Salzleck.",
+  "storyEn": "A quiet detour leads to Salzleck."
  },
  {
   "id": "L04s23",
   "league": 4,
-  "place": "Sennenwacht",
+  "place": "Der Geduckte Forst",
   "col": 1,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3002,16 +3246,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Sennenwacht.",
-  "storyEn": "A side path branches toward Sennenwacht."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Geduckte Forst.",
+  "storyEn": "A side path branches toward Der Geduckte Forst."
  },
  {
   "id": "L04s24",
   "league": 4,
-  "place": "Der Steile Anger",
+  "place": "Die Schindelhütte",
   "col": 4,
   "row": 7,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -3022,131 +3268,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Die Prüfung wartet bei Der Steile Anger.",
-  "storyEn": "The trial waits at Der Steile Anger."
+  "storyDe": "Die Prüfung wartet bei Die Schindelhütte.",
+  "storyEn": "The trial waits at Die Schindelhütte."
  },
  {
   "id": "L04s25",
   "league": 4,
-  "place": "Wildheuplatz",
+  "place": "Gratrast",
   "col": 1,
   "row": 7,
   "map": "classic",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [],
-  "reward": {
-   "xp": 78,
-   "gold": 72
-  },
-  "storyDe": "Ein stiller Umweg führt zu Wildheuplatz.",
-  "storyEn": "A quiet detour leads to Wildheuplatz."
- },
- {
-  "id": "L04s26",
-  "league": 4,
-  "place": "Felsenfenster",
-  "col": 4,
-  "row": 7,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L04s27"
-  ],
-  "reward": {
-   "xp": 70
-  },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Felsenfenster.",
-  "storyEn": "A side path branches toward Felsenfenster."
- },
- {
-  "id": "L04s27",
-  "league": 4,
-  "place": "Zundermoos",
-  "col": 4,
-  "row": 8,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L04s28"
-  ],
-  "reward": {
-   "xp": 78
-  },
-  "storyDe": "Abseits des Weges liegt Zundermoos.",
-  "storyEn": "Off the road lies Zundermoos."
- },
- {
-  "id": "L04s28",
-  "league": 4,
-  "place": "Die Wolkenweide",
-  "col": 3,
-  "row": 8,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [],
-  "reward": {
-   "xp": 78,
-   "gold": 42
-  },
-  "storyDe": "Ein stiller Umweg führt zu Die Wolkenweide.",
-  "storyEn": "A quiet detour leads to Die Wolkenweide."
- },
- {
-  "id": "L04s29",
-  "league": 4,
-  "place": "Salzleck",
-  "col": 5,
-  "row": 9,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L04s30"
-  ],
-  "reward": {
-   "xp": 111
-  },
-  "storyDe": "Der letzte Anstieg:  Salzleck.",
-  "storyEn": "The final ascent:  Salzleck."
- },
- {
-  "id": "L04s30",
-  "league": 4,
-  "place": "Der Geduckte Forst",
-  "col": 5,
-  "row": 9,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [],
-  "reward": {
-   "xp": 114,
-   "gold": 36
-  },
-  "storyDe": "Der Geduckte Forst: Hier wartet der Meister von Kapitel IV.",
-  "storyEn": "Der Geduckte Forst: here waits the master of chapter IV.",
-  "boss": {
-   "pure": "b02"
-  },
-  "tier": 4
- },
- {
-  "id": "L04s31",
-  "league": 4,
-  "place": "Gratrast",
-  "col": 5,
-  "row": 7,
-  "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3159,12 +3291,138 @@ export const CAMPAIGN12 = [
   "storyEn": "A quiet detour leads to Gratrast."
  },
  {
-  "id": "L04s32",
+  "id": "L04s26",
   "league": 4,
   "place": "Murmelfeld",
   "col": 4,
   "row": 7,
+  "map": "skirmish",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L04s27"
+  ],
+  "reward": {
+   "xp": 70
+  },
+  "storyDe": "Ein Seitenpfad zweigt ab nach Murmelfeld.",
+  "storyEn": "A side path branches toward Murmelfeld."
+ },
+ {
+  "id": "L04s27",
+  "league": 4,
+  "place": "Die Zwei Wetterfichten",
+  "col": 4,
+  "row": 8,
+  "map": "courtyard",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L04s28"
+  ],
+  "reward": {
+   "xp": 78
+  },
+  "storyDe": "Abseits des Weges liegt Die Zwei Wetterfichten.",
+  "storyEn": "Off the road lies Die Zwei Wetterfichten."
+ },
+ {
+  "id": "L04s28",
+  "league": 4,
+  "place": "Hangdorf",
+  "col": 3,
+  "row": 8,
+  "map": "gauntlet",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [],
+  "reward": {
+   "xp": 78,
+   "gold": 42
+  },
+  "storyDe": "Ein stiller Umweg führt zu Hangdorf.",
+  "storyEn": "A quiet detour leads to Hangdorf."
+ },
+ {
+  "id": "L04s29",
+  "league": 4,
+  "place": "Almglocken",
+  "col": 5,
+  "row": 9,
+  "map": "arena",
+  "chapter": 4,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L04s30"
+  ],
+  "reward": {
+   "xp": 111
+  },
+  "storyDe": "Der letzte Anstieg:  Almglocken.",
+  "storyEn": "The final ascent:  Almglocken."
+ },
+ {
+  "id": "L04s30",
+  "league": 4,
+  "place": "Bergahornhof",
+  "col": 5,
+  "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [],
+  "reward": {
+   "xp": 114,
+   "gold": 36
+  },
+  "storyDe": "Bergahornhof: Hier wartet der Meister von Kapitel IV.",
+  "storyEn": "Bergahornhof: here waits the master of chapter IV.",
+  "final": true,
+  "boss": {
+   "pure": "b02"
+  },
+  "tier": 4
+ },
+ {
+  "id": "L04s31",
+  "league": 4,
+  "place": "Steinrose",
+  "col": 5,
+  "row": 7,
+  "map": "skirmish",
+  "chapter": 3,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [],
+  "reward": {
+   "xp": 78,
+   "gold": 72
+  },
+  "storyDe": "Ein stiller Umweg führt zu Steinrose.",
+  "storyEn": "A quiet detour leads to Steinrose."
+ },
+ {
+  "id": "L04s32",
+  "league": 4,
+  "place": "Windkamm",
+  "col": 4,
+  "row": 7,
+  "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3174,16 +3432,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der letzte Anstieg:  Murmelfeld.",
-  "storyEn": "The final ascent:  Murmelfeld."
+  "storyDe": "Der letzte Anstieg:  Windkamm.",
+  "storyEn": "The final ascent:  Windkamm."
  },
  {
   "id": "L04s33",
   "league": 4,
-  "place": "Die Zwei Wetterfichten",
+  "place": "Lärchentor",
   "col": 4,
   "row": 7,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3193,16 +3453,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der letzte Anstieg:  Die Zwei Wetterfichten.",
-  "storyEn": "The final ascent:  Die Zwei Wetterfichten."
+  "storyDe": "Der letzte Anstieg:  Lärchentor.",
+  "storyEn": "The final ascent:  Lärchentor."
  },
  {
   "id": "L04s34",
   "league": 4,
-  "place": "Hangdorf",
+  "place": "Wurzelstieg",
   "col": 5,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3212,16 +3474,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der letzte Anstieg:  Hangdorf.",
-  "storyEn": "The final ascent:  Hangdorf."
+  "storyDe": "Der letzte Anstieg:  Wurzelstieg.",
+  "storyEn": "The final ascent:  Wurzelstieg."
  },
  {
   "id": "L04s35",
   "league": 4,
-  "place": "Steinrose",
+  "place": "Der Zerzauste Wald",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3231,8 +3495,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der letzte Anstieg:  Steinrose.",
-  "storyEn": "The final ascent:  Steinrose."
+  "storyDe": "Der letzte Anstieg:  Der Zerzauste Wald.",
+  "storyEn": "The final ascent:  Der Zerzauste Wald."
  },
  {
   "id": "L04s36",
@@ -3241,6 +3505,7 @@ export const CAMPAIGN12 = [
   "col": 4,
   "row": 6,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3260,6 +3525,7 @@ export const CAMPAIGN12 = [
   "col": 4,
   "row": 2,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3279,6 +3545,7 @@ export const CAMPAIGN12 = [
   "col": 4,
   "row": 1,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3301,6 +3568,7 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 5,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3320,6 +3588,7 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3339,6 +3608,7 @@ export const CAMPAIGN12 = [
   "col": 2,
   "row": 5,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -3358,6 +3628,7 @@ export const CAMPAIGN12 = [
   "col": 3,
   "row": 4,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -3368,7 +3639,12 @@ export const CAMPAIGN12 = [
    "xp": 70
   },
   "storyDe": "Abseits des Weges liegt Nebelweide.",
-  "storyEn": "Off the road lies Nebelweide."
+  "storyEn": "Off the road lies Nebelweide.",
+  "gate": {
+   "gold": 55
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L05s00",
@@ -3377,6 +3653,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3392,10 +3670,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L05s01",
   "league": 5,
-  "place": "Klammglocke",
+  "place": "Barfußspur",
   "col": 2,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3404,16 +3683,18 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 47
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Klammglocke.",
-  "storyEn": "A side path branches toward Klammglocke."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Barfußspur.",
+  "storyEn": "A side path branches toward Barfußspur."
  },
  {
   "id": "L05s02",
   "league": 5,
-  "place": "Vereister Altar",
+  "place": "Klammglocke",
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3423,16 +3704,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 63
   },
-  "storyDe": "Der Weg beginnt bei Vereister Altar.",
-  "storyEn": "The road begins at Vereister Altar."
+  "storyDe": "Der Weg beginnt bei Klammglocke.",
+  "storyEn": "The road begins at Klammglocke."
  },
  {
   "id": "L05s03",
   "league": 5,
-  "place": "Jägersitz",
+  "place": "Vereister Altar",
   "col": 1,
   "row": 3,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3442,16 +3725,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 66
   },
-  "storyDe": "Der Weg beginnt bei Jägersitz.",
-  "storyEn": "The road begins at Jägersitz."
+  "storyDe": "Der Weg beginnt bei Vereister Altar.",
+  "storyEn": "The road begins at Vereister Altar."
  },
  {
   "id": "L05s04",
   "league": 5,
-  "place": "Firnriss",
+  "place": "Königsgrat",
   "col": 5,
   "row": 3,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3460,16 +3744,17 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 80
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Firnriss.",
-  "storyEn": "A side path branches toward Firnriss."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Königsgrat.",
+  "storyEn": "A side path branches toward Königsgrat."
  },
  {
   "id": "L05s05",
   "league": 5,
-  "place": "Die Wolfsspur",
+  "place": "Grabesgeröll",
   "col": 2,
   "row": 3,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3479,16 +3764,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 76
   },
-  "storyDe": "Abseits des Weges liegt Die Wolfsspur.",
-  "storyEn": "Off the road lies Die Wolfsspur."
+  "storyDe": "Abseits des Weges liegt Grabesgeröll.",
+  "storyEn": "Off the road lies Grabesgeröll."
  },
  {
   "id": "L05s06",
   "league": 5,
-  "place": "Wo der Atem gefror",
+  "place": "Firnriss",
   "col": 2,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3499,16 +3786,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Der Weg beginnt bei Wo der Atem gefror.",
-  "storyEn": "The road begins at Wo der Atem gefror."
+  "storyDe": "Der Weg beginnt bei Firnriss.",
+  "storyEn": "The road begins at Firnriss."
  },
  {
   "id": "L05s07",
   "league": 5,
-  "place": "Eisnadel",
+  "place": "Der Fürst im Halbschatten",
   "col": 4,
   "row": 3,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3518,16 +3806,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Eisnadel.",
-  "storyEn": "A side path branches toward Eisnadel."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Fürst im Halbschatten.",
+  "storyEn": "A side path branches toward Der Fürst im Halbschatten."
  },
  {
   "id": "L05s08",
   "league": 5,
-  "place": "Kluftmesse",
+  "place": "Jägersitz",
   "col": 2,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3538,16 +3828,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Der Weg beginnt bei Kluftmesse.",
-  "storyEn": "The road begins at Kluftmesse."
+  "storyDe": "Der Weg beginnt bei Jägersitz.",
+  "storyEn": "The road begins at Jägersitz."
  },
  {
   "id": "L05s09",
   "league": 5,
-  "place": "Nachtwand",
+  "place": "Die Wolfsspur",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3557,16 +3849,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Der Weg beginnt bei Nachtwand.",
-  "storyEn": "The road begins at Nachtwand."
+  "storyDe": "Der Weg beginnt bei Die Wolfsspur.",
+  "storyEn": "The road begins at Die Wolfsspur."
  },
  {
   "id": "L05s10",
   "league": 5,
-  "place": "Raureifgitter",
+  "place": "Wo der Atem gefror",
   "col": 2,
   "row": 4,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3576,16 +3870,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Der Pfad führt weiter über Raureifgitter.",
-  "storyEn": "The path leads on across Raureifgitter."
+  "storyDe": "Der Pfad führt weiter über Wo der Atem gefror.",
+  "storyEn": "The path leads on across Wo der Atem gefror."
  },
  {
   "id": "L05s11",
   "league": 5,
-  "place": "Blaue Wand",
+  "place": "Jägersteig",
   "col": 4,
   "row": 4,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3595,16 +3890,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Abseits des Weges liegt Blaue Wand.",
-  "storyEn": "Off the road lies Blaue Wand."
+  "storyDe": "Abseits des Weges liegt Jägersteig.",
+  "storyEn": "Off the road lies Jägersteig."
  },
  {
   "id": "L05s12",
   "league": 5,
-  "place": "Wächtenwall",
+  "place": "Das Erfrorene Tor",
   "col": 3,
   "row": 4,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3614,16 +3910,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein stiller Umweg führt zu Wächtenwall.",
-  "storyEn": "A quiet detour leads to Wächtenwall."
+  "storyDe": "Ein stiller Umweg führt zu Das Erfrorene Tor.",
+  "storyEn": "A quiet detour leads to Das Erfrorene Tor."
  },
  {
   "id": "L05s13",
   "league": 5,
-  "place": "Eisburg",
+  "place": "Rast der Erschöpften",
   "col": 4,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3634,16 +3931,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Eisburg.",
-  "storyEn": "A side path branches toward Eisburg."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Rast der Erschöpften.",
+  "storyEn": "A side path branches toward Rast der Erschöpften."
  },
  {
   "id": "L05s14",
   "league": 5,
-  "place": "Schneelinde",
+  "place": "Schneegrenze",
   "col": 2,
   "row": 4,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3653,16 +3951,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 76
   },
-  "storyDe": "Abseits des Weges liegt Schneelinde.",
-  "storyEn": "Off the road lies Schneelinde."
+  "storyDe": "Abseits des Weges liegt Schneegrenze.",
+  "storyEn": "Off the road lies Schneegrenze."
  },
  {
   "id": "L05s15",
   "league": 5,
-  "place": "Frostthron",
+  "place": "Vereiste Klause",
   "col": 3,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3672,16 +3971,23 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 76
   },
-  "storyDe": "Ein stiller Umweg führt zu Frostthron.",
-  "storyEn": "A quiet detour leads to Frostthron."
+  "storyDe": "Ein stiller Umweg führt zu Vereiste Klause.",
+  "storyEn": "A quiet detour leads to Vereiste Klause.",
+  "gate": {
+   "gold": 65
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L05s16",
   "league": 5,
-  "place": "Der Zugefrorene Riegel",
+  "place": "Eisnadel",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -3691,8 +3997,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Der Pfad führt weiter über Der Zugefrorene Riegel.",
-  "storyEn": "The path leads on across Der Zugefrorene Riegel.",
+  "storyDe": "Der Pfad führt weiter über Eisnadel.",
+  "storyEn": "The path leads on across Eisnadel.",
   "boss": {
    "pure": "b22",
    "rotation": [
@@ -3705,10 +4011,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L05s17",
   "league": 5,
-  "place": "Fährtenfeld",
+  "place": "Eisbucht",
   "col": 4,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3718,16 +4025,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Abseits des Weges liegt Fährtenfeld.",
-  "storyEn": "Off the road lies Fährtenfeld."
+  "storyDe": "Abseits des Weges liegt Eisbucht.",
+  "storyEn": "Off the road lies Eisbucht."
  },
  {
   "id": "L05s18",
   "league": 5,
-  "place": "Nordlichtkanzel",
+  "place": "Kluftmesse",
   "col": 3,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3738,16 +4047,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der Pfad führt weiter über Nordlichtkanzel.",
-  "storyEn": "The path leads on across Nordlichtkanzel."
+  "storyDe": "Der Pfad führt weiter über Kluftmesse.",
+  "storyEn": "The path leads on across Kluftmesse."
  },
  {
   "id": "L05s19",
   "league": 5,
-  "place": "Halle der stillen Kälte",
+  "place": "Splitterbrück",
   "col": 5,
   "row": 5,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3756,16 +4066,17 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 80
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Halle der stillen Kälte.",
-  "storyEn": "A side path branches toward Halle der stillen Kälte."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Splitterbrück.",
+  "storyEn": "A side path branches toward Splitterbrück."
  },
  {
   "id": "L05s20",
   "league": 5,
-  "place": "Taustelle",
+  "place": "Frostbeulen",
   "col": 2,
   "row": 5,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3776,16 +4087,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Abseits des Weges liegt Taustelle.",
-  "storyEn": "Off the road lies Taustelle."
+  "storyDe": "Abseits des Weges liegt Frostbeulen.",
+  "storyEn": "Off the road lies Frostbeulen."
  },
  {
   "id": "L05s21",
   "league": 5,
-  "place": "Gipfelruh",
+  "place": "Gefrorene Träne",
   "col": 2,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3794,16 +4106,18 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 80
   },
-  "storyDe": "Ein stiller Umweg führt zu Gipfelruh.",
-  "storyEn": "A quiet detour leads to Gipfelruh."
+  "storyDe": "Ein stiller Umweg führt zu Gefrorene Träne.",
+  "storyEn": "A quiet detour leads to Gefrorene Träne."
  },
  {
   "id": "L05s22",
   "league": 5,
-  "place": "Verwaiste Hütte",
+  "place": "Blaue Wand",
   "col": 4,
   "row": 5,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3813,16 +4127,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der Pfad führt weiter über Verwaiste Hütte.",
-  "storyEn": "The path leads on across Verwaiste Hütte."
+  "storyDe": "Der Pfad führt weiter über Blaue Wand.",
+  "storyEn": "The path leads on across Blaue Wand."
  },
  {
   "id": "L05s23",
   "league": 5,
-  "place": "Lawinenhang",
+  "place": "Raureifgitter",
   "col": 3,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3832,16 +4148,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der Pfad führt weiter über Lawinenhang.",
-  "storyEn": "The path leads on across Lawinenhang."
+  "storyDe": "Der Pfad führt weiter über Raureifgitter.",
+  "storyEn": "The path leads on across Raureifgitter."
  },
  {
   "id": "L05s24",
   "league": 5,
-  "place": "Barfußspur",
+  "place": "Nachtwand",
   "col": 3,
   "row": 5,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3851,16 +4169,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der Pfad führt weiter über Barfußspur.",
-  "storyEn": "The path leads on across Barfußspur."
+  "storyDe": "Der Pfad führt weiter über Nachtwand.",
+  "storyEn": "The path leads on across Nachtwand."
  },
  {
   "id": "L05s25",
   "league": 5,
-  "place": "Königsgrat",
+  "place": "Eiskahn",
   "col": 2,
   "row": 6,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3870,16 +4189,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Königsgrat.",
-  "storyEn": "A side path branches toward Königsgrat."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Eiskahn.",
+  "storyEn": "A side path branches toward Eiskahn."
  },
  {
   "id": "L05s26",
   "league": 5,
-  "place": "Grabesgeröll",
+  "place": "Wächtenwall",
   "col": 4,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3889,16 +4210,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Die Prüfung wartet bei Grabesgeröll.",
-  "storyEn": "The trial waits at Grabesgeröll."
+  "storyDe": "Die Prüfung wartet bei Wächtenwall.",
+  "storyEn": "The trial waits at Wächtenwall."
  },
  {
   "id": "L05s27",
   "league": 5,
-  "place": "Der Fürst im Halbschatten",
+  "place": "Eisburg",
   "col": 4,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3908,8 +4231,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Die Prüfung wartet bei Der Fürst im Halbschatten.",
-  "storyEn": "The trial waits at Der Fürst im Halbschatten.",
+  "storyDe": "Die Prüfung wartet bei Eisburg.",
+  "storyEn": "The trial waits at Eisburg.",
   "boss": {
    "piece": "guardian",
    "wins": 1
@@ -3919,10 +4242,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L05s28",
   "league": 5,
-  "place": "Jägersteig",
+  "place": "Knirschsteg",
   "col": 2,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3932,16 +4256,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Jägersteig.",
-  "storyEn": "A side path branches toward Jägersteig."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Knirschsteg.",
+  "storyEn": "A side path branches toward Knirschsteg."
  },
  {
   "id": "L05s29",
   "league": 5,
-  "place": "Das Erfrorene Tor",
+  "place": "Schneelinde",
   "col": 4,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3951,16 +4277,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Die Prüfung wartet bei Das Erfrorene Tor.",
-  "storyEn": "The trial waits at Das Erfrorene Tor."
+  "storyDe": "Die Prüfung wartet bei Schneelinde.",
+  "storyEn": "The trial waits at Schneelinde."
  },
  {
   "id": "L05s30",
   "league": 5,
-  "place": "Rast der Erschöpften",
+  "place": "Fallenstellerlager",
   "col": 1,
   "row": 6,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -3969,16 +4296,18 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 80
   },
-  "storyDe": "Ein stiller Umweg führt zu Rast der Erschöpften.",
-  "storyEn": "A quiet detour leads to Rast der Erschöpften."
+  "storyDe": "Ein stiller Umweg führt zu Fallenstellerlager.",
+  "storyEn": "A quiet detour leads to Fallenstellerlager."
  },
  {
   "id": "L05s31",
   "league": 5,
-  "place": "Schneegrenze",
+  "place": "Frostthron",
   "col": 3,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -3989,16 +4318,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Die Prüfung wartet bei Schneegrenze.",
-  "storyEn": "The trial waits at Schneegrenze."
+  "storyDe": "Die Prüfung wartet bei Frostthron.",
+  "storyEn": "The trial waits at Frostthron."
  },
  {
   "id": "L05s32",
   "league": 5,
-  "place": "Vereiste Klause",
+  "place": "Nordlichtkanzel",
   "col": 4,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4008,16 +4339,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Der letzte Anstieg:  Vereiste Klause.",
-  "storyEn": "The final ascent:  Vereiste Klause."
+  "storyDe": "Der letzte Anstieg:  Nordlichtkanzel.",
+  "storyEn": "The final ascent:  Nordlichtkanzel."
  },
  {
   "id": "L05s33",
   "league": 5,
-  "place": "Eisbucht",
+  "place": "Der Zugefrorene Riegel",
   "col": 4,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -4027,16 +4360,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Die Prüfung wartet bei Eisbucht.",
-  "storyEn": "The trial waits at Eisbucht."
+  "storyDe": "Die Prüfung wartet bei Der Zugefrorene Riegel.",
+  "storyEn": "The trial waits at Der Zugefrorene Riegel."
  },
  {
   "id": "L05s34",
   "league": 5,
-  "place": "Splitterbrück",
+  "place": "Fährtenfeld",
   "col": 4,
   "row": 7,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4046,16 +4381,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Die Prüfung wartet bei Splitterbrück.",
-  "storyEn": "The trial waits at Splitterbrück."
+  "storyDe": "Die Prüfung wartet bei Fährtenfeld.",
+  "storyEn": "The trial waits at Fährtenfeld."
  },
  {
   "id": "L05s35",
   "league": 5,
-  "place": "Frostbeulen",
+  "place": "Halle der stillen Kälte",
   "col": 5,
   "row": 7,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4065,16 +4402,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Der letzte Anstieg:  Frostbeulen.",
-  "storyEn": "The final ascent:  Frostbeulen."
+  "storyDe": "Der letzte Anstieg:  Halle der stillen Kälte.",
+  "storyEn": "The final ascent:  Halle der stillen Kälte."
  },
  {
   "id": "L05s36",
   "league": 5,
-  "place": "Gefrorene Träne",
+  "place": "Der Erstarrte Hain",
   "col": 3,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -4084,16 +4422,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 76
   },
-  "storyDe": "Ein stiller Umweg führt zu Gefrorene Träne.",
-  "storyEn": "A quiet detour leads to Gefrorene Träne."
+  "storyDe": "Ein stiller Umweg führt zu Der Erstarrte Hain.",
+  "storyEn": "A quiet detour leads to Der Erstarrte Hain."
  },
  {
   "id": "L05s37",
   "league": 5,
-  "place": "Eiskahn",
+  "place": "Steinrosen",
   "col": 3,
   "row": 8,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -4103,16 +4442,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Eiskahn.",
-  "storyEn": "A side path branches toward Eiskahn."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Steinrosen.",
+  "storyEn": "A side path branches toward Steinrosen."
  },
  {
   "id": "L05s38",
   "league": 5,
-  "place": "Knirschsteg",
+  "place": "Taustelle",
   "col": 5,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4123,16 +4464,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Der letzte Anstieg:  Knirschsteg.",
-  "storyEn": "The final ascent:  Knirschsteg."
+  "storyDe": "Der letzte Anstieg:  Taustelle.",
+  "storyEn": "The final ascent:  Taustelle."
  },
  {
   "id": "L05s39",
   "league": 5,
-  "place": "Fallenstellerlager",
+  "place": "Firnscharte",
   "col": 2,
   "row": 8,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -4141,16 +4483,17 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 47
   },
-  "storyDe": "Ein stiller Umweg führt zu Fallenstellerlager.",
-  "storyEn": "A quiet detour leads to Fallenstellerlager."
+  "storyDe": "Ein stiller Umweg führt zu Firnscharte.",
+  "storyEn": "A quiet detour leads to Firnscharte."
  },
  {
   "id": "L05s40",
   "league": 5,
-  "place": "Der Erstarrte Hain",
+  "place": "Frostglockenturm",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4160,16 +4503,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 76
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der Erstarrte Hain.",
-  "storyEn": "A side path branches toward Der Erstarrte Hain."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Frostglockenturm.",
+  "storyEn": "A side path branches toward Frostglockenturm."
  },
  {
   "id": "L05s41",
   "league": 5,
-  "place": "Steinrosen",
+  "place": "Gipfelruh",
   "col": 5,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4179,16 +4524,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Der letzte Anstieg:  Steinrosen.",
-  "storyEn": "The final ascent:  Steinrosen."
+  "storyDe": "Der letzte Anstieg:  Gipfelruh.",
+  "storyEn": "The final ascent:  Gipfelruh."
  },
  {
   "id": "L05s42",
   "league": 5,
-  "place": "Firnscharte",
+  "place": "Wächtenkamm",
   "col": 4,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4198,16 +4544,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein stiller Umweg führt zu Firnscharte.",
-  "storyEn": "A quiet detour leads to Firnscharte."
+  "storyDe": "Ein stiller Umweg führt zu Wächtenkamm.",
+  "storyEn": "A quiet detour leads to Wächtenkamm."
  },
  {
   "id": "L05s43",
   "league": 5,
-  "place": "Frostglockenturm",
+  "place": "Wolfsgrube",
   "col": 4,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4217,16 +4564,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Frostglockenturm.",
-  "storyEn": "A side path branches toward Frostglockenturm."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Wolfsgrube.",
+  "storyEn": "A side path branches toward Wolfsgrube."
  },
  {
   "id": "L05s44",
   "league": 5,
-  "place": "Wächtenkamm",
+  "place": "Verwaiste Hütte",
   "col": 5,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4236,16 +4585,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Der letzte Anstieg:  Wächtenkamm.",
-  "storyEn": "The final ascent:  Wächtenkamm."
+  "storyDe": "Der letzte Anstieg:  Verwaiste Hütte.",
+  "storyEn": "The final ascent:  Verwaiste Hütte."
  },
  {
   "id": "L05s45",
   "league": 5,
-  "place": "Wolfsgrube",
+  "place": "Rabenkanzel",
   "col": 3,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4254,16 +4604,17 @@ export const CAMPAIGN12 = [
    "xp": 84,
    "gold": 80
   },
-  "storyDe": "Ein stiller Umweg führt zu Wolfsgrube.",
-  "storyEn": "A quiet detour leads to Wolfsgrube."
+  "storyDe": "Ein stiller Umweg führt zu Rabenkanzel.",
+  "storyEn": "A quiet detour leads to Rabenkanzel."
  },
  {
   "id": "L05s46",
   "league": 5,
-  "place": "Rabenkanzel",
+  "place": "Quellen unterm Eis",
   "col": 4,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4273,16 +4624,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Rabenkanzel.",
-  "storyEn": "A side path branches toward Rabenkanzel."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Quellen unterm Eis.",
+  "storyEn": "A side path branches toward Quellen unterm Eis."
  },
  {
   "id": "L05s47",
   "league": 5,
-  "place": "Quellen unterm Eis",
+  "place": "Steinerner Schlaf",
   "col": 3,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4292,16 +4644,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Abseits des Weges liegt Quellen unterm Eis.",
-  "storyEn": "Off the road lies Quellen unterm Eis."
+  "storyDe": "Abseits des Weges liegt Steinerner Schlaf.",
+  "storyEn": "Off the road lies Steinerner Schlaf."
  },
  {
   "id": "L05s48",
   "league": 5,
-  "place": "Steinerner Schlaf",
+  "place": "Lawinenhang",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -4310,8 +4664,9 @@ export const CAMPAIGN12 = [
    "xp": 129,
    "gold": 40
   },
-  "storyDe": "Steinerner Schlaf: Hier wartet der Meister von Kapitel V.",
-  "storyEn": "Steinerner Schlaf: here waits the master of chapter V.",
+  "storyDe": "Lawinenhang: Hier wartet der Meister von Kapitel V.",
+  "storyEn": "Lawinenhang: here waits the master of chapter V.",
+  "final": true,
   "boss": {
    "pure": "b19"
   },
@@ -4324,6 +4679,8 @@ export const CAMPAIGN12 = [
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -4343,6 +4700,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 1,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -4363,6 +4722,8 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -4378,481 +4739,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L06s03",
   "league": 6,
-  "place": "Steinmetzsitz",
-  "col": 5,
-  "row": 2,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [],
-  "reward": {
-   "xp": 82,
-   "gold": 28
-  },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Steinmetzsitz.",
-  "storyEn": "A side path branches toward Steinmetzsitz."
- },
- {
-  "id": "L06s04",
-  "league": 6,
-  "place": "Geröllzunge",
-  "col": 1,
-  "row": 2,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s08"
-  ],
-  "reward": {
-   "xp": 82
-  },
-  "storyDe": "Abseits des Weges liegt Geröllzunge.",
-  "storyEn": "Off the road lies Geröllzunge."
- },
- {
-  "id": "L06s05",
-  "league": 6,
-  "place": "Der Gamssteig",
-  "col": 1,
-  "row": 2,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s07"
-  ],
-  "reward": {
-   "xp": 75
-  },
-  "storyDe": "Der Weg beginnt bei Der Gamssteig.",
-  "storyEn": "The road begins at Der Gamssteig."
- },
- {
-  "id": "L06s06",
-  "league": 6,
-  "place": "Wo der letzte Riegel fiel",
-  "col": 5,
-  "row": 3,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s09"
-  ],
-  "reward": {
-   "xp": 96
-  },
-  "storyDe": "Der Pfad führt weiter über Wo der letzte Riegel fiel.",
-  "storyEn": "The path leads on across Wo der letzte Riegel fiel."
- },
- {
-  "id": "L06s07",
-  "league": 6,
-  "place": "Kluftfeste",
-  "col": 1,
-  "row": 3,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s10"
-  ],
-  "reward": {
-   "xp": 78
-  },
-  "storyDe": "Der Weg beginnt bei Kluftfeste.",
-  "storyEn": "The road begins at Kluftfeste."
- },
- {
-  "id": "L06s08",
-  "league": 6,
-  "place": "Adlermesse",
-  "col": 1,
-  "row": 3,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s11"
-  ],
-  "reward": {
-   "xp": 90
-  },
-  "storyDe": "Ein stiller Umweg führt zu Adlermesse.",
-  "storyEn": "A quiet detour leads to Adlermesse."
- },
- {
-  "id": "L06s09",
-  "league": 6,
-  "place": "Wolkenstube",
-  "col": 5,
-  "row": 3,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s03",
-   "L06s12"
-  ],
-  "reward": {
-   "xp": 102
-  },
-  "storyDe": "Der Pfad führt weiter über Wolkenstube.",
-  "storyEn": "The path leads on across Wolkenstube."
- },
- {
-  "id": "L06s10",
-  "league": 6,
-  "place": "Splitterkar",
-  "col": 2,
-  "row": 4,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s14"
-  ],
-  "reward": {
-   "xp": 81
-  },
-  "storyDe": "Der Weg beginnt bei Splitterkar.",
-  "storyEn": "The road begins at Splitterkar."
- },
- {
-  "id": "L06s11",
-  "league": 6,
-  "place": "Dohlenflug",
-  "col": 1,
-  "row": 4,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s17"
-  ],
-  "reward": {
-   "xp": 90
-  },
-  "storyDe": "Ein stiller Umweg führt zu Dohlenflug.",
-  "storyEn": "A quiet detour leads to Dohlenflug."
- },
- {
-  "id": "L06s12",
-  "league": 6,
-  "place": "Firnhang",
-  "col": 5,
-  "row": 4,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s18"
-  ],
-  "reward": {
-   "xp": 108
-  },
-  "storyDe": "Die Prüfung wartet bei Firnhang.",
-  "storyEn": "The trial waits at Firnhang.",
-  "boss": {
-   "piece": "assassin",
-   "wins": 1
-  },
-  "tier": 2
- },
- {
-  "id": "L06s13",
-  "league": 6,
-  "place": "Hochwacht",
-  "col": 3,
-  "row": 4,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s15",
-   "L06s06"
-  ],
-  "reward": {
-   "xp": 90
-  },
-  "storyDe": "Der Pfad führt weiter über Hochwacht.",
-  "storyEn": "The path leads on across Hochwacht.",
-  "boss": {
-   "pure": "b21",
-   "rotation": [
-    "b21",
-    "b07"
-   ]
-  },
-  "tier": 2
- },
- {
-  "id": "L06s14",
-  "league": 6,
-  "place": "Zwergkiefer",
-  "col": 2,
-  "row": 4,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s16"
-  ],
-  "reward": {
-   "xp": 84
-  },
-  "storyDe": "Der Weg beginnt bei Zwergkiefer.",
-  "storyEn": "The road begins at Zwergkiefer."
- },
- {
-  "id": "L06s15",
-  "league": 6,
-  "place": "Gipfelkron",
-  "col": 3,
-  "row": 4,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s19"
-  ],
-  "reward": {
-   "xp": 93
-  },
-  "storyDe": "Der Pfad führt weiter über Gipfelkron.",
-  "storyEn": "The path leads on across Gipfelkron."
- },
- {
-  "id": "L06s16",
-  "league": 6,
-  "place": "Das Verlorene Schloss",
-  "col": 2,
-  "row": 5,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "easy",
-  "bump": 1,
-  "next": [
-   "L06s13",
-   "L06s22"
-  ],
-  "reward": {
-   "xp": 87
-  },
-  "storyDe": "Der Pfad führt weiter über Das Verlorene Schloss.",
-  "storyEn": "The path leads on across Das Verlorene Schloss."
- },
- {
-  "id": "L06s17",
-  "league": 6,
-  "place": "Schutthalde",
-  "col": 1,
-  "row": 5,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s20"
-  ],
-  "reward": {
-   "xp": 90
-  },
-  "storyDe": "Ein stiller Umweg führt zu Schutthalde.",
-  "storyEn": "A quiet detour leads to Schutthalde."
- },
- {
-  "id": "L06s18",
-  "league": 6,
-  "place": "Adlerkanzel",
-  "col": 5,
-  "row": 5,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s21"
-  ],
-  "reward": {
-   "xp": 114
-  },
-  "storyDe": "Die Prüfung wartet bei Adlerkanzel.",
-  "storyEn": "The trial waits at Adlerkanzel."
- },
- {
-  "id": "L06s19",
-  "league": 6,
-  "place": "Halle der leeren Regale",
-  "col": 3,
-  "row": 5,
-  "map": "skirmish",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s23"
-  ],
-  "reward": {
-   "xp": 99
-  },
-  "storyDe": "Der Pfad führt weiter über Halle der leeren Regale.",
-  "storyEn": "The path leads on across Halle der leeren Regale."
- },
- {
-  "id": "L06s20",
-  "league": 6,
-  "place": "Schlüsselbund",
-  "col": 1,
-  "row": 5,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [],
-  "reward": {
-   "xp": 90,
-   "gold": 88
-  },
-  "storyDe": "Ein stiller Umweg führt zu Schlüsselbund.",
-  "storyEn": "A quiet detour leads to Schlüsselbund."
- },
- {
-  "id": "L06s21",
-  "league": 6,
-  "place": "Sieben Riegel",
-  "col": 5,
-  "row": 5,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s26"
-  ],
-  "reward": {
-   "xp": 117
-  },
-  "storyDe": "Die Prüfung wartet bei Sieben Riegel.",
-  "storyEn": "The trial waits at Sieben Riegel."
- },
- {
-  "id": "L06s22",
-  "league": 6,
-  "place": "Verfallene Klause",
-  "col": 2,
-  "row": 5,
-  "map": "courtyard",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s24"
-  ],
-  "reward": {
-   "xp": 82
-  },
-  "storyDe": "Abseits des Weges liegt Verfallene Klause.",
-  "storyEn": "Off the road lies Verfallene Klause."
- },
- {
-  "id": "L06s23",
-  "league": 6,
-  "place": "Donnerkar",
-  "col": 3,
-  "row": 5,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s25"
-  ],
-  "reward": {
-   "xp": 105
-  },
-  "storyDe": "Die Prüfung wartet bei Donnerkar.",
-  "storyEn": "The trial waits at Donnerkar."
- },
- {
-  "id": "L06s24",
-  "league": 6,
-  "place": "Sternenlager",
-  "col": 2,
-  "row": 6,
-  "map": "arena",
-  "rules": "hp",
-  "difficulty": "hard",
-  "bump": 1,
-  "next": [
-   "L06s30"
-  ],
-  "reward": {
-   "xp": 90
-  },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Sternenlager.",
-  "storyEn": "A side path branches toward Sternenlager."
- },
- {
-  "id": "L06s25",
-  "league": 6,
-  "place": "Königsjoch",
-  "col": 3,
-  "row": 6,
-  "map": "classic",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s29",
-   "L06s21"
-  ],
-  "reward": {
-   "xp": 111
-  },
-  "storyDe": "Die Prüfung wartet bei Königsjoch.",
-  "storyEn": "The trial waits at Königsjoch."
- },
- {
-  "id": "L06s26",
-  "league": 6,
-  "place": "Grauer Atem",
-  "col": 5,
-  "row": 6,
-  "map": "gauntlet",
-  "rules": "hp",
-  "difficulty": "normal",
-  "bump": 1,
-  "next": [
-   "L06s28"
-  ],
-  "reward": {
-   "xp": 120
-  },
-  "storyDe": "Die Prüfung wartet bei Grauer Atem.",
-  "storyEn": "The trial waits at Grauer Atem."
- },
- {
-  "id": "L06s27",
-  "league": 6,
   "place": "Der Hüter ohne Tür",
   "col": 5,
-  "row": 6,
-  "map": "courtyard",
+  "row": 2,
+  "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -4865,12 +4756,530 @@ export const CAMPAIGN12 = [
   "storyEn": "A side path branches toward Der Hüter ohne Tür."
  },
  {
-  "id": "L06s28",
+  "id": "L06s04",
   "league": 6,
   "place": "Seilpfad",
+  "col": 1,
+  "row": 2,
+  "map": "arena",
+  "chapter": 1,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s08"
+  ],
+  "reward": {
+   "xp": 82
+  },
+  "storyDe": "Abseits des Weges liegt Seilpfad.",
+  "storyEn": "Off the road lies Seilpfad."
+ },
+ {
+  "id": "L06s05",
+  "league": 6,
+  "place": "Steinmetzsitz",
+  "col": 1,
+  "row": 2,
+  "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s07"
+  ],
+  "reward": {
+   "xp": 75
+  },
+  "storyDe": "Der Weg beginnt bei Steinmetzsitz.",
+  "storyEn": "The road begins at Steinmetzsitz."
+ },
+ {
+  "id": "L06s06",
+  "league": 6,
+  "place": "Splitterkar",
+  "col": 5,
+  "row": 3,
+  "map": "classic",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s09"
+  ],
+  "reward": {
+   "xp": 96
+  },
+  "storyDe": "Der Pfad führt weiter über Splitterkar.",
+  "storyEn": "The path leads on across Splitterkar."
+ },
+ {
+  "id": "L06s07",
+  "league": 6,
+  "place": "Geröllzunge",
+  "col": 1,
+  "row": 3,
+  "map": "arena",
+  "chapter": 1,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s10"
+  ],
+  "reward": {
+   "xp": 78
+  },
+  "storyDe": "Der Weg beginnt bei Geröllzunge.",
+  "storyEn": "The road begins at Geröllzunge."
+ },
+ {
+  "id": "L06s08",
+  "league": 6,
+  "place": "Das Verriegelte Tor",
+  "col": 1,
+  "row": 3,
+  "map": "gauntlet",
+  "chapter": 1,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s11"
+  ],
+  "reward": {
+   "xp": 90
+  },
+  "storyDe": "Ein stiller Umweg führt zu Das Verriegelte Tor.",
+  "storyEn": "A quiet detour leads to Das Verriegelte Tor."
+ },
+ {
+  "id": "L06s09",
+  "league": 6,
+  "place": "Firnhang",
+  "col": 5,
+  "row": 3,
+  "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s03",
+   "L06s12"
+  ],
+  "reward": {
+   "xp": 102
+  },
+  "storyDe": "Der Pfad führt weiter über Firnhang.",
+  "storyEn": "The path leads on across Firnhang."
+ },
+ {
+  "id": "L06s10",
+  "league": 6,
+  "place": "Der Gamssteig",
+  "col": 2,
+  "row": 4,
+  "map": "classic",
+  "chapter": 1,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s14"
+  ],
+  "reward": {
+   "xp": 81
+  },
+  "storyDe": "Der Weg beginnt bei Der Gamssteig.",
+  "storyEn": "The road begins at Der Gamssteig."
+ },
+ {
+  "id": "L06s11",
+  "league": 6,
+  "place": "Rast am Abgrund",
+  "col": 1,
+  "row": 4,
+  "map": "skirmish",
+  "chapter": 1,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s17"
+  ],
+  "reward": {
+   "xp": 90
+  },
+  "storyDe": "Ein stiller Umweg führt zu Rast am Abgrund.",
+  "storyEn": "A quiet detour leads to Rast am Abgrund."
+ },
+ {
+  "id": "L06s12",
+  "league": 6,
+  "place": "Zwergkiefer",
+  "col": 5,
+  "row": 4,
+  "map": "arena",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s18"
+  ],
+  "reward": {
+   "xp": 108
+  },
+  "storyDe": "Die Prüfung wartet bei Zwergkiefer.",
+  "storyEn": "The trial waits at Zwergkiefer.",
+  "boss": {
+   "piece": "assassin",
+   "wins": 1
+  },
+  "tier": 2
+ },
+ {
+  "id": "L06s13",
+  "league": 6,
+  "place": "Adlermesse",
+  "col": 3,
+  "row": 4,
+  "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s15",
+   "L06s06"
+  ],
+  "reward": {
+   "xp": 90
+  },
+  "storyDe": "Der Pfad führt weiter über Adlermesse.",
+  "storyEn": "The path leads on across Adlermesse.",
+  "boss": {
+   "pure": "b21",
+   "rotation": [
+    "b21",
+    "b07"
+   ]
+  },
+  "tier": 2
+ },
+ {
+  "id": "L06s14",
+  "league": 6,
+  "place": "Wo der letzte Riegel fiel",
+  "col": 2,
+  "row": 4,
+  "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s16"
+  ],
+  "reward": {
+   "xp": 84
+  },
+  "storyDe": "Der Weg beginnt bei Wo der letzte Riegel fiel.",
+  "storyEn": "The road begins at Wo der letzte Riegel fiel."
+ },
+ {
+  "id": "L06s15",
+  "league": 6,
+  "place": "Wolkenstube",
+  "col": 3,
+  "row": 4,
+  "map": "arena",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s19"
+  ],
+  "reward": {
+   "xp": 93
+  },
+  "storyDe": "Der Pfad führt weiter über Wolkenstube.",
+  "storyEn": "The path leads on across Wolkenstube."
+ },
+ {
+  "id": "L06s16",
+  "league": 6,
+  "place": "Kluftfeste",
+  "col": 2,
+  "row": 5,
+  "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "easy",
+  "bump": 1,
+  "next": [
+   "L06s13",
+   "L06s22"
+  ],
+  "reward": {
+   "xp": 87
+  },
+  "storyDe": "Der Pfad führt weiter über Kluftfeste.",
+  "storyEn": "The path leads on across Kluftfeste."
+ },
+ {
+  "id": "L06s17",
+  "league": 6,
+  "place": "Grathelm",
+  "col": 1,
+  "row": 5,
+  "map": "courtyard",
+  "chapter": 1,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s20"
+  ],
+  "reward": {
+   "xp": 90
+  },
+  "storyDe": "Ein stiller Umweg führt zu Grathelm.",
+  "storyEn": "A quiet detour leads to Grathelm."
+ },
+ {
+  "id": "L06s18",
+  "league": 6,
+  "place": "Das Verlorene Schloss",
+  "col": 5,
+  "row": 5,
+  "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s21"
+  ],
+  "reward": {
+   "xp": 114
+  },
+  "storyDe": "Die Prüfung wartet bei Das Verlorene Schloss.",
+  "storyEn": "The trial waits at Das Verlorene Schloss."
+ },
+ {
+  "id": "L06s19",
+  "league": 6,
+  "place": "Dohlenflug",
+  "col": 3,
+  "row": 5,
+  "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s23"
+  ],
+  "reward": {
+   "xp": 99
+  },
+  "storyDe": "Der Pfad führt weiter über Dohlenflug.",
+  "storyEn": "The path leads on across Dohlenflug."
+ },
+ {
+  "id": "L06s20",
+  "league": 6,
+  "place": "Steinerne Stube",
+  "col": 1,
+  "row": 5,
+  "map": "classic",
+  "chapter": 1,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [],
+  "reward": {
+   "xp": 90,
+   "gold": 88
+  },
+  "storyDe": "Ein stiller Umweg führt zu Steinerne Stube.",
+  "storyEn": "A quiet detour leads to Steinerne Stube."
+ },
+ {
+  "id": "L06s21",
+  "league": 6,
+  "place": "Schutthalde",
+  "col": 5,
+  "row": 5,
+  "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s26"
+  ],
+  "reward": {
+   "xp": 117
+  },
+  "storyDe": "Die Prüfung wartet bei Schutthalde.",
+  "storyEn": "The trial waits at Schutthalde."
+ },
+ {
+  "id": "L06s22",
+  "league": 6,
+  "place": "Gletschermilch",
+  "col": 2,
+  "row": 5,
+  "map": "courtyard",
+  "chapter": 2,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s24"
+  ],
+  "reward": {
+   "xp": 82
+  },
+  "storyDe": "Abseits des Weges liegt Gletschermilch.",
+  "storyEn": "Off the road lies Gletschermilch.",
+  "gate": {
+   "gold": 75
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
+ },
+ {
+  "id": "L06s23",
+  "league": 6,
+  "place": "Hochwacht",
+  "col": 3,
+  "row": 5,
+  "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s25"
+  ],
+  "reward": {
+   "xp": 105
+  },
+  "storyDe": "Die Prüfung wartet bei Hochwacht.",
+  "storyEn": "The trial waits at Hochwacht."
+ },
+ {
+  "id": "L06s24",
+  "league": 6,
+  "place": "Hängender Weiler",
+  "col": 2,
+  "row": 6,
+  "map": "arena",
+  "chapter": 2,
+  "rules": "hp",
+  "difficulty": "hard",
+  "bump": 1,
+  "next": [
+   "L06s30"
+  ],
+  "reward": {
+   "xp": 90
+  },
+  "storyDe": "Ein Seitenpfad zweigt ab nach Hängender Weiler.",
+  "storyEn": "A side path branches toward Hängender Weiler."
+ },
+ {
+  "id": "L06s25",
+  "league": 6,
+  "place": "Gipfelkron",
+  "col": 3,
+  "row": 6,
+  "map": "classic",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s29",
+   "L06s21"
+  ],
+  "reward": {
+   "xp": 111
+  },
+  "storyDe": "Die Prüfung wartet bei Gipfelkron.",
+  "storyEn": "The trial waits at Gipfelkron."
+ },
+ {
+  "id": "L06s26",
+  "league": 6,
+  "place": "Adlerkanzel",
+  "col": 5,
+  "row": 6,
+  "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [
+   "L06s28"
+  ],
+  "reward": {
+   "xp": 120
+  },
+  "storyDe": "Die Prüfung wartet bei Adlerkanzel.",
+  "storyEn": "The trial waits at Adlerkanzel."
+ },
+ {
+  "id": "L06s27",
+  "league": 6,
+  "place": "Murmelloch",
+  "col": 5,
+  "row": 6,
+  "map": "courtyard",
+  "chapter": 4,
+  "rules": "hp",
+  "difficulty": "normal",
+  "bump": 1,
+  "next": [],
+  "reward": {
+   "xp": 82,
+   "gold": 28
+  },
+  "storyDe": "Ein Seitenpfad zweigt ab nach Murmelloch.",
+  "storyEn": "A side path branches toward Murmelloch."
+ },
+ {
+  "id": "L06s28",
+  "league": 6,
+  "place": "Halle der leeren Regale",
   "col": 5,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -4880,16 +5289,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Die Prüfung wartet bei Seilpfad.",
-  "storyEn": "The trial waits at Seilpfad."
+  "storyDe": "Die Prüfung wartet bei Halle der leeren Regale.",
+  "storyEn": "The trial waits at Halle der leeren Regale."
  },
  {
   "id": "L06s29",
   "league": 6,
-  "place": "Das Verriegelte Tor",
+  "place": "Kristallader",
   "col": 3,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -4899,16 +5309,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 82
   },
-  "storyDe": "Ein stiller Umweg führt zu Das Verriegelte Tor.",
-  "storyEn": "A quiet detour leads to Das Verriegelte Tor."
+  "storyDe": "Ein stiller Umweg führt zu Kristallader.",
+  "storyEn": "A quiet detour leads to Kristallader."
  },
  {
   "id": "L06s30",
   "league": 6,
-  "place": "Rast am Abgrund",
+  "place": "Seilwinde",
   "col": 2,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -4918,16 +5329,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Rast am Abgrund.",
-  "storyEn": "A side path branches toward Rast am Abgrund."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Seilwinde.",
+  "storyEn": "A side path branches toward Seilwinde."
  },
  {
   "id": "L06s31",
   "league": 6,
-  "place": "Grathelm",
+  "place": "Schlüsselbund",
   "col": 5,
   "row": 7,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -4938,16 +5351,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Der letzte Anstieg:  Grathelm.",
-  "storyEn": "The final ascent:  Grathelm."
+  "storyDe": "Der letzte Anstieg:  Schlüsselbund.",
+  "storyEn": "The final ascent:  Schlüsselbund."
  },
  {
   "id": "L06s32",
   "league": 6,
-  "place": "Steinerne Stube",
+  "place": "Schwindelsteg",
   "col": 3,
   "row": 7,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -4957,16 +5371,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein stiller Umweg führt zu Steinerne Stube.",
-  "storyEn": "A quiet detour leads to Steinerne Stube."
+  "storyDe": "Ein stiller Umweg führt zu Schwindelsteg.",
+  "storyEn": "A quiet detour leads to Schwindelsteg."
  },
  {
   "id": "L06s33",
   "league": 6,
-  "place": "Gletschermilch",
+  "place": "Bei den Steinmetzen",
   "col": 2,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -4976,16 +5391,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Gletschermilch.",
-  "storyEn": "A side path branches toward Gletschermilch."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Bei den Steinmetzen.",
+  "storyEn": "A side path branches toward Bei den Steinmetzen."
  },
  {
   "id": "L06s34",
   "league": 6,
-  "place": "Hängender Weiler",
+  "place": "Sieben Riegel",
   "col": 5,
   "row": 7,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -4996,16 +5413,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der letzte Anstieg:  Hängender Weiler.",
-  "storyEn": "The final ascent:  Hängender Weiler."
+  "storyDe": "Der letzte Anstieg:  Sieben Riegel.",
+  "storyEn": "The final ascent:  Sieben Riegel."
  },
  {
   "id": "L06s35",
   "league": 6,
-  "place": "Murmelloch",
+  "place": "Der Kahle Rücken",
   "col": 3,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5014,16 +5432,17 @@ export const CAMPAIGN12 = [
    "xp": 90,
    "gold": 52
   },
-  "storyDe": "Ein stiller Umweg führt zu Murmelloch.",
-  "storyEn": "A quiet detour leads to Murmelloch."
+  "storyDe": "Ein stiller Umweg führt zu Der Kahle Rücken.",
+  "storyEn": "A quiet detour leads to Der Kahle Rücken."
  },
  {
   "id": "L06s36",
   "league": 6,
-  "place": "Kristallader",
+  "place": "Flechtenteppich",
   "col": 2,
   "row": 7,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5033,16 +5452,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Kristallader.",
-  "storyEn": "A side path branches toward Kristallader."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Flechtenteppich.",
+  "storyEn": "A side path branches toward Flechtenteppich."
  },
  {
   "id": "L06s37",
   "league": 6,
-  "place": "Seilwinde",
+  "place": "Klufttreppe",
   "col": 5,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5052,16 +5472,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 82
   },
-  "storyDe": "Abseits des Weges liegt Seilwinde.",
-  "storyEn": "Off the road lies Seilwinde."
+  "storyDe": "Abseits des Weges liegt Klufttreppe.",
+  "storyEn": "Off the road lies Klufttreppe."
  },
  {
   "id": "L06s38",
   "league": 6,
-  "place": "Schwindelsteg",
+  "place": "Verfallene Klause",
   "col": 5,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5071,16 +5493,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Der letzte Anstieg:  Schwindelsteg.",
-  "storyEn": "The final ascent:  Schwindelsteg."
+  "storyDe": "Der letzte Anstieg:  Verfallene Klause.",
+  "storyEn": "The final ascent:  Verfallene Klause."
  },
  {
   "id": "L06s39",
   "league": 6,
-  "place": "Bei den Steinmetzen",
+  "place": "Schlüsselzinne",
   "col": 2,
   "row": 8,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5090,16 +5513,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Bei den Steinmetzen.",
-  "storyEn": "A side path branches toward Bei den Steinmetzen."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Schlüsselzinne.",
+  "storyEn": "A side path branches toward Schlüsselzinne."
  },
  {
   "id": "L06s40",
   "league": 6,
-  "place": "Der Kahle Rücken",
+  "place": "Nebelmeerblick",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5109,16 +5533,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Abseits des Weges liegt Der Kahle Rücken.",
-  "storyEn": "Off the road lies Der Kahle Rücken."
+  "storyDe": "Abseits des Weges liegt Nebelmeerblick.",
+  "storyEn": "Off the road lies Nebelmeerblick."
  },
  {
   "id": "L06s41",
   "league": 6,
-  "place": "Flechtenteppich",
+  "place": "Schieferwiege",
   "col": 4,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5128,16 +5553,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein stiller Umweg führt zu Flechtenteppich.",
-  "storyEn": "A quiet detour leads to Flechtenteppich."
+  "storyDe": "Ein stiller Umweg führt zu Schieferwiege.",
+  "storyEn": "A quiet detour leads to Schieferwiege."
  },
  {
   "id": "L06s42",
   "league": 6,
-  "place": "Klufttreppe",
+  "place": "Steinbockstand",
   "col": 4,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5147,16 +5573,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Klufttreppe.",
-  "storyEn": "A side path branches toward Klufttreppe."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Steinbockstand.",
+  "storyEn": "A side path branches toward Steinbockstand."
  },
  {
   "id": "L06s43",
   "league": 6,
-  "place": "Schlüsselzinne",
+  "place": "Donnerkar",
   "col": 5,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5166,16 +5594,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 135
   },
-  "storyDe": "Der letzte Anstieg:  Schlüsselzinne.",
-  "storyEn": "The final ascent:  Schlüsselzinne."
+  "storyDe": "Der letzte Anstieg:  Donnerkar.",
+  "storyEn": "The final ascent:  Donnerkar."
  },
  {
   "id": "L06s44",
   "league": 6,
-  "place": "Nebelmeerblick",
+  "place": "Tropfstein",
   "col": 3,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5185,16 +5614,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein stiller Umweg führt zu Nebelmeerblick.",
-  "storyEn": "A quiet detour leads to Nebelmeerblick."
+  "storyDe": "Ein stiller Umweg führt zu Tropfstein.",
+  "storyEn": "A quiet detour leads to Tropfstein."
  },
  {
   "id": "L06s45",
   "league": 6,
-  "place": "Schieferwiege",
+  "place": "Ödgrat",
   "col": 1,
   "row": 9,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5204,16 +5634,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Schieferwiege.",
-  "storyEn": "A side path branches toward Schieferwiege."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Ödgrat.",
+  "storyEn": "A side path branches toward Ödgrat."
  },
  {
   "id": "L06s46",
   "league": 6,
-  "place": "Steinbockstand",
+  "place": "Sternenlager",
   "col": 5,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5223,16 +5655,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 138
   },
-  "storyDe": "Der letzte Anstieg:  Steinbockstand.",
-  "storyEn": "The final ascent:  Steinbockstand."
+  "storyDe": "Der letzte Anstieg:  Sternenlager.",
+  "storyEn": "The final ascent:  Sternenlager."
  },
  {
   "id": "L06s47",
   "league": 6,
-  "place": "Tropfstein",
+  "place": "Echostille",
   "col": 3,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5241,16 +5674,17 @@ export const CAMPAIGN12 = [
    "xp": 90,
    "gold": 88
   },
-  "storyDe": "Ein stiller Umweg führt zu Tropfstein.",
-  "storyEn": "A quiet detour leads to Tropfstein."
+  "storyDe": "Ein stiller Umweg führt zu Echostille.",
+  "storyEn": "A quiet detour leads to Echostille."
  },
  {
   "id": "L06s48",
   "league": 6,
-  "place": "Ödgrat",
+  "place": "Zwölf Türen",
   "col": 1,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5258,8 +5692,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Ödgrat.",
-  "storyEn": "A side path branches toward Ödgrat.",
+  "storyDe": "Ein Seitenpfad zweigt ab nach Zwölf Türen.",
+  "storyEn": "A side path branches toward Zwölf Türen.",
   "boss": {
    "piece": "captain",
    "wins": 1
@@ -5269,10 +5703,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L06s49",
   "league": 6,
-  "place": "Echostille",
+  "place": "Grauer Atem",
   "col": 5,
   "row": 10,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5281,8 +5717,9 @@ export const CAMPAIGN12 = [
    "xp": 144,
    "gold": 44
   },
-  "storyDe": "Echostille: Hier wartet der Meister von Kapitel VI.",
-  "storyEn": "Echostille: here waits the master of chapter VI.",
+  "storyDe": "Grauer Atem: Hier wartet der Meister von Kapitel VI.",
+  "storyEn": "Grauer Atem: here waits the master of chapter VI.",
+  "final": true,
   "boss": {
    "pure": "b20"
   },
@@ -5291,10 +5728,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L06s50",
   "league": 6,
-  "place": "Zwölf Türen",
+  "place": "Königsjoch",
   "col": 5,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5305,8 +5744,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 141
   },
-  "storyDe": "Der letzte Anstieg:  Zwölf Türen.",
-  "storyEn": "The final ascent:  Zwölf Türen."
+  "storyDe": "Der letzte Anstieg:  Königsjoch.",
+  "storyEn": "The final ascent:  Königsjoch."
  },
  {
   "id": "L06s51",
@@ -5315,6 +5754,7 @@ export const CAMPAIGN12 = [
   "col": 5,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5329,10 +5769,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L07s00",
   "league": 7,
-  "place": "Erster Riss",
+  "place": "Weites Rund",
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5342,16 +5784,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 72
   },
-  "storyDe": "Der Weg beginnt bei Erster Riss.",
-  "storyEn": "The road begins at Erster Riss."
+  "storyDe": "Der Weg beginnt bei Weites Rund.",
+  "storyEn": "The road begins at Weites Rund."
  },
  {
   "id": "L07s01",
   "league": 7,
-  "place": "Staubglocke",
+  "place": "Murmeltierstadt",
   "col": 3,
   "row": 1,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5360,16 +5803,18 @@ export const CAMPAIGN12 = [
    "xp": 96,
    "gold": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Staubglocke.",
-  "storyEn": "A quiet detour leads to Staubglocke."
+  "storyDe": "Ein stiller Umweg führt zu Murmeltierstadt.",
+  "storyEn": "A quiet detour leads to Murmeltierstadt."
  },
  {
   "id": "L07s02",
   "league": 7,
-  "place": "Wundaltar",
+  "place": "Hufdonner",
   "col": 1,
   "row": 1,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5380,16 +5825,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 75
   },
-  "storyDe": "Der Weg beginnt bei Wundaltar.",
-  "storyEn": "The road begins at Wundaltar."
+  "storyDe": "Der Weg beginnt bei Hufdonner.",
+  "storyEn": "The road begins at Hufdonner."
  },
  {
   "id": "L07s03",
   "league": 7,
-  "place": "Plünderersitz",
+  "place": "Grasklinge",
   "col": 5,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5398,16 +5844,17 @@ export const CAMPAIGN12 = [
    "xp": 96,
    "gold": 96
   },
-  "storyDe": "Abseits des Weges liegt Plünderersitz.",
-  "storyEn": "Off the road lies Plünderersitz."
+  "storyDe": "Abseits des Weges liegt Grasklinge.",
+  "storyEn": "Off the road lies Grasklinge."
  },
  {
   "id": "L07s04",
   "league": 7,
-  "place": "Splitterknochen",
+  "place": "Bohlenweg",
   "col": 3,
   "row": 2,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5417,16 +5864,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Splitterknochen.",
-  "storyEn": "A quiet detour leads to Splitterknochen."
+  "storyDe": "Ein stiller Umweg führt zu Bohlenweg.",
+  "storyEn": "A quiet detour leads to Bohlenweg."
  },
  {
   "id": "L07s05",
   "league": 7,
-  "place": "Der Galgenpfad",
+  "place": "Jurtenring",
   "col": 1,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5436,16 +5885,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Der Weg beginnt bei Der Galgenpfad.",
-  "storyEn": "The road begins at Der Galgenpfad."
+  "storyDe": "Der Weg beginnt bei Jurtenring.",
+  "storyEn": "The road begins at Jurtenring."
  },
  {
   "id": "L07s06",
   "league": 7,
-  "place": "Wo die Erde trank",
+  "place": "Bei den Pferdehirten",
   "col": 3,
   "row": 2,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5455,16 +5905,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Wo die Erde trank.",
-  "storyEn": "Off the road lies Wo die Erde trank."
+  "storyDe": "Abseits des Weges liegt Bei den Pferdehirten.",
+  "storyEn": "Off the road lies Bei den Pferdehirten."
  },
  {
   "id": "L07s07",
   "league": 7,
-  "place": "Dornenkelch",
+  "place": "Der Wildwechsel",
   "col": 2,
   "row": 3,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5474,16 +5926,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der Weg beginnt bei Dornenkelch.",
-  "storyEn": "The road begins at Dornenkelch."
+  "storyDe": "Der Weg beginnt bei Der Wildwechsel.",
+  "storyEn": "The road begins at Der Wildwechsel."
  },
  {
   "id": "L07s08",
   "league": 7,
-  "place": "Kelchmesse",
+  "place": "Der Wispernde Halm",
   "col": 5,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5493,16 +5946,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Kelchmesse.",
-  "storyEn": "A side path branches toward Kelchmesse."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Wispernde Halm.",
+  "storyEn": "A side path branches toward Der Wispernde Halm."
  },
  {
   "id": "L07s09",
   "league": 7,
-  "place": "Fahles Land",
+  "place": "Reiteraltar",
   "col": 1,
   "row": 3,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5512,16 +5967,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Der Weg beginnt bei Fahles Land.",
-  "storyEn": "The road begins at Fahles Land."
+  "storyDe": "Der Weg beginnt bei Reiteraltar.",
+  "storyEn": "The road begins at Reiteraltar."
  },
  {
   "id": "L07s10",
   "league": 7,
-  "place": "Sprödes Bett",
+  "place": "Zeltasche",
   "col": 5,
   "row": 3,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5531,16 +5987,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Sprödes Bett.",
-  "storyEn": "A quiet detour leads to Sprödes Bett."
+  "storyDe": "Ein stiller Umweg führt zu Zeltasche.",
+  "storyEn": "A quiet detour leads to Zeltasche."
  },
  {
   "id": "L07s11",
   "league": 7,
-  "place": "Grauschleier",
+  "place": "Weidewende",
   "col": 4,
   "row": 3,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5550,16 +6007,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Grauschleier.",
-  "storyEn": "A side path branches toward Grauschleier."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Weidewende.",
+  "storyEn": "A side path branches toward Weidewende."
  },
  {
   "id": "L07s12",
   "league": 7,
-  "place": "Totes Geäst",
+  "place": "Grasmeer",
   "col": 2,
   "row": 4,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5569,16 +6028,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der Weg beginnt bei Totes Geäst.",
-  "storyEn": "The road begins at Totes Geäst."
+  "storyDe": "Der Weg beginnt bei Grasmeer.",
+  "storyEn": "The road begins at Grasmeer."
  },
  {
   "id": "L07s13",
   "league": 7,
-  "place": "Dornenfeste",
+  "place": "Windzinne",
   "col": 4,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5588,16 +6048,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Dornenfeste.",
-  "storyEn": "A quiet detour leads to Dornenfeste."
+  "storyDe": "Ein stiller Umweg führt zu Windzinne.",
+  "storyEn": "A quiet detour leads to Windzinne."
  },
  {
   "id": "L07s14",
   "league": 7,
-  "place": "Graudorn",
+  "place": "Zunderflur",
   "col": 1,
   "row": 4,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5607,16 +6069,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der Weg beginnt bei Graudorn.",
-  "storyEn": "The road begins at Graudorn."
+  "storyDe": "Der Weg beginnt bei Zunderflur.",
+  "storyEn": "The road begins at Zunderflur."
  },
  {
   "id": "L07s15",
   "league": 7,
-  "place": "Dornendiadem",
+  "place": "Trockene Tränke",
   "col": 4,
   "row": 4,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5627,16 +6090,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Dornendiadem.",
-  "storyEn": "Off the road lies Dornendiadem."
+  "storyDe": "Abseits des Weges liegt Trockene Tränke.",
+  "storyEn": "Off the road lies Trockene Tränke."
  },
  {
   "id": "L07s16",
   "league": 7,
-  "place": "Das Ausgeblutete Tor",
+  "place": "Freier Himmel",
   "col": 3,
   "row": 4,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5646,16 +6111,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der Pfad führt weiter über Das Ausgeblutete Tor.",
-  "storyEn": "The path leads on across Das Ausgeblutete Tor."
+  "storyDe": "Der Pfad führt weiter über Freier Himmel.",
+  "storyEn": "The path leads on across Freier Himmel."
  },
  {
   "id": "L07s17",
   "league": 7,
-  "place": "Rabenacker",
+  "place": "Wo die Lanze fällt",
   "col": 1,
   "row": 4,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5666,16 +6133,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der Weg beginnt bei Rabenacker.",
-  "storyEn": "The road begins at Rabenacker."
+  "storyDe": "Der Weg beginnt bei Wo die Lanze fällt.",
+  "storyEn": "The road begins at Wo die Lanze fällt."
  },
  {
   "id": "L07s18",
   "league": 7,
-  "place": "Kanzel der Wunde",
+  "place": "Wolfsfalle",
   "col": 4,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5685,16 +6153,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Kanzel der Wunde.",
-  "storyEn": "Off the road lies Kanzel der Wunde."
+  "storyDe": "Abseits des Weges liegt Wolfsfalle.",
+  "storyEn": "Off the road lies Wolfsfalle."
  },
  {
   "id": "L07s19",
   "league": 7,
-  "place": "Halle des vollen Kelchs",
+  "place": "Flirrende Luft",
   "col": 3,
   "row": 5,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5704,8 +6174,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Pfad führt weiter über Halle des vollen Kelchs.",
-  "storyEn": "The path leads on across Halle des vollen Kelchs.",
+  "storyDe": "Der Pfad führt weiter über Flirrende Luft.",
+  "storyEn": "The path leads on across Flirrende Luft.",
   "boss": {
    "pure": "b15",
    "rotation": [
@@ -5718,10 +6188,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L07s20",
   "league": 7,
-  "place": "Bittersalz",
+  "place": "Turniermesse",
   "col": 2,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5731,16 +6203,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der Weg beginnt bei Bittersalz.",
-  "storyEn": "The road begins at Bittersalz."
+  "storyDe": "Der Weg beginnt bei Turniermesse.",
+  "storyEn": "The road begins at Turniermesse."
  },
  {
   "id": "L07s21",
   "league": 7,
-  "place": "Galgenhöhe",
+  "place": "Geierschatten",
   "col": 1,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5750,16 +6223,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 88
   },
-  "storyDe": "Abseits des Weges liegt Galgenhöhe.",
-  "storyEn": "Off the road lies Galgenhöhe."
+  "storyDe": "Abseits des Weges liegt Geierschatten.",
+  "storyEn": "Off the road lies Geierschatten."
  },
  {
   "id": "L07s22",
   "league": 7,
-  "place": "Verlassene Kate",
+  "place": "Siegerquell",
   "col": 4,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5769,16 +6243,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Verlassene Kate.",
-  "storyEn": "A quiet detour leads to Verlassene Kate."
+  "storyDe": "Ein stiller Umweg führt zu Siegerquell.",
+  "storyEn": "A quiet detour leads to Siegerquell."
  },
  {
   "id": "L07s23",
   "league": 7,
-  "place": "Staubwalze",
+  "place": "Stutenmilch",
   "col": 2,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 1,
@@ -5788,16 +6264,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Pfad führt weiter über Staubwalze.",
-  "storyEn": "The path leads on across Staubwalze."
+  "storyDe": "Der Pfad führt weiter über Stutenmilch.",
+  "storyEn": "The path leads on across Stutenmilch."
  },
  {
   "id": "L07s24",
   "league": 7,
-  "place": "Letzter Schluck",
+  "place": "Brandschneise",
   "col": 1,
   "row": 6,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5807,16 +6284,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Letzter Schluck.",
-  "storyEn": "Off the road lies Letzter Schluck."
+  "storyDe": "Abseits des Weges liegt Brandschneise.",
+  "storyEn": "Off the road lies Brandschneise."
  },
  {
   "id": "L07s25",
   "league": 7,
-  "place": "Königsdurst",
+  "place": "Distelwind",
   "col": 4,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5826,16 +6304,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Königsdurst.",
-  "storyEn": "A quiet detour leads to Königsdurst."
+  "storyDe": "Ein stiller Umweg führt zu Distelwind.",
+  "storyEn": "A quiet detour leads to Distelwind."
  },
  {
   "id": "L07s26",
   "league": 7,
-  "place": "Zehrfeuer",
+  "place": "Sattelfeste",
   "col": 3,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5845,16 +6325,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Der Pfad führt weiter über Zehrfeuer.",
-  "storyEn": "The path leads on across Zehrfeuer."
+  "storyDe": "Der Pfad führt weiter über Sattelfeste.",
+  "storyEn": "The path leads on across Sattelfeste."
  },
  {
   "id": "L07s27",
   "league": 7,
-  "place": "Die Magd am Kelch",
+  "place": "Lied der Weite",
   "col": 1,
   "row": 7,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5864,16 +6345,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Die Magd am Kelch.",
-  "storyEn": "Off the road lies Die Magd am Kelch."
+  "storyDe": "Abseits des Weges liegt Lied der Weite.",
+  "storyEn": "Off the road lies Lied der Weite."
  },
  {
   "id": "L07s28",
   "league": 7,
-  "place": "Marterpfad",
+  "place": "Fahnenwind",
   "col": 2,
   "row": 7,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5883,16 +6366,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der Pfad führt weiter über Marterpfad.",
-  "storyEn": "The path leads on across Marterpfad."
+  "storyDe": "Der Pfad führt weiter über Fahnenwind.",
+  "storyEn": "The path leads on across Fahnenwind."
  },
  {
   "id": "L07s29",
   "league": 7,
-  "place": "Das Rostige Tor",
+  "place": "Weites Rund II",
   "col": 4,
   "row": 7,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5902,16 +6386,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Das Rostige Tor.",
-  "storyEn": "A side path branches toward Das Rostige Tor."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Weites Rund II.",
+  "storyEn": "A side path branches toward Weites Rund II."
  },
  {
   "id": "L07s30",
   "league": 7,
-  "place": "Rast der Verlorenen",
+  "place": "Hufdonner II",
   "col": 1,
   "row": 7,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5921,16 +6406,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Rast der Verlorenen.",
-  "storyEn": "Off the road lies Rast der Verlorenen."
+  "storyDe": "Abseits des Weges liegt Hufdonner II.",
+  "storyEn": "Off the road lies Hufdonner II."
  },
  {
   "id": "L07s31",
   "league": 7,
-  "place": "Aschepfand",
+  "place": "Steppenulme",
   "col": 3,
   "row": 7,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5940,16 +6427,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Der Pfad führt weiter über Aschepfand.",
-  "storyEn": "The path leads on across Aschepfand."
+  "storyDe": "Der Pfad führt weiter über Steppenulme.",
+  "storyEn": "The path leads on across Steppenulme."
  },
  {
   "id": "L07s32",
   "league": 7,
-  "place": "Wundklause",
+  "place": "Steppenkron",
   "col": 3,
   "row": 7,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -5959,16 +6448,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Der Pfad führt weiter über Wundklause.",
-  "storyEn": "The path leads on across Wundklause."
+  "storyDe": "Der Pfad führt weiter über Steppenkron.",
+  "storyEn": "The path leads on across Steppenkron."
  },
  {
   "id": "L07s33",
   "league": 7,
-  "place": "Lakensenke",
+  "place": "Reiteraltar II",
   "col": 5,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5978,16 +6468,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 88
   },
-  "storyDe": "Abseits des Weges liegt Lakensenke.",
-  "storyEn": "Off the road lies Lakensenke."
+  "storyDe": "Abseits des Weges liegt Reiteraltar II.",
+  "storyEn": "Off the road lies Reiteraltar II.",
+  "gate": {
+   "gold": 85
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L07s34",
   "league": 7,
-  "place": "Blutzoll",
+  "place": "Jurtenring II",
   "col": 1,
   "row": 8,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -5997,16 +6493,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Blutzoll.",
-  "storyEn": "A quiet detour leads to Blutzoll."
+  "storyDe": "Ein stiller Umweg führt zu Jurtenring II.",
+  "storyEn": "A quiet detour leads to Jurtenring II."
  },
  {
   "id": "L07s35",
   "league": 7,
-  "place": "Hohlzahn",
+  "place": "Bannergrund",
   "col": 4,
   "row": 8,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6016,16 +6514,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Der Pfad führt weiter über Hohlzahn.",
-  "storyEn": "The path leads on across Hohlzahn."
+  "storyDe": "Der Pfad führt weiter über Bannergrund.",
+  "storyEn": "The path leads on across Bannergrund."
  },
  {
   "id": "L07s36",
   "league": 7,
-  "place": "Geierwarte",
+  "place": "Verlassene Jurte",
   "col": 5,
   "row": 8,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6036,16 +6536,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 138
   },
-  "storyDe": "Die Prüfung wartet bei Geierwarte.",
-  "storyEn": "The trial waits at Geierwarte."
+  "storyDe": "Die Prüfung wartet bei Verlassene Jurte.",
+  "storyEn": "The trial waits at Verlassene Jurte."
  },
  {
   "id": "L07s37",
   "league": 7,
-  "place": "Knochenfloß",
+  "place": "Asras Brunnen",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6055,16 +6557,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Die Prüfung wartet bei Knochenfloß.",
-  "storyEn": "The trial waits at Knochenfloß."
+  "storyDe": "Die Prüfung wartet bei Asras Brunnen.",
+  "storyEn": "The trial waits at Asras Brunnen."
  },
  {
   "id": "L07s38",
   "league": 7,
-  "place": "Wackelsteg",
+  "place": "Der Ferne Riegel",
   "col": 3,
   "row": 8,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6072,16 +6576,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Der Pfad führt weiter über Wackelsteg.",
-  "storyEn": "The path leads on across Wackelsteg."
+  "storyDe": "Der Pfad führt weiter über Der Ferne Riegel.",
+  "storyEn": "The path leads on across Der Ferne Riegel."
  },
  {
   "id": "L07s39",
   "league": 7,
-  "place": "Krähenbankett",
+  "place": "Zunderflur II",
   "col": 1,
   "row": 8,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6091,16 +6596,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Abseits des Weges liegt Krähenbankett.",
-  "storyEn": "Off the road lies Krähenbankett."
+  "storyDe": "Abseits des Weges liegt Zunderflur II.",
+  "storyEn": "Off the road lies Zunderflur II."
  },
  {
   "id": "L07s40",
   "league": 7,
-  "place": "Der Verdorrte Hain",
+  "place": "Falkenkanzel",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6110,16 +6617,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Die Prüfung wartet bei Der Verdorrte Hain.",
-  "storyEn": "The trial waits at Der Verdorrte Hain."
+  "storyDe": "Die Prüfung wartet bei Falkenkanzel.",
+  "storyEn": "The trial waits at Falkenkanzel."
  },
  {
   "id": "L07s41",
   "league": 7,
-  "place": "Distelacker",
+  "place": "Halle des einen Gangs",
   "col": 4,
   "row": 8,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6129,8 +6638,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Die Prüfung wartet bei Distelacker.",
-  "storyEn": "The trial waits at Distelacker.",
+  "storyDe": "Die Prüfung wartet bei Halle des einen Gangs.",
+  "storyEn": "The trial waits at Halle des einen Gangs.",
   "boss": {
    "piece": "dragon",
    "wins": 2
@@ -6140,10 +6649,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L07s42",
   "league": 7,
-  "place": "Rinnsal",
+  "place": "Letzte Schranke",
   "col": 5,
   "row": 8,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6154,16 +6665,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 144
   },
-  "storyDe": "Die Prüfung wartet bei Rinnsal.",
-  "storyEn": "The trial waits at Rinnsal."
+  "storyDe": "Die Prüfung wartet bei Letzte Schranke.",
+  "storyEn": "The trial waits at Letzte Schranke."
  },
  {
   "id": "L07s43",
   "league": 7,
-  "place": "Der Schiefe Galgen",
+  "place": "Königsweide",
   "col": 5,
   "row": 9,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6173,16 +6686,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 147
   },
-  "storyDe": "Die Prüfung wartet bei Der Schiefe Galgen.",
-  "storyEn": "The trial waits at Der Schiefe Galgen."
+  "storyDe": "Die Prüfung wartet bei Königsweide.",
+  "storyEn": "The trial waits at Königsweide."
  },
  {
   "id": "L07s44",
   "league": 7,
-  "place": "Dürrejahr",
+  "place": "Grasklause",
   "col": 3,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6190,16 +6705,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 168
   },
-  "storyDe": "Der letzte Anstieg:  Dürrejahr.",
-  "storyEn": "The final ascent:  Dürrejahr."
+  "storyDe": "Der letzte Anstieg:  Grasklause.",
+  "storyEn": "The final ascent:  Grasklause."
  },
  {
   "id": "L07s45",
   "league": 7,
-  "place": "Grubenlicht",
+  "place": "Zerrissene Standarte",
   "col": 5,
   "row": 9,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6211,16 +6728,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 150
   },
-  "storyDe": "Die Prüfung wartet bei Grubenlicht.",
-  "storyEn": "The trial waits at Grubenlicht."
+  "storyDe": "Die Prüfung wartet bei Zerrissene Standarte.",
+  "storyEn": "The trial waits at Zerrissene Standarte."
  },
  {
   "id": "L07s46",
   "league": 7,
-  "place": "Geiergericht",
+  "place": "Der Wildwechsel II",
   "col": 1,
   "row": 9,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6230,16 +6748,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Geiergericht.",
-  "storyEn": "A quiet detour leads to Geiergericht."
+  "storyDe": "Ein stiller Umweg führt zu Der Wildwechsel II.",
+  "storyEn": "A quiet detour leads to Der Wildwechsel II."
  },
  {
   "id": "L07s47",
   "league": 7,
-  "place": "Tropfenzähler",
+  "place": "Der Meister der Lanze",
   "col": 4,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6249,16 +6769,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 153
   },
-  "storyDe": "Der letzte Anstieg:  Tropfenzähler.",
-  "storyEn": "The final ascent:  Tropfenzähler."
+  "storyDe": "Der letzte Anstieg:  Der Meister der Lanze.",
+  "storyEn": "The final ascent:  Der Meister der Lanze."
  },
  {
   "id": "L07s48",
   "league": 7,
-  "place": "Ödnisrand",
+  "place": "Viehtrift",
   "col": 4,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6268,16 +6790,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 156
   },
-  "storyDe": "Der letzte Anstieg:  Ödnisrand.",
-  "storyEn": "The final ascent:  Ödnisrand."
+  "storyDe": "Der letzte Anstieg:  Viehtrift.",
+  "storyEn": "The final ascent:  Viehtrift."
  },
  {
   "id": "L07s49",
   "league": 7,
-  "place": "Schlackenzunge",
+  "place": "Hufschlagring",
   "col": 3,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6287,16 +6811,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 165
   },
-  "storyDe": "Der letzte Anstieg:  Schlackenzunge.",
-  "storyEn": "The final ascent:  Schlackenzunge."
+  "storyDe": "Der letzte Anstieg:  Hufschlagring.",
+  "storyEn": "The final ascent:  Hufschlagring."
  },
  {
   "id": "L07s50",
   "league": 7,
-  "place": "Stimmen im Staub",
+  "place": "Rast der Reiter",
   "col": 3,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6306,16 +6832,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 162
   },
-  "storyDe": "Der letzte Anstieg:  Stimmen im Staub.",
-  "storyEn": "The final ascent:  Stimmen im Staub."
+  "storyDe": "Der letzte Anstieg:  Rast der Reiter.",
+  "storyEn": "The final ascent:  Rast der Reiter."
  },
  {
   "id": "L07s51",
   "league": 7,
-  "place": "Erster Riss II",
+  "place": "Das Ferne Tor",
   "col": 4,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6325,16 +6853,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 159
   },
-  "storyDe": "Der letzte Anstieg:  Erster Riss II.",
-  "storyEn": "The final ascent:  Erster Riss II."
+  "storyDe": "Der letzte Anstieg:  Das Ferne Tor.",
+  "storyEn": "The final ascent:  Das Ferne Tor."
  },
  {
   "id": "L07s52",
   "league": 7,
-  "place": "Staubglocke II",
+  "place": "Wo die Lanze fällt II",
   "col": 1,
   "row": 9,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6345,16 +6874,18 @@ export const CAMPAIGN12 = [
    "xp": 96,
    "gold": 96
   },
-  "storyDe": "Ein stiller Umweg führt zu Staubglocke II.",
-  "storyEn": "A quiet detour leads to Staubglocke II."
+  "storyDe": "Ein stiller Umweg führt zu Wo die Lanze fällt II.",
+  "storyEn": "A quiet detour leads to Wo die Lanze fällt II."
  },
  {
   "id": "L07s53",
   "league": 7,
-  "place": "Wundaltar II",
+  "place": "Hoher Ausguck",
   "col": 1,
   "row": 10,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6364,16 +6895,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 135
   },
-  "storyDe": "Die Prüfung wartet bei Wundaltar II.",
-  "storyEn": "The trial waits at Wundaltar II."
+  "storyDe": "Die Prüfung wartet bei Hoher Ausguck.",
+  "storyEn": "The trial waits at Hoher Ausguck."
  },
  {
   "id": "L07s54",
   "league": 7,
-  "place": "Plünderersitz II",
+  "place": "Hufeisenglück",
   "col": 5,
   "row": 10,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6382,8 +6915,9 @@ export const CAMPAIGN12 = [
    "xp": 177,
    "gold": 48
   },
-  "storyDe": "Plünderersitz II: Hier wartet der Meister von Kapitel VII.",
-  "storyEn": "Plünderersitz II: here waits the master of chapter VII.",
+  "storyDe": "Hufeisenglück: Hier wartet der Meister von Kapitel VII.",
+  "storyEn": "Hufeisenglück: here waits the master of chapter VII.",
+  "final": true,
   "boss": {
    "pure": "b16"
   },
@@ -6392,10 +6926,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L07s55",
   "league": 7,
-  "place": "Splitterknochen II",
+  "place": "Böenritt",
   "col": 1,
   "row": 10,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 1,
@@ -6403,16 +6939,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 141
   },
-  "storyDe": "Die Prüfung wartet bei Splitterknochen II.",
-  "storyEn": "The trial waits at Splitterknochen II."
+  "storyDe": "Die Prüfung wartet bei Böenritt.",
+  "storyEn": "The trial waits at Böenritt."
  },
  {
   "id": "L07s56",
   "league": 7,
-  "place": "Der Galgenpfad II",
+  "place": "Schilfmeer",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6420,16 +6958,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 171
   },
-  "storyDe": "Der letzte Anstieg:  Der Galgenpfad II.",
-  "storyEn": "The final ascent:  Der Galgenpfad II."
+  "storyDe": "Der letzte Anstieg:  Schilfmeer.",
+  "storyEn": "The final ascent:  Schilfmeer."
  },
  {
   "id": "L07s57",
   "league": 7,
-  "place": "Wo die Erde trank II",
+  "place": "Stromschnellenfurt",
   "col": 5,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 1,
@@ -6437,16 +6977,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 174
   },
-  "storyDe": "Der letzte Anstieg:  Wo die Erde trank II.",
-  "storyEn": "The final ascent:  Wo die Erde trank II."
+  "storyDe": "Der letzte Anstieg:  Stromschnellenfurt.",
+  "storyEn": "The final ascent:  Stromschnellenfurt."
  },
  {
   "id": "L08s00",
   "league": 8,
-  "place": "Weites Rund",
+  "place": "Oberkante",
   "col": 1,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6456,16 +6998,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 78
   },
-  "storyDe": "Der Weg beginnt bei Weites Rund.",
-  "storyEn": "The road begins at Weites Rund."
+  "storyDe": "Der Weg beginnt bei Oberkante.",
+  "storyEn": "The road begins at Oberkante."
  },
  {
   "id": "L08s01",
   "league": 8,
-  "place": "Hufdonner",
+  "place": "Hammerschlag",
   "col": 1,
   "row": 1,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6475,16 +7019,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 81
   },
-  "storyDe": "Der Weg beginnt bei Hufdonner.",
-  "storyEn": "The road begins at Hufdonner."
+  "storyDe": "Der Weg beginnt bei Hammerschlag.",
+  "storyEn": "The road begins at Hammerschlag."
  },
  {
   "id": "L08s02",
   "league": 8,
-  "place": "Reiteraltar",
+  "place": "Zinnoberaltar",
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6494,16 +7040,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der Weg beginnt bei Reiteraltar.",
-  "storyEn": "The road begins at Reiteraltar."
+  "storyDe": "Der Weg beginnt bei Zinnoberaltar.",
+  "storyEn": "The road begins at Zinnoberaltar."
  },
  {
   "id": "L08s03",
   "league": 8,
-  "place": "Jurtenring",
+  "place": "Räubersitz",
   "col": 1,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6513,16 +7061,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der Weg beginnt bei Jurtenring.",
-  "storyEn": "The road begins at Jurtenring."
+  "storyDe": "Der Weg beginnt bei Räubersitz.",
+  "storyEn": "The road begins at Räubersitz."
  },
  {
   "id": "L08s04",
   "league": 8,
-  "place": "Zunderflur",
+  "place": "Steinschlag",
   "col": 6,
   "row": 3,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6530,8 +7079,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Zunderflur.",
-  "storyEn": "A side path branches toward Zunderflur.",
+  "storyDe": "Ein Seitenpfad zweigt ab nach Steinschlag.",
+  "storyEn": "A side path branches toward Steinschlag.",
   "boss": {
    "piece": "amazon",
    "wins": 1
@@ -6541,10 +7090,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L08s05",
   "league": 8,
-  "place": "Der Wildwechsel",
+  "place": "Tiefenblick",
   "col": 4,
   "row": 3,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6553,16 +7103,18 @@ export const CAMPAIGN12 = [
    "xp": 102,
    "gold": 62
   },
-  "storyDe": "Abseits des Weges liegt Der Wildwechsel.",
-  "storyEn": "Off the road lies Der Wildwechsel."
+  "storyDe": "Abseits des Weges liegt Tiefenblick.",
+  "storyEn": "Off the road lies Tiefenblick."
  },
  {
   "id": "L08s06",
   "league": 8,
-  "place": "Wo die Lanze fällt",
+  "place": "Geröllrutsche",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6573,16 +7125,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der Weg beginnt bei Wo die Lanze fällt.",
-  "storyEn": "The road begins at Wo die Lanze fällt."
+  "storyDe": "Der Weg beginnt bei Geröllrutsche.",
+  "storyEn": "The road begins at Geröllrutsche."
  },
  {
   "id": "L08s07",
   "league": 8,
-  "place": "Grasmeer",
+  "place": "Königsschlucht",
   "col": 5,
   "row": 3,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6592,16 +7145,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Grasmeer.",
-  "storyEn": "A side path branches toward Grasmeer."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Königsschlucht.",
+  "storyEn": "A side path branches toward Königsschlucht."
  },
  {
   "id": "L08s08",
   "league": 8,
-  "place": "Turniermesse",
+  "place": "Der Kondorpfad",
   "col": 2,
   "row": 3,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6611,16 +7166,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der Weg beginnt bei Turniermesse.",
-  "storyEn": "The road begins at Turniermesse."
+  "storyDe": "Der Weg beginnt bei Der Kondorpfad.",
+  "storyEn": "The road begins at Der Kondorpfad."
  },
  {
   "id": "L08s09",
   "league": 8,
-  "place": "Freier Himmel",
+  "place": "Rostregen",
   "col": 3,
   "row": 3,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6630,16 +7186,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 94
   },
-  "storyDe": "Ein stiller Umweg führt zu Freier Himmel.",
-  "storyEn": "A quiet detour leads to Freier Himmel."
+  "storyDe": "Ein stiller Umweg führt zu Rostregen.",
+  "storyEn": "A quiet detour leads to Rostregen."
  },
  {
   "id": "L08s10",
   "league": 8,
-  "place": "Stutenmilch",
+  "place": "Wo die Treppe hinabführt",
   "col": 2,
   "row": 3,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -6649,16 +7207,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der Pfad führt weiter über Stutenmilch.",
-  "storyEn": "The path leads on across Stutenmilch."
+  "storyDe": "Der Pfad führt weiter über Wo die Treppe hinabführt.",
+  "storyEn": "The path leads on across Wo die Treppe hinabführt."
  },
  {
   "id": "L08s11",
   "league": 8,
-  "place": "Flirrende Luft",
+  "place": "Die Faust am Grund",
   "col": 1,
   "row": 4,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6668,16 +7227,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 94
   },
-  "storyDe": "Abseits des Weges liegt Flirrende Luft.",
-  "storyEn": "Off the road lies Flirrende Luft."
+  "storyDe": "Abseits des Weges liegt Die Faust am Grund.",
+  "storyEn": "Off the road lies Die Faust am Grund."
  },
  {
   "id": "L08s12",
   "league": 8,
-  "place": "Fahnenwind",
+  "place": "Messerschlucht",
   "col": 2,
   "row": 4,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6687,8 +7248,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der Pfad führt weiter über Fahnenwind.",
-  "storyEn": "The path leads on across Fahnenwind.",
+  "storyDe": "Der Pfad führt weiter über Messerschlucht.",
+  "storyEn": "The path leads on across Messerschlucht.",
   "boss": {
    "pure": "b01",
    "rotation": [
@@ -6701,10 +7262,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L08s13",
   "league": 8,
-  "place": "Sattelfeste",
+  "place": "Maultiersteige",
   "col": 5,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6714,16 +7276,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Sattelfeste.",
-  "storyEn": "A side path branches toward Sattelfeste."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Maultiersteige.",
+  "storyEn": "A side path branches toward Maultiersteige."
  },
  {
   "id": "L08s14",
   "league": 8,
-  "place": "Steppenulme",
+  "place": "Abbruchkante",
   "col": 3,
   "row": 4,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6734,16 +7298,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der Pfad führt weiter über Steppenulme.",
-  "storyEn": "The path leads on across Steppenulme."
+  "storyDe": "Der Pfad führt weiter über Abbruchkante.",
+  "storyEn": "The path leads on across Abbruchkante."
  },
  {
   "id": "L08s15",
   "league": 8,
-  "place": "Steppenkron",
+  "place": "Steinmesse",
   "col": 2,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6753,16 +7319,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Pfad führt weiter über Steppenkron.",
-  "storyEn": "The path leads on across Steppenkron."
+  "storyDe": "Der Pfad führt weiter über Steinmesse.",
+  "storyEn": "The path leads on across Steinmesse."
  },
  {
   "id": "L08s16",
   "league": 8,
-  "place": "Der Ferne Riegel",
+  "place": "Das Glühende Tor",
   "col": 1,
   "row": 4,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6772,16 +7339,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der Ferne Riegel.",
-  "storyEn": "A side path branches toward Der Ferne Riegel."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Das Glühende Tor.",
+  "storyEn": "A side path branches toward Das Glühende Tor."
  },
  {
   "id": "L08s17",
   "league": 8,
-  "place": "Bannergrund",
+  "place": "Flimmerhitze",
   "col": 4,
   "row": 5,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6791,16 +7360,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Die Prüfung wartet bei Bannergrund.",
-  "storyEn": "The trial waits at Bannergrund."
+  "storyDe": "Die Prüfung wartet bei Flimmerhitze.",
+  "storyEn": "The trial waits at Flimmerhitze."
  },
  {
   "id": "L08s18",
   "league": 8,
-  "place": "Falkenkanzel",
+  "place": "Glutofen",
   "col": 4,
   "row": 5,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6810,8 +7381,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Die Prüfung wartet bei Falkenkanzel.",
-  "storyEn": "The trial waits at Falkenkanzel.",
+  "storyDe": "Die Prüfung wartet bei Glutofen.",
+  "storyEn": "The trial waits at Glutofen.",
   "boss": {
    "piece": "warlock",
    "wins": 2
@@ -6821,10 +7392,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L08s19",
   "league": 8,
-  "place": "Halle des einen Gangs",
+  "place": "Rast am Schlund",
   "col": 1,
   "row": 5,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6834,16 +7406,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Halle des einen Gangs.",
-  "storyEn": "A side path branches toward Halle des einen Gangs."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Rast am Schlund.",
+  "storyEn": "A side path branches toward Rast am Schlund."
  },
  {
   "id": "L08s20",
   "league": 8,
-  "place": "Asras Brunnen",
+  "place": "Zerborstene Stufen",
   "col": 5,
   "row": 5,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6853,16 +7426,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Asras Brunnen.",
-  "storyEn": "Off the road lies Asras Brunnen."
+  "storyDe": "Abseits des Weges liegt Zerborstene Stufen.",
+  "storyEn": "Off the road lies Zerborstene Stufen."
  },
  {
   "id": "L08s21",
   "league": 8,
-  "place": "Hoher Ausguck",
+  "place": "Kupferader",
   "col": 2,
   "row": 5,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6873,16 +7448,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Pfad führt weiter über Hoher Ausguck.",
-  "storyEn": "The path leads on across Hoher Ausguck."
+  "storyDe": "Der Pfad führt weiter über Kupferader.",
+  "storyEn": "The path leads on across Kupferader."
  },
  {
   "id": "L08s22",
   "league": 8,
-  "place": "Verlassene Jurte",
+  "place": "Felsenhorst",
   "col": 4,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6892,16 +7469,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Die Prüfung wartet bei Verlassene Jurte.",
-  "storyEn": "The trial waits at Verlassene Jurte."
+  "storyDe": "Die Prüfung wartet bei Felsenhorst.",
+  "storyEn": "The trial waits at Felsenhorst."
  },
  {
   "id": "L08s23",
   "league": 8,
-  "place": "Böenritt",
+  "place": "Einsiedlerloch",
   "col": 5,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6911,16 +7489,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Böenritt.",
-  "storyEn": "Off the road lies Böenritt."
+  "storyDe": "Abseits des Weges liegt Einsiedlerloch.",
+  "storyEn": "Off the road lies Einsiedlerloch."
  },
  {
   "id": "L08s24",
   "league": 8,
-  "place": "Letzte Schranke",
+  "place": "Windgeschliffen",
   "col": 2,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6930,16 +7509,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 94
   },
-  "storyDe": "Ein stiller Umweg führt zu Letzte Schranke.",
-  "storyEn": "A quiet detour leads to Letzte Schranke."
+  "storyDe": "Ein stiller Umweg führt zu Windgeschliffen.",
+  "storyEn": "A quiet detour leads to Windgeschliffen."
  },
  {
   "id": "L08s25",
   "league": 8,
-  "place": "Königsweide",
+  "place": "Zinnendorn",
   "col": 4,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6950,16 +7531,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Die Prüfung wartet bei Königsweide.",
-  "storyEn": "The trial waits at Königsweide."
+  "storyDe": "Die Prüfung wartet bei Zinnendorn.",
+  "storyEn": "The trial waits at Zinnendorn."
  },
  {
   "id": "L08s26",
   "league": 8,
-  "place": "Zerrissene Standarte",
+  "place": "Furtlose Enge",
   "col": 1,
   "row": 6,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -6969,16 +7551,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Zerrissene Standarte.",
-  "storyEn": "Off the road lies Zerrissene Standarte."
+  "storyDe": "Abseits des Weges liegt Furtlose Enge.",
+  "storyEn": "Off the road lies Furtlose Enge."
  },
  {
   "id": "L08s27",
   "league": 8,
-  "place": "Der Meister der Lanze",
+  "place": "Glutkamm",
   "col": 4,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -6988,16 +7572,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Die Prüfung wartet bei Der Meister der Lanze.",
-  "storyEn": "The trial waits at Der Meister der Lanze."
+  "storyDe": "Die Prüfung wartet bei Glutkamm.",
+  "storyEn": "The trial waits at Glutkamm."
  },
  {
   "id": "L08s28",
   "league": 8,
-  "place": "Viehtrift",
+  "place": "Scherbengrat",
   "col": 4,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7008,16 +7593,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 94
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Viehtrift.",
-  "storyEn": "A side path branches toward Viehtrift."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Scherbengrat.",
+  "storyEn": "A side path branches toward Scherbengrat.",
+  "gate": {
+   "gold": 95
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L08s29",
   "league": 8,
-  "place": "Das Ferne Tor",
+  "place": "Tropfsteinorgel",
   "col": 1,
   "row": 6,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7026,16 +7617,17 @@ export const CAMPAIGN12 = [
    "xp": 102,
    "gold": 104
   },
-  "storyDe": "Abseits des Weges liegt Das Ferne Tor.",
-  "storyEn": "Off the road lies Das Ferne Tor."
+  "storyDe": "Abseits des Weges liegt Tropfsteinorgel.",
+  "storyEn": "Off the road lies Tropfsteinorgel."
  },
  {
   "id": "L08s30",
   "league": 8,
-  "place": "Rast der Reiter",
+  "place": "Seilrolle",
   "col": 2,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7045,16 +7637,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein stiller Umweg führt zu Rast der Reiter.",
-  "storyEn": "A quiet detour leads to Rast der Reiter."
+  "storyDe": "Ein stiller Umweg führt zu Seilrolle.",
+  "storyEn": "A quiet detour leads to Seilrolle."
  },
  {
   "id": "L08s31",
   "league": 8,
-  "place": "Hufschlagring",
+  "place": "Hängebrück",
   "col": 5,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7064,16 +7657,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Hufschlagring.",
-  "storyEn": "A side path branches toward Hufschlagring."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Hängebrück.",
+  "storyEn": "A side path branches toward Hängebrück."
  },
  {
   "id": "L08s32",
   "league": 8,
-  "place": "Grasklause",
+  "place": "Das Berstende Tor",
   "col": 4,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -7083,16 +7678,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Die Prüfung wartet bei Grasklause.",
-  "storyEn": "The trial waits at Grasklause."
+  "storyDe": "Die Prüfung wartet bei Das Berstende Tor.",
+  "storyEn": "The trial waits at Das Berstende Tor."
  },
  {
   "id": "L08s33",
   "league": 8,
-  "place": "Schilfmeer",
+  "place": "Grubenlampen",
   "col": 2,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7102,16 +7698,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein stiller Umweg führt zu Schilfmeer.",
-  "storyEn": "A quiet detour leads to Schilfmeer."
+  "storyDe": "Ein stiller Umweg führt zu Grubenlampen.",
+  "storyEn": "A quiet detour leads to Grubenlampen."
  },
  {
   "id": "L08s34",
   "league": 8,
-  "place": "Stromschnellenfurt",
+  "place": "Der Versteinerte Hain",
   "col": 6,
   "row": 7,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7120,16 +7717,17 @@ export const CAMPAIGN12 = [
    "xp": 102,
    "gold": 104
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Stromschnellenfurt.",
-  "storyEn": "A side path branches toward Stromschnellenfurt."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Versteinerte Hain.",
+  "storyEn": "A side path branches toward Der Versteinerte Hain."
  },
  {
   "id": "L08s35",
   "league": 8,
-  "place": "Hufeisenglück",
+  "place": "Dornengesims",
   "col": 5,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7139,16 +7737,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Hufeisenglück.",
-  "storyEn": "Off the road lies Hufeisenglück."
+  "storyDe": "Abseits des Weges liegt Dornengesims.",
+  "storyEn": "Off the road lies Dornengesims."
  },
  {
   "id": "L08s36",
   "league": 8,
-  "place": "Murmeltierstadt",
+  "place": "Schwalbennische",
   "col": 4,
   "row": 7,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7159,16 +7759,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der letzte Anstieg:  Murmeltierstadt.",
-  "storyEn": "The final ascent:  Murmeltierstadt."
+  "storyDe": "Der letzte Anstieg:  Schwalbennische.",
+  "storyEn": "The final ascent:  Schwalbennische."
  },
  {
   "id": "L08s37",
   "league": 8,
-  "place": "Grasklinge",
+  "place": "Talenge",
   "col": 2,
   "row": 8,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7178,16 +7779,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Grasklinge.",
-  "storyEn": "A side path branches toward Grasklinge."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Talenge.",
+  "storyEn": "A side path branches toward Talenge."
  },
  {
   "id": "L08s38",
   "league": 8,
-  "place": "Bohlenweg",
+  "place": "Wachtfels",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -7196,16 +7798,18 @@ export const CAMPAIGN12 = [
    "xp": 94,
    "gold": 34
   },
-  "storyDe": "Abseits des Weges liegt Bohlenweg.",
-  "storyEn": "Off the road lies Bohlenweg."
+  "storyDe": "Abseits des Weges liegt Wachtfels.",
+  "storyEn": "Off the road lies Wachtfels."
  },
  {
   "id": "L08s39",
   "league": 8,
-  "place": "Bei den Pferdehirten",
+  "place": "Kondorkanzel",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7215,16 +7819,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Der letzte Anstieg:  Bei den Pferdehirten.",
-  "storyEn": "The final ascent:  Bei den Pferdehirten."
+  "storyDe": "Der letzte Anstieg:  Kondorkanzel.",
+  "storyEn": "The final ascent:  Kondorkanzel."
  },
  {
   "id": "L08s40",
   "league": 8,
-  "place": "Der Wispernde Halm",
+  "place": "Halle der geballten Faust",
   "col": 5,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7235,16 +7841,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 135
   },
-  "storyDe": "Der letzte Anstieg:  Der Wispernde Halm.",
-  "storyEn": "The final ascent:  Der Wispernde Halm."
+  "storyDe": "Der letzte Anstieg:  Halle der geballten Faust.",
+  "storyEn": "The final ascent:  Halle der geballten Faust."
  },
  {
   "id": "L08s41",
   "league": 8,
-  "place": "Zeltasche",
+  "place": "Ockerwanne",
   "col": 2,
   "row": 9,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7254,16 +7861,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Zeltasche.",
-  "storyEn": "Off the road lies Zeltasche."
+  "storyDe": "Abseits des Weges liegt Ockerwanne.",
+  "storyEn": "Off the road lies Ockerwanne."
  },
  {
   "id": "L08s42",
   "league": 8,
-  "place": "Weidewende",
+  "place": "Schuttrinne",
   "col": 2,
   "row": 9,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7273,16 +7881,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Ein stiller Umweg führt zu Weidewende.",
-  "storyEn": "A quiet detour leads to Weidewende."
+  "storyDe": "Ein stiller Umweg führt zu Schuttrinne.",
+  "storyEn": "A quiet detour leads to Schuttrinne."
  },
  {
   "id": "L08s43",
   "league": 8,
-  "place": "Späherzinne",
+  "place": "Bussardstand",
   "col": 4,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -7292,16 +7901,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 94
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Späherzinne.",
-  "storyEn": "A side path branches toward Späherzinne."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Bussardstand.",
+  "storyEn": "A side path branches toward Bussardstand."
  },
  {
   "id": "L08s44",
   "league": 8,
-  "place": "Trockene Tränke",
+  "place": "Heiße Quelle",
   "col": 1,
   "row": 9,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7311,16 +7921,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Abseits des Weges liegt Trockene Tränke.",
-  "storyEn": "Off the road lies Trockene Tränke."
+  "storyDe": "Abseits des Weges liegt Heiße Quelle.",
+  "storyEn": "Off the road lies Heiße Quelle."
  },
  {
   "id": "L08s45",
   "league": 8,
-  "place": "Wolfsfalle",
+  "place": "Eisenblüte",
   "col": 1,
   "row": 9,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7329,16 +7940,18 @@ export const CAMPAIGN12 = [
    "xp": 102,
    "gold": 104
   },
-  "storyDe": "Ein stiller Umweg führt zu Wolfsfalle.",
-  "storyEn": "A quiet detour leads to Wolfsfalle."
+  "storyDe": "Ein stiller Umweg führt zu Eisenblüte.",
+  "storyEn": "A quiet detour leads to Eisenblüte."
  },
  {
   "id": "L08s46",
   "league": 8,
-  "place": "Geierschatten",
+  "place": "Blasebalg",
   "col": 5,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7348,16 +7961,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 138
   },
-  "storyDe": "Der letzte Anstieg:  Geierschatten.",
-  "storyEn": "The final ascent:  Geierschatten."
+  "storyDe": "Der letzte Anstieg:  Blasebalg.",
+  "storyEn": "The final ascent:  Blasebalg."
  },
  {
   "id": "L08s47",
   "league": 8,
-  "place": "Siegerquell",
+  "place": "Zunderspalte",
   "col": 4,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -7366,16 +7980,18 @@ export const CAMPAIGN12 = [
    "xp": 102,
    "gold": 62
   },
-  "storyDe": "Abseits des Weges liegt Siegerquell.",
-  "storyEn": "Off the road lies Siegerquell."
+  "storyDe": "Abseits des Weges liegt Zunderspalte.",
+  "storyEn": "Off the road lies Zunderspalte."
  },
  {
   "id": "L08s48",
   "league": 8,
-  "place": "Brandschneise",
+  "place": "Aussichtsnadel",
   "col": 5,
   "row": 10,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7385,16 +8001,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 141
   },
-  "storyDe": "Der letzte Anstieg:  Brandschneise.",
-  "storyEn": "The final ascent:  Brandschneise."
+  "storyDe": "Der letzte Anstieg:  Aussichtsnadel.",
+  "storyEn": "The final ascent:  Aussichtsnadel."
  },
  {
   "id": "L08s49",
   "league": 8,
-  "place": "Distelwind",
+  "place": "Verlassener Stollen",
   "col": 5,
   "row": 10,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -7403,8 +8021,9 @@ export const CAMPAIGN12 = [
    "xp": 144,
    "gold": 52
   },
-  "storyDe": "Distelwind: Hier wartet der Meister von Kapitel VIII.",
-  "storyEn": "Distelwind: here waits the master of chapter VIII.",
+  "storyDe": "Verlassener Stollen: Hier wartet der Meister von Kapitel VIII.",
+  "storyEn": "Verlassener Stollen: here waits the master of chapter VIII.",
+  "final": true,
   "boss": {
    "pure": "b17"
   },
@@ -7413,10 +8032,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L09s00",
   "league": 9,
-  "place": "Oberkante",
+  "place": "Erster Riss",
   "col": 1,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7426,16 +8047,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 84
   },
-  "storyDe": "Der Weg beginnt bei Oberkante.",
-  "storyEn": "The road begins at Oberkante."
+  "storyDe": "Der Weg beginnt bei Erster Riss.",
+  "storyEn": "The road begins at Erster Riss."
  },
  {
   "id": "L09s01",
   "league": 9,
-  "place": "Hammerschlag",
+  "place": "Staubglocke",
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7446,16 +8069,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 87
   },
-  "storyDe": "Der Weg beginnt bei Hammerschlag.",
-  "storyEn": "The road begins at Hammerschlag."
+  "storyDe": "Der Weg beginnt bei Staubglocke.",
+  "storyEn": "The road begins at Staubglocke."
  },
  {
   "id": "L09s02",
   "league": 9,
-  "place": "Zinnoberaltar",
+  "place": "Wundaltar",
   "col": 2,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7465,16 +8090,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 90
   },
-  "storyDe": "Der Weg beginnt bei Zinnoberaltar.",
-  "storyEn": "The road begins at Zinnoberaltar."
+  "storyDe": "Der Weg beginnt bei Wundaltar.",
+  "storyEn": "The road begins at Wundaltar."
  },
  {
   "id": "L09s03",
   "league": 9,
-  "place": "Räubersitz",
+  "place": "Rabenacker",
   "col": 5,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7483,16 +8109,18 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 112
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Räubersitz.",
-  "storyEn": "A side path branches toward Räubersitz."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Rabenacker.",
+  "storyEn": "A side path branches toward Rabenacker."
  },
  {
   "id": "L09s04",
   "league": 9,
-  "place": "Geröllrutsche",
+  "place": "Plünderersitz",
   "col": 2,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7502,16 +8130,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der Weg beginnt bei Geröllrutsche.",
-  "storyEn": "The road begins at Geröllrutsche."
+  "storyDe": "Der Weg beginnt bei Plünderersitz.",
+  "storyEn": "The road begins at Plünderersitz."
  },
  {
   "id": "L09s05",
   "league": 9,
-  "place": "Der Kondorpfad",
+  "place": "Kanzel der Wunde",
   "col": 4,
   "row": 3,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7521,16 +8150,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Ein stiller Umweg führt zu Der Kondorpfad.",
-  "storyEn": "A quiet detour leads to Der Kondorpfad."
+  "storyDe": "Ein stiller Umweg führt zu Kanzel der Wunde.",
+  "storyEn": "A quiet detour leads to Kanzel der Wunde."
  },
  {
   "id": "L09s06",
   "league": 9,
-  "place": "Wo die Treppe hinabführt",
+  "place": "Splitterknochen",
   "col": 2,
   "row": 3,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7540,16 +8171,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der Pfad führt weiter über Wo die Treppe hinabführt.",
-  "storyEn": "The path leads on across Wo die Treppe hinabführt."
+  "storyDe": "Der Pfad führt weiter über Splitterknochen.",
+  "storyEn": "The path leads on across Splitterknochen."
  },
  {
   "id": "L09s07",
   "league": 9,
-  "place": "Messerschlucht",
+  "place": "Halle des vollen Kelchs",
   "col": 1,
   "row": 4,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7559,16 +8191,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 100
   },
-  "storyDe": "Abseits des Weges liegt Messerschlucht.",
-  "storyEn": "Off the road lies Messerschlucht."
+  "storyDe": "Abseits des Weges liegt Halle des vollen Kelchs.",
+  "storyEn": "Off the road lies Halle des vollen Kelchs."
  },
  {
   "id": "L09s08",
   "league": 9,
-  "place": "Steinmesse",
+  "place": "Der Galgenpfad",
   "col": 3,
   "row": 4,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -7578,8 +8212,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der Pfad führt weiter über Steinmesse.",
-  "storyEn": "The path leads on across Steinmesse.",
+  "storyDe": "Der Pfad führt weiter über Der Galgenpfad.",
+  "storyEn": "The path leads on across Der Galgenpfad.",
   "boss": {
    "pure": "b13",
    "rotation": [
@@ -7592,10 +8226,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L09s09",
   "league": 9,
-  "place": "Kupferader",
+  "place": "Bittersalz",
   "col": 4,
   "row": 4,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7606,16 +8241,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 100
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Kupferader.",
-  "storyEn": "A side path branches toward Kupferader."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Bittersalz.",
+  "storyEn": "A side path branches toward Bittersalz.",
+  "gate": {
+   "gold": 105
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L09s10",
   "league": 9,
-  "place": "Abbruchkante",
+  "place": "Galgenhöhe",
   "col": 1,
   "row": 4,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7625,16 +8266,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Abseits des Weges liegt Abbruchkante.",
-  "storyEn": "Off the road lies Abbruchkante."
+  "storyDe": "Abseits des Weges liegt Galgenhöhe.",
+  "storyEn": "Off the road lies Galgenhöhe."
  },
  {
   "id": "L09s11",
   "league": 9,
-  "place": "Flimmerhitze",
+  "place": "Wo die Erde trank",
   "col": 3,
   "row": 4,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7646,16 +8289,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Pfad führt weiter über Flimmerhitze.",
-  "storyEn": "The path leads on across Flimmerhitze."
+  "storyDe": "Der Pfad führt weiter über Wo die Erde trank.",
+  "storyEn": "The path leads on across Wo die Erde trank."
  },
  {
   "id": "L09s12",
   "league": 9,
-  "place": "Glutofen",
+  "place": "Verlassene Kate",
   "col": 4,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7665,16 +8309,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Glutofen.",
-  "storyEn": "A side path branches toward Glutofen."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Verlassene Kate.",
+  "storyEn": "A side path branches toward Verlassene Kate."
  },
  {
   "id": "L09s13",
   "league": 9,
-  "place": "Felsenhorst",
+  "place": "Staubwalze",
   "col": 5,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7684,16 +8329,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Abseits des Weges liegt Felsenhorst.",
-  "storyEn": "Off the road lies Felsenhorst."
+  "storyDe": "Abseits des Weges liegt Staubwalze.",
+  "storyEn": "Off the road lies Staubwalze."
  },
  {
   "id": "L09s14",
   "league": 9,
-  "place": "Zinnendorn",
+  "place": "Dornenkelch",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7703,16 +8350,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Pfad führt weiter über Zinnendorn.",
-  "storyEn": "The path leads on across Zinnendorn."
+  "storyDe": "Der Pfad führt weiter über Dornenkelch.",
+  "storyEn": "The path leads on across Dornenkelch."
  },
  {
   "id": "L09s15",
   "league": 9,
-  "place": "Glutkamm",
+  "place": "Letzter Schluck",
   "col": 1,
   "row": 5,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7721,16 +8369,17 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 67
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Glutkamm.",
-  "storyEn": "A side path branches toward Glutkamm."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Letzter Schluck.",
+  "storyEn": "A side path branches toward Letzter Schluck."
  },
  {
   "id": "L09s16",
   "league": 9,
-  "place": "Das Berstende Tor",
+  "place": "Königsdurst",
   "col": 2,
   "row": 5,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7741,16 +8390,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 100
   },
-  "storyDe": "Abseits des Weges liegt Das Berstende Tor.",
-  "storyEn": "Off the road lies Das Berstende Tor."
+  "storyDe": "Abseits des Weges liegt Königsdurst.",
+  "storyEn": "Off the road lies Königsdurst."
  },
  {
   "id": "L09s17",
   "league": 9,
-  "place": "Schwalbennische",
+  "place": "Zehrfeuer",
   "col": 5,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7759,16 +8409,18 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 112
   },
-  "storyDe": "Ein stiller Umweg führt zu Schwalbennische.",
-  "storyEn": "A quiet detour leads to Schwalbennische."
+  "storyDe": "Ein stiller Umweg führt zu Zehrfeuer.",
+  "storyEn": "A quiet detour leads to Zehrfeuer."
  },
  {
   "id": "L09s18",
   "league": 9,
-  "place": "Kondorkanzel",
+  "place": "Kelchmesse",
   "col": 4,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7778,16 +8430,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Die Prüfung wartet bei Kondorkanzel.",
-  "storyEn": "The trial waits at Kondorkanzel."
+  "storyDe": "Die Prüfung wartet bei Kelchmesse.",
+  "storyEn": "The trial waits at Kelchmesse."
  },
  {
   "id": "L09s19",
   "league": 9,
-  "place": "Halle der geballten Faust",
+  "place": "Die Magd am Kelch",
   "col": 2,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7797,16 +8450,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Abseits des Weges liegt Halle der geballten Faust.",
-  "storyEn": "Off the road lies Halle der geballten Faust."
+  "storyDe": "Abseits des Weges liegt Die Magd am Kelch.",
+  "storyEn": "Off the road lies Die Magd am Kelch."
  },
  {
   "id": "L09s20",
   "league": 9,
-  "place": "Blasebalg",
+  "place": "Marterpfad",
   "col": 3,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7815,16 +8469,18 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 112
   },
-  "storyDe": "Ein stiller Umweg führt zu Blasebalg.",
-  "storyEn": "A quiet detour leads to Blasebalg."
+  "storyDe": "Ein stiller Umweg führt zu Marterpfad.",
+  "storyEn": "A quiet detour leads to Marterpfad."
  },
  {
   "id": "L09s21",
   "league": 9,
-  "place": "Aussichtsnadel",
+  "place": "Fahles Land",
   "col": 4,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7834,8 +8490,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Die Prüfung wartet bei Aussichtsnadel.",
-  "storyEn": "The trial waits at Aussichtsnadel.",
+  "storyDe": "Die Prüfung wartet bei Fahles Land.",
+  "storyEn": "The trial waits at Fahles Land.",
   "boss": {
    "piece": "inquisitor",
    "wins": 2
@@ -7845,10 +8501,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L09s22",
   "league": 9,
-  "place": "Verlassener Stollen",
+  "place": "Sprödes Bett",
   "col": 4,
   "row": 7,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7858,16 +8516,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Die Prüfung wartet bei Verlassener Stollen.",
-  "storyEn": "The trial waits at Verlassener Stollen."
+  "storyDe": "Die Prüfung wartet bei Sprödes Bett.",
+  "storyEn": "The trial waits at Sprödes Bett."
  },
  {
   "id": "L09s23",
   "league": 9,
-  "place": "Steinschlag",
+  "place": "Grauschleier",
   "col": 4,
   "row": 7,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -7877,16 +8537,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Die Prüfung wartet bei Steinschlag.",
-  "storyEn": "The trial waits at Steinschlag."
+  "storyDe": "Die Prüfung wartet bei Grauschleier.",
+  "storyEn": "The trial waits at Grauschleier."
  },
  {
   "id": "L09s24",
   "league": 9,
-  "place": "Tiefenblick",
+  "place": "Das Rostige Tor",
   "col": 1,
   "row": 8,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7895,16 +8556,18 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 112
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Tiefenblick.",
-  "storyEn": "A side path branches toward Tiefenblick."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Das Rostige Tor.",
+  "storyEn": "A side path branches toward Das Rostige Tor."
  },
  {
   "id": "L09s25",
   "league": 9,
-  "place": "Königsschlucht",
+  "place": "Totes Geäst",
   "col": 4,
   "row": 8,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7915,16 +8578,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Der letzte Anstieg:  Königsschlucht.",
-  "storyEn": "The final ascent:  Königsschlucht."
+  "storyDe": "Der letzte Anstieg:  Totes Geäst.",
+  "storyEn": "The final ascent:  Totes Geäst."
  },
  {
   "id": "L09s26",
   "league": 9,
-  "place": "Rostregen",
+  "place": "Rast der Verlorenen",
   "col": 4,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7934,16 +8598,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 100
   },
-  "storyDe": "Ein stiller Umweg führt zu Rostregen.",
-  "storyEn": "A quiet detour leads to Rostregen."
+  "storyDe": "Ein stiller Umweg führt zu Rast der Verlorenen.",
+  "storyEn": "A quiet detour leads to Rast der Verlorenen."
  },
  {
   "id": "L09s27",
   "league": 9,
-  "place": "Die Faust am Grund",
+  "place": "Dornenfeste",
   "col": 5,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7954,16 +8620,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Der letzte Anstieg:  Die Faust am Grund.",
-  "storyEn": "The final ascent:  Die Faust am Grund."
+  "storyDe": "Der letzte Anstieg:  Dornenfeste.",
+  "storyEn": "The final ascent:  Dornenfeste."
  },
  {
   "id": "L09s28",
   "league": 9,
-  "place": "Maultiersteige",
+  "place": "Aschepfand",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7973,16 +8640,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Abseits des Weges liegt Maultiersteige.",
-  "storyEn": "Off the road lies Maultiersteige."
+  "storyDe": "Abseits des Weges liegt Aschepfand.",
+  "storyEn": "Off the road lies Aschepfand."
  },
  {
   "id": "L09s29",
   "league": 9,
-  "place": "Das Glühende Tor",
+  "place": "Graudorn",
   "col": 5,
   "row": 8,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -7992,16 +8661,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Der letzte Anstieg:  Das Glühende Tor.",
-  "storyEn": "The final ascent:  Das Glühende Tor."
+  "storyDe": "Der letzte Anstieg:  Graudorn.",
+  "storyEn": "The final ascent:  Graudorn."
  },
  {
   "id": "L09s30",
   "league": 9,
-  "place": "Rast am Schlund",
+  "place": "Wundklause",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -8011,16 +8681,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Rast am Schlund.",
-  "storyEn": "A side path branches toward Rast am Schlund."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Wundklause.",
+  "storyEn": "A side path branches toward Wundklause."
  },
  {
   "id": "L09s31",
   "league": 9,
-  "place": "Zerborstene Stufen",
+  "place": "Lakensenke",
   "col": 4,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -8029,16 +8700,18 @@ export const CAMPAIGN12 = [
    "xp": 100,
    "gold": 37
   },
-  "storyDe": "Abseits des Weges liegt Zerborstene Stufen.",
-  "storyEn": "Off the road lies Zerborstene Stufen."
+  "storyDe": "Abseits des Weges liegt Lakensenke.",
+  "storyEn": "Off the road lies Lakensenke."
  },
  {
   "id": "L09s32",
   "league": 9,
-  "place": "Einsiedlerloch",
+  "place": "Dornendiadem",
   "col": 5,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -8048,16 +8721,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der letzte Anstieg:  Einsiedlerloch.",
-  "storyEn": "The final ascent:  Einsiedlerloch."
+  "storyDe": "Der letzte Anstieg:  Dornendiadem.",
+  "storyEn": "The final ascent:  Dornendiadem."
  },
  {
   "id": "L09s33",
   "league": 9,
-  "place": "Windgeschliffen",
+  "place": "Blutzoll",
   "col": 3,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -8066,16 +8740,18 @@ export const CAMPAIGN12 = [
    "xp": 108,
    "gold": 112
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Windgeschliffen.",
-  "storyEn": "A side path branches toward Windgeschliffen."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Blutzoll.",
+  "storyEn": "A side path branches toward Blutzoll."
  },
  {
   "id": "L09s34",
   "league": 9,
-  "place": "Furtlose Enge",
+  "place": "Das Ausgeblutete Tor",
   "col": 5,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -8084,8 +8760,9 @@ export const CAMPAIGN12 = [
    "xp": 132,
    "gold": 56
   },
-  "storyDe": "Furtlose Enge: Hier wartet der Meister von Kapitel IX.",
-  "storyEn": "Furtlose Enge: here waits the master of chapter IX.",
+  "storyDe": "Das Ausgeblutete Tor: Hier wartet der Meister von Kapitel IX.",
+  "storyEn": "Das Ausgeblutete Tor: here waits the master of chapter IX.",
+  "final": true,
   "boss": {
    "pure": "b18"
   },
@@ -8098,6 +8775,8 @@ export const CAMPAIGN12 = [
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8113,10 +8792,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s01",
   "league": 10,
-  "place": "Karawanenglocke",
+  "place": "Wasserprobe",
   "col": 3,
   "row": 2,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8125,16 +8805,18 @@ export const CAMPAIGN12 = [
    "xp": 114,
    "gold": 120
   },
-  "storyDe": "Ein stiller Umweg führt zu Karawanenglocke.",
-  "storyEn": "A quiet detour leads to Karawanenglocke."
+  "storyDe": "Ein stiller Umweg führt zu Wasserprobe.",
+  "storyEn": "A quiet detour leads to Wasserprobe."
  },
  {
   "id": "L10s02",
   "league": 10,
-  "place": "Dünenaltar",
+  "place": "Karawanenglocke",
   "col": 1,
   "row": 2,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8144,16 +8826,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 93
   },
-  "storyDe": "Der Weg beginnt bei Dünenaltar.",
-  "storyEn": "The road begins at Dünenaltar."
+  "storyDe": "Der Weg beginnt bei Karawanenglocke.",
+  "storyEn": "The road begins at Karawanenglocke."
  },
  {
   "id": "L10s03",
   "league": 10,
-  "place": "Lastenrast",
+  "place": "Skarabäenfeld",
   "col": 3,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8163,16 +8846,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Abseits des Weges liegt Lastenrast.",
-  "storyEn": "Off the road lies Lastenrast."
+  "storyDe": "Abseits des Weges liegt Skarabäenfeld.",
+  "storyEn": "Off the road lies Skarabäenfeld."
  },
  {
   "id": "L10s04",
   "league": 10,
-  "place": "Dornengürtel",
+  "place": "Dünenaltar",
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8182,16 +8867,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der Weg beginnt bei Dornengürtel.",
-  "storyEn": "The road begins at Dornengürtel."
+  "storyDe": "Der Weg beginnt bei Dünenaltar.",
+  "storyEn": "The road begins at Dünenaltar."
  },
  {
   "id": "L10s05",
   "league": 10,
-  "place": "Der Fennekpfad",
+  "place": "Lastenrast",
   "col": 1,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8201,16 +8888,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der Weg beginnt bei Der Fennekpfad.",
-  "storyEn": "The road begins at Der Fennekpfad."
+  "storyDe": "Der Weg beginnt bei Lastenrast.",
+  "storyEn": "The road begins at Lastenrast."
  },
  {
   "id": "L10s06",
   "league": 10,
-  "place": "Wo der Name verweht",
+  "place": "Blaue Grotte",
   "col": 2,
   "row": 3,
   "map": "skirmish",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8221,16 +8909,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Abseits des Weges liegt Wo der Name verweht.",
-  "storyEn": "Off the road lies Wo der Name verweht."
+  "storyDe": "Abseits des Weges liegt Blaue Grotte.",
+  "storyEn": "Off the road lies Blaue Grotte."
  },
  {
   "id": "L10s07",
   "league": 10,
-  "place": "Spiegelung",
+  "place": "Treibsandfalle",
   "col": 2,
   "row": 3,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8240,16 +8929,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Ein stiller Umweg führt zu Spiegelung.",
-  "storyEn": "A quiet detour leads to Spiegelung."
+  "storyDe": "Ein stiller Umweg führt zu Treibsandfalle.",
+  "storyEn": "A quiet detour leads to Treibsandfalle."
  },
  {
   "id": "L10s08",
   "league": 10,
-  "place": "Oasenmesse",
+  "place": "Dornengürtel",
   "col": 1,
   "row": 4,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8259,16 +8950,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Weg beginnt bei Oasenmesse.",
-  "storyEn": "The road begins at Oasenmesse."
+  "storyDe": "Der Weg beginnt bei Dornengürtel.",
+  "storyEn": "The road begins at Dornengürtel."
  },
  {
   "id": "L10s09",
   "league": 10,
-  "place": "Sieben Palmen",
+  "place": "Seilbrück",
   "col": 3,
   "row": 4,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8278,16 +8970,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Abseits des Weges liegt Sieben Palmen.",
-  "storyEn": "Off the road lies Sieben Palmen."
+  "storyDe": "Abseits des Weges liegt Seilbrück.",
+  "storyEn": "Off the road lies Seilbrück."
  },
  {
   "id": "L10s10",
   "league": 10,
-  "place": "Glasfeld",
+  "place": "Bei den Wasserträgern",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8297,16 +8990,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Ein stiller Umweg führt zu Glasfeld.",
-  "storyEn": "A quiet detour leads to Glasfeld."
+  "storyDe": "Ein stiller Umweg führt zu Bei den Wasserträgern.",
+  "storyEn": "A quiet detour leads to Bei den Wasserträgern."
  },
  {
   "id": "L10s11",
   "league": 10,
-  "place": "Fata Morgana",
+  "place": "Gebleichte Rippen",
   "col": 5,
   "row": 4,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8316,16 +9011,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 162
   },
-  "storyDe": "Die Prüfung wartet bei Fata Morgana.",
-  "storyEn": "The trial waits at Fata Morgana."
+  "storyDe": "Die Prüfung wartet bei Gebleichte Rippen.",
+  "storyEn": "The trial waits at Gebleichte Rippen."
  },
  {
   "id": "L10s12",
   "league": 10,
-  "place": "Wanderdüne",
+  "place": "Der Singende Fels",
   "col": 3,
   "row": 4,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8335,16 +9031,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Abseits des Weges liegt Wanderdüne.",
-  "storyEn": "Off the road lies Wanderdüne."
+  "storyDe": "Abseits des Weges liegt Der Singende Fels.",
+  "storyEn": "Off the road lies Der Singende Fels."
  },
  {
   "id": "L10s13",
   "league": 10,
-  "place": "Karawanserei",
+  "place": "Sandhose",
   "col": 5,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8354,16 +9052,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 159
   },
-  "storyDe": "Die Prüfung wartet bei Karawanserei.",
-  "storyEn": "The trial waits at Karawanserei."
+  "storyDe": "Die Prüfung wartet bei Sandhose.",
+  "storyEn": "The trial waits at Sandhose."
  },
  {
   "id": "L10s14",
   "league": 10,
-  "place": "Dattelhain",
+  "place": "Bleichgart",
   "col": 1,
   "row": 5,
   "map": "arena",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8371,8 +9070,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Dattelhain.",
-  "storyEn": "A side path branches toward Dattelhain.",
+  "storyDe": "Ein Seitenpfad zweigt ab nach Bleichgart.",
+  "storyEn": "A side path branches toward Bleichgart.",
   "boss": {
    "piece": "strategist",
    "wins": 1
@@ -8382,10 +9081,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s15",
   "league": 10,
-  "place": "Sonnenspeer",
+  "place": "Der Fennekpfad",
   "col": 1,
   "row": 5,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8395,16 +9096,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Weg beginnt bei Sonnenspeer.",
-  "storyEn": "The road begins at Sonnenspeer."
+  "storyDe": "Der Weg beginnt bei Der Fennekpfad.",
+  "storyEn": "The road begins at Der Fennekpfad."
  },
  {
   "id": "L10s16",
   "league": 10,
-  "place": "Das Versandete Tor",
+  "place": "Königsdüne",
   "col": 5,
   "row": 5,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8414,8 +9117,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 165
   },
-  "storyDe": "Der letzte Anstieg:  Das Versandete Tor.",
-  "storyEn": "The final ascent:  Das Versandete Tor.",
+  "storyDe": "Der letzte Anstieg:  Königsdüne.",
+  "storyEn": "The final ascent:  Königsdüne.",
   "boss": {
    "piece": "engineer",
    "wins": 2
@@ -8425,10 +9128,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s17",
   "league": 10,
-  "place": "Salzkruste",
+  "place": "Sichelgrab",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8438,16 +9142,23 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 106
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Salzkruste.",
-  "storyEn": "A side path branches toward Salzkruste."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Sichelgrab.",
+  "storyEn": "A side path branches toward Sichelgrab.",
+  "gate": {
+   "gold": 115
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L10s18",
   "league": 10,
-  "place": "Geierkanzel",
+  "place": "Vergessene Zisterne",
   "col": 4,
   "row": 5,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8457,16 +9168,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 156
   },
-  "storyDe": "Die Prüfung wartet bei Geierkanzel.",
-  "storyEn": "The trial waits at Geierkanzel."
+  "storyDe": "Die Prüfung wartet bei Vergessene Zisterne.",
+  "storyEn": "The trial waits at Vergessene Zisterne."
  },
  {
   "id": "L10s19",
   "league": 10,
-  "place": "Halle des letzten Tors",
+  "place": "Glutspiegel",
   "col": 5,
   "row": 6,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8476,16 +9189,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 168
   },
-  "storyDe": "Der letzte Anstieg:  Halle des letzten Tors.",
-  "storyEn": "The final ascent:  Halle des letzten Tors."
+  "storyDe": "Der letzte Anstieg:  Glutspiegel.",
+  "storyEn": "The final ascent:  Glutspiegel."
  },
  {
   "id": "L10s20",
   "league": 10,
-  "place": "Vesnas Schatten",
+  "place": "Wo der Name verweht",
   "col": 1,
   "row": 6,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8495,8 +9210,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der Weg beginnt bei Vesnas Schatten.",
-  "storyEn": "The road begins at Vesnas Schatten."
+  "storyDe": "Der Weg beginnt bei Wo der Name verweht.",
+  "storyEn": "The road begins at Wo der Name verweht."
  },
  {
   "id": "L10s21",
@@ -8505,6 +9220,8 @@ export const CAMPAIGN12 = [
   "col": 4,
   "row": 6,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8521,10 +9238,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s22",
   "league": 10,
-  "place": "Vergessene Zisterne",
+  "place": "Spiegelzinne",
   "col": 4,
   "row": 6,
   "map": "courtyard",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8534,16 +9252,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 106
   },
-  "storyDe": "Ein stiller Umweg führt zu Vergessene Zisterne.",
-  "storyEn": "A quiet detour leads to Vergessene Zisterne."
+  "storyDe": "Ein stiller Umweg führt zu Spiegelzinne.",
+  "storyEn": "A quiet detour leads to Spiegelzinne."
  },
  {
   "id": "L10s23",
   "league": 10,
-  "place": "Sandhose",
+  "place": "Halle des letzten Tors",
   "col": 3,
   "row": 6,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8554,16 +9274,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 147
   },
-  "storyDe": "Die Prüfung wartet bei Sandhose.",
-  "storyEn": "The trial waits at Sandhose."
+  "storyDe": "Die Prüfung wartet bei Halle des letzten Tors.",
+  "storyEn": "The trial waits at Halle des letzten Tors."
  },
  {
   "id": "L10s24",
   "league": 10,
-  "place": "Gebleichte Rippen",
+  "place": "Vesnas Schatten",
   "col": 4,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8573,16 +9295,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 150
   },
-  "storyDe": "Die Prüfung wartet bei Gebleichte Rippen.",
-  "storyEn": "The trial waits at Gebleichte Rippen."
+  "storyDe": "Die Prüfung wartet bei Vesnas Schatten.",
+  "storyEn": "The trial waits at Vesnas Schatten."
  },
  {
   "id": "L10s25",
   "league": 10,
-  "place": "Königsdüne",
+  "place": "Ausgetrocknet",
   "col": 5,
   "row": 6,
   "map": "classic",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8591,16 +9314,18 @@ export const CAMPAIGN12 = [
    "xp": 114,
    "gold": 72
   },
-  "storyDe": "Ein stiller Umweg führt zu Königsdüne.",
-  "storyEn": "A quiet detour leads to Königsdüne."
+  "storyDe": "Ein stiller Umweg führt zu Ausgetrocknet.",
+  "storyEn": "A quiet detour leads to Ausgetrocknet."
  },
  {
   "id": "L10s26",
   "league": 10,
-  "place": "Glutspiegel",
+  "place": "Der Kanonier am Wasser",
   "col": 5,
   "row": 6,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8610,16 +9335,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 171
   },
-  "storyDe": "Der letzte Anstieg:  Glutspiegel.",
-  "storyEn": "The final ascent:  Glutspiegel."
+  "storyDe": "Der letzte Anstieg:  Der Kanonier am Wasser.",
+  "storyEn": "The final ascent:  Der Kanonier am Wasser."
  },
  {
   "id": "L10s27",
   "league": 10,
-  "place": "Der Kanonier am Wasser",
+  "place": "Spiegelung",
   "col": 1,
   "row": 6,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8629,16 +9356,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Der Weg beginnt bei Der Kanonier am Wasser.",
-  "storyEn": "The road begins at Der Kanonier am Wasser."
+  "storyDe": "Der Weg beginnt bei Spiegelung.",
+  "storyEn": "The road begins at Spiegelung."
  },
  {
   "id": "L10s28",
   "league": 10,
-  "place": "Kamelspur",
+  "place": "Geierkanzel",
   "col": 3,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8648,16 +9377,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 144
   },
-  "storyDe": "Die Prüfung wartet bei Kamelspur.",
-  "storyEn": "The trial waits at Kamelspur."
+  "storyDe": "Die Prüfung wartet bei Geierkanzel.",
+  "storyEn": "The trial waits at Geierkanzel."
  },
  {
   "id": "L10s29",
   "league": 10,
-  "place": "Das Flüsternde Tor",
+  "place": "Kamelspur",
   "col": 5,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8667,16 +9398,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 174
   },
-  "storyDe": "Der letzte Anstieg:  Das Flüsternde Tor.",
-  "storyEn": "The final ascent:  Das Flüsternde Tor."
+  "storyDe": "Der letzte Anstieg:  Kamelspur.",
+  "storyEn": "The final ascent:  Kamelspur."
  },
  {
   "id": "L10s30",
   "league": 10,
-  "place": "Rast der Durstigen",
+  "place": "Oasenmesse",
   "col": 1,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8686,16 +9419,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Der Weg beginnt bei Rast der Durstigen.",
-  "storyEn": "The road begins at Rast der Durstigen."
+  "storyDe": "Der Weg beginnt bei Oasenmesse.",
+  "storyEn": "The road begins at Oasenmesse."
  },
  {
   "id": "L10s31",
   "league": 10,
-  "place": "Dünenwerder",
+  "place": "Das Flüsternde Tor",
   "col": 5,
   "row": 7,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8705,16 +9440,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 177
   },
-  "storyDe": "Der letzte Anstieg:  Dünenwerder.",
-  "storyEn": "The final ascent:  Dünenwerder."
+  "storyDe": "Der letzte Anstieg:  Das Flüsternde Tor.",
+  "storyEn": "The final ascent:  Das Flüsternde Tor."
  },
  {
   "id": "L10s32",
   "league": 10,
-  "place": "Sandklause",
+  "place": "Salzkruste",
   "col": 3,
   "row": 7,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8724,16 +9461,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 141
   },
-  "storyDe": "Die Prüfung wartet bei Sandklause.",
-  "storyEn": "The trial waits at Sandklause."
+  "storyDe": "Die Prüfung wartet bei Salzkruste.",
+  "storyEn": "The trial waits at Salzkruste."
  },
  {
   "id": "L10s33",
   "league": 10,
-  "place": "Palmschatten",
+  "place": "Sieben Palmen",
   "col": 1,
   "row": 8,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8743,16 +9482,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Der Pfad führt weiter über Palmschatten.",
-  "storyEn": "The path leads on across Palmschatten."
+  "storyDe": "Der Pfad führt weiter über Sieben Palmen.",
+  "storyEn": "The path leads on across Sieben Palmen."
  },
  {
   "id": "L10s34",
   "league": 10,
-  "place": "Wasserprobe",
+  "place": "Das Versandete Tor",
   "col": 3,
   "row": 8,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8762,16 +9503,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 138
   },
-  "storyDe": "Der Pfad führt weiter über Wasserprobe.",
-  "storyEn": "The path leads on across Wasserprobe."
+  "storyDe": "Der Pfad führt weiter über Das Versandete Tor.",
+  "storyEn": "The path leads on across Das Versandete Tor."
  },
  {
   "id": "L10s35",
   "league": 10,
-  "place": "Skarabäenfeld",
+  "place": "Schlangenloch",
   "col": 5,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8781,16 +9523,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 106
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Skarabäenfeld.",
-  "storyEn": "A side path branches toward Skarabäenfeld."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Schlangenloch.",
+  "storyEn": "A side path branches toward Schlangenloch."
  },
  {
   "id": "L10s36",
   "league": 10,
-  "place": "Blaue Grotte",
+  "place": "Stachelnest",
   "col": 4,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8800,16 +9543,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Abseits des Weges liegt Blaue Grotte.",
-  "storyEn": "Off the road lies Blaue Grotte."
+  "storyDe": "Abseits des Weges liegt Stachelnest.",
+  "storyEn": "Off the road lies Stachelnest."
  },
  {
   "id": "L10s37",
   "league": 10,
-  "place": "Treibsandfalle",
+  "place": "Rast der Durstigen",
   "col": 5,
   "row": 8,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8820,16 +9565,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 180
   },
-  "storyDe": "Der letzte Anstieg:  Treibsandfalle.",
-  "storyEn": "The final ascent:  Treibsandfalle."
+  "storyDe": "Der letzte Anstieg:  Rast der Durstigen.",
+  "storyEn": "The final ascent:  Rast der Durstigen."
  },
  {
   "id": "L10s38",
   "league": 10,
-  "place": "Seilbrück",
+  "place": "Tiefbrunnen",
   "col": 4,
   "row": 8,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8839,16 +9585,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Seilbrück.",
-  "storyEn": "A side path branches toward Seilbrück."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Tiefbrunnen.",
+  "storyEn": "A side path branches toward Tiefbrunnen."
  },
  {
   "id": "L10s39",
   "league": 10,
-  "place": "Bei den Wasserträgern",
+  "place": "Glasfeld",
   "col": 1,
   "row": 8,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 2,
@@ -8858,8 +9606,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Der Pfad führt weiter über Bei den Wasserträgern.",
-  "storyEn": "The path leads on across Bei den Wasserträgern.",
+  "storyDe": "Der Pfad führt weiter über Glasfeld.",
+  "storyEn": "The path leads on across Glasfeld.",
   "boss": {
    "pure": "b05",
    "rotation": [
@@ -8872,10 +9620,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s40",
   "league": 10,
-  "place": "Der Singende Fels",
+  "place": "Sonnenspeer",
   "col": 2,
   "row": 8,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8885,16 +9635,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 135
   },
-  "storyDe": "Der Pfad führt weiter über Der Singende Fels.",
-  "storyEn": "The path leads on across Der Singende Fels."
+  "storyDe": "Der Pfad führt weiter über Sonnenspeer.",
+  "storyEn": "The path leads on across Sonnenspeer."
  },
  {
   "id": "L10s41",
   "league": 10,
-  "place": "Bleichgart",
+  "place": "Dünenwerder",
   "col": 5,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8904,16 +9656,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 183
   },
-  "storyDe": "Der letzte Anstieg:  Bleichgart.",
-  "storyEn": "The final ascent:  Bleichgart."
+  "storyDe": "Der letzte Anstieg:  Dünenwerder.",
+  "storyEn": "The final ascent:  Dünenwerder."
  },
  {
   "id": "L10s42",
   "league": 10,
-  "place": "Sichelgrab",
+  "place": "Fata Morgana",
   "col": 1,
   "row": 9,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8923,16 +9677,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Der Pfad führt weiter über Sichelgrab.",
-  "storyEn": "The path leads on across Sichelgrab."
+  "storyDe": "Der Pfad führt weiter über Fata Morgana.",
+  "storyEn": "The path leads on across Fata Morgana."
  },
  {
   "id": "L10s43",
   "league": 10,
-  "place": "Spiegelzinne",
+  "place": "Namenlose Weite",
   "col": 4,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -8942,16 +9697,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Ein stiller Umweg führt zu Spiegelzinne.",
-  "storyEn": "A quiet detour leads to Spiegelzinne."
+  "storyDe": "Ein stiller Umweg führt zu Namenlose Weite.",
+  "storyEn": "A quiet detour leads to Namenlose Weite."
  },
  {
   "id": "L10s44",
   "league": 10,
-  "place": "Ausgetrocknet",
+  "place": "Dattelhain",
   "col": 2,
   "row": 9,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8961,8 +9718,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Der Pfad führt weiter über Ausgetrocknet.",
-  "storyEn": "The path leads on across Ausgetrocknet.",
+  "storyDe": "Der Pfad führt weiter über Dattelhain.",
+  "storyEn": "The path leads on across Dattelhain.",
   "boss": {
    "piece": "archbishop",
    "wins": 2
@@ -8972,10 +9729,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L10s45",
   "league": 10,
-  "place": "Schlangenloch",
+  "place": "Wanderdüne",
   "col": 1,
   "row": 9,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -8985,16 +9744,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Der Pfad führt weiter über Schlangenloch.",
-  "storyEn": "The path leads on across Schlangenloch."
+  "storyDe": "Der Pfad führt weiter über Wanderdüne.",
+  "storyEn": "The path leads on across Wanderdüne."
  },
  {
   "id": "L10s46",
   "league": 10,
-  "place": "Stachelnest",
+  "place": "Sternenpfad",
   "col": 3,
   "row": 9,
   "map": "skirmish",
+  "chapter": 4,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -9003,16 +9763,18 @@ export const CAMPAIGN12 = [
    "xp": 114,
    "gold": 120
   },
-  "storyDe": "Ein stiller Umweg führt zu Stachelnest.",
-  "storyEn": "A quiet detour leads to Stachelnest."
+  "storyDe": "Ein stiller Umweg führt zu Sternenpfad.",
+  "storyEn": "A quiet detour leads to Sternenpfad."
  },
  {
   "id": "L10s47",
   "league": 10,
-  "place": "Tiefbrunnen",
+  "place": "Sandklause",
   "col": 5,
   "row": 9,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -9022,16 +9784,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 186
   },
-  "storyDe": "Der letzte Anstieg:  Tiefbrunnen.",
-  "storyEn": "The final ascent:  Tiefbrunnen."
+  "storyDe": "Der letzte Anstieg:  Sandklause.",
+  "storyEn": "The final ascent:  Sandklause."
  },
  {
   "id": "L10s48",
   "league": 10,
-  "place": "Namenlose Weite",
+  "place": "Karawanserei",
   "col": 2,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 2,
@@ -9041,16 +9805,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der Pfad führt weiter über Namenlose Weite.",
-  "storyEn": "The path leads on across Namenlose Weite."
+  "storyDe": "Der Pfad führt weiter über Karawanserei.",
+  "storyEn": "The path leads on across Karawanserei."
  },
  {
   "id": "L10s49",
   "league": 10,
-  "place": "Sternenpfad",
+  "place": "Palmschatten",
   "col": 5,
   "row": 10,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 2,
@@ -9059,8 +9825,9 @@ export const CAMPAIGN12 = [
    "xp": 189,
    "gold": 60
   },
-  "storyDe": "Sternenpfad: Hier wartet der Meister von Kapitel X.",
-  "storyEn": "Sternenpfad: here waits the master of chapter X.",
+  "storyDe": "Palmschatten: Hier wartet der Meister von Kapitel X.",
+  "storyEn": "Palmschatten: here waits the master of chapter X.",
+  "final": true,
   "boss": {
    "pure": "b08"
   },
@@ -9069,10 +9836,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L11s00",
   "league": 11,
-  "place": "Erste Gischt",
+  "place": "Königsklippe",
   "col": 3,
   "row": 1,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9081,8 +9850,9 @@ export const CAMPAIGN12 = [
    "xp": 171,
    "gold": 64
   },
-  "storyDe": "Erste Gischt: Hier wartet der Meister von Kapitel XI.",
-  "storyEn": "Erste Gischt: here waits the master of chapter XI.",
+  "storyDe": "Königsklippe: Hier wartet der Meister von Kapitel XI.",
+  "storyEn": "Königsklippe: here waits the master of chapter XI.",
+  "final": true,
   "boss": {
    "pure": "b14"
   },
@@ -9091,10 +9861,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L11s01",
   "league": 11,
-  "place": "Tidenglocke",
+  "place": "Erste Gischt",
   "col": 0,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9104,16 +9876,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 96
   },
-  "storyDe": "Der Weg beginnt bei Tidenglocke.",
-  "storyEn": "The road begins at Tidenglocke."
+  "storyDe": "Der Weg beginnt bei Erste Gischt.",
+  "storyEn": "The road begins at Erste Gischt."
  },
  {
   "id": "L11s02",
   "league": 11,
-  "place": "Wrackaltar",
+  "place": "Bleicher Horizont",
   "col": 4,
   "row": 1,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9123,16 +9897,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 168
   },
-  "storyDe": "Der letzte Anstieg:  Wrackaltar.",
-  "storyEn": "The final ascent:  Wrackaltar."
+  "storyDe": "Der letzte Anstieg:  Bleicher Horizont.",
+  "storyEn": "The final ascent:  Bleicher Horizont."
  },
  {
   "id": "L11s03",
   "league": 11,
-  "place": "Strandgutlese",
+  "place": "Tidenglocke",
   "col": 0,
   "row": 1,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9143,16 +9919,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 99
   },
-  "storyDe": "Der Weg beginnt bei Strandgutlese.",
-  "storyEn": "The road begins at Strandgutlese."
+  "storyDe": "Der Weg beginnt bei Tidenglocke.",
+  "storyEn": "The road begins at Tidenglocke."
  },
  {
   "id": "L11s04",
   "league": 11,
-  "place": "Muschelscherben",
+  "place": "Sturmglas",
   "col": 4,
   "row": 2,
   "map": "gauntlet",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9162,16 +9940,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 165
   },
-  "storyDe": "Der letzte Anstieg:  Muschelscherben.",
-  "storyEn": "The final ascent:  Muschelscherben."
+  "storyDe": "Der letzte Anstieg:  Sturmglas.",
+  "storyEn": "The final ascent:  Sturmglas."
  },
  {
   "id": "L11s05",
   "league": 11,
-  "place": "Der Möwenstrich",
+  "place": "Wrackaltar",
   "col": 1,
   "row": 2,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9181,16 +9961,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Weg beginnt bei Der Möwenstrich.",
-  "storyEn": "The road begins at Der Möwenstrich."
+  "storyDe": "Der Weg beginnt bei Wrackaltar.",
+  "storyEn": "The road begins at Wrackaltar."
  },
  {
   "id": "L11s06",
   "league": 11,
-  "place": "Wo der Riss ausblutet",
+  "place": "Verlassener Kai",
   "col": 4,
   "row": 2,
   "map": "courtyard",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9200,16 +9982,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 162
   },
-  "storyDe": "Der letzte Anstieg:  Wo der Riss ausblutet.",
-  "storyEn": "The final ascent:  Wo der Riss ausblutet."
+  "storyDe": "Der letzte Anstieg:  Verlassener Kai.",
+  "storyEn": "The final ascent:  Verlassener Kai."
  },
  {
   "id": "L11s07",
   "league": 11,
-  "place": "Gezeitenklinge",
+  "place": "Strandgutlese",
   "col": 1,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9219,16 +10003,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Weg beginnt bei Gezeitenklinge.",
-  "storyEn": "The road begins at Gezeitenklinge."
+  "storyDe": "Der Weg beginnt bei Strandgutlese.",
+  "storyEn": "The road begins at Strandgutlese."
  },
  {
   "id": "L11s08",
   "league": 11,
-  "place": "Leuchtfeuermesse",
+  "place": "Aschesegel",
   "col": 1,
   "row": 3,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9238,16 +10023,23 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 112
   },
-  "storyDe": "Abseits des Weges liegt Leuchtfeuermesse.",
-  "storyEn": "Off the road lies Leuchtfeuermesse."
+  "storyDe": "Abseits des Weges liegt Aschesegel.",
+  "storyEn": "Off the road lies Aschesegel.",
+  "gate": {
+   "gold": 125
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L11s09",
   "league": 11,
-  "place": "Kap der Fracht",
+  "place": "Krähennest",
   "col": 4,
   "row": 3,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9257,16 +10049,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 159
   },
-  "storyDe": "Der letzte Anstieg:  Kap der Fracht.",
-  "storyEn": "The final ascent:  Kap der Fracht."
+  "storyDe": "Der letzte Anstieg:  Krähennest.",
+  "storyEn": "The final ascent:  Krähennest."
  },
  {
   "id": "L11s10",
   "league": 11,
-  "place": "Kalter Sog",
+  "place": "Muschelscherben",
   "col": 1,
   "row": 3,
   "map": "arena",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9276,16 +10070,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der Weg beginnt bei Kalter Sog.",
-  "storyEn": "The road begins at Kalter Sog."
+  "storyDe": "Der Weg beginnt bei Muschelscherben.",
+  "storyEn": "The road begins at Muschelscherben."
  },
  {
   "id": "L11s11",
   "league": 11,
-  "place": "Milchsee",
+  "place": "Osrics letztes Tor",
   "col": 1,
   "row": 3,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9295,16 +10090,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Abseits des Weges liegt Milchsee.",
-  "storyEn": "Off the road lies Milchsee."
+  "storyDe": "Abseits des Weges liegt Osrics letztes Tor.",
+  "storyEn": "Off the road lies Osrics letztes Tor."
  },
  {
   "id": "L11s12",
   "league": 11,
-  "place": "Wogenmark",
+  "place": "Der Möwenstrich",
   "col": 2,
   "row": 4,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9314,16 +10111,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Der Weg beginnt bei Wogenmark.",
-  "storyEn": "The road begins at Wogenmark."
+  "storyDe": "Der Weg beginnt bei Der Möwenstrich.",
+  "storyEn": "The road begins at Der Möwenstrich."
  },
  {
   "id": "L11s13",
   "league": 11,
-  "place": "Wellenwacht",
+  "place": "Wracklichter",
   "col": 1,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9333,16 +10131,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wellenwacht.",
-  "storyEn": "A side path branches toward Wellenwacht."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Wracklichter.",
+  "storyEn": "A side path branches toward Wracklichter."
  },
  {
   "id": "L11s14",
   "league": 11,
-  "place": "Tangwald",
+  "place": "Wo der Riss ausblutet",
   "col": 2,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9352,16 +10152,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Der Weg beginnt bei Tangwald.",
-  "storyEn": "The road begins at Tangwald."
+  "storyDe": "Der Weg beginnt bei Wo der Riss ausblutet.",
+  "storyEn": "The road begins at Wo der Riss ausblutet."
  },
  {
   "id": "L11s15",
   "league": 11,
-  "place": "Gischtthron",
+  "place": "Das Ertrunkene Tor",
   "col": 3,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9370,16 +10171,17 @@ export const CAMPAIGN12 = [
    "xp": 112,
    "gold": 43
   },
-  "storyDe": "Ein stiller Umweg führt zu Gischtthron.",
-  "storyEn": "A quiet detour leads to Gischtthron."
+  "storyDe": "Ein stiller Umweg führt zu Das Ertrunkene Tor.",
+  "storyEn": "A quiet detour leads to Das Ertrunkene Tor."
  },
  {
   "id": "L11s16",
   "league": 11,
-  "place": "Das Berstende Gatter",
+  "place": "Rast der Gestrandeten",
   "col": 1,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9389,16 +10191,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Das Berstende Gatter.",
-  "storyEn": "A side path branches toward Das Berstende Gatter."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Rast der Gestrandeten.",
+  "storyEn": "A side path branches toward Rast der Gestrandeten."
  },
  {
   "id": "L11s17",
   "league": 11,
-  "place": "Treibnetz",
+  "place": "Gezeitenklinge",
   "col": 3,
   "row": 5,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -9408,16 +10212,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 117
   },
-  "storyDe": "Der Pfad führt weiter über Treibnetz.",
-  "storyEn": "The path leads on across Treibnetz."
+  "storyDe": "Der Pfad führt weiter über Gezeitenklinge.",
+  "storyEn": "The path leads on across Gezeitenklinge."
  },
  {
   "id": "L11s18",
   "league": 11,
-  "place": "Möwenkanzel",
+  "place": "Leuchtfeuermesse",
   "col": 3,
   "row": 5,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9428,8 +10234,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Der Pfad führt weiter über Möwenkanzel.",
-  "storyEn": "The path leads on across Möwenkanzel.",
+  "storyDe": "Der Pfad führt weiter über Leuchtfeuermesse.",
+  "storyEn": "The path leads on across Leuchtfeuermesse.",
   "boss": {
    "pure": "b07",
    "rotation": [
@@ -9442,10 +10248,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L11s19",
   "league": 11,
-  "place": "Halle der herrenlosen Fracht",
+  "place": "Piersplitter",
   "col": 1,
   "row": 6,
   "map": "arena",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9455,16 +10262,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Halle der herrenlosen Fracht.",
-  "storyEn": "A side path branches toward Halle der herrenlosen Fracht."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Piersplitter.",
+  "storyEn": "A side path branches toward Piersplitter."
  },
  {
   "id": "L11s20",
   "league": 11,
-  "place": "Kielwasser",
+  "place": "Kap der Fracht",
   "col": 3,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9475,16 +10284,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Der Pfad führt weiter über Kielwasser.",
-  "storyEn": "The path leads on across Kielwasser."
+  "storyDe": "Der Pfad führt weiter über Kap der Fracht.",
+  "storyEn": "The path leads on across Kap der Fracht."
  },
  {
   "id": "L11s21",
   "league": 11,
-  "place": "Krähennest",
+  "place": "Kalter Sog",
   "col": 3,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9494,16 +10305,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Der Pfad führt weiter über Krähennest.",
-  "storyEn": "The path leads on across Krähennest."
+  "storyDe": "Der Pfad führt weiter über Kalter Sog.",
+  "storyEn": "The path leads on across Kalter Sog."
  },
  {
   "id": "L11s22",
   "league": 11,
-  "place": "Verlassener Kai",
+  "place": "Brackwasserklause",
   "col": 5,
   "row": 6,
   "map": "courtyard",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9513,16 +10325,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Verlassener Kai.",
-  "storyEn": "A side path branches toward Verlassener Kai."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Brackwasserklause.",
+  "storyEn": "A side path branches toward Brackwasserklause."
  },
  {
   "id": "L11s23",
   "league": 11,
-  "place": "Sturmglas",
+  "place": "Ankerfriedhof",
   "col": 5,
   "row": 6,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9532,16 +10345,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Abseits des Weges liegt Sturmglas.",
-  "storyEn": "Off the road lies Sturmglas."
+  "storyDe": "Abseits des Weges liegt Ankerfriedhof.",
+  "storyEn": "Off the road lies Ankerfriedhof."
  },
  {
   "id": "L11s24",
   "league": 11,
-  "place": "Bleicher Horizont",
+  "place": "Salzlippen",
   "col": 5,
   "row": 6,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9550,16 +10364,17 @@ export const CAMPAIGN12 = [
    "xp": 120,
    "gold": 128
   },
-  "storyDe": "Ein stiller Umweg führt zu Bleicher Horizont.",
-  "storyEn": "A quiet detour leads to Bleicher Horizont."
+  "storyDe": "Ein stiller Umweg führt zu Salzlippen.",
+  "storyEn": "A quiet detour leads to Salzlippen."
  },
  {
   "id": "L11s25",
   "league": 11,
-  "place": "Königsklippe",
+  "place": "Flaschenpost",
   "col": 0,
   "row": 6,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9569,16 +10384,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Königsklippe.",
-  "storyEn": "A side path branches toward Königsklippe."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Flaschenpost.",
+  "storyEn": "A side path branches toward Flaschenpost."
  },
  {
   "id": "L11s26",
   "league": 11,
-  "place": "Aschesegel",
+  "place": "Perlmuttgrotte",
   "col": 3,
   "row": 6,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9588,16 +10404,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 112
   },
-  "storyDe": "Abseits des Weges liegt Aschesegel.",
-  "storyEn": "Off the road lies Aschesegel."
+  "storyDe": "Abseits des Weges liegt Perlmuttgrotte.",
+  "storyEn": "Off the road lies Perlmuttgrotte."
  },
  {
   "id": "L11s27",
   "league": 11,
-  "place": "Osrics letztes Tor",
+  "place": "Milchsee",
   "col": 4,
   "row": 6,
   "map": "skirmish",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9607,8 +10425,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der Pfad führt weiter über Osrics letztes Tor.",
-  "storyEn": "The path leads on across Osrics letztes Tor.",
+  "storyDe": "Der Pfad führt weiter über Milchsee.",
+  "storyEn": "The path leads on across Milchsee.",
   "boss": {
    "piece": "chancellor",
    "wins": 2
@@ -9618,10 +10436,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L11s28",
   "league": 11,
-  "place": "Wracklichter",
+  "place": "Fährmannsruf",
   "col": 4,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9631,16 +10450,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 112
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Wracklichter.",
-  "storyEn": "A side path branches toward Wracklichter."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Fährmannsruf.",
+  "storyEn": "A side path branches toward Fährmannsruf."
  },
  {
   "id": "L11s29",
   "league": 11,
-  "place": "Das Ertrunkene Tor",
+  "place": "Planke über Schwarz",
   "col": 3,
   "row": 7,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9650,16 +10470,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Abseits des Weges liegt Das Ertrunkene Tor.",
-  "storyEn": "Off the road lies Das Ertrunkene Tor."
+  "storyDe": "Abseits des Weges liegt Planke über Schwarz.",
+  "storyEn": "Off the road lies Planke über Schwarz."
  },
  {
   "id": "L11s30",
   "league": 11,
-  "place": "Rast der Gestrandeten",
+  "place": "Wogenmark",
   "col": 4,
   "row": 7,
   "map": "courtyard",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9670,16 +10492,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Der Pfad führt weiter über Rast der Gestrandeten.",
-  "storyEn": "The path leads on across Rast der Gestrandeten."
+  "storyDe": "Der Pfad führt weiter über Wogenmark.",
+  "storyEn": "The path leads on across Wogenmark."
  },
  {
   "id": "L11s31",
   "league": 11,
-  "place": "Piersplitter",
+  "place": "Bei den Strandläufern",
   "col": 3,
   "row": 7,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9689,16 +10512,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Piersplitter.",
-  "storyEn": "A side path branches toward Piersplitter."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Bei den Strandläufern.",
+  "storyEn": "A side path branches toward Bei den Strandläufern."
  },
  {
   "id": "L11s32",
   "league": 11,
-  "place": "Brackwasserklause",
+  "place": "Wellenwacht",
   "col": 4,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9708,16 +10533,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 135
   },
-  "storyDe": "Die Prüfung wartet bei Brackwasserklause.",
-  "storyEn": "The trial waits at Brackwasserklause."
+  "storyDe": "Die Prüfung wartet bei Wellenwacht.",
+  "storyEn": "The trial waits at Wellenwacht."
  },
  {
   "id": "L11s33",
   "league": 11,
-  "place": "Ankerfriedhof",
+  "place": "Die Stille See",
   "col": 1,
   "row": 7,
   "map": "gauntlet",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9727,16 +10553,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein stiller Umweg führt zu Ankerfriedhof.",
-  "storyEn": "A quiet detour leads to Ankerfriedhof."
+  "storyDe": "Ein stiller Umweg führt zu Die Stille See.",
+  "storyEn": "A quiet detour leads to Die Stille See."
  },
  {
   "id": "L11s34",
   "league": 11,
-  "place": "Salzlippen",
+  "place": "Seegraswiege",
   "col": 2,
   "row": 8,
   "map": "arena",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9746,16 +10573,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Salzlippen.",
-  "storyEn": "A side path branches toward Salzlippen."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Seegraswiege.",
+  "storyEn": "A side path branches toward Seegraswiege."
  },
  {
   "id": "L11s35",
   "league": 11,
-  "place": "Flaschenpost",
+  "place": "Ebbe und Niemand",
   "col": 2,
   "row": 8,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9764,16 +10592,18 @@ export const CAMPAIGN12 = [
    "xp": 120,
    "gold": 128
   },
-  "storyDe": "Abseits des Weges liegt Flaschenpost.",
-  "storyEn": "Off the road lies Flaschenpost."
+  "storyDe": "Abseits des Weges liegt Ebbe und Niemand.",
+  "storyEn": "Off the road lies Ebbe und Niemand."
  },
  {
   "id": "L11s36",
   "league": 11,
-  "place": "Perlmuttgrotte",
+  "place": "Tangwald",
   "col": 4,
   "row": 8,
   "map": "arena",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9783,16 +10613,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 138
   },
-  "storyDe": "Die Prüfung wartet bei Perlmuttgrotte.",
-  "storyEn": "The trial waits at Perlmuttgrotte."
+  "storyDe": "Die Prüfung wartet bei Tangwald.",
+  "storyEn": "The trial waits at Tangwald."
  },
  {
   "id": "L11s37",
   "league": 11,
-  "place": "Fährmannsruf",
+  "place": "Der Leuchtturm",
   "col": 1,
   "row": 8,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9801,16 +10632,18 @@ export const CAMPAIGN12 = [
    "xp": 120,
    "gold": 128
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Fährmannsruf.",
-  "storyEn": "A side path branches toward Fährmannsruf."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Der Leuchtturm.",
+  "storyEn": "A side path branches toward Der Leuchtturm."
  },
  {
   "id": "L11s38",
   "league": 11,
-  "place": "Planke über Schwarz",
+  "place": "Gischtthron",
   "col": 4,
   "row": 8,
   "map": "classic",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9820,16 +10653,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 141
   },
-  "storyDe": "Die Prüfung wartet bei Planke über Schwarz.",
-  "storyEn": "The trial waits at Planke über Schwarz."
+  "storyDe": "Die Prüfung wartet bei Gischtthron.",
+  "storyEn": "The trial waits at Gischtthron."
  },
  {
   "id": "L11s39",
   "league": 11,
-  "place": "Bei den Strandläufern",
+  "place": "Das Berstende Gatter",
   "col": 4,
   "row": 9,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9839,16 +10674,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 144
   },
-  "storyDe": "Die Prüfung wartet bei Bei den Strandläufern.",
-  "storyEn": "The trial waits at Bei den Strandläufern."
+  "storyDe": "Die Prüfung wartet bei Das Berstende Gatter.",
+  "storyEn": "The trial waits at Das Berstende Gatter."
  },
  {
   "id": "L11s40",
   "league": 11,
-  "place": "Die Stille See",
+  "place": "Möwenkanzel",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9858,16 +10695,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 150
   },
-  "storyDe": "Die Prüfung wartet bei Die Stille See.",
-  "storyEn": "The trial waits at Die Stille See."
+  "storyDe": "Die Prüfung wartet bei Möwenkanzel.",
+  "storyEn": "The trial waits at Möwenkanzel."
  },
  {
   "id": "L11s41",
   "league": 11,
-  "place": "Seegraswiege",
+  "place": "Treibnetz",
   "col": 4,
   "row": 9,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9878,16 +10717,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 147
   },
-  "storyDe": "Die Prüfung wartet bei Seegraswiege.",
-  "storyEn": "The trial waits at Seegraswiege."
+  "storyDe": "Die Prüfung wartet bei Treibnetz.",
+  "storyEn": "The trial waits at Treibnetz."
  },
  {
   "id": "L11s42",
   "league": 11,
-  "place": "Ebbe und Niemand",
+  "place": "Halle der herrenlosen Fracht",
   "col": 5,
   "row": 9,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9897,8 +10738,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 153
   },
-  "storyDe": "Der letzte Anstieg:  Ebbe und Niemand.",
-  "storyEn": "The final ascent:  Ebbe und Niemand.",
+  "storyDe": "Der letzte Anstieg:  Halle der herrenlosen Fracht.",
+  "storyEn": "The final ascent:  Halle der herrenlosen Fracht.",
   "boss": {
    "piece": "standard",
    "wins": 2
@@ -9908,10 +10749,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L11s43",
   "league": 11,
-  "place": "Der Leuchtturm",
+  "place": "Robbenbank",
   "col": 4,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 3,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9920,16 +10762,18 @@ export const CAMPAIGN12 = [
    "xp": 112,
    "gold": 43
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der Leuchtturm.",
-  "storyEn": "A side path branches toward Der Leuchtturm."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Robbenbank.",
+  "storyEn": "A side path branches toward Robbenbank."
  },
  {
   "id": "L11s44",
   "league": 11,
-  "place": "Robbenbank",
+  "place": "Kielwasser",
   "col": 5,
   "row": 10,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9939,8 +10783,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 156
   },
-  "storyDe": "Der letzte Anstieg:  Robbenbank.",
-  "storyEn": "The final ascent:  Robbenbank."
+  "storyDe": "Der letzte Anstieg:  Kielwasser.",
+  "storyEn": "The final ascent:  Kielwasser."
  },
  {
   "id": "L11s45",
@@ -9949,6 +10793,7 @@ export const CAMPAIGN12 = [
   "col": 1,
   "row": 7,
   "map": "classic",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -9964,10 +10809,11 @@ export const CAMPAIGN12 = [
  {
   "id": "L12s00",
   "league": 12,
-  "place": "Der letzte Steg",
+  "place": "Leuchtfeuerrest",
   "col": 0,
   "row": 5,
   "map": "classic",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9977,16 +10823,22 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 118
   },
-  "storyDe": "Ein Seitenpfad zweigt ab nach Der letzte Steg.",
-  "storyEn": "A side path branches toward Der letzte Steg."
+  "storyDe": "Ein Seitenpfad zweigt ab nach Leuchtfeuerrest.",
+  "storyEn": "A side path branches toward Leuchtfeuerrest.",
+  "gate": {
+   "gold": 135
+  },
+  "tagDe": "Zollstation",
+  "tagEn": "Toll station"
  },
  {
   "id": "L12s01",
   "league": 12,
-  "place": "Wrack der Morgenröte",
+  "place": "Kap der Stille",
   "col": 1,
   "row": 8,
   "map": "skirmish",
+  "chapter": 2,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -9995,16 +10847,17 @@ export const CAMPAIGN12 = [
    "xp": 126,
    "gold": 82
   },
-  "storyDe": "Abseits des Weges liegt Wrack der Morgenröte.",
-  "storyEn": "Off the road lies Wrack der Morgenröte."
+  "storyDe": "Abseits des Weges liegt Kap der Stille.",
+  "storyEn": "Off the road lies Kap der Stille."
  },
  {
   "id": "L12s02",
   "league": 12,
-  "place": "Mastbruch",
+  "place": "Eiserne Untiefe",
   "col": 5,
   "row": 3,
   "map": "courtyard",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10013,16 +10866,18 @@ export const CAMPAIGN12 = [
    "xp": 126,
    "gold": 82
   },
-  "storyDe": "Ein stiller Umweg führt zu Mastbruch.",
-  "storyEn": "A quiet detour leads to Mastbruch."
+  "storyDe": "Ein stiller Umweg führt zu Eiserne Untiefe.",
+  "storyEn": "A quiet detour leads to Eiserne Untiefe."
  },
  {
   "id": "L12s03",
   "league": 12,
-  "place": "Einsame Boje",
+  "place": "Wrack der Morgenröte",
   "col": 1,
   "row": 3,
   "map": "skirmish",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -10032,16 +10887,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 105
   },
-  "storyDe": "Der Weg beginnt bei Einsame Boje.",
-  "storyEn": "The road begins at Einsame Boje."
+  "storyDe": "Der Weg beginnt bei Wrack der Morgenröte.",
+  "storyEn": "The road begins at Wrack der Morgenröte."
  },
  {
   "id": "L12s04",
   "league": 12,
-  "place": "Riff der Rippen",
+  "place": "Einsame Boje",
   "col": 2,
   "row": 4,
   "map": "gauntlet",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -10052,8 +10909,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 111
   },
-  "storyDe": "Der Pfad führt weiter über Riff der Rippen.",
-  "storyEn": "The path leads on across Riff der Rippen.",
+  "storyDe": "Der Pfad führt weiter über Einsame Boje.",
+  "storyEn": "The path leads on across Einsame Boje.",
   "boss": {
    "pure": "b15",
    "rotation": [
@@ -10070,6 +10927,8 @@ export const CAMPAIGN12 = [
   "col": 3,
   "row": 6,
   "map": "classic",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10085,10 +10944,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L12s06",
   "league": 12,
-  "place": "Treibholzfeld",
+  "place": "Versunkener Wachtturm",
   "col": 3,
   "row": 7,
   "map": "courtyard",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10098,16 +10959,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 123
   },
-  "storyDe": "Die Prüfung wartet bei Treibholzfeld.",
-  "storyEn": "The trial waits at Treibholzfeld."
+  "storyDe": "Die Prüfung wartet bei Versunkener Wachtturm.",
+  "storyEn": "The trial waits at Versunkener Wachtturm."
  },
  {
   "id": "L12s07",
   "league": 12,
-  "place": "Versunkener Wachtturm",
+  "place": "Krumme Klippe",
   "col": 3,
   "row": 8,
   "map": "arena",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -10117,8 +10980,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 129
   },
-  "storyDe": "Der letzte Anstieg:  Versunkener Wachtturm.",
-  "storyEn": "The final ascent:  Versunkener Wachtturm."
+  "storyDe": "Der letzte Anstieg:  Krumme Klippe.",
+  "storyEn": "The final ascent:  Krumme Klippe."
  },
  {
   "id": "L12s08",
@@ -10127,6 +10990,8 @@ export const CAMPAIGN12 = [
   "col": 4,
   "row": 8,
   "map": "skirmish",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -10137,6 +11002,7 @@ export const CAMPAIGN12 = [
   },
   "storyDe": "Blitzfeste des Grossmeisters: Hier wartet der Meister von Kapitel XII.",
   "storyEn": "Blitzfeste des Grossmeisters: here waits the master of chapter XII.",
+  "final": true,
   "boss": {
    "pure": "b23"
   },
@@ -10145,10 +11011,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L12s09",
   "league": 12,
-  "place": "Krumme Klippe",
+  "place": "Riff der Rippen",
   "col": 4,
   "row": 7,
   "map": "arena",
+  "chapter": 2,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10158,16 +11026,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 114
   },
-  "storyDe": "Der Pfad führt weiter über Krumme Klippe.",
-  "storyEn": "The path leads on across Krumme Klippe."
+  "storyDe": "Der Pfad führt weiter über Riff der Rippen.",
+  "storyEn": "The path leads on across Riff der Rippen."
  },
  {
   "id": "L12s10",
   "league": 12,
-  "place": "Nebelbank",
+  "place": "Mastbruch",
   "col": 4,
   "row": 5,
   "map": "courtyard",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -10178,16 +11048,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 108
   },
-  "storyDe": "Der Weg beginnt bei Nebelbank.",
-  "storyEn": "The road begins at Nebelbank."
+  "storyDe": "Der Weg beginnt bei Mastbruch.",
+  "storyEn": "The road begins at Mastbruch."
  },
  {
   "id": "L12s11",
   "league": 12,
-  "place": "Sturmsäule",
+  "place": "Sturmauge",
   "col": 5,
   "row": 5,
   "map": "skirmish",
+  "chapter": 1,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10197,16 +11068,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 118
   },
-  "storyDe": "Ein stiller Umweg führt zu Sturmsäule.",
-  "storyEn": "A quiet detour leads to Sturmsäule."
+  "storyDe": "Ein stiller Umweg führt zu Sturmauge.",
+  "storyEn": "A quiet detour leads to Sturmauge."
  },
  {
   "id": "L12s12",
   "league": 12,
-  "place": "Leuchtfeuerrest",
+  "place": "Treibholzfeld",
   "col": 5,
   "row": 8,
   "map": "skirmish",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10216,8 +11089,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 120
   },
-  "storyDe": "Die Prüfung wartet bei Leuchtfeuerrest.",
-  "storyEn": "The trial waits at Leuchtfeuerrest.",
+  "storyDe": "Die Prüfung wartet bei Treibholzfeld.",
+  "storyEn": "The trial waits at Treibholzfeld.",
   "boss": {
    "piece": "seeress",
    "wins": 2
@@ -10227,10 +11100,12 @@ export const CAMPAIGN12 = [
  {
   "id": "L12s13",
   "league": 12,
-  "place": "Kap der Stille",
+  "place": "Nebelbank",
   "col": 4,
   "row": 9,
   "map": "classic",
+  "chapter": 4,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "hard",
   "bump": 3,
@@ -10240,16 +11115,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 132
   },
-  "storyDe": "Der letzte Anstieg:  Kap der Stille.",
-  "storyEn": "The final ascent:  Kap der Stille."
+  "storyDe": "Der letzte Anstieg:  Nebelbank.",
+  "storyEn": "The final ascent:  Nebelbank."
  },
  {
   "id": "L12s14",
   "league": 12,
-  "place": "Eiserne Untiefe",
+  "place": "Salzfels",
   "col": 5,
   "row": 9,
   "map": "gauntlet",
+  "chapter": 3,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "normal",
   "bump": 3,
@@ -10259,16 +11136,18 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 126
   },
-  "storyDe": "Die Prüfung wartet bei Eiserne Untiefe.",
-  "storyEn": "The trial waits at Eiserne Untiefe."
+  "storyDe": "Die Prüfung wartet bei Salzfels.",
+  "storyEn": "The trial waits at Salzfels."
  },
  {
   "id": "L12s15",
   "league": 12,
-  "place": "Blitzfeste des Grossmeisters",
+  "place": "Der letzte Steg",
   "col": 1,
   "row": 1,
   "map": "classic",
+  "chapter": 1,
+  "haupt": true,
   "rules": "hp",
   "difficulty": "easy",
   "bump": 3,
@@ -10279,7 +11158,7 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 102
   },
-  "storyDe": "Der Weg beginnt bei Blitzfeste des Grossmeisters.",
-  "storyEn": "The road begins at Blitzfeste des Grossmeisters."
+  "storyDe": "Der Weg beginnt bei Der letzte Steg.",
+  "storyEn": "The road begins at Der letzte Steg."
  }
 ];

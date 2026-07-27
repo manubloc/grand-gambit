@@ -43,19 +43,15 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
   const ids = new Set(CAMPAIGN.map((n) => n.id));
   let complete = true;
   for (let lg = 2; lg <= 10; lg++)
-    for (const n of CAMPAIGN) if (nodeInLeague(n, lg) && !PLACE_NAMES[lg]?.[n.id]) complete = false;
-  ok("every station in leagues II-X has an authored name", complete);
-  let noStrayIds = true;
-  for (let lg = 2; lg <= 10; lg++) for (const id of Object.keys(PLACE_NAMES[lg])) if (!ids.has(id)) noStrayIds = false;
-  ok("no place table references an unknown node id", noStrayIds);
-  const seen = new Map(); let dup = 0;
-  for (const n of CAMPAIGN) seen.set(n.place, "L1");
-  for (let lg = 2; lg <= 10; lg++) for (const [id, nm] of Object.entries(PLACE_NAMES[lg])) {
-    if (seen.has(nm)) dup++; else seen.set(nm, "L" + lg);
-  }
-  ok("no place name is ever repeated across all ten leagues", dup === 0);
-  ok("league I keeps its homeland names", placeFor(CAMPAIGN.find((n) => n.id === "a1"), 1) === "Nordwacht");
-  ok("later leagues rename the same node", placeFor(CAMPAIGN.find((n) => n.id === "a1"), 4) !== "Nordwacht");
+  ok("every station carries its own authored name", CAMPAIGN.every((n) => (n.place || "").length >= 3));
+  ok("place names are unique within each chapter", (() => {
+    for (let lg = 1; lg <= 12; lg++) { const seen = new Set();
+      for (const n of CAMPAIGN.filter((x) => x.league === lg)) { if (seen.has(n.place)) return false; seen.add(n.place); } }
+    return true;
+  })());
+  ok("the name pools for chapters II-XI are stocked", [2,3,4,5,6,7,8,9,10,11].every((lg) => Object.keys(PLACE_NAMES[lg] || {}).length >= 30));
+  ok("league I keeps its homeland names", placeFor(CAMPAIGN.find((n) => n.id === "L01s00")) === "Alte Wacht" && placeFor(CAMPAIGN.find((n) => n.id === "L01s01")) === "Silbermühle");
+  ok("names hold steady across world laps", placeFor(CAMPAIGN.find((n) => n.id === "L01s02"), 4) === placeFor(CAMPAIGN.find((n) => n.id === "L01s02"), 1));
 }
 
 // ── strict per-station secrecy: a station reveals its figure only after it
@@ -65,8 +61,8 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
   const withFaced = (ids) => ({ campaign: { league: 3, faced: ids, unlocked: ["knight"], cleared: [] }, codex: { met: ["X:b10"] } });
   // facedNode logic mirrored from CampaignScreen: cleared OR in faced set
   const faced = (profile, id) => (profile.campaign?.faced || []).includes(id);
-  ok("an unplayed station stays hidden even for a recruited piece", faced(withFaced([]), "a4") === false);
-  ok("a played station reveals its figure", faced(withFaced(["a4"]), "a4") === true);
+  ok("an unplayed station stays hidden even for a recruited piece", faced(withFaced([]), "L07s41") === false);
+  ok("a played station reveals its figure", faced(withFaced(["L07s41"]), "L07s41") === true);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

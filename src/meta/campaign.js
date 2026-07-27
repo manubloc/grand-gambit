@@ -33,7 +33,7 @@ const PREDS = (() => {
 })();
 export const predsOf = (id) => PREDS[id] || [];
 
-export const leagueNo = (league) => ((Math.max(1, league || 1) - 1) % 11) + 1;
+export const leagueNo = (league) => ((Math.max(1, league || 1) - 1) % 12) + 1;
 /** League-bound sites (the combo paths) only exist in their own climate. */
 export const nodeInLeague = (node, league) => !node.league || node.league === leagueNo(league);
 /** Gates come as "item", { item, piece } or { gold } (a toll) — normalize. */
@@ -75,6 +75,7 @@ export function payToll(profile, id) {
 
 export function nodeStatus(profile, id) {
   const node = nodeById(id);
+  if (!node) return "hidden"; // eine Station, die es nicht gibt, existiert nicht
   if (!nodeInLeague(node, profile?.campaign?.league)) return "hidden";
   const cleared = new Set(clearedIds(profile));
   if (cleared.has(id)) return "cleared";
@@ -107,16 +108,17 @@ const ATK_BOOST = [0, 0, 1, 1, 2];
 export function nodeBossSpec(node, league = 1) {
   node = { ...node, boss: effectiveNodeBoss(node, league) };  // the Hoard hatches late
   if (!node.boss) return null;
-  const override = node.id === "n22" ? leagueFinalBossPiece(league) : null;
-  if (node.boss.pure && !override) {
-    // the Citadel fields THIS league's boss — ten finales, ten auras;
-    // monster stations rotate their champion by league
-    if (node.id === "n22") return bossSpec(bossById(leagueBossId(league)) || bossById(node.boss.pure));
+  if (node.boss.pure) {
+    // Monster-Stationen rotieren ihren Champion mit dem Weltdurchlauf; der
+    // Kapitel-Endboss steht seit den zwoelf Graphen direkt am Knoten.
     const rot = node.boss.rotation;
-    const pid = rot ? rot[(leagueNo(league) - 1) % rot.length] : node.boss.pure;
+    // Die Rotation zaehlt den WELTDURCHLAUF: erste Runde stellt den ersten
+    // Champion, die zweite Weltrunde den naechsten - nicht das Kapitel.
+    const lap = Math.floor((Math.max(1, league) - 1) / 12);
+    const pid = rot ? rot[lap % rot.length] : node.boss.pure;
     return bossSpec(bossById(pid) || bossById(node.boss.pure));
   }
-  const ch = CHARACTERS[override || node.boss.piece];
+  const ch = CHARACTERS[node.boss.piece];
   const tier = node.tier || 1;
   const { abilities } = resolveCharacter(ch, 1 + tier); // a taste of its ladder
   return {
@@ -138,10 +140,10 @@ export function nodeBossSpec(node, league = 1) {
 /** The station's name in the given league — unique across the whole journey.
  *  League I uses the homeland names from CAMPAIGN; II–XI draw from PLACE_NAMES,
  *  each set hand-written from that biome's lore (see content/placeNames.js). */
-export function placeFor(node, league = 1) {
-  const lg = Math.max(1, Math.min(11, leagueNo(league)));
-  if (lg === 1) return node?.place || "";
-  return (PLACE_NAMES[lg] && PLACE_NAMES[lg][node?.id]) || node?.place || "";
+/** Seit den zwoelf Graphen traegt jede Station ihren festen eigenen Namen -
+ *  Weltdurchlaeufe benennen nichts mehr um. */
+export function placeFor(node) {
+  return node?.place || "";
 }
 
 export function effectiveNodeBoss(node, lg) {
@@ -187,6 +189,17 @@ export function buildStageMatch(id, profile = null, leagueOverride = null) {
   if (boss) {
     let qi = formation.indexOf("queen");
     if (qi === -1) qi = Math.max(0, Math.floor(formation.length / 2) - 1);
+    // Ein GROSSER Drache entfaltet sich beim Aufbau auf die Nachbarspalte
+    // einwaerts und raeumt sie leer - stuende dort der Koenig, waere die
+    // Partie vor dem ersten Zug verloren. Also einen Slot waehlen, dessen
+    // Entfaltung den Koenig verschont.
+    if (boss.kind === "D") {
+      const w2 = formation.length;
+      const ki = aiArmy.back.findIndex((sp) => sp.kind === "K");
+      const inward = (q) => (q < w2 - 1 ? q + 1 : q - 1);
+      if (qi === ki || inward(qi) === ki)
+        for (let j = 0; j < w2; j++) if (j !== ki && inward(j) !== ki) { qi = j; break; }
+    }
     aiArmy.back = aiArmy.back.map((spec, j) => (j === qi ? boss : spec));
     bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: looking ? null : recruitOnWin(node, profile),
       art: boss.art || null, accent: boss.accent, kind: boss.kind };
@@ -209,7 +222,7 @@ export function buildStageMatch(id, profile = null, leagueOverride = null) {
     // a recruited champion, or the fallen Grandmaster in his keep. In the
     // look-back, EVERY station replays as a friendly.
     friendly: looking || (!!profile && nodeStatus(profile, id) === "cleared"
-      && (id === "n22" || (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg))))),
+      && (!!bossPieceFor(node, lg) && (profile.campaign?.unlocked || []).includes(bossPieceFor(node, lg)))),
     reward: node.reward || { xp: 0 },
   };
 }
@@ -249,7 +262,7 @@ export function advanceCampaign(profile, id) {
     // EXCEPT a friendly match against one of your OWN (a recruited champion,
     // or the fallen Grandmaster holding his keep), which still pays a
     // quarter of the station's XP (gold is halved in applyResult)
-    const friendlyXp = ((bossPiece && unlocked.has(bossPiece) && !joined) || id === "n22")
+    const friendlyXp = ((bossPiece && unlocked.has(bossPiece) && !joined) || nodeById(id)?.final)
       ? Math.round((node.reward?.xp || 0) * leagueRewardMult(league) * 0.25) : 0;
     return { ...profile, stats, xpEarned: (profile.xpEarned || 0) + friendlyXp,
       campaign: { ...(profile.campaign || {}), unlocked: [...unlocked], dupes, bossWins } };
@@ -266,7 +279,7 @@ export function advanceCampaign(profile, id) {
   const spGain = spForXpJump(profile.xpEarned || 0, xpEarned);
   let items = profile.items;
   if (node.grant === "potion") items = { ...(items || {}), potion: Math.min(3, ((items || {}).potion || 0) + 1) };
-  const finished = id === "n22"; // the Citadel falls — the MAP STAYS; the
+  const finished = !!nodeById(id)?.final; // der Kapitel-Endboss faellt — die Karte BLEIBT; the
   // gate to the next league opens up in the corner (advanceLeague), no rematch
   if (finished) stats.leaguesWon = (stats.leaguesWon || 0) + 1;
   return {
@@ -284,18 +297,19 @@ export function advanceCampaign(profile, id) {
  *  league begins WITHOUT a rematch — court, tallies and dupes travel along,
  *  clears and paid tolls reset with the new climate. */
 export function advanceLeague(profile) {
-  if (nodeStatus(profile, "n22") !== "cleared") return profile;
+  const fin = CAMPAIGN.find((n) => n.final && nodeInLeague(n, profile?.campaign?.league));
+  if (!fin || nodeStatus(profile, fin.id) !== "cleared") return profile;
   const league = profile.campaign?.league || 1;
   return { ...profile, campaign: { league: league + 1, cleared: [],
     unlocked: [...(profile.campaign?.unlocked || [])], dupes: { ...(profile.campaign?.dupes || {}) },
     bossWins: { ...(profile.campaign?.bossWins || {}) }, tolls: [] } };
 }
 
-/** League-specific finale: the Desert league (IX) ends at the Captain, whose
- *  recruitment (plus a boat) is the only way onto the Endless Sea (X). */
-export const leagueFinalBossPiece = (league) => (((league - 1) % 11) + 1 === 10 ? "captain" : null);
-export const bossPieceFor = (node, league) =>
-  (node.id === "n22" && leagueFinalBossPiece(league)) || effectiveNodeBoss(node, league)?.piece || null;
+/** Seit den zwoelf Kapitel-Graphen vergeben die Stationen ihre Figuren
+ *  selbst - der Kapitaen sitzt auf einem Seitenpfad in Kapitel VI. Die
+ *  Funktion bleibt fuer alte Aufrufer stehen und sagt schlicht: nein. */
+export const leagueFinalBossPiece = () => null;
+export const bossPieceFor = (node, league) => effectiveNodeBoss(node, league)?.piece || null;
 
 /** Some champions take convincing: `wins` on the boss is how many victories it
  *  takes before the piece joins (default 1). The tally lives on the profile
@@ -321,23 +335,15 @@ export const leagueBump = (league) => 2 * ((league || 1) - 1);
  *  time (II: skirmish · III: courtyard & gauntlet · IV+: everything). */
 export function effectiveMap(node, league = 1) {
   if (!node) return "classic";
-  if (node.id === "n22" || node.league) return node.map; // finale & combo sites keep their stage
-  // THE CLASSIC BOARD RULES THE REALM: most stations fight on 8x8 — classic
-  // first, with the Gauntlet and the Courtyard as its lieutenants. The wide
-  // arena and the tight skirmish survive only on their signature stations.
-  const bent = BEND_8X8[node.id] || node.map;
+  if (node.final) return node.map; // das Kapitelfinale behaelt seine Buehne
+  // DAS KLASSISCHE BRETT REGIERT DEN ANFANG: Kapitel I spielt rein 8x8,
+  // dann betreten die Buehnen die Welt eine nach der anderen
+  // (II: skirmish · III: courtyard & gauntlet · ab IV: alles).
   const lg = leagueNo(league);
-  if (lg >= 4) return bent;
+  if (lg >= 4) return node.map;
   const allowed = lg === 1 ? ["classic"] : lg === 2 ? ["classic", "skirmish"] : ["classic", "skirmish", "courtyard", "gauntlet"];
-  return allowed.includes(bent) ? bent : "classic";
+  return allowed.includes(node.map) ? node.map : "classic";
 }
-// deterministic per-station re-routing toward the 8x8 boards (classic-heavy)
-const BEND_8X8 = {
-  n16: "classic", n17: "classic", d1: "classic", d2: "classic", e1: "classic",
-  e2: "courtyard", e3: "classic", n20: "classic", n21: "classic", g2: "classic",
-  w2: "classic", a1: "classic", a2: "classic", c1: "classic", z1: "classic",
-  w1: "classic", w3: "classic",
-};
 
 /** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
  *  the monster milestones (pure bosses, incl. the Citadel) grant a total

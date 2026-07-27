@@ -161,14 +161,17 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
 // Along the main spine (the n-nodes) the purse must never shrink: a later
 // station paying less than an earlier one reads as a bug to the player.
 {
-  const spine = CAMPAIGN.filter((n) => /^n\d+$/.test(n.id) && n.reward?.xp)
-    .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+const { hauptast: haSt } = await import("./test_helpers12.mjs");
   const drops = [];
-  for (let i = 1; i < spine.length; i++)
-    if (spine[i].reward.xp < spine[i - 1].reward.xp)
-      drops.push(`${spine[i - 1].id}(${spine[i - 1].reward.xp}) → ${spine[i].id}(${spine[i].reward.xp})`);
-  ok("the main road's rewards never fall back", drops.length === 0 || console.log("     ", drops.join(", ")));
-  ok("the spine actually climbs", spine.length > 3 && spine[spine.length - 1].reward.xp > spine[0].reward.xp * 2);
+  for (let lg = 1; lg <= 12; lg++) {
+    const spine = haSt(lg).filter((n) => n.reward?.xp);
+    for (let i = 1; i < spine.length; i++)
+      if (spine[i].reward.xp < spine[i - 1].reward.xp)
+        drops.push(`${spine[i - 1].id}(${spine[i - 1].reward.xp}) → ${spine[i].id}(${spine[i].reward.xp})`);
+  }
+  ok("the main road's rewards never fall back (all twelve chapters)", drops.length === 0 || console.log("     ", drops.join(", ")));
+  const s1 = haSt(1);
+  ok("the spine actually climbs", s1.length > 3 && s1[s1.length - 1].reward.xp > s1[0].reward.xp * 2);
 }
 
 // ── 10. THE CROWN KEEPS ITS SQUARES ─────────────────────────────────────────
@@ -251,7 +254,7 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
   const swap = CHARACTER_LIST.find((c) => c.flank && (prof.campaign?.unlocked || []).includes(c.id));
   const changed = [...map.defaultFormation]; changed[0] = swap.id;
   const after = { ...prof,
-    pausedMatch: { v: 1, nodeId: "n03", enc: encodeState(g), potionsUsed: 0, hourglassUsed: 0, clock: null },
+    pausedMatch: { v: 1, nodeId: "L01s03", enc: encodeState(g), potionsUsed: 0, hourglassUsed: 0, clock: null },
     loadout: { ...(prof.loadout || {}), formations: { classic: changed } } };
 
   ok("the paused fight resumes exactly as it stood",

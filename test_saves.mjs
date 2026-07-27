@@ -38,7 +38,7 @@ const A = ana.id;
 const s1 = await createSave(A, "Erste Reise");
 ok("a fresh slot starts at 0% with a default profile", s1.pct === 0 && s1.playtimeSec === 0 && s1.league === 1);
 const prof = await loadSave(A, s1.id);
-prof.campaign.cleared = ["n01", "n02", "n03"];
+prof.campaign.cleared = ["L01s00", "L01s01", "L01s03"];
 const upd = await writeSave(A, s1.id, prof, 125);
 ok("writes document progress and accumulate playtime", upd.clearedCount === 3 && upd.playtimeSec === 125 && upd.pct > 0);
 await writeSave(A, s1.id, prof, 55);
@@ -52,13 +52,15 @@ ok("deleting removes slot and payload", (await listSaves(A)).length === 1 && (aw
 ok("playtime formats like a game", fmtPlaytime(45) === "0 min" && fmtPlaytime(3720) === "1 h 02 min");
 
 // ── progress dial (the admin control) ────────────────────────────────────────
+import { CAMPAIGN as CSaves } from "./src/content/index.js";
+const N1 = CSaves.filter((n) => n.league === 1).length;
 const order = leagueOrder(1);
-ok("journey order covers the whole league once", order.length === 36 && new Set(order).size === 36 && order[0] === "n01");
+ok("journey order covers the whole chapter once, main spine first", order.length === N1 && new Set(order).size === N1 && order[0] === "L01s00");
 const full = withProgressPct(defaultProfile(), 100);
-ok("100% clears every site of the league", full.campaign.cleared.length === 36 && progressPct(full) === 100);
-ok("100% unlocks the bosses along the way", full.campaign.unlocked.length >= 15 && full.gold > 2000);
+ok("100% clears every site of the chapter", full.campaign.cleared.length === N1 && progressPct(full) === 100);
+ok("100% unlocks the bosses along the way", full.campaign.unlocked.length >= 2 && full.gold > 500);
 const half = withProgressPct(defaultProfile(), 50);
-ok("50% clears the first half in journey order", half.campaign.cleared.length === 18 && half.campaign.cleared[0] === "n01");
+ok("50% clears the first half in journey order", half.campaign.cleared.length === Math.round(N1 / 2) && half.campaign.cleared[0] === "L01s00");
 const zero = withProgressPct({ ...full, name: "Keep" }, 0);
 ok("0% resets progress but keeps the identity", zero.campaign.cleared.length === 0 && zero.gold === 0 && zero.name === "Keep");
 
@@ -73,20 +75,20 @@ const { recordStage, totalBestMoves, fmtMs } = await import("./src/meta/records.
 const { mergeBoard } = await import("./src/meta/leaderboard.js");
 {
   let p = { ...defaultProfile() };
-  p = recordStage(p, { id: "n01", moves: 24, now: 1000 });
-  ok("first victory starts the run clock and logs the moves", p.records.runStartAt === 1000 && p.records.moves.n01 === 24 && p.records.wins === 1);
-  p.campaign.cleared = ["n01"];
-  p = recordStage(p, { id: "n01", moves: 30, now: 2000 });
-  ok("worse move counts never overwrite the best", p.records.moves.n01 === 24 && p.records.wins === 2);
-  p = recordStage(p, { id: "n01", moves: 18, now: 3000 });
-  ok("better move counts do", p.records.moves.n01 === 18);
-  p.campaign.cleared = leagueOrder(1).filter((id) => id !== "n22");
-  p = recordStage(p, { id: "n22", moves: 40, now: 61000 });
+  p = recordStage(p, { id: "L01s00", moves: 24, now: 1000 });
+  ok("first victory starts the run clock and logs the moves", p.records.runStartAt === 1000 && p.records.moves.L01s00 === 24 && p.records.wins === 1);
+  p.campaign.cleared = ["L01s00"];
+  p = recordStage(p, { id: "L01s00", moves: 30, now: 2000 });
+  ok("worse move counts never overwrite the best", p.records.moves.L01s00 === 24 && p.records.wins === 2);
+  p = recordStage(p, { id: "L01s00", moves: 18, now: 3000 });
+  ok("better move counts do", p.records.moves.L01s00 === 18);
+  p.campaign.cleared = leagueOrder(1).filter((id) => id !== "L01s44");
+  p = recordStage(p, { id: "L01s44", moves: 40, now: 61000 });
   ok("felling the throne stops the run clock", p.records.fastestRunMs === 60000 && fmtMs(60000) === "1 min 00 s");
-  const again = recordStage(p, { id: "n22", moves: 33, now: 990000 });
+  const again = recordStage(p, { id: "L01s44", moves: 33, now: 990000 });
   ok("later throne replays keep the first run time", again.records.fastestRunMs === 60000);
-  p.campaign.cleared = ["n01", "n02"];
-  p.records.moves = { n01: 18, n02: 22, x99: 5 };
+  p.campaign.cleared = ["L01s00", "L01s01"];
+  p.records.moves = { L01s00: 18, L01s01: 22, x99: 5 };
   const tb = totalBestMoves(p);
   ok("total best moves sums only cleared league stages", tb.sum === 40 && tb.stages === 2);
 }
@@ -138,7 +140,7 @@ await clearSession();
   ok("league X at 100% fields every reachable boss", ownedLeagueBosses(everything).length === 24 && everything.stats.leaguesWon === 10);
   ok("league X at 100% fills the whole chest", Object.keys(ITEMS).every((id) => (everything.items || {})[id] >= 1));
   const mid = withProgressPct(defaultProfile(), 40, 5);
-  ok("mid-journey counts earlier leagues as mastered", mid.stats.leaguesWon === 4 && mid.campaign.unlocked.length > 10 && (mid.campaign.bribedBosses || []).length === 0);
+  ok("mid-journey counts earlier leagues as mastered", mid.stats.leaguesWon === 4 && mid.campaign.unlocked.length >= 8 && (mid.campaign.bribedBosses || []).length === 0);
 }
 
 

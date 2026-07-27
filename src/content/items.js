@@ -1,7 +1,7 @@
 // Equipment & expedition gear — bought with gold in the court's supply
 // chest. Two flavors: CONSUMABLES burn per use (draughts), KEYS are owned
 // once and forever — they unlock hidden paths on the campaign map, and one
-// of them (the boat, together with the Captain) opens the Endless Sea.
+// of them (the boat, together with the Captain) opens the Endless Sea (chapter XII).
 export const ITEMS = {
   potion: {
     id: "potion", emoji: "🧪", kind: "consumable", gold: 25, max: 3, minCleared: 1,
@@ -76,7 +76,7 @@ export const ITEMS = {
     loreEn: "Clears the Blasted Pass in the Red Canyon (Chapter VIII). NOTE: only an Alchemist from your court can set the charge safely — without one the keg stays unused.",
   },
   sternenkompass: {
-    id: "sternenkompass", emoji: "🧭", kind: "key", gold: 65, minLeague: 9,
+    id: "sternenkompass", emoji: "🧭", kind: "key", gold: 65, minLeague: 10,
     nameDe: "Sternenkompass", nameEn: "Star compass",
     textDe: "Weist im Sonnenschlund (Kapitel X) den Nachtpfad zum Verborgenen Schrein — nur ein Späher liest die Zeichen. Der Sieg schenkt einen Lebenstrank.",
     textEn: "Points the night path to the Hidden Shrine in the Sonnenschlund (Chapter X) — only a Pathfinder reads the signs. Victory grants a healing draught.",
@@ -101,11 +101,11 @@ export const ITEMS = {
   },
 
   boat: {
-    id: "boat", emoji: "🛶", kind: "key", gold: 2400, minLeague: 9, // a life's savings: the passage to the Endless Sea is EARNED
+    id: "boat", emoji: "🛶", kind: "key", gold: 2400, minLeague: 10, // a life's savings: the passage to the Endless Sea is EARNED
     nameDe: "Boot", nameEn: "Boat",
     textDe: "Mit dem Kapitän an Bord öffnet es das Endlose Meer (Kapitel X).",
     textEn: "With the Captain aboard it opens the Endless Sea (Chapter X).",
-    loreDe: "Das teuerste Stück der Truhe — und das einzige, das eine ganze Welt öffnet: das Endlose Meer (Kapitel X). ACHTUNG: Das Boot allein segelt nicht. Erst mit dem Kapitän an Bord, den du als Endboss des Wüsten-Kapitels gewinnst, stichst du in See.",
+    loreDe: "Das teuerste Stück der Truhe — und das einzige, das eine ganze Welt öffnet: das Endlose Meer (Kapitel XII). ACHTUNG: Das Boot allein segelt nicht. Erst mit dem Kapitän an Bord, den ein Seitenpfad in Kapitel VI verbirgt, stichst du in See.",
     loreEn: "The dearest thing in the chest — and the only one that opens a whole world: the Endless Sea (Chapter X). NOTE: the boat does not sail itself. Only with the Captain aboard, won as the Desert Chapter finale, do you put to sea.",
   },
 };

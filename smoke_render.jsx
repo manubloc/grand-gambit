@@ -41,7 +41,7 @@ prof = advanceCampaign(advanceCampaign(advanceCampaign(prof, "n01"), "n02"), "n0
 step("CampaignScreen (forked)", () => renderToStaticMarkup(<CampaignScreen profile={prof} t={t} onStart={() => {}} />));
 step("ArmyScreen", () => renderToStaticMarkup(<ArmyScreen profile={prof} dispatch={() => {}} t={t} />));
 step("GameScreen quick play", () => renderToStaticMarkup(<GameScreen profile={prof} dispatch={() => {}} t={t} />));
-step("GameScreen campaign piece-boss", () => renderToStaticMarkup(<GameScreen profile={prof} dispatch={() => {}} t={t} match={buildStageMatch("a2")} onExit={() => {}} />));
+step("GameScreen campaign piece-boss", () => renderToStaticMarkup(<GameScreen profile={prof} dispatch={() => {}} t={t} match={buildStageMatch("L06s12", { campaign: { league: 6, cleared: [], unlocked: [] } })} onExit={() => {}} />));
 // EVERY campaign node must at least OPEN (render) without crashing — this is
 // exactly the "a level won't open" failure, dragon stages included. We build a
 // fully-progressed profile so every node (dragons a4/g7/g1, all bosses) is reachable.

@@ -94,24 +94,24 @@ ok("the hero spec carries his tier onto the board", buildArmyForMap({ pieces: { 
 // ── retinue score: monotonic with progress ──────────────────────────────────
 import { retinueScore, defaultProfile as dp2, advanceCampaign as adv2 } from "./src/meta/index.js";
 const r0 = retinueScore(dp2());
-const rp = retinueScore(adv2(adv2(dp2(), "n01"), "n02"));
+const rp = retinueScore(adv2(adv2(dp2(), "L01s00"), "L01s01"));
 ok("retinue score starts modest and grows with progress", r0 > 50 && r0 < 400 && rp > r0);
 ok("upgrades raise the retinue score", retinueScore({ ...dp2(), pieces: { levels: { rook: 3 } } }) === r0 + 80);
 
 // ── stage clock (v0.4): time pressure begins in league 5, only on SOME nodes ─
 import { stageTimer, buildStageMatch as bsm2 } from "./src/meta/index.js";
 import { nodeById as nb2 } from "./src/content/index.js";
-ok("no clock before league 5", stageTimer(nb2("n22"), 4) === null && stageTimer(nb2("n03"), 1) === null);
-ok("plain stages never get a clock", stageTimer(nb2("n01"), 7) === null);
-const tMon = stageTimer(nb2("n03"), 5);
+ok("no clock before league 5", stageTimer(nb2("L01s44"), 4) === null && stageTimer(nb2("L01s03"), 1) === null);
+ok("plain stages never get a clock", stageTimer(nb2("L01s00"), 7) === null);
+const tMon = stageTimer(nb2("L01s03"), 5);
 ok("league 5 monster boss: 6-minute total budget", tMon?.type === "total" && tMon.seconds === 360);
-const tEli = stageTimer(nb2("n20"), 5);
+const tEli = stageTimer(nb2("L03s23"), 5);
 ok("league 5 elite piece boss: 20s per move", tEli?.type === "move" && tEli.seconds === 20);
-ok("clocks tighten but stay bounded", stageTimer(nb2("n22"), 30).seconds === 180 && stageTimer(nb2("n20"), 30).seconds === 12);
+ok("clocks tighten but stay bounded", stageTimer(nb2("L01s44"), 30).seconds === 180 && stageTimer(nb2("L03s23"), 30).seconds === 12);
 ok("buildStageMatch carries the clock", (() => {
   const p = { ...dp2(), campaign: { league: 5, cleared: [], unlocked: [] } };
-  const m = bsm2("n03", p);
-  return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2("n03", dp2()).timer === null;
+  const m = bsm2("L01s03", p);
+  return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2("L01s03", dp2()).timer === null;
 })());
 
 // ── the purse (v0.5): visible gold per win, tolls, richer claims ─────────────
@@ -120,23 +120,29 @@ import { CAMPAIGN as CAMP3, ITEM_LIST as IL3 } from "./src/content/index.js";
 
 // end bosses simply carry more gold
 ok("stage gold grows down the road and peaks at the League Keep",
-  stageGold(nb2("n22"), 1) > stageGold(nb2("n03"), 1) && stageGold(nb2("n03"), 1) > stageGold(nb2("n01"), 1));
+  stageGold(nb2("L01s44"), 1) > stageGold(nb2("L01s03"), 1) && stageGold(nb2("L01s03"), 1) > stageGold(nb2("L01s00"), 1));
 ok("pure monster bosses pay a premium over plain sites",
-  stageGold(nb2("n03"), 1) - stageGold(nb2("n02"), 1) >= 8);
-ok("league scaling multiplies the purse", stageGold(nb2("n22"), 3) === Math.round(stageGold(nb2("n22"), 1) * 2));
+  stageGold(nb2("L01s03"), 1) - stageGold(nb2("L01s01"), 1) >= 8);
+ok("league scaling multiplies the purse", stageGold(nb2("L01s44"), 3) === Math.round(stageGold(nb2("L01s44"), 1) * 2));
 ok("quick-play purses scale with difficulty", winGold("easy") < winGold("normal") && winGold("normal") < winGold("hard"));
 
 // tolls: reachable but gated until paid; paying opens the way for this league
-const tp0 = { ...dp2(), gold: 500, campaign: { league: 1, cleared: ["n01", "n02", "n03", "a1", "a2", "a3"], unlocked: [] } };
-ok("the Mist Ferry is reachable but wants its toll", ns2(tp0, "z1") === "gated");
-ok("toll cost scales with the league", tollCost(nb2("z1"), 1) === 40 && tollCost(nb2("z1"), 3) === 80);
-const tpPoor = payToll({ ...tp0, gold: 10 }, "z1");
-ok("too little gold: the ferryman does not row", tpPoor.gold === 10 && !(tpPoor.campaign.tolls || []).includes("z1"));
-const tp1 = payToll(tp0, "z1");
+import { hauptast as haT } from "./test_helpers12.mjs";
+const zollT = CAMP3.find((n) => n.league === 1 && n.gate?.gold);
+const vorZoll = haT(1).slice(0, 4).map((n) => n.id); // der Abzweig liegt am Erwachen
+const tp0 = { ...dp2(), gold: 500, campaign: { league: 1, cleared: vorZoll, unlocked: [] } };
+ok("the toll gate is reachable but wants its toll", ns2(tp0, zollT.id) === "gated");
+ok("toll cost scales with the league", tollCost(zollT, 1) === zollT.gate.gold && tollCost(zollT, 3) === zollT.gate.gold * 2);
+const tpPoor = payToll({ ...tp0, gold: 10 }, zollT.id);
+ok("too little gold: the ferryman does not row", tpPoor.gold === 10 && !(tpPoor.campaign.tolls || []).includes(zollT.id));
+const tp1 = payToll(tp0, zollT.id);
 ok("paying the toll opens the way and empties the purse accordingly",
-  tp1.gold === 500 - 40 && ns2(tp1, "z1") === "available");
-ok("paying twice is a no-op", payToll(tp1, "z1") === tp1);
-ok("toll sites reward more than they cost", CAMP3.filter((n) => n.gate?.gold).every((n) => (n.reward?.gold || 0) > n.gate.gold));
+  tp1.gold === 500 - zollT.gate.gold && ns2(tp1, zollT.id) === "available");
+ok("paying twice is a no-op", payToll(tp1, zollT.id) === tp1);
+ok("the branch behind a toll pays more than the toll costs", CAMP3.filter((n) => n.gate?.gold).every((z) => {
+  const ast = CAMP3.filter((n) => n.league === z.league && !n.haupt && (n.reward?.gold || 0) > 0);
+  return ast.reduce((a, n) => a + n.reward.gold, 0) > z.gate.gold;
+}));
 
 // richer claims: gold = max(5, 80% of the tier's points)
 const evItems = ev2({ wins: 5 }).items;
@@ -147,16 +153,16 @@ ok("claims pay a fatter purse (80% of tier points, min 5)",
 // the big invariant: league 1 first-clear income comfortably covers every key
 // item AVAILABLE in league 1. Late keys (the boat, minLeague 9) are a life's
 // savings by design — they get their own invariant below.
-const l1Income = CAMP3.filter((n) => !n.league).reduce((a, n) => a + stageGold(n, 1), 0);
+const l1Income = CAMP3.filter((n) => n.league === 1).reduce((a, n) => a + stageGold(n, 1), 0);
 const keyCost = IL3.filter((i) => i.kind === "key" && (i.minLeague || 1) <= 1).reduce((a, i) => a + i.gold, 0);
-const tolls1 = CAMP3.filter((n) => n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
+const tolls1 = CAMP3.filter((n) => n.league === 1 && n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
 ok("league 1 income covers its keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
   l1Income > (keyCost + tolls1) * 1.1);
 
 // the boat is EXPENSIVE by design (a story savings goal) — but the income of
 // leagues 1..9 must still afford it comfortably before the Endless Sea calls
 const boat3 = IL3.find((i) => i.id === "boat");
-const income9 = [1,2,3,4,5,6,7,8,9].reduce((a, lg) => a + CAMP3.filter((n) => !n.league).reduce((b, n) => b + stageGold(n, lg), 0), 0);
+const income9 = [1,2,3,4,5,6,7,8,9].reduce((a, lg) => a + CAMP3.filter((n) => n.league === lg).reduce((b, n) => b + stageGold(n, lg), 0), 0);
 ok("the boat costs serious coin (>= 2000)", boat3.gold >= 2000);
 ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + ")", income9 > boat3.gold * 1.5);
 
@@ -226,17 +232,17 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
   }
   {
     const p = withProgressPct(defaultProfile(), 40, 2);
-    const m = buildStageMatch("a4", p);
+    const m = buildStageMatch("L07s41", p);
     ok("hoard boss dragon carries the big flag", !!m.aiArmy.back.find((s) => s && s.kind === "D" && s.big));
   }
   ok("potion veiled at the very start", !itemRevealed(fresh, ITEMS.potion));
-  ok("potion revealed after the first win", itemRevealed({ campaign: { league: 1, cleared: ["n01"] } }, ITEMS.potion));
+  ok("potion revealed after the first win", itemRevealed({ campaign: { league: 1, cleared: ["L01s00"] } }, ITEMS.potion));
   ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));
-  const mid = { campaign: { league: 1, cleared: ["n01","n02","n03","c1","c2"] } };
+  const mid = { campaign: { league: 1, cleared: ["L01s00","L01s01","L01s03","L01s22","L01s23"] } };
   ok("machete revealed after 4 stages", itemRevealed(mid, ITEMS.machete));
   ok("mountain key veiled in league 1", !itemRevealed(mid, ITEMS.bergschluessel));
   ok("mountain key revealed in league 5", itemRevealed({ campaign: { league: 5, cleared: [] } }, ITEMS.bergschluessel));
-  ok("time-turner revealed after 2 stages", itemRevealed({ campaign: { league: 1, cleared: ["n01","n02"] } }, ITEMS.hourglass));
+  ok("time-turner revealed after 2 stages", itemRevealed({ campaign: { league: 1, cleared: ["L01s00","L01s01"] } }, ITEMS.hourglass));
 }
 
 
@@ -244,10 +250,11 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 import { placeFor as _pf } from "./src/meta/index.js";
 import { CAMPAIGN as _cg } from "./src/content/index.js";
 {
-  const seen = new Set(); let dups = 0;
-  for (let lg = 1; lg <= 10; lg++) for (const n of _cg) { const nm = _pf(n, lg); if (seen.has(nm)) dups++; seen.add(nm); }
-  ok("510 station names, none spoken twice", seen.size === 510 && dups === 0);
-  ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "a1"), 1) === "Nordwacht");
+  let einzig = true;
+  for (let lg = 1; lg <= 12; lg++) { const seen = new Set();
+    for (const n of _cg.filter((x) => x.league === lg)) { const nm = _pf(n); if (seen.has(nm)) einzig = false; seen.add(nm); } }
+  ok("529 stations, no name spoken twice within a chapter", _cg.length === 529 && einzig);
+  ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "L01s00")) === "Alte Wacht");
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

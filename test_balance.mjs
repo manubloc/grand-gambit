@@ -43,23 +43,27 @@ const anyFinished = (games) => games.some((g) => g.st.over);
 
 // 1) the very first station, fresh hero at level 1
 const fresh = defaultProfile();
-const g1 = SEEDS.map((s) => playStage("n01", fresh, s));
+const g1 = SEEDS.map((s) => playStage("L01s00", fresh, s));
 ok(`the opening station is no sprint — shortest duel ${floorOver(g1)} plies (>= 12)`, floorOver(g1) >= 12);
 ok("no opening game collapses early — every duel outlives 12 plies or runs deep", g1.every((g) => g.plies >= 12));
 
-// 2) a boss station: the dragon of league I
-const g2 = SEEDS.map((s) => playStage("a4", fresh, s));
+// 2) a boss station: the dragon in its home chapter VII, against a
+// chapter-VII career (a fresh level-1 army would fall in a dozen plies)
+import { withProgressPct as wpp } from "./src/meta/index.js";
+const lvl7 = Object.fromEntries(["pawn","knight","bishop","rook","queen","king","gambit"].map((k) => [k, 13]));
+const dragonProf = { ...wpp(fresh, 60, 7), pieces: { levels: lvl7, abilities: {} } };
+const g2 = SEEDS.map((s) => playStage("L07s41", dragonProf, s));
 ok(`the dragon's lair holds longer than a skirmish — shortest ${floorOver(g2)} plies (>= 16)`, floorOver(g2) >= 16);
 
 // 3) the League Keep, the hardest table of league I
-const g3 = SEEDS.map((s) => playStage("n22", fresh, s));
+const g3 = SEEDS.map((s) => playStage("L01s44", fresh, s));
 ok(`the League Keep is a real siege — shortest ${floorOver(g3)} plies (>= 16)`, floorOver(g3) >= 16);
 ok("the Keep duel reaches a decisive end", anyFinished(g3));
 
 // 4) a grown court in a later league: gambit 20, some champions leveled
 const grown = { ...defaultProfile(), campaign: { league: 5, cleared: [], unlocked: ["hawk", "assassin", "mage"], dupes: {}, bossWins: {} },
   pieces: { levels: { gambit: 20, rook: 7, knight: 7, bishop: 6, queen: 8, hawk: 6, assassin: 6, mage: 6 }, abilities: {} } };
-const g4 = SEEDS.map((s) => playStage("n01", grown, s));
+const g4 = SEEDS.map((s) => playStage("L01s00", grown, s));
 ok(`league V with a leveled court still trades blows — shortest ${floorOver(g4)} plies (>= 12)`, floorOver(g4) >= 12);
 
 // 5) symmetry sanity: two IDENTICAL fresh armies must never end absurdly fast

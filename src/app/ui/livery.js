@@ -98,6 +98,13 @@ export const emblemArt = () => pick(emblemC, emblemK);
 export const logoArt = () => pick(logoC, logoK);
 export const logoMenuArt = () => pick(logoMenuC, logoMenuK);
 
-const GROUNDS_C = { 1: g01C, 2: g02C, 3: g03C, 4: g04C, 5: g05C, 6: g06C, 7: g07C, 8: g08C, 9: g09C, 10: g10C };
-const GROUNDS_K = { 1: g01K, 2: g02K, 3: g03K, 4: g04K, 5: g05K, 6: g06K, 7: g07K, 8: g08K, 9: g09K, 10: g10K };
+import g11C from "./assets/ground-11.webp";
+import g11K from "./assets/ground-11.carved.webp";
+import g12C from "./assets/ground-12.webp";
+import g12K from "./assets/ground-12.carved.webp";
+// Die Boeden 7/8/9 drehen mit der Weltdrehung: Sattelweite (VII) spielt auf
+// dem alten Steppenboden, Aschgrund (VIII) auf dem Canyonboden, Die Wunde (IX)
+// auf dem Oedlandboden. 11 und 12 sind beruhigte Ausschnitte der Kapitelkarten.
+const GROUNDS_C = { 1: g01C, 2: g02C, 3: g03C, 4: g04C, 5: g05C, 6: g06C, 7: g08C, 8: g09C, 9: g07C, 10: g10C, 11: g11C, 12: g12C };
+const GROUNDS_K = { 1: g01K, 2: g02K, 3: g03K, 4: g04K, 5: g05K, 6: g06K, 7: g08K, 8: g09K, 9: g07K, 10: g10K, 11: g11K, 12: g12K };
 export const groundArt = (league) => pick(GROUNDS_C, GROUNDS_K)[league] || null;

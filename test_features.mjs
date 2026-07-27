@@ -77,55 +77,60 @@ ok("buildArmy falls back to standard on illegal formation", fb.back.filter((s) =
 
 // ── Campaign (branching graph) ───────────────────────────────────────────────
 ok("campaign has stages", CAMPAIGN.length >= 8);
-const s0 = buildStageMatch("n01");
+const s0 = buildStageMatch("L01s00");
 ok("story starts as chess on the classic board", s0.map === "classic" && s0.rules === "chess");
 ok("stage match builds a full enemy army", s0.aiArmy.back.length === 8 && s0.aiArmy.pawn.kind === KIND.PAWN);
 ok("stage match carries a search depth", typeof s0.depth === "number" && s0.depth >= 1);
 ok("classic stages field base-level enemies", s0.aiArmy.back.every((p) => (p.level || 1) === 1));
 ok("later stages open new arenas", CAMPAIGN.some((s) => s.map === "arena") && CAMPAIGN.some((s) => s.rules === "hp"));
 
-const last = buildStageMatch("n22");
+const last = buildStageMatch("L01s44");
 ok("final stage is a boss fight", last.boss && last.aiArmy.back.some((s) => s.kind === "X"));
 
+import { hauptast, figurStation, startOf } from "./test_helpers12.mjs";
+import * as metaAll from "./src/meta/index.js";
+const H1 = hauptast(1);
 let prof = { xp: 0, campaign: { cleared: [], unlocked: [] } };
-ok("n01 starts available, a1 locked", nodeStatus(prof, "n01") === "available" && nodeStatus(prof, "a1") === "locked");
-prof = advanceCampaign(prof, "n01");
-ok("clearing grants bonus xp (both balances)", clearedCount(prof) === 1 && prof.xp === CAMPAIGN[0].reward.xp && prof.xpEarned === prof.xp);
-ok("n01 cleared, n02 available", nodeStatus(prof, "n01") === "cleared" && nodeStatus(prof, "n02") === "available");
-ok("clearing a locked node is a no-op", clearedCount(advanceCampaign(prof, "a3")) === 1);
-prof = advanceCampaign(prof, "n02");
-prof = advanceCampaign(prof, "n03");
-ok("the road FORKS after the awakening", nodeStatus(prof, "a1") === "available" && nodeStatus(prof, "b1") === "available" && nodeStatus(prof, "c1") === "available");
-ok("paths do not open each other", nodeStatus(advanceCampaign(prof, "a1"), "b2") === "locked");
+ok("the chapter start is available, a side path locked", nodeStatus(prof, H1[0].id) === "available" && nodeStatus(prof, "L01s02") === "locked");
+prof = advanceCampaign(prof, H1[0].id);
+ok("clearing grants bonus xp (both balances)", clearedCount(prof) === 1 && prof.xp === H1[0].reward.xp && prof.xpEarned === prof.xp);
+ok("start cleared, the next main station available", nodeStatus(prof, H1[0].id) === "cleared" && nodeStatus(prof, H1[1].id) === "available");
+ok("clearing a locked node is a no-op", clearedCount(advanceCampaign(prof, H1[10].id)) === 1);
+prof = advanceCampaign(prof, H1[1].id);
+prof = advanceCampaign(prof, H1[2].id);
+ok("the road FORKS after the awakening (one branch may want a toll)", H1[2].next.length >= 2 && H1[2].next.every((id) => ["available","gated"].includes(nodeStatus(prof, id))));
+ok("paths do not open each other", nodeStatus(prof, H1[10].id) === "locked");
 
 // ── Piece bosses unlock pieces; XP upgrades them ─────────────────────────────
-const before = unlockedCharacterIds(prof);
-ok("assassin locked before its boss falls", !before.includes("assassin"));
-let prof2 = advanceCampaign(advanceCampaign(prof, "a1"), "a2");
-ok("hawk & assassin resist the first blow — the blades demand two wins", !unlockedCharacterIds(prof2).includes("hawk") && !unlockedCharacterIds(prof2).includes("assassin"));
-prof2 = advanceCampaign(advanceCampaign(prof2, "a1"), "a2"); // replay both duels once
-ok("the second victory recruits them both", unlockedCharacterIds(prof2).includes("hawk") && unlockedCharacterIds(prof2).includes("assassin"));
-ok("campaign clears feed the achievement stats", prof2.stats.stagesCleared === 5 && prof2.stats.bossKills === 3 && prof2.stats.recruits === 2);
-ok("a cleared champion station deals the FRIENDLY table", buildStageMatch("a1", prof2).friendly === true && !buildStageMatch("n01", prof2).friendly);
-// friendly matches: replaying your OWN champion's station pays a little XP
-ok("a friendly against a recruited champion pays a quarter XP", (() => {
-  const xp = prof2.xpEarned || 0;
-  return (advanceCampaign(prof2, "a1").xpEarned || 0) === xp + Math.round(65 * 0.25);
-})());
-// recruit pacing: the enemy appears from league I, the RECRUIT waits for his league
+// Die Figuren wohnen jetzt in ihren Kapiteln: der Falke frueh (ein Sieg),
+// der Drache spaet (zwei Siege, ueber Wiederholungen gezaehlt).
+const hawkN = figurStation("hawk"), dragonN = figurStation("dragon");
+ok("the hawk waits in its own chapter, locked to a fresh profile", !unlockedCharacterIds(prof).includes("hawk"));
+{
+  let p2 = { xp: 0, campaign: { league: hawkN.league, cleared: [], unlocked: [] } };
+  const vor = hauptast(hawkN.league);
+  for (const n of vor) { p2 = advanceCampaign(p2, n.id); if (n.id === hawkN.id) break; }
+  ok("an early champion falls in a single win", unlockedCharacterIds(p2).includes("hawk"));
+  ok("campaign clears feed the achievement stats", p2.stats.stagesCleared >= 1 && p2.stats.recruits === 1);
+  ok("a cleared champion station deals the FRIENDLY table", buildStageMatch(hawkN.id, p2).friendly === true && !buildStageMatch(startOf(hawkN.league).id, p2).friendly);
+  ok("a friendly against a recruited champion pays a quarter XP", (() => {
+    const xp = p2.xpEarned || 0;
+    const { leagueRewardMult } = metaAll;
+    return (advanceCampaign(p2, hawkN.id).xpEarned || 0) === xp + Math.round(hawkN.reward.xp * leagueRewardMult(hawkN.league) * 0.25);
+  })());
+}
 import { bossPieceFor, effectiveMap, winsNeeded, bossWinsFor, recruitOnWin } from "./src/meta/index.js";
 import { nodeById as nbId } from "./src/content/index.js";
-// stubborn champions: the Dragon demands three victories, tallied across replays & leagues
-ok("wins demands are read off the boss (the Hoard hatches in League II)",
-  winsNeeded(nbId("a4"), 2) === 3 && winsNeeded(nbId("a4"), 1) === 1 && winsNeeded(nbId("a2")) === 2 && winsNeeded(nbId("b4")) === 2);
-// family pacing: the Crown yields fast (1-2 wins), the Shadows resist (2-3)
-ok("the standard falls in one win, moonlit adepts demand two", winsNeeded(nbId("d2")) === 1 && winsNeeded(nbId("b2")) === 2 && winsNeeded(nbId("b3")) === 2);
+ok("wins demands are read off the boss (late champions resist twice)",
+  winsNeeded(dragonN, dragonN.league) === 2 && winsNeeded(hawkN, hawkN.league) === 1 && winsNeeded(figurStation("seeress")) === 2);
+ok("early chapters yield in one win, the deep road demands two",
+  winsNeeded(figurStation("mage")) === 1 && winsNeeded(figurStation("warlock")) === 2);
 {
-  let d = { ...prof2, campaign: { ...prof2.campaign, league: 2 } }; // the Dragon only hatches in League II
-  d = advanceCampaign(d, "a3");
-  ok("first Dragon win only notches the tally", (() => { d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 1 && !unlockedCharacterIds(d).includes("dragon"); })());
-  ok("a replay notches it again without progress or XP", (() => { const xp = d.xpEarned || 0; d = advanceCampaign(d, "a4"); return bossWinsFor(d, "dragon") === 2 && (d.xpEarned || 0) === xp && !unlockedCharacterIds(d).includes("dragon"); })());
-  ok("the NEXT win would seal it — and the third replay recruits", (() => { const seal = recruitOnWin(nbId("a4"), d) === "dragon"; d = advanceCampaign(d, "a4"); return seal && unlockedCharacterIds(d).includes("dragon"); })());
+  let d = { xp: 0, campaign: { league: dragonN.league, cleared: [], unlocked: [] } };
+  for (const n of hauptast(dragonN.league)) { if (n.id === dragonN.id) break; d = advanceCampaign(d, n.id); }
+  ok("first Dragon win only notches the tally", (() => { d = advanceCampaign(d, dragonN.id); return bossWinsFor(d, "dragon") === 1 && !unlockedCharacterIds(d).includes("dragon"); })());
+  ok("a replay notches it again without progress or XP", (() => { const xp = d.xpEarned || 0; const c = clearedCount(d); d = advanceCampaign(d, dragonN.id); return bossWinsFor(d, "dragon") === 2 && clearedCount(d) === c; })());
+  ok("the tally seals the recruit on the deciding win", unlockedCharacterIds(d).includes("dragon"));
 }
 // a won league boss may march in the queen's place — one at most
 import { formationLegalOn as fLegal, buildArmyFromFormation as bFromForm, ownedLeagueBosses } from "./src/meta/index.js";
@@ -143,28 +148,40 @@ import { mapById as mapOf } from "./src/content/index.js";
   const army = bFromForm(() => 1, withBoss);
   ok("the fielded boss brings his stats and aura", army.back[4].bossId === "b25" && army.back[4].aura.type === "courtHp");
 }
-ok("Liga I fields classic boards; later leagues open the stages (classic-heavy, v0.22.45)",
-  effectiveMap(nbId("a1"), 1) === "classic" && effectiveMap(nbId("a1"), 4) === "classic" /* bent onto 8x8 for good */
-  && effectiveMap(nbId("b3"), 2) === "skirmish" /* signature skirmish survives */
-  && effectiveMap(nbId("a4"), 3) === "gauntlet" && effectiveMap(nbId("n16"), 4) === "classic" /* the wide arena yields */
-  && effectiveMap(nbId("n22"), 1) === "arena" /* the finale keeps its stage */);
+ok("from chapter IV every station fields its own stage; the finale always does",
+  ["L01s02","L01s16","L07s41","L01s22"].every((id) => effectiveMap(nbId(id), 4) === nbId(id).map)
+  && effectiveMap(nbId("L01s44"), 1) === nbId("L01s44").map);
 
 // ── League 2 (New Game+): rollover, duplication stars, scaling ───────────────
 import { buildStageMatch as bsm2, dupeCount, leagueBump } from "./src/meta/index.js";
 import { potionCommand, reduce as red2, createGame as cg2, WHITE as W2 } from "./src/core/index.js";
-let lg = prof2;
-for (const id of ["a3", "a4", "a5", "n16", "n17", "d1", "d2", "n20", "n21", "n22"]) lg = advanceCampaign(lg, id);
-ok("the fallen Keep stays on the map — no auto-jump into league 2", lg.campaign.league === 1 && lg.campaign.cleared.includes("n22"));
-ok("the gate refuses while the Master still stands", advanceLeague(prof2).campaign?.league !== 2);
+import { kapitelDurch, figurStation as fig2, hauptast as ha2 } from "./test_helpers12.mjs";
+let lg = kapitelDurch({ xp: 0, campaign: { cleared: [], unlocked: [] } }, 1);
+const FIN1 = ha2(1)[ha2(1).length - 1].id;
+ok("the fallen Keep stays on the map — no auto-jump into league 2", lg.campaign.league === 1 && lg.campaign.cleared.includes(FIN1));
+ok("the gate refuses while the Master still stands", advanceLeague({ xp: 0, campaign: { cleared: [], unlocked: [] } }).campaign?.league !== 2);
 lg = advanceLeague(lg);
 ok("stepping through the gate rolls into league 2 with clears reset", lg.campaign.league === 2 && lg.campaign.cleared.length === 0);
 ok("unlocked pieces survive the rollover, gold is untouched by it", lg.campaign.unlocked.length >= 2 && (lg.gold || 0) === (typeof lg.gold === "number" ? lg.gold : 0));
 ok("paid tolls reset with the league — every climate has its own gatekeeper", (lg.campaign.tolls || []).length === 0);
-lg = advanceCampaign(advanceCampaign(advanceCampaign(lg, "n01"), "n02"), "n03");
-lg = advanceCampaign(advanceCampaign(lg, "a1"), "a2");
-ok("re-beating recruited piece bosses in league II grants duplication stars", dupeCount(lg, "hawk") === 1 && dupeCount(lg, "assassin") === 1);
-ok("the win tally survives the league rollover", bossWinsFor(lg, "hawk") >= 2);
-ok("league 2 foes on opened stages come level-boosted — classic boards stay pure chess", bsm2("a1", lg).aiArmy.back[0].level > 1 && bsm2("n01", lg).aiArmy.back[0].level === 1);
+{
+  const hawk2 = fig2("hawk");
+  for (const n of ha2(2)) { lg = advanceCampaign(lg, n.id); if (n.id === hawk2.id) break; }
+  ok("the hawk joins in its home chapter", lg.campaign.unlocked.includes("hawk"));
+  ok("the win tally survives across fights", bossWinsFor(lg, "hawk") >= 1);
+  // Duplikatsterne gibt es beim WIEDERSEHEN: im naechsten Weltdurchlauf
+  // (Liga 14 = Kapitel II erneut) ist die Station wieder ein Erstsieg.
+  let lap = { xp: 0, campaign: { league: 14, cleared: [], unlocked: ["hawk"], bossWins: { hawk: 1 }, dupes: {} } };
+  for (const n of ha2(2)) { lap = advanceCampaign(lap, n.id); if (n.id === hawk2.id) break; }
+  ok("re-beating recruited piece bosses on the next world lap grants duplication stars", dupeCount(lap, "hawk") === 1);
+  // Die Buehnenstaffelung folgt dem REGELWERK: reine Schachpartien bleiben
+  // Stufe 1, HP-Schlachten skalieren - unabhaengig vom Brett.
+  const chessN = H1[0], hpN = ha2(2).find((n) => n.rules === "hp");
+  ok("pure chess stays vanilla while HP battles scale with the world",
+    bsm2(chessN.id, { xp: 0, campaign: { league: 13, cleared: [], unlocked: [] } }).aiArmy.back[0].level === 1
+    && bsm2(hpN.id, lg).aiArmy.back[0].level > 1);
+  ok("chapter I bends every stage onto the classic board", effectiveMap(ha2(1).find((n) => n.map !== "classic"), 1) === "classic");
+}
 
 // ── Healing draught: a real, guarded core command ─────────────────────────────
 const hg = cg2(undefined, undefined, { rules: "hp", seed: 3, potions: { w: 1, b: 0 } });
@@ -178,24 +195,29 @@ ok("without charges the command is a no-op", red2(heal.state, potionCommand("b",
 // ── Item-gated secret paths + the Captain/boat chain ─────────────────────────
 import { nodeStatus as nst, seaAccessible, dupeCount as dc2 } from "./src/meta/index.js";
 import { buyItem, CAMPAIGN as CAMP2, ITEMS } from "./src/content/index.js";
-ok("the map now holds 51 sites (the Moonwatch joined the wisdom road)", CAMP2.length === 51 && CAMP2.filter((n) => n.gate).length === 11);
-ok("fifteen sites are league-bound (6 secrets + 9 league wilds)", CAMP2.filter((n) => n.league).length === 15);
+ok("every chapter posts exactly one toll station", CAMP2.filter((n) => n.gate).length === 12 && CAMP2.filter((n) => n.gate?.gold).length === 12);
+ok("all stations are chapter-bound (twelve worlds, 529 stations)", CAMP2.filter((n) => n.league).length === CAMP2.length && CAMP2.length === 529);
 import { nodeStatus as nstH } from "./src/meta/index.js";
-ok("league-bound sites hide outside their league", nstH({ campaign: { league: 1, cleared: ["a1"] } }, "g8") === "hidden");
-let gp = { ...prof, gold: 500 };
-for (const id of ["c1", "c2"]) gp = advanceCampaign(gp, id);
-ok("a reachable gated site reports 'gated' until you own the key", nst(gp, "g1") === "gated");
+ok("league-bound sites hide outside their league", nstH({ campaign: { league: 1, cleared: ["L01s02"] } }, "L02s00") === "hidden");
+let gp = { xp: 0, gold: 500, campaign: { league: 1, cleared: [], unlocked: [], tolls: [] } };
+const H1b = hauptast(1);
+for (const n of H1b.slice(0, 3)) gp = advanceCampaign(gp, n.id);
+const zoll = CAMP2.find((n) => n.league === 1 && n.gate?.gold);
+ok("a reachable toll gate reports 'gated' until you pay", nst(gp, zoll.id) === "gated");
+import { payToll, tollCost } from "./src/meta/index.js";
 const goldBefore = gp.gold;
-gp = buyItem(gp, "machete");
-ok("buying the key opens the path (and charges gold)", nst(gp, "g1") === "available" && gp.gold === goldBefore - ITEMS.machete.gold);
-gp = advanceCampaign(gp, "g1");
-ok("the secret guardian recruits its heavyweight early", gp.campaign.unlocked.includes("dragon"));
-const lg9 = { v: 2, sp: 0, gold: 0, xp: 0, xpEarned: 0, stats: {}, pieces: { levels: {}, abilities: {} }, items: {}, claims: {},
+gp = payToll(gp, zoll.id);
+ok("paying the toll opens the path (and charges gold)", nst(gp, zoll.id) === "available" && gp.gold === goldBefore - tollCost(zoll, 1));
+gp = advanceCampaign(gp, zoll.id);
+ok("the long branch behind the toll pays out at its leaf", CAMP2.some((n) => n.league === 1 && !n.haupt && (n.reward?.gold || 0) >= 40));
+import { kapitelDurch as kd9 } from "./test_helpers12.mjs";
+const capN = fig2("captain");
+ok("the Captain waits on a side path of chapter VI", capN.league === 6 && !capN.haupt && bsm2(capN.id, { campaign: { league: 6, cleared: [], unlocked: [] } }).boss.unlocks === "captain");
+let sailed = kd9({ v: 2, sp: 0, gold: 0, xp: 0, xpEarned: 0, stats: {}, pieces: { levels: {}, abilities: {} }, items: {}, claims: {},
   loadout: { flank: ["knight", "knight"], formations: {} },
-  campaign: { league: 10, cleared: ["n01","n02","n03","a1","a2","a3","a4","a5","n16","n17","d1","d2","n20","n21"], unlocked: [], dupes: {} } };
-ok("league X finale is the Captain", bsm2("n22", lg9).boss.unlocks === "captain");
-const sailed = advanceLeague(advanceCampaign(lg9, "n22"));
-ok("beating him recruits the Captain and opens league XI", sailed.campaign.unlocked.includes("captain") && sailed.campaign.league === 11);
+  campaign: { league: 11, cleared: [], unlocked: ["captain"], dupes: {} } }, 11);
+sailed = advanceLeague(sailed);
+ok("clearing the Coast opens chapter XII", sailed.campaign.league === 12);
 ok("but the sea still wants a boat (and the boat wants a fortune)", !seaAccessible(sailed) && !seaAccessible(buyItem({ ...sailed, gold: 200 }, "boat")) && seaAccessible(buyItem({ ...sailed, gold: 2500 }, "boat")));
 
 // ── The Grand Gambit: the eponymous hero pawn ────────────────────────────────
@@ -282,7 +304,7 @@ ok("the AI values the hero above a common pawn", (() => {
 // ── Unlocks ride on campaign reach ───────────────────────────────────────────
 const fresh = { xp: 0, campaign: { cleared: [], unlocked: [] } };
 ok("fresh profile: only classic, no HP", mapUnlocked(fresh, "classic") && !mapUnlocked(fresh, "skirmish") && !hpUnlocked(fresh));
-ok("hp opens once the awakening is reachable", hpUnlocked(advanceCampaign(advanceCampaign(fresh, "n01"), "n02")));
+ok("hp opens once the awakening is reachable", hpUnlocked(advanceCampaign(advanceCampaign(fresh, "L01s00"), "L01s01")));
 ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish") && mapUnlocked(prof, "courtyard") && !mapUnlocked(prof, "arena"));
 
 
@@ -290,9 +312,11 @@ ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish
 {
   const { buildStageMatch, buildArmy } = await import("./src/meta/index.js");
   const { mapById } = await import("./src/content/index.js");
-  const prof = { campaign: { league: 1, cleared: ["n01","n02","n03"], unlocked: ["hawk"] },
+  const { figurStation: figT } = await import("./test_helpers12.mjs");
+  const hawkT = figT("hawk");
+  const prof = { campaign: { league: hawkT.league, cleared: [], unlocked: ["hawk"] },
     loadout: { formations: { skirmish: null } }, charXp: {}, items: {} };
-  const mt = buildStageMatch("a1", prof); // a1 recruits the hawk
+  const mt = buildStageMatch(hawkT.id, prof); // die Falkenstation stellt den eigenen Falken
   ok("rematch vs owned challenger is flagged turncoat", mt.turncoat === true && mt.excludeId === "hawk");
   const arena = mapById("arena");
   const saved = ["rook","hawk","knight","bishop","queen","king","bishop","knight","hawk","rook"];
@@ -300,7 +324,7 @@ ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish
   const kinds = (a) => a.back.map((x) => x.kind).join("");
   ok("player army fields the hawk normally", kinds(buildArmy(p2, arena)).includes("H"));
   ok("player army benches the hawk in a turncoat duel", !kinds(buildArmy(p2, arena, "hawk")).includes("H"));
-  const fresh = buildStageMatch("a1", { campaign: { league: 1, cleared: [], unlocked: [] } });
+  const fresh = buildStageMatch("L01s02", { campaign: { league: 1, cleared: [], unlocked: [] } });
   ok("first encounter is no turncoat", !fresh.turncoat && !fresh.excludeId);
 }
 
