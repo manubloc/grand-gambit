@@ -24,10 +24,23 @@ export function progressPct(profile) {
   return Math.max(0, Math.min(100, Math.round((clearedCount(profile) / total) * 100)));
 }
 
-/** The league's sites in play order (x-axis rows are the journey east). */
+/** Die Stationen eines Kapitels in Spielreihenfolge: erst der Hauptast (der
+ *  Story-Faden), dann die Nebenaeste in der Reihenfolge ihrer Abzweigung.
+ *  row/col sind seit den zwoelf Karten Bildpositionen, keine Ordnung mehr. */
 export function leagueOrder(league = 1) {
-  return CAMPAIGN.filter((n) => nodeInLeague(n, league))
-    .slice().sort((a, b) => (a.row - b.row) || (a.col - b.col)).map((n) => n.id);
+  const ks = CAMPAIGN.filter((n) => nodeInLeague(n, league));
+  const byId = Object.fromEntries(ks.map((n) => [n.id, n]));
+  const ziele = new Set(ks.flatMap((n) => n.next));
+  const start = ks.find((n) => !ziele.has(n.id));
+  const haupt = []; let cur = start;
+  while (cur) { haupt.push(cur.id); cur = cur.next.map((i) => byId[i]).find((n) => n?.haupt && !haupt.includes(n.id)); }
+  const seen = new Set(haupt); const rest = [];
+  for (const hid of haupt) {
+    const q = [...(byId[hid]?.next || [])];
+    while (q.length) { const id = q.shift(); if (seen.has(id) || !byId[id]) continue; seen.add(id); rest.push(id); q.push(...byId[id].next); }
+  }
+  for (const n of ks) if (!seen.has(n.id)) { seen.add(n.id); rest.push(n.id); }
+  return [...haupt, ...rest];
 }
 
 /**
@@ -42,8 +55,8 @@ export function withProgressPct(profile, pct, league = 1) {
   const biome = ((lg - 1) % 12) + 1;
   const base = defaultProfile();
   const keep = { name: profile.name, lang: profile.lang, online: profile.online, notices: profile.notices, difficulty: profile.difficulty };
-  // the Endless Sea (X) sits behind its toll: captain + boat travel along
-  const seaKit = biome === 10 ? { unlocked: ["captain"], items: { boat: 1 } } : { unlocked: [], items: {} };
+  // Das Endlose Meer (XII) sitzt hinter seinem Zoll: Kapitaen + Boot reisen mit.
+  const seaKit = biome === 12 ? { unlocked: ["captain"], items: { boat: 1 } } : { unlocked: [], items: {} };
   if (p === 0) return { ...base, ...keep,
     items: { ...seaKit.items },
     campaign: { ...base.campaign, league: lg, unlocked: [...new Set([...(base.campaign?.unlocked || []), ...seaKit.unlocked])] } };

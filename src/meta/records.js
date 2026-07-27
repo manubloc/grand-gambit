@@ -18,9 +18,9 @@ export function recordStage(profile, { id, moves, now = Date.now() }) {
   // a fresh career starts the run clock with its very first victory
   const clearedBefore = profile.campaign?.cleared?.length || 0;
   if (r.runStartAt == null && clearedBefore === 0) r.runStartAt = now;
-  // the throne falls → the run is complete (first time only)
-  const throne = CAMPAIGN.find((n) => n.id === "n22");
-  if (throne && id === "n22" && r.runStartAt != null && r.fastestRunMs == null) {
+  // der Kapitel-Endboss faellt -> der Lauf ist komplett (nur das erste Mal)
+  const node = CAMPAIGN.find((n) => n.id === id);
+  if (node?.final && r.runStartAt != null && r.fastestRunMs == null) {
     r.fastestRunMs = Math.max(1000, now - r.runStartAt);
   }
   return { ...profile, records: r };

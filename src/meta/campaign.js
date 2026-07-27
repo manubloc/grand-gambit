@@ -75,6 +75,7 @@ export function payToll(profile, id) {
 
 export function nodeStatus(profile, id) {
   const node = nodeById(id);
+  if (!node) return "hidden"; // eine Station, die es nicht gibt, existiert nicht
   if (!nodeInLeague(node, profile?.campaign?.league)) return "hidden";
   const cleared = new Set(clearedIds(profile));
   if (cleared.has(id)) return "cleared";
@@ -111,7 +112,10 @@ export function nodeBossSpec(node, league = 1) {
     // Monster-Stationen rotieren ihren Champion mit dem Weltdurchlauf; der
     // Kapitel-Endboss steht seit den zwoelf Graphen direkt am Knoten.
     const rot = node.boss.rotation;
-    const pid = rot ? rot[(leagueNo(league) - 1) % rot.length] : node.boss.pure;
+    // Die Rotation zaehlt den WELTDURCHLAUF: erste Runde stellt den ersten
+    // Champion, die zweite Weltrunde den naechsten - nicht das Kapitel.
+    const lap = Math.floor((Math.max(1, league) - 1) / 12);
+    const pid = rot ? rot[lap % rot.length] : node.boss.pure;
     return bossSpec(bossById(pid) || bossById(node.boss.pure));
   }
   const ch = CHARACTERS[node.boss.piece];
@@ -136,10 +140,10 @@ export function nodeBossSpec(node, league = 1) {
 /** The station's name in the given league — unique across the whole journey.
  *  League I uses the homeland names from CAMPAIGN; II–XI draw from PLACE_NAMES,
  *  each set hand-written from that biome's lore (see content/placeNames.js). */
-export function placeFor(node, league = 1) {
-  const lg = Math.max(1, Math.min(11, leagueNo(league)));
-  if (lg === 1) return node?.place || "";
-  return (PLACE_NAMES[lg] && PLACE_NAMES[lg][node?.id]) || node?.place || "";
+/** Seit den zwoelf Graphen traegt jede Station ihren festen eigenen Namen -
+ *  Weltdurchlaeufe benennen nichts mehr um. */
+export function placeFor(node) {
+  return node?.place || "";
 }
 
 export function effectiveNodeBoss(node, lg) {
@@ -185,6 +189,17 @@ export function buildStageMatch(id, profile = null, leagueOverride = null) {
   if (boss) {
     let qi = formation.indexOf("queen");
     if (qi === -1) qi = Math.max(0, Math.floor(formation.length / 2) - 1);
+    // Ein GROSSER Drache entfaltet sich beim Aufbau auf die Nachbarspalte
+    // einwaerts und raeumt sie leer - stuende dort der Koenig, waere die
+    // Partie vor dem ersten Zug verloren. Also einen Slot waehlen, dessen
+    // Entfaltung den Koenig verschont.
+    if (boss.kind === "D") {
+      const w2 = formation.length;
+      const ki = aiArmy.back.findIndex((sp) => sp.kind === "K");
+      const inward = (q) => (q < w2 - 1 ? q + 1 : q - 1);
+      if (qi === ki || inward(qi) === ki)
+        for (let j = 0; j < w2; j++) if (j !== ki && inward(j) !== ki) { qi = j; break; }
+    }
     aiArmy.back = aiArmy.back.map((spec, j) => (j === qi ? boss : spec));
     bossInfo = { name: boss.name, bossId: boss.bossId, unlocks: looking ? null : recruitOnWin(node, profile),
       art: boss.art || null, accent: boss.accent, kind: boss.kind };
@@ -320,23 +335,15 @@ export const leagueBump = (league) => 2 * ((league || 1) - 1);
  *  time (II: skirmish · III: courtyard & gauntlet · IV+: everything). */
 export function effectiveMap(node, league = 1) {
   if (!node) return "classic";
-  if (node.league) return node.map; // finale & combo sites keep their stage
-  // THE CLASSIC BOARD RULES THE REALM: most stations fight on 8x8 — classic
-  // first, with the Gauntlet and the Courtyard as its lieutenants. The wide
-  // arena and the tight skirmish survive only on their signature stations.
-  const bent = BEND_8X8[node.id] || node.map;
+  if (node.final) return node.map; // das Kapitelfinale behaelt seine Buehne
+  // DAS KLASSISCHE BRETT REGIERT DEN ANFANG: Kapitel I spielt rein 8x8,
+  // dann betreten die Buehnen die Welt eine nach der anderen
+  // (II: skirmish · III: courtyard & gauntlet · ab IV: alles).
   const lg = leagueNo(league);
-  if (lg >= 4) return bent;
+  if (lg >= 4) return node.map;
   const allowed = lg === 1 ? ["classic"] : lg === 2 ? ["classic", "skirmish"] : ["classic", "skirmish", "courtyard", "gauntlet"];
-  return allowed.includes(bent) ? bent : "classic";
+  return allowed.includes(node.map) ? node.map : "classic";
 }
-// deterministic per-station re-routing toward the 8x8 boards (classic-heavy)
-const BEND_8X8 = {
-  n16: "classic", n17: "classic", d1: "classic", d2: "classic", e1: "classic",
-  e2: "courtyard", e3: "classic", n20: "classic", n21: "classic", g2: "classic",
-  w2: "classic", a1: "classic", a2: "classic", c1: "classic", z1: "classic",
-  w1: "classic", w3: "classic",
-};
 
 /** Time pressure (v0.4): from league 5 onward SOME stages carry a clock —
  *  the monster milestones (pure bosses, incl. the Citadel) grant a total

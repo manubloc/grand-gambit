@@ -62,7 +62,7 @@ const MAPS = ["classic", "skirmish", "courtyard", "gauntlet", "arena"];
 // Liga I hat keinen Block in placeNames - ihre Orte leben in der alten
 // 51-Knoten-Kampagne. Liga XII ist neu und bekommt hier ihren Meerespool.
 const NAMEN_I = ["Alte Wacht","Silberm\u00fchle","Vergessener Schrein","Nordwacht","Schattenklippe",
-  "Wolfspass","Drachenhort","Klingenschlucht","Sonnenheiligtum","Alte Sternwarte","Hexenmoor",
+  "Wolfspass","Steinernes Tor","Klingenschlucht","Sonnenheiligtum","Alte Sternwarte","Hexenmoor",
   "Nebelmoor","Geisterfeld","Waldfeste","Lindenhain","Kronenstadt","Eisenbollwerk","Grenzwall",
   "Hohes Heiligtum","Ratshalle","Schmiedegrund","Bannerh\u00f6he","Verlassene Ruinen","Sturmfeste",
   "Mondwarte","Kr\u00e4henfels","Furt am Grauen Bach","Zehntscheune","M\u00fchlensteg","Alter Markt",
@@ -71,13 +71,29 @@ const NAMEN_I = ["Alte Wacht","Silberm\u00fchle","Vergessener Schrein","Nordwach
   "Torfstich","Gl\u00f6cknerturm"];
 const NAMEN_XII = ["Der letzte Steg","Wrack der Morgenr\u00f6te","Mastbruch","Einsame Boje","Riff der Rippen",
   "Gekentertes Gl\u00fcck","Treibholzfeld","Versunkener Wachtturm","Salzfels","Krumme Klippe",
-  "Nebelbank","Sturms\u00e4ule","Leuchtfeuerrest","Kap der Stille","Eiserne Untiefe","Blitzfeste des Grossmeisters"];
-const namenFuer = (roman, n, liga) => {
+  "Nebelbank","Sturms\u00e4ule","Leuchtfeuerrest","Kap der Stille","Eiserne Untiefe","Sturmauge"];
+// Der HAUPTAST schoepft zuerst aus dem Namenspool: die markanten, kuratierten
+// Namen liegen vorn und gehoeren auf den Story-Faden. Nebenstationen bekommen
+// den Rest; geht der Pool aus, zaehlt ein Suffix hoch. Doppelte Poolnamen
+// werden beim Ziehen entschaerft.
+const namenFuer = (roman, n, liga, hauptListe) => {
   const pool = (liga === 1 ? NAMEN_I : liga === 12 ? NAMEN_XII
     : Object.values(PLACE_NAMES[String(liga)] || {})).slice();
-  const aus = [];
-  for (let i = 0; i < n; i++)
-    aus.push(pool.length ? pool[i % pool.length] + (i >= pool.length ? " " + ["II","III","IV"][Math.floor(i/pool.length)-1] : "") : "Wegstein " + (i+1));
+  const aus = new Array(n);
+  const vergeben = new Set();
+  let zeiger = 0;
+  const zieh = () => {
+    let nm = pool.length ? pool[zeiger % pool.length] : "Wegstein";
+    const runde = Math.floor(zeiger / Math.max(1, pool.length));
+    zeiger++;
+    if (runde > 0) nm += " " + (["II", "III", "IV", "V"][runde - 1] || "VI");
+    while (vergeben.has(nm)) nm += " \u2032";
+    vergeben.add(nm);
+    return nm;
+  };
+  const rang = new Map(hauptListe.map((idx, i) => [idx, i]));
+  const reihen = [...hauptListe, ...Array.from({ length: n }, (_, i) => i).filter((i) => !rang.has(i))];
+  for (const i of reihen) aus[i] = zieh();
   return aus;
 };
 
@@ -132,7 +148,7 @@ SLOTS.forEach(([key, name, roman], si) => {
     astVon[idx] = g; astLen[g] = (astLen[g] || 0) + 1;
   });
 
-  const namen = namenFuer(roman, pk.length, liga);
+  const namen = namenFuer(roman, pk.length, liga, haupt);
   const H = haupt.length;
   const schwer = Math.max(0, Math.round((30 - H) / 8));   // kurzer Hauptast = schwerer
 
@@ -146,6 +162,8 @@ SLOTS.forEach(([key, name, roman], si) => {
   // sonst ist sie im ganzen Spiel nicht freischaltbar.
   const figurAst = nebenPool.length && astNachLen.length
     ? (astNachLen.find(a => a[1] >= 4) || astNachLen[0])[0] : null;
+  // Zoll: der laengste Nebenast jedes Kapitels beginnt mit einer Mautstation.
+  const zollAst = astNachLen.length ? astNachLen[0][0] : null;
   let figurBlatt = -1;
   if (figurAst) {
     // Das echte Blatt ist der Punkt mit der GROESSTEN Wegdistanz im Ast -
@@ -224,6 +242,12 @@ SLOTS.forEach(([key, name, roman], si) => {
       const b = AST_DE.length;
       n.storyDe = `${AST_DE[(i + liga) % b]} ${ort}.`;
       n.storyEn = `${AST_EN[(i + liga) % b]} ${ort}.`;
+      if (zollAst && g === zollAst && tiefe === 2) {
+        // Der Einstieg in den langen Ast kostet Zoll - wer die grosse
+        // Belohnung will, zahlt den Faehrmann. Genau ein Tor je Kapitel.
+        n.gate = { gold: 15 + 10 * liga };
+        n.tagDe = "Zollstation"; n.tagEn = "Toll station";
+      }
       if (i === figurBlatt) {                   // die eine Nebenast-Figur
         n.boss = { piece: NEBENFIGUR[liga], wins: 1 };
         n.tier = Math.min(4, 1 + Math.floor(liga / 4));

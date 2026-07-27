@@ -127,16 +127,22 @@ ok("league scaling multiplies the purse", stageGold(nb2("L01s44"), 3) === Math.r
 ok("quick-play purses scale with difficulty", winGold("easy") < winGold("normal") && winGold("normal") < winGold("hard"));
 
 // tolls: reachable but gated until paid; paying opens the way for this league
-const tp0 = { ...dp2(), gold: 500, campaign: { league: 1, cleared: ["L01s00", "L01s01", "L01s03", "L01s02", "L06s12", "L01s42"], unlocked: [] } };
-ok("the Mist Ferry is reachable but wants its toll", ns2(tp0, "L01s05") === "gated");
-ok("toll cost scales with the league", tollCost(nb2("L01s05"), 1) === 40 && tollCost(nb2("L01s05"), 3) === 80);
-const tpPoor = payToll({ ...tp0, gold: 10 }, "L01s05");
-ok("too little gold: the ferryman does not row", tpPoor.gold === 10 && !(tpPoor.campaign.tolls || []).includes("L01s05"));
-const tp1 = payToll(tp0, "L01s05");
+import { hauptast as haT } from "./test_helpers12.mjs";
+const zollT = CAMP3.find((n) => n.league === 1 && n.gate?.gold);
+const vorZoll = haT(1).slice(0, 4).map((n) => n.id); // der Abzweig liegt am Erwachen
+const tp0 = { ...dp2(), gold: 500, campaign: { league: 1, cleared: vorZoll, unlocked: [] } };
+ok("the toll gate is reachable but wants its toll", ns2(tp0, zollT.id) === "gated");
+ok("toll cost scales with the league", tollCost(zollT, 1) === zollT.gate.gold && tollCost(zollT, 3) === zollT.gate.gold * 2);
+const tpPoor = payToll({ ...tp0, gold: 10 }, zollT.id);
+ok("too little gold: the ferryman does not row", tpPoor.gold === 10 && !(tpPoor.campaign.tolls || []).includes(zollT.id));
+const tp1 = payToll(tp0, zollT.id);
 ok("paying the toll opens the way and empties the purse accordingly",
-  tp1.gold === 500 - 40 && ns2(tp1, "L01s05") === "available");
-ok("paying twice is a no-op", payToll(tp1, "L01s05") === tp1);
-ok("toll sites reward more than they cost", CAMP3.filter((n) => n.gate?.gold).every((n) => (n.reward?.gold || 0) > n.gate.gold));
+  tp1.gold === 500 - zollT.gate.gold && ns2(tp1, zollT.id) === "available");
+ok("paying twice is a no-op", payToll(tp1, zollT.id) === tp1);
+ok("the branch behind a toll pays more than the toll costs", CAMP3.filter((n) => n.gate?.gold).every((z) => {
+  const ast = CAMP3.filter((n) => n.league === z.league && !n.haupt && (n.reward?.gold || 0) > 0);
+  return ast.reduce((a, n) => a + n.reward.gold, 0) > z.gate.gold;
+}));
 
 // richer claims: gold = max(5, 80% of the tier's points)
 const evItems = ev2({ wins: 5 }).items;
@@ -147,16 +153,16 @@ ok("claims pay a fatter purse (80% of tier points, min 5)",
 // the big invariant: league 1 first-clear income comfortably covers every key
 // item AVAILABLE in league 1. Late keys (the boat, minLeague 9) are a life's
 // savings by design — they get their own invariant below.
-const l1Income = CAMP3.filter((n) => !n.league).reduce((a, n) => a + stageGold(n, 1), 0);
+const l1Income = CAMP3.filter((n) => n.league === 1).reduce((a, n) => a + stageGold(n, 1), 0);
 const keyCost = IL3.filter((i) => i.kind === "key" && (i.minLeague || 1) <= 1).reduce((a, i) => a + i.gold, 0);
-const tolls1 = CAMP3.filter((n) => n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
+const tolls1 = CAMP3.filter((n) => n.league === 1 && n.gate?.gold).reduce((a, n) => a + tollCost(n, 1), 0);
 ok("league 1 income covers its keys plus tolls with room to breathe (" + l1Income + " vs " + (keyCost + tolls1) + ")",
   l1Income > (keyCost + tolls1) * 1.1);
 
 // the boat is EXPENSIVE by design (a story savings goal) — but the income of
 // leagues 1..9 must still afford it comfortably before the Endless Sea calls
 const boat3 = IL3.find((i) => i.id === "boat");
-const income9 = [1,2,3,4,5,6,7,8,9].reduce((a, lg) => a + CAMP3.filter((n) => !n.league).reduce((b, n) => b + stageGold(n, lg), 0), 0);
+const income9 = [1,2,3,4,5,6,7,8,9].reduce((a, lg) => a + CAMP3.filter((n) => n.league === lg).reduce((b, n) => b + stageGold(n, lg), 0), 0);
 ok("the boat costs serious coin (>= 2000)", boat3.gold >= 2000);
 ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + ")", income9 > boat3.gold * 1.5);
 
@@ -244,10 +250,11 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
 import { placeFor as _pf } from "./src/meta/index.js";
 import { CAMPAIGN as _cg } from "./src/content/index.js";
 {
-  const seen = new Set(); let dups = 0;
-  for (let lg = 1; lg <= 10; lg++) for (const n of _cg) { const nm = _pf(n, lg); if (seen.has(nm)) dups++; seen.add(nm); }
-  ok("510 station names, none spoken twice", seen.size === 510 && dups === 0);
-  ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "L01s02"), 1) === "Nordwacht");
+  let einzig = true;
+  for (let lg = 1; lg <= 12; lg++) { const seen = new Set();
+    for (const n of _cg.filter((x) => x.league === lg)) { const nm = _pf(n); if (seen.has(nm)) einzig = false; seen.add(nm); } }
+  ok("529 stations, no name spoken twice within a chapter", _cg.length === 529 && einzig);
+  ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "L01s00")) === "Alte Wacht");
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

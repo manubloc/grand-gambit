@@ -311,7 +311,7 @@ export const PLACE_NAMES = {
     "Der Wispernde Halm",
     "Zeltasche",
     "Weidewende",
-    "Späherzinne",
+    "Windzinne",
     "Trockene Tränke",
     "Wolfsfalle",
     "Geierschatten",
