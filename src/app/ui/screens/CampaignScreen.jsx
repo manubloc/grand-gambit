@@ -8,7 +8,7 @@ import { familyOf } from "../../../core/index.js";
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle } from "../../../content/index.js";
-import { nodeStatus, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
+import { nodeStatus, nodeInLeague, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import bootUrl from "../assets/wanderer-boot.webp";
 import { T } from "../theme.js";
@@ -58,7 +58,7 @@ const CrownIc = ({ c = "#f2d98c", size = 16 }) => (
   <svg viewBox="0 0 24 24" width={size} height={size}><path d="M4 17 L5.2 8.5 L9 12 L12 6.5 L15 12 L18.8 8.5 L20 17 Z" fill={c} /><path d="M5.5 19.5 L18.5 19.5" stroke={c} strokeWidth="2" strokeLinecap="round" /></svg>
 );
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 const CAM_EASE = "cubic-bezier(.45,.05,.35,1)";
 
 // the name-plate halo borrows each land's own light: spring green, desert
@@ -343,7 +343,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               fill={MP.pineDark} opacity={f.o} />)}
             {scenery.drifts.map((m, i) => SnowDrift({ ...m, k: "sd" + i }))}
             {scenery.isles.map((m, i) => Isle({ ...m, k: "is" + i }))}
-            {th.sea && CAMPAIGN.map((n, i) => Isle({ x: nx(n), y: ny(n) + 14, s: 1.05, k: "nis" + i }))}
+            {!bm && th.sea && CAMPAIGN.filter((n) => nodeInLeague(n, viewLeague)).map((n, i) => Isle({ x: nx(n), y: ny(n) + 14, s: 1.05, k: "nis" + i }))}
             {scenery.mistsBack.map((m, i) => Mist({ ...m, k: "mb" + i }))}
             {scenery.stonesAt && StoneCircle({ ...scenery.stonesAt, s: 1.05, k: "stones" })}
             {scenery.ruin && RuinArch({ x: nx(nodeById("e1")) - 56, y: ny(nodeById("e1")) + 30, s: 1, k: "ruin" })}
@@ -404,9 +404,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             </div>
           ))}
           <div className="gg-serif" style={{ position: "absolute", top: Math.max(14, ny({ col: 2 }) - 74), left: Math.min(WMAP - 84, WMAP - 14), transform: "translateX(-50%)",
-            color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ LIGA {ROMAN[viewLeague - 1] || viewLeague} ❖</div>
+            color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ {(en ? "CHAPTER " : "KAPITEL ")}{ROMAN[viewLeague - 1] || viewLeague} ❖</div>
           {/* medallions + labels — small waypoints now; the wanderer is the star */}
           {CAMPAIGN.map((n) => {
+            if (!nodeInLeague(n, viewLeague)) return null; // nur das betrachtete Kapitel betritt seine Karte
             const st = viewing ? "available" : nodeStatus(profile, n.id); // a mastered world holds no locks
             const isSel = !viewing && sel === n.id, isCur = !viewing && cur === n.id;
             const pieceCh = n.boss?.piece ? CHARACTERS[n.boss.piece] : null;
