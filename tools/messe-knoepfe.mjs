@@ -88,6 +88,11 @@ const lies = () => page.evaluate(() => {
 
 const seiten = [];
 const sammle = async (name) => { await page.waitForTimeout(800); const l = await lies(); seiten.push([name, l]);
+  if (process.argv.includes("--halle")) {
+    const hb = await page.evaluate(() => [...document.querySelectorAll("img")].filter(x=>x.src.includes("bg-hall")).map(x=>{const r=x.getBoundingClientRect();
+      return {y:Math.round(r.top), h:Math.round(r.height), w:Math.round(r.width), op:getComputedStyle(x).opacity};}));
+    console.log("   Halle:", JSON.stringify(hb));
+  }
   if (process.argv.includes("--bilder")) await page.screenshot({ path: `/tmp/schirm-${name}.png`, fullPage: false });
   console.log(`  ${name}: ${l.length} Elemente`, l.length ? "-> " + l.slice(0, 3).map((e) => e.text || e.tag).join(" / ") : ""); };
 
