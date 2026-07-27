@@ -34,6 +34,10 @@ const { STEP, LANE, LEFT, TOPPAD, WMAP, HMAP, nx, ny } = GEO;
 // v0.3 map immersion: medallions ~30% smaller (46 → 32), wanderer ~40% larger
 // (34×36 → 48×50) — he is the hero, the stations are just waypoints.
 const MEDAL = 32, MEDAL_ART = 22, HIT = 44;
+// DIE TIEFE DER KARTE: was weiter hinten (oben) liegt, steht kleiner -
+// Stationen sacht (86-100%), der Wanderer deutlicher (78-100%).
+const tiefeStation = (y, H) => 0.86 + 0.14 * Math.max(0, Math.min(1, y / Math.max(1, H)));
+const tiefeWanderer = (y, H) => 0.78 + 0.22 * Math.max(0, Math.min(1, y / Math.max(1, H)));
 // parchment palette for the embedded node panel — map-world UI, not app chrome
 const PP = { bg: "linear-gradient(170deg, #f4eee0, #ece4cf)", bg2: "#e7dfc9", line: "#c9bfa4",
   ink: MP.ink, dim: "#6f6752", chipInk: "#4a4433", green: "#3e7d47" };
@@ -228,7 +232,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const seaLock = !viewing && th.sea && !seaAccessible(profile);
   const panelW = Math.min(352, frameW - 28);
   const panelLeft = 14;
-  const panelPos = { bottom: dockPad + 14, maxHeight: frameH - 28, overflowY: "auto" }; // anchored INSIDE the frame, never over the dock
+  // DER GAMBIT BLEIBT SICHTBAR: das Panel erscheint auf der Seite des
+  // Schirms, auf der er NICHT steht - steht er unten, oeffnet es oben.
+  // 24px Abstand zur Figur sind fest eingeplant (Token ragt ~82px nach oben).
+  const tokenNode = nodeById(token.at);
+  const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camY : frameH * 0.5;
+  const panelOben = tokenScreenY > frameH * 0.52;
+  const panelPos = panelOben
+    ? { top: 14, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - 14), overflowY: "auto" }
+    : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 
   return (
@@ -236,6 +248,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
       {/* the wanderer's window onto the world — a rounded frame; whatever the
           screen shape, chrome stays dark and every control lives INSIDE */}
       <div ref={vpRef} style={{ position: "absolute", inset: 0 }}>
+      {/* nichts hier - der Nebel wohnt im transformierten Kartenraum unten */}
       {/* the painted frame: the league's rim colour running light-to-dark
           around the window — the map hangs like a canvas over the chrome */}
       <div aria-hidden style={{ position: "absolute", left: frameX - 3, top: frameY - 3,
@@ -316,6 +329,31 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
           transform: `translate(${-camX}px, ${-camY}px) scale(${zf})`,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
+          {/* DER NEBEL DER ZUKUNFT: Der Weg endet im Dunkel. Ab knapp ueber
+              der hoechsten erreichten Station steigt Schwaerze auf, getragen
+              von Schwaden des Risses - das Ende der Karte ist NICHT zu sehen.
+              Mit jedem Fortschritt weicht der Nebel zurueck; im Rueckblick
+              auf gemeisterte Kapitel faellt er ganz. */}
+          {bm && !viewing && (() => {
+            const erreicht = CAMPAIGN.filter((n) => nodeInLeague(n, viewLeague))
+              .filter((n) => { const st = nodeStatus(profile, n.id); return st === "cleared" || st === "available"; })
+              .map((n) => ny(n));
+            const front = erreicht.length ? Math.min(...erreicht) : HM * 0.8;
+            const klar = Math.min(HM, front + 60);        // bis hier voll sichtbar
+            const dicht = Math.max(0, front - 480);       // ab hier fast schwarz
+            const p = (v) => (100 * v / HM).toFixed(2) + "%";
+            return <>
+              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+                background: `linear-gradient(180deg, rgba(0,0,0,.96) 0%, rgba(0,0,0,.96) ${p(Math.max(0, dicht - 300))}, rgba(4,2,10,.88) ${p(dicht)}, rgba(10,6,22,.42) ${p(front - 160)}, transparent ${p(klar)})` }} />
+              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+                background: `radial-gradient(120% 46% at 50% ${p(Math.max(0, dicht - 40))}, rgba(124,58,237,.30) 0%, rgba(91,33,182,.14) 46%, transparent 74%)`,
+                mixBlendMode: "screen" }} />
+              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none",
+                backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
+                maskImage: `linear-gradient(180deg, #000 0%, #000 ${p(dicht)}, transparent ${p(front - 120)})`,
+                WebkitMaskImage: `linear-gradient(180deg, #000 0%, #000 ${p(dicht)}, transparent ${p(front - 120)})` }} />
+            </>;
+          })()}
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
               <linearGradient id="wash" x1="0" y1="0" x2="1" y2="0">
@@ -418,7 +456,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             if (st === "hidden") return null;
             const ringCol = st === "locked" ? "#8d8672" : st === "gated" ? "#a9853f" : st === "cleared" ? "#7c5f3d" : T.gold;
             return (
-              <div key={n.id} style={{ position: "absolute", left: nx(n), top: ny(n), transform: "translate(-50%,-50%)" }}>
+              <div key={n.id} style={{ position: "absolute", left: nx(n), top: ny(n), transform: `translate(-50%,-50%) scale(${tiefeStation(ny(n), HM)})`, transformOrigin: "center" }}>
                 {/* on painted maps every boss stands at his station in person —
                     dark and waiting until beaten, gold once he joined the court;
                     the league finale towers over the road's end */}
@@ -516,10 +554,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                         surface. The SEA has no pale surface to blend into — a halo
                         there reads as an ugly oval, so we drop it and carry the
                         name on the letters alone (bright ink, dark outline). */}
-                    {!th.sea && <span aria-hidden style={{ position: "absolute", inset: "-8px -18px", borderRadius: "50%",
-                      background: `radial-gradient(ellipse at center, rgba(${labelTint(viewLeague)},.22) 0%, rgba(${labelTint(viewLeague)},.12) 38%, rgba(${labelTint(viewLeague)},.04) 62%, transparent 78%)`,
+                    {/* ein weiches helles Kissen unter jedem Namen, damit die
+                        Schrift auf jedem Untergrund stehen bleibt */}
+                    {!th.sea && <span aria-hidden style={{ position: "absolute", inset: "-9px -20px", borderRadius: "50%",
+                      background: "radial-gradient(ellipse at center, rgba(255,250,236,.34) 0%, rgba(255,250,236,.18) 40%, rgba(255,250,236,.06) 64%, transparent 80%)",
                       filter: "blur(4px)", pointerEvents: "none" }} />}
-                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 13.5, fontWeight: 700,
+                    <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 15.5, fontWeight: 700,
                       color: th.sea ? "#fbf6e8" : "#231d10",
                       lineHeight: 0.94, textShadow: th.sea
                         ? "0 1px 2px rgba(6,20,34,.95), 0 0 4px rgba(6,20,34,.85), 0 0 1px rgba(6,20,34,1)"
@@ -534,9 +574,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             const tn = nodeById(token.at);
             if (!tn) return null;
             return <div onClick={(e) => { e.stopPropagation(); setSel(token.at); setPanelOpen(true); }}
-              title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn), width: 76, height: 78, zIndex: 5,
+              title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn),
+                width: Math.round(96 * tiefeWanderer(ny(tn), HM)), height: Math.round(98 * tiefeWanderer(ny(tn), HM)), zIndex: 5,
               pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,
-              transform: (bm ? "translate(-50%,-102%)" : "translate(-98%,-70%)"), transformOrigin: "50% 96%" }}>
+              transform: (bm ? "translate(-50%,-102%) perspective(640px) rotateX(11deg)" : "translate(-98%,-70%)"),
+              transformOrigin: "50% 96%", transformStyle: "preserve-3d" }}>
 
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
               <div aria-hidden style={{ position: "absolute", left: "50%", top: "62%", width: 58, height: 9,

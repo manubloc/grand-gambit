@@ -160,7 +160,34 @@ for (let lg = 1; lg <= 12; lg++) {
         return c ? ([...c.querySelectorAll("div")].map((d) => getComputedStyle(d).animationName).find((a) => a && a.includes("ggHop")) || "none") : "weg";
       });
       if (!hop.includes("ggHop")) befunde.push(`Kapitel 1: unterwegs kein Huepfen (anim=${hop})`);
-      await page.waitForTimeout(900);
+      await page.waitForTimeout(1100);
+
+      // DER GAMBIT BLEIBT SICHTBAR: Panel und Wanderer duerfen sich nie
+      // ueberlappen, mit mindestens 12px Abstand (Soll 24, Toleranz fuer Rundung).
+      const frei = await page.evaluate(() => {
+        const tok = document.querySelector('[title="Gambit"]');
+        const panels = [...document.querySelectorAll("div")].filter((d) => {
+          const st = d.getAttribute("style") || "";
+          return st.includes("backdrop-filter") && d.offsetWidth > 250 && d.offsetWidth < 420 && (d.textContent || "").length > 30;
+        });
+        if (!tok) return { fehlt: "Wanderer" };
+        if (!panels.length) return { fehlt: "Panel (nicht offen)" };
+        const t = tok.getBoundingClientRect(), p = panels[0].getBoundingClientRect();
+        const overlap = Math.max(0, Math.min(t.bottom, p.bottom) - Math.max(t.top, p.top)) *
+                        Math.max(0, Math.min(t.right, p.right) - Math.max(t.left, p.left));
+        const abstand = t.top >= p.bottom ? t.top - p.bottom : p.top - t.bottom;
+        return { overlap: Math.round(overlap), abstand: Math.round(abstand) };
+      });
+      if (frei.fehlt) befunde.push(`Kapitel 1: Sichtbarkeitstest unvollstaendig (${frei.fehlt})`);
+      else if (frei.overlap > 0) befunde.push(`Kapitel 1: Panel ueberdeckt den Gambit (${frei.overlap}px2)`);
+      else if (frei.abstand < 12) befunde.push(`Kapitel 1: Panel zu dicht am Gambit (${frei.abstand}px)`);
+
+      // NEBEL DER ZUKUNFT: das obere Kartenende muss im Dunkel liegen
+      const nebel = await page.evaluate(() => {
+        const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.96)")));
+        return !!o;
+      });
+      if (!nebel) befunde.push("Kapitel 1: Nebel der Zukunft fehlt");
     }
   }
 
