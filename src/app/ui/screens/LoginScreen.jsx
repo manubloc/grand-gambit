@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { T } from "../theme.js";
 import { register, login, loginGuest, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
-import { logoMenuArt, logoArt } from "../livery.js";
+import { logoArt } from "../livery.js";
 
 const STR = {
   de: {
@@ -89,8 +89,11 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
         objectFit: "cover", display: "block", marginTop: 0, marginBottom: 42,
         WebkitMaskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)",
         maskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)" }} />
-      <img src={logoMenuArt()} alt="" draggable={false} style={{ width: "min(78vw, 380px)", display: "block",
-        marginTop: -28, marginBottom: 18, filter: "drop-shadow(0 3px 14px rgba(0,0,0,.85))" }} />
+      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: ".26em",
+        fontSize: "clamp(19px, 5.2vw, 30px)", lineHeight: 1.15, textAlign: "center", marginTop: -22, marginBottom: 14,
+        background: `linear-gradient(180deg, ${T.goldBright} 0%, ${T.gold} 52%, ${T.lime} 100%)`,
+        WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+        filter: "drop-shadow(0 2px 12px rgba(0,0,0,.9))" }}>GRAND GAMBIT</div>
       <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 14px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>
