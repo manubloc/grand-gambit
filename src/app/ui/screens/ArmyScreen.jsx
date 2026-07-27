@@ -1,4 +1,5 @@
 import { StatOrbBadge as SheetOrb, JewelIc } from "../board/PieceGlyph.jsx";
+import { AbilityIcon, abilityTint } from "../AbilityIcons.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
@@ -83,8 +84,9 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
     <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: 9,
       padding: "9px 11px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left",
       fontFamily: "inherit", color: "inherit" }}>
-      <span style={{ fontSize: 17, width: 24, textAlign: "center", flex: "0 0 auto",
-        filter: owned ? "none" : "grayscale(.4) opacity(.85)" }}>{ab.icon}</span>
+      {/* das gezeichnete Medaillon der Faehigkeit - Farbe nach ihrem Wesen */}
+      <span style={{ flex: "0 0 auto", filter: owned ? "none" : "grayscale(.35) opacity(.85)" }}>
+        <AbilityIcon id={ab.id} size={30} /></span>
       <span style={{ flex: 1, minWidth: 0 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 800, color: owned ? "#f1e8c6" : "#d7d0b6",
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{en ? ab.nameEn : ab.nameDe}</span>
@@ -110,7 +112,7 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
         style={{ marginTop: 10, display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 13px", borderRadius: 9,
           fontFamily: "inherit", fontWeight: 800, fontSize: 12.5, cursor: "pointer",
           background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)", color: "#f6e9a4",
-          border: "1.5px solid #e3c07a", boxShadow: "0 0 10px rgba(64,110,220,.35)" }}>
+          border: "1px solid #e3c07a", boxShadow: "0 0 10px rgba(64,110,220,.35)" }}>
         {en ? "Learn" : "Erlernen"} · {price} <SkillStar size={11} /></button>}
       {!reach && <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a856f", display: "inline-flex", alignItems: "center", gap: 6 }}>
         <LockIc size={11} /> {en ? "Unlocks at level" : "Ab Stufe"} {price != null ? "" : ""}<b style={{ color: "#b9b295" }}>{ab._lvl}</b></div>}
@@ -320,7 +322,8 @@ function ChroniclePanel({ profile, t, en, account = null }) {
             <div style={{ display: "grid", gap: 6 }}>
               {rungs.map((rg) => { const ab = ABILITIES[rg.ability]; const mv = ABILITY_MOVE[rg.ability];
                 return <div key={rg.ability} style={{ fontSize: 12, lineHeight: 1.5, color: "#c9c3aa" }}>
-                  <span style={{ color: "#f6e4a8", fontWeight: 800 }}>{ab.icon} {ab[en ? "nameEn" : "nameDe"]}</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#f6e4a8", fontWeight: 800 }}>
+                    <AbilityIcon id={ab.id} size={22} /> {ab[en ? "nameEn" : "nameDe"]}</span>
                   <span className="gg-serif" style={{ color: "#a9a28a", fontSize: 11 }}> · {en ? "from level" : "ab Stufe"} {rg.level}</span>
                   {" — "}{ab[en ? "descEn" : "descDe"]}
                   {mv && <div style={{ marginTop: 5, marginBottom: 3 }}>
@@ -338,7 +341,7 @@ function ChroniclePanel({ profile, t, en, account = null }) {
     {BOSSES.map((b) => {
       const open = openId === "X:" + b.id;
       const seen = seenBoss(b);
-      const fam = FAM[b.art] ? (en ? FAM[b.art][1] : FAM[b.art][0]) : b.art;
+      const fam = FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : b.art;
       return <div key={b.id} style={{ borderRadius: 12, border: `1px solid ${open ? T.riftLine : "rgba(124,58,237,.4)"}`,
         boxShadow: open ? `0 0 16px ${T.riftGlow}` : "0 0 7px rgba(124,58,237,.16)",
         background: "linear-gradient(180deg, rgba(46,24,40,.42), rgba(14,10,18,.6))", overflow: "hidden" }}>
@@ -510,7 +513,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
     {open && unlocked && (
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 11, padding: "8px 10px",
         background: T.panel2, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
-        <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text }}>
+        <div style={{ flex: 1, fontSize: 12.5, color: maxed ? T.faint : T.text, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 4 }}>
           {char.id === "gambit" && <span className="gg-serif" style={{ color: T.goldBright, marginRight: 8, letterSpacing: ".05em" }}>
             {"✦".repeat(gambitTier(level))} {t("army.stufe", { r: ["I", "II", "III", "IV", "V", "VI"][gambitTier(level) - 1] })}</span>}
           {(() => { // mirror of core/setup: the SAME formulas, so what you read is what you field
@@ -519,12 +522,13 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             const atkAt = (l) => (BASE_ATK[k] || 1) + Math.floor((l - 1) / 2);
             return maxed
               ? <span className="gg-serif" style={{ letterSpacing: ".03em" }}>{t("army.maxed")}</span>
-              : <span style={{ color: "#b9b295", display: "inline-block", lineHeight: 1.5 }}>{en ? "Level" : "Stufe"} {level} → {level + 1}
-                {/* the gains live INSIDE the spheres now — same numerals as
-                    every orb on the board, sized up so the plus breathes */}
-                <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px 0 4px" }}><SheetOrb kind="life" v={"+" + (hpAt(level + 1) - hpAt(level))} size={27} num={0.56} /></span>
-                {atkAt(level + 1) > atkAt(level) && <span style={{ display: "inline-flex", verticalAlign: "-0.35em", margin: "0 1px" }}><SheetOrb kind="power" v="+1" size={27} num={0.56} /></span>}
-</span>;
+              : <span style={{ color: "#b9b295", display: "inline-flex", alignItems: "center", gap: 6, lineHeight: 1 }}>
+                <span>{en ? "Level" : "Stufe"} {level} → {level + 1}</span>
+                {/* the gains live INSIDE the spheres - one flex line centres
+                    text, spheres and the button on the SAME axis */}
+                <SheetOrb kind="life" v={"+" + (hpAt(level + 1) - hpAt(level))} size={27} num={0.56} />
+                {atkAt(level + 1) > atkAt(level) && <SheetOrb kind="power" v="+1" size={27} num={0.56} />}
+              </span>;
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
@@ -534,7 +538,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             cursor: affordable ? "pointer" : "default",
             background: affordable ? "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" : "#1a2340",
             color: affordable ? "#f6e9a4" : "#8d94ad",
-            border: `1.5px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
+            border: `1px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
             boxShadow: affordable ? "0 0 14px rgba(64,110,220,.4)" : "none",
             animation: affordable ? "ggUpPulse 2.2s ease-in-out infinite" : "none",
             textShadow: affordable ? "0 1px 2px rgba(0,0,0,.5)" : "none" }}>
@@ -1146,8 +1150,11 @@ const FAM_LABEL = { golem: ["Golems","Golems"], beast: ["Bestien","Beasts"], ser
 // figure paintings preload once per session, so the muster grid shows tiles
 // and figures TOGETHER instead of empty tiles that fill in a moment later
 let codexArtReady = false;
-function CodexTree({ profile, dispatch, t, en, onZoom }) {
-  const met = new Set(profile.codex?.met || []);
+function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
+  // Werkbank-Durchblick: der Admin sieht jedes Monster und kann jede Kachel
+  // oeffnen - Spieler sehen weiter nur, was sie erlebt haben.
+  const isAdmin = !!account?.isAdmin;
+  const met = new Set(isAdmin ? BOSSES.map((b) => "X:" + b.id) : (profile.codex?.met || []));
   const unlocked = new Set(profile.campaign?.unlocked || []);
   const league = profile.campaign?.league || 1;
   const gold = profile.gold || 0;
@@ -1212,19 +1219,22 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
   const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null }) => (
-    <div onClick={onOpen} style={{ position: "relative", background: T.panel2, border: `1px solid ${glow ? T.gold : T.line}`,
+    <div onClick={onOpen} style={{ position: "relative",
+      // der leichte Riss-Verlauf der Menueleisten, eine Stufe stiller
+      background: "radial-gradient(130% 120% at 50% -12%, rgba(124,58,237,.20) 0%, rgba(34,22,60,.55) 46%, rgba(12,8,22,.7) 100%)",
+      border: `1px solid ${glow ? T.gold : "rgba(124,58,237,.38)"}`,
       borderRadius: 11, padding: "10px 7px 9px", textAlign: "center", minWidth: 0, cursor: onOpen ? "pointer" : "default",
-      boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : undefined }}>
+      boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : "0 0 6px rgba(124,58,237,.12)" }}>
       {/* THE CORNER SIGIL: the piece's own vector figure, bare — no ring, no
           plate, just the silhouette, so the tile says at a glance WHICH figure
           this is even before the painting has loaded. The house name no longer
           sits up here; it belongs under the name, where it reads as a caption. */}
       {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
         display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
-      {img ? <img src={img} alt="" style={{ width: 68, height: 68, objectFit: "contain", display: "block", margin: "0 auto",
+      {img ? <img src={img} alt="" style={{ width: 76, height: 76, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
-        : <div style={{ width: 68, height: 68, display: "grid", placeItems: "center", margin: "0 auto" }}>
+        : <div style={{ width: 76, height: 76, display: "grid", placeItems: "center", margin: "0 auto" }}>
             {/* NEVER A QUESTION MARK WHERE A FIGURE BELONGS. If no painting is
                 at hand, the tile shows the piece's own shape as a black
                 silhouette — a shadow you can still recognise. The NAME may stay
@@ -1276,10 +1286,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
     const sigBig = <PieceArt kind="X" bossId={b.id} art={b.art} size={58} level={1}
       fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
     if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow sigil={sig} sigilBig={sigBig}
+      onOpen={() => setDetail(k)}
       name={en ? b.nameEn : b.nameDe} origin={bribedSet.has(b.id) ? t("tree.allied") : t("tree.inCourt")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);
       return <Tile key={b.id} img={img} dim sigil={sig} sigilBig={sigBig} name={en ? b.nameEn : b.nameDe} origin={t("tree.masters")}
+        onOpen={() => setDetail(k)}
         action={can ? (sacrificeFor === b.id
           ? <div style={{ marginTop: 5 }}>
               <div style={{ fontSize: 9.5, color: T.gold, marginBottom: 3 }}>{t("tree.pickSacrifice")}</div>
@@ -1335,6 +1347,45 @@ function CodexTree({ profile, dispatch, t, en, onZoom }) {
       const list = BOSSES.filter((b) => !bribedSet.has(b.id) && !ownedBossSet.has(b.id));
       return list.length ? <div><H>{t("tree.masters")}</H><div style={grid}>{list.map(monsterTile)}</div></div> : null;
     })()}
+    {/* EIN MONSTER OEFFNET SEINE KARTE wie jede Figur des Hofs: Portrait,
+        Zeichen, Familie, Zugbild und sein Fluestern. Der Rahmen traegt das
+        Licht des Risses statt des Goldes der Krone. */}
+    {detail && detail.startsWith("X:") && (() => {
+      const b = BOSSES.find((x) => "X:" + x.id === detail);
+      if (!b) return null;
+      const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
+      const fam = FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : b.art;
+      return <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
+        display: "grid", placeItems: "center", padding: 16 }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 420px)",
+          borderRadius: 22, overflow: "hidden", boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
+          border: `1px solid ${T.riftLine}`,
+          background: "radial-gradient(130% 110% at 50% -10%, rgba(124,58,237,.28) 0%, rgba(26,16,44,.97) 46%, rgba(8,5,14,.99) 100%)" }}>
+          <button onClick={() => setDetail(null)} aria-label="close" style={{ position: "absolute", top: 9, right: 9, zIndex: 4,
+            width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
+            background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
+            fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", padding: "18px 16px 16px" }}>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
+              {img && <img src={img} alt="" style={{ width: 96, height: 116, objectFit: "contain", objectPosition: "bottom",
+                filter: `drop-shadow(0 0 10px ${T.riftGlow})` }} />}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>
+                <div className="gg-serif" style={{ fontSize: 11, letterSpacing: ".14em", color: T.riftBright, textTransform: "uppercase", marginTop: 2 }}>{fam}</div>
+              </div>
+              <span style={{ paddingBottom: 4 }}><PieceArt kind="X" bossId={b.id} art={b.art} size={44} level={1}
+                fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent={T.riftBright} /></span>
+            </div>
+            <div style={{ marginTop: 14 }}>
+              <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 4 }}>{t("chron.moves").toUpperCase()}</div>
+              <MoveDiagram kind={null} moveSpec={b.moveSpec} />
+            </div>
+            {(en ? b.hintEn : b.hintDe) && <div className="gg-serif" style={{ marginTop: 12, fontSize: 12.5, fontStyle: "italic",
+              color: "#c5b4c9", lineHeight: 1.55 }}>„{en ? b.hintEn : b.hintDe}"</div>}
+          </div>
+        </div>
+      </div>;
+    })()}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
         display: "grid", placeItems: "center", padding: 16 }}>
@@ -1377,7 +1428,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
-    {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} />}
+    {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
   </div>;
 }

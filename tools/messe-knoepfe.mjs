@@ -102,6 +102,31 @@ for (const [knopf, name] of [["Profil", "Profil"], ["Hofstaat", "Hofstaat"], ["S
   const ok = await klick(knopf);
   console.log("klick", knopf, ok ? "ok" : "NICHT GEFUNDEN");
   if (ok) await sammle(name);
+  if (name === "Hofstaat") {
+    await page.waitForFunction(() => /MEISTER|MASTERS/.test(document.body.innerText), { timeout: 9000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    // DER MONSTER-KLICK: eine Bestien-Kachel im Verzeichnis muss ihr Popup
+    // oeffnen wie jede Figur (der gemeldete Fehler vom 27.07.).
+    const popup = await page.evaluate(() => {
+      // Die Kacheln der MEISTER-Sektion: klickbare Karten unterhalb der
+      // Ueberschrift MEISTER & GROSSMEISTER
+      const alle = [...document.querySelectorAll("div")];
+      const kopf = alle.find((d) => /MEISTER/.test(d.textContent || "") && d.offsetHeight < 40);
+      if (!kopf) return "MEISTER-Kopf fehlt";
+      const raster = kopf.nextElementSibling;
+      const kachel = raster && [...raster.children].find((d) => d.style.cursor === "pointer");
+      if (!kachel) return "keine klickbare Monster-Kachel (Fehler!)";
+      kachel.click();
+      return "geklickt";
+    });
+    await page.waitForTimeout(700);
+    const offen = await page.evaluate(() => {
+      const o = [...document.querySelectorAll("div")].find((d) => d.style.position === "fixed" && (d.textContent || "").length > 10 && d.querySelector("svg"));
+      return !!o;
+    });
+    if (popup !== "geklickt" || !offen) seiten.push(["MONSTERKLICK", [{ tag: "fehler", text: popup + " / Popup " + (offen ? "offen" : "ZU"), bw: 99, ow: 0, shadow: "" }]]);
+    else { console.log("   Monster-Popup: offen"); await page.evaluate(() => { const x = [...document.querySelectorAll("button")].find((b) => b.textContent.trim() === "✕"); x && x.click(); }); await page.waitForTimeout(400); }
+  }
 }
 
 await browser.close(); srv.close();

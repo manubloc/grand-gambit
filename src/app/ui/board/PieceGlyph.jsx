@@ -135,9 +135,11 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   // the cavity without shrinking below legibility
   const chars = String(v ?? "").length;
   const scale = chars >= 3 ? 0.78 : chars === 2 ? 0.88 : 1;
+  const schein = kind === "life"
+    ? "drop-shadow(0 0 2.5px rgba(230,57,74,.9)) drop-shadow(0 0 7px rgba(230,57,74,.45)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
+    : "drop-shadow(0 0 2.5px rgba(74,163,232,.9)) drop-shadow(0 0 7px rgba(74,163,232,.45)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))";
   return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
-    backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%",
-    filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.45))" }}>
+    backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%", filter: schein }}>
     <span style={{ ...numeralStyle(size * num * scale), textShadow: "0 1px 0 rgba(255,245,216,.22)",
       transform: `translate(${(ORB_TRUE_CENTER.x * size).toFixed(2)}px, ${(ORB_TRUE_CENTER.y * size).toFixed(2)}px)` }}>{v}</span>
   </span>;
