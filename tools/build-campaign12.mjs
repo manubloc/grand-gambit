@@ -1,0 +1,262 @@
+// Baut aus dem vom Besitzer gepflegten Stationsstand die neue Kampagne:
+// ZWOELF Liga-Graphen statt des einen 51-Knoten-Graphen, der bisher in jeder
+// Liga wiederverwendet wurde.
+//
+//   Eingabe   tools/stationen.json  (Export des Stationspruefers, gepflegt)
+//   Ausgabe   src/content/campaign12.gen.js   die Knoten aller zwoelf Ligen
+//             src/app/ui/mapBitmaps12.gen.js  Stationspositionen je Karte
+//
+// Entscheidungen, wie vom Besitzer vorgegeben:
+//   - Hauptast traegt die Story: die vier Kapitelphasen liegen auf seinen
+//     Vierteln, die Schluesselfiguren stehen dort, die letzte Station ist der
+//     Liga-Endboss.
+//   - Nebenaeste sind Belohnungswege: je laenger der Ast, desto groesser die
+//     Belohnung am Blatt. Kurze Aeste zahlen Trank-Niveau (Gold/XP), lange
+//     tragen vereinzelt eine Figur - aber weniger Schluesselfiguren als der
+//     Hauptast.
+//   - Kuerzere Hauptaeste sind schwerer: Schwierigkeit und Boss-Stufe
+//     skalieren mit der inversen Hauptastlaenge.
+//   - Keine Minispiele vorerst; jede Station ist eine Partie.
+//
+// 15 der 20 Schluesselfiguren liegen auf Hauptaesten, 5 auf langen Nebenaesten.
+import { readFileSync, writeFileSync } from "node:fs";
+import { PLACE_NAMES } from "../src/content/placeNames.js";
+
+const ROH = JSON.parse(readFileSync("tools/stationen.json", "utf8"));
+const KAP = ROH.kapitel || ROH;
+
+// Slot -> Datei, Name, roemische Zahl. VII/VIII getauscht wie angesagt,
+// XI neu benannt (das Meer ist jetzt XII), XII uebernimmt "Endloses Meer".
+const SLOTS = [
+  ["687", "Kronland", "I"], ["688", "Kornmark", "II"], ["689", "Eichwald", "III"],
+  ["690", "Krummholz", "IV"], ["691", "Grauwacht", "V"], ["692", "Wolkenjoch", "VI"],
+  ["693", "Sattelweite", "VII"], ["694", "Aschgrund", "VIII"], ["696", "Die Wunde", "IX"],
+  ["698", "Sonnenschlund", "X"], ["700", "Die K\u00fcste", "XI"], ["707", "Endloses Meer", "XII"],
+];
+
+// Liga-Endbosse: I-XI wie gehabt, XII ist der Grossmeister in seiner Blitzfeste.
+const ENDBOSS = ["b25","b12","b10","b02","b19","b20","b16","b17","b18","b08","b14","b23"];
+// Zwischen-Monster fuer die Mitte des Hauptastes, je Liga eine kleine Rotation.
+const MITTE = [["b01","b03"],["b02","b11"],["b24","b05"],["b09","b13"],["b22","b04"],
+  ["b21","b07"],["b15","b06"],["b01","b09"],["b13","b22"],["b05","b24"],["b07","b21"],["b15","b04"]];
+// Schluesselfiguren: [liga, anteilImHauptast 0..1] bzw. Nebenast-Pool je Liga.
+const HAUPTFIGUR = {
+  1:[["mage",.38],["paladin",.72]], 2:[["hawk",.55]], 3:[["alchemist",.55]],
+  4:[["sorceress",.55]], 5:[["guardian",.55]], 6:[["assassin",.55]],
+  7:[["dragon",.55]], 8:[["warlock",.55]], 9:[["inquisitor",.55]],
+  10:[["archbishop",.42],["engineer",.75]], 11:[["chancellor",.42],["standard",.75]],
+  12:[["seeress",.5]],
+};
+const NEBENFIGUR = { 2:"bard", 4:"pathfinder", 6:"captain", 8:"amazon", 10:"strategist" };
+
+const PHASEN = [
+  ["Der Weg beginnt bei", "The road begins at"],
+  ["Der Pfad f\u00fchrt weiter \u00fcber", "The path leads on across"],
+  ["Die Pr\u00fcfung wartet bei", "The trial waits at"],
+  ["Der letzte Anstieg: ", "The final ascent: "],
+];
+const AST_DE = ["Ein Seitenpfad zweigt ab nach", "Abseits des Weges liegt", "Ein stiller Umweg f\u00fchrt zu"];
+const AST_EN = ["A side path branches toward", "Off the road lies", "A quiet detour leads to"];
+const MAPS = ["classic", "skirmish", "courtyard", "gauntlet", "arena"];
+
+// Liga I hat keinen Block in placeNames - ihre Orte leben in der alten
+// 51-Knoten-Kampagne. Liga XII ist neu und bekommt hier ihren Meerespool.
+const NAMEN_I = ["Alte Wacht","Silberm\u00fchle","Vergessener Schrein","Nordwacht","Schattenklippe",
+  "Wolfspass","Drachenhort","Klingenschlucht","Sonnenheiligtum","Alte Sternwarte","Hexenmoor",
+  "Nebelmoor","Geisterfeld","Waldfeste","Lindenhain","Kronenstadt","Eisenbollwerk","Grenzwall",
+  "Hohes Heiligtum","Ratshalle","Schmiedegrund","Bannerh\u00f6he","Verlassene Ruinen","Sturmfeste",
+  "Mondwarte","Kr\u00e4henfels","Furt am Grauen Bach","Zehntscheune","M\u00fchlensteg","Alter Markt",
+  "Wachtbaum","Kalkh\u00f6hle","Grenzstein","Jagdrast","Sonnenhang","Talsperre","Brackwasserbr\u00fccke",
+  "Steinkreis","Hirtenruh","K\u00f6nigsallee","Pilgerpfad","Rabenstieg","Feldkapelle","Heckenrondell",
+  "Torfstich","Gl\u00f6cknerturm"];
+const NAMEN_XII = ["Der letzte Steg","Wrack der Morgenr\u00f6te","Mastbruch","Einsame Boje","Riff der Rippen",
+  "Gekentertes Gl\u00fcck","Treibholzfeld","Versunkener Wachtturm","Salzfels","Krumme Klippe",
+  "Nebelbank","Sturms\u00e4ule","Leuchtfeuerrest","Kap der Stille","Eiserne Untiefe","Blitzfeste des Grossmeisters"];
+const namenFuer = (roman, n, liga) => {
+  const pool = (liga === 1 ? NAMEN_I : liga === 12 ? NAMEN_XII
+    : Object.values(PLACE_NAMES[String(liga)] || {})).slice();
+  const aus = [];
+  for (let i = 0; i < n; i++)
+    aus.push(pool.length ? pool[i % pool.length] + (i >= pool.length ? " " + ["II","III","IV"][Math.floor(i/pool.length)-1] : "") : "Wegstein " + (i+1));
+  return aus;
+};
+
+const knoten = [];
+const bitmaps = {};
+let angeschlossen = 0;
+
+SLOTS.forEach(([key, name, roman], si) => {
+  const liga = si + 1;
+  const v = KAP[key];
+  const pk = v.punkte.map(p => ({ x: p[0], y: p[1] }));
+  const kanten = v.kanten.map(e => [e[0], e[1]]);
+
+  // Lose Punkte an den naechsten Nachbarn anschliessen - der gepflegte Stand
+  // hatte in Sattelweite drei davon; ohne Anschluss gaebe es sie im Spiel nicht.
+  // Anschluss loser Punkte NUR an Punkte, die schon im Netz haengen - sonst
+  // verbinden sich lose Punkte untereinander und bilden eine eigene Insel
+  // ohne Weg dorthin (genau das passierte in Sattelweite: 54-56-57).
+  const hatKante = new Set(kanten.flat());
+  const imNetz = new Set(hatKante);
+  pk.forEach((p, i) => {
+    if (hatKante.has(i) || pk.length < 2) return;
+    let best = -1, bd = 1e18;
+    pk.forEach((q, j) => {
+      if (j === i || !imNetz.has(j)) return;
+      const d = (p.x - q.x) ** 2 + ((p.y - q.y) * 1.4) ** 2;
+      if (d < bd) { bd = d; best = j; }
+    });
+    kanten.push([Math.min(i, best), Math.max(i, best)]);
+    hatKante.add(i); angeschlossen++;
+  });
+
+  const nb = {};
+  kanten.forEach(([u, w]) => { (nb[u] = nb[u] || []).push(w); (nb[w] = nb[w] || []).push(u); });
+
+  const haupt = v.hauptast.filter(i => pk[i]);
+  const start = haupt[0];
+  const dist = { [start]: 0 };
+  const q = [start];
+  while (q.length) {
+    const u = q.shift();
+    for (const w of nb[u] || []) if (dist[w] === undefined) { dist[w] = dist[u] + 1; q.push(w); }
+  }
+  const rangH = new Map(haupt.map((id, i) => [id, i]));
+
+  // Aeste aus den Nummern des Pruefers: "7.1", "7.1.2" -> Gruppe "7.1".
+  const astVon = {}, astLen = {};
+  Object.entries(v.nummern || {}).forEach(([idx, nr]) => {
+    const t = String(nr).split(".");
+    if (t.length < 2) return;
+    const g = t[0] + "." + t[1];
+    astVon[idx] = g; astLen[g] = (astLen[g] || 0) + 1;
+  });
+
+  const namen = namenFuer(roman, pk.length, liga);
+  const H = haupt.length;
+  const schwer = Math.max(0, Math.round((30 - H) / 8));   // kurzer Hauptast = schwerer
+
+  const figuren = (HAUPTFIGUR[liga] || []).map(([f, a]) => [haupt[Math.min(H - 1, Math.round(a * (H - 1)))], f]);
+  const figAt = Object.fromEntries(figuren);
+  const mitteAt = haupt[Math.round(0.3 * (H - 1))];
+  const nebenPool = NEBENFIGUR[liga] ? [NEBENFIGUR[liga]] : [];
+  // Die Nebenfigur sitzt GENAU EINMAL: am tiefsten Punkt des laengsten Asts.
+  const astNachLen = Object.entries(astLen).sort((a, b) => b[1] - a[1]);
+  // Notfalls tut es auch ein kuerzerer Ast - die Figur MUSS vergeben werden,
+  // sonst ist sie im ganzen Spiel nicht freischaltbar.
+  const figurAst = nebenPool.length && astNachLen.length
+    ? (astNachLen.find(a => a[1] >= 4) || astNachLen[0])[0] : null;
+  let figurBlatt = -1;
+  if (figurAst) {
+    // Das echte Blatt ist der Punkt mit der GROESSTEN Wegdistanz im Ast -
+    // die Nummerntiefe taugt nicht, weil mehrere Punkte Tiefe drei haben
+    // und der erste davon mitten im Ast liegen kann.
+    let tief = -1;
+    Object.entries(astVon).forEach(([idx, g]) => {
+      if (g !== figurAst) return;
+      const d = dist[Number(idx)] ?? -1;
+      if (d > tief) { tief = d; figurBlatt = Number(idx); }
+    });
+  }
+
+  pk.forEach((p, i) => {
+    const id = `L${String(liga).padStart(2, "0")}s${String(i).padStart(2, "0")}`;
+    const imHaupt = rangH.has(i);
+    const rang = rangH.get(i);
+    const nx = (nb[i] || [])
+      .filter(w => (dist[w] ?? 1e9) > (dist[i] ?? 1e9) ||
+                   ((dist[w] ?? 1e9) === (dist[i] ?? 1e9) && w > i))
+      .map(w => `L${String(liga).padStart(2, "0")}s${String(w).padStart(2, "0")}`);
+
+    const phase = imHaupt ? Math.min(3, Math.floor((rang / Math.max(1, H - 1)) * 4)) : null;
+    const ort = namen[i];
+    const g = astVon[i];
+    const len = g ? astLen[g] : 0;
+    const tiefe = g ? String(v.nummern[i]).split(".").length : 0;
+    const blatt = g && !((nb[i] || []).some(w => astVon[w] === g && (dist[w] ?? 0) > (dist[i] ?? 0)));
+
+    const n = {
+      id, league: liga, place: ort,
+      col: Math.round((p.x / v.breite) * 6),
+      row: Math.round((1 - p.y / v.hoehe) * 12),
+      map: MAPS[(rang ?? i) % MAPS.length],
+      rules: liga === 1 && imHaupt && rang < 2 ? "chess" : "hp",
+      difficulty: imHaupt
+        ? (rang < H * 0.3 ? "easy" : rang < H * 0.7 ? "normal" : "hard")
+        : (len >= 4 ? "hard" : "normal"),
+      bump: Math.min(3, Math.floor((liga - 1) / 4) + schwer),
+      next: nx,
+      reward: { xp: 30 + 6 * liga + (imHaupt ? 3 * (rang || 0) : 8 * tiefe) },
+    };
+
+    if (imHaupt) {
+      n.storyDe = `${PHASEN[phase][0]} ${ort}.`;
+      n.storyEn = `${PHASEN[phase][1]} ${ort}.`;
+      if (rang === H - 1) {                    // Liga-Endboss
+        if (liga === 12) n.place = "Blitzfeste des Grossmeisters";
+        n.boss = { pure: ENDBOSS[si] };
+        n.tier = Math.min(4, 3 + schwer + (liga >= 11 ? 1 : 0));
+        n.difficulty = "hard";
+        n.storyDe = `${n.place}: Hier wartet der Meister von Kapitel ${roman}.`;
+        n.storyEn = `${n.place}: here waits the master of chapter ${roman}.`;
+        n.reward.gold = 20 + 4 * liga;
+      } else if (figAt[i]) {
+        n.boss = { piece: figAt[i], wins: liga >= 7 ? 2 : 1 };
+        n.tier = Math.min(4, 1 + Math.floor(liga / 4) + schwer);
+      } else if (i === mitteAt && liga > 1) {
+        n.boss = { pure: MITTE[si][0], rotation: MITTE[si] };
+        n.tier = Math.min(4, 1 + Math.floor(liga / 5) + schwer);
+      } else if (liga === 1 && rang === 2) {   // das Erwachen wie gehabt
+        n.boss = { pure: "b01", rotation: ["b01", "b03", "b02"] };
+        n.tier = 1;
+        n.storyDe = `${ort}: die alte Magie erwacht - Figuren bluten, Figuren halten stand.`;
+        n.storyEn = `${ort}: the old magic wakes - pieces bleed, pieces endure.`;
+      }
+    } else {
+      const b = AST_DE.length;
+      n.storyDe = `${AST_DE[(i + liga) % b]} ${ort}.`;
+      n.storyEn = `${AST_EN[(i + liga) % b]} ${ort}.`;
+      if (i === figurBlatt) {                   // die eine Nebenast-Figur
+        n.boss = { piece: NEBENFIGUR[liga], wins: 1 };
+        n.tier = Math.min(4, 1 + Math.floor(liga / 4));
+      } else if (blatt) {                        // Belohnung nach Astlaenge
+        if (len >= 4) n.reward.gold = 40 + 8 * liga;
+        else if (len >= 2)   n.reward.gold = 22 + 5 * liga;
+        else                 n.reward.gold = 10 + 3 * liga;   // Trank-Niveau
+      }
+    }
+    if ((v.leer || []).includes(i)) n.leer = true;
+    knoten.push(n);
+  });
+
+  bitmaps[`kap${liga}`] = {
+    file: `kap-${String(liga).padStart(2, "0")}`,
+    w: 1796, h: Math.round((1796 / v.breite) * v.hoehe),
+    pos: Object.fromEntries(pk.map((p, i) => [
+      `L${String(liga).padStart(2, "0")}s${String(i).padStart(2, "0")}`,
+      [Math.round((p.x / v.breite) * 1796), Math.round((p.y / v.breite) * 1796)],
+    ])),
+  };
+});
+
+const kopf = `// GENERIERT von tools/build-campaign12.mjs - nicht von Hand pflegen.
+// Quelle ist tools/stationen.json, der im Stationspruefer gepflegte Stand
+// (${ROH.erzeugt || "?"}). Zwoelf Liga-Graphen, ${knoten.length} Stationen.
+// Zum Neubau: node tools/build-campaign12.mjs\n`;
+writeFileSync("src/content/campaign12.gen.js",
+  kopf + "export const CAMPAIGN12 = " + JSON.stringify(knoten, null, 1) + ";\n");
+
+writeFileSync("src/app/ui/mapBitmaps12.gen.js",
+  `// GENERIERT von tools/build-campaign12.mjs - Stationspositionen der zwoelf
+// Kapitelkarten, umgerechnet auf die 1796er Leinwand des Kampagnenschirms.
+` + SLOTS.map(([, , ], i) => `import kap${i + 1}Url from "./assets/kap/kap-${String(i + 1).padStart(2, "0")}.webp";`).join("\n")
+  + "\n\nexport const MAP_BITMAPS12 = {\n"
+  + Object.entries(bitmaps).map(([k, b], i) =>
+      `  ${k}: { url: kap${i + 1}Url, h: ${b.h}, pos: ${JSON.stringify(b.pos)} },`).join("\n")
+  + "\n};\n");
+
+const fig = knoten.filter(n => n.boss?.piece).map(n => n.boss.piece);
+const doppelt = fig.filter((f, i) => fig.indexOf(f) !== i);
+console.log(`geschrieben: ${knoten.length} Stationen, ${fig.length} Figuren-Stationen, ${knoten.filter(n=>n.boss?.pure).length} Monster-Bosse`);
+if (doppelt.length) console.log("DOPPELT VERGEBEN:", [...new Set(doppelt)].join(", "));
+console.log(`lose Punkte automatisch angeschlossen: ${angeschlossen}`);
