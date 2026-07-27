@@ -931,7 +931,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   // SEIN Licht - violett statt Gold. Gewoehnliche Partien
                   // bleiben golden: Gold ist die Krone, Violett der Riss.
                   ...(status === "available" || friendly
-                    ? (node?.boss
+                    ? (node?.boss?.pure
                         ? { background: "rgba(124,58,237,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
                             border: `1px solid ${T.riftLine}`, boxShadow: `0 0 18px ${T.riftGlow}`, color: T.riftInk }
                         : { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
@@ -940,7 +940,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={node?.boss && (status === "available" || friendly) ? T.riftInk : T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={node?.boss?.pure && (status === "available" || friendly) ? T.riftInk : T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}

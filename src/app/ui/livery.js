@@ -98,7 +98,10 @@ export const crestArt = (n) => pick([crest1C, crest2C, crest3C], [crest1K, crest
 // Das Wappen ist seit v0.36 der RISS IM GOLDRING - dasselbe Zeichen, das als
 // App-Symbol und Favicon steht. Es gilt in beiden Livreen.
 export const emblemArt = () => emblemRiss;
-export const logoArt = () => pick(logoC, logoK);
+// Seit v0.36.1 traegt der Eingang das INTROBILD - der Riss oeffnet sich, und
+// die Wortmarke steht darunter. Es gilt in beiden Livreen.
+import introUrl from "./assets/intro-riss.webp";
+export const logoArt = () => introUrl;
 export const logoMenuArt = () => pick(logoMenuC, logoMenuK);
 
 import g11C from "./assets/ground-11.webp";

@@ -78,6 +78,7 @@ const lies = () => page.evaluate(() => {
       tag: e.tagName.toLowerCase(),
       text: (e.textContent || e.value || e.placeholder || "").trim().slice(0, 26),
       bw: Math.max(parseFloat(c.borderTopWidth) || 0, parseFloat(c.borderLeftWidth) || 0),
+      bg: (c.backgroundImage !== "none" ? c.backgroundImage : c.backgroundColor).slice(0, 90),
       bc: c.borderTopColor,
       ow: parseFloat(c.outlineWidth) || 0,
       shadow: roh(c.boxShadow).slice(0, 150),
@@ -111,6 +112,7 @@ for (const [seite, liste] of seiten) {
     if (e.bw > 1.5) gruende.push(`Rand ${e.bw}px (${e.bc})`);
     if (e.ow > 1.5) gruende.push(`Outline ${e.ow}px`);
     if (/inset/.test(e.shadow)) gruende.push(`Innenschatten: ${e.shadow}`);
+    if (process.argv.includes("--farben") && e.text) console.log(`   [${seite}] "${e.text}" -> ${e.bg}`);
     if (gruende.length) funde.push(`${seite} · ${e.tag} "${e.text}": ${gruende.join(" | ")}`);
   }
 }

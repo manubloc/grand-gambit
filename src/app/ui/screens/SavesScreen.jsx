@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
-import { logoArt } from "../livery.js";
+import { logoMenuArt, logoArt } from "../livery.js";
 import { LeagueShield } from "../LeagueShield.jsx";
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
@@ -49,7 +49,12 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
       {/* the emblem greets returning strategists too — same night sky, no glow */}
-      <img src={logoArt()} alt="Grand Gambit" style={{ width: "min(94vw, 620px)", maxHeight: "32vh", objectFit: "contain", display: "block", marginTop: 0, marginBottom: 38 }} />
+      <img src={logoArt()} alt="Grand Gambit" draggable={false} style={{ width: "min(94vw, 620px)", maxHeight: "32vh",
+        objectFit: "cover", display: "block", marginTop: 0, marginBottom: 38,
+        WebkitMaskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)",
+        maskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)" }} />
+      <img src={logoMenuArt()} alt="" draggable={false} style={{ width: "min(78vw, 330px)", display: "block",
+        marginTop: -28, marginBottom: 18, filter: "drop-shadow(0 3px 14px rgba(0,0,0,.85))" }} />
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
         {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
         {account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" && <span style={{ color: T.gold }}> · Admin</span>}
