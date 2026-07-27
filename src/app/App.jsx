@@ -359,7 +359,7 @@ export default function App() {
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
       <img src={emblemArt()} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
-        filter: "drop-shadow(0 0 7px rgba(139,92,246,.55)) drop-shadow(0 0 14px rgba(124,58,237,.3))" }} />
+        filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
       <div style={{ flex: 1 }} />
       {currencyRow}
     </div>
@@ -382,7 +382,7 @@ export default function App() {
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
           <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
-            filter: "drop-shadow(0 0 7px rgba(139,92,246,.55)) drop-shadow(0 0 14px rgba(124,58,237,.3))" }} />
+            filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
         </aside>
