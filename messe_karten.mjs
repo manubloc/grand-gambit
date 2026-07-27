@@ -184,7 +184,7 @@ for (let lg = 1; lg <= 12; lg++) {
 
       // NEBEL DER ZUKUNFT: das obere Kartenende muss im Dunkel liegen
       const nebel = await page.evaluate(() => {
-        const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.96)")));
+        const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.97)")));
         return !!o;
       });
       if (!nebel) befunde.push("Kapitel 1: Nebel der Zukunft fehlt");

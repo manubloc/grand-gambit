@@ -37,10 +37,13 @@ export function Panel({ style, children, ...p }) {
 /** The one panel headline: serif, gold, led by the brand diamond — so every
  *  screen speaks in the campaign's voice instead of bold sans shouting. */
 export function PanelTitle({ children, tag, style }) {
-  return <div style={{ display: "flex", alignItems: "center", gap: 7, ...style }}>
+  // Auf schmalen Schirmen darf die Zeile NIE breiter als ihr Panel werden:
+  // der Titel schrumpft mit Auslassungspunkten, das Abzeichen bleibt stehen.
+  return <div style={{ display: "flex", alignItems: "center", gap: 7, minWidth: 0, maxWidth: "100%", ...style }}>
     <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
-    <span className="gg-serif" style={{ fontSize: 15.5, letterSpacing: ".07em", color: T.goldBright }}>{children}</span>
-    {tag && <span style={{ color: T.gold, fontSize: 11, fontWeight: 800 }}>· {tag}</span>}
+    <span className="gg-serif" style={{ fontSize: 15.5, letterSpacing: ".07em", color: T.goldBright,
+      minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{children}</span>
+    {tag && <span style={{ color: T.gold, fontSize: 11, fontWeight: 800, flex: "0 0 auto" }}>· {tag}</span>}
   </div>;
 }
 

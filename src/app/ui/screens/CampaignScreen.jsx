@@ -232,14 +232,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const seaLock = !viewing && th.sea && !seaAccessible(profile);
   const panelW = Math.min(352, frameW - 28);
   const panelLeft = 14;
-  // DER GAMBIT BLEIBT SICHTBAR: das Panel erscheint auf der Seite des
-  // Schirms, auf der er NICHT steht - steht er unten, oeffnet es oben.
-  // 24px Abstand zur Figur sind fest eingeplant (Token ragt ~82px nach oben).
+  // DER GAMBIT BLEIBT SICHTBAR: das Panel erscheint auf der Seite, auf der
+  // er NICHT steht. Zwei Lehren aus v0.37.1: (1) top braucht frameY, sonst
+  // schiesst das Panel UEBER die Karte hinaus; (2) die Seite darf nur von der
+  // ZIEL-Kameralage abhaengen (ohne panOff), sonst springt das Panel bei
+  // jedem Wisch um und die Karte flackert.
   const tokenNode = nodeById(token.at);
-  const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camY : frameH * 0.5;
+  const camYZiel = clamp(ny(camNode) * zf - frameH * 0.5, 0, camMaxY);
+  const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camYZiel : frameH * 0.5;
   const panelOben = tokenScreenY > frameH * 0.52;
   const panelPos = panelOben
-    ? { top: 14, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - 14), overflowY: "auto" }
+    ? { top: frameY + 14, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - 14), overflowY: "auto" }
     : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 
@@ -326,34 +329,32 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none",
           borderRadius: Math.min(22, frameW / 12),
           background: `radial-gradient(130% 80% at 50% 82%, transparent 60%, rgba(9,11,16,.2) 84%, rgba(7,9,13,.44) 100%)` }} />
+        {/* DER NEBEL DER ZUKUNFT liegt als OBERSTE Wetterschicht im Rahmen -
+            ueber Karte UND Wolken (Stapel: Karte 2, Wolken 5, Nebel 6,
+            Panel 7). Er rechnet die Kartenlage in Schirmprozente um und
+            wandert so beim Ziehen exakt mit. Ab knapp ueber der hoechsten
+            erreichten Station steigt Schwaerze mit Riss-Schwaden auf; das
+            Kartenende bleibt verborgen, der Nebel weicht mit dem Fortschritt
+            und faellt im Rueckblick ganz. */}
+        {bm && !viewing && (() => {
+          const erreicht = CAMPAIGN.filter((n) => nodeInLeague(n, viewLeague))
+            .filter((n) => { const st = nodeStatus(profile, n.id); return st === "cleared" || st === "available"; })
+            .map((n) => ny(n));
+          const front = erreicht.length ? Math.min(...erreicht) : HM * 0.8;
+          const sp = (v) => Math.max(-30, Math.min(130, (v * zf - camY) / frameH * 100)).toFixed(2) + "%";
+          const klar = front + 60, dicht = front - 480;
+          return <>
+            <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+              borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
+              background: `linear-gradient(180deg, rgba(0,0,0,.97) 0%, rgba(0,0,0,.97) ${sp(dicht - 300)}, rgba(4,2,10,.9) ${sp(dicht)}, rgba(10,6,22,.44) ${sp(front - 160)}, transparent ${sp(klar)})` }} />
+            <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+              borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
+              background: `radial-gradient(120% 40% at 50% ${sp(dicht - 40)}, rgba(139,92,246,.34) 0%, rgba(91,33,182,.16) 46%, transparent 74%)` }} />
+          </>;
+        })()}
         <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
           transform: `translate(${-camX}px, ${-camY}px) scale(${zf})`,
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
-          {/* DER NEBEL DER ZUKUNFT: Der Weg endet im Dunkel. Ab knapp ueber
-              der hoechsten erreichten Station steigt Schwaerze auf, getragen
-              von Schwaden des Risses - das Ende der Karte ist NICHT zu sehen.
-              Mit jedem Fortschritt weicht der Nebel zurueck; im Rueckblick
-              auf gemeisterte Kapitel faellt er ganz. */}
-          {bm && !viewing && (() => {
-            const erreicht = CAMPAIGN.filter((n) => nodeInLeague(n, viewLeague))
-              .filter((n) => { const st = nodeStatus(profile, n.id); return st === "cleared" || st === "available"; })
-              .map((n) => ny(n));
-            const front = erreicht.length ? Math.min(...erreicht) : HM * 0.8;
-            const klar = Math.min(HM, front + 60);        // bis hier voll sichtbar
-            const dicht = Math.max(0, front - 480);       // ab hier fast schwarz
-            const p = (v) => (100 * v / HM).toFixed(2) + "%";
-            return <>
-              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
-                background: `linear-gradient(180deg, rgba(0,0,0,.96) 0%, rgba(0,0,0,.96) ${p(Math.max(0, dicht - 300))}, rgba(4,2,10,.88) ${p(dicht)}, rgba(10,6,22,.42) ${p(front - 160)}, transparent ${p(klar)})` }} />
-              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
-                background: `radial-gradient(120% 46% at 50% ${p(Math.max(0, dicht - 40))}, rgba(124,58,237,.30) 0%, rgba(91,33,182,.14) 46%, transparent 74%)`,
-                mixBlendMode: "screen" }} />
-              <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none",
-                backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
-                maskImage: `linear-gradient(180deg, #000 0%, #000 ${p(dicht)}, transparent ${p(front - 120)})`,
-                WebkitMaskImage: `linear-gradient(180deg, #000 0%, #000 ${p(dicht)}, transparent ${p(front - 120)})` }} />
-            </>;
-          })()}
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
               <linearGradient id="wash" x1="0" y1="0" x2="1" y2="0">

@@ -426,7 +426,7 @@ export default function App() {
           the viewport — before this, header ran at 10, dock at 12, content at
           14, three different alignments (the profile looked narrower than the
           menu). */}
-      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px 108px",
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overflowX: "hidden", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>

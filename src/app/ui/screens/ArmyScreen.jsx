@@ -394,7 +394,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             <PieceGlyph piece={{ kind: char.kind, color: "w", level: 1, abilities: [], used: {}, shield: 0 }} artStyle="svg" />
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div className="gg-serif" style={{ fontSize: 16, letterSpacing: ".04em", color: T.dim }}>{en ? char.nameEn : char.nameDe}</div>
+            <div className="gg-quill" style={{ fontSize: 18, letterSpacing: ".03em", color: T.dim }}>{en ? char.nameEn : char.nameDe}</div>
           {epic && <div style={{ fontSize: 11, color: T.gold, letterSpacing: ".04em", marginTop: 1 }}>{t("army.gambitTag")}</div>}
             {(en ? char.flavorEn : char.flavorDe) && (
               <div className="gg-serif" style={{ fontSize: 11.5, color: "#9a947f", fontStyle: "italic", marginTop: 2, lineHeight: 1.4 }}>
@@ -463,7 +463,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                 inline-flex, and two inline boxes in a block simply flow side by
                 side — which is why the card read "Läufer Freie Figur" on one
                 line. Block-level flex gives each its own row, always. */}
-            <div className="gg-serif" style={{ fontWeight: 800, fontSize: 17, letterSpacing: ".02em", color: "#f0e8cc",
+            <div className="gg-quill" style={{ fontWeight: 800, fontSize: 19, letterSpacing: ".02em", color: "#f0e8cc",
               display: "flex", alignItems: "center", gap: 7, lineHeight: 1.15 }}>
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{en ? char.nameEn : char.nameDe}</span>
               {onToggle && <span aria-hidden style={{ fontSize: 10, color: T.faint, flex: "0 0 auto",
@@ -1244,7 +1244,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                   filter: "brightness(0) opacity(.62)" }}>{sigilBig || sigil}</span>
               : <span style={{ fontSize: 26, color: T.faint }}>◆</span>}
           </div>}
-      <div className="gg-serif" style={{ fontSize: 11.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
+      <div className="gg-quill" style={{ fontSize: 12.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
       {origin && <div className="gg-serif" style={{ fontSize: 9, letterSpacing: ".1em", marginTop: 1,
         color: T.dim, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>}
@@ -1337,8 +1337,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       {shadowIn.map((c) => champTile(c, t("tree.fromShadow")))}
       {alliedIn.map(monsterTile)}
     </div>
-    <H>{t("tree.crown")}</H><div style={grid}>{CROWN_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
-    <H>{t("tree.shadow")}</H><div style={grid}>{SHADOW_IDS.filter((c) => !unlocked.has(c)).map((c) => champTile(c))}</div>
+    {(() => { const rest = CROWN_IDS.filter((c) => !unlocked.has(c));
+      return rest.length ? <><H>{t("tree.crown")}</H><div style={grid}>{rest.map((c) => champTile(c))}</div></> : null; })()}
+    {(() => { const rest = SHADOW_IDS.filter((c) => !unlocked.has(c));
+      return rest.length ? <><H>{t("tree.shadow")}</H><div style={grid}>{rest.map((c) => champTile(c))}</div></> : null; })()}
     {/* ONE HALL FOR THE MASTERS. Five family headings (Golems, Beasts,
         Serpents, Wraiths, Tyrants) split twenty-five monsters into five thin
         rows of mostly "???" — the register read as a list of holes rather than
@@ -1380,6 +1382,21 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
               <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 4 }}>{t("chron.moves").toUpperCase()}</div>
               <MoveDiagram kind={null} moveSpec={b.moveSpec} />
             </div>
+            {/* Was das Wesen KANN: seine Gaben mit denselben Medaillons wie
+                der Hof - heute tragen fuenf der 25 welche; der Rest folgt,
+                wenn die Bestien ihr volles Regelwerk bekommen. */}
+            {(b.abilities || []).length > 0 && <div style={{ marginTop: 13 }}>
+              <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 5 }}>{en ? "GIFTS" : "GABEN"}</div>
+              {(b.abilities || []).map((aid) => ABILITIES[aid] ? (
+                <div key={aid} style={{ display: "flex", alignItems: "center", gap: 9, padding: "6px 8px", marginBottom: 5,
+                  borderRadius: 10, border: "1px solid rgba(124,58,237,.4)", background: "rgba(20,12,36,.55)" }}>
+                  <AbilityIcon id={aid} size={26} />
+                  <div style={{ minWidth: 0 }}>
+                    <div className="gg-quill" style={{ fontSize: 13.5, color: "#e9def2" }}>{en ? ABILITIES[aid].nameEn : ABILITIES[aid].nameDe}</div>
+                    <div style={{ fontSize: 11, color: "#a898b4", lineHeight: 1.4 }}>{en ? ABILITIES[aid].descEn : ABILITIES[aid].descDe}</div>
+                  </div>
+                </div>) : null)}
+            </div>}
             {(en ? b.hintEn : b.hintDe) && <div className="gg-serif" style={{ marginTop: 12, fontSize: 12.5, fontStyle: "italic",
               color: "#c5b4c9", lineHeight: 1.55 }}>„{en ? b.hintEn : b.hintDe}"</div>}
           </div>
@@ -1390,11 +1407,15 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
         display: "grid", placeItems: "center", padding: 16 }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
-          borderRadius: 22, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,.6)",
-          border: "1px solid rgba(233,210,150,.4)" }}>
+          borderRadius: 22, overflow: "hidden",
+          // dasselbe Gewand wie die Monsterkarte: Riss-Kontur, violetter
+          // Schein, halbdurchsichtiger dunkler Grund
+          boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
+          border: `1px solid ${T.riftLine}`,
+          background: "radial-gradient(130% 110% at 50% -10%, rgba(124,58,237,.24) 0%, rgba(20,14,34,.97) 46%, rgba(8,5,14,.99) 100%)" }}>
           <button onClick={() => setDetail(null)} aria-label="close" style={{ position: "absolute", top: 9, right: 9, zIndex: 4,
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
-            background: "rgba(10,13,20,.72)", border: "1px solid rgba(233,210,150,.4)", color: "#e9d296",
+            background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
           <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto" }}>
             <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
