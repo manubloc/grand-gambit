@@ -16,6 +16,8 @@ import { Button, Chip } from "../primitives.jsx";
 import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
+import { carvedById } from "../board/carvedArt.js";
+import { livery } from "../livery.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
 import { StatOrbBadge } from "../board/PieceGlyph.jsx";
@@ -546,6 +548,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 borderRadius: "50%", background: "radial-gradient(ellipse at center, rgba(46,42,32,.34), transparent 72%)" }} />}
               {/* at SEA the Gambit takes to his painted boat: the hull rides in
                   front of the figure, its foam replaces the road shadow */}
+              {/* Boot und Figur reisen GEMEINSAM: unterwegs huepft der Gambit
+                  ueber Land und gleitet auf See; vor Anker schaukelt das Boot
+                  leise. Der Bodenschatten bleibt bewusst am Boden. */}
+              <div aria-hidden={false} style={{ position: "absolute", inset: 0,
+                animation: token.moving
+                  ? (th.sea && hasItem(profile, "boat") ? "ggGlide .9s ease-in-out infinite" : "ggHop .38s ease-in-out infinite")
+                  : (th.sea && hasItem(profile, "boat") ? "ggBob 2.8s ease-in-out infinite" : "none") }}>
               {th.sea && hasItem(profile, "boat") && <img src={bootUrl} alt="" draggable={false}
                 style={{ position: "absolute", left: "50%", bottom: -9, transform: "translateX(-50%)",
                   width: 128, height: "auto", zIndex: 3, pointerEvents: "none", userSelect: "none",
@@ -558,11 +567,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     : "drop-shadow(0 2px 3px rgba(46,42,32,.35))"; })(),
                 transform: ((th.sea && hasItem(profile, "boat") ? "translateY(-9%)" : "")
                   + (token.moving ? ` rotate(${-7 * stride.dir}deg)` : "")) || "none", transition: "transform .3s ease" }}>
-                {bm && PAINTED.gambit
-                  ? <img src={(() => { const gt = gambitTier(characterLevel(profile, "gambit") || 1);
-                      return (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit; })()} alt="" draggable={false} style={{ width: "100%", height: "100%",
-                      objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
-                  : <WandererArt size="100%" />}
+                {(() => {
+                  // Der Karten-Gambit traegt die LIVREE des Bretts: in der
+                  // Schnitzerei laeuft die geschnitzte Figur, im Gemaelde die
+                  // gemalte - jeweils in seiner aktuellen Stufe.
+                  const gt = gambitTier(characterLevel(profile, "gambit") || 1);
+                  const src = livery() === "carved"
+                    ? (carvedById(gt >= 2 ? "gambit-t" + gt : "gambit") || carvedById("gambit"))
+                    : ((gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit);
+                  return bm && src
+                    ? <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%",
+                        objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
+                    : <WandererArt size="100%" />;
+                })()}
+              </div>
               </div>
             </div>;
           })()}

@@ -124,6 +124,9 @@ export const GLOBAL_CSS = `
      Viertel. Das war die harte Kante. Damit er vollstaendig hinauslaeuft,
      muss die linke Kante ueber 100 % kommen: 100/62 = 161 %. 175 % gibt Luft. */
   @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(175%); } }
+  @keyframes ggHop { 0% { transform: translateY(0); } 32% { transform: translateY(-13px); } 55% { transform: translateY(0) scale(1.04, .94); } 72% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
+  @keyframes ggGlide { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3px) rotate(-1.6deg); } }
+  @keyframes ggBob { 0%, 100% { transform: translateY(0) rotate(-0.8deg); } 50% { transform: translateY(-2.5px) rotate(0.8deg); } }
   @keyframes ggRingSpin { to { transform: rotate(360deg); } }
   @keyframes ggSpark {
     0%   { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)) scale(.5); }

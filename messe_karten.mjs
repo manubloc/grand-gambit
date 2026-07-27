@@ -101,7 +101,7 @@ async function messeKarte(kapNr, etikett) {
       const st = d.getAttribute("style") || "";
       return /translate\(-50%,\s*-50%\)/.test(st) && st.includes("position: absolute") && st.includes("left:") && st.includes("top:") && d.offsetWidth >= 30 && d.offsetWidth <= 70;
     });
-    const eintraege = alle.map((d) => ({ t: (d.textContent || "").trim(), x: parseFloat(d.style.left), y: parseFloat(d.style.top) })).filter((e) => e.t);
+    const eintraege = alle.map((d) => ({ t: (d.textContent || "").trim().replace(/^[✓✔!·\s]+/, ""), x: parseFloat(d.style.left), y: parseFloat(d.style.top) })).filter((e) => e.t);
     const istSoll = (t) => sollNamen.some((sn) => sn === t || sn.startsWith(t.slice(0, 16)) || t.startsWith(sn.slice(0, 16)));
     const stationen = eintraege.filter((e) => istSoll(e.t));
     const fremde = eintraege.filter((e) => !istSoll(e.t) && !e.t.includes("AKTUELL")).map((e) => e.t);
@@ -123,7 +123,7 @@ for (let lg = 1; lg <= 12; lg++) {
   await page.evaluate(({ acc, slot, lg }) => {
     const key = `gambit:u::save:${acc}:${slot}`;
     const p = JSON.parse(localStorage.getItem(key) || "{}");
-    p.campaign = { ...(p.campaign || {}), league: lg, cleared: [], unlocked: lg >= 6 ? ["captain"] : [], tolls: [], dupes: {} };
+    p.campaign = { ...(p.campaign || {}), league: lg, cleared: lg === 1 ? ["L01s00"] : [], unlocked: lg >= 6 ? ["captain"] : [], tolls: [], dupes: {} };
     p.items = lg === 12 ? { ...(p.items || {}), boat: 1 } : (p.items || {});
     localStorage.setItem(key, JSON.stringify(p));
   }, { ...keys, lg });
@@ -133,6 +133,36 @@ for (let lg = 1; lg <= 12; lg++) {
   if (await weiter.count()) { await weiter.first().click(); await page.waitForTimeout(1000); }
   await oeffneKampagne();
   await messeKarte(lg, `Kapitel ${lg}`);
+
+  // Der Wanderer: traegt er die Livree (carved-Gambit), und lebt die Animation?
+  if (lg === 1 || lg === 12) {
+    const wf = await page.evaluate(() => {
+      const c = document.querySelector('[title="Gambit"]');
+      if (!c) return { da: false };
+      const img = c.querySelector("img[src]");
+      const anim = [...c.querySelectorAll("div")].map((d) => getComputedStyle(d).animationName).find((a) => a && a !== "none") || "none";
+      return { da: true, src: img ? img.getAttribute("src").split("/").pop().slice(0, 30) : null, anim };
+    });
+    if (!wf.da) befunde.push(`Kapitel ${lg}: kein Wanderer auf der Karte`);
+    else {
+      if (lg === 1 && !(wf.src || "").includes("gambit")) befunde.push(`Kapitel 1: Wanderer zeigt nicht den Gambit (src=${wf.src})`);
+      if (lg === 12 && !wf.anim.includes("ggBob")) befunde.push(`Kapitel 12: Boot schaukelt nicht vor Anker (anim=${wf.anim})`);
+    }
+    if (lg === 1) {
+      // Zur Alten Wacht zurueckwandern: unterwegs muss der Gambit HUEPFEN
+      await page.evaluate(() => {
+        const st = [...document.querySelectorAll("div")].find((d) => (d.textContent || "").trim().replace(/^[✓✔!·\s]+/, "") === "Alte Wacht" && d.offsetWidth <= 70);
+        const b = st && st.querySelector("button"); b && b.click();
+      });
+      await page.waitForTimeout(220);
+      const hop = await page.evaluate(() => {
+        const c = document.querySelector('[title="Gambit"]');
+        return c ? ([...c.querySelectorAll("div")].map((d) => getComputedStyle(d).animationName).find((a) => a && a.includes("ggHop")) || "none") : "weg";
+      });
+      if (!hop.includes("ggHop")) befunde.push(`Kapitel 1: unterwegs kein Huepfen (anim=${hop})`);
+      await page.waitForTimeout(900);
+    }
+  }
 
   // Rueckblick: ein Kapitel zurueck - DER gemeldete Fehler
   if (lg >= 2) {
