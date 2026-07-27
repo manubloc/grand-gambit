@@ -22,7 +22,7 @@ import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
-import { MysticBackground } from "./ui/MysticBackground.jsx";
+import { MysticBackground, RiftSeam } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
@@ -359,7 +359,7 @@ export default function App() {
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
       <img src={emblemArt()} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
-        filter: "drop-shadow(0 0 6px rgba(240,200,110,.45))" }} />
+        filter: "drop-shadow(0 0 7px rgba(139,92,246,.55)) drop-shadow(0 0 14px rgba(124,58,237,.3))" }} />
       <div style={{ flex: 1 }} />
       {currencyRow}
     </div>
@@ -369,6 +369,7 @@ export default function App() {
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
       padding: immersive ? "10px 10px 10px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
+      <RiftSeam />
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
@@ -381,7 +382,7 @@ export default function App() {
           borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
           display: "flex", alignItems: "center", gap: 10 }}>
           <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
-            filter: "drop-shadow(0 0 7px rgba(240,200,110,.45))" }} />
+            filter: "drop-shadow(0 0 7px rgba(139,92,246,.55)) drop-shadow(0 0 14px rgba(124,58,237,.3))" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
         </aside>
@@ -403,6 +404,7 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
+      {!inMatch && <RiftSeam />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}

@@ -30,7 +30,8 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
       background: "rgba(6,10,16,.7)", borderRadius: 99, overflow: "hidden", pointerEvents: "none",
       boxShadow: "inset 0 0 0 0.5px rgba(255,255,255,.22), inset 0 1px 1px rgba(0,0,0,.5)" }}>
       <span style={{ display: "block", width: "100%", height: `${ratio * 100}%`, borderRadius: 99,
-        background: `linear-gradient(0deg, ${deep} 0%, ${col} 66%, rgba(255,255,255,.4) 100%)`, transition: "height .2s ease" }} />
+        background: `linear-gradient(0deg, ${deep} 0%, ${col} 62%, rgba(255,255,255,.55) 100%)`,
+        boxShadow: `0 0 4px ${col}, 0 0 8px ${col}66`, transition: "height .2s ease" }} />
     </span>;
   }
   const d = Math.min(0.075, 0.5 / Math.ceil(max / 2));
@@ -39,14 +40,18 @@ function HpDots({ hp, max, side = "left", palette = "life" }) {
     gap: "0.024em", pointerEvents: "none",
     filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))" }}>
     {Array.from({ length: max }).map((_, i) => (
-      <span key={i} style={{ width: `max(3.5px, ${d}em)`, height: `max(3.5px, ${d}em)`, borderRadius: "50%",
+      // ECHTE KUGELN statt flacher Punkte: ein enges Glanzlicht oben links,
+      // darunter die volle Farbe, unten der Schattenboden - und aussen ein
+      // Schein, der die Perle vom Brett abhebt. Leere Perlen bleiben dunkel,
+      // damit der Unterschied auf einen Blick zaehlt.
+      <span key={i} style={{ width: `max(4px, ${d}em)`, height: `max(4px, ${d}em)`, borderRadius: "50%",
         background: i < hp
-          ? `radial-gradient(circle at 32% 26%, #ffffffe8 0%, rgba(255,255,255,.28) 17%, ${col} 50%, ${deep} 100%)`
-          : "radial-gradient(circle at 32% 26%, rgba(255,255,255,.14) 0%, rgba(8,12,18,.78) 60%)",
+          ? `radial-gradient(circle at 34% 24%, #ffffff 0%, #ffffffcc 9%, ${col} 42%, ${col} 58%, ${deep} 88%, #000 100%)`
+          : "radial-gradient(circle at 34% 24%, rgba(255,255,255,.1) 0%, rgba(4,6,10,.9) 62%)",
         boxShadow: i < hp
-          ? `inset 0 0 0 0.5px rgba(255,255,255,.3), inset 0 -0.6px 1px ${deep}, 0 0 3px ${col}55`
-          : "inset 0 0 0 1px rgba(255,255,255,.12)",
-        transition: "background .2s ease" }} />
+          ? `inset 0 -0.9px 1.4px ${deep}, inset 0 0.5px 0.8px rgba(255,255,255,.5), 0 0 4px ${col}, 0 0 9px ${col}77`
+          : "inset 0 0 0 0.6px rgba(255,255,255,.16)",
+        transition: "background .2s ease, box-shadow .2s ease" }} />
     ))}
   </span>;
 }
@@ -91,22 +96,27 @@ function SpellStar({ size }) {
 // diameter and the same engraved numerals the old strip carried, for both
 // sides alike (the figure itself tells friend from foe).
 function StatDuo({ piece, focus, shrink = 1 }) {
-  const d = 0.375 * (focus ? 1.4 : 1) * shrink;  // orb diameter in em — a size up, numerals with it
+  const d = 0.405 * (focus ? 1.4 : 1) * shrink;  // orb diameter in em — a size up, numerals with it
   const gap = d * 0.045;                         // a hair apart — nearly kissing
   // the star promises an ACT: only castable (live) talents count — a piece
   // with purely passive gifts has nothing left to "use", so no star for it
   const spell = (piece.abilities || []).some((id) => ABILITIES[id]?.live) && Object.keys(piece.used || {}).length === 0;
-  const orb = (img, v) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center",
-      backgroundImage: `url(${img})`, backgroundSize: "100% 100%" }}>
+  // MEHR KUGEL, MEHR LICHT: Die Perlen sassen bisher stumpf auf dem Brett.
+  // Ein farbiger Schein hinter jeder Kugel hebt sie vom Feld ab, ein zweiter
+  // enger Schein gibt ihr Volumen - Rot fuer Lebenskraft, Blau fuer Kraft.
+  const schein = (art) => art === "life"
+    ? "drop-shadow(0 0 2px rgba(230,57,74,.95)) drop-shadow(0 0 6px rgba(230,57,74,.55)) drop-shadow(0 1px 1.5px rgba(0,0,0,.7))"
+    : "drop-shadow(0 0 2px rgba(74,163,232,.95)) drop-shadow(0 0 6px rgba(74,163,232,.55)) drop-shadow(0 1px 1.5px rgba(0,0,0,.7))";
+  const orb = (img, v, art) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center",
+      backgroundImage: `url(${img})`, backgroundSize: "100% 100%", filter: schein(art) }}>
     {/* same optical correction as the badges: the sphere sits high in its box */}
     <span style={{ ...numeralStyle(d * 0.6 + "em"),
       transform: `translate(${(ORB_TRUE_CENTER.x * d).toFixed(4)}em, ${(ORB_TRUE_CENTER.y * d).toFixed(4)}em)` }}>{v}</span>
   </span>;
   return <span style={{ position: "absolute", bottom: "-0.09em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
-    display: "inline-flex", gap: gap + "em", pointerEvents: "none",
-    filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))" }}>
-    {orb(ORB.power, piece.atk)}
-    {orb(ORB.life, piece.hp)}
+    display: "inline-flex", gap: gap + "em", pointerEvents: "none" }}>
+    {orb(ORB.power, piece.atk, "power")}
+    {orb(ORB.life, piece.hp, "life")}
     {spell && <span style={{ position: "absolute", left: "50%", top: 0, transform: "translate(-50%, -58%)" }}>
       <SpellStar size={d * 0.72 + "em"} />
     </span>}

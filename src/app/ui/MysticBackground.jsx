@@ -33,6 +33,20 @@ const hauchFuer = (league) => {
   return `rgba(${r}, ${g}, ${b}, .55)`;
 };
 
+/** DER SAUM DES RISSES: ein violettes Leuchten laeuft aussen um den Schirm.
+ *  Es muss OBEN liegen, nicht im Hintergrund - dort verdecken es die Flaechen
+ *  der Oberflaeche, gemessen kam am aeussersten Rand exakt nichts an. Als
+ *  eigene Schicht mit hohem zIndex und ohne Mausannahme stoert es nichts und
+ *  ist ueberall sichtbar. Es atmet langsam, damit der Rand lebt statt blinkt. */
+export function RiftSeam() {
+  return <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 60, pointerEvents: "none",
+    boxShadow: "inset 0 0 70px 6px rgba(124,58,237,.34), inset 0 0 26px 0 rgba(167,139,250,.2)",
+    animation: "ggSaum 7s ease-in-out infinite" }}>
+    <div style={{ position: "absolute", inset: 0,
+      background: "linear-gradient(90deg, rgba(139,92,246,.22) 0%, transparent 11%, transparent 89%, rgba(139,92,246,.22) 100%)" }} />
+  </div>;
+}
+
 export function MysticBackground({ league = 1 }) {
   // the ember/smoke canvas is retired — the hall stands still and clear
 
