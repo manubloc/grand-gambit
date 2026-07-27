@@ -343,17 +343,19 @@ export default function App() {
     );
   });
 
-  const coinChip = (icon, val, title) => (
-    <span title={title} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px",
-      borderRadius: 10, background: "linear-gradient(172deg, rgba(240,206,122,.13), rgba(240,206,122,.05))",
-      border: "1px solid rgba(214,176,96,.5)", boxShadow: "0 1px 4px rgba(0,0,0,.35)",
-      color: T.goldBright, fontSize: 13.5, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
-      fontVariantNumeric: "tabular-nums" }}>{icon} {val}</span>
+  // OHNE PILLE: Zeichen und Zahl stehen frei in der Leiste - der Rahmen um
+  // jede Zahl war ein Kasten zu viel. Die Skillpunkte sind vom Hofstaat
+  // hierher gezogen, damit sie ueberall in Sicht bleiben.
+  const coinChip = (icon, val, title, farbe = T.goldBright) => (
+    <span title={title} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6,
+      color: farbe, fontSize: 15, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
+      textShadow: "0 1px 3px rgba(0,0,0,.7)", fontVariantNumeric: "tabular-nums" }}>{icon} {val}</span>
   );
   const currencyRow = (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: "0 0 auto", alignItems: "center", justifyContent: "flex-end" }}>
-      {coinChip(<CoinIc size={20} />, profile.gold || 0, t("army.balance"))}
-      {coinChip(<CrestIc size={20} />, retinueScore(profile), t("online.score"))}
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 14, flex: "0 0 auto", alignItems: "center", justifyContent: "flex-end" }}>
+      {coinChip(<SkillIc size={19} />, profile.sp || 0, t("banner.sp").replace("+{n} ", ""), T.riftBright)}
+      {coinChip(<CoinIc size={19} />, profile.gold || 0, t("army.balance"))}
+      {coinChip(<CrestIc size={19} />, retinueScore(profile), t("online.score"))}
     </div>
   );
   const headerBar = (
@@ -377,7 +379,8 @@ export default function App() {
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {(
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
-          background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`,
+          background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
+          backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
           border: "1px solid rgba(167,139,250,.5)", borderRadius: 20, padding: "10px 16px",
           boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.34), 0 0 34px rgba(124,58,237,.16)`,
           animation: "ggSaum 7s ease-in-out infinite",
@@ -413,8 +416,10 @@ export default function App() {
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
-          <div style={{ background: `${T.panel}${T.glass}`, backdropFilter: `blur(${T.glassBlur})`, border: `1px solid ${T.line}`,
-            borderRadius: 18, boxShadow: T.shadow, padding: "12px 14px" }}>{headerBar}</div>
+          <div style={{ background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
+            backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
+            border: "1px solid rgba(167,139,250,.5)", borderRadius: 18, padding: "12px 14px",
+            boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.3)` }}>{headerBar}</div>
         </header>
       )}
       {/* ONE flush edge: header card, screen panels and dock all sit 10px from
@@ -430,8 +435,10 @@ export default function App() {
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
           padding: "0 10px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
           <div style={{ maxWidth: 540, margin: "0 auto", pointerEvents: "auto",
-            background: `${T.panel}${T.glass}`, backdropFilter: `blur(${T.glassBlur})`, border: `1px solid ${T.line}`,
-            borderRadius: 22, boxShadow: "0 12px 32px rgba(0,0,0,.55)",
+            background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
+            backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
+            border: "1px solid rgba(167,139,250,.42)", borderRadius: 22,
+            boxShadow: "0 12px 32px rgba(0,0,0,.55), 0 0 18px rgba(124,58,237,.22)",
             display: "grid", gridTemplateColumns: `repeat(${TABS.length}, 1fr)`, padding: "6px 8px" }}>
             {railItems}
           </div>

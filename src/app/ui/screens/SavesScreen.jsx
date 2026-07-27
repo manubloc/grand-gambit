@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { T } from "../theme.js";
 import { TrashIc } from "../icons.jsx";
 import { logoArt } from "../livery.js";
-import { RiftFloor } from "../MysticBackground.jsx";
 import { LeagueShield } from "../LeagueShield.jsx";
 import { listSaves, createSave, deleteSave, renameSave, loadSave, writeSave,
   migrateLegacyInto, fmtPlaytime, adminHasDefaultPass } from "../../../meta/index.js";
@@ -45,7 +44,6 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: T.savesBg, padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <RiftFloor />
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>

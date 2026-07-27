@@ -1368,17 +1368,6 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
   return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip", paddingTop: 8 }}>
     <CharLightbox char={zoomChar} en={profile.lang === "en"} onClose={() => setZoomChar(null)} />
-    {/* balance — always in sight, whatever the tab; wears the treasury's gold */}
-    <GildedFrame pad="11px 16px">
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span className="gg-serif" style={{ fontSize: 13, letterSpacing: ".22em", textTransform: "uppercase",
-        ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("army.balance")}</span>
-      <span style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: T.gold, display: "inline-flex", alignItems: "center", gap: 7 }}><SkillIc size={18} /> {profile.sp || 0}</span>
-        <span className="gg-serif" style={{ fontWeight: 500, fontSize: 21, letterSpacing: ".02em", color: "#e8c96a", display: "inline-flex", alignItems: "center", gap: 7 }}><CoinIc size={18} /> {profile.gold || 0}</span>
-      </span>
-    </div>
-    </GildedFrame>
     {/* three rooms instead of one endless scroll */}
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },

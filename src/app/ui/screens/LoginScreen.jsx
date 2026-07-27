@@ -6,7 +6,6 @@ import { useState } from "react";
 import { T } from "../theme.js";
 import { register, login, loginGuest, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
 import { logoArt } from "../livery.js";
-import { RiftFloor } from "../MysticBackground.jsx";
 
 const STR = {
   de: {
@@ -79,7 +78,6 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
       padding: "16px 18px", background: T.loginBg }}>
-      <RiftFloor />
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
@@ -91,12 +89,12 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
         objectFit: "cover", display: "block", marginTop: 0, marginBottom: 42,
         WebkitMaskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)",
         maskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)" }} />
-      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: ".26em",
+      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: ".1em",
         fontSize: "clamp(19px, 5.2vw, 30px)", lineHeight: 1.15, textAlign: "center", marginTop: -22, marginBottom: 14,
         background: `linear-gradient(180deg, ${T.goldBright} 0%, ${T.gold} 52%, ${T.lime} 100%)`,
         WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
         filter: "drop-shadow(0 2px 12px rgba(0,0,0,.9))" }}>GRAND GAMBIT</div>
-      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, margin: "8px 0 14px" }}>{s.tag}</div>
+      <div className="gg-quill" style={{ color: T.dim, fontSize: 16, lineHeight: 1.6, margin: "12px 0 34px" }}>{s.tag}</div>
 
       <div style={{ width: "100%", maxWidth: 380, display: "flex", flexDirection: "column", gap: 10 }}>
         <input style={field} type="email" placeholder={s.email} value={email} autoComplete="username"
