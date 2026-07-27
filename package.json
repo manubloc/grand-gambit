@@ -1,7 +1,7 @@
 {
   "name": "gambit",
   "private": true,
-  "version": "0.35.3",
+  "version": "0.35.4",
   "type": "module",
   "description": "GAMBIT — chess that levels up. Characters gain special moves and shields; new pieces unlock over time. Deterministic, UI-free core (command/event sim with replay) for cross-platform reuse.",
   "scripts": {
@@ -20,7 +20,8 @@
     "predev": "npm run art",
     "map:svg": "node scripts/export-map.mjs",
     "deploy:site": "node scripts/deploy-pages.mjs",
-    "ui": "esbuild test_ui.jsx --bundle --platform=node --jsx=automatic --outfile=.uitest.mjs --format=esm --external:react --external:react-dom --loader:.jpg=dataurl --loader:.webp=dataurl --loader:.css=empty && node .uitest.mjs"
+    "ui": "esbuild test_ui.jsx --bundle --platform=node --jsx=automatic --outfile=.uitest.mjs --format=esm --external:react --external:react-dom --loader:.jpg=dataurl --loader:.webp=dataurl --loader:.css=empty && node .uitest.mjs",
+    "ui:knoepfe": "node tools/messe-knoepfe.mjs --pruefen"
   },
   "dependencies": {
     "@fontsource/im-fell-english": "^5.2.6",

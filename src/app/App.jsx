@@ -106,7 +106,7 @@ export function LeaveMatchAsk({ t, resumable, onLeave, onStay }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "grid", placeItems: "center",
       background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
-      <div style={{ background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
+      <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: `1px solid ${T.line}`,
         borderRadius: 18, boxShadow: T.shadow, padding: "18px 18px 15px", maxWidth: 340, width: "100%" }}>
         <div className="gg-serif" style={{ fontSize: 18, color: T.goldBright, textAlign: "center" }}>{t("leave.title")}</div>
         <div style={{ fontSize: 13, color: T.dim, lineHeight: 1.55, margin: "10px 2px 14px", textAlign: "center" }}>
@@ -471,7 +471,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
     const shineDelay = useShineDelay();
     return (
     <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
-      background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
+      background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: `1px solid ${T.line}`,
       borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
       <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
       <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
@@ -504,7 +504,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         art={<CrestArt src={crestArt(3)} />} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
-          cursor: "pointer", background: `linear-gradient(160deg, ${T.panel2}, ${T.panel})`,
+          cursor: "pointer", background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
           border: "1px solid #8a6d3544", borderRadius: T.radius, boxShadow: T.shadow,
           padding: "12px 14px 13px", color: T.dim, fontSize: 13 }}>
           {/* line one: the title, a touch smaller, flanked by the twin diamonds */}
@@ -568,7 +568,7 @@ export function GameIntro({ t, dispatch, onStart }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
       background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
-      <div style={{ width: "100%", maxWidth: 420, background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
+      <div style={{ width: "100%", maxWidth: 420, background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
         border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
         padding: "22px 20px 18px", textAlign: "center",
         maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>

@@ -1045,7 +1045,7 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
           background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center", padding: 16 }}>
           <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
             maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
-            background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: "1px solid rgba(233,210,150,.42)",
+            background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: "1px solid rgba(233,210,150,.42)",
             boxShadow: "0 18px 50px rgba(0,0,0,.6)" }}>
             <div style={{ display: "grid", placeItems: "center", marginBottom: 10 }}>
               {shard ? <img src={itemArt("sternensplitter")} alt="" aria-hidden draggable={false} style={{ width: 124, height: 124, objectFit: "contain", display: "block", filter: "drop-shadow(0 0 12px rgba(246,222,150,.5)) drop-shadow(0 2px 5px rgba(0,0,0,.5))" }} /> : <ItemIcon id={it.id} size={116} />}

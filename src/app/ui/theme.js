@@ -53,6 +53,12 @@ const CARVED = { ...CLASSIC,
   //      gerechnet, nicht gegen die reine - sonst luegt die Rechnung.
   bg: "#151d2c", bg2: "#1d2739", panel: "#35456ae8", panel2: "#3d4f78e8", line: "#54679' + '2",
   text: "#f6efdf", dim: "#c6bca2", faint: "#c0b8a4",
+  //   4. GOLD eine Stufe heller. Auf der blauen Tafel wirkte das alte Gold
+  //      stumpf - Ueberschriften wie "DEINE SCHATZKAMMER" lasen sich fast
+  //      dunkel. Gemessen gegen die effektive Tafelfarbe #324164 steigt der
+  //      Kontrast von 6,29:1 auf 7,26:1 (gold) und 8,24:1 auf 9,07:1 (hell);
+  //      der Akzent lime von 4,73:1 auf 5,85:1.
+  gold: "#f2d98c", goldBright: "#fbf3cf", lime: "#e0c274", limeDim: "#c2a253",
   magenta: "#9fb0d0", magentaDim: "#76849f",
   shadow: "0 10px 24px rgba(0,0,0,.45)",
   glass: "d9", glassBlur: "18px",
@@ -91,6 +97,18 @@ export const GLOBAL_CSS = `
   input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   html, body, #root { height: 100%; }
   button, a { -webkit-tap-highlight-color: transparent; }
+  /* DIE WURZEL DES PLASTIK-RAHMENS: Ohne eigene Angabe geben Browser jedem
+     Knopf und Feld ihren Standardrahmen "2px outset" - eine dicke, dunkle,
+     dreidimensional wirkende Kante. Genau die soll nirgends erscheinen.
+     Deshalb hier EIN Reset fuer alle Bedienelemente: duenne Kante, flach.
+     Eigene Stile im Bauteil ueberschreiben das wie gehabt. */
+  button, input, select, textarea {
+    border: 1px solid transparent;
+    border-radius: ${T.radiusSm}px;
+    background-clip: padding-box;
+  }
+  input, select, textarea { border-color: ${T.line}; background-color: ${T.bg2}; color: ${T.text}; }
+  input:focus, select:focus, textarea:focus { border-color: ${T.gold}; outline: none; }
   button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
   body {
     margin: 0; color: ${T.text};

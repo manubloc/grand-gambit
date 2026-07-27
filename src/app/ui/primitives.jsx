@@ -9,14 +9,20 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
       color: T.limeInk, border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
+    // ruhiger dunkler Knopf: EINE duenne Linie, kein zweiter Rahmen darunter
     subtle: { background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
-      color: T.text, border: `1px solid ${T.line}`, boxShadow: "inset 0 0 0 0.5px rgba(201,164,92,.12)" },
+      color: T.text, border: `1px solid ${T.line}` },
   };
   return <button disabled={disabled} style={{ ...base, ...variants[variant], ...style }} {...p}>{children}</button>;
 }
 
+/** Jeder Bereich traegt denselben sanften blauen Verlauf: oben in der Mitte
+ *  am hellsten, nach unten und aussen ruhig auslaufend - so wie die
+ *  Schatzkammer. Eine duenne Linie fasst ihn, kein plastischer Rahmen. */
+export const PANEL_WASH = () =>
+  `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`;
 export function Panel({ style, children, ...p }) {
-  return <div style={{ background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: 16, ...style }} {...p}>{children}</div>;
+  return <div style={{ background: PANEL_WASH(), border: `1px solid ${T.line}`, borderRadius: T.radius, padding: 16, ...style }} {...p}>{children}</div>;
 }
 
 /** The one panel headline: serif, gold, led by the brand diamond — so every
