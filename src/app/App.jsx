@@ -22,7 +22,7 @@ import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
-import { MysticBackground, RiftSeam } from "./ui/MysticBackground.jsx";
+import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
@@ -369,7 +369,6 @@ export default function App() {
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
       padding: immersive ? "10px 10px 10px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
-      <RiftSeam />
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
@@ -378,8 +377,10 @@ export default function App() {
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {(
         <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
-          background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`, border: `1px solid ${T.line}`,
-          borderRadius: 20, boxShadow: T.shadow, padding: "10px 16px",
+          background: `linear-gradient(180deg, ${T.panel2}, ${T.panel})`,
+          border: "1px solid rgba(167,139,250,.5)", borderRadius: 20, padding: "10px 16px",
+          boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.34), 0 0 34px rgba(124,58,237,.16)`,
+          animation: "ggSaum 7s ease-in-out infinite",
           display: "flex", alignItems: "center", gap: 10 }}>
           <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
             filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
@@ -404,7 +405,6 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
-      {!inMatch && <RiftSeam />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}

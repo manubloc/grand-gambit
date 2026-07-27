@@ -23,6 +23,10 @@ const LEAGUE_TINTS = [
   { s: [38, 52, 50],  a: [150, 200, 184] },  // XI   Die Kueste: Gischt
   { s: [30, 40, 66],  a: [152, 182, 230] },  // XII  Endloses Meer: deep sea silver
 ];
+// EINE Maske genuegt: das Brett laeuft nach oben ins Schwarz aus. Zwei Masken
+// mit "intersect" hatten es fast vollstaendig weggeschnitten - unten kam
+// gemessen nur noch Helligkeit 3 an statt der 25 des Bildes.
+const MASKE_BRETT = "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.45) 22%, #000 55%, #000 100%)";
 const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 12)];
 /** Der Hauch ueber dem Schwarz: die Kapitelfarbe auf ein Zehntel gedaempft und
  *  in Richtung des Riss-Violetts gezogen. So bleibt jedes Kapitel erkennbar,
@@ -38,12 +42,18 @@ const hauchFuer = (league) => {
  *  der Oberflaeche, gemessen kam am aeussersten Rand exakt nichts an. Als
  *  eigene Schicht mit hohem zIndex und ohne Mausannahme stoert es nichts und
  *  ist ueberall sichtbar. Es atmet langsam, damit der Rand lebt statt blinkt. */
-export function RiftSeam() {
-  return <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 60, pointerEvents: "none",
-    boxShadow: "inset 0 0 70px 6px rgba(124,58,237,.34), inset 0 0 26px 0 rgba(167,139,250,.2)",
-    animation: "ggSaum 7s ease-in-out infinite" }}>
-    <div style={{ position: "absolute", inset: 0,
-      background: "linear-gradient(90deg, rgba(139,92,246,.22) 0%, transparent 11%, transparent 89%, rgba(139,92,246,.22) 100%)" }} />
+/** DER BRETTGRUND: das gerissene Schachbrett am unteren Rand. Das Menuegeruest
+ *  bekommt ihn ueber MysticBackground; Schirme davor (Anmeldung, Spielstaende)
+ *  haben den nicht - deshalb steht er hier auch einzeln zur Verfuegung, mit
+ *  genau derselben Platzierung und Maske, damit der Uebergang nahtlos ist. */
+export function RiftFloor({ fixed = true }) {
+  const mob = typeof window !== "undefined" && window.innerWidth < 900;
+  const W = mob ? "168%" : "min(112%, 1400px)";
+  return <div aria-hidden style={{ position: fixed ? "fixed" : "absolute", inset: 0, zIndex: 0,
+    pointerEvents: "none", overflow: "hidden" }}>
+    <img src={bgHall()} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: 0,
+      width: W, marginLeft: `calc(${W} / -2)`, maxWidth: "none", userSelect: "none",
+      WebkitMaskImage: MASKE_BRETT, maskImage: MASKE_BRETT, opacity: 0.85 }} />
   </div>;
 }
 
@@ -53,10 +63,7 @@ export function MysticBackground({ league = 1 }) {
   const mask = "radial-gradient(ellipse 78% 72% at 50% 66%, #000 38%, rgba(0,0,0,.5) 64%, transparent 92%)";
   // Das Brett steht unten auf: nach OBEN laeuft es ins Schwarz aus, seitlich
   // ebenfalls, unten bleibt es stehen - sonst schwebte es ueber dem Rand.
-  // EINE Maske genuegt: das Brett laeuft nach oben ins Schwarz aus. Zwei
-  // Masken mit "intersect" hatten es fast vollstaendig weggeschnitten - unten
-  // kam gemessen nur noch Helligkeit 3 an statt der 25 des Bildes.
-  const maskBrett = "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.45) 22%, #000 55%, #000 100%)";
+
   const mob = typeof innerWidth !== "undefined" && innerWidth < 640;
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden",
@@ -77,7 +84,7 @@ export function MysticBackground({ league = 1 }) {
           width: W, marginLeft: `calc(${W} / -2)`, maxWidth: "none", userSelect: "none",
           // Das Brett bringt sein eigenes Violett mit - keine Farbdrehung mehr.
           // Die Maske loest nur noch die Kanten, damit kein Bildrand steht.
-          WebkitMaskImage: maskBrett, maskImage: maskBrett,
+          WebkitMaskImage: MASKE_BRETT, maskImage: MASKE_BRETT,
           opacity: 0.85 }} />;
       })()}
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}

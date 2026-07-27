@@ -6,6 +6,7 @@ import { useState } from "react";
 import { T } from "../theme.js";
 import { register, login, loginGuest, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
 import { logoArt } from "../livery.js";
+import { RiftFloor } from "../MysticBackground.jsx";
 
 const STR = {
   de: {
@@ -78,6 +79,7 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
       padding: "16px 18px", background: T.loginBg }}>
+      <RiftFloor />
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
