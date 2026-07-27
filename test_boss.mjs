@@ -75,28 +75,25 @@ function loneBoss(boss) {
   ok("campaign has 41 boss stages (the Moonwatch joined)", bossStages.length === 41);
   ok("34 of them are recruitable piece bosses", bossStages.filter((st) => st.boss.piece).length === 34);
   ok("every pure boss resolves", bossStages.filter((st) => st.boss.pure).every((st) => bossById(st.boss.pure)));
-  const m = buildStageMatch("n03");
+  const m = buildStageMatch("L01s03");
   ok("boss replaces the enemy queen", m.aiArmy.back.some((sp) => sp.kind === "X") && !m.aiArmy.back.some((sp) => sp.kind === "Q"));
   ok("stage match exposes the boss for the UI", m.boss && m.boss.bossId === "b01");
-  const pm = buildStageMatch("a2"); // Attentäter piece boss
+  const pm = buildStageMatch("L06s12"); // Attentäter piece boss
   ok("piece boss fields its own kind with boosted stats", pm.aiArmy.back.some((sp) => sp.kind === "S" && sp.hp >= 8) && pm.boss.unlocks === null
-    && buildStageMatch("a2", { campaign: { bossWins: { assassin: 1 } } }).boss.unlocks === "assassin");
+    && buildStageMatch("L06s12", { campaign: { bossWins: { assassin: 1 } } }).boss.unlocks === "assassin");
   ok("a stubborn champion resists until his last demanded win (Hoard = League II)",
-    buildStageMatch("a4", { campaign: { league: 2 } }).boss.unlocks === null
-    && buildStageMatch("a4", { campaign: { league: 2, bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
+    buildStageMatch("L07s41", { campaign: { league: 2 } }).boss.unlocks === null
+    && buildStageMatch("L07s41", { campaign: { league: 2, bossWins: { dragon: 2 } } }).boss.unlocks === "dragon");
   ok("in League I the Hoard belongs to the Broodmother, no recruit", (() => {
-    const m = buildStageMatch("a4", { campaign: { league: 1 } });
+    const m = buildStageMatch("L07s41", { campaign: { league: 1 } });
     return m.boss.bossId === "b03" && m.boss.unlocks === null && m.node.storyDe.includes("Brutmutter");
   })());
   // monster stations rotate their champion by league — the whole bestiary marches
   const nA5 = (id) => CAMPAIGN.find((n) => n.id === id);
-  ok("station rotation fields a fresh monster each league and cycles", nodeBossSpec(nA5("a5"), 1).bossId === "b22"
-    && nodeBossSpec(nA5("a5"), 2).bossId === "b09" && nodeBossSpec(nA5("a5"), 5).bossId === "b22"
-    && nodeBossSpec(nA5("n03"), 5).bossId === "b24" && nodeBossSpec(nA5("e2"), 3).bossId === "b15");
-  ok("the League Keep fields THIS league's boss with his aura", nodeBossSpec(nA5("n22"), 1).bossId === "b25"
-    && nodeBossSpec(nA5("n22"), 2).bossId === "b12" && nodeBossSpec(nA5("n22"), 2).aura.type === "noEnemyPotions"
-    && nodeBossSpec(nA5("n22"), 4).bossId === "b02" && nodeBossSpec(nA5("n22"), 11).bossId === "b14" && nodeBossSpec(nA5("n22"), 12).bossId === "b25");
-  ok("every rotated monster resolves to a real boss", ["n03","a5","b5","c5","e2"].every((id) =>
+  ok("each chapter ends at its own fixed master", nodeBossSpec(nA5("L01s44"), 1).bossId === "b25"
+    && nA5("L05s16").boss.rotation[0] === "b22" && nodeBossSpec(nA5("L05s16"), 5).bossId === "b22"
+    && nodeBossSpec(nA5("L05s16"), 6).bossId === "b04");
+  ok("every rotated monster resolves to a real boss", ["L01s03","L05s16"].every((id) =>
     (nA5(id).boss.rotation || []).every((b) => bossById(b))));
 }
 

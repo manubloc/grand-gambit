@@ -62,10 +62,10 @@ ok("every dragon node unfolds its 2x2 block with valid wing refs", dragonNodes >
 // ── the look back: a mastered league replays as an honest friendly ──
 {
   const p5 = withProgressPct(defaultProfile(), 60, 5);
-  const look = buildStageMatch("n16", p5, 1);
+  const look = buildStageMatch("L01s22", p5, 1);
   ok("look-back match is a friendly with no first-clear and no timer",
     look.friendly === true && look.firstClear === false && look.timer == null);
-  const now = buildStageMatch("n16", p5);
+  const now = buildStageMatch("L01s22", p5);
   const maxL = (m) => Math.max(...m.aiArmy.back.filter((s) => s).map((s) => s.level));
   ok("look-back foes scale to the OLD league (weaker than today)", maxL(look) < maxL(now));
   ok("look-back never dangles a recruit reward", !look.boss || look.boss.unlocks == null);

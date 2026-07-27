@@ -168,10 +168,15 @@ SLOTS.forEach(([key, name, roman], si) => {
                    ((dist[w] ?? 1e9) === (dist[i] ?? 1e9) && w > i))
       .map(w => `L${String(liga).padStart(2, "0")}s${String(w).padStart(2, "0")}`);
 
-    const phase = imHaupt ? Math.min(3, Math.floor((rang / Math.max(1, H - 1)) * 4)) : null;
     const ort = namen[i];
     const g = astVon[i];
     const len = g ? astLen[g] : 0;
+    let phase;
+    if (imHaupt) phase = Math.min(3, Math.floor((rang / Math.max(1, H - 1)) * 4));
+    else {
+      const anker = g ? Number(g.split(".")[0]) - 1 : 0;   // Hauptast-Rang aus "7.1"
+      phase = Math.min(3, Math.floor((anker / Math.max(1, H - 1)) * 4));
+    }
     const tiefe = g ? String(v.nummern[i]).split(".").length : 0;
     const blatt = g && !((nb[i] || []).some(w => astVon[w] === g && (dist[w] ?? 0) > (dist[i] ?? 0)));
 
@@ -180,6 +185,8 @@ SLOTS.forEach(([key, name, roman], si) => {
       col: Math.round((p.x / v.breite) * 6),
       row: Math.round((1 - p.y / v.hoehe) * 12),
       map: MAPS[(rang ?? i) % MAPS.length],
+      chapter: phase + 1,
+      haupt: imHaupt || undefined,
       rules: liga === 1 && imHaupt && rang < 2 ? "chess" : "hp",
       difficulty: imHaupt
         ? (rang < H * 0.3 ? "easy" : rang < H * 0.7 ? "normal" : "hard")
@@ -192,7 +199,8 @@ SLOTS.forEach(([key, name, roman], si) => {
     if (imHaupt) {
       n.storyDe = `${PHASEN[phase][0]} ${ort}.`;
       n.storyEn = `${PHASEN[phase][1]} ${ort}.`;
-      if (rang === H - 1) {                    // Liga-Endboss
+      if (rang === H - 1) {                    // Kapitel-Endboss
+        n.final = true;                          // schliesst das Kapitel ab
         if (liga === 12) n.place = "Blitzfeste des Grossmeisters";
         n.boss = { pure: ENDBOSS[si] };
         n.tier = Math.min(4, 3 + schwer + (liga >= 11 ? 1 : 0));

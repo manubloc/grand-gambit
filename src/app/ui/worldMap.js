@@ -10,7 +10,10 @@ export const WORLD_MAP = {
   // league → [x%, y%] along the corridor; L11 sits on the lighthouse isle
   anchors: {
     1: [49, 93], 2: [52, 82], 3: [45.5, 70], 4: [48, 65], 5: [50, 60], 6: [52, 49.5],
-    7: [55.5, 40], 8: [55, 32.5], 9: [48.5, 24.5], 10: [50, 16], 11: [74, 5.5],
+    7: [55.5, 40], 8: [55, 32.5], 9: [48.5, 24.5], 10: [50, 16],
+    // 11 sitzt auf der Leuchtturm-Insel - als Kueste passt sie dort erst recht.
+    // 12 ist ERFUNDEN, bis die neue Weltkarte kommt: draussen im offenen Wasser.
+    11: [74, 5.5], 12: [86, 2.2],
   },
 };
 
@@ -46,12 +49,12 @@ export const LEAGUE_LORE = {
     en: "Over these passes fled what remained of the court, bolting every door behind it. The Keeper still carries the keys — only one door he can find to this day: the Crown's archive. There lay Vesna's forbidden register, name upon name, until that winter. Ever since, the Keeper guards an empty shelf, as strictly as ever.",
   },
   7: {
-    de: "Der Aschgrund war der erste Preis: Wo der Riss trank, blieben rissige Erde und totes Geäst. Hier liest die Blutmagd den Ritus — ein Kelch, der nie geleert und nie gefüllt wird, für den letzten Schluck vor dem Abstieg. Asra trank daraus, und sie soll gelächelt haben. Die Blutmagd schenkt seither niemandem mehr nach.",
-    en: "The Aschgrund was the first price: where the rift drank, cracked earth and dead boughs remained. Here the Bloodmaid keeps the rite — a chalice never emptied and never filled, for the last sip before the descent. Asra drank from it, and they say she smiled. The Bloodmaid has refilled no cup since.",
-  },
-  8: {
     de: "Auf der Sattelweite ritt der Lanzenmeister einst Turniere für den ganzen Hof — und einen letzten Gang für Asra, seine beste Schülerin, am Vorabend ihres Abstiegs. Er reitet ihn noch immer, Gang um Gang, gegen eine Gegnerin, die nur er sieht. Er weiß, dass etwas zurückgekehrt ist. Er weigert sich zu sehen, was.",
     en: "On the Sattelweite the Lancemaster once rode tourneys for the whole court — and one last tilt for Asra, his finest student, on the eve of her descent. He rides it still, tilt after tilt, against an opponent only he can see. He knows something has returned. He refuses to see what.",
+  },
+  8: {
+    de: "Der Aschgrund war der erste Preis: Wo der Riss trank, blieben rissige Erde und totes Geäst. Hier liest die Blutmagd den Ritus — ein Kelch, der nie geleert und nie gefüllt wird, für den letzten Schluck vor dem Abstieg. Asra trank daraus, und sie soll gelächelt haben. Die Blutmagd schenkt seither niemandem mehr nach.",
+    en: "The Aschgrund was the first price: where the rift drank, cracked earth and dead boughs remained. Here the Bloodmaid keeps the rite — a chalice never emptied and never filled, for the last sip before the descent. Asra drank from it, and they say she smiled. The Bloodmaid has refilled no cup since.",
   },
   9: {
     de: "Die Wunde trägt ihren Namen zu Recht: Hier führt die Treppe hinab, die jeder Gambit zuletzt geht — die Stufen glatt von bloßen Füßen. Am Grund liegt der Riss offen und atmet. Eisenfaust hält seit dem ersten Tag die Wache, die Faust um einen Namen geballt, den er nicht mehr aussprechen kann. Wer hier lauscht, hört den Riss flüstern: Er übt Namen, wie andere Klingen wetzen.",
@@ -62,6 +65,10 @@ export const LEAGUE_LORE = {
     en: "The Sonnenschlund swallows tracks, names and intentions; only the oasis remembers. Here came Vesna the seeress when even she had forgotten Asra's name — for it was she who spoke it to the rift, to save the court. The register is gone; Asra collects no revenge in it, only names: she means to give every one of them back, though the court should break on it. One thing Vesna still carries — the young Gambit's name, written down before the rite, against every rule: Corvin.",
   },
   11: {
+    de: "Die K\u00fcste ist der letzte Ort mit Namen: Hier enden die Stra\u00dfen, hier beginnen die Listen des Hafenmeisters. Er verzeichnet jede Fracht, die aufs Endlose Meer hinausgeht \u2014 nur eine Zeile l\u00e4sst er seit Jahren frei, gleich oben, f\u00fcr ein Boot, das zur\u00fcckkommen soll. Vesna hat ihm daf\u00fcr einen Namen angeboten. Er hat abgelehnt: Solange die Zeile leer ist, sagt er, ist niemand genommen.",
+    en: "The Coast is the last place with names: here the roads end, here the harbourmaster's ledgers begin. He records every cargo that sails out onto the Endless Sea \u2014 only one line he has kept blank for years, right at the top, for a boat that is meant to return. Vesna offered him a name for it. He refused: as long as the line is blank, he says, no one has been taken.",
+  },
+  12: {
     de: "Das Endlose Meer ist, wohin der Riss ausblutet: Was er nicht behalten will, spült er hier an. Der Kapitän fährt die Habseligkeiten der Genommenen hinaus — Fracht ohne Empfänger, seit Osrics erster Nacht. Irgendwo auf diesem Wasser wartet der alte König als Großmeister: Der Riss holt sich zuletzt den, der ihn geöffnet hat. Und zum ersten Mal steigt ein Gambit mit Namen herab — diesmal weiß der Riss, wen er nimmt. Vielleicht macht genau das den Unterschied.",
     en: "The Endless Sea is where the rift bleeds out: what it will not keep, it washes up here. The Captain ferries out the belongings of the taken — cargo with no recipient, since Osric's first night. Somewhere on this water the old king waits as Grandmaster: the rift comes last for the one who opened it. And for the first time a Gambit walks down carrying a name — this time the rift knows whom it takes. Perhaps that is exactly what makes the difference.",
   },

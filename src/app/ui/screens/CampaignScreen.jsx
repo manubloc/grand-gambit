@@ -19,7 +19,7 @@ import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
 import { StatOrbBadge } from "../board/PieceGlyph.jsx";
-import { MAP_BITMAPS } from "../mapBitmaps.js";
+import { MAP_BITMAPS12 as MAP_BITMAPS } from "../mapBitmaps12.gen.js";
 import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
 import { useMedia } from "../../App.jsx";
 import { voiceFor } from "../../../content/index.js";
@@ -72,13 +72,14 @@ const LABEL_TINT = {
   4: "139,150,102",
   5: "220,229,243",
   6: "199,198,194",
-  7: "179,146,104",
-  8: "236,196,127",
-  9: "241,155,91",
+  7: "236,196,127",   /* Sattelweite: das alte Steppengold */
+  8: "241,155,91",    /* Aschgrund: das alte Canyonrot */
+  9: "179,146,104",   /* Die Wunde: das alte Oedlandbraun */
   10: "255,212,127",
-  11: "228,236,238",
+  11: "196,214,206",  /* Die Kueste: Gischtgruen */
+  12: "228,236,238",  /* Endloses Meer: das alte Meersilber */
 };
-const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 11) + 1] || "248,242,226";
+const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 12) + 1] || "248,242,226";
 
 export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTree }) {
   const en = profile.lang === "en";
@@ -261,7 +262,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         {bm && bmDef && (() => {
           // cloud tint by world (1..10, repeating). Summer (2) is brightest, then
           // it darkens with the seasons and the wastes beyond.
-          const world = ((Math.max(1, viewLeague) - 1) % 11) + 1;
+          const world = ((Math.max(1, viewLeague) - 1) % 12) + 1;
           const CLOUD = {
             1: "236,232,222", 2: "255,255,255", 3: "214,198,176", 4: "222,228,236",
             5: "198,204,214", 6: "150,132,112", 7: "170,158,132", 8: "150,138,120",
@@ -488,10 +489,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     {faced && pieceCh ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
                         <PieceArt kind={pieceCh.kind} fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
                       : faced && pure ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}>
-                        <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={n.id === "n22" ? "#f2d98c" : T.danger} size="100%" /></div>
-                      : n.id === "n22" ? ((faced && ((viewLeague - 1) % 11) + 1 === 10)
-                          ? <div style={{ width: MEDAL_ART, height: MEDAL_ART }}><PieceArt kind="V" fill={MP.ivory} rim="#c9a45c" detail={MP.medal} size="100%" level={1} /></div>
-                          : <CrownIc />) : <Swords />}
+                        <PieceArt kind="X" art={pure.art} fill={MP.ivory} rim="#c9a45c" accent={T.danger} size="100%" /></div>
+                      : <Swords />}
                   </div>; })()}
                   </div>
                   {st === "cleared" && (bm

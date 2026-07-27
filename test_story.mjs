@@ -251,7 +251,7 @@ const core = (nm) => (nm || "").split(/[\s,]+/)
   const swap = CHARACTER_LIST.find((c) => c.flank && (prof.campaign?.unlocked || []).includes(c.id));
   const changed = [...map.defaultFormation]; changed[0] = swap.id;
   const after = { ...prof,
-    pausedMatch: { v: 1, nodeId: "n03", enc: encodeState(g), potionsUsed: 0, hourglassUsed: 0, clock: null },
+    pausedMatch: { v: 1, nodeId: "L01s03", enc: encodeState(g), potionsUsed: 0, hourglassUsed: 0, clock: null },
     loadout: { ...(prof.loadout || {}), formations: { classic: changed } } };
 
   ok("the paused fight resumes exactly as it stood",

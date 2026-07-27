@@ -54,8 +54,8 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
     if (seen.has(nm)) dup++; else seen.set(nm, "L" + lg);
   }
   ok("no place name is ever repeated across all ten leagues", dup === 0);
-  ok("league I keeps its homeland names", placeFor(CAMPAIGN.find((n) => n.id === "a1"), 1) === "Nordwacht");
-  ok("later leagues rename the same node", placeFor(CAMPAIGN.find((n) => n.id === "a1"), 4) !== "Nordwacht");
+  ok("league I keeps its homeland names", placeFor(CAMPAIGN.find((n) => n.id === "L01s02"), 1) === "Nordwacht");
+  ok("later leagues rename the same node", placeFor(CAMPAIGN.find((n) => n.id === "L01s02"), 4) !== "Nordwacht");
 }
 
 // ── strict per-station secrecy: a station reveals its figure only after it
@@ -65,8 +65,8 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
   const withFaced = (ids) => ({ campaign: { league: 3, faced: ids, unlocked: ["knight"], cleared: [] }, codex: { met: ["X:b10"] } });
   // facedNode logic mirrored from CampaignScreen: cleared OR in faced set
   const faced = (profile, id) => (profile.campaign?.faced || []).includes(id);
-  ok("an unplayed station stays hidden even for a recruited piece", faced(withFaced([]), "a4") === false);
-  ok("a played station reveals its figure", faced(withFaced(["a4"]), "a4") === true);
+  ok("an unplayed station stays hidden even for a recruited piece", faced(withFaced([]), "L07s41") === false);
+  ok("a played station reveals its figure", faced(withFaced(["L07s41"]), "L07s41") === true);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
