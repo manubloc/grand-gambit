@@ -6,7 +6,8 @@ import { T } from "./theme.js";
 import { logoMenuArt } from "./livery.js";
 import { PieceArt } from "./board/PieceArt.jsx";
 
-const GOLD = "#c9a45c", GOLD_HI = "#e3c07a", GOLD_DK = "#a8863f", NAVY = "#0e1424";
+const GOLD = "#c9a45c", GOLD_HI = "#e3c07a", GOLD_DK = "#a8863f", NAVY = "#000";
+import introUrl from "./assets/intro-riss.webp";
 
 // ── the ring emblem ──────────────────────────────────────────────────────────
 export function Emblem({ size = 250, animate = true }) {
@@ -78,11 +79,19 @@ export function Splash({ onDone }) {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [onDone]);
   return (
-    <div onClick={onDone} style={{ position: "fixed", inset: 0, zIndex: 99, background: NAVY,
+    <div onClick={onDone} style={{ position: "fixed", inset: 0, zIndex: 99, background: "#000",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18,
-      cursor: "pointer", ...(out ? { animation: "splashOut .5s ease both" } : {}) }}>
-      <Emblem size={min(0.62)} animate />
-      <img src={logoMenuArt()} alt="Grand Gambit" style={{ width: min(0.72), display: "block" }} />
+      cursor: "pointer", overflow: "hidden", ...(out ? { animation: "splashOut .5s ease both" } : {}) }}>
+      {/* Der Riss oeffnet sich: das Introbild fuellt den Schirm, seine Raender
+          verlaufen ins Schwarz der App, damit kein Kasten entsteht. Darueber
+          steht die Wortmarke. */}
+      <img src={introUrl} alt="" draggable={false} style={{ position: "absolute", inset: 0,
+        width: "100%", height: "100%", objectFit: "cover", opacity: 0.92,
+        animation: "ggRiftOpen 2.6s ease-out both",
+        WebkitMaskImage: "radial-gradient(ellipse 82% 76% at 50% 52%, #000 46%, rgba(0,0,0,.55) 72%, transparent 96%)",
+        maskImage: "radial-gradient(ellipse 82% 76% at 50% 52%, #000 46%, rgba(0,0,0,.55) 72%, transparent 96%)" }} />
+      <img src={logoMenuArt()} alt="Grand Gambit" style={{ width: min(0.72), display: "block",
+        position: "relative", marginTop: "42vh", filter: "drop-shadow(0 4px 18px rgba(0,0,0,.9))" }} />
     </div>
   );
 }

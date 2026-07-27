@@ -24,6 +24,14 @@ const LEAGUE_TINTS = [
   { s: [30, 40, 66],  a: [152, 182, 230] },  // XII  Endloses Meer: deep sea silver
 ];
 const tintFor = (league) => LEAGUE_TINTS[((Math.max(1, league || 1) - 1) % 12)];
+/** Der Hauch ueber dem Schwarz: die Kapitelfarbe auf ein Zehntel gedaempft und
+ *  in Richtung des Riss-Violetts gezogen. So bleibt jedes Kapitel erkennbar,
+ *  ohne dass der Grund je aufhellt. */
+const hauchFuer = (league) => {
+  const t = tintFor(league)?.s || [30, 20, 50];
+  const r = Math.round(t[0] * 0.34 + 22), g = Math.round(t[1] * 0.24 + 8), b = Math.round(t[2] * 0.4 + 34);
+  return `rgba(${r}, ${g}, ${b}, .55)`;
+};
 
 export function MysticBackground({ league = 1 }) {
   // the ember/smoke canvas is retired — the hall stands still and clear
@@ -32,7 +40,10 @@ export function MysticBackground({ league = 1 }) {
   const mob = typeof innerWidth !== "undefined" && innerWidth < 640;
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden",
-      background: "radial-gradient(120% 100% at 50% 30%, #070a12 0%, #04060a 72%)" }}>
+      // SCHWARZ, restlos. Aus der Tiefe steigt nur ein Hauch des Risses -
+      // dasselbe Violett wie im Wappen, so schwach, dass es als Ahnung wirkt
+      // und nicht als Farbe.
+      background: `radial-gradient(120% 90% at 50% 26%, ${hauchFuer(league)} 0%, #000 62%), #000` }}>
       {/* phones: the hall grows and lifts above the bottom menu — the marble
           board in the picture stays in view instead of hiding behind the nav.
           CENTRING WITHOUT transform: the app root carries a CSS `zoom`, and a
@@ -44,11 +55,13 @@ export function MysticBackground({ league = 1 }) {
         const W = mob ? "142%" : "min(96%, 1080px)";
         return <img src={bgHall()} alt="" draggable={false} style={{ position: "absolute", left: "50%", bottom: mob ? "7vh" : 0,
           width: W, marginLeft: `calc(${W} / -2)`, maxWidth: mob ? "none" : undefined, userSelect: "none",
-          WebkitMaskImage: mask, maskImage: mask, opacity: 0.9 }} />;
+          WebkitMaskImage: mask, maskImage: mask, opacity: 0.62,
+          // die Halle zieht ins Licht des Risses, statt blau zu bleiben
+          filter: "hue-rotate(-28deg) saturate(.72) brightness(.86)" }} />;
       })()}
       {/* the ceiling of night: melts the image's top edge whatever the viewport */}
       <div style={{ position: "absolute", inset: 0,
-        background: "linear-gradient(180deg, #04060a 0%, rgba(4,6,10,.6) 22%, transparent 46%)" }} />
+        background: "linear-gradient(180deg, #000 0%, rgba(0,0,0,.62) 22%, transparent 46%)" }} />
     </div>
   );
 }

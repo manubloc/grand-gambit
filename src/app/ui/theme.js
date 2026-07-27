@@ -11,12 +11,18 @@
 // no component knows two designs exist. Classic stays the default: the old
 // design is a promise, not a leftover.
 const CLASSIC = {
-  bg: "#0c111e", bg2: "#101828", panel: "#131b2d", panel2: "#1a2338", line: "#28324e",
+  bg: "#000000", bg2: "#0a0710", panel: "#140f24", panel2: "#1c1533", line: "#2f2450",
   text: "#f0e9d8", dim: "#a9a48e", faint: "#6f6b5e",
   lime: "#d1ad55", limeDim: "#b08f3a", limeInk: "#17110a",          // player / primary accent (gold)
   magenta: "#8fa0c0", magentaDim: "#66748f", magentaInk: "#10141d", // enemy accent (steel navy)
   gold: "#eac96b", danger: "#d5495a", green: "#58c98b", blue: "#8fa0c0",
   goldBright: "#f6e9a4",
+  // DER RISS: die violette Stimme des Spiels. `rift` traegt Flaechen,
+  // `riftInk` die Schrift darauf, `riftGlow` den Schein. Gemessen auf
+  // Schwarz: rift 4,96:1, riftLine 7,72:1, riftBright 11,38:1 - deshalb
+  // steht auf violetten Flaechen WEISSE Schrift, nie dunkle.
+  rift: "#7c3aed", riftDeep: "#5b21b6", riftLine: "#a78bfa", riftBright: "#c4b5fd",
+  riftInk: "#f7f3ff", riftGlow: "rgba(139,92,246,.55)",
   shadow: "0 10px 28px rgba(0,0,0,.55)",
   // How see-through the floating chrome (header card, dock) is, as a hex
   // alpha appended to `panel`, plus its backdrop blur. Classic stays nearly
@@ -32,7 +38,7 @@ const CLASSIC = {
   // the title art sits on it and the whole opening reads as one dark curtain.
   // Only what comes AFTER logging in wears the lightened carved stone. Classic
   // keeps its exact former values here (login was #000, saves inherited T.bg).
-  input: "#0d1017", loginBg: "#000", savesBg: "#0c111e", errText: "#e08f8f",
+  input: "#0b0813", loginBg: "#000", savesBg: "#000", errText: "#e08f8f",
   radius: 14, radiusSm: 10,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
@@ -51,7 +57,11 @@ const CARVED = { ...CLASSIC,
   //   3. TAFELN leicht durchscheinend (Alpha e8 = 91 %), damit das Brett
   //      darunter zu ahnen ist. Die Kontraste sind gegen die GEMISCHTE Farbe
   //      gerechnet, nicht gegen die reine - sonst luegt die Rechnung.
-  bg: "#151d2c", bg2: "#1d2739", panel: "#35456ae8", panel2: "#3d4f78e8", line: "#54679' + '2",
+  //   5. SCHWARZ als Grund und DER RISS als zweite Stimme. Das Introbild und
+  //      das Wappen geben die Sprache vor: tiefes Schwarz, aus dem violettes
+  //      Licht bricht. Die Tafeln bleiben ablesbar, verlieren aber ihr Blau
+  //      zugunsten eines sehr dunklen Violett-Anteils.
+  bg: "#000000", bg2: "#0a0710", panel: "#1a1430e8", panel2: "#241a3fe8", line: "#3b2d63",
   text: "#f6efdf", dim: "#c6bca2", faint: "#c0b8a4",
   //   4. GOLD eine Stufe heller. Auf der blauen Tafel wirkte das alte Gold
   //      stumpf - Ueberschriften wie "DEINE SCHATZKAMMER" lasen sich fast
@@ -63,7 +73,7 @@ const CARVED = { ...CLASSIC,
   shadow: "0 10px 24px rgba(0,0,0,.45)",
   glass: "d9", glassBlur: "18px",
   sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
-  input: "#111827", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
+  input: "#0b0813", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
 };
 export const T = { ...CLASSIC };
 /** Swap the whole app's livery in place. Called once from App.jsx per render
@@ -108,7 +118,7 @@ export const GLOBAL_CSS = `
     background-clip: padding-box;
   }
   input, select, textarea { border-color: ${T.line}; background-color: ${T.bg2}; color: ${T.text}; }
-  input:focus, select:focus, textarea:focus { border-color: ${T.gold}; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: ${T.riftLine}; box-shadow: 0 0 0 3px rgba(124,58,237,.18); outline: none; }
   button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
   body {
     margin: 0; color: ${T.text};
@@ -142,6 +152,9 @@ export const GLOBAL_CSS = `
      Viertel. Das war die harte Kante. Damit er vollstaendig hinauslaeuft,
      muss die linke Kante ueber 100 % kommen: 100/62 = 161 %. 175 % gibt Luft. */
   @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(175%); } }
+  @keyframes ggRiftOpen { from { transform: scale(1.09); opacity: 0; } 40% { opacity: .92; } to { transform: scale(1); opacity: .92; } }
+  @keyframes ggRiftPulse { 0%, 100% { box-shadow: 0 0 9px rgba(124,58,237,.35); border-color: rgba(167,139,250,.55); }
+    50% { box-shadow: 0 0 20px rgba(139,92,246,.65); border-color: rgba(196,181,253,.95); } }
   @keyframes ggHop { 0% { transform: translateY(0); } 32% { transform: translateY(-13px); } 55% { transform: translateY(0) scale(1.04, .94); } 72% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
   @keyframes ggGlide { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3px) rotate(-1.6deg); } }
   @keyframes ggBob { 0%, 100% { transform: translateY(0) rotate(-0.8deg); } 50% { transform: translateY(-2.5px) rotate(0.8deg); } }

@@ -37,6 +37,7 @@ import logoMenuC from "./assets/logo-menu.webp";
 import logoMenuK from "./assets/logo-menu.carved.webp";
 import emblemC from "./assets/emblem.webp";
 import emblemK from "./assets/emblem.carved.webp";
+import emblemRiss from "./assets/emblem-riss.webp";
 
 import g01C from "./assets/ground-01.webp"; import g01K from "./assets/ground-01.carved.webp";
 import g02C from "./assets/ground-02.webp"; import g02K from "./assets/ground-02.carved.webp";
@@ -94,7 +95,9 @@ export const bgHall = () => pick(hallC, hallK);
 export const boardFrame = () => pick(frameC, frameK);
 export const leagueShield = () => pick(shieldC, shieldK);
 export const crestArt = (n) => pick([crest1C, crest2C, crest3C], [crest1K, crest2K, crest3K])[n - 1] || null;
-export const emblemArt = () => pick(emblemC, emblemK);
+// Das Wappen ist seit v0.36 der RISS IM GOLDRING - dasselbe Zeichen, das als
+// App-Symbol und Favicon steht. Es gilt in beiden Livreen.
+export const emblemArt = () => emblemRiss;
 export const logoArt = () => pick(logoC, logoK);
 export const logoMenuArt = () => pick(logoMenuC, logoMenuK);
 

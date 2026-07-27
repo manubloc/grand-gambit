@@ -927,14 +927,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
               <Button variant={status === "available" || friendly ? "primary" : "subtle"} disabled={status === "locked" || closed}
                 onClick={() => onStart(sel)} style={{ flex: 1, position: "relative", overflow: "hidden",
+                  // Steht an der Station ein Wesen des Risses, traegt der Knopf
+                  // SEIN Licht - violett statt Gold. Gewoehnliche Partien
+                  // bleiben golden: Gold ist die Krone, Violett der Riss.
                   ...(status === "available" || friendly
-                    ? { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
-                        border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)" }
+                    ? (node?.boss
+                        ? { background: "rgba(124,58,237,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+                            border: `1px solid ${T.riftLine}`, boxShadow: `0 0 18px ${T.riftGlow}`, color: T.riftInk }
+                        : { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+                            border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)" })
                     : { background: "#dcd3ba", color: PP.ink }) }}>
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={node?.boss && (status === "available" || friendly) ? T.riftInk : T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
             </div>
           )}

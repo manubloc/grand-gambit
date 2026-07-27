@@ -9,6 +9,11 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
       color: T.limeInk, border: "1px solid rgba(255,240,200,.5)", boxShadow: "0 2px 12px rgba(201,164,92,.22)" },
     ghost: { background: "transparent", color: T.text, border: `1px solid ${T.line}` },
     danger: { background: "transparent", color: T.danger, border: `1px solid ${T.danger}55` },
+    // DER RISS: fuer alles, was aus ihm kommt - Herausforderungen, Bestien,
+    // Freischaltungen. Weisse Schrift, weil dunkle auf Violett nur 4,42:1
+    // erreicht, weisse dagegen 5,70:1.
+    rift: { background: `linear-gradient(160deg, ${T.rift}, ${T.riftDeep})`,
+      color: T.riftInk, border: `1px solid ${T.riftLine}`, boxShadow: `0 0 14px ${T.riftGlow}` },
     // ruhiger dunkler Knopf: EINE duenne Linie, kein zweiter Rahmen darunter
     subtle: { background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
       color: T.text, border: `1px solid ${T.line}` },
@@ -21,6 +26,10 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
  *  Schatzkammer. Eine duenne Linie fasst ihn, kein plastischer Rahmen. */
 export const PANEL_WASH = () =>
   `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`;
+/** Fuer Flaechen, die dem Riss gehoeren: derselbe Verlauf, aber der Schimmer
+ *  oben ist das violette Licht selbst. */
+export const RIFT_WASH = () =>
+  `radial-gradient(125% 140% at 50% -12%, rgba(124,58,237,.34) 0%, rgba(91,33,182,.16) 46%, ${T.bg} 100%)`;
 export function Panel({ style, children, ...p }) {
   return <div style={{ background: PANEL_WASH(), border: `1px solid ${T.line}`, borderRadius: T.radius, padding: 16, ...style }} {...p}>{children}</div>;
 }

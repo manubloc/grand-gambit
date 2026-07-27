@@ -280,8 +280,11 @@ function ChroniclePanel({ profile, t, en, account = null }) {
       const open = openId === ch.id;
       const seen = seenChar(ch);
       const rungs = ch.ladder.filter((r) => r.ability);
-      return <div key={ch.id} style={{ borderRadius: 12, border: `1px solid ${open ? "#e3c07a88" : T.line}`,
-        background: "linear-gradient(180deg, rgba(24,32,58,.5), rgba(12,16,30,.6))", overflow: "hidden" }}>
+      // Jede Figur kam durch den Riss - deshalb umfasst sie sein Licht:
+      // ruhig im Regal, leuchtend sobald sie aufgeschlagen wird.
+      return <div key={ch.id} style={{ borderRadius: 12, border: `1px solid ${open ? T.riftLine : "rgba(124,58,237,.4)"}`,
+        boxShadow: open ? `0 0 16px ${T.riftGlow}` : "0 0 7px rgba(124,58,237,.16)",
+        background: "linear-gradient(180deg, rgba(30,18,58,.55), rgba(6,4,12,.7))", overflow: "hidden" }}>
         <button onClick={() => seen && setOpenId(open ? null : ch.id)} style={{ display: "flex", alignItems: "center", gap: 10,
           width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: seen ? "pointer" : "default", textAlign: "left" }}>
           {/* BOTH FACES OF A FIGURE: the painting as she appears in battle and,
@@ -336,7 +339,8 @@ function ChroniclePanel({ profile, t, en, account = null }) {
       const open = openId === "X:" + b.id;
       const seen = seenBoss(b);
       const fam = FAM[b.art] ? (en ? FAM[b.art][1] : FAM[b.art][0]) : b.art;
-      return <div key={b.id} style={{ borderRadius: 12, border: `1px solid ${open ? "#e3c07a88" : T.line}`,
+      return <div key={b.id} style={{ borderRadius: 12, border: `1px solid ${open ? T.riftLine : "rgba(124,58,237,.4)"}`,
+        boxShadow: open ? `0 0 16px ${T.riftGlow}` : "0 0 7px rgba(124,58,237,.16)",
         background: "linear-gradient(180deg, rgba(46,24,40,.42), rgba(14,10,18,.6))", overflow: "hidden" }}>
         <button onClick={() => seen && setOpenId(open ? null : "X:" + b.id)} style={{ display: "flex", alignItems: "center", gap: 10,
           width: "100%", padding: "8px 10px", background: "none", border: "none", cursor: seen ? "pointer" : "default", textAlign: "left" }}>
