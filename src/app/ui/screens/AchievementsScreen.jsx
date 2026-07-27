@@ -100,8 +100,8 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           background: "linear-gradient(160deg, rgba(96,74,34,.62), rgba(28,21,11,.95) 62%)",
           border: `1.5px solid ${ready ? "rgba(240,214,138,.8)" : "rgba(214,176,96,.5)"}`,
           boxShadow: ready
-            ? "inset 0 1px 0 rgba(255,248,214,.18), 0 0 26px rgba(240,214,138,.32), " + T.shadow
-            : "inset 0 1px 0 rgba(255,248,214,.1), 0 0 16px rgba(240,214,138,.16), " + T.shadow }}>
+            ? "0 0 26px rgba(240,214,138,.32), " + T.shadow
+            : "0 0 16px rgba(240,214,138,.16), " + T.shadow }}>
           {/* THE GLEAM NOW MOVES: it used to be a fixed band painted across the
               plate. Tapping a plate sends it sweeping once, left to right —
               gold catching the light as the card turns. The key on the wrapper
@@ -176,7 +176,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                   return <span key={i} style={{ width: 7, height: 7, transform: "rotate(45deg)", borderRadius: 1.5,
                     background: state === "claimed" ? "linear-gradient(160deg, #f6e4a2, #d9b565 70%)" : state === "ready" ? T.lime : "rgba(30,24,13,.9)",
                     border: state === "locked" ? "1px solid rgba(180,150,90,.3)" : "none",
-                    boxShadow: state === "claimed" ? "0 0 6px rgba(240,214,138,.75), inset 0 1px 0 rgba(255,246,214,.6)" : state === "ready" ? `0 0 6px ${T.lime}aa` : "inset 0 1px 1px rgba(0,0,0,.5)",
+                    boxShadow: state === "claimed" ? "0 0 6px rgba(240,214,138,.75)" : state === "ready" ? `0 0 6px ${T.lime}aa` : "inset 0 1px 1px rgba(0,0,0,.5)",
                     animation: state === "ready" ? "herePulse 1.6s ease-in-out infinite" : "none" }} />;
                 })}
               </span>
@@ -205,7 +205,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 background: done
                   ? "linear-gradient(90deg, #b8944e, #f6e4a2 55%, #e0bd72)"
                   : "linear-gradient(90deg, #8a6d35, #f0d68a 60%, #d9b565)",
-                boxShadow: "0 0 9px rgba(217,181,101,.55), inset 0 1px 0 rgba(255,246,214,.5)" }} />
+                boxShadow: "0 0 9px rgba(217,181,101,.55)" }} />
             </div>
             {/* WHEN A PURSE IS WAITING the row breaks apart: the tally keeps its
                 line and the claim drops beneath it, full width and a size up,
@@ -221,8 +221,8 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 return <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "CLAIM_ACH", id: it.id }); }}
                   style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 14, borderRadius: 999, padding: "13px 18px 12px",
                     marginTop: 9, width: "100%",
-                    border: "none", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
-                    boxShadow: `0 0 16px ${T.gold}88, inset 0 1px 0 #fff6d8cc`, whiteSpace: "nowrap",
+                    border: "1px solid rgba(255,240,200,.5)", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
+                    boxShadow: `0 0 16px ${T.gold}88`, whiteSpace: "nowrap",
                     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                   {t("ach.claim")} · <SkillStar size={13} />{r.sp} <GoldCoin size={13} />{r.gold}
                 </button>;

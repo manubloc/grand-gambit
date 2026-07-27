@@ -740,7 +740,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             width: 42, height: 42, borderRadius: "50%", display: "grid", placeItems: "center",
             background: zoomMode ? "rgba(240,206,122,.2)" : "rgba(8, 11, 20, .55)",
             border: `1px solid rgba(233, 210, 150, ${zoomMode ? ".8" : ".42"})`,
-            boxShadow: "0 2px 10px rgba(0,0,0,.4), inset 0 0.5px 0 rgba(255,243,196,.25)",
+            boxShadow: "0 2px 10px rgba(0,0,0,.4)",
             backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
           <ZoomIc size={19} />
         </button>
@@ -1022,9 +1022,9 @@ function HpBriefing({ t, onBegin, onNever }) {
         </div>
         <div style={{ marginTop: 9, fontSize: 12.5, lineHeight: 1.5, color: "#5c5344" }}>{t("hpb.star")}</div>
         <button onClick={onBegin} style={{ width: "100%", marginTop: 14, fontFamily: "inherit", fontWeight: 900,
-          fontSize: 14.5, borderRadius: 999, padding: "12px 18px", border: "none", cursor: "pointer",
+          fontSize: 14.5, borderRadius: 999, padding: "12px 18px", border: "1px solid rgba(255,240,200,.5)", cursor: "pointer",
           background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a",
-          boxShadow: "0 0 14px rgba(217,181,101,.5), inset 0 1px 0 #fff6d8cc" }}>{t("hpb.ok")}</button>
+          boxShadow: "0 0 14px rgba(217,181,101,.5)" }}>{t("hpb.ok")}</button>
         <button onClick={onNever} style={{ width: "100%", marginTop: 7, fontFamily: "inherit", fontWeight: 700,
           fontSize: 12.5, borderRadius: 999, padding: "8px 14px", border: "1px solid #c9bfa4",
           background: "transparent", color: "#6b6152", cursor: "pointer" }}>{t("hpb.never")}</button>
@@ -1108,7 +1108,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
               padding: "7px 10px", borderRadius: 10, fontSize: 12.5, fontWeight: 800,
               background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
               border: "1px solid #e3c07a", color: "#f6e9a4",
-              boxShadow: "0 0 10px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>
+              boxShadow: "0 0 10px rgba(64,110,220,.3)" }}>
               {ni.id === "spvault" ? <SkillStar size={15} /> : <ItemIcon id={ni.id} size={17} />}
               <span>{ni.id === "spvault" ? t("banner.vault")
                 : t(ni.free ? "banner.newItemFree" : "banner.newItem", { name: it ? (en ? it.nameEn : it.nameDe) : ni.id })}</span>

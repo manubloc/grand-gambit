@@ -54,7 +54,7 @@ function StatPill({ icon, val, color }) {
     fontSize: 12.5, fontWeight: 900, minWidth: 58, boxSizing: "border-box",
     padding: "3px 10px", borderRadius: 999, color: "#f6e9a4",
     background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)",
-    border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>
+    border: "1px solid #e3c07a", boxShadow: "0 0 8px rgba(64,110,220,.3)" }}>
     <span style={{ display: "inline-flex", color }}>{icon}</span> {val}</span>;
 }
 
@@ -469,7 +469,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               {epic ? t("army.gambitTag") : fam ? (en ? FAMILIES[fam].en : FAMILIES[fam].de) : (en ? "Free piece" : "Freie Figur")}
             </div>
           </div>
-          {stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", flex: "0 0 auto", boxShadow: "0 0 8px rgba(64,110,220,.3), inset 0 1px 0 rgba(190,215,255,.28)" }}>{"★".repeat(stars)}</Chip>}
+          {stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", flex: "0 0 auto", boxShadow: "0 0 8px rgba(64,110,220,.3)" }}>{"★".repeat(stars)}</Chip>}
         </div>
         {/* the flavour line, in the serif voice — directly under the name and
             house line, BEFORE the stats, as asked */}
@@ -531,7 +531,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             background: affordable ? "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" : "#1a2340",
             color: affordable ? "#f6e9a4" : "#8d94ad",
             border: `1.5px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
-            boxShadow: affordable ? "0 0 14px rgba(64,110,220,.4), inset 0 1px 0 rgba(190,215,255,.35)" : "none",
+            boxShadow: affordable ? "0 0 14px rgba(64,110,220,.4)" : "none",
             animation: affordable ? "ggUpPulse 2.2s ease-in-out infinite" : "none",
             textShadow: affordable ? "0 1px 2px rgba(0,0,0,.5)" : "none" }}>
           {t("army.upgrade")} · {cost} <SkillStar size={12} /></button>}
@@ -778,7 +778,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: eaten ? "default" : "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
               background: eaten ? "rgba(120,90,190,.1)" : isHero ? `radial-gradient(circle at 42% 30%, ${T.gold}2e, ${T.bg2})` : T.bg2,
-              border: `2px solid ${isHero ? T.gold : eaten ? "#8a7ab8" : T.line}`, opacity: eaten ? 0.4 : 1,
+              border: `1px solid ${isHero ? T.gold : eaten ? "#8a7ab8" : T.line}`, opacity: eaten ? 0.4 : 1,
               boxShadow: isHero ? `0 0 9px ${T.gold}55` : "none" }}>
             {eaten
               ? <span style={{ fontSize: "clamp(10px, 3.6vw, 16px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
@@ -808,7 +808,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
             style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: isKingSlot ? "default" : "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
               background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,
-              border: `2px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
+              border: `1px solid ${open || (isWing && pick === dragonAt) ? T.lime : isDragon || isWing ? "#8a7ab8" : T.line}` }}>
             {isWing
               ? <span title={t("army.wing")} style={{ fontSize: "clamp(11px, 4vw, 18px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
               : isDragon
@@ -984,9 +984,9 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
             </div>
             <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "BUY_SP_SHARD" }); }} disabled={!can}
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
-                position: "relative", border: "none", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 5,
+                position: "relative", border: "1px solid rgba(255,240,200,.5)", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 5,
                 background: can ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : T.panel,
-                boxShadow: can ? `0 0 12px ${T.gold}66, inset 0 1px 0 #fff6d8aa` : "none",
+                boxShadow: can ? `0 0 12px ${T.gold}66` : "none",
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default",
                 outline: can ? "none" : `1.5px solid ${T.line}` }}>
               {left === 0 ? (en ? "Vault empty" : "Tresor leer") : <><GoldCoin size={13} /> {SP_SHARD_GOLD}</>}
@@ -1077,7 +1077,7 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
             )}
             <button onClick={() => { if (!can) return; dispatch(shard ? { type: "BUY_SP_SHARD" } : { type: "BUY_ITEM", id: it.id }); setGearInfo(null); }}
               disabled={!can} style={{ width: "100%", marginTop: 14, fontFamily: "inherit", fontWeight: 900, fontSize: 14,
-                borderRadius: 999, padding: "12px 16px", border: "none", whiteSpace: "nowrap",
+                borderRadius: 999, padding: "12px 16px", border: "1px solid rgba(255,240,200,.5)", whiteSpace: "nowrap",
                 display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
                 background: can ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : T.panel2,
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default",

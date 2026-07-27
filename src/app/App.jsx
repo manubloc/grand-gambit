@@ -113,9 +113,9 @@ export function LeaveMatchAsk({ t, resumable, onLeave, onStay }) {
           {resumable ? t("leave.pause") : t("leave.quit")}
         </div>
         <button onClick={onLeave} style={{ width: "100%", fontFamily: "inherit", fontWeight: 900, fontSize: 14,
-          borderRadius: 999, padding: "12px 16px", border: "none", cursor: "pointer", color: "#17110a",
+          borderRadius: 999, padding: "12px 16px", border: "1px solid rgba(255,240,200,.5)", cursor: "pointer", color: "#17110a",
           background: resumable ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : `linear-gradient(160deg, ${T.danger}, #a3313f)`,
-          boxShadow: "0 0 14px rgba(217,181,101,.4), inset 0 1px 0 #fff6d8aa" }}>
+          boxShadow: "0 0 14px rgba(217,181,101,.4)" }}>
           {resumable ? t("leave.pauseGo") : t("leave.quitGo")}
         </button>
         <button onClick={onStay} style={{ width: "100%", marginTop: 8, fontFamily: "inherit", fontWeight: 700,
@@ -346,7 +346,7 @@ export default function App() {
   const coinChip = (icon, val, title) => (
     <span title={title} className="gg-serif" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px",
       borderRadius: 10, background: "linear-gradient(172deg, rgba(240,206,122,.13), rgba(240,206,122,.05))",
-      border: "1px solid rgba(214,176,96,.5)", boxShadow: "inset 0 0.5px 0 rgba(255,243,196,.35), 0 1px 4px rgba(0,0,0,.35)",
+      border: "1px solid rgba(214,176,96,.5)", boxShadow: "0 1px 4px rgba(0,0,0,.35)",
       color: T.goldBright, fontSize: 13.5, fontWeight: 700, letterSpacing: ".04em", whiteSpace: "nowrap",
       fontVariantNumeric: "tabular-nums" }}>{icon} {val}</span>
   );
@@ -480,7 +480,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
         borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
         background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
-        boxShadow: `0 0 12px ${T.gold}55, inset 0 1px 0 #fff6d8aa`,
+        boxShadow: `0 0 12px ${T.gold}55`,
         color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
         <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
           background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",

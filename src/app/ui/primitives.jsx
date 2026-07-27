@@ -76,7 +76,7 @@ export function Segmented({ options, value, onChange }) {
         fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer",
         opacity: o.disabled ? 0.45 : 1, position: "relative", overflow: "hidden",
         background: on ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : "transparent",
-        boxShadow: on ? `0 0 12px ${T.gold}55, inset 0 1px 0 #fff6d8aa` : "none",
+        boxShadow: on ? `0 0 12px ${T.gold}55` : "none",
         color: on ? "#17110a" : T.dim }}>
         <span style={{ position: "relative" }}>{o.label}</span>
       </button>;

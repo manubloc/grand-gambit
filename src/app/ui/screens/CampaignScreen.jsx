@@ -608,7 +608,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <button onClick={() => setWorld(true)} title={t("camp.zoomOut")}
           style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
             display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
-            border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+            border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
             backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
           <MapPinIc size={21} />
         </button>
@@ -616,7 +616,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           <button onClick={() => { setViewLeague(viewLeague - 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague - 2] || viewLeague - 1}
             style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
               display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
-              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
               backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
             <BackIc size={19} />
           </button>
@@ -633,7 +633,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           <button onClick={() => { setViewLeague(viewLeague + 1); setPanOff({ x: 0, y: 0 }); }} title={ROMAN[viewLeague] || viewLeague + 1}
             style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
               display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
-              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
               backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
             <span style={{ transform: "scaleX(-1)", display: "grid" }}><BackIc size={19} /></span>
           </button>
@@ -642,7 +642,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           <button onClick={() => dispatch({ type: "REPLACE", profile: advanceLeague(profile) })} title={t("camp.advance", { r: ROMAN[league] || league + 1 })}
             style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
               display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
-              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35), inset 0 0.5px 0 rgba(255,243,196,.25)",
+              border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
               backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
             <span style={{ transform: "scaleX(-1)", display: "grid" }}><BackIc size={19} /></span>
           </button>
@@ -680,7 +680,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
                   background: "rgba(8, 11, 20, .55)", border: "1px solid rgba(233, 210, 150, .42)",
-                  boxShadow: "0 2px 10px rgba(0,0,0,.4), inset 0 0.5px 0 rgba(255,243,196,.25)",
+                  boxShadow: "0 2px 10px rgba(0,0,0,.4)",
                   backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
                 <BackIc size={20} />
               </button>
