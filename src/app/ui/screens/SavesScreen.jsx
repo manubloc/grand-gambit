@@ -26,6 +26,7 @@ const fmtDate = (ts, lang) => new Date(ts).toLocaleDateString(lang === "de" ? "d
 
 export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __testSaves = null }) {
   const [lang, setLang] = useState(initialLang);
+  const en = lang === "en";
   const [saves, setSaves] = useState(__testSaves);
   const [confirmDel, setConfirmDel] = useState(null);
   const [adminPct, setAdminPct] = useState(100);
@@ -44,7 +45,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: T.savesBg, padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
+      <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: "calc(12px + env(safe-area-inset-top))", right: "calc(14px + env(safe-area-inset-right))",
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
@@ -64,6 +65,22 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         <button onClick={onLogout} className="gg-serif" style={{ background: "none", border: "none", color: T.faint,
           textDecoration: "underline", fontSize: 12.5, letterSpacing: ".05em", cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>
+      {/* ALS GAST SPIELT MAN AUF SAND: nichts wird gesichert, und die Halle
+          bleibt zu. Das gehoert VOR die Spielstandsliste, nicht in eine
+          Fussnote - sonst merkt man es erst, wenn der Fortschritt weg ist. */}
+      {account.provider === "guest" && (
+        <div style={{ width: "min(100%, 520px)", margin: "6px 0 14px", padding: "12px 14px", borderRadius: 14,
+          background: "radial-gradient(130% 120% at 50% -12%, rgba(124,58,237,.2) 0%, rgba(22,16,34,.92) 46%, rgba(10,8,16,.96) 100%)",
+          border: "1px solid rgba(167,139,250,.55)", boxShadow: "0 0 16px rgba(124,58,237,.22)" }}>
+          <div className="gg-quill" style={{ fontSize: 16.5, color: "#e6dcff", marginBottom: 5 }}>
+            {en ? "You are playing as a guest" : "Du spielst als Gast"}</div>
+          <div className="gg-serif" style={{ fontSize: 12.5, lineHeight: 1.55, color: "#c3b8d4" }}>
+            {en
+              ? "Nothing is saved: close the app and your progress is gone — every start begins anew. Online duels stay closed as well; they need an account. Create one at any time to keep your court and enter the Hall."
+              : "Es wird nichts gesichert: Schließt du die App, ist dein Fortschritt fort — jeder Start beginnt von vorn. Auch die Online-Duelle bleiben zu, dafür braucht es ein Konto. Du kannst jederzeit eins anlegen, dann bleibt dein Hofstaat erhalten und die Halle steht dir offen."}
+          </div>
+        </div>
+      )}
       <div className="gg-serif" style={{ color: T.goldBright, fontSize: 14.5, letterSpacing: ".08em", margin: "8px 0 12px",
         display: "flex", alignItems: "center", gap: 8 }}>
         <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)" }} />

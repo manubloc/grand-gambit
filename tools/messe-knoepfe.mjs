@@ -119,6 +119,20 @@ const sammle = async (name) => { await page.waitForTimeout(800); const l = await
       seiten.push(["HALLE", [{ tag: "fehler", text: "die Startverbindung prueft nicht beides vor dem Verbinden", bw: 99, ow: 0, shadow: "" }]]);
   }
 
+
+  // v0.39.5: DER GAST FAENGT NEU AN. Der Hinweis im Spielstandsschirm
+  // verspricht, dass nichts gesichert wird - dann muss der Einstieg auch
+  // wirklich aufraeumen, sonst luegt die Oberflaeche.
+  {
+    const a = readFileSync("src/meta/accounts.js", "utf8");
+    const g = a.slice(a.indexOf("export async function loginGuest"), a.indexOf("export async function loginGuest") + 900);
+    if (!/storage\.delete/.test(g))
+      seiten.push(["GAST", [{ tag: "fehler", text: "Gast-Einstieg raeumt alte Spielstaende nicht weg", bw: 99, ow: 0, shadow: "" }]]);
+    const sv = readFileSync("src/app/ui/screens/SavesScreen.jsx", "utf8");
+    if (!/provider === "guest"/.test(sv))
+      seiten.push(["GAST", [{ tag: "fehler", text: "kein Gast-Hinweis im Spielstandsschirm", bw: 99, ow: 0, shadow: "" }]]);
+  }
+
   if (process.argv.includes("--halle")) {
     const hb = await page.evaluate(() => [...document.querySelectorAll("img")].filter(x=>x.src.includes("bg-hall")).map(x=>{const r=x.getBoundingClientRect();
       return {y:Math.round(r.top), h:Math.round(r.height), w:Math.round(r.width), op:getComputedStyle(x).opacity};}));

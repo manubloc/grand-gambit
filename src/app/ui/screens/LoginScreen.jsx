@@ -78,9 +78,14 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
   return (
     <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
       padding: "16px 18px", background: T.loginBg }}>
-      <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: 12, right: 14,
-        background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
-        fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
+      {/* Der Sprachknopf lag UNTER dem Titelbild und schluckte jeden Tipp -
+          gemessen fing ein IMG die Klicks ab. Er sitzt jetzt fest am Schirm
+          und ueber allem, mit lesbarer Schrift auf dunklem Grund. */}
+      <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "fixed", top: "calc(12px + env(safe-area-inset-top))", right: "calc(14px + env(safe-area-inset-right))", zIndex: 30,
+        background: "rgba(10,8,18,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+        border: "1px solid rgba(167,139,250,.5)", color: "#e9e3d4", borderRadius: 999, padding: "6px 13px",
+        fontFamily: "inherit", fontSize: 12, fontWeight: 700, letterSpacing: ".06em", cursor: "pointer",
+        boxShadow: "0 2px 10px rgba(0,0,0,.5)" }}>{lang === "de" ? "EN" : "DE"}</button>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
       {/* the artwork carries its own night sky — no vignette, no glow, nothing

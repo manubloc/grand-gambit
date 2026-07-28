@@ -47,9 +47,13 @@ export function InstallBanner({ en = false }) {
   useEffect(() => {
     if (gone || isStandalone()) return;
     const off = onInstallReady((e) => setPrompt(e));
-    // iOS never fires the event — offer the hint after a moment instead
+    // KEIN BROWSER BLEIBT AUSSEN VOR: iOS feuert das Ereignis nie, Firefox
+    // und mancher Desktop-Browser ebenso wenig. Wer nach kurzer Zeit kein
+    // Angebot bekommen hat, sieht deshalb die Anleitung - so laesst sich die
+    // App ueberall einrichten, nur eben von Hand.
     let tid = null;
     if (isIOS()) tid = setTimeout(() => setIos(true), 1200);
+    else tid = setTimeout(() => setIos((v) => (deferredEvt ? v : true)), 4000);
     const onInstalled = () => dismiss();
     window.addEventListener("appinstalled", onInstalled);
     return () => { off(); window.removeEventListener("appinstalled", onInstalled); if (tid) clearTimeout(tid); };
@@ -83,8 +87,11 @@ export function InstallBanner({ en = false }) {
           {prompt
             ? (en ? "As an app on your home screen — fullscreen, offline, no browser bar."
                   : "Als App auf dem Startbildschirm — Vollbild, offline, ohne Browserleiste.")
-            : (en ? "In Safari's share menu choose \u201cAdd to Home Screen\u201d — it then runs as an app."
-                  : "Im Safari-Teilen-Men\u00fc \u201eZum Home-Bildschirm\u201c w\u00e4hlen \u2014 dann l\u00e4uft es als App.")}
+            : (isIOS()
+                ? (en ? "In Safari's share menu choose \u201cAdd to Home Screen\u201d — it then runs as an app."
+                      : "Im Safari-Teilen-Men\u00fc \u201eZum Home-Bildschirm\u201c w\u00e4hlen \u2014 dann l\u00e4uft es als App.")
+                : (en ? "Open your browser menu and choose \u201cInstall app\u201d or \u201cAdd to Home screen\u201d."
+                      : "Im Browser-Men\u00fc \u201eApp installieren\u201c oder \u201eZum Startbildschirm hinzuf\u00fcgen\u201c w\u00e4hlen."))}
         </div>
       </div>
       {prompt && (

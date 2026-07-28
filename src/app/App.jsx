@@ -318,7 +318,15 @@ export default function App() {
           if (!faced.includes(id)) dispatch({ type: "REPLACE", profile: { ...profile, campaign: { ...profile.campaign, faced: [...faced, id] } } });
           setMatch(buildStageMatch(id, profile));
         }} onOpenTree={() => { setArmyTab({ tab: "tree", n: Date.now() }); setTab("army"); }} />
-        : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account}
+        : view === "online" ? sub(t("online.title"), account?.provider === "guest"
+          ? <Panel><div className="gg-quill" style={{ fontSize: 18, color: T.goldBright, marginBottom: 6 }}>
+              {profile.lang === "en" ? "The Hall needs an account" : "Die Halle braucht ein Konto"}</div>
+            <div className="gg-serif" style={{ fontSize: 13, lineHeight: 1.6, color: T.dim }}>
+              {profile.lang === "en"
+                ? "Online duels, correspondence games and the cloud vault are tied to an account — a guest leaves no trace the Hall could find again. Create an account and everything you have played stays with you."
+                : "Online-Duelle, Fernpartien und die Wolken-Sicherung hängen an einem Konto — ein Gast hinterlässt keine Spur, die die Halle wiederfinden könnte. Lege ein Konto an, dann bleibt dir alles erhalten, was du gespielt hast."}</div>
+          </Panel>
+          : <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account}
             oeffneDaily={oeffneDaily}
             onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)

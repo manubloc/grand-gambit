@@ -83,9 +83,23 @@ export async function login(email, pass) {
   return acc;
 }
 
+/** DER GAST FAENGT IMMER NEU AN. Bisher lag sein Fortschritt dauerhaft im
+ *  Speicher wie bei jedem Konto - der Hinweis "es wird nichts gesichert" war
+ *  also unwahr. Jetzt raeumt jeder Gast-Einstieg auf: alte Gast-Spielstaende
+ *  und ihr Verzeichnis fallen, bevor die neue Sitzung beginnt. Wer sein Reich
+ *  behalten will, legt ein Konto an - genau so steht es im Hinweis. */
 export async function loginGuest() {
   const list = await ensureAccounts();
-  let acc = list.find((a) => a.provider === "guest");
+  const alt = list.find((a) => a.provider === "guest");
+  if (alt) {
+    try {
+      // storage.get liefert { value } - nicht den Text selbst
+      const r = await storage.get(`saves:${alt.id}`, false);
+      for (const s of JSON.parse(r?.value || "[]")) await storage.delete(`save:${alt.id}:${s.id}`, false);
+      await storage.delete(`saves:${alt.id}`, false);
+    } catch { /* nichts zu raeumen */ }
+  }
+  let acc = alt;
   if (!acc) {
     acc = await mkAccount({ email: "gast@" + rid(6) + ".local", pass: null, name: "Gast", provider: "guest" });
     list.push(acc); await writeList(list);
