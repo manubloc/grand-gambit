@@ -98,6 +98,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   useEffect(() => { if (world && !profile?.notices?.worldSeen) dispatch({ type: "SET_NOTICE", key: "worldSeen" }); }, [world]); // the overworld: travel between leagues
   const [worldSel, setWorldSel] = useState(null); // tapped league on the painting
   useEffect(() => { setViewLeague(league); }, [league]);
+  // Beim Wechsel des angezeigten Kapitels setzt der Wanderer den Fuss auf
+  // dessen Boden: seine Station, wenn sie hier liegt, sonst Station 1.
+  useEffect(() => {
+    const ziel = platzIm(viewLeague);
+    setToken((t) => (t.at === ziel || (nodeById(t.at) && nodeInLeague(nodeById(t.at), viewLeague)) ? t : { at: ziel, moving: false }));
+    setSel((v) => (nodeById(v) && nodeInLeague(nodeById(v), viewLeague) ? v : ziel));
+  }, [viewLeague]);
   const viewing = viewLeague !== league;
   const th = themeForLeague(viewLeague);
   const bmDef = th.bitmap ? MAP_BITMAPS[th.bitmap] : null; // painted league worlds
@@ -106,8 +113,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const ny = (n) => (bm && n?.id && bmDef.pos[n.id]) ? bmDef.pos[n.id][1] : GEO.ny(n);
   const HM = bm ? bmDef.h : HMAP;
   const mult = leagueRewardMult(league);
-  const [sel, setSel] = useState(() => currentNodeId(profile));
-  const [token, setToken] = useState(() => ({ at: currentNodeId(profile), moving: false }));
+  const platzIm = (lg) => {
+    const cur = currentNodeId(profile);
+    const curN = nodeById(cur);
+    if (curN && nodeInLeague(curN, lg)) return cur;
+    const erste = CAMPAIGN.find((n) => nodeInLeague(n, lg));
+    return erste ? erste.id : cur;
+  };
+  const [sel, setSel] = useState(() => platzIm(league));
+  const [token, setToken] = useState(() => ({ at: platzIm(league), moving: false }));
   const [panelOpen, setPanelOpen] = useState(true);
   // free panning: a finger (or mouse) drags the window across the world; the
   // camera resumes following the wanderer on his next step
@@ -241,8 +255,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const camYZiel = clamp(ny(camNode) * zf - frameH * 0.5, 0, camMaxY);
   const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camYZiel : frameH * 0.5;
   const panelOben = tokenScreenY > frameH * 0.52;
+  const LEISTE = 12 + 40 + 10;   // Abstand + Knopfhoehe + Luft darunter
   const panelPos = panelOben
-    ? { top: frameY + 14, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - 14), overflowY: "auto" }
+    ? { top: frameY + LEISTE, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - LEISTE), overflowY: "auto" }
     : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
 

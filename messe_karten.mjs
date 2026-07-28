@@ -182,6 +182,34 @@ for (let lg = 1; lg <= 12; lg++) {
       else if (frei.overlap > 0) befunde.push(`Kapitel 1: Panel ueberdeckt den Gambit (${frei.overlap}px2)`);
       else if (frei.abstand < 12) befunde.push(`Kapitel 1: Panel zu dicht am Gambit (${frei.abstand}px)`);
 
+      // DIE KNOEPFE BLEIBEN FREI: Weltkarten- und Kapitelknopf duerfen nie
+      // unter dem Stations-Panel verschwinden (frameY+12, 40px hoch).
+      const knoepfeFrei = await page.evaluate(() => {
+        // NUR die Kopfleiste: ihre Knoepfe tragen den Glasgrund (backdrop-filter)
+        // im Inline-Stil - Stationen sind ebenfalls rund und 44px gross und
+        // wuerden sonst mitgezaehlt, obwohl sie unter dem Panel liegen duerfen.
+        const runde = [...document.querySelectorAll("button")].filter((b) => {
+          const inl = b.getAttribute("style") || "";
+          return inl.includes("backdrop-filter") && inl.includes("border-radius: 50%");
+        });
+        const panels2 = [...document.querySelectorAll("div")].filter((d) => {
+          const st = d.getAttribute("style") || "";
+          return st.includes("rgba(240,233,216") && st.includes("backdrop-filter");
+        });
+        const panels = panels2;
+        if (!runde.length) return { keine: true };
+        if (!panels.length) return { ok: true, n: runde.length };
+        const p = panels[0].getBoundingClientRect();
+        const verdeckt = runde.filter((b) => !panels[0].contains(b)).filter((b) => { const r = b.getBoundingClientRect();
+          return Math.max(0, Math.min(r.bottom, p.bottom) - Math.max(r.top, p.top)) *
+                 Math.max(0, Math.min(r.right, p.right) - Math.max(r.left, p.left)) > 0; });
+        return { ok: verdeckt.length === 0, verdeckt: verdeckt.length, n: runde.length,
+          lagen: verdeckt.map(b => { const r = b.getBoundingClientRect(); return { t: Math.round(r.top), b: Math.round(r.bottom), l: Math.round(r.left), titel: b.getAttribute("title") || "?" }; }),
+          p: [Math.round(p.top), Math.round(p.bottom), Math.round(p.left), Math.round(p.right)] };
+      });
+      if (knoepfeFrei.keine) befunde.push("Kapitel 1: keine runden Kopfknoepfe gefunden");
+      else if (!knoepfeFrei.ok) befunde.push(`Kapitel 1: Panel verdeckt ${knoepfeFrei.verdeckt} Kopfknopf/-knoepfe`);
+
       // NEBEL DER ZUKUNFT: das obere Kartenende muss im Dunkel liegen
       const nebel = await page.evaluate(() => {
         const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.97)")));
