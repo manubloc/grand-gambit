@@ -104,6 +104,21 @@ const sammle = async (name) => { await page.waitForTimeout(800); const l = await
     if (!/du bist dran/.test(a)) seiten.push(["ABKUERZUNG", [{ tag: "fehler", text: "Abkuerzung ohne Zugstatus", bw: 99, ow: 0, shadow: "" }]]);
   }
 
+
+  // v0.39.4: DIE HALLE STEHT OFFEN - ABER NUR MIT EINWILLIGUNG.
+  // Die App verbindet beim Start von selbst; das darf NIE ohne vorliegende
+  // Zustimmung geschehen (so steht es auch in der Datenschutzerklaerung) und
+  // muss abschaltbar bleiben.
+  {
+    const a = readFileSync("src/app/App.jsx", "utf8");
+    if (!/notices\?\.online/.test(a) || !/autoConnect/.test(a))
+      seiten.push(["HALLE", [{ tag: "fehler", text: "Startverbindung ohne Einwilligungs- oder Abschaltpruefung", bw: 99, ow: 0, shadow: "" }]]);
+    // die Bedingung muss BEIDES verlangen, bevor verbunden wird
+    const stelle = a.slice(a.indexOf("stillVerbunden.current = true") - 700, a.indexOf("stillVerbunden.current = true"));
+    if (!/notices\?\.online/.test(stelle) || !/autoConnect === false/.test(stelle))
+      seiten.push(["HALLE", [{ tag: "fehler", text: "die Startverbindung prueft nicht beides vor dem Verbinden", bw: 99, ow: 0, shadow: "" }]]);
+  }
+
   if (process.argv.includes("--halle")) {
     const hb = await page.evaluate(() => [...document.querySelectorAll("img")].filter(x=>x.src.includes("bg-hall")).map(x=>{const r=x.getBoundingClientRect();
       return {y:Math.round(r.top), h:Math.round(r.height), w:Math.round(r.width), op:getComputedStyle(x).opacity};}));

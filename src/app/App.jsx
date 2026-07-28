@@ -17,7 +17,7 @@ import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
 import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
-import { OnlineScreen } from "./ui/screens/OnlineScreen.jsx";
+import { OnlineScreen, buildStats } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
 import { NavIcon, HeartIc, SkillStar, MapIc } from "./ui/icons.jsx";
 import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
@@ -175,6 +175,35 @@ export default function App() {
       meta: { league: p.campaign?.league || 1, gold: p.gold || 0 } });
   }), []);
   useEffect(() => netRef.current.on("gift", (m) => dispatch({ type: "GIFT_GOLD", n: m.gold || 10 })), []);
+
+  // ── DIE HALLE STEHT OFFEN ──────────────────────────────────────────────────
+  // Wer der Verbindung EINMAL zugestimmt hat, muss sich nicht jedesmal neu
+  // verbinden: die App klinkt sich beim Start still ein. Zwei Bedingungen sind
+  // dabei unverhandelbar - eine vorliegende Einwilligung (notices.online, so
+  // steht es auch in der Datenschutzerklaerung) und ein Schalter, mit dem man
+  // die Automatik abstellen kann (online.autoConnect !== false). Schlaegt es
+  // fehl, passiert nichts weiter: das Spiel laeuft ohne Halle genauso.
+  const [hallenSteht, setHallenSteht] = useState(false);
+  useEffect(() => {
+    const ab = netRef.current.on("welcome", () => setHallenSteht(true));
+    const zu = netRef.current.on("close", () => setHallenSteht(false));
+    return () => { ab && ab(); zu && zu(); };
+  }, []);
+  const stillVerbunden = useRef(false);
+  useEffect(() => {
+    if (stillVerbunden.current || !profile) return;
+    const o = profile.online || {};
+    if (!profile.notices?.online || o.autoConnect === false || !o.server || !o.id) return;
+    stillVerbunden.current = true;
+    const t0 = setTimeout(() => {
+      netRef.current.connect(o.server, {
+        id: o.id, secret: o.secret, name: o.name || profile.name || "?",
+        score: retinueScore(profile), privacy: o.privacy || "public",
+        stats: buildStats(profile, 0), lang: profile.lang === "en" ? "en" : "de",
+      }).catch(() => { /* keine Halle, kein Drama - offline spielt es sich weiter */ });
+    }, 1200);   // erst das Spiel zeigen, dann leise verbinden
+    return () => clearTimeout(t0);
+  }, [profile?.notices?.online, profile?.online?.server]);
   useEffect(() => netRef.current.on("daily:game", (m) => {
     if (!m.game) return;
     setMatch(null); setPvp(null); setQuick(null);
@@ -293,7 +322,7 @@ export default function App() {
             oeffneDaily={oeffneDaily}
             onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
-        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} />
+        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} hallenStand={hallenSteht} />
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
         : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
@@ -461,7 +490,7 @@ export const HubArt = ({ children }) => (
 const G = "#c9a45c", GH = "#e8c97e", NV = "#0e1424";
 
 
-export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null }) {
+export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null, hallenStand = false }) {
   const en = profile.lang === "en";
   const hubWide = useMedia("(min-width: 900px)");
   const cur = nodeById(currentNodeId(profile));
@@ -542,7 +571,17 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<SwordsArt size={54} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
-        extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
+        extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
+          : <span title={hallenStand ? (profile.lang === "en" ? "Connected" : "Verbunden")
+              : (profile.lang === "en" ? "Not connected" : "Nicht verbunden")}
+              style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700,
+                letterSpacing: ".05em", color: hallenStand ? "#9fe8b4" : T.faint }}>
+              <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%",
+                background: hallenStand ? "#5ad48a" : "rgba(150,150,170,.5)",
+                boxShadow: hallenStand ? "0 0 8px #5ad48a" : "none" }} />
+              {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
+                : (profile.lang === "en" ? "offline" : "offline")}
+            </span>}
         art={<CrestArt src={crestArt(3)} />} />
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",

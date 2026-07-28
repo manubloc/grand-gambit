@@ -59,7 +59,7 @@ const rollTag = (en) => {
 };
 // The figures a player sees on their own profile, mirrored to the Hall so the
 // admin can survey everyone. Same numbers, nothing private.
-function buildStats(profile, playtimeSec) {
+export function buildStats(profile, playtimeSec) {
   const st = profile.stats || {};
   return {
     games: st.games || 0, wins: st.wins || 0, losses: st.losses || 0, draws: st.draws || 0,
@@ -401,6 +401,14 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
               <span style={{ fontSize: 12.5, color: T.dim }}>{t("online.privacy")}:</span>
               <Segmented value={o.privacy || "public"} onChange={setPrivacy}
                 options={[{ id: "public", label: t("online.public") }, { id: "friends", label: t("online.friendsOnly") }]} />
+            </Line>
+            {/* KEIN ZWANG: die Halle steht beim Start von selbst offen - wer
+                das nicht will, stellt es hier ab und verbindet wieder von Hand. */}
+            <Line>
+              <span style={{ fontSize: 12.5, color: T.dim }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
+              <Segmented value={o.autoConnect === false ? "off" : "on"}
+                onChange={(v) => dispatch({ type: "SET_ONLINE", online: { ...o, autoConnect: v !== "off" } })}
+                options={[{ id: "on", label: en ? "automatic" : "automatisch" }, { id: "off", label: en ? "manual" : "von Hand" }]} />
             </Line>
             {!searching ? (<>
               <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
