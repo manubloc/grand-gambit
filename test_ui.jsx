@@ -63,19 +63,44 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 {
   const w = html(<StatTriad piece={piece({ color: "w" })} focus={false} />);
   const b = html(<StatTriad piece={piece({ color: "b" })} focus={false} />);
-  ok("your piece carries two orb images", imgs(w) === 2);
-  ok("the enemy piece carries two orb images", imgs(b) === 2);
+  const kugeln = (h) => (h.match(/<svg/g) || []).length;
+  ok("your piece carries two sealed spheres", kugeln(w) >= 2 && w.includes("#e3c07a"));
+  ok("the enemy piece carries two sealed spheres", kugeln(b) >= 2 && b.includes("#e3c07a"));
   ok("both sides wear the SAME pair (attack blue, life red)", imgs(w) === imgs(b));
   ok("the values are actually printed", w.includes(">4<") && w.includes(">7<"));
+}
+
+
+// ── DAS KANTENGLÜHEN ────────────────────────────────────────────────────────
+// "starke leuchtende kante um die kontur der figur und langsam ins lilane" -
+// gestapelte Schatten mit 0 Versatz und WACHSENDEM Radius; die eigenen leiser
+// als die Gegner, und beim Auswaehlen glimmt die Figur auf.
+{
+  const radien = (h) => [...h.matchAll(/drop-shadow\(0 0 (\d+)px/g)].map((m) => +m[1]);
+  const eigen = html(<PieceGlyph piece={piece({ color: "w" })} />);
+  const feind = html(<PieceGlyph piece={piece({ color: "b" })} />);
+  const gewaehlt = html(<PieceGlyph piece={{ ...piece({ color: "w" }), selected: true }} />);
+  const r = radien(eigen);
+  ok("the glow hugs the contour: radii grow outward", r.length >= 3 && r[0] < r[1] && r[1] < r[2]);
+  const staerke = (h, farbe) => [...h.matchAll(new RegExp(farbe.replace(/,/g, ",\\s*") + ",\\s*([\\d.]+)\\)", "g"))].map((m) => +m[1]);
+  const meine = staerke(eigen, "240,214,138"), seine = staerke(feind, "150,105,255");
+  const meineGew = staerke(gewaehlt, "240,214,138");
+  ok("your pieces glow softer than the enemy's", Math.max(...meine) < Math.max(...seine));
+  ok("a chosen piece flares up", Math.max(...meineGew) > Math.max(...meine));
+  ok("the enemy wears the rift, you wear gold", feind.includes("150,105,255") && eigen.includes("240,214,138"));
 }
 
 // ── 3. ONE SIZE OF NUMERAL ──────────────────────────────────────────────────
 // "die zahlen überall gleiche größe egal ob ein oder zweistellig"
 {
-  const one = fontSizes(html(<StatTriad piece={piece({ atk: 4, hp: 7 })} />));
-  const two = fontSizes(html(<StatTriad piece={piece({ atk: 12, hp: 34 })} />));
-  ok("single and double digits share one font size on the board", one.join() === two.join());
+  const svgFsAll = (h) => (h.match(/font-size="([\d.]+)"/g) || []).map((x) => parseFloat(x.match(/[\d.]+/)[0]));
+  const one = svgFsAll(html(<StatTriad piece={piece({ atk: 4, hp: 7 })} />));
+  const two = svgFsAll(html(<StatTriad piece={piece({ atk: 12, hp: 34 })} />));
   ok("both orbs of a piece share one font size", new Set(one).size === 1);
+  ok("double digits shrink a step, but both orbs stay equal", new Set(two).size === 1 && two[0] < one[0]);
+  // die Zahl sitzt auf dem BRETT auf derselben Mittellinie wie im Hofstaat
+  const mitteBrett = (h) => (h.match(/dominant-baseline="central"/g) || []).length;
+  ok("board numerals sit on the same centre line as the court's", mitteBrett(html(<StatTriad piece={piece({ atk: 4, hp: 7 })} />)) >= 2);
 }
 
 // ── 4. THE SPELL STAR IS AN HONEST PROMISE ──────────────────────────────────

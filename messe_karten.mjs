@@ -134,6 +134,23 @@ for (let lg = 1; lg <= 12; lg++) {
   await oeffneKampagne();
   await messeKarte(lg, `Kapitel ${lg}`);
 
+  // DER WANDERER STEHT IN JEDEM KAPITEL: nie im Nirgendwo. Wechselt man das
+  // Kapitel, muss er auf seiner Station stehen - oder, wenn die hier nicht
+  // liegt, auf Station 1.
+  {
+    const w = await page.evaluate(() => {
+      const tok = document.querySelector('[title="Gambit"]');
+      if (!tok) return { fehlt: true };
+      const r = tok.getBoundingClientRect();
+      return { fehlt: false, b: Math.round(r.width), h: Math.round(r.height),
+        x: Math.round(r.left), y: Math.round(r.top),
+        drin: r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight };
+    });
+    if (w.fehlt) befunde.push(`Kapitel ${lg}: der Wanderer fehlt ganz`);
+    else if (w.b < 10 || w.h < 10) befunde.push(`Kapitel ${lg}: der Wanderer ist unsichtbar (${w.b}x${w.h})`);
+    else if (!w.drin) befunde.push(`Kapitel ${lg}: der Wanderer steht ausserhalb des Schirms (${w.x}/${w.y})`);
+  }
+
   // Der Wanderer: traegt er die Livree (carved-Gambit), und lebt die Animation?
   if (lg === 1 || lg === 12) {
     const wf = await page.evaluate(() => {
@@ -210,6 +227,45 @@ for (let lg = 1; lg <= 12; lg++) {
       if (knoepfeFrei.keine) befunde.push("Kapitel 1: keine runden Kopfknoepfe gefunden");
       else if (!knoepfeFrei.ok) befunde.push(`Kapitel 1: Panel verdeckt ${knoepfeFrei.verdeckt} Kopfknopf/-knoepfe`);
 
+      // DIE KNOPFLEISTE BLEIBT FREI: das Panel darf Atlas und Kapitelwechsel
+      // nie verdecken. Zuerst die Weltkarte schliessen, falls sie offen liegt -
+      // sonst misst man ihr Overlay statt der Kapitelkarte.
+      await page.evaluate(() => {
+        if (document.querySelector("[data-world-frame]")) {
+          const zu = [...document.querySelectorAll("button")].find((b) => /Zum Kapitel|To the chapter/i.test(b.title || ""));
+          zu && zu.click();
+        }
+      });
+      await page.waitForTimeout(700);
+      const leisteFrei = await page.evaluate(() => {
+        // NUR auf der Kapitelkarte pruefen (dort steht der Wanderer); die
+        // Weltkarte hat ihre eigene Leiste und kein Stations-Panel.
+        // Die Weltkarte liegt als Overlay ueber der Kapitelkarte - dort gilt
+        // die Pruefung nicht (eigene Leiste, kein Stations-Panel).
+        if (!document.querySelector('[title="Gambit"]') || document.querySelector('[data-world-frame]')) return { n: 0, p: 0, ueber: 0, welche: [], pTop: 0, pBottom: 0, weltkarte: !!document.querySelector('[data-world-frame]') };
+        const knoepfe = [...document.querySelectorAll("button")].filter((b) => {
+          const r = b.getBoundingClientRect();
+          return r.width > 30 && r.width < 52 && r.height > 30 && r.height < 52 && r.top < 260;
+        });
+        const panels = [...document.querySelectorAll("div")].filter((d) => {
+          const st = d.getAttribute("style") || "";
+          return st.includes("backdrop-filter") && d.offsetWidth > 250 && d.offsetWidth < 460 && (d.textContent || "").length > 30;
+        });
+        if (!knoepfe.length || !panels.length) return { n: knoepfe.length, p: panels.length, ueber: 0 };
+        const p = panels[0].getBoundingClientRect();
+        let ueber = 0;
+        for (const b of knoepfe) {
+          const r = b.getBoundingClientRect();
+          const ov = Math.max(0, Math.min(r.bottom, p.bottom) - Math.max(r.top, p.top)) *
+                     Math.max(0, Math.min(r.right, p.right) - Math.max(r.left, p.left));
+          if (ov > 0) ueber++;
+        }
+        return { n: knoepfe.length, p: panels.length, ueber,
+          welche: knoepfe.map((b) => { const r = b.getBoundingClientRect(); return (b.title || b.textContent || '?').slice(0, 14) + '@' + Math.round(r.top); }),
+          pTop: Math.round(p.top), pBottom: Math.round(p.bottom) };
+      });
+      if (leisteFrei.ueber > 0) befunde.push(`Kapitel 1: das Panel verdeckt ${leisteFrei.ueber} Knopf/Knoepfe der Kartenleiste`);
+
       // NEBEL DER ZUKUNFT: das obere Kartenende muss im Dunkel liegen
       const nebel = await page.evaluate(() => {
         const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.97)")));
@@ -226,6 +282,30 @@ for (let lg = 1; lg <= 12; lg++) {
     if (zk) { await page.waitForTimeout(1200); await messeKarte(lg - 1, `Rueckblick auf ${lg - 1} (aus ${lg})`); }
     else befunde.push(`Kapitel ${lg}: Rueckblick-Pfeil (title=${roman}) nicht gefunden`);
   }
+}
+
+// GEGENPROBE ZUM SICHERHEITSNETZ: steht der Wanderer auf einer Station eines
+// FREMDEN Kapitels, muss er trotzdem sichtbar sein - genau der Fall
+// "Gambit ist nirgends" beim Kapitelwechsel.
+{
+  await page.evaluate(({ acc, slot }) => {
+    const key = `gambit:u::save:${acc}:${slot}`;
+    const p = JSON.parse(localStorage.getItem(key) || "{}");
+    p.campaign = { ...(p.campaign || {}), league: 3, cleared: [], unlocked: [], tolls: [], dupes: {} };
+    localStorage.setItem(key, JSON.stringify(p));
+  }, keys);
+  await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1400);
+  const w2 = page.getByText("Weiterspielen");
+  if (await w2.count()) { await w2.first().click(); await page.waitForTimeout(1000); }
+  await oeffneKampagne();
+  const gz = await page.evaluate(() => {
+    const t = document.querySelector('[title="Gambit"]');
+    if (!t) return { fehlt: true };
+    const r = t.getBoundingClientRect();
+    return { fehlt: false, ok: r.width > 10 && r.height > 10 && r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight };
+  });
+  if (gz.fehlt || !gz.ok) befunde.push("Sicherheitsnetz: der Wanderer fehlt nach einem Kapitelwechsel");
 }
 
 await browser.close(); srv.close();

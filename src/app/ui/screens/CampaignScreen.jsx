@@ -254,8 +254,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const tokenNode = nodeById(token.at);
   const camYZiel = clamp(ny(camNode) * zf - frameH * 0.5, 0, camMaxY);
   const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camYZiel : frameH * 0.5;
-  const panelOben = tokenScreenY > frameH * 0.52;
+  // Oben NUR, wenn dort nach Abzug der Knopfleiste wirklich Platz bleibt -
+  // sonst schob sich das Panel unter Atlas- und Kapitelknopf und verdeckte sie.
   const LEISTE = 12 + 40 + 10;   // Abstand + Knopfhoehe + Luft darunter
+  const panelOben = tokenScreenY > frameH * 0.52 && (tokenScreenY - 82 - 24 - LEISTE) >= 190;
   const panelPos = panelOben
     ? { top: frameY + LEISTE, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - LEISTE), overflowY: "auto" }
     : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
@@ -602,7 +604,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           })}
           {/* the traveller — the Grand Gambit walks the trail, larger than life */}
           {!viewing && (() => {
-            const tn = nodeById(token.at);
+            // DER WANDERER IST NIE NIRGENDWO: kennt das Spiel seine Station
+            // nicht, oder gehoert sie zu einem anderen Kapitel, dann stellt er
+            // den Fuss auf Station 1 dieses Kapitels - statt zu verschwinden.
+            let tn = nodeById(token.at);
+            if (!tn || !nodeInLeague(tn, viewLeague)) {
+              tn = CAMPAIGN.find((n) => nodeInLeague(n, viewLeague)) || null;
+            }
             if (!tn) return null;
             return <div onClick={(e) => { e.stopPropagation(); setSel(token.at); setPanelOpen(true); }}
               title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn),

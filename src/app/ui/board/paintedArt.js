@@ -225,4 +225,4 @@ export function paintedFitFor(piece) {
 }
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
-export const ENEMY_FILTER = "saturate(0.52) brightness(0.86) contrast(1.06)"; // Farbe bleibt lesbar, Ton ins Dunkle - das Fremde traegt der Riss-Schein
+export const ENEMY_FILTER = "saturate(0.34) brightness(0.78) contrast(1.1)"; // v0.38.6: eine Stufe entsaettigter - die AUSSAGE traegt das violette Kantenglühen, nicht die Farbe

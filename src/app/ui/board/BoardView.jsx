@@ -442,7 +442,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // champion stands in the QUEEN'S square, the effect read as "only
             // the queen is in focus, everything else is out of focus". The
             // stranger still announces himself with the pulsing ring below.
-            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={(isSel || isSpy) ? { ...piece, selected: true } : piece} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {/* the value orbs live on the SQUARE, not on the piece: one fixed
               em-basis for every figure, so every strip is the same size and
               sits flush with the square's bottom edge — pawn, rook or queen */}

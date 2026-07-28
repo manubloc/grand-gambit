@@ -101,22 +101,17 @@ function StatDuo({ piece, focus, shrink = 1 }) {
   // the star promises an ACT: only castable (live) talents count — a piece
   // with purely passive gifts has nothing left to "use", so no star for it
   const spell = (piece.abilities || []).some((id) => ABILITIES[id]?.live) && Object.keys(piece.used || {}).length === 0;
-  // MEHR KUGEL, MEHR LICHT: Die Perlen sassen bisher stumpf auf dem Brett.
-  // Ein farbiger Schein hinter jeder Kugel hebt sie vom Feld ab, ein zweiter
-  // enger Schein gibt ihr Volumen - Rot fuer Lebenskraft, Blau fuer Kraft.
-  const schein = (art) => art === "life"
-    ? "drop-shadow(0 0 2px rgba(230,57,74,.95)) drop-shadow(0 0 6px rgba(230,57,74,.55)) drop-shadow(0 1px 1.5px rgba(0,0,0,.7))"
-    : "drop-shadow(0 0 2px rgba(74,163,232,.95)) drop-shadow(0 0 6px rgba(74,163,232,.55)) drop-shadow(0 1px 1.5px rgba(0,0,0,.7))";
-  const orb = (img, v, art) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center",
-      backgroundImage: `url(${img})`, backgroundSize: "100% 100%", filter: schein(art) }}>
-    {/* same optical correction as the badges: the sphere sits high in its box */}
-    <span style={{ ...numeralStyle(d * 0.6 + "em"),
-      transform: `translate(${(ORB_TRUE_CENTER.x * d).toFixed(4)}em, ${(ORB_TRUE_CENTER.y * d).toFixed(4)}em)` }}>{v}</span>
+  // EINE KUGEL FUER ALLE (v0.38.6): dieselbe gegossene Siegelkugel wie im
+  // Hofstaat - Goldrand, Glanzlicht, Zahl geometrisch mittig. Vorher trug das
+  // Brett noch die alte Bildkugel mit optischer Versatz-Korrektur, weshalb die
+  // Zahl je nach Wert wanderte.
+  const orb = (kind, v) => <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center" }}>
+    <StatOrbBadge kind={kind} v={v} size={`${d}em`} num={0.58} />
   </span>;
   return <span style={{ position: "absolute", bottom: "-0.09em", left: "50%", transform: "translateX(-50%)", zIndex: 3,
     display: "inline-flex", gap: gap + "em", pointerEvents: "none" }}>
-    {orb(ORB.power, piece.atk, "power")}
-    {orb(ORB.life, piece.hp, "life")}
+    {orb("power", piece.atk)}
+    {orb("life", piece.hp)}
     {spell && <span style={{ position: "absolute", left: "50%", top: 0, transform: "translate(-50%, -58%)" }}>
       <SpellStar size={d * 0.72 + "em"} />
     </span>}
@@ -143,7 +138,7 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   const [c0, c1, c2] = kind === "life"
     ? ["#e0616f", "#a81a2a", "#3d0810"]
     : ["#6aa8d8", "#1f5e9e", "#08203c"];
-  const rid = "sob-" + kind + "-" + size;
+  const rid = "sob-" + kind + "-" + String(size).replace(/[^a-z0-9]/gi, "");
   const schein = kind === "life"
     ? "drop-shadow(0 0 3px rgba(230,57,74,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
     : "drop-shadow(0 0 3px rgba(74,163,232,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))";
@@ -242,9 +237,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const HERO_SHEEN = white
     ? "drop-shadow(0 0 5px rgba(240,214,138,.45)) drop-shadow(0 0 10px rgba(240,214,138,.22))"
     : "drop-shadow(0 0 5px rgba(196,181,253,.42)) drop-shadow(0 0 10px rgba(139,92,246,.24))";
+  // Der Saum folgt der Silhouette: erste Stufe schmal und hell (die Kante),
+  // die weiteren breiter und schwaecher (das Abklingen ins Violett). Die
+  // EIGENEN glimmen nur leise golden, die Gegner tragen den Riss - und beim
+  // Auswaehlen glimmt die Figur deutlich auf.
+  const kante = (r, g2, b2, staerke = 1) =>
+    `drop-shadow(0 0 1px rgba(${r},${g2},${b2},${(0.95 * staerke).toFixed(2)})) `
+    + `drop-shadow(0 0 3px rgba(${r},${g2},${b2},${(0.55 * staerke).toFixed(2)})) `
+    + `drop-shadow(0 0 8px rgba(${r},${g2},${b2},${(0.28 * staerke).toFixed(2)}))`;
+  const gewaehlt = !!piece.selected;
   const SIDE_GLOW = white
-    ? "drop-shadow(0 0 4px rgba(240,214,138,.22)) drop-shadow(0 0 10px rgba(240,206,122,.12))"
-    : "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 12px rgba(124,58,237,.24))";
+    ? kante(240, 214, 138, gewaehlt ? 0.9 : 0.34)      // eigene: leise, beim Zug hell
+    : kante(150, 105, 255, gewaehlt ? 1.0 : 0.62);     // Gegner: der Riss
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
     + " " + SIDE_GLOW
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
