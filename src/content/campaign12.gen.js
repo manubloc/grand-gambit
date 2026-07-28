@@ -950,7 +950,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Bannerhöhe: here waits the master of chapter I.",
   "final": true,
   "boss": {
-   "pure": "b25"
+   "pure": "b12"
   },
   "tier": 4
  },
@@ -1836,7 +1836,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Kanzel im Weizen: here waits the master of chapter II.",
   "final": true,
   "boss": {
-   "pure": "b12"
+   "pure": "b10"
   },
   "tier": 4
  },
@@ -2735,7 +2735,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Der Rostige Riegel: here waits the master of chapter III.",
   "final": true,
   "boss": {
-   "pure": "b10"
+   "pure": "b02"
   },
   "tier": 4
  },
@@ -3391,7 +3391,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Bergahornhof: here waits the master of chapter IV.",
   "final": true,
   "boss": {
-   "pure": "b02"
+   "pure": "b19"
   },
   "tier": 4
  },
@@ -4668,7 +4668,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Lawinenhang: here waits the master of chapter V.",
   "final": true,
   "boss": {
-   "pure": "b19"
+   "pure": "b20"
   },
   "tier": 4
  },
@@ -5721,7 +5721,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Grauer Atem: here waits the master of chapter VI.",
   "final": true,
   "boss": {
-   "pure": "b20"
+   "pure": "b16"
   },
   "tier": 3
  },
@@ -6919,7 +6919,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Hufeisenglück: here waits the master of chapter VII.",
   "final": true,
   "boss": {
-   "pure": "b16"
+   "pure": "b17"
   },
   "tier": 3
  },
@@ -8025,7 +8025,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Verlassener Stollen: here waits the master of chapter VIII.",
   "final": true,
   "boss": {
-   "pure": "b17"
+   "pure": "b18"
   },
   "tier": 4
  },
@@ -8764,7 +8764,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Das Ausgeblutete Tor: here waits the master of chapter IX.",
   "final": true,
   "boss": {
-   "pure": "b18"
+   "pure": "b08"
   },
   "tier": 4
  },
@@ -9829,7 +9829,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Palmschatten: here waits the master of chapter X.",
   "final": true,
   "boss": {
-   "pure": "b08"
+   "pure": "b14"
   },
   "tier": 3
  },
@@ -9854,7 +9854,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Königsklippe: here waits the master of chapter XI.",
   "final": true,
   "boss": {
-   "pure": "b14"
+   "pure": "b23"
   },
   "tier": 4
  },
@@ -11004,7 +11004,7 @@ export const CAMPAIGN12 = [
   "storyEn": "Blitzfeste des Grossmeisters: here waits the master of chapter XII.",
   "final": true,
   "boss": {
-   "pure": "b23"
+   "pure": "b25"
   },
   "tier": 4
  },

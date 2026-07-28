@@ -92,7 +92,7 @@ function loneBoss(boss) {
   })());
   // monster stations rotate their champion by league — the whole bestiary marches
   const nA5 = (id) => CAMPAIGN.find((n) => n.id === id);
-  ok("each chapter ends at its own fixed master", nodeBossSpec(nA5("L01s44"), 1).bossId === "b25"
+  ok("each chapter ends at its own fixed master", nodeBossSpec(nA5("L01s44"), 1).bossId === "b12"  // v0.38.1: Osric ans Ende, Kapitel I endet beim Richter
     && nA5("L05s16").boss.rotation[0] === "b22" && nodeBossSpec(nA5("L05s16"), 5).bossId === "b22"
     && nodeBossSpec(nA5("L05s16"), 17).bossId === "b04");
   ok("every rotated monster resolves to a real boss", ["L01s03","L05s16"].every((id) =>

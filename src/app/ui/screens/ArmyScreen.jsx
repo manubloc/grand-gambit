@@ -395,7 +395,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div className="gg-quill" style={{ fontSize: 18, letterSpacing: ".03em", color: T.dim }}>{en ? char.nameEn : char.nameDe}</div>
-          {epic && <div style={{ fontSize: 11, color: T.gold, letterSpacing: ".04em", marginTop: 1 }}>{t("army.gambitTag")}</div>}
             {(en ? char.flavorEn : char.flavorDe) && (
               <div className="gg-serif" style={{ fontSize: 11.5, color: "#9a947f", fontStyle: "italic", marginTop: 2, lineHeight: 1.4 }}>
                 „{en ? char.flavorEn : char.flavorDe}“
@@ -473,14 +472,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             <div style={{ fontSize: 11, color: "#9a8f6f", letterSpacing: ".05em", marginTop: 2, display: "flex", alignItems: "center", gap: 6 }}>
               {fam && <span aria-hidden style={{ width: 8, height: 8, transform: "rotate(45deg)", borderRadius: 2, flex: "0 0 auto",
                 background: FAMILIES[fam].color, boxShadow: `0 0 4px ${FAMILIES[fam].color}88` }} />}
-              {epic ? t("army.gambitTag") : fam ? (en ? FAMILIES[fam].en : FAMILIES[fam].de) : (en ? "Free piece" : "Freie Figur")}
+              {epic ? (en ? "The Grand Gambit" : "Der Grand Gambit") : fam ? (en ? FAMILIES[fam].en : FAMILIES[fam].de) : (en ? "Free piece" : "Freie Figur")}
             </div>
           </div>
           {stars > 0 && <Chip color="#f6e9a4" bg="linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" style={{ border: "1px solid #e3c07a", flex: "0 0 auto", boxShadow: "0 0 8px rgba(64,110,220,.3)" }}>{"★".repeat(stars)}</Chip>}
         </div>
         {/* the flavour line, in the serif voice — directly under the name and
             house line, BEFORE the stats, as asked */}
-        {(en ? char.flavorEn : char.flavorDe) && (
+        {!epic && (en ? char.flavorEn : char.flavorDe) && (
           <div className="gg-serif" style={{ marginTop: 7, fontSize: 12, lineHeight: 1.4, color: "#b9b295",
             fontStyle: "italic", letterSpacing: ".015em" }}>
             „{en ? char.flavorEn : char.flavorDe}“
@@ -536,12 +535,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
             cursor: affordable ? "pointer" : "default",
-            background: affordable ? "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)" : "#1a2340",
-            color: affordable ? "#f6e9a4" : "#8d94ad",
-            border: `1px solid ${affordable ? "#e3c07a" : "#3d4666"}`,
-            boxShadow: affordable ? "0 0 14px rgba(64,110,220,.4)" : "none",
+            // das Riss-Gewand: sehr dunkler Grund, leuchtend violette Schrift
+            // und Kontur mit weichem Schimmer
+            background: affordable ? "linear-gradient(172deg, rgba(40,24,72,.97) 0%, rgba(14,9,28,.99) 100%)" : "#151827",
+            color: affordable ? T.riftBright : "#8d94ad",
+            border: `1px solid ${affordable ? T.riftLine : "#3d4666"}`,
+            boxShadow: affordable ? `0 0 12px ${T.riftGlow}, 0 0 26px rgba(124,58,237,.25), inset 0 0 10px rgba(124,58,237,.14)` : "none",
             animation: affordable ? "ggUpPulse 2.2s ease-in-out infinite" : "none",
-            textShadow: affordable ? "0 1px 2px rgba(0,0,0,.5)" : "none" }}>
+            textShadow: affordable ? "0 0 8px rgba(196,181,253,.8), 0 1px 2px rgba(0,0,0,.6)" : "none" }}>
           {t("army.upgrade")} · {cost} <SkillStar size={12} /></button>}
       </div>
     )}
@@ -962,8 +963,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
 function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
   const [gearInfo, setGearInfo] = useState(initialGearInfo);   // ein angetipptes Stück zeigt sein Blatt
   return (
-    <div style={{ background: T.panel, border: `1px solid ${T.line}`, borderRadius: T.radius, padding: "12px 14px" }}>
-      <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.dim, textTransform: "uppercase", marginBottom: 8 }}>{t("army.supplies")}</div>
+    <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.14) 0%, rgba(26,20,12,.94) 44%, rgba(10,8,6,.98) 100%)",
+      border: "1px solid rgba(227,192,122,.5)", borderRadius: T.radius, padding: "12px 14px",
+      boxShadow: "0 0 16px rgba(240,206,122,.12), inset 0 1px 0 rgba(255,240,200,.08)" }}>
+      <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.goldBright, textTransform: "uppercase", marginBottom: 8,
+        textShadow: "0 0 8px rgba(240,206,122,.35)" }}>{t("army.supplies")}</div>
       <div style={{ display: "grid", gap: 8 }}>
         {(() => {
           // Star shards: the treasury's rarest ware — skill points for gold,
@@ -1053,8 +1057,9 @@ function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
           background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center", padding: 16 }}>
           <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
             maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
-            background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: "1px solid rgba(233,210,150,.42)",
-            boxShadow: "0 18px 50px rgba(0,0,0,.6)" }}>
+            background: "radial-gradient(130% 120% at 50% -12%, rgba(240,206,122,.16) 0%, rgba(24,19,11,.97) 44%, rgba(10,8,5,.99) 100%)",
+            border: "1px solid rgba(227,192,122,.55)",
+            boxShadow: "0 18px 50px rgba(0,0,0,.6), 0 0 22px rgba(240,206,122,.16)" }}>
             <div style={{ display: "grid", placeItems: "center", marginBottom: 10 }}>
               {shard ? <img src={itemArt("sternensplitter")} alt="" aria-hidden draggable={false} style={{ width: 124, height: 124, objectFit: "contain", display: "block", filter: "drop-shadow(0 0 12px rgba(246,222,150,.5)) drop-shadow(0 2px 5px rgba(0,0,0,.5))" }} /> : <ItemIcon id={it.id} size={116} />}
             </div>
@@ -1386,7 +1391,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                 der Hof - heute tragen fuenf der 25 welche; der Rest folgt,
                 wenn die Bestien ihr volles Regelwerk bekommen. */}
             {(b.abilities || []).length > 0 && <div style={{ marginTop: 13 }}>
-              <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 5 }}>{en ? "GIFTS" : "GABEN"}</div>
+              <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 5 }}>{en ? "ABILITIES" : "FÄHIGKEITEN"}</div>
               {(b.abilities || []).map((aid) => ABILITIES[aid] ? (
                 <div key={aid} style={{ display: "flex", alignItems: "center", gap: 9, padding: "6px 8px", marginBottom: 5,
                   borderRadius: 10, border: "1px solid rgba(124,58,237,.4)", background: "rgba(20,12,36,.55)" }}>

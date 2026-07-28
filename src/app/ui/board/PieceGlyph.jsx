@@ -131,17 +131,35 @@ export function JewelIc({ kind, size = 13 }) {
 
 // px-based jewel badge for sheets & the court roster — the separately cut orbs.
 export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
-  // multi-glyph values ("+1", "12") get a touch more room so they stay inside
-  // the cavity without shrinking below legibility
+  // NEU GEGOSSEN (v0.38.1): weg von der geschnitzten Grafik mit versenkter
+  // Zahl - hin zum SIEGEL-STIL der Schatzkammer: satte Kugel im Farbverlauf,
+  // ein feiner GOLDRAND wie an jedem Wappen des Hauses, Glanzlicht oben, und
+  // die Zahl WEISS und fett mit dunklem Kern - endlich klar lesbar.
   const chars = String(v ?? "").length;
-  const scale = chars >= 3 ? 0.78 : chars === 2 ? 0.88 : 1;
+  const fs = size * num * (chars >= 3 ? 0.8 : chars === 2 ? 0.9 : 1);
+  const [c0, c1, c2] = kind === "life"
+    ? ["#ff8592", "#d92638", "#5e0f1a"]
+    : ["#8ecdf8", "#2f7fd1", "#0e2f55"];
+  const rid = "sob-" + kind + "-" + size;
   const schein = kind === "life"
-    ? "drop-shadow(0 0 2.5px rgba(230,57,74,.9)) drop-shadow(0 0 7px rgba(230,57,74,.45)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
-    : "drop-shadow(0 0 2.5px rgba(74,163,232,.9)) drop-shadow(0 0 7px rgba(74,163,232,.45)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))";
-  return <span style={{ width: size, height: size, display: "grid", placeItems: "center", flex: "0 0 auto",
-    backgroundImage: `url(${ORB[kind]})`, backgroundSize: "100% 100%", filter: schein }}>
-    <span style={{ ...numeralStyle(size * num * scale), textShadow: "0 1px 0 rgba(255,245,216,.22)",
-      transform: `translate(${(ORB_TRUE_CENTER.x * size).toFixed(2)}px, ${(ORB_TRUE_CENTER.y * size).toFixed(2)}px)` }}>{v}</span>
+    ? "drop-shadow(0 0 3px rgba(230,57,74,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
+    : "drop-shadow(0 0 3px rgba(74,163,232,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))";
+  return <span style={{ position: "relative", width: size, height: size, display: "grid", placeItems: "center",
+    flex: "0 0 auto", filter: schein }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ position: "absolute", inset: 0 }}>
+      <defs>
+        <radialGradient id={rid} cx="38%" cy="30%" r="80%">
+          <stop offset="0%" stopColor={c0} /><stop offset="52%" stopColor={c1} /><stop offset="100%" stopColor={c2} />
+        </radialGradient>
+      </defs>
+      <circle cx="12" cy="12" r="11" fill={`url(#${rid})`} />
+      <circle cx="12" cy="12" r="11" fill="none" stroke="#e3c07a" strokeWidth="1.1" opacity=".95" />
+      <circle cx="12" cy="12" r="9.9" fill="none" stroke="#6f5526" strokeWidth=".7" opacity=".55" />
+      <ellipse cx="9.2" cy="7.4" rx="4.6" ry="3" fill="rgba(255,255,255,.34)" />
+    </svg>
+    <span style={{ position: "relative", fontFamily: "Georgia, serif", fontWeight: 800, fontSize: fs,
+      color: "#ffffff", lineHeight: 1, textShadow: "0 1px 2px rgba(0,0,0,.85), 0 0 3px rgba(0,0,0,.6)",
+      fontVariantNumeric: "tabular-nums" }}>{v}</span>
   </span>;
 }
 

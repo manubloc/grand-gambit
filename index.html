@@ -91,11 +91,11 @@
          Grund und 8px Rand am body - beim Laden blitzt das als heller Rahmen
          auf. Deshalb hier, vor allem anderen, Schwarz ohne Rand. */
       html, body { margin:0; padding:0; background:#000; }
-      @keyframes ggBootAtem { 0%,100% { transform:scale(1); filter:drop-shadow(0 0 18px rgba(124,58,237,.45)); }
-        50% { transform:scale(1.035); filter:drop-shadow(0 0 34px rgba(139,92,246,.8)); } }
-      @keyframes ggBootKreis { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-      @keyframes ggBootTangente { 0% { transform:translate(0,0) scale(.5); opacity:0; }
-        12% { opacity:1; } 100% { transform:translate(var(--tx),var(--ty)) scale(1); opacity:0; } }
+      @keyframes ggBootAtem { 0%,100% { transform:scale(1) translateZ(0); }
+        50% { transform:scale(1.035) translateZ(0); } }
+      @keyframes ggBootKreis { from { transform:rotate(0deg) translateZ(0); } to { transform:rotate(360deg) translateZ(0); } }
+      @keyframes ggBootTangente { 0% { transform:translate3d(0,0,0) scale(.5); opacity:0; }
+        12% { opacity:1; } 100% { transform:translate3d(var(--tx),var(--ty),0) scale(1); opacity:0; } }
       @keyframes ggBootFunke { 0% { transform:translate(0,0) scale(.4); opacity:0; }
         18% { opacity:1; } 100% { transform:translate(var(--dx),var(--dy)) scale(1); opacity:0; } }
       @keyframes ggBootWort { from { opacity:0; letter-spacing:.5em; } to { opacity:1; letter-spacing:.26em; } }
@@ -117,7 +117,7 @@
           <!-- DER SCHWEIF DES RISSES: ein violetter Komet umrundet das Zeichen
                in 1,5 Sekunden und verliert TANGENTIAL Funken - jeder Funke
                startet auf der Kreisbahn und fliegt in Laufrichtung davon. -->
-          <div style="position:absolute;inset:-7%;animation:ggBootKreis 1.5s linear infinite">
+          <div style="position:absolute;inset:-7%;animation:ggBootKreis 1.5s linear infinite;will-change:transform;transform:translateZ(0)">
             <div style="position:absolute;left:50%;top:0;width:10px;height:10px;margin-left:-5px;border-radius:50%;
               background:radial-gradient(circle,#e6dcff 0%,#a78bfa 45%,transparent 75%);
               box-shadow:0 0 10px 3px rgba(139,92,246,.9),0 0 24px 8px rgba(124,58,237,.45)"></div>
@@ -130,7 +130,7 @@
             <div class="gg-funke" style="left:50%;top:2px;--tx:40px;--ty:-32px;animation:ggBootTangente 1.4s ease-out 1.05s infinite"></div>
           </div>
           <img src="./icons/boot-riss.png" alt="Grand Gambit" width="208" height="208"
-            style="position:relative;width:100%;height:100%;display:block;animation:ggBootAtem 3.2s ease-in-out infinite" />
+            style="position:relative;width:100%;height:100%;display:block;animation:ggBootAtem 3.2s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(139,92,246,.6));will-change:transform" />
         </div>
         <div style="font-size:clamp(17px,4.6vw,23px);letter-spacing:.26em;animation:ggBootWort 1.1s ease-out both">GRAND GAMBIT</div>
         <div style="font-size:13px;color:#8b7fb0;margin-top:11px;max-width:420px;line-height:1.5">Wird geladen …</div>

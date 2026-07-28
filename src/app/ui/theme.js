@@ -211,8 +211,8 @@ export const GLOBAL_CSS = `
     100% { transform: scale(1) translateY(0) translateX(0); } }
   @keyframes ggAbilityGlow { 0%, 100% { box-shadow: 0 0 10px rgba(240,206,122,.22); }
     50% { box-shadow: 0 0 22px rgba(240,206,122,.5); } }
-  @keyframes ggUpPulse { 0%, 100% { box-shadow: 0 0 10px rgba(64,110,220,.35), 0 0 0 0 rgba(227,192,122,.0); }
-    50% { box-shadow: 0 0 18px rgba(80,130,240,.55), 0 0 0 3px rgba(227,192,122,.18); } }
+  @keyframes ggUpPulse { 0%, 100% { box-shadow: 0 0 10px rgba(124,58,237,.4), 0 0 22px rgba(124,58,237,.18), inset 0 0 10px rgba(124,58,237,.12); }
+    50% { box-shadow: 0 0 18px rgba(139,92,246,.65), 0 0 34px rgba(124,58,237,.3), inset 0 0 14px rgba(124,58,237,.2); } }
   @keyframes ggNewPulse { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(240,206,122,.25), 0 0 10px rgba(240,206,122,.15); }
     50% { box-shadow: inset 0 0 0 4.5px rgba(246,233,164,.95), 0 0 30px rgba(240,206,122,.8); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }

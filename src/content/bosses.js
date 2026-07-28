@@ -72,7 +72,12 @@ export const bossById = (id) => BOSSES.find((b) => b.id === id) || null;
  *  wins you its boss: he may then march for YOU, in place of the queen (one
  *  boss at most). Every league boss carries an AURA that bends the whole
  *  match, not just his square. */
-export const LEAGUE_BOSSES = ["b25", "b12", "b10", "b02", "b19", "b20", "b16", "b17", "b18", "b08", "b14", "b23"];
+// v0.38.1: OSRIC GEHOERT ANS ENDE. Die Liste begann mit b25 - der
+// Grossmeister stand als Finale von KAPITEL I, waehrend Kapitel XII mit
+// Asra endete, die dort zusaetzlich als Station stand (Doppelung). Jetzt:
+// aufsteigend, die Erzfeindin als vorletztes Finale, Osric EINMAL - im
+// letzten Kapitel, in der letzten Festung.
+export const LEAGUE_BOSSES = ["b12", "b10", "b02", "b19", "b20", "b16", "b17", "b18", "b08", "b14", "b23", "b25"];
 export const leagueBossId = (league) => LEAGUE_BOSSES[(((league || 1) - 1) % 12)];
 export const bossName = (b, en) => (en ? b.nameEn : b.nameDe);
 

@@ -137,7 +137,7 @@ await clearSession();
   const everything = withProgressPct(defaultProfile(), 100, 10);
   ok("league X at 100% recruits every character", Object.values(CHARACTERS).every((c) => isUnlocked(c, everything)));
   ok("league X at 100% has met every monster", BOSSES.every((b) => (everything.codex?.met || []).includes("X:" + b.id)));
-  ok("league X at 100% fields every reachable boss", ownedLeagueBosses(everything).length === 24 && everything.stats.leaguesWon === 10);
+  ok("league X at 100% fields every reachable boss", ownedLeagueBosses(everything).length === 23 && everything.stats.leaguesWon === 10);  // v0.38.1: Asra (XI) und Osric (XII) warten hinter Kapitel X
   ok("league X at 100% fills the whole chest", Object.keys(ITEMS).every((id) => (everything.items || {})[id] >= 1));
   const mid = withProgressPct(defaultProfile(), 40, 5);
   ok("mid-journey counts earlier leagues as mastered", mid.stats.leaguesWon === 4 && mid.campaign.unlocked.length >= 8 && (mid.campaign.bribedBosses || []).length === 0);
@@ -151,7 +151,7 @@ const fullUn = new Set(fullB.campaign.unlocked), fullMet = new Set(fullB.codex.m
 ok("full build recruits every character", Object.keys(CHARACTERS).every((id) => fullUn.has(id) || COURT_T.includes(id)));
 ok("full build meets every monster in the codex", BOSSES.every((b) => fullMet.has("X:" + b.id)));
 const fullOwned = new Set([...ownedLeagueBosses(fullB), ...(fullB.campaign.bribedBosses || [])]);
-ok("full build fields every monster except the arch-enemy", BOSSES.every((b) => fullOwned.has(b.id) || b.id === "b23"));
+ok("full build fields every monster except the last two masters", BOSSES.every((b) => fullOwned.has(b.id) || b.id === "b23" || b.id === "b25"));  // v0.38.1: Erzfeindin und Grossmeister stehen jenseits von Kapitel X
 ok("full build fills the chest", Object.values(ITEMS).every((it) => (fullB.items[it.id] || 0) > 0));
 ok("full build counts ten league crowns", fullB.stats.leaguesWon === 10);
 

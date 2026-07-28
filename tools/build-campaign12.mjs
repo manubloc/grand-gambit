@@ -35,7 +35,7 @@ const SLOTS = [
 ];
 
 // Liga-Endbosse: I-XI wie gehabt, XII ist der Grossmeister in seiner Blitzfeste.
-const ENDBOSS = ["b25","b12","b10","b02","b19","b20","b16","b17","b18","b08","b14","b23"];
+const ENDBOSS = ["b12","b10","b02","b19","b20","b16","b17","b18","b08","b14","b23","b25"]; // v0.38.1: Osric ans Ende (war faelschlich Kapitel-I-Finale)
 // Zwischen-Monster fuer die Mitte des Hauptastes, je Liga eine kleine Rotation.
 const MITTE = [["b01","b03"],["b02","b11"],["b24","b05"],["b09","b13"],["b22","b04"],
   ["b21","b07"],["b15","b06"],["b01","b09"],["b13","b22"],["b05","b24"],["b07","b21"],["b15","b04"]];

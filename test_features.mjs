@@ -139,14 +139,14 @@ import { mapById as mapOf } from "./src/content/index.js";
   const arena = mapOf("arena");
   const ids = ["hawk","assassin","pathfinder","dragon","guardian","bard","paladin","inquisitor","standard","engineer","chancellor","archbishop","mage","alchemist","sorceress","warlock","strategist","amazon","captain","knight","bishop","rook","queen","king","pawn"];
   const base = ["rook","knight","knight","bishop","queen","king","bishop","knight","knight","rook"];
-  const withBoss = [...base]; withBoss[4] = "boss:b25";
+  const withBoss = [...base]; withBoss[4] = "boss:b12";  // v0.38.1: Kapitel-I-Trophaee ist der Richter (Osric ans Ende)
   const prof1 = { stats: { leaguesWon: 1 } }, prof0 = { stats: {} };
-  ok("league bosses are trophies of finished leagues", ownedLeagueBosses(prof1).join() === "b25" && ownedLeagueBosses(prof0).length === 0);
-  ok("a boss stands in for the queen — if you own him", fLegal(withBoss, ids, arena, ["b25"]) && !fLegal(withBoss, ids, arena, []));
-  const twoBosses = [...withBoss]; twoBosses[0] = "boss:b25";
-  ok("one boss at most on the field", !fLegal(twoBosses, ids, arena, ["b25"]));
+  ok("league bosses are trophies of finished leagues", ownedLeagueBosses(prof1).join() === "b12" && ownedLeagueBosses(prof0).length === 0);
+  ok("a boss stands in for the queen — if you own him", fLegal(withBoss, ids, arena, ["b12"]) && !fLegal(withBoss, ids, arena, []));
+  const twoBosses = [...withBoss]; twoBosses[0] = "boss:b12";
+  ok("one boss at most on the field", !fLegal(twoBosses, ids, arena, ["b12"]));
   const army = bFromForm(() => 1, withBoss);
-  ok("the fielded boss brings his stats and aura", army.back[4].bossId === "b25" && army.back[4].aura.type === "courtHp");
+  ok("the fielded boss brings his stats and aura", army.back[4].bossId === "b12" && army.back[4].aura.type === "noEnemyPotions");
 }
 ok("from chapter IV every station fields its own stage; the finale always does",
   ["L01s02","L01s16","L07s41","L01s22"].every((id) => effectiveMap(nbId(id), 4) === nbId(id).map)
@@ -332,7 +332,7 @@ ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish
 {
   const pb = { stats: { leaguesWon: 1 }, campaign: { bribedBosses: ["b10"] } };
   const owned = ownedLeagueBosses(pb);
-  ok("league victory grants its boss", owned.includes("b25"));
+  ok("league victory grants its boss", owned.includes("b12"));
   ok("a bribed monster fights for you too", owned.includes("b10"));
   ok("no double entries in the ranks", new Set(owned).size === owned.length);
 }

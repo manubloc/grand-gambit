@@ -104,9 +104,10 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   const delta = html(<StatOrbBadge kind="life" v="+2" size={24} />);
   ok("a plain badge prints its number", plain.includes(">5<"));
   ok("a delta badge prints its sign and number", delta.includes("+2"));
-  ok("both badges pull an orb image", imgs(plain) === 1 && imgs(delta) === 1);
-  // the optical correction must be applied — the sphere sits high in its box
-  ok("the numeral is nudged onto the sphere's true centre", plain.includes("translate("));
+  // v0.38.1: Siegel-Stil — die Kugel ist gezeichnet (SVG mit Goldrand), kein
+  // Bild mehr; die Zahl steht per Grid mittig, keine Versatz-Korrektur noetig.
+  ok("both badges are cast as sealed spheres (svg, gold rim)", plain.includes("<svg") && delta.includes("<svg") && plain.includes("#e3c07a"));
+  ok("the numeral rides the sphere, white and bold", plain.includes("#ffffff") || plain.includes("rgb(255, 255, 255)"));
   ok("multi-glyph values shrink a step to stay inside the cavity",
     parseFloat(fontSizes(delta)[0]) < parseFloat(fontSizes(plain)[0]));
 }

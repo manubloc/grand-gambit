@@ -327,14 +327,15 @@ export default function App() {
       }} style={{ position: "relative",
         display: "flex", alignItems: "center", gap: wide ? 12 : 0, flexDirection: wide ? "row" : "column",
         justifyContent: wide ? "flex-start" : "center", width: wide ? "auto" : "100%",
-        background: on ? `linear-gradient(135deg, ${T.lime}26, ${T.lime}10)` : "none",
-        border: on ? `1px solid ${T.lime}55` : "1px solid transparent",
+        background: on ? "linear-gradient(135deg, rgba(139,92,246,.30), rgba(124,58,237,.14))" : "none",
+        border: on ? "1px solid rgba(196,181,253,.55)" : "1px solid transparent",
         borderRadius: 14, cursor: "pointer", fontFamily: "inherit",
-        padding: wide ? "11px 14px" : "9px 4px 8px", color: on ? T.goldBright : T.faint,
+        padding: wide ? "11px 14px" : "9px 4px 8px", color: on ? "#ffffff" : "#cfc8e6",
         transition: "background .18s, color .18s" }}>
-        <NavIcon id={tb.id} color={on ? T.gold : T.faint} size={wide ? 25 : 26} />
-        <span className="gg-serif" style={{ fontSize: wide ? 13 : 9.5, fontWeight: 700, marginTop: wide ? 0 : 3,
-          letterSpacing: ".09em", textTransform: "uppercase" }}>{t(tb.key)}</span>
+        <NavIcon id={tb.id} color={on ? T.goldBright : "#b9b0d8"} size={wide ? 25 : 26} />
+        <span className="gg-serif" style={{ fontSize: wide ? 13 : 10, fontWeight: 800, marginTop: wide ? 0 : 3,
+          letterSpacing: ".09em", textTransform: "uppercase",
+          textShadow: on ? "0 0 8px rgba(196,181,253,.6), 0 1px 2px rgba(0,0,0,.6)" : "0 1px 2px rgba(0,0,0,.55)" }}>{t(tb.key)}</span>
         {badge && <span style={{ position: "absolute", top: wide ? 7 : 4, right: wide ? 8 : "calc(50% - 17px)",
           minWidth: 15, height: 15, padding: "0 3px", borderRadius: 9, background: T.gold, color: "#241a08",
           fontSize: 9.5, fontWeight: 900, display: "grid", placeItems: "center",
@@ -383,7 +384,6 @@ export default function App() {
           backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
           border: "1px solid rgba(167,139,250,.5)", borderRadius: 20, padding: "10px 16px",
           boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.34), 0 0 34px rgba(124,58,237,.16)`,
-          animation: "ggSaum 7s ease-in-out infinite",
           display: "flex", alignItems: "center", gap: 10 }}>
           <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
             filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
