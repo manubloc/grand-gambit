@@ -767,21 +767,47 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               </button>
               <img src={WORLD_MAP.url} alt="" draggable={false} style={{ display: "block", width: "100%",
                 aspectRatio: `${WORLD_MAP.w} / ${WORLD_MAP.h}`, userSelect: "none" }} />
-              {/* mist over what lies ahead: from just above the current league to the crown */}
-              {league < 10 && (() => {
-                const cutY = Math.max(0, WORLD_MAP.anchors[Math.min(10, league + 1)][1] - 4);
-                return <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: `${cutY + 5}%`,
-                  background: "linear-gradient(180deg, rgba(14,12,9,.78) 0%, rgba(14,12,9,.72) 82%, rgba(14,12,9,0) 100%)",
-                  overflow: "hidden" }}>
-                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(14px)", opacity: 0.72,
-                    background: "radial-gradient(52% 38% at 78% 34%, rgba(196,186,168,.34), transparent 70%), radial-gradient(50% 34% at 74% 62%, rgba(176,168,152,.26), transparent 70%)",
+              {/* DAS LICHT DER BEREISTEN WELT: keine Trennlinie mehr, sondern
+                  ein weiter RADIUS um jedes erreichte Kapitel. Die Karte ist
+                  ueberall dunkel, und um jede besuchte Welt oeffnet sich ein
+                  grosser weicher Kreis - das naechste Kapitel liegt im
+                  hellsten Licht, die frueheren daemmern nach. So waechst der
+                  Ausschnitt Kapitel fuer Kapitel, statt eine Kante zu schieben.
+                  Umgesetzt als MASKE ueber einer dunklen Flaeche: wo ein Kreis
+                  liegt, wird das Dunkel weggenommen. */}
+              {(() => {
+                const bis = Math.min(12, league);
+                const kreise = [];
+                for (let lg = 1; lg <= bis; lg++) {
+                  const [ax, ay] = WORLD_MAP.anchors[lg] || [];
+                  if (ax == null) continue;
+                  // das juengste Kapitel leuchtet am weitesten, aeltere etwas enger
+                  const alter = bis - lg;                       // 0 = das neueste
+                  const r = alter === 0 ? 26 : Math.max(15, 23 - alter * 1.6);
+                  const kern = alter === 0 ? 0.62 : 0.55;
+                  kreise.push(`radial-gradient(${r}% ${r * 1.7}% at ${ax}% ${ay}%, #000 0%, #000 ${Math.round(kern * 100)}%, rgba(0,0,0,.45) 78%, transparent 100%)`);
+                }
+                if (!kreise.length) return null;
+                const maske = kreise.join(", ");
+                return <>
+                  {/* die Dunkelheit selbst - mit den Kreisen als Loch */}
+                  <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+                    background: "linear-gradient(180deg, rgba(6,5,12,.93) 0%, rgba(8,6,14,.9) 55%, rgba(6,5,12,.93) 100%)",
+                    WebkitMaskImage: `linear-gradient(#000 0 0), ${maske}`,
+                    maskImage: `linear-gradient(#000 0 0), ${maske}`,
+                    WebkitMaskComposite: "xor", maskComposite: "exclude" }} />
+                  {/* Schwaden am Rand der Sicht, damit die Kreise nicht wie
+                      ausgestanzt wirken */}
+                  <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.5,
+                    filter: "blur(12px)",
+                    background: "radial-gradient(48% 34% at 76% 30%, rgba(190,180,164,.22), transparent 70%), radial-gradient(42% 28% at 34% 70%, rgba(170,162,148,.18), transparent 70%)",
+                    WebkitMaskImage: `linear-gradient(#000 0 0), ${maske}`,
+                    maskImage: `linear-gradient(#000 0 0), ${maske}`,
+                    WebkitMaskComposite: "xor", maskComposite: "exclude",
                     animation: "ggFogR 44s ease-in-out infinite alternate" }} />
-                  <div style={{ position: "absolute", inset: "-12%", filter: "blur(18px)", opacity: 0.55,
-                    background: "radial-gradient(46% 30% at 84% 22%, rgba(206,196,178,.3), transparent 70%), radial-gradient(40% 26% at 30% 76%, rgba(170,162,148,.24), transparent 70%)",
-                    animation: "ggFogR2 58s ease-in-out infinite alternate" }} />
-                </div>;
+                </>;
               })()}
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((lg) => {
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((lg) => {
                 const [ax, ay] = WORLD_MAP.anchors[lg];
                 const reachable = lg <= league;
                 const here = lg === league;

@@ -105,7 +105,15 @@ async function messeKarte(kapNr, etikett) {
     const istSoll = (t) => sollNamen.some((sn) => sn === t || sn.startsWith(t.slice(0, 16)) || t.startsWith(sn.slice(0, 16)));
     const stationen = eintraege.filter((e) => istSoll(e.t));
     const fremde = eintraege.filter((e) => !istSoll(e.t) && !e.t.includes("AKTUELL")).map((e) => e.t);
-    const img = [...document.querySelectorAll("img")].sort((a, b) => (b.naturalWidth || 0) - (a.naturalWidth || 0))[0];
+    // Das Kapitelbild, NICHT die Weltkarte: seit v0.39 ist die Weltkarte quer
+    // (1672 breit) und war damit ploetzlich das "breiteste Bild" - die
+    // Hoehengrenze wurde daraus falsch berechnet und meldete Stationen als
+    // ausserhalb, die sauber sassen. Jetzt wird alles im Weltkarten-Rahmen
+    // ausgeschlossen und nach FLAECHE gewaehlt.
+    const welt = document.querySelector("[data-world-frame]");
+    const img = [...document.querySelectorAll("img")]
+      .filter((x) => !welt || !welt.contains(x))
+      .sort((a, b) => ((b.naturalWidth || 0) * (b.naturalHeight || 0)) - ((a.naturalWidth || 0) * (a.naturalHeight || 0)))[0];
     return { anzahl: stationen.length, pos: stationen.map((e) => [e.x, e.y]), fremde: [...new Set(fremde)], kw: img?.naturalWidth || 0, kh: img?.naturalHeight || 0 };
   }, soll);
   if (m.anzahl !== soll.length) befunde.push(`${etikett}: ${m.anzahl} benannte Stationen, erwartet ${soll.length}`);
@@ -282,6 +290,37 @@ for (let lg = 1; lg <= 12; lg++) {
     if (zk) { await page.waitForTimeout(1200); await messeKarte(lg - 1, `Rueckblick auf ${lg - 1} (aus ${lg})`); }
     else befunde.push(`Kapitel ${lg}: Rueckblick-Pfeil (title=${roman}) nicht gefunden`);
   }
+}
+
+// DAS LICHT DER BEREISTEN WELT (einmal am Ende, damit die Kapitelkamera
+// vorher ungestoert bleibt - das Oeffnen der Weltkarte verschiebt die Sicht).
+{
+  await page.evaluate(() => {
+      const b = [...document.querySelectorAll("button")].find((x) => /Weltkarte|world map/i.test(x.title || ""));
+      b && b.click();
+    });
+    await page.waitForTimeout(900);
+    const w = await page.evaluate(() => {
+      const f = document.querySelector("[data-world-frame]");
+      if (!f) return { kein: true };
+      const maske = [...f.querySelectorAll("div")].find((x) => {
+        const st = x.getAttribute("style") || "";
+        return st.includes("mask-image") && st.includes("radial-gradient");
+      });
+      if (!maske) return { ohneMaske: true };
+      const st = maske.getAttribute("style") || "";
+      const mv = (st.match(/(?:-webkit-)?mask-image:\s*([^;]+);/) || [])[1] || "";
+          return { kreise: (mv.match(/radial-gradient/g) || []).length, roh: (st.match(/radial-gradient/g) || []).length };
+    });
+    if (w.kein) befunde.push("Weltkarte liess sich nicht oeffnen");
+    else if (w.ohneMaske) befunde.push("Weltkarte: das Licht der bereisten Welt fehlt");
+    else if (w.kreise < 1) befunde.push("Weltkarte: kein einziger Lichtradius");
+    // zurueck auf die Kapitelkarte
+    await page.evaluate(() => {
+      const zu = [...document.querySelectorAll("button")].find((b) => /Zum Kapitel|To the chapter/i.test(b.title || ""));
+      zu && zu.click();
+    });
+  await page.waitForTimeout(700);
 }
 
 // GEGENPROBE ZUM SICHERHEITSNETZ: steht der Wanderer auf einer Station eines

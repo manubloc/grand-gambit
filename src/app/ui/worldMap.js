@@ -6,14 +6,24 @@ import worldUrl from "./assets/weltkarte.webp";
 
 export const WORLD_MAP = {
   url: worldUrl,
-  w: 836, h: 1881,
+  w: 1672, h: 941,   // v0.39: die neue Weltkarte liegt quer im Verhaeltnis 16:9
   // league → [x%, y%] along the corridor; L11 sits on the lighthouse isle
+  // Die zwoelf Welten auf der neuen Querkarte - mit dem Ankerwerkzeug
+  // gesetzt, nicht geschaetzt: der Weg steigt von Kronland links unten
+  // ueber das Gebirge zur Endfestung rechts oben.
   anchors: {
-    1: [49, 93], 2: [52, 82], 3: [45.5, 70], 4: [48, 65], 5: [50, 60], 6: [52, 49.5],
-    7: [55.5, 40], 8: [55, 32.5], 9: [48.5, 24.5], 10: [50, 16],
-    // 11 sitzt auf der Leuchtturm-Insel - als Kueste passt sie dort erst recht.
-    // 12 ist ERFUNDEN, bis die neue Weltkarte kommt: draussen im offenen Wasser.
-    11: [74, 5.5], 12: [86, 2.2],
+    1: [14.63, 94.72],
+    2: [18.85, 80.36],
+    3: [24.57, 71.33],
+    4: [27.86, 56.59],
+    5: [30.65, 44.64],
+    6: [36.44, 35.62],
+    7: [45.74, 32.31],
+    8: [55.9, 34.6],
+    9: [66.42, 41.85],
+    10: [75.43, 37.53],
+    11: [80.08, 26.34],
+    12: [85.37, 16.3],
   },
 };
 
