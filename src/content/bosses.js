@@ -25,29 +25,42 @@ const RING2 = (() => { const o = []; for (let f = -2; f <= 2; f++) for (let r = 
 const B = (id, nameDe, nameEn, art, accent, hp, atk, moveSpec, extra = {}) =>
   ({ id, nameDe, nameEn, art, accent, hp, atk, moveSpec, abilities: extra.abilities || [], aura: extra.aura || null, hintDe: extra.hintDe, hintEn: extra.hintEn });
 
+/* ── DIE GABEN DER BESTIEN (v0.38) ────────────────────────────────────────
+ * Jedes Wesen traegt seit v0.38 die Gabe seiner FAMILIE - dieselben Regeln,
+ * die auch der Hof kennt, von der Engine fuer jede Figur ausgespielt:
+ *   golem   -> bulwark   (Stein schluckt den ersten Punkt jedes Schlags)
+ *   beast   -> regen     (wildes Fleisch heilt einen Punkt je Zug)
+ *   serpent -> lifesteal (Gift trinkt die Haelfte des Schadens als Leben)
+ *   wraith  -> teleport  (Schemen blinzeln auf ein nahes leeres Feld)
+ *   tyrant  -> je nach Rolle: Panzer oder Zaehigkeit, meist mit Aura
+ * BALANCE-GEGENGEWICHTE: bulwark vervielfacht die effektiven HP gegen
+ * schwache Angreifer (eff = hp * atk/(atk-1) bei atk>=2) - deshalb sinken
+ * die Grund-HP der neuen Panzertraeger. Alle Werte sind ueber
+ * messe_monster.mjs simuliert (Feldwirkung je Gabe, Grenzwerte je Kapitel).
+ */
 export const BOSSES = [
-  B("b01", "Der Wächter",      "The Warden",      "golem",   "#8fb4ff", 12, 2, { slides: KING, range: 1 }),
-  B("b02", "Springbock",       "Springbok",       "beast",   "#ffb454",  9, 3, { leaps: CAMEL }),
-  B("b03", "Die Brutmutter",   "The Broodmother", "serpent", "#3ad98a",  7, 1, { slides: KING, range: 1, spawn: { max: 4 } }),
-  B("b04", "Der Schleicher",   "The Prowler",     "wraith",  "#a78bfa",  8, 3, { slides: DIAG, range: 2, leaps: ORTHO }),
-  B("b05", "Zebra",            "Zebra",           "beast",   "#ff8a4c",  9, 3, { leaps: ZEBRA }),
-  B("b06", "Das Bollwerk",     "The Bulwark",     "golem",   "#9aa5b7", 18, 2, { slides: DIAG, range: 1 }),
-  B("b07", "Der Geist",        "The Ghost",       "wraith",  "#7dd3fc",  6, 4, { leaps: RING2 }),
-  B("b08", "Kanonier",         "Cannoneer",       "golem",   "#ffd166", 10, 4, { slides: ORTHO, range: 3 }, { aura: { type: "courtHp", n: 2 } }),
-  B("b09", "Skorpion",         "Scorpion",        "serpent", "#f472b6",  9, 4, { leaps: [...sym(2, 2), ...ORTHO] }),
-  B("b10", "Doppelritter",     "Twin Knight",     "beast",   "#3d9bff", 11, 3, { leaps: [...KNIGHT, ...KING] }, { aura: { type: "wardAdj" } }),
-  B("b11", "Die Flüsterin",    "The Whisperer",   "wraith",  "#c4b5fd",  9, 2, { slides: KING, range: 1, spawn: { max: 3 } }),
-  B("b12", "Der Richter",      "The Judge",       "tyrant",  "#ffb454", 12, 3, { slides: KING, range: 2 }, { aura: { type: "noEnemyPotions" } }),
-  B("b13", "Brandstifter",     "Firestarter",     "serpent", "#ff4d5e",  7, 5, { slides: DIAG }),
-  B("b14", "Der Koloss",       "The Colossus",    "golem",   "#94a3b8", 20, 3, { slides: ORTHO, range: 2, leaps: DIAG }, { aura: { type: "grant", id: "bulwark" } }),
-  B("b15", "Sturmkrähe",       "Stormcrow",       "beast",   "#38bdf8",  8, 4, { leaps: [...CAMEL, ...sym(0, 3)] }),
+  B("b01", "Der Wächter",      "The Warden",      "golem",   "#8fb4ff", 9, 2, { slides: KING, range: 1 }, { abilities: ["bulwark"] }),  // 12->9: Panzer-Gegengewicht
+  B("b02", "Springbock",       "Springbok",       "beast",   "#ffb454",  7, 3, { leaps: CAMEL }, { abilities: ["regen"] }),  // 9->7: heilt fortan
+  B("b03", "Die Brutmutter",   "The Broodmother", "serpent", "#3ad98a",  7, 1, { slides: KING, range: 1, spawn: { max: 4 } }, { abilities: ["lifesteal"] }),  // atk 1: trinkt kaum
+  B("b04", "Der Schleicher",   "The Prowler",     "wraith",  "#a78bfa",  8, 3, { slides: DIAG, range: 2, leaps: ORTHO }, { abilities: ["teleport"] }),
+  B("b05", "Zebra",            "Zebra",           "beast",   "#ff8a4c",  8, 3, { leaps: ZEBRA }, { abilities: ["regen"] }),  // 9->8
+  B("b06", "Das Bollwerk",     "The Bulwark",     "golem",   "#9aa5b7", 11, 2, { slides: DIAG, range: 1 }, { abilities: ["bulwark"] }),  // 18->11: Kapitel-I-Grenze (12 Schlaege atk-2)
+  B("b07", "Der Geist",        "The Ghost",       "wraith",  "#7dd3fc",  6, 4, { leaps: RING2 }, { abilities: ["teleport"] }),  // Glaskanone, jetzt fluechtig
+  B("b08", "Kanonier",         "Cannoneer",       "golem",   "#ffd166", 9, 4, { slides: ORTHO, range: 3 }, { aura: { type: "courtHp", n: 2 }, abilities: ["bulwark"] }),  // 10->9
+  B("b09", "Skorpion",         "Scorpion",        "serpent", "#f472b6",  9, 4, { leaps: [...sym(2, 2), ...ORTHO] }, { abilities: ["lifesteal"] }),
+  B("b10", "Doppelritter",     "Twin Knight",     "beast",   "#3d9bff", 11, 3, { leaps: [...KNIGHT, ...KING] }, { aura: { type: "wardAdj" }, abilities: ["regen"] }),
+  B("b11", "Die Flüsterin",    "The Whisperer",   "wraith",  "#c4b5fd",  9, 2, { slides: KING, range: 1, spawn: { max: 2 } }, { abilities: ["teleport"] }),  // spawn 3->2: Blink + Brut kombinierte auf +19 Feldwirkung; HP-Senkung war wirkungslos (sie steht hinten), die Brut ist der Hebel
+  B("b12", "Der Richter",      "The Judge",       "tyrant",  "#ffb454", 11, 3, { slides: KING, range: 2 }, { aura: { type: "noEnemyPotions" }, abilities: ["bulwark"] }),  // 12->11
+  B("b13", "Brandstifter",     "Firestarter",     "serpent", "#ff4d5e",  7, 5, { slides: DIAG }, { abilities: ["lifesteal"] }),  // scharf, aber glas
+  B("b14", "Der Koloss",       "The Colossus",    "golem",   "#94a3b8", 18, 3, { slides: ORTHO, range: 2, leaps: DIAG }, { aura: { type: "grant", id: "bulwark" } }),  // seine AURA ist die Gabe: Eigenpanzer + Panzer-Aura kaskadierte in der Sim (+77 Feldwirkung)
+  B("b15", "Sturmkrähe",       "Stormcrow",       "beast",   "#38bdf8",  8, 4, { leaps: [...CAMEL, ...sym(0, 3)] }, { abilities: ["regen"] }),
   B("b16", "Die Blutmagd",     "The Bloodmaid",   "serpent", "#fb7185", 10, 4, { slides: KING, range: 1, leaps: [[0, 2], [0, -2]] }, { aura: { type: "grant", id: "lifesteal" }, abilities: ["lifesteal"] }),
-  B("b17", "Lanzenmeister",    "Lancemaster",     "tyrant",  "#eab308", 12, 3, { leaps: [...sym(0, 2), ...KING] }, { aura: { type: "wardAdj" } }),
-  B("b18", "Eisenfaust",       "Ironfist",        "golem",   "#f97316", 13, 4, { slides: ORTHO }, { aura: { type: "courtAtk", n: 1 } }),
-  B("b19", "Schattenfürst",    "Shadowlord",      "wraith",  "#a78bfa",  9, 4, { slides: DIAG, leaps: KNIGHT }, { aura: { type: "courtAtk", n: 1 } }),
+  B("b17", "Lanzenmeister",    "Lancemaster",     "tyrant",  "#eab308", 12, 3, { leaps: [...sym(0, 2), ...KING] }, { aura: { type: "wardAdj" }, abilities: ["regen"] }),  // der Feldherr haelt sich
+  B("b18", "Eisenfaust",       "Ironfist",        "golem",   "#f97316", 11, 4, { slides: ORTHO }, { aura: { type: "courtAtk", n: 1 }, abilities: ["bulwark"] }),  // 13->11
+  B("b19", "Schattenfürst",    "Shadowlord",      "wraith",  "#a78bfa",  9, 4, { slides: DIAG, leaps: KNIGHT }, { aura: { type: "courtAtk", n: 1 }, abilities: ["teleport"] }),
   B("b20", "Der Hüter",        "The Keeper",      "tyrant",  "#34d399", 16, 3, { slides: KING, range: 1, leaps: sym(0, 2) }, { aura: { type: "courtHp", n: 2 }, abilities: ["bulwark"] }),
-  B("b21", "Die Wandlerin",    "The Shifter",     "wraith",  "#f0abfc",  8, 3, { leaps: RING2, spawn: { max: 2 } }),
-  B("b22", "Der Zerreißer",    "The Render",      "beast",   "#ef4444", 10, 5, { leaps: [...KNIGHT, ...CAMEL] }),
+  B("b21", "Die Wandlerin",    "The Shifter",     "wraith",  "#f0abfc",  8, 3, { leaps: RING2, spawn: { max: 2 } }, { abilities: ["teleport"] }),  // die Wandlerin wandelt
+  B("b22", "Der Zerreißer",    "The Render",      "beast",   "#ef4444", 10, 5, { leaps: [...KNIGHT, ...CAMEL] }, { abilities: ["regen"] }),
   B("b23", "Asra, die Erzfeindin", "Asra, the Archenemy",   "tyrant",  "#fbbf24", 13, 4, { slides: KING, range: 3 }, { abilities: ["regen"] }),
   B("b24", "Seuchenkönig",     "Plaguelord",      "serpent", "#84cc16",  9, 2, { slides: KING, range: 1, spawn: { max: 5 } }, { abilities: ["lifesteal"] }),
   B("b25", "Osric, der Großmeister", "Osric, the Grandmaster", "tyrant", "#ffd166", 18, 5, { slides: KING, range: 4, leaps: KNIGHT }, { aura: { type: "courtHp", n: 1 }, abilities: ["bulwark"] }),

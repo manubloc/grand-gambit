@@ -202,6 +202,19 @@ export function pieceMoves(state, sqIndex) {
         if (!board[ix(nf, nr, D)]) push(moves, from, ix(nf, nr, D), piece, false, null, { special: "spawn" });
       }
     }
+    // LATENTE FALLE (v0.38): dieses fruehe return ueberspringt ALLE
+    // Faehigkeitsbloecke darunter - ein Zugbild-Traeger konnte nie blinken.
+    // Das Blinzeln der Schemen ist die eine Bewegungs-Gabe der Monster,
+    // deshalb wird es HIER ebenfalls angeboten.
+    if (hasAbility(piece, "teleport")) {
+      const R = 2;
+      for (let dr = -R; dr <= R; dr++) for (let df = -R; df <= R; df++) {
+        if (df === 0 && dr === 0) continue;
+        const tf = f + df, tr = r + dr;
+        if (onBoard(tf, tr, D) && !board[ix(tf, tr, D)])
+          push(moves, from, ix(tf, tr, D), piece, false, null, { special: "blink", consumes: "teleport" });
+      }
+    }
     return moves;
   }
 

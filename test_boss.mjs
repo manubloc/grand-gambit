@@ -31,10 +31,10 @@ function loneBoss(boss) {
 
 // 1) stats override
 {
-  const b = bossById("b06"); // Bollwerk: hp 18 atk 2
+  const b = bossById("b06"); // Bollwerk: hp 11 atk 2 (v0.38: Panzer-Gegengewicht, 18->11)
   const s = bossGame(b);
   const p = s.board[idx(3, 7, 8)];
-  ok("boss stats come from its definition", p.hp === 18 && p.maxHp === 18 && p.atk === 2);
+  ok("boss stats come from its definition", p.hp === 11 && p.maxHp === 11 && p.atk === 2);
   ok("boss carries name/art/accent", p.name.de === "Das Bollwerk" && p.art === "golem" && !!p.accent);
 }
 
