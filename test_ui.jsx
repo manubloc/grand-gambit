@@ -108,8 +108,13 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   // Bild mehr; die Zahl steht per Grid mittig, keine Versatz-Korrektur noetig.
   ok("both badges are cast as sealed spheres (svg, gold rim)", plain.includes("<svg") && delta.includes("<svg") && plain.includes("#e3c07a"));
   ok("the numeral rides the sphere, white and bold", plain.includes("#ffffff") || plain.includes("rgb(255, 255, 255)"));
-  ok("multi-glyph values shrink a step to stay inside the cavity",
-    parseFloat(fontSizes(delta)[0]) < parseFloat(fontSizes(plain)[0]));
+  // v0.38.4: die Zahl sitzt GEOMETRISCH mittig (SVG-Text, dominantBaseline
+  // central) - als HTML-span schwankte sie mit der Schriftgrundlinie, "+2"
+  // sass anders als "5". Fuer JEDEN Wert dieselbe Mitte.
+  const mitte = (h) => (h.match(/y="12"[^>]*dominant-baseline="central"|dominant-baseline="central"[^>]*y="12"/) || []).length;
+  ok("every value sits on the SAME centre line", mitte(plain) === 1 && mitte(delta) === 1 && mitte(html(<StatOrbBadge kind="power" v={12} size={24} />)) === 1);
+  const svgFs = (h) => parseFloat((h.match(/font-size="([\d.]+)"/) || [0, "0"])[1]);
+  ok("multi-glyph values shrink a step to stay inside the cavity", svgFs(delta) < svgFs(plain));
 }
 
 // ── 6. NO EMPTY RENDERS ─────────────────────────────────────────────────────

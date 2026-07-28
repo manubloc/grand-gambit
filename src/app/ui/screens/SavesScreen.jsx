@@ -53,7 +53,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         objectFit: "cover", display: "block", marginTop: 0, marginBottom: 38,
         WebkitMaskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)",
         maskImage: "radial-gradient(ellipse 78% 74% at 50% 50%, #000 42%, rgba(0,0,0,.6) 70%, transparent 95%)" }} />
-      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: ".26em",
+      <div style={{ fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: ".13em",
         fontSize: "clamp(19px, 5.2vw, 30px)", lineHeight: 1.15, textAlign: "center", marginTop: -22, marginBottom: 14,
         background: `linear-gradient(180deg, ${T.goldBright} 0%, ${T.gold} 52%, ${T.lime} 100%)`,
         WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",

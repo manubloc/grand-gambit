@@ -152,6 +152,15 @@ export const GLOBAL_CSS = `
      Viertel. Das war die harte Kante. Damit er vollstaendig hinauslaeuft,
      muss die linke Kante ueber 100 % kommen: 100/62 = 161 %. 175 % gibt Luft. */
   @keyframes ggPlateSheen { from { transform: translateX(-120%); } to { transform: translateX(175%); } }
+  /* der Funkenschlag: ein Lichtpunkt wandert die Kontur entlang */
+  @keyframes ggFunkenlauf { to { background-position: 200% 0; } }
+  .gg-funkenkontur { position: relative; }
+  .gg-funkenkontur::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(196,181,253,.15) 30%, rgba(230,220,255,.95) 46%,
+      rgba(196,181,253,.6) 54%, rgba(139,92,246,.2) 70%, transparent 100%);
+    background-size: 200% 100%; animation: ggFunkenlauf 2.4s linear infinite;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
   @keyframes ggSaum { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
   @keyframes ggRiftOpen { from { transform: scale(1.09); opacity: 0; } 40% { opacity: .92; } to { transform: scale(1); opacity: .92; } }
   @keyframes ggRiftPulse { 0%, 100% { box-shadow: 0 0 9px rgba(124,58,237,.35); border-color: rgba(167,139,250,.55); }

@@ -532,6 +532,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         </div>
         {!maxed && <button disabled={!affordable}
           onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}
+          className={affordable ? "gg-funkenkontur" : undefined}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
             cursor: affordable ? "pointer" : "default",
@@ -1112,7 +1113,8 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
 // Tap a figurine → the painting fills the stage. One tap anywhere closes it.
 function CharLightbox({ char, en, onClose }) {
   if (!char) return null;
-  const src = paintedById(char.id);
+  // ein Wesen kommt als { boss: true, id: "boss-bXX" } - dieselbe Lupe
+  const src = char.boss ? (paintedById("boss-" + char.bid) || paintedById("boss-" + char.art)) : paintedById(char.id);
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 80, background: "rgba(5, 8, 16, .88)",
       backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)", display: "grid", placeItems: "center",
@@ -1120,7 +1122,8 @@ function CharLightbox({ char, en, onClose }) {
       <div style={{ textAlign: "center", maxWidth: 520 }}>
         {src && <img src={src} alt="" style={{ height: "min(58vh, 470px)", maxWidth: "88vw", objectFit: "contain",
           filter: "drop-shadow(0 18px 40px rgba(0,0,0,.65))" }} />}
-        <div className="gg-serif" style={{ color: T.goldBright, fontSize: 23, letterSpacing: ".06em", marginTop: 14 }}>
+        <div className="gg-quill" style={{ color: char.boss ? "#e7b7c9" : T.goldBright, fontSize: 25, letterSpacing: ".04em", marginTop: 14,
+          textShadow: char.boss ? "0 0 12px rgba(139,92,246,.45)" : "0 0 10px rgba(240,206,122,.3)" }}>
           {en ? char.nameEn : char.nameDe}</div>
         {(en ? char.flavorEn : char.flavorDe) && (
           <div className="gg-serif" style={{ color: "#9a947f", fontStyle: "italic", fontSize: 13.5, lineHeight: 1.5, marginTop: 6 }}>
@@ -1374,7 +1377,9 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
           <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", padding: "18px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
-              {img && <img src={img} alt="" style={{ width: 96, height: 116, objectFit: "contain", objectPosition: "bottom",
+              {img && <img src={img} alt="" onClick={(e) => { e.stopPropagation(); onZoom && onZoom({ boss: true, bid: b.id, art: b.art, nameDe: b.nameDe, nameEn: b.nameEn, flavorDe: b.flavorDe, flavorEn: b.flavorEn }); }}
+                title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
+                style={{ width: 128, height: 152, objectFit: "contain", objectPosition: "bottom", cursor: "zoom-in",
                 filter: `drop-shadow(0 0 10px ${T.riftGlow})` }} />}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>
@@ -1396,12 +1401,33 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={spec.atk} /><span style={{ fontSize: 10.5, color: "#a898b4", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={spec.hp} /><span style={{ fontSize: 10.5, color: "#a898b4", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
                 </div>
+                {/* DIE STUFENLEITER DER BESTIE: was jeder Rang bringt, offen
+                    einsehbar wie die Fähigkeitsleiter des Hofes. */}
+                {mein && <div style={{ marginTop: 12 }}>
+                  <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 5 }}>{en ? "RANKS" : "RÄNGE"}</div>
+                  {[2, 3, 4, 5].map((r) => {
+                    const da = lvl >= r, sp2 = bossSpecLeveled(b, r);
+                    return <div key={r} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 8px", marginBottom: 4,
+                      borderRadius: 9, border: `1px solid ${da ? "rgba(124,58,237,.5)" : "rgba(255,255,255,.09)"}`,
+                      background: da ? "rgba(30,18,54,.6)" : "rgba(12,10,18,.5)", opacity: da ? 1 : 0.62 }}>
+                      <span className="gg-serif" style={{ fontSize: 11, color: da ? T.riftBright : "#8d84a0", minWidth: 52 }}>
+                        {(en ? "Rank " : "Rang ") + r}</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                        <SheetOrb kind="life" v={sp2.hp} size={22} num={0.54} />
+                        {(r === 3 || r === 5) && <SheetOrb kind="power" v={sp2.atk} size={22} num={0.54} />}
+                      </span>
+                      <span style={{ flex: 1 }} />
+                      <span style={{ fontSize: 10.5, color: da ? "#a898b4" : "#7b7290" }}>
+                        {da ? (en ? "reached" : "erreicht") : bossUpgradeCost(r) + " ✦"}</span>
+                    </div>;
+                  })}
+                </div>}
                 {mein && <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                   <span className="gg-serif" style={{ fontSize: 11.5, color: "#c9bcd6" }}>
                     {(en ? "Rank " : "Rang ") + lvl + " / " + BOSS_MAX_LEVEL}</span>
                   <span style={{ flex: 1 }} />
                   {lvl < BOSS_MAX_LEVEL && <button onClick={() => dispatch({ type: "UPGRADE_BOSS", id: b.id })}
-                    disabled={!kann}
+                    disabled={!kann} className={kann ? "gg-funkenkontur" : undefined}
                     style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 10,
                       fontFamily: "inherit", fontWeight: 800, fontSize: 12.5, cursor: kann ? "pointer" : "default",
                       background: kann ? "linear-gradient(172deg, rgba(40,24,72,.97) 0%, rgba(14,9,28,.99) 100%)" : "#151827",

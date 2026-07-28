@@ -137,9 +137,12 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   // die Zahl WEISS und fett mit dunklem Kern - endlich klar lesbar.
   const chars = String(v ?? "").length;
   const fs = size * num * (chars >= 3 ? 0.8 : chars === 2 ? 0.9 : 1);
+  // DUNKLER GEGOSSEN (v0.38.4): die satten Toene sprangen im Kampf zu sehr
+  // an - eine Stufe tiefer, damit die Kugeln zum Brett gehoeren statt es zu
+  // uebertoenen. Der Goldrand haelt sie trotzdem klar abgesetzt.
   const [c0, c1, c2] = kind === "life"
-    ? ["#ff8592", "#d92638", "#5e0f1a"]
-    : ["#8ecdf8", "#2f7fd1", "#0e2f55"];
+    ? ["#e0616f", "#a81a2a", "#3d0810"]
+    : ["#6aa8d8", "#1f5e9e", "#08203c"];
   const rid = "sob-" + kind + "-" + size;
   const schein = kind === "life"
     ? "drop-shadow(0 0 3px rgba(230,57,74,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
@@ -155,11 +158,12 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
       <circle cx="12" cy="12" r="11" fill={`url(#${rid})`} />
       <circle cx="12" cy="12" r="11" fill="none" stroke="#e3c07a" strokeWidth="1.1" opacity=".95" />
       <circle cx="12" cy="12" r="9.9" fill="none" stroke="#6f5526" strokeWidth=".7" opacity=".55" />
-      <ellipse cx="9.2" cy="7.4" rx="4.6" ry="3" fill="rgba(255,255,255,.34)" />
+      <ellipse cx="9.2" cy="7.4" rx="4.6" ry="3" fill="rgba(255,255,255,.3)" />
+      <text x="12" y="12" textAnchor="middle" dominantBaseline="central"
+        fontFamily="Georgia, serif" fontWeight="800" fontSize={24 * num * (chars >= 3 ? 0.8 : chars === 2 ? 0.9 : 1)}
+        fill="#ffffff" stroke="rgba(0,0,0,.55)" strokeWidth=".7" paintOrder="stroke"
+        style={{ userSelect: "none" }}>{v}</text>
     </svg>
-    <span style={{ position: "relative", fontFamily: "Georgia, serif", fontWeight: 800, fontSize: fs,
-      color: "#ffffff", lineHeight: 1, textShadow: "0 1px 2px rgba(0,0,0,.85), 0 0 3px rgba(0,0,0,.6)",
-      fontVariantNumeric: "tabular-nums" }}>{v}</span>
   </span>;
 }
 
