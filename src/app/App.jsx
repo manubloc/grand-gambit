@@ -151,6 +151,8 @@ export default function App() {
   // over the tab you chose. It asks now, and it says what leaving costs: a
   // campaign fight is saved and resumable, a quick or online game is not.
   const [leaveTo, setLeaveTo] = useState(null);
+  // eine ueber die Abkuerzung im Hauptmenue gewaehlte Fernpartie
+  const oeffneDaily = useRef(null);
   // A CORRESPONDENCE GAME OPENED FROM THE SHELF. The server hands back seed,
   // both armies and every command played so far; the board replays them and
   // hands the single next move back. Nothing here lives in a socket.
@@ -288,9 +290,10 @@ export default function App() {
           setMatch(buildStageMatch(id, profile));
         }} onOpenTree={() => { setArmyTab({ tab: "tree", n: Date.now() }); setTab("army"); }} />
         : view === "online" ? sub(t("online.title"), <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account}
+            oeffneDaily={oeffneDaily}
             onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
-        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={() => setView("online")} onTutorial={() => setView("tutorial")} />
+        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} />
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
         : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
@@ -495,6 +498,47 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
         art={<CrestArt src={crestArt(1)} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
+      {/* ABKUERZUNG ZU DEN FERNPARTIEN: wer laufende Partien hat, sieht hier
+          sofort, wo er am Zug ist - und springt mit einem Griff hinein, ohne
+          erst den Online-Bereich zu oeffnen. Die Liste stammt aus dem letzten
+          Besuch der Halle und braucht keine Verbindung. */}
+      {(() => {
+        let liste = [];
+        try { liste = JSON.parse(localStorage.getItem("gambit:u::daily:v1") || "[]"); } catch { liste = []; }
+        if (!liste.length) return null;
+        const dran = liste.filter((g) => g.yourTurn);
+        const sortiert = [...dran, ...liste.filter((g) => !g.yourTurn)].slice(0, 4);
+        return <div style={{ gridColumn: "1 / -1", display: "grid", gap: 7 }}>
+          <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".13em", color: T.gold, textTransform: "uppercase" }}>
+            {t("daily.title")}{dran.length > 0 ? ` · ${dran.length}\u00d7 ${profile.lang === "en" ? "your move" : "du bist dran"}` : ""}
+          </div>
+          <div style={{ display: "grid", gap: 6, gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))" }}>
+            {sortiert.map((g) => {
+              const tage = g.deadline ? Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000)) : null;
+              return <button key={g.gameId} onClick={() => onOnline && onOnline(g.gameId)}
+                style={{ display: "flex", alignItems: "center", gap: 9, textAlign: "left", cursor: "pointer",
+                  fontFamily: "inherit", padding: "10px 12px", borderRadius: 12,
+                  background: g.yourTurn ? "linear-gradient(150deg, rgba(139,92,246,.3), rgba(12,10,22,.9) 62%)"
+                    : "linear-gradient(150deg, rgba(30,26,44,.55), rgba(10,9,16,.8))",
+                  border: `1px solid ${g.yourTurn ? T.riftLine : "rgba(120,110,150,.3)"}`,
+                  boxShadow: g.yourTurn ? "0 0 12px rgba(124,58,237,.3)" : "none" }}>
+                <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
+                  background: g.yourTurn ? T.riftBright : "rgba(150,145,180,.45)",
+                  boxShadow: g.yourTurn ? `0 0 9px ${T.riftBright}` : "none" }} />
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span className="gg-quill" style={{ display: "block", fontSize: 14, color: T.text,
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.opp}</span>
+                  <span style={{ display: "block", fontSize: 11, color: g.yourTurn ? T.riftBright : T.faint }}>
+                    {g.yourTurn ? (profile.lang === "en" ? "your move" : "du bist dran")
+                      : (profile.lang === "en" ? "waiting" : "wartet auf ihn")}
+                    {tage != null ? ` · ${tage}\u202fd` : ""}
+                  </span>
+                </span>
+              </button>;
+            })}
+          </div>
+        </div>;
+      })()}
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<SwordsArt size={54} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}

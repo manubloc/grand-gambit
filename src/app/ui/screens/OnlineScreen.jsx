@@ -79,7 +79,7 @@ function ModeGlyph({ glyph, color }) {
   </svg>;
 }
 
-export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = null }) {
+export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = null, oeffneDaily = null }) {
   const en = profile.lang === "en";
   const o = profile.online || {};
   const score = useMemo(() => retinueScore(profile), [profile]);
@@ -197,6 +197,8 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
   useEffect(() => {
     const subs = [
       net.on("welcome", (m) => { setConn("on"); setOnlineN(m.online || 0); net.send({ t: "daily:list" });
+        // aus dem Hauptmenue gewaehlte Partie sofort oeffnen
+        if (oeffneDaily?.current) { const g = oeffneDaily.current; oeffneDaily.current = null; net.send({ t: "daily:open", gameId: g }); }
         if (m.push) { setPushKey(m.push); syncPush(); } }),
       net.on("push:ok", (m) => setPushMode(m.on ? "on" : "off")),
       net.on("friends", (m) => { setFriends(m.friends || []); setRequests(m.requests || []); }),
@@ -205,7 +207,16 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
       net.on("info", (m) => flash(m.info === "requestSent" ? t("online.requestSent") : t("online.challengeSent"))),
       net.on("error", (m) => flash(t("online.err", { e: m.error }))),
       net.on("match", () => { setSearching(false); setChallenge(null); }),
-      net.on("daily:list", (m) => setDaily(m.games || [])),
+      net.on("daily:list", (m) => {
+        const gs = m.games || [];
+        setDaily(gs);
+        // fuers Hauptmenue merken: wer ist dran, gegen wen, wie lange noch
+        try {
+          localStorage.setItem("gambit:u::daily:v1", JSON.stringify(gs.filter((g) => !g.done).map((g) => ({
+            gameId: g.gameId, opp: g.opp?.name || "?", yourTurn: !!g.yourTurn, deadline: g.deadline || 0,
+          }))));
+        } catch { /* voller Speicher: dann eben ohne Abkuerzung */ }
+      }),
       net.on("daily:new", () => { setSearching(false); net.send({ t: "daily:list" }); flash(t("daily.opened")); }),
       net.on("daily:turn", () => net.send({ t: "daily:list" })),
       net.on("daily:ok", () => net.send({ t: "daily:list" })),
@@ -281,6 +292,46 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
   const wideOn = useMedia("(min-width: 980px)");
   return (
     <div style={{ display: "grid", gap: 12, gridTemplateColumns: wideOn ? "1.1fr 1fr" : "1fr", alignItems: "start" }}>
+      {/* DER KUERZESTE WEG: laufende Fernpartien stehen GANZ OBEN, noch vor
+          Suche und Freundesliste - wer dran ist, soll mit einem Griff hinein. */}
+      {daily.some((g) => !g.done) && <Panel style={{ gridColumn: "1 / -1" }}>
+  {daily.length > 0 && (
+                  <div style={{ marginTop: 12 }}>
+                    <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginBottom: 6 }}>
+                      {t("daily.title").toUpperCase()}
+                    </div>
+                    <div style={{ display: "grid", gap: 6 }}>
+                      {daily.map((g) => {
+                        const days = Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000));
+                        const mine = g.yourTurn && !g.done;
+                        return (
+                          <button key={g.gameId} onClick={() => onDaily && onDaily(g.gameId)}
+                            style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left",
+                              fontFamily: "inherit", cursor: "pointer", padding: "10px 12px", borderRadius: 12,
+                              background: mine ? "linear-gradient(150deg, rgba(167,139,250,.26), rgba(12,16,26,.9) 62%)"
+                                : "linear-gradient(150deg, rgba(30,36,54,.5), rgba(10,12,20,.75))",
+                              border: `1.5px solid ${mine ? "#a78bfa" : "rgba(120,130,160,.28)"}`,
+                              opacity: g.done ? 0.6 : 1 }}>
+                            <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
+                              background: mine ? "#a78bfa" : "rgba(150,160,190,.5)",
+                              boxShadow: mine ? "0 0 8px #a78bfa" : "none" }} />
+                            <span style={{ flex: 1, minWidth: 0 }}>
+                              <span style={{ display: "block", fontWeight: 800, fontSize: 13.5, color: T.text }}>{g.opp.name}</span>
+                              <span style={{ display: "block", fontSize: 11.5, color: mine ? "#c9b8ff" : T.dim, marginTop: 1 }}>
+                                {g.done ? t("daily.done") : mine ? t("daily.yourTurn") : t("daily.waiting")}
+                                {!g.done && ` · ${t("daily.left", { d: days + (en ? (days === 1 ? " day" : " days") : (days === 1 ? " Tag" : " Tage")) })}`}
+                              </span>
+                            </span>
+                            <span style={{ fontSize: 11.5, color: T.faint, whiteSpace: "nowrap" }}>{g.moves} ×</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {pushRow(8)}
+                    <div style={{ fontSize: 11, color: T.faint, marginTop: 6, lineHeight: 1.45 }}>{t("daily.hint")}</div>
+                  </div>
+                )}
+      </Panel>}
       <Panel>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -412,42 +463,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
               {/* THE CORRESPONDENCE SHELF: every long game you have running,
                   the ones waiting on YOU first. This list is the whole point of
                   the format — it is what you come back to, days later. */}
-              {daily.length > 0 && (
-                <div style={{ marginTop: 12 }}>
-                  <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginBottom: 6 }}>
-                    {t("daily.title").toUpperCase()}
-                  </div>
-                  <div style={{ display: "grid", gap: 6 }}>
-                    {daily.map((g) => {
-                      const days = Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000));
-                      const mine = g.yourTurn && !g.done;
-                      return (
-                        <button key={g.gameId} onClick={() => onDaily && onDaily(g.gameId)}
-                          style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left",
-                            fontFamily: "inherit", cursor: "pointer", padding: "10px 12px", borderRadius: 12,
-                            background: mine ? "linear-gradient(150deg, rgba(167,139,250,.26), rgba(12,16,26,.9) 62%)"
-                              : "linear-gradient(150deg, rgba(30,36,54,.5), rgba(10,12,20,.75))",
-                            border: `1.5px solid ${mine ? "#a78bfa" : "rgba(120,130,160,.28)"}`,
-                            opacity: g.done ? 0.6 : 1 }}>
-                          <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
-                            background: mine ? "#a78bfa" : "rgba(150,160,190,.5)",
-                            boxShadow: mine ? "0 0 8px #a78bfa" : "none" }} />
-                          <span style={{ flex: 1, minWidth: 0 }}>
-                            <span style={{ display: "block", fontWeight: 800, fontSize: 13.5, color: T.text }}>{g.opp.name}</span>
-                            <span style={{ display: "block", fontSize: 11.5, color: mine ? "#c9b8ff" : T.dim, marginTop: 1 }}>
-                              {g.done ? t("daily.done") : mine ? t("daily.yourTurn") : t("daily.waiting")}
-                              {!g.done && ` · ${t("daily.left", { d: days + (en ? (days === 1 ? " day" : " days") : (days === 1 ? " Tag" : " Tage")) })}`}
-                            </span>
-                          </span>
-                          <span style={{ fontSize: 11.5, color: T.faint, whiteSpace: "nowrap" }}>{g.moves} ×</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {pushRow(8)}
-                  <div style={{ fontSize: 11, color: T.faint, marginTop: 6, lineHeight: 1.45 }}>{t("daily.hint")}</div>
-                </div>
-              )}
+
               {daily.length === 0 && timeMode === "daily" && pushRow(10)}
 
               <div style={{ height: 8 }} />

@@ -8,6 +8,7 @@ import { groundArt, livery } from "../livery.js";
 import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
+import { LeaveMatchAsk } from "../../App.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
@@ -564,7 +565,17 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     dispatch({ type: "PAUSE_MATCH", data: { v: 1, nodeId: match.nodeId, enc: encodeState(cur.state),
       potionsUsed: potionsUsedRef.current, hourglassUsed: hourglassUsedRef.current, clock: cur.clock } });
   }
+  const [fragtRaus, setFragtRaus] = useState(false);
+  // Eine LAUFENDE Partie verlaesst man nicht mit einem Fehlgriff - der
+  // Ruecken-Knopf fragt genauso nach wie das Menue. Ist die Partie vorbei
+  // (das Ergebnis steht), geht es ohne Rueckfrage.
   function leave() { pauseNow(); onExit && onExit(); }
+  function leaveAsk() {
+    // banner steht, sobald das Ergebnis feststeht - status() ist hier oben
+    // noch nicht berechnet, also fragen wir nur den Banner ab.
+    if (banner) { leave(); return; }
+    setFragtRaus(true);
+  }
   useEffect(() => {
     if (!campaign || pvp) return;
     const fn = () => { if (document.visibilityState === "hidden") pauseNow(); };
@@ -601,7 +612,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* top bar: ‹ back · context · clock · ⚑ resign — everything floats, nothing scrolls */}
       <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
         {onExit && (
-          <button onClick={leave} style={pill({ border: `1.5px solid ${T.gold}88`, color: T.gold })}>
+          <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.gold}88`, color: T.gold })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
@@ -869,6 +880,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     </div>
   ) : null;
 
+  const raus = fragtRaus ? <LeaveMatchAsk t={t} resumable={!!match && !pvp && !daily}
+    onStay={() => setFragtRaus(false)}
+    onLeave={() => { setFragtRaus(false); leave(); }} /> : null;
   const bannerEl = banner ? <ResultBanner banner={banner} t={t} onNew={pvp ? onExit : newGame} campaign={campaign} onExit={onExit} boss={match?.boss || null}
     onSettings={!campaign && !pvp ? onExit : null}
     pvpInfo={pvp ? { rated, rematch, onRematch: () => { pvp.net.send({ t: "rematch", matchId: pvp.matchId }); setRematch("wait"); } } : null}
@@ -889,7 +903,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {yourStrip}
       </aside>
       {dailyDoneEl}
-      {bannerEl}
+      {bannerEl}{raus}
     </div>
   );
 
@@ -900,7 +914,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
       {dailyDoneEl}
-      {bannerEl}
+      {bannerEl}{raus}
     </div>
   );
 }

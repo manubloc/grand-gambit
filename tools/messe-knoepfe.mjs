@@ -88,6 +88,22 @@ const lies = () => page.evaluate(() => {
 
 const seiten = [];
 const sammle = async (name) => { await page.waitForTimeout(800); const l = await lies(); seiten.push([name, l]);
+
+  // v0.39.3: EINE LAUFENDE PARTIE VERLAESST MAN NICHT VERSEHENTLICH.
+  // Der Ruecken-Knopf im Spiel muss dieselbe Rueckfrage stellen wie das Menue.
+  {
+    const q = readFileSync("src/app/ui/screens/GameScreen.jsx", "utf8");
+    if (!/leaveAsk/.test(q)) seiten.push(["VERLASSEN", [{ tag: "fehler", text: "Ruecken-Knopf fragt nicht nach", bw: 99, ow: 0, shadow: "" }]]);
+    if (/onClick=\{leave\}/.test(q)) seiten.push(["VERLASSEN", [{ tag: "fehler", text: "es gibt noch einen Ausgang ohne Rueckfrage", bw: 99, ow: 0, shadow: "" }]]);
+  }
+  // DIE ABKUERZUNG ZU DEN FERNPARTIEN muss im Hauptmenue stehen und den
+  // Zugstatus zeigen - der Weg ins Spiel soll so kurz wie moeglich sein.
+  {
+    const a = readFileSync("src/app/App.jsx", "utf8");
+    if (!/daily:v1/.test(a)) seiten.push(["ABKUERZUNG", [{ tag: "fehler", text: "Hauptmenue ohne Fernpartien-Abkuerzung", bw: 99, ow: 0, shadow: "" }]]);
+    if (!/du bist dran/.test(a)) seiten.push(["ABKUERZUNG", [{ tag: "fehler", text: "Abkuerzung ohne Zugstatus", bw: 99, ow: 0, shadow: "" }]]);
+  }
+
   if (process.argv.includes("--halle")) {
     const hb = await page.evaluate(() => [...document.querySelectorAll("img")].filter(x=>x.src.includes("bg-hall")).map(x=>{const r=x.getBoundingClientRect();
       return {y:Math.round(r.top), h:Math.round(r.height), w:Math.round(r.width), op:getComputedStyle(x).opacity};}));
