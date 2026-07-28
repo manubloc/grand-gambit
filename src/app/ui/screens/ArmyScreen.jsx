@@ -964,7 +964,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
 export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
   const [gearInfo, setGearInfo] = useState(initialGearInfo);   // ein angetipptes Stück zeigt sein Blatt
   return (
-    <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.14) 0%, rgba(26,20,12,.94) 44%, rgba(10,8,6,.98) 100%)",
+    <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.13) 0%, rgba(26,20,12,.62) 44%, rgba(10,8,6,.55) 100%)",
+      backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)",
       border: "1px solid rgba(227,192,122,.5)", borderRadius: T.radius, padding: "12px 14px",
       boxShadow: "0 0 16px rgba(240,206,122,.12), inset 0 1px 0 rgba(255,240,200,.08)" }}>
       {/* DER STAND DES HÄNDLERS: er steht bei seiner Ware und sagt ein Wort -

@@ -256,6 +256,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const tokenScreenY = tokenNode ? ny(tokenNode) * zf - camYZiel : frameH * 0.5;
   // Oben NUR, wenn dort nach Abzug der Knopfleiste wirklich Platz bleibt -
   // sonst schob sich das Panel unter Atlas- und Kapitelknopf und verdeckte sie.
+  // Steht die Station im Licht - oder schluckt der Nebel sie noch? Marken
+  // duerfen nur zeigen, was man ohnehin sieht.
+  const lichtFront = (() => {
+    const erreicht = CAMPAIGN.filter((n) => nodeInLeague(n, viewLeague))
+      .filter((n) => { const st = nodeStatus(profile, n.id); return st === "cleared" || st === "available"; })
+      .map((n) => ny(n));
+    return erreicht.length ? Math.min(...erreicht) : HM;
+  })();
+  const imLicht = (n) => viewing || !bm || ny(n) >= lichtFront - 120;
   const LEISTE = 12 + 40 + 10;   // Abstand + Knopfhoehe + Luft darunter
   const panelOben = tokenScreenY > frameH * 0.52 && (tokenScreenY - 82 - 24 - LEISTE) >= 190;
   const panelPos = panelOben
@@ -366,7 +375,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           return <>
             <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
               borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
-              background: `linear-gradient(180deg, rgba(0,0,0,.97) 0%, rgba(0,0,0,.97) ${sp(dicht - 300)}, rgba(4,2,10,.9) ${sp(dicht)}, rgba(10,6,22,.44) ${sp(front - 160)}, transparent ${sp(klar)})` }} />
+              background: `linear-gradient(180deg, #000 0%, #000 ${sp(dicht)}, rgba(2,1,6,.96) ${sp(dicht + 120)}, rgba(8,5,18,.55) ${sp(front - 140)}, transparent ${sp(klar)})` }} />
             <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
               borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
               background: `radial-gradient(120% 40% at 50% ${sp(dicht - 40)}, rgba(139,92,246,.34) 0%, rgba(91,33,182,.16) 46%, transparent 74%)` }} />
@@ -566,7 +575,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                       deutliches goldenes Siegel - man sieht auf einen Blick, wo
                       es nicht weitergeht; das Antippen erklaert im Panel, was
                       fehlt (Gegenstand, Figur oder Zoll). */}
-                  {st === "gated" && <span style={{ position: "absolute", top: -3, right: -4, width: 21, height: 21,
+                  {st === "gated" && imLicht(n) && <span style={{ position: "absolute", top: -3, right: -4, width: 21, height: 21,
                     borderRadius: "50%", display: "grid", placeItems: "center", zIndex: 3,
                     background: "radial-gradient(circle at 38% 30%, #3a2c10 0%, #171008 100%)",
                     border: "1.5px solid #e3c07a",
@@ -574,7 +583,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     animation: "ggGatePuls 2.6s ease-in-out infinite" }}>
                     <LockIc size={12} color="#f2d98c" /></span>}
                   {/* und darunter, klein, WAS genau fehlt */}
-                  {st === "gated" && (gateOf(n)?.item || gateOf(n)?.gold) && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
+                  {st === "gated" && imLicht(n) && (gateOf(n)?.item || gateOf(n)?.gold) && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
                     filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : <GoldCoin size={11} style={{ verticalAlign: "-2px" }} />}</span>}
                   {!bm && n.boss?.pure && (viewing || facedNode(n)) && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 13, height: 13,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
@@ -748,9 +757,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 el.scrollTop = Math.max(0, img.offsetTop + img.offsetHeight * ay - el.clientHeight / 2);
               });
             }}
-            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "absolute", inset: 0, zIndex: 12,
-            background: "rgba(4,6,10,.82)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
-            overflowY: "auto", padding: "22px 12px calc(30px + env(safe-area-inset-bottom))" }}>
+            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "fixed", inset: 0, zIndex: 30,
+            // VOLLBILD: der Atlas lag bisher mit inset 0 IM Kartenrahmen und
+            // stand deshalb nur im oberen Drittel, unten abgeschnitten. Als
+            // fixes Vollbild-Overlay nimmt er den ganzen Schirm - und laesst
+            // unten Platz fuer die Menueleiste.
+            background: "rgba(4,6,10,.94)",
+            overflowY: "auto", WebkitOverflowScrolling: "touch",
+            padding: "calc(18px + env(safe-area-inset-top)) 12px calc(104px + env(safe-area-inset-bottom))" }}>
             <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
               fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
             <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 12 }}>{t("camp.worldHint")}</div>
@@ -760,7 +774,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
             <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
-              width: "100%", maxWidth: `min(100%, calc((78dvh - 90px) * ${WORLD_MAP.w} / ${WORLD_MAP.h}))`, margin: "0 auto",
+              width: "100%", maxWidth: `min(100%, calc((72dvh - 40px) * ${WORLD_MAP.w} / ${WORLD_MAP.h}))`, margin: "0 auto",
               borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
               boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
@@ -798,19 +812,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 return <>
                   {/* die Dunkelheit selbst - mit den Kreisen als Loch */}
                   <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-                    background: "linear-gradient(180deg, rgba(6,5,12,.93) 0%, rgba(8,6,14,.9) 55%, rgba(6,5,12,.93) 100%)",
+                    background: "#05040a",
                     WebkitMaskImage: `linear-gradient(#000 0 0), ${maske}`,
                     maskImage: `linear-gradient(#000 0 0), ${maske}`,
                     WebkitMaskComposite: "xor", maskComposite: "exclude" }} />
-                  {/* Schwaden am Rand der Sicht, damit die Kreise nicht wie
-                      ausgestanzt wirken */}
-                  <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.5,
-                    filter: "blur(12px)",
-                    background: "radial-gradient(48% 34% at 76% 30%, rgba(190,180,164,.22), transparent 70%), radial-gradient(42% 28% at 34% 70%, rgba(170,162,148,.18), transparent 70%)",
-                    WebkitMaskImage: `linear-gradient(#000 0 0), ${maske}`,
-                    maskImage: `linear-gradient(#000 0 0), ${maske}`,
-                    WebkitMaskComposite: "xor", maskComposite: "exclude",
-                    animation: "ggFogR 44s ease-in-out infinite alternate" }} />
+                  {/* Die Schwadenschicht ist gefallen: zwei maskierte Flaechen
+                      uebereinander liessen das Ziehen ruckeln - und sie liessen
+                      Unbereistes erahnen, was es nicht soll. */}
                 </>;
               })()}
               {Array.from({ length: 12 }, (_, i) => i + 1).map((lg) => {

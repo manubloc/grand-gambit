@@ -276,7 +276,10 @@ for (let lg = 1; lg <= 12; lg++) {
 
       // NEBEL DER ZUKUNFT: das obere Kartenende muss im Dunkel liegen
       const nebel = await page.evaluate(() => {
-        const o = [...document.querySelectorAll("div")].find((d) => ((d.getAttribute("style") || "").includes("rgba(0, 0, 0, 0.97)")));
+        const o = [...document.querySelectorAll("div")].find((d) => {
+          const st = d.getAttribute("style") || "";
+          return st.includes("linear-gradient") && /rgb\(0, ?0, ?0\)|#000/.test(st) && st.includes("z-index: 6");
+        });
         return !!o;
       });
       if (!nebel) befunde.push("Kapitel 1: Nebel der Zukunft fehlt");
