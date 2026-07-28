@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
 import { carvedForPiece, carvedFitFor } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
@@ -251,7 +251,10 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 0.9 : 0.34)      // eigene: leise, beim Zug hell
     : kante(150, 105, 255, gewaehlt ? 1.0 : 0.62);     // Gegner: der Riss
-  const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
+  const klassisch = artStyle === "classic";
+  const glow = klassisch
+    ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
+    : "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
     + " " + SIDE_GLOW
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
     + (piece.hero ? " " + HERO_SHEEN : "")
@@ -267,7 +270,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const painting = carving
     ? carving
     : artStyle === "classic"
-    ? (CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
+    ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
     : (artStyle === "painted" || artStyle === "carved")
     ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
     : null;
@@ -302,7 +305,11 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
               // neither the gold lift nor the steel filter may touch them —
               // both would repaint the inlaid gold. Only the rank gets a
               // whisper of light, so kings and queens still read first.
-              filter: carving
+              filter: klassisch
+                // der klassische Satz bringt seine beiden Farben schon mit -
+                // kein Umfaerben, nur ein Hauch Licht fuer die Grossen
+                ? (isKing ? "brightness(1.08)" : isQueen ? "brightness(1.04)" : "none")
+                : carving
                 ? (isKing ? "brightness(1.12)" : isQueen ? "brightness(1.06)" : "none")
                 : white
                 ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"

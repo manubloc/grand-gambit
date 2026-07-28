@@ -83,6 +83,30 @@ import cQueen from "../assets/painted/classic-queen.webp";
 import cKing from "../assets/painted/classic-king.webp";
 export const CLASSIC_PAINTED = { P: cPawn, N: cKnight, B: cBishop, R: cRook, Q: cQueen, K: cKing };
 
+// ── DAS KLASSISCHE SPIEL HAT SEINEN EIGENEN SATZ (v0.40) ────────────────────
+// Sechs Figuren, geschnitzt in derselben Formensprache wie der Hof, aber
+// schmucklos und in zwei Farben: cremegrau und dunkelgrau. Der dunkle Satz
+// ist aus DENSELBEN Dateien abgeleitet, es sind also dieselben Figuren -
+// deshalb braucht das klassische Brett auch keinen Farbfilter fuer die
+// Gegenseite mehr, und weder Riss- noch Goldschein.
+import kPawnH from "../assets/klassik/pawn-hell.webp";
+import kKnightH from "../assets/klassik/knight-hell.webp";
+import kBishopH from "../assets/klassik/bishop-hell.webp";
+import kRookH from "../assets/klassik/rook-hell.webp";
+import kQueenH from "../assets/klassik/queen-hell.webp";
+import kKingH from "../assets/klassik/king-hell.webp";
+import kPawnD from "../assets/klassik/pawn-dunkel.webp";
+import kKnightD from "../assets/klassik/knight-dunkel.webp";
+import kBishopD from "../assets/klassik/bishop-dunkel.webp";
+import kRookD from "../assets/klassik/rook-dunkel.webp";
+import kQueenD from "../assets/klassik/queen-dunkel.webp";
+import kKingD from "../assets/klassik/king-dunkel.webp";
+const KLASSIK_HELL = { P: kPawnH, N: kKnightH, B: kBishopH, R: kRookH, Q: kQueenH, K: kKingH };
+const KLASSIK_DUNKEL = { P: kPawnD, N: kKnightD, B: kBishopD, R: kRookD, Q: kQueenD, K: kKingD };
+/** Die klassische Figur nach Art und SEITE - weiss traegt Creme, schwarz Grau. */
+export const klassikFor = (piece) =>
+  (piece?.color === "w" ? KLASSIK_HELL : KLASSIK_DUNKEL)[piece?.kind] || null;
+
 export const PAINTED = {
   haendler: pHaendler, pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,

@@ -98,6 +98,19 @@ for (const f of dateien) {
     funde.push(`${f}: Segmented mit o.id statt o.value - der Schalter laesst sich nicht umstellen`);
 }
 
+
+// v0.40: Der Soundtrack braucht einen Lader - esbuild kennt .mp3 nicht von
+// selbst und bricht mit --log-level=silent STILL ab, wodurch ganze Suiten
+// unbemerkt ausfallen (genau so geschehen beim Einbau).
+{
+  const pkg = readFileSync("package.json", "utf8");
+  const audioImport = /\.mp3"/.test(readFileSync("src/app/ui/Soundtrack.jsx", "utf8"));
+  for (const m of pkg.matchAll(/"(\w+)": "([^"]*esbuild[^"]*)"/g)) {
+    if (audioImport && /--loader:\.webp/.test(m[2]) && !/--loader:\.mp3/.test(m[2]))
+      funde.push(`package.json: Skript \"${m[1]}\" hat keinen mp3-Lader - esbuild bricht dort still ab`);
+  }
+}
+
 if (funde.length) {
   console.log("KNOPF-BEFUNDE:\n" + funde.map((f) => "  - " + f).join("\n"));
   process.exit(1);

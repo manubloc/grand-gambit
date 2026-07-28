@@ -14,6 +14,7 @@ const inApp = () =>
   (typeof navigator !== "undefined" && navigator.standalone === true);
 
 export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onLogout }) {
+  const en = profile.lang === "en";
   const [devPct, setDevPct] = useState(0); // workbench: journey progress slider
   const [devLg, setDevLg] = useState(profile.campaign?.league || 1); // workbench: league pick — applied together with the dial via SETZEN
   const [pin, setPin] = useState("");
@@ -72,6 +73,13 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
         options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
+      {/* DIE MELODIE DES HAUSES: laeuft in der Schleife, sobald man das Spiel
+          einmal beruehrt hat (kein Browser spielt ungefragt) - und schweigt,
+          sobald man hier abschaltet oder das Fenster verlaesst. */}
+      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{en ? "Music" : "Musik"}</div>
+      <Segmented value={profile.sound === false ? "off" : "on"}
+        onChange={(v) => dispatch({ type: "SET_SOUND", on: v !== "off" })}
+        options={[{ value: "on", label: en ? "on" : "an" }, { value: "off", label: en ? "off" : "aus" }]} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />

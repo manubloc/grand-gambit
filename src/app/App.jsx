@@ -7,6 +7,7 @@ import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
 import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { SwordsArt } from "./ui/SwordsArt.jsx";
+import { Soundtrack } from "./ui/Soundtrack.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
@@ -69,6 +70,7 @@ function reducer(state, a) {
     case "HYDRATE": return a.profile;
     case "SET_NAME": return { ...state, name: a.name };
     case "SET_LANG": return { ...state, lang: a.lang };
+    case "SET_SOUND": return { ...state, sound: a.on };
     case "SET_PIN": return { ...state, pin: a.pin };
     case "SET_DIFFICULTY": return { ...state, difficulty: a.difficulty };
     case "SET_PIECE_STYLE": return { ...state, pieceStyle: a.style };
@@ -459,6 +461,8 @@ export default function App() {
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
+      {/* die Melodie des Hauses - abschaltbar unter Profil */}
+      <Soundtrack an={profile.sound !== false} />
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {(!immersive || mapView) && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
