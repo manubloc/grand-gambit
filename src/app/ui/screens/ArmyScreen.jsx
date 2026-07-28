@@ -967,6 +967,29 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
     <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.14) 0%, rgba(26,20,12,.94) 44%, rgba(10,8,6,.98) 100%)",
       border: "1px solid rgba(227,192,122,.5)", borderRadius: T.radius, padding: "12px 14px",
       boxShadow: "0 0 16px rgba(240,206,122,.12), inset 0 1px 0 rgba(255,240,200,.08)" }}>
+      {/* DER STAND DES HÄNDLERS: er steht bei seiner Ware und sagt ein Wort -
+          und ein anderes, sobald etwas NEU in seinem Bündel liegt. */}
+      {(() => {
+        const neuDa = ITEM_LIST.filter((it) => itemRevealed(profile, it) && !(it.kind === "key" ? profile.items?.[it.id] : (profile.items?.[it.id] || 0)) && (profile.gold || 0) >= it.gold);
+        const spruch = neuDa.length
+          ? (en ? `New in my bundle — ${neuDa.length === 1 ? "one piece" : neuDa.length + " pieces"} you can afford today.`
+                : `Neu im Bündel — ${neuDa.length === 1 ? "ein Stück" : neuDa.length + " Stücke"}, die du heute zahlen kannst.`)
+          : (en ? "Look your fill. What I have, I have honestly." : "Sieh dich um. Was ich habe, habe ich ehrlich.");
+        return <div style={{ display: "flex", alignItems: "flex-end", gap: 12, marginBottom: 12 }}>
+          <img src={paintedById("haendler")} alt="" draggable={false}
+            style={{ width: 92, height: 108, objectFit: "contain", objectPosition: "bottom", flex: "0 0 auto",
+              filter: "drop-shadow(0 3px 6px rgba(0,0,0,.55)) drop-shadow(0 0 10px rgba(240,206,122,.22))" }} />
+          <div style={{ flex: 1, minWidth: 0, paddingBottom: 6 }}>
+            <div className="gg-quill" style={{ fontSize: 18, color: T.goldBright, textShadow: "0 0 10px rgba(240,206,122,.3)" }}>
+              {en ? "Corvo the Pedlar" : "Corvo, der Krämer"}</div>
+            <div className="gg-serif" style={{ fontSize: 12, color: neuDa.length ? "#f2dca0" : "#b9a98a", fontStyle: "italic",
+              lineHeight: 1.45, marginTop: 3 }}>„{spruch}"</div>
+          </div>
+          {neuDa.length > 0 && <span className="gg-serif" style={{ flex: "0 0 auto", alignSelf: "flex-start",
+            fontSize: 10.5, fontWeight: 800, letterSpacing: ".1em", color: "#17110a", background: T.gold,
+            borderRadius: 999, padding: "3px 9px", boxShadow: "0 0 10px rgba(240,206,122,.5)" }}>{en ? "NEW" : "NEU"}</span>}
+        </div>;
+      })()}
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.goldBright, textTransform: "uppercase", marginBottom: 8,
         textShadow: "0 0 8px rgba(240,206,122,.35)" }}>{t("army.supplies")}</div>
       <div style={{ display: "grid", gap: 8 }}>
@@ -1492,7 +1515,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
-  const [tab, setTab] = useState(initialTab === "gear" ? "tree" : (initialTab || "tree")); // tree (der Hof) | formation | chron - die Schatzkammer wohnt jetzt im eigenen Menuepunkt
+  const [tab, setTab] = useState(initialTab || "tree"); // tree (der Hof) | formation | gear (der Haendler) | chron
   // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
   const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
@@ -1504,10 +1527,12 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
+      { value: "gear", label: t("army.tabGear") },
       { value: "chron", label: t("army.tabChron") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
+    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
   </div>;
 }

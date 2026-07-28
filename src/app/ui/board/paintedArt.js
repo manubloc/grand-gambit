@@ -4,6 +4,7 @@ import { carvedForPiece, carvedById } from "./carvedArt.js";
 // painting. Pieces without a painting yet fall back to the drawn SVG silently,
 // so the set may grow one figure at a time.
 import pPawn from "../assets/painted/painted-pawn.webp";
+import pHaendler from "../assets/painted/painted-haendler.webp";  // der fahrende Haendler am Stand
 import pGambit from "../assets/painted/painted-gambit.webp";
 // the risen hero: tier portraits (Stufe II/III) — currently placeholder copies
 // of the base painting; the user's generated art replaces these files 1:1
@@ -83,7 +84,7 @@ import cKing from "../assets/painted/classic-king.webp";
 export const CLASSIC_PAINTED = { P: cPawn, N: cKnight, B: cBishop, R: cRook, Q: cQueen, K: cKing };
 
 export const PAINTED = {
-  pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
+  haendler: pHaendler, pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
   captain: pCaptain, pathfinder: pPathfinder, sorceress: pSorceress,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,

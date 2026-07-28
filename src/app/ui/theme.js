@@ -161,6 +161,9 @@ export const GLOBAL_CSS = `
     background-size: 200% 100%; animation: ggFunkenlauf 2.4s linear infinite;
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  /* das Siegel am verschlossenen Weg atmet leise */
+  @keyframes ggGatePuls { 0%, 100% { box-shadow: 0 0 8px rgba(240,206,122,.5), 0 1px 3px rgba(0,0,0,.6); }
+    50% { box-shadow: 0 0 14px rgba(240,206,122,.85), 0 1px 3px rgba(0,0,0,.6); } }
   @keyframes ggSaum { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
   @keyframes ggRiftOpen { from { transform: scale(1.09); opacity: 0; } 40% { opacity: .92; } to { transform: scale(1); opacity: .92; } }
   @keyframes ggRiftPulse { 0%, 100% { box-shadow: 0 0 9px rgba(124,58,237,.35); border-color: rgba(167,139,250,.55); }

@@ -545,8 +545,20 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     : <span style={{ position: "absolute", top: 2, right: 2, width: 13, height: 13, borderRadius: "50%",
                         background: T.gold, color: "#17110a", fontSize: 8.5, fontWeight: 900, display: "flex", alignItems: "center",
                         justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>)}
-                  {st === "gated" && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
-                    filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : gateOf(n)?.gold ? <GoldCoin size={11} style={{ verticalAlign: "-2px" }} /> : <LockIc size={11} />}</span>}
+                  {/* DAS SCHLOSS AM WEG: eine verschlossene Station traegt ein
+                      deutliches goldenes Siegel - man sieht auf einen Blick, wo
+                      es nicht weitergeht; das Antippen erklaert im Panel, was
+                      fehlt (Gegenstand, Figur oder Zoll). */}
+                  {st === "gated" && <span style={{ position: "absolute", top: -3, right: -4, width: 21, height: 21,
+                    borderRadius: "50%", display: "grid", placeItems: "center", zIndex: 3,
+                    background: "radial-gradient(circle at 38% 30%, #3a2c10 0%, #171008 100%)",
+                    border: "1.5px solid #e3c07a",
+                    boxShadow: "0 0 8px rgba(240,206,122,.65), 0 1px 3px rgba(0,0,0,.6)",
+                    animation: "ggGatePuls 2.6s ease-in-out infinite" }}>
+                    <LockIc size={12} color="#f2d98c" /></span>}
+                  {/* und darunter, klein, WAS genau fehlt */}
+                  {st === "gated" && (gateOf(n)?.item || gateOf(n)?.gold) && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
+                    filter: bm ? "none" : "drop-shadow(0 1px 1px rgba(0,0,0,.4))" }}>{gateOf(n)?.item ? <ItemIcon id={gateOf(n).item} size={11} style={{ display: "inline-block", verticalAlign: "-2px" }} /> : <GoldCoin size={11} style={{ verticalAlign: "-2px" }} />}</span>}
                   {!bm && n.boss?.pure && (viewing || facedNode(n)) && st !== "cleared" && st !== "gated" && <span style={{ position: "absolute", bottom: 3, right: 3, width: 13, height: 13,
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
                     border: "1.5px solid #efe9da" }}><SkullIc color="#f6f0de" size={8} /></span>}
