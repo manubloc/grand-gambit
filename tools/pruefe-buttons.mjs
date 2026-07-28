@@ -68,6 +68,26 @@ for (const f of dateien) {
   if (!marke(L) || marke(L) !== marke(S)) funde.push(`Wortmarke laeuft auseinander: Login ${marke(L)} vs Spielstaende ${marke(S)}`);
 }
 
+
+// v0.39.2: Die Schaufensterseite muss die WIRKLICHEN Zahlen nennen - sie
+// sprach noch von "zehn Ligen" und 26 Helden, obwohl es zwoelf Kapitel und
+// 27 Helden sind. Und die Rechtstexte muessen abdecken, was der Code tut.
+{
+  const land = readFileSync("public/landing.html", "utf8");
+  if (/\bLigen?\b|zehn Ligen/.test(land)) funde.push("Landingpage nennt noch Ligen statt Kapitel");
+  if (/26 Helden/.test(land)) funde.push("Landingpage nennt eine veraltete Heldenzahl");
+  const dat = readFileSync("public/privacy.html", "utf8");
+  const nut = readFileSync("public/terms.html", "utf8");
+  const pushImCode = readFileSync("src/app/ui/screens/OnlineScreen.jsx", "utf8").includes("pushManager");
+  if (pushImCode && !/Push-Endpunkt|Benachrichtigung/.test(dat))
+    funde.push("Push laeuft im Code, fehlt aber in der Datenschutzerklaerung");
+  if (!/Faires Spiel|Fair/.test(nut)) funde.push("Nutzungsbedingungen ohne Fair-Play-Regel fuer den Mehrspieler-Betrieb");
+  for (const [name, txt] of [["Datenschutz", dat], ["Nutzungsbedingungen", nut]]) {
+    const nrs = [...txt.matchAll(/<h2>(\d+)\. /g)].map((m) => +m[1]);
+    for (let i = 0; i < nrs.length; i++) if (nrs[i] !== i + 1) { funde.push(`${name}: Nummerierung springt bei ${nrs[i]}`); break; }
+  }
+}
+
 if (funde.length) {
   console.log("KNOPF-BEFUNDE:\n" + funde.map((f) => "  - " + f).join("\n"));
   process.exit(1);
