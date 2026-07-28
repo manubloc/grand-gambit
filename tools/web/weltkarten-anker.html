@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grand Gambit — Weltkarten-Anker</title>
+<style>
+  :root { --gold:#e3c07a; --goldhell:#f6dfa0; --riss:#a78bfa; --tinte:#e9e3d4; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0a0812; color:var(--tinte);
+    font-family: Georgia, "Times New Roman", serif; -webkit-text-size-adjust:100%; }
+  header { padding:14px 16px 10px; border-bottom:1px solid rgba(167,139,250,.35);
+    background:linear-gradient(180deg, rgba(60,38,110,.5), rgba(20,14,34,.6)); }
+  h1 { margin:0 0 4px; font-size:19px; letter-spacing:.13em; color:var(--goldhell); font-weight:700; }
+  .hinweis { font-size:12.5px; color:#b9a9c5; line-height:1.5; }
+  main { padding:12px; }
+  .buehne { position:relative; max-width:1400px; margin:0 auto; border-radius:12px; overflow:hidden;
+    border:1px solid rgba(167,139,250,.45); box-shadow:0 0 22px rgba(124,58,237,.22); background:#05040a; }
+  .buehne img { display:block; width:100%; height:auto; }
+  .ablage { display:grid; place-items:center; min-height:44vh; padding:28px; text-align:center;
+    border:2px dashed rgba(227,192,122,.4); border-radius:12px; cursor:pointer; color:#b9a98a; font-size:14px; }
+  .ablage.warm { border-color:var(--gold); background:rgba(240,206,122,.07); }
+  .marke { position:absolute; transform:translate(-50%,-50%); width:30px; height:30px; border-radius:50%;
+    display:grid; place-items:center; font-size:12.5px; font-weight:800; color:#17110a; cursor:grab;
+    background:radial-gradient(circle at 38% 30%, #f6dfa0, #c9a052); border:1.5px solid #5c4318;
+    box-shadow:0 0 10px rgba(240,206,122,.6); font-family:Georgia,serif; user-select:none; touch-action:none; }
+  .marke.dran { box-shadow:0 0 0 3px rgba(167,139,250,.75), 0 0 16px rgba(139,92,246,.8); }
+  .linie { position:absolute; inset:0; pointer-events:none; }
+  .leiste { display:flex; flex-wrap:wrap; gap:6px; margin:12px auto 0; max-width:1400px; }
+  button { font-family:inherit; font-size:13px; font-weight:700; padding:8px 13px; border-radius:9px; cursor:pointer;
+    background:linear-gradient(172deg, rgba(40,24,72,.96), rgba(14,9,28,.98));
+    color:var(--riss); border:1px solid rgba(167,139,250,.6); }
+  button:hover { box-shadow:0 0 12px rgba(124,58,237,.5); }
+  button.gold { color:var(--goldhell); border-color:rgba(227,192,122,.65); }
+  .liste { max-width:1400px; margin:12px auto 0; display:grid; gap:4px;
+    grid-template-columns:repeat(auto-fill, minmax(215px, 1fr)); }
+  .welt { display:flex; align-items:center; gap:8px; padding:6px 9px; border-radius:8px; font-size:12.5px;
+    border:1px solid rgba(255,255,255,.09); background:rgba(20,14,32,.6); cursor:pointer; }
+  .welt.dran { border-color:var(--riss); background:rgba(60,38,110,.5); }
+  .welt.fertig { border-color:rgba(227,192,122,.5); }
+  .welt b { color:var(--goldhell); font-weight:700; min-width:20px; }
+  .welt .wo { margin-left:auto; color:#8d84a0; font-size:11px; font-variant-numeric:tabular-nums; }
+  textarea { width:100%; max-width:1400px; margin:12px auto 0; display:block; min-height:150px; padding:11px;
+    border-radius:10px; background:#0d0a16; color:#cfe3d0; border:1px solid rgba(167,139,250,.4);
+    font-family:ui-monospace, Menlo, Consolas, monospace; font-size:12px; line-height:1.5; }
+</style>
+</head>
+<body>
+<header>
+  <h1>WELTKARTEN-ANKER</h1>
+  <div class="hinweis">
+    Karte hineinziehen, dann die zwölf Welten <b>der Reihe nach</b> anklicken — Kronland zuerst,
+    Endloses Meer zuletzt. Marken lassen sich danach frei verschieben. Unten kommen die
+    fertigen Koordinaten für <code>WORLD_MAP.anchors</code> heraus.
+  </div>
+</header>
+<main>
+  <div id="ablage" class="ablage">Weltkarte hierher ziehen · oder tippen zum Auswählen</div>
+  <div id="buehne" class="buehne" style="display:none">
+    <img id="karte" alt="" />
+    <svg id="linie" class="linie"></svg>
+    <div id="marken"></div>
+  </div>
+  <div class="leiste">
+    <button class="gold" onclick="zurueck()">Letzte Marke zurück</button>
+    <button onclick="allesLoeschen()">Alle löschen</button>
+    <button class="gold" onclick="kopieren()">Koordinaten kopieren</button>
+    <button onclick="sichern()">Stand sichern</button>
+  </div>
+  <div id="liste" class="liste"></div>
+  <textarea id="ausgabe" readonly placeholder="Sobald alle zwölf Welten sitzen, steht hier der fertige Code."></textarea>
+</main>
+<script>
+const WELTEN = ["Kronland","Kornmark","Eichwald","Krummholz","Grauwacht","Wolkenjoch",
+  "Sattelweite","Aschgrund","Die Wunde","Sonnenschlund","Die Küste","Endloses Meer"];
+let anker = JSON.parse(localStorage.getItem("gg:weltanker") || "{}");   // {1:[x,y], ...} in Prozent
+let dran = null;   // gerade gezogene Marke
+
+const $ = (id) => document.getElementById(id);
+const naechste = () => { for (let i = 1; i <= 12; i++) if (!anker[i]) return i; return null; };
+
+// ── Bild annehmen ──────────────────────────────────────────────────────────
+const ablage = $("ablage");
+ablage.addEventListener("click", () => {
+  const f = document.createElement("input"); f.type = "file"; f.accept = "image/*";
+  f.onchange = () => f.files[0] && nimm(f.files[0]); f.click();
+});
+["dragenter","dragover"].forEach((e) => ablage.addEventListener(e, (ev) => {
+  ev.preventDefault(); ablage.classList.add("warm"); }));
+["dragleave","drop"].forEach((e) => ablage.addEventListener(e, () => ablage.classList.remove("warm")));
+ablage.addEventListener("drop", (ev) => { ev.preventDefault();
+  const f = ev.dataTransfer.files[0]; f && nimm(f); });
+function nimm(datei) {
+  const leser = new FileReader();
+  leser.onload = () => {
+    $("karte").src = leser.result;
+    localStorage.setItem("gg:weltkarte", leser.result);
+    ablage.style.display = "none"; $("buehne").style.display = "block";
+    zeichne();
+  };
+  leser.readAsDataURL(datei);
+}
+// gesicherte Karte wieder aufnehmen
+const alt = localStorage.getItem("gg:weltkarte");
+if (alt) { $("karte").src = alt; ablage.style.display = "none"; $("buehne").style.display = "block"; }
+
+// ── Setzen und Ziehen ──────────────────────────────────────────────────────
+$("buehne").addEventListener("click", (ev) => {
+  if (dran || ev.target.classList.contains("marke")) return;
+  const n = naechste(); if (!n) return;
+  const r = $("karte").getBoundingClientRect();
+  anker[n] = [ +(((ev.clientX - r.left) / r.width) * 100).toFixed(2),
+               +(((ev.clientY - r.top) / r.height) * 100).toFixed(2) ];
+  zeichne();
+});
+function greif(nr, ev) {
+  ev.preventDefault(); ev.stopPropagation(); dran = nr;
+  const zieh = (e) => {
+    const p = e.touches ? e.touches[0] : e;
+    const r = $("karte").getBoundingClientRect();
+    anker[nr] = [ +Math.max(0, Math.min(100, ((p.clientX - r.left) / r.width) * 100)).toFixed(2),
+                  +Math.max(0, Math.min(100, ((p.clientY - r.top) / r.height) * 100)).toFixed(2) ];
+    zeichne();
+  };
+  const los = () => { dran = null;
+    window.removeEventListener("mousemove", zieh); window.removeEventListener("mouseup", los);
+    window.removeEventListener("touchmove", zieh); window.removeEventListener("touchend", los); };
+  window.addEventListener("mousemove", zieh); window.addEventListener("mouseup", los);
+  window.addEventListener("touchmove", zieh, { passive: false }); window.addEventListener("touchend", los);
+}
+
+// ── Darstellen ─────────────────────────────────────────────────────────────
+function zeichne() {
+  const m = $("marken"); m.innerHTML = "";
+  for (let i = 1; i <= 12; i++) {
+    if (!anker[i]) continue;
+    const [x, y] = anker[i];
+    const d = document.createElement("div");
+    d.className = "marke" + (dran === i ? " dran" : "");
+    d.style.left = x + "%"; d.style.top = y + "%"; d.textContent = i;
+    d.title = WELTEN[i - 1];
+    d.addEventListener("mousedown", (e) => greif(i, e));
+    d.addEventListener("touchstart", (e) => greif(i, e), { passive: false });
+    m.appendChild(d);
+  }
+  // der eine Weg: eine Linie durch alle gesetzten Welten
+  const pfad = [];
+  for (let i = 1; i <= 12; i++) if (anker[i]) pfad.push(anker[i]);
+  $("linie").innerHTML = pfad.length > 1
+    ? `<polyline points="${pfad.map(([x, y]) => x + "," + y).join(" ")}" fill="none"
+        stroke="rgba(167,139,250,.75)" stroke-width=".45" stroke-dasharray="1.4 1" vector-effect="non-scaling-stroke" />`
+    : "";
+  $("linie").setAttribute("viewBox", "0 0 100 100");
+  $("linie").setAttribute("preserveAspectRatio", "none");
+
+  const l = $("liste"); l.innerHTML = "";
+  const n = naechste();
+  WELTEN.forEach((name, i) => {
+    const nr = i + 1, a = anker[nr];
+    const d = document.createElement("div");
+    d.className = "welt" + (a ? " fertig" : "") + (nr === n ? " dran" : "");
+    d.innerHTML = `<b>${nr}</b> ${name}<span class="wo">${a ? a[0] + " / " + a[1] : "—"}</span>`;
+    d.onclick = () => { delete anker[nr]; zeichne(); };   // antippen = löschen und neu setzen
+    l.appendChild(d);
+  });
+  ausgeben(); localStorage.setItem("gg:weltanker", JSON.stringify(anker));
+}
+function ausgeben() {
+  const zeilen = [];
+  for (let i = 1; i <= 12; i++) if (anker[i]) zeilen.push(`    ${i}: [${anker[i][0]}, ${anker[i][1]}],`);
+  const fehlt = 12 - zeilen.length;
+  $("ausgabe").value = zeilen.length
+    ? `// in src/app/ui/worldMap.js — WORLD_MAP.anchors ersetzen\n  anchors: {\n${zeilen.join("\n")}\n  },`
+      + (fehlt ? `\n\n// es fehlen noch ${fehlt} Welten` : "\n\n// vollständig — alle zwölf sitzen")
+    : "";
+}
+function zurueck() { for (let i = 12; i >= 1; i--) if (anker[i]) { delete anker[i]; break; } zeichne(); }
+function allesLoeschen() { if (confirm("Alle zwölf Anker löschen?")) { anker = {}; zeichne(); } }
+function kopieren() {
+  const t = $("ausgabe"); t.select(); document.execCommand("copy");
+  navigator.clipboard && navigator.clipboard.writeText(t.value);
+  alert("Koordinaten kopiert.");
+}
+function sichern() {
+  const b = new Blob([JSON.stringify(anker, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = "weltkarten-anker.json"; a.click();
+}
+zeichne();
+</script>
+</body>
+</html>
