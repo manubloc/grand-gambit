@@ -310,11 +310,17 @@ for (let lg = 1; lg <= 12; lg++) {
       if (!maske) return { ohneMaske: true };
       const st = maske.getAttribute("style") || "";
       const mv = (st.match(/(?:-webkit-)?mask-image:\s*([^;]+);/) || [])[1] || "";
-          return { kreise: (mv.match(/radial-gradient/g) || []).length, roh: (st.match(/radial-gradient/g) || []).length };
+          const fr = f.getBoundingClientRect();
+          return { kreise: (mv.match(/radial-gradient/g) || []).length,
+            breit: Math.round(fr.width), hoch: Math.round(fr.height), vw: innerWidth, vh: innerHeight };
     });
     if (w.kein) befunde.push("Weltkarte liess sich nicht oeffnen");
     else if (w.ohneMaske) befunde.push("Weltkarte: das Licht der bereisten Welt fehlt");
     else if (w.kreise < 1) befunde.push("Weltkarte: kein einziger Lichtradius");
+    // DIE WELTKARTE STEHT GROSS: sie soll die Breite nehmen wie die
+    // Kapitelkarte, nicht bei 430px klemmen.
+    if (w.breit != null && w.breit < w.vw * 0.84)
+      befunde.push(`Weltkarte zu klein: ${w.breit}px von ${w.vw}px Schirmbreite (${Math.round(100 * w.breit / w.vw)}%)`);
     // zurueck auf die Kapitelkarte
     await page.evaluate(() => {
       const zu = [...document.querySelectorAll("button")].find((b) => /Zum Kapitel|To the chapter/i.test(b.title || ""));

@@ -754,7 +754,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
               fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
             <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 12 }}>{t("camp.worldHint")}</div>
-            <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative", maxWidth: 430, margin: "0 auto",
+            {/* DIE WELTKARTE NIMMT DEN GANZEN SCHIRM: die alte Bremse von 430px
+                stammt von der schmalen Hochkantkarte - die neue liegt quer und
+                soll so gross stehen wie die Kapitelkarte. Sie fuellt die
+                Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
+                die Leiste rutscht. */}
+            <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
+              width: "100%", maxWidth: `min(100%, calc((78dvh - 90px) * ${WORLD_MAP.w} / ${WORLD_MAP.h}))`, margin: "0 auto",
               borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
               boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
