@@ -225,4 +225,4 @@ export function paintedFitFor(piece) {
 }
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
-export const ENEMY_FILTER = "saturate(0.34) brightness(0.78) contrast(1.1)"; // v0.38.6: eine Stufe entsaettigter - die AUSSAGE traegt das violette Kantenglühen, nicht die Farbe
+export const ENEMY_FILTER = "saturate(0.6) brightness(1.02) contrast(1.04)"; // v0.39.6: die Figuren waren zu dunkel zum Erkennen - Helligkeit zurueck ueber 1, die Zugehoerigkeit traegt allein die violette KONTUR

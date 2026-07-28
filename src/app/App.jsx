@@ -514,7 +514,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
       <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
       <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
-      {extra && <div style={{ fontSize: 12.5, color: T.text, marginTop: 10 }}>{extra}</div>}
+      {extra && <div style={{ position: "absolute", right: 12, bottom: 10, fontSize: 12.5, color: T.text }}>{extra}</div>}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
         borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
         background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
@@ -578,7 +578,8 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       })()}
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<SwordsArt size={54} />} />
-      <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
+      <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
+        cta={hallenStand ? (profile.lang === "en" ? "Play" : "Spielen") : t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
           : <span title={hallenStand ? (profile.lang === "en" ? "Connected" : "Verbunden")
               : (profile.lang === "en" ? "Not connected" : "Nicht verbunden")}

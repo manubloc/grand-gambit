@@ -241,10 +241,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // die weiteren breiter und schwaecher (das Abklingen ins Violett). Die
   // EIGENEN glimmen nur leise golden, die Gegner tragen den Riss - und beim
   // Auswaehlen glimmt die Figur deutlich auf.
+  // EINE KONTUR, KEIN NEBEL: zwei enge Schatten statt dreier weiter - das
+  // Licht liegt AUF der Silhouette, frisst kein halbes Feld und kostet die
+  // Haelfte an Rechenzeit.
   const kante = (r, g2, b2, staerke = 1) =>
-    `drop-shadow(0 0 1px rgba(${r},${g2},${b2},${(0.95 * staerke).toFixed(2)})) `
-    + `drop-shadow(0 0 3px rgba(${r},${g2},${b2},${(0.55 * staerke).toFixed(2)})) `
-    + `drop-shadow(0 0 8px rgba(${r},${g2},${b2},${(0.28 * staerke).toFixed(2)}))`;
+    `drop-shadow(0 0 1px rgba(${r},${g2},${b2},${(1 * staerke).toFixed(2)})) `
+    + `drop-shadow(0 0 2.5px rgba(${r},${g2},${b2},${(0.5 * staerke).toFixed(2)}))`;
   const gewaehlt = !!piece.selected;
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 0.9 : 0.34)      // eigene: leise, beim Zug hell

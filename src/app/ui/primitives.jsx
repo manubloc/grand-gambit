@@ -91,7 +91,7 @@ export function Segmented({ options, value, onChange }) {
       const on = value === o.value;
       return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
         border: on ? "1px solid rgba(255,240,200,.5)" : "1px solid transparent", borderRadius: 8, padding: "9px 6px",
-        fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer",
+        fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer", whiteSpace: "nowrap",
         opacity: o.disabled ? 0.45 : 1, position: "relative", overflow: "hidden",
         background: on ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : "transparent",
         boxShadow: on ? `0 0 12px ${T.gold}55` : "none",

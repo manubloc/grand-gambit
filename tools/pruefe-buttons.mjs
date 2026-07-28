@@ -88,6 +88,16 @@ for (const f of dateien) {
   }
 }
 
+
+// v0.39.6: Segmented liest o.value - wer Optionen mit o.id uebergibt, baut
+// einen Schalter, der sich NICHT umstellen laesst (so geschehen bei
+// Sichtbarkeit und Startverbindung).
+for (const f of dateien) {
+  const txt = readFileSync(f, "utf8");
+  if (/<Segmented/.test(txt) && /options=\{\[\{ id:/.test(txt))
+    funde.push(`${f}: Segmented mit o.id statt o.value - der Schalter laesst sich nicht umstellen`);
+}
+
 if (funde.length) {
   console.log("KNOPF-BEFUNDE:\n" + funde.map((f) => "  - " + f).join("\n"));
   process.exit(1);

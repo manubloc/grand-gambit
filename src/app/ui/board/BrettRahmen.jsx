@@ -31,11 +31,11 @@ function Ecke({ id, verzug }) {
       <path d="M1.2 10 q.3 4.5 2.2 6 q-.4 -2.6 .8 -3.7 q.5 1.6 1.6 1.6 q-.6 -2 .4 -3.9"
         fill="none" stroke={`url(#${id}-fl)`} strokeWidth="1.1" strokeLinecap="round" />
       <circle cx="3.6" cy="3.6" r="1.05" fill={GOLD_HELL}>
-        <animate attributeName="opacity" values="1;.35;1;1" dur="3.4s" begin={`${verzug}s`} repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;.35;1;1" dur="6.5s" begin={`${verzug}s`} repeatCount="indefinite" />
       </circle>
       <circle cx="3.6" cy="3.6" r="2.4" fill="none" stroke={GOLD_HELL} strokeWidth=".35" opacity="0">
-        <animate attributeName="opacity" values="0;.75;0" dur="3.4s" begin={`${verzug}s`} repeatCount="indefinite" />
-        <animate attributeName="r" values="1.2;3.4" dur="3.4s" begin={`${verzug}s`} repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;.75;0" dur="6.5s" begin={`${verzug}s`} repeatCount="indefinite" />
+        <animate attributeName="r" values="1.2;3.4" dur="6.5s" begin={`${verzug}s`} repeatCount="indefinite" />
       </circle>
     </g>
   );
@@ -63,7 +63,7 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
   const W = 1000, H = 1000, rand = 26;   // eigenes Gitter, quadratisch
   const feind = Math.max(0, -lage);      // wie stark der Gegner führt
   const eigen = Math.max(0, lage);
-  const blitzTakt = feind > 0.05 ? Math.max(2.4, 7 - feind * 5) : 0;   // Sekunden
+  const blitzTakt = feind > 0.12 ? Math.max(4.5, 11 - feind * 6) : 0;   // seltener, erst bei klarer Uebermacht   // Sekunden
   return (
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", ...style }}>
@@ -87,8 +87,8 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
           <stop offset="50%" stopColor="#fffdf4" stopOpacity=".85" />
           <stop offset="58%" stopColor="#fff" stopOpacity="0" />
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-          <animate attributeName="x1" values="-1;1" dur="6.5s" repeatCount="indefinite" />
-          <animate attributeName="x2" values="0;2" dur="6.5s" repeatCount="indefinite" />
+          <animate attributeName="x1" values="-1;1" dur="11s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="0;2" dur="11s" repeatCount="indefinite" />
         </linearGradient>
         <clipPath id={`${id}-leisten`}>
           <path d={`M${rand - 9} ${rand - 9} H${W - rand + 9} V${H - rand + 9} H${rand - 9} Z
@@ -124,14 +124,21 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
 
       {/* DIE BLITZE DES GEGNERS: zucken an der oberen Leiste, je öfter, je
           klarer er führt. Drei Zacken mit versetztem Takt. */}
-      {blitzTakt > 0 && [0.22, 0.5, 0.78].map((p, i) => {
-        const x = rand + (W - 2 * rand) * p;
+      {/* DER RISS SCHLAEGT EIN: keine Blitz-Symbole mehr, die aufploppen -
+          sondern ein feiner Zickzack, der ENTLANG der oberen Leiste zuckt und
+          sofort wieder verlischt. Gezeichnet als duenne Linie ohne Fuellung,
+          damit es wie eine Entladung wirkt und nicht wie ein Bildchen. */}
+      {blitzTakt > 0 && [0.3, 0.62].map((p, i) => {
+        const x = rand + (W - 2 * rand) * p, y = rand;
+        const zack = `M${x - 34} ${y} l7 -4 l5 5 l8 -6 l6 5 l9 -4 l5 5 l8 -3`;
         return (
           <g key={i} opacity="0">
-            <animate attributeName="opacity" values="0;1;0;0;0" dur={`${blitzTakt}s`} begin={`${i * 0.9}s`} repeatCount="indefinite" />
-            <path d={`M${x} ${rand - 6} l-13 26 l11 -3 l-8 24 l24 -30 l-12 3 Z`}
-              fill={RISS_HELL} stroke={RISS} strokeWidth="1.6" strokeLinejoin="round" />
-            <circle cx={x} cy={rand - 2} r="9" fill={RISS_HELL} opacity=".55" />
+            <animate attributeName="opacity" values="0;.95;0;0;0;0;0" dur={`${blitzTakt}s`}
+              begin={`${i * 1.7}s`} repeatCount="indefinite" />
+            <path d={zack} fill="none" stroke={RISS_HELL} strokeWidth="1.1"
+              strokeLinecap="round" strokeLinejoin="round" />
+            <path d={zack} fill="none" stroke={RISS} strokeWidth="2.4"
+              strokeLinecap="round" strokeLinejoin="round" opacity=".4" />
           </g>
         );
       })}

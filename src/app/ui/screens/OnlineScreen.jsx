@@ -398,17 +398,17 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
               <Button variant="subtle" onClick={() => net.close()} style={{ padding: "7px 12px", fontSize: 12.5 }}>{t("online.disconnect")}</Button>
             </Line>
             <Line>
-              <span style={{ fontSize: 12.5, color: T.dim }}>{t("online.privacy")}:</span>
+              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{t("online.privacy")}:</span>
               <Segmented value={o.privacy || "public"} onChange={setPrivacy}
-                options={[{ id: "public", label: t("online.public") }, { id: "friends", label: t("online.friendsOnly") }]} />
+                options={[{ value: "public", label: t("online.public") }, { value: "friends", label: t("online.friendsOnly") }]} />
             </Line>
             {/* KEIN ZWANG: die Halle steht beim Start von selbst offen - wer
                 das nicht will, stellt es hier ab und verbindet wieder von Hand. */}
             <Line>
-              <span style={{ fontSize: 12.5, color: T.dim }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
+              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
               <Segmented value={o.autoConnect === false ? "off" : "on"}
                 onChange={(v) => dispatch({ type: "SET_ONLINE", online: { ...o, autoConnect: v !== "off" } })}
-                options={[{ id: "on", label: en ? "automatic" : "automatisch" }, { id: "off", label: en ? "manual" : "von Hand" }]} />
+                options={[{ value: "on", label: en ? "automatic" : "automatisch" }, { value: "off", label: en ? "manual" : "von Hand" }]} />
             </Line>
             {!searching ? (<>
               <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
@@ -506,6 +506,19 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
           <div className="gg-serif" style={{ fontSize: 15.5, color: T.text, letterSpacing: ".05em", marginBottom: 8 }}>{t("online.friends")}</div>
           <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 8 }}>
             {t("online.myCode")}: <b style={{ color: T.gold, letterSpacing: ".08em" }}>{o.id}</b>
+            {/* DEN CODE VERSCHICKEN: teilen, wo das Geraet es kann - sonst in
+                die Zwischenablage. So kommt ein Freund mit einem Griff herein. */}
+            <Button variant="subtle" style={{ padding: "5px 10px", fontSize: 12, marginLeft: 8 }}
+              onClick={async () => {
+                const text = en
+                  ? `Play me at Grand Gambit! My friend code: ${o.id} — https://grandgambit.win`
+                  : `Spiel mit mir Grand Gambit! Mein Freundescode: ${o.id} — https://grandgambit.win`;
+                try {
+                  if (navigator.share) { await navigator.share({ title: "Grand Gambit", text }); return; }
+                  await navigator.clipboard.writeText(text);
+                  flash(en ? "Invitation copied" : "Einladung kopiert");
+                } catch { /* abgebrochen oder verboten: dann eben von Hand */ }
+              }}>{en ? "Share" : "Teilen"}</Button>
           </div>
           <Line>
             <input style={input} value={code} onChange={(e) => setCode(e.target.value.trim())} placeholder={t("online.codePh")} maxLength={12} />
