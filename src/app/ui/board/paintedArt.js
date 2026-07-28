@@ -224,4 +224,4 @@ export function paintedFitFor(piece) {
 }
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
-export const ENEMY_FILTER = "hue-rotate(185deg) saturate(0.32) brightness(1.02)"; // whiter steel, less blue
+export const ENEMY_FILTER = "saturate(0.52) brightness(0.86) contrast(1.06)"; // Farbe bleibt lesbar, Ton ins Dunkle - das Fremde traegt der Riss-Schein

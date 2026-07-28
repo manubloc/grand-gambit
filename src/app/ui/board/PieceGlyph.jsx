@@ -233,12 +233,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const ROYAL_HALO = white
     ? (isKing ? "drop-shadow(0 0 6px rgba(248,228,158,.64)) drop-shadow(0 0 16px rgba(240,214,138,.4))"
               : "drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))")
-    : (isKing ? "drop-shadow(0 0 6px rgba(218,232,246,.54)) drop-shadow(0 0 16px rgba(190,212,232,.32))"
-              : "drop-shadow(0 0 5px rgba(214,228,242,.42)) drop-shadow(0 0 12px rgba(190,212,232,.24))");
+    : (isKing ? "drop-shadow(0 0 6px rgba(196,181,253,.54)) drop-shadow(0 0 16px rgba(139,92,246,.34))"
+              : "drop-shadow(0 0 5px rgba(196,181,253,.42)) drop-shadow(0 0 12px rgba(139,92,246,.26))");
   const HERO_SHEEN = white
     ? "drop-shadow(0 0 5px rgba(240,214,138,.45)) drop-shadow(0 0 10px rgba(240,214,138,.22))"
-    : "drop-shadow(0 0 5px rgba(214,228,242,.4)) drop-shadow(0 0 10px rgba(190,212,232,.2))";
+    : "drop-shadow(0 0 5px rgba(196,181,253,.42)) drop-shadow(0 0 10px rgba(139,92,246,.24))";
+  const SIDE_GLOW = white
+    ? "drop-shadow(0 0 4px rgba(240,214,138,.22)) drop-shadow(0 0 10px rgba(240,206,122,.12))"
+    : "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 12px rgba(124,58,237,.24))";
   const glow = "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
+    + " " + SIDE_GLOW
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
     + (piece.hero ? " " + HERO_SHEEN : "")
     + (royal ? " " + ROYAL_HALO : "");

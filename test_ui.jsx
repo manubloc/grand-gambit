@@ -21,7 +21,7 @@ import { LeaveMatchAsk, GameIntro } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN, TIME_MODES, timeModeById, clockFor } from "./src/content/index.js";
-import { ArmyScreen } from "./src/app/ui/screens/ArmyScreen.jsx";
+import { ArmyScreen, GearPanel } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile, evaluate } from "./src/meta/index.js";
 import { makeT } from "./src/app/i18n/strings.js";
@@ -589,14 +589,14 @@ import { IC_SPELLSTAR, IC_COIN, IC_SKILL } from "./src/app/ui/assets/icons/iconA
   const broken = [];
   for (const id of [...ids, "shard"]) {
     try {
-      const m = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo={id} />);
+      const m = html(<GearPanel profile={prof} dispatch={() => {}} t={t} en={false} initialGearInfo={id} />);
       if (m.length < 500) broken.push(id + " (leer)");
     } catch (e) { broken.push(id + ": " + e.message.slice(0, 40)); }
   }
   ok(`every sheet opens without crashing (${ids.length + 1})`,
     broken.length === 0 || console.log("     ", broken.join(" | ")));
 
-  const sheet = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo="bergschluessel" />);
+  const sheet = html(<GearPanel profile={prof} dispatch={() => {}} t={t} en={false} initialGearInfo="bergschluessel" />);
   ok("the sheet shows the painting large", sheet.includes("width:116px"));
   ok("it carries the short line", sheet.includes(ITEMS.bergschluessel.textDe.slice(0, 24)));
   ok("and the longer word beneath", sheet.includes(ITEMS.bergschluessel.loreDe.slice(0, 30)));
@@ -610,12 +610,12 @@ import { IC_SPELLSTAR, IC_COIN, IC_SKILL } from "./src/app/ui/assets/icons/iconA
     ids.every((id) => !/[♥⚔]/.test(ITEMS[id].textDe + ITEMS[id].loreDe)));
 
   // the shard sits among the wares now, with no pedestal of its own
-  const gear = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" />);
+  const gear = html(<GearPanel profile={prof} dispatch={() => {}} t={t} en={false} />);
   // (a shine elsewhere on the page is fine — what mattered was the shard's OWN
   // gilded plate: its border, its ground and its gold lettering)
   ok("the star shard no longer sits on its own gilded plate",
     !gear.includes("rgba(43, 36, 16, .4)") && !gear.includes("1px solid #8a6d3566"));
-  const shardSheet = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="gear" initialGearInfo="shard" />);
+  const shardSheet = html(<GearPanel profile={prof} dispatch={() => {}} t={t} en={false} initialGearInfo="shard" />);
   ok("its sheet explains the ration per chapter", /je erreichtem Kapitel/.test(shardSheet));
 }
 

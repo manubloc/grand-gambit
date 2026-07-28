@@ -42,5 +42,21 @@ let s4 = { ...hpState(b4), turn: "b" };
 const zuege = legalMovesFrom(s4, idx(3, 3, 8));
 ok("Schemen blinzelt: blink-Zug im Angebot", zuege.some((m) => m.special === "blink"));
 
-console.log(`\nRESULT: ${passed} passed, ${failed} failed`);
+// 5) DAS STUFENWERK: ueberproportionale Kosten, ein Gesetz fuer alle
+import("./src/meta/leveling.js").then(({ bossUpgradeCost, bossSpecLeveled, upgradeBoss, BOSS_MAX_LEVEL }) => {
+  import("./src/content/index.js").then(({ bossById }) => {
+    const k = [2, 3, 4, 5].map(bossUpgradeCost);
+    ok("Bestien lernen teuer: Kosten 5,7,9,11 steigen ueberproportional", k.join(",") === "5,7,9,11" && (k[1] - k[0]) === 2);
+    const b = bossById("b01");
+    const l5 = bossSpecLeveled(b, 5);
+    ok("Rang 5 traegt +4 Leben und +2 Angriffskraft", l5.hp === b.hp + 4 && l5.atk === b.atk + 2 && l5.maxHp === l5.hp);
+    const prof = { sp: 20, pieces: {}, campaign: { bribedBosses: ["b01"] }, stats: {} };
+    const p1 = upgradeBoss(prof, "b01");
+    ok("ein bestochenes Wesen steigt im Rang und zahlt", p1.pieces.bossLevels.b01 === 2 && p1.sp === 20 - bossUpgradeCost(2));
+    const fremd = upgradeBoss({ sp: 20, pieces: {}, campaign: {}, stats: {} }, "b01");
+    ok("ein fremdes Wesen lernt nicht", !fremd.pieces?.bossLevels?.b01);
+    console.log(`\nRESULT: ${passed} passed, ${failed} failed`);
+    if (failed) process.exit(1);
+  });
+});
 if (failed) process.exit(1);

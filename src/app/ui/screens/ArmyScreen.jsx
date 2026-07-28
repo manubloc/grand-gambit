@@ -3,7 +3,7 @@ import { AbilityIcon, abilityTint } from "../AbilityIcons.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
-import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap } from "../../../meta/index.js";
+import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
@@ -960,7 +960,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
 }
 
 // Gear & supplies — its own room now (tab 2), no longer part of one long scroll.
-function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
+export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
   const [gearInfo, setGearInfo] = useState(initialGearInfo);   // ein angetipptes Stück zeigt sein Blatt
   return (
     <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.14) 0%, rgba(26,20,12,.94) 44%, rgba(10,8,6,.98) 100%)",
@@ -1236,10 +1236,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           sits up here; it belongs under the name, where it reads as a caption. */}
       {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
         display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
-      {img ? <img src={img} alt="" style={{ width: 76, height: 76, objectFit: "contain", display: "block", margin: "0 auto",
+      {img ? <img src={img} alt="" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
-        : <div style={{ width: 76, height: 76, display: "grid", placeItems: "center", margin: "0 auto" }}>
+        : <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto" }}>
             {/* NEVER A QUESTION MARK WHERE A FIGURE BELONGS. If no painting is
                 at hand, the tile shows the piece's own shape as a black
                 silhouette — a shadow you can still recognise. The NAME may stay
@@ -1383,6 +1383,35 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
               <span style={{ paddingBottom: 4 }}><PieceArt kind="X" bossId={b.id} art={b.art} size={44} level={1}
                 fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent={T.riftBright} /></span>
             </div>
+            {(en ? b.flavorEn : b.flavorDe) && <div className="gg-serif" style={{ marginTop: 8, fontSize: 12, lineHeight: 1.45,
+              color: "#b9a9c5", fontStyle: "italic" }}>„{en ? b.flavorEn : b.flavorDe}"</div>}
+            {(() => {
+              const lvl = bossLevelOf(profile, b.id);
+              const spec = bossSpecLeveled(b, lvl);
+              const mein = (profile.campaign?.bribedBosses || []).includes(b.id) || ownedBossSet.has(b.id);
+              const cost = bossUpgradeCost(lvl + 1);
+              const kann = mein && lvl < BOSS_MAX_LEVEL && (profile.sp || 0) >= cost;
+              return <>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, margin: "12px 0 2px" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={spec.atk} /><span style={{ fontSize: 10.5, color: "#a898b4", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={spec.hp} /><span style={{ fontSize: 10.5, color: "#a898b4", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
+                </div>
+                {mein && <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                  <span className="gg-serif" style={{ fontSize: 11.5, color: "#c9bcd6" }}>
+                    {(en ? "Rank " : "Rang ") + lvl + " / " + BOSS_MAX_LEVEL}</span>
+                  <span style={{ flex: 1 }} />
+                  {lvl < BOSS_MAX_LEVEL && <button onClick={() => dispatch({ type: "UPGRADE_BOSS", id: b.id })}
+                    disabled={!kann}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 10,
+                      fontFamily: "inherit", fontWeight: 800, fontSize: 12.5, cursor: kann ? "pointer" : "default",
+                      background: kann ? "linear-gradient(172deg, rgba(40,24,72,.97) 0%, rgba(14,9,28,.99) 100%)" : "#151827",
+                      color: kann ? T.riftBright : "#8d94ad", border: `1px solid ${kann ? T.riftLine : "#3d4666"}`,
+                      boxShadow: kann ? `0 0 12px ${T.riftGlow}` : "none",
+                      textShadow: kann ? "0 0 8px rgba(196,181,253,.8)" : "none" }}>
+                    {t("army.upgrade")} · {cost} <SkillStar size={12} /></button>}
+                </div>}
+              </>;
+            })()}
             <div style={{ marginTop: 14 }}>
               <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: T.riftBright, marginBottom: 4 }}>{t("chron.moves").toUpperCase()}</div>
               <MoveDiagram kind={null} moveSpec={b.moveSpec} />
@@ -1437,7 +1466,7 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
   const [openChar, setOpenChar] = useState(null); // Figuren-Akkordeon: eine Karte offen
   const en = profile.lang === "en";
   const wide = useMedia("(min-width: 900px)");
-  const [tab, setTab] = useState(initialTab || "tree"); // tree (the court) first | formation | chars | gear
+  const [tab, setTab] = useState(initialTab === "gear" ? "tree" : (initialTab || "tree")); // tree (der Hof) | formation | chron - die Schatzkammer wohnt jetzt im eigenen Menuepunkt
   // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
   const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
   const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
@@ -1449,12 +1478,10 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     <Segmented value={tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
-      { value: "gear", label: t("army.tabGear") },
       { value: "chron", label: t("army.tabChron") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
-    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
   </div>;
 }

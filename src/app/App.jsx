@@ -4,8 +4,9 @@ import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../c
 import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
-import { claimableCount, retinueScore } from "../meta/index.js";
+import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
 import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
+import { SwordsArt } from "./ui/SwordsArt.jsx";
 import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
@@ -20,7 +21,7 @@ import { createNet } from "../platform/net.web.js";
 import { NavIcon, HeartIc, SkillStar, MapIc } from "./ui/icons.jsx";
 import { Bar, Panel, Button, Chip } from "./ui/primitives.jsx";
 import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
-import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
+import { ArmyScreen, GearPanel } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
@@ -33,8 +34,6 @@ const CrestArt = ({ src }) => (
   <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
     filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
 );
-import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
-import { LeaderboardSection } from "./ui/screens/LeaderboardScreen.jsx";
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
 
 
@@ -79,6 +78,7 @@ function reducer(state, a) {
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);
     case "RECORD_STAGE": return recordStage(state, a);
     case "UPGRADE_PIECE": return upgradePiece(state, a.id);
+    case "UPGRADE_BOSS": return upgradeBoss(state, a.id);
     case "BUY_SP_SHARD": return buySpShard(state);
     case "UNLOCK_ABILITY": return unlockAbility(state, a.id, a.ability);
     case "RESPEC": return respecPiece(state, a.id);
@@ -294,16 +294,35 @@ export default function App() {
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
         : tab === "ach" ? <div>
-          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
-            {[["ach", t("ranks.tabAch")], ["lb", t("ranks.tabLb")]].map(([id, lbl]) => (
-              <button key={id} onClick={() => setTrophyTab(id)} style={{ flex: 1, background: trophyTab === id ? "rgba(201,164,92,.22)" : "none",
-                border: `1px solid ${trophyTab === id ? T.gold + "88" : T.line}`, color: trophyTab === id ? T.gold : T.dim,
-                borderRadius: 999, padding: "8px 6px", fontFamily: "inherit", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>{lbl}</button>
-            ))}
+          {/* DIE TRUHE DES HAUSES: nur noch die Schatzkammer selbst - Erfolge
+              und Bestenliste sind ausgezogen. Oben wacht die gezeichnete
+              Truhe, halb offen, mit dem Licht des Goldes im Deckelspalt. */}
+          <div style={{ display: "grid", placeItems: "center", padding: "6px 0 12px" }}>
+            <svg width="92" height="72" viewBox="0 0 46 36" aria-hidden
+              style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,.55)) drop-shadow(0 0 10px rgba(240,206,122,.3))" }}>
+              <defs>
+                <linearGradient id="ggTrH" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#7a5a2c" /><stop offset="100%" stopColor="#3d2c12" /></linearGradient>
+                <linearGradient id="ggTrG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f6dfa0" /><stop offset="100%" stopColor="#b8903f" /></linearGradient>
+              </defs>
+              {/* der Lichtspalt unterm Deckel */}
+              <rect x="5" y="15.5" width="36" height="3.4" rx="1.6" fill="#ffe9a8" opacity=".9" />
+              {/* Deckel, leicht geoeffnet */}
+              <path d="M4 16 L4 12 Q4 5 23 5 Q42 5 42 12 L42 16 L40 14.6 Q23 8.6 6 14.6 Z" fill="url(#ggTrH)" stroke="#241708" strokeWidth="1.1" strokeLinejoin="round" />
+              <path d="M4 12.6 L42 12.6" stroke="url(#ggTrG)" strokeWidth="1.4" opacity=".85" />
+              {/* Korpus */}
+              <rect x="4" y="17.5" width="38" height="16.5" rx="2.5" fill="url(#ggTrH)" stroke="#241708" strokeWidth="1.1" />
+              <path d="M4 22 L42 22 M4 29 L42 29" stroke="url(#ggTrG)" strokeWidth="1.3" opacity=".8" />
+              {/* Schloss */}
+              <rect x="20.4" y="16.8" width="5.2" height="7" rx="1.4" fill="url(#ggTrG)" stroke="#5c4318" strokeWidth="1" />
+              <circle cx="23" cy="19.6" r="1" fill="#3d2c12" />
+              {/* zwei Muenzen, die aus dem Spalt lugen */}
+              <circle cx="12.5" cy="15.9" r="1.7" fill="url(#ggTrG)" stroke="#5c4318" strokeWidth=".7" />
+              <circle cx="32.6" cy="15.7" r="1.4" fill="url(#ggTrG)" stroke="#5c4318" strokeWidth=".7" />
+            </svg>
           </div>
-          {trophyTab === "lb"
-            ? <LeaderboardSection profile={profile} playtimeSec={slot?.playtimeSec || 0} />
-            : <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />}
+          <GearPanel profile={profile} dispatch={dispatch} t={t} en={profile.lang === "en"} />
         </div>
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account}
               onSwitchSave={() => setSlot(null)}
@@ -319,7 +338,7 @@ export default function App() {
   const claimable = claimableCount(profile);
   const railItems = TABS.map((tb) => {
     const on = tab === tb.id;
-    const badge = tb.id === "ach" && claimable > 0;
+    const badge = false; // Erfolge sind ausgezogen - kein Zaehler mehr am Schatzpunkt
     return (
       <button key={tb.id} onClick={() => {
         if (inMatch && tb.id !== tab) { setLeaveTo(tb.id); return; }
@@ -507,7 +526,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
         art={<CrestArt src={crestArt(1)} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<CrestArt src={crestArt(2)} />} />
+        art={<SwordsArt size={54} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline} cta={t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip> : null}
         art={<CrestArt src={crestArt(3)} />} />

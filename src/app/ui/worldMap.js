@@ -37,7 +37,7 @@ export const LEAGUE_LORE = {
     en: "Two bodies, one vow: the Twin Knight swore it to the last Gambit — loyalty to the gate, and not one step further down. One of them remembers her voice, neither recalls the name. So the vow guards a gate and no longer knows for whom. In the amber leaves, they say, oaths turn like foliage.",
   },
   4: {
-    de: "Wo der Eichwald dünner wird, wachsen die Bäume krumm — der Wind erlaubt kein aufrechtes Stehen mehr. Hirten sagen, an der Baumgrenze hört man den Riss zum ersten Mal: nicht als Laut, sondern als Stille zwischen zwei Glockenschlägen. Der Springbock springt dort von Fels zu Fels, als suche er einen Namen, den er auf keiner Weide fand.",
+    de: "Wo der Eichwald dünner wird, wachsen die Bäume krumm — der Wind erlaubt kein aufrechtes Stehen mehr. Hirten sagen, an der Baumgrenze hört man den Riss zum ersten Mal: nicht als Laut, sondern als Stille zwischen zwei Glockenschlägen. Der Hetzer jagt dort von Fels zu Fels, als suche er einen Namen, den ihm keine Weide je gab.",
     en: "Where the Eichwald thins, the trees grow crooked — the wind no longer permits standing upright. Herders say the treeline is where you first hear the rift: not as a sound, but as the silence between two bell strokes. The Springbok leaps there from rock to rock, as if searching for a name it found on no pasture.",
   },
   5: {

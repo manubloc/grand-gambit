@@ -221,13 +221,39 @@ export const ownedLeagueBosses = (profile) => {
 export const isBossEntry = (id) => typeof id === "string" && id.startsWith("boss:");
 export const bossEntryId = (id) => (isBossEntry(id) ? id.slice(5) : null);
 
+// ── DAS STUFENWERK DER BESTIEN (v0.38.2) ────────────────────────────────────
+// EIN Gesetz fuer alle Familien: fuenf Raenge, jeder Rang +1 Leben, Rang 3
+// und 5 je +1 Angriffskraft. Die Kosten steigen UEBERPROPORTIONAL (3, 5, 7,
+// 9 Skillpunkte) - die Bestien lernen langsamer als der Hof, dafuer wiegt
+// jeder Rang schwerer. Gespeichert unter pieces.bossLevels[bXX].
+export const BOSS_MAX_LEVEL = 5;
+export const bossLevelOf = (profile, bossId) => Math.max(1, Math.min(BOSS_MAX_LEVEL, profile?.pieces?.bossLevels?.[bossId] || 1));
+export const bossUpgradeCost = (level) => 1 + 2 * level;   // 2->3, 3->5, 4->7, 5->9
+export function bossSpecLeveled(b, level) {
+  const spec = bossSpec(b);
+  const l = Math.max(1, Math.min(BOSS_MAX_LEVEL, level || 1));
+  const atkPlus = (l >= 3 ? 1 : 0) + (l >= 5 ? 1 : 0);
+  return { ...spec, level: l, hp: spec.hp + (l - 1), maxHp: spec.hp + (l - 1), atk: spec.atk + atkPlus };
+}
+export function upgradeBoss(profile, bossId) {
+  const owned = new Set([...ownedLeagueBosses(profile), ...(profile.campaign?.bribedBosses || [])]);
+  if (!owned.has(bossId)) return profile;
+  const lvl = bossLevelOf(profile, bossId);
+  if (lvl >= BOSS_MAX_LEVEL) return profile;
+  const cost = bossUpgradeCost(lvl + 1);
+  if ((profile.sp || 0) < cost) return profile;
+  const pieces = { ...(profile.pieces || {}) };
+  pieces.bossLevels = { ...(pieces.bossLevels || {}), [bossId]: lvl + 1 };
+  return { ...profile, sp: profile.sp - cost, pieces };
+}
+
 export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boostOf = null) {
   // (null slots — the dragon's wing — become empty back-rank squares)
   const back = formation.map((id) => {
     if (id == null) return null;                   // the dragon's wing: an open square
     if (isBossEntry(id)) {
       const b = bossById(bossEntryId(id));
-      if (b) return { ...bossSpec(b) };            // the boss marches: stats, moves & aura
+      if (b) return bossSpecLeveled(b, levelOf("X:" + b.id));  // der Boss marschiert mit seinem RANG
     }
     const ch = CHARACTERS[id];
     const level = Math.max(1, levelOf(id) || 1);
@@ -329,7 +355,7 @@ export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   // level-1 vanilla pieces (authentic), but an HP battle — even on the 8x8
   // classic field — brings your leveled pieces, their abilities and dupes.
   const chess = rules === "chess";
-  const levelOf = chess ? () => 1 : (id) => characterLevel(profile, id);
+  const levelOf = chess ? () => 1 : (id) => id && id.startsWith("X:") ? bossLevelOf(profile, id.slice(2)) : characterLevel(profile, id);
   const chosenOf = chess ? null : (id) => chosenAbilities(profile, id);
   const boostOf = chess ? null : (id) => dupeCount(profile, id);
   // The FIELD is arrangeable on every board — honour a saved legal formation.
