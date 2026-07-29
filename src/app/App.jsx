@@ -672,9 +672,15 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       </Card>
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
-          cursor: "pointer", background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
-          border: "1px solid #8a6d3544", borderRadius: T.radius, boxShadow: T.shadow,
-          padding: "12px 14px 13px", color: T.dim, fontSize: 13 }}>
+                    cursor: "pointer", background: `linear-gradient(170deg, rgba(74,58,110,.96), rgba(48,37,74,.96))`,
+          // Die Akademie war nicht mehr zu sehen (Besitzer, v0.47): ihre Kante
+          // stand bei 27 % Deckkraft (#8a6d3544) auf einer ohnehin fast
+          // schwarzen Flaeche - gemessen lag die Karte bei Helligkeit 27 auf
+          // einem Grund von 24. Sie bleibt SEKUNDAER (kein Gold-CTA, kein
+          // Glanz), bekommt aber eine sichtbare Kante und eine eigene Flaeche.
+          border: `1px solid ${T.gold}66`, borderRadius: T.radius,
+          boxShadow: `${T.shadow}, inset 0 0 0 1px rgba(255,255,255,.04)`,
+          padding: "13px 14px 14px", color: T.text, fontSize: 13 }}>
           {/* line one: the title, a touch smaller, flanked by the twin diamonds */}
           <span style={{ display: "block" }}>
             <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
