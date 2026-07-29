@@ -49,7 +49,7 @@ for (const livree of ["classic", "carved"]) {
   pruefe("selInk/sel", T.selInk, wahl, 4.5);
   pruefe("selLine/sel", T.selLine, wahl, 3.0);      // Konturen: 3:1 (Nicht-Text)
   pruefe("riftInk/rift", T.riftInk, rgb(T.rift), 4.5);
-  pruefe("limeInk/goldknopf", T.limeInk, rgb("#d9b565"), 4.5); // Mittelton des CTA-Verlaufs
+  pruefe("limeInk/goldknopf", T.limeInk, rgb("#d4af37"), 4.5); // Mittelton des CTA-Verlaufs (Vorlage)
   pruefe("danger/panel", T.danger, tafel, 3.0);      // Statusfarbe an Konturen/Icons
   pruefe("warn/panel", T.warn, tafel, 3.0);
   pruefe("info/panel", T.info, tafel, 3.0);

@@ -24,3 +24,6 @@ Alle Zahlen in VISUAL_AUDIT.md. Entscheidungen: (a) Match-Umbau als HÖHENDECKEL
 
 ## Checkpoint 5 — Abschluss
 FINAL_REPORT.md geschrieben; Reinraum auf dem Feature-Branch komplett grün (ci → 791/0/19 → build → single → boot 3/3 → drive3). Push von Feature- und Backup-Branch; main bleibt lokal wie remote auf 1aaa021.
+
+## Checkpoint 6 — Die Vorlagen des Besitzers (v0.43.0)
+Zwei GPT-Blaetter nachgereicht (design/vorlagen). Entscheidungen: (a) VORLAGE SCHLAEGT AUFTRAGSTEXT bei der Auswahlfarbe - aktive Reiter/Segmente in flachem Gold (ihr Grundsatzblock sagt "Gold = Aktionen, Violett = Magie/Highlights"); Hierarchie haelt, weil nur der CTA Verlauf+Glanz traegt. sel-Tokens bleiben fuer Fokus/Auren. (b) Palette der Vorlage in CARVED uebernommen, Kontrastsuite blieb der Torwaechter (30/30). (c) NICHT umgesetzt und als Frage offen: das dunkle Stations-Panel der Vorlage (Koenigsgallee) widersprich dem Pergament-Panel des Auftrags §19.7 - Rueckfrage an den Besitzer statt Umbau. Der blaue Punkt auf "Partie starten" in der Vorlage wurde als Generierungs-Beifang gewertet (Tintenmarke bleibt). (d) Lehre wiederholt sich: ein Text-Replace traf den ERSTEN Fundort (ChroniclePanel) statt der Kachel - die ui-Suite fing es; Einschub sitzt jetzt in Tile selbst.

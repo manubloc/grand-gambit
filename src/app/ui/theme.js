@@ -90,14 +90,22 @@ const CARVED = { ...CLASSIC,
   //      das Wappen geben die Sprache vor: tiefes Schwarz, aus dem violettes
   //      Licht bricht. Die Tafeln bleiben ablesbar, verlieren aber ihr Blau
   //      zugunsten eines sehr dunklen Violett-Anteils.
-  bg: "#000000", bg2: "#0a0710", panel: "#1a1430e8", panel2: "#241a3fe8", line: "#3b2d63",
-  text: "#f6efdf", dim: "#c6bca2", faint: "#c0b8a4",
+  //   6. DIE VORLAGEN DES BESITZERS (design/vorlagen/ds1-vorlage-*.png,
+  //      29. Juli): Grundton #0B0E14 statt reinem Schwarz, Tafeln #15121E /
+  //      #1D1730, Schrift waermer (#F1E7C6 / #A89E8A), Violett heller
+  //      (#7A3CFF / Glow #B07CFF), Statusfarben kraeftiger. Der Eintritt
+  //      (Login/Spielstaende) bleibt per loginBg/savesBg tiefschwarz.
+  bg: "#0b0e14", bg2: "#15121e", panel: "#1d1730e8", panel2: "#261d3ee8", line: "#38295e",
+  text: "#f1e7c6", dim: "#a89e8a", faint: "#c0b8a4",
+  rift: "#7a3cff", riftDeep: "#5a24cc", riftLine: "#b07cff", riftBright: "#cdb2ff",
+  riftGlow: "rgba(122,60,255,.55)",
+  warn: "#ffc857", green: "#3ccb7a",
   //   4. GOLD eine Stufe heller. Auf der blauen Tafel wirkte das alte Gold
   //      stumpf - Ueberschriften wie "DEINE SCHATZKAMMER" lasen sich fast
   //      dunkel. Gemessen gegen die effektive Tafelfarbe #324164 steigt der
   //      Kontrast von 6,29:1 auf 7,26:1 (gold) und 8,24:1 auf 9,07:1 (hell);
   //      der Akzent lime von 4,73:1 auf 5,85:1.
-  gold: "#f2d98c", goldBright: "#fbf3cf", lime: "#e0c274", limeDim: "#c2a253",
+  gold: "#e6c35c", goldBright: "#f6e6ac", lime: "#d4af37", limeDim: "#b78a21",
   magenta: "#9fb0d0", magentaDim: "#76849f",
   shadow: "0 10px 24px rgba(0,0,0,.45)",
   glass: "d9", glassBlur: "18px",
@@ -106,6 +114,10 @@ const CARVED = { ...CLASSIC,
 };
 /** Die Abstandsleiter des Hauses - jeder neue Abstand greift eine Sprosse. */
 export const SPACING = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64];
+/** DER EINE GOLDVERLAUF fuer Handlungen - aus der Vorlage des Besitzers
+ *  (Gold Primaer #D4AF37 -> Gold Dunkel #B78A21). Vorher lag dieser Verlauf
+ *  als Literal in acht Dateien in drei Varianten. */
+export const GOLD_CTA = "linear-gradient(165deg, #e9c95d, #d4af37 48%, #b78a21)";
 export const T = { ...CLASSIC };
 /** Swap the whole app's livery in place. Called once from App.jsx per render
  *  of a hydrated profile — every T.* read after it sees the chosen design. */

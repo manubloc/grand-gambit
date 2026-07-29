@@ -3,7 +3,7 @@
 // grayed and quiet. Progress is a single number and a thin bar — no clutter.
 import { useState } from "react";
 import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../meta/index.js";
-import { T } from "../theme.js";
+import { T, GOLD_CTA } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
 import { AchIcon, SkillStar, GoldCoin } from "../icons.jsx";
 import { achArt } from "../assets/ach/index.js";
@@ -225,7 +225,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 return <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "CLAIM_ACH", id: it.id }); }}
                   style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 14, borderRadius: 999, padding: "13px 18px 12px",
                     marginTop: 9, width: "100%",
-                    border: "1px solid rgba(255,240,200,.5)", background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)", color: "#17110a", cursor: "pointer",
+                    border: "1px solid rgba(255,240,200,.5)", background: GOLD_CTA, color: "#17110a", cursor: "pointer",
                     boxShadow: `0 0 16px ${T.gold}88`, whiteSpace: "nowrap",
                     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                   {t("ach.claim")} · <SkillStar size={13} />{r.sp} <GoldCoin size={13} />{r.gold}

@@ -2,7 +2,7 @@
 // A gradient gold frame, a soft radial glow from above, a passing gleam and
 // four corner diamonds. Hofstaat, Profil & friends borrow the shimmer here.
 import { useMemo } from "react";
-import { T } from "./theme.js";
+import { T, GOLD_CTA } from "./theme.js";
 
 // The gleam passes rarely now — and never in chorus. Every mounted shine takes
 // the next slot, so several on one screen glint one after another, not at once.
@@ -62,7 +62,7 @@ export function GoldShineButton({ children, onClick, disabled = false, style }) 
       style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "9px 16px", minHeight: Math.max(38, T.touch - 6),
         border: disabled ? `1px solid ${T.line}` : "1px solid rgba(255,240,200,.5)", position: "relative", overflow: "hidden", whiteSpace: "nowrap",
         display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 5,
-        background: disabled ? T.panel : "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
+        background: disabled ? T.panel : GOLD_CTA,
         boxShadow: disabled ? "none" : `0 0 12px ${T.gold}66`,
         outline: "none",
         color: disabled ? T.faint : "#17110a", cursor: disabled ? "default" : "pointer", ...style }}>

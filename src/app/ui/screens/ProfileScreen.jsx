@@ -4,7 +4,7 @@ import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgress
 import { CHARACTERS } from "../../../content/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
-import { Panel, Button, Segmented, Stat, PanelTitle } from "../primitives.jsx";
+import { Panel, Button, Segmented, Stat, PanelTitle, Toggle } from "../primitives.jsx";
 import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
 import { setHouseDesign } from "../livery.js";
 import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
@@ -77,9 +77,9 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           einmal beruehrt hat (kein Browser spielt ungefragt) - und schweigt,
           sobald man hier abschaltet oder das Fenster verlaesst. */}
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{en ? "Music" : "Musik"}</div>
-      <Segmented value={profile.sound === false ? "off" : "on"}
-        onChange={(v) => dispatch({ type: "SET_SOUND", on: v !== "off" })}
-        options={[{ value: "on", label: en ? "on" : "an" }, { value: "off", label: en ? "off" : "aus" }]} />
+      {/* Der Schalter der Vorlage: An = violette Bahn, cremefarbener Knauf. */}
+      <Toggle on={profile.sound !== false} label={profile.sound !== false ? (en ? "on" : "an") : (en ? "off" : "aus")}
+        onChange={(an) => dispatch({ type: "SET_SOUND", on: an })} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />

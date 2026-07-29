@@ -11,7 +11,7 @@ import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
-import { T } from "./ui/theme.js";
+import { T, GOLD_CTA } from "./ui/theme.js";
 import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
@@ -459,10 +459,12 @@ export default function App() {
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {!immersive && (
         <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
-          <div style={{ background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
+          {/* Die Ressourcen-PILLE der Vorlage: voll gerundet, violetter Glas-
+              verlauf, duenne violette Kante. Fluchtlinie bleibt bei 10 px. */}
+          <div style={{ background: "linear-gradient(90deg, rgba(58,36,110,.72) 0%, rgba(26,17,50,.78) 100%)",
             backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
-            border: "1px solid rgba(167,139,250,.5)", borderRadius: 18, padding: "12px 14px",
-            boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.3)` }}>{headerBar}</div>
+            border: "1px solid rgba(176,124,255,.4)", borderRadius: 999, padding: "10px 16px",
+            boxShadow: `${T.shadow}, 0 0 16px rgba(122,60,255,.28)` }}>{headerBar}</div>
         </header>
       )}
       {/* ONE flush edge: header card, screen panels and dock all sit 10px from
@@ -560,7 +562,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         {extra && <div style={{ marginTop: 7, fontSize: 12.5, color: T.text, paddingRight: 92 }}>{extra}</div>}
         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
           borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
-          background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
+          background: GOLD_CTA,
           boxShadow: `0 0 12px ${T.gold}55`,
           color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
           {!ruhig && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",

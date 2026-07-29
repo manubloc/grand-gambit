@@ -1250,7 +1250,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null }) => (
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null }) => (
     <div onClick={onOpen} style={{ position: "relative",
       // der leichte Riss-Verlauf der Menueleisten, eine Stufe stiller
       background: "radial-gradient(130% 120% at 50% -12%, rgba(124,58,237,.20) 0%, rgba(34,22,60,.55) 46%, rgba(12,8,22,.7) 100%)",
@@ -1278,6 +1278,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           </div>}
       <div className="gg-quill" style={{ fontSize: 12.5, marginTop: 5, color: dark ? T.faint : glow ? T.goldBright : T.text,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</div>
+      {/* Die Vorlage (ds1-vorlage-screens): jede Kachel traegt ihre Stufe -
+          "Koenig Stufe 8" - klein und golden unter dem Namen. */}
+      {stufe != null && <div className="gg-serif" style={{ fontSize: 9.5, letterSpacing: ".1em", marginTop: 1,
+        color: T.gold, whiteSpace: "nowrap" }}>{(en ? "Level " : "Stufe ") + stufe}</div>}
       {origin && <div className="gg-serif" style={{ fontSize: 9, letterSpacing: ".1em", marginTop: 1,
         color: T.dim, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{origin}</div>}
       {action}
@@ -1294,7 +1298,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
     const sigBig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={58} level={1}
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
-    if (own) return <Tile key={cid} img={img} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
+    if (own) return <Tile key={cid} img={img} stufe={unlocked.has(cid) ? characterLevel(profile, cid) : null} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
       return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}

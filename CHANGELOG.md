@@ -1,5 +1,29 @@
 # Changelog - Grand Gambit
 
+## 0.43.0
+
+DIE VORLAGEN DES BESITZERS (design/vorlagen/ds1-vorlage-*.png) EINGEBAUT:
+
+- FARBWELT DER VORLAGE in der geschnitzten Livree: Grund #0B0E14 statt reinem
+  Schwarz, Tafeln #15121E/#1D1730, Schrift waermer (#F1E7C6/#A89E8A), Violett
+  heller (#7A3CFF, Glow #B07CFF), Status kraeftiger (Erfolg #3CCB7A, Warnung
+  #FFC857). Eintritt (Login/Spielstaende) bleibt tiefschwarz, classic-Livree
+  unangetastet. Kontrastsuite: 30/30 gruen.
+- AUSWAHL IST WIEDER GOLD - die Vorlage schlaegt den Auftragstext: aktive
+  Reiter, Segmente und Kartenwahl tragen FLACHES Gold (matter Verlauf, dunkle
+  Tinte, kein Schein); der glaenzende Verlauf mit Glanzlauf bleibt allein dem
+  CTA. Violett behaelt Fokusring, Riss und Auren. Umbruch langer Namen und
+  Beruehrhoehen aus v0.42 bleiben.
+- EIN GOLDVERLAUF FUER ALLE HANDLUNGEN: GOLD_CTA (#D4AF37 -> #B78A21) als eine
+  Quelle in theme.js - ersetzt drei Literal-Varianten in Gilded, primitives,
+  Hub-CTA und Schatzkammer-Einfordern. Sekundaerknopf mit goldener Kontur.
+- KOPFLEISTE ALS RESSOURCEN-PILLE: voll gerundet, violetter Glasverlauf,
+  duenne violette Kante - Fluchtlinie bleibt bei 10 px.
+- HOFSTAAT-KACHELN tragen ihre Stufe ("Koenig - Stufe 8", golden unter dem
+  Namen); SCHALTER nach Vorlage (violette Bahn, cremefarbener Knauf) als
+  neues Bauteil, Musik im Profil nutzt ihn, Musterkammer zeigt ihn.
+- Vorlagen liegen im Repo unter design/vorlagen/ als Referenz.
+
 ## 0.42.0
 
 DESIGNSYSTEM 1.0 - DIE GROSSE UI-UEBERARBEITUNG (alles gemessen, nichts geschaetzt):

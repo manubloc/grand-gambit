@@ -5,7 +5,7 @@
 // kein Spieler stolpert hinein, kein Menuepunkt, kein Bundle-Umweg.
 import { useState } from "react";
 import { T, SPACING } from "../theme.js";
-import { Button, Panel, PanelTitle, FieldLabel, MapChip, Bar, Chip, Segmented, Stat } from "../primitives.jsx";
+import { Button, Panel, PanelTitle, FieldLabel, MapChip, Bar, Chip, Segmented, Stat, Toggle } from "../primitives.jsx";
 import { GildedFrame, GoldShineButton, GoldRule, goldText } from "../Gilded.jsx";
 
 const H = ({ children }) => <div className="gg-display" style={{ fontSize: 19, color: T.gold, letterSpacing: ".04em", margin: "26px 0 10px" }}>{children}</div>;
@@ -20,6 +20,7 @@ const LANG = "Außergewöhnlich lange deutsche Beschriftungsprobe für Schaltfl�
 
 export function GalerieScreen() {
   const [seg, setSeg] = useState("b");
+  const [an, setAn] = useState(true);
   const [chip, setChip] = useState(true);
   return (
     <div className="gg-thinbar" style={{ maxWidth: 560, margin: "0 auto", padding: "20px 14px 60px", height: "100dvh", overflowY: "auto", color: T.text }}>
@@ -51,7 +52,7 @@ export function GalerieScreen() {
         <Button variant="subtle" disabled>Deaktiviert</Button>
       </Reihe>
 
-      <H>Auswahl (Violett = gewählt)</H>
+      <H>Auswahl (Gold = gewählt · Vorlage 29.7.)</H>
       <Segmented value={seg} onChange={setSeg} options={[
         { value: "a", label: "Klassisch" }, { value: "b", label: "HP-Gefecht" },
         { value: "c", label: "Scharmützel · 6×6 · langer Name" }, { value: "d", label: "Gesperrt", disabled: true }]} />
@@ -81,6 +82,12 @@ export function GalerieScreen() {
         <Chip color={T.info}>Hinweis</Chip>
         <Chip color={T.faint}>offline</Chip>
         <Stat label="Wert" value="4,8:1" color={T.gold} />
+      </Reihe>
+
+      <H>Schalter</H>
+      <Reihe>
+        <Toggle on={an} onChange={setAn} label={an ? "An" : "Aus"} />
+        <Toggle on={false} onChange={() => {}} label="Aus" disabled />
       </Reihe>
 
       <H>Eingaben</H>
