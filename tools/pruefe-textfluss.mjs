@@ -22,7 +22,7 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.listen(4336, r));
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox"] });
 let gesamtFunde = 0, gemessen = 0;
-for (const [vw, vh] of [[320, 690], [412, 915]]) {
+for (const [vw, vh] of [[320, 690], [412, 915], [1280, 860]]) {
 const page = await browser.newPage({ viewport: { width: vw, height: vh }, deviceScaleFactor: 2 });
 await page.goto("http://127.0.0.1:4336/", { waitUntil: "load" });
 await page.waitForTimeout(1400);
@@ -52,6 +52,43 @@ const messe = (wo) => page.evaluate((ort) => {
         raus.push({ ort, text: "ELLIPSIS: " + (e.textContent || "").slice(0, 30), wOver: e.scrollWidth - e.clientWidth, hOver: 0 });
     }
   }
+  // DER DAUERAUFTRAG DES BESITZERS: "nie Elemente uebereinander". Jedes
+  // sichtbare Knopf-Paar wird auf Ueberdeckung geprueft (Vorfahr-Verhaeltnisse
+  // ausgenommen - Knoepfe in Knoepfen gibt es ohnehin nicht).
+  // Erste Fassung schlug bei Inhalt-unterm-Dock in SCROLL-MITTE an - das ist
+  // aber legitim (Glasleiste, man scrollt weiter). Die echte Regel: Inhalt
+  // gegen Inhalt IMMER; Inhalt gegen Dock erst, nachdem main ans ENDE
+  // gescrollt wurde - dort garantiert das Bodenpolster die Freiheit.
+  document.querySelector("main")?.scrollTo(0, 9e6);
+  // getBoundingClientRect ignoriert CLIPPING: ein aus main herausgescrollter
+  // Knopf "ueberlappte" numerisch die Kopfleiste (gemessen: top -1125, real
+  // unsichtbar). Wir rechnen deshalb das SICHTBARE Rechteck - mit jedem
+  // overflow-schneidenden Vorfahren verschnitten.
+  const sichtbar = (el) => {
+    let r = el.getBoundingClientRect();
+    for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+      const o = getComputedStyle(a);
+      if (o.overflow !== "visible" || o.overflowY !== "visible" || o.overflowX !== "visible") {
+        const ar = a.getBoundingClientRect();
+        r = { left: Math.max(r.left, ar.left), top: Math.max(r.top, ar.top),
+          right: Math.min(r.right, ar.right), bottom: Math.min(r.bottom, ar.bottom) };
+        if (r.right - r.left <= 0 || r.bottom - r.top <= 0) return null;
+      }
+    }
+    return { ...r, width: r.right - r.left, height: r.bottom - r.top };
+  };
+  const kn = [...document.querySelectorAll("main button, nav button, aside button")]
+    .map((b) => ({ b, r: sichtbar(b), dock: !!b.closest("nav, aside") }))
+    .filter((x) => x.r && x.r.width > 8 && x.r.height > 8 && x.r.bottom > 0 && x.r.top < innerHeight && x.b.offsetParent !== null);
+  for (let i = 0; i < kn.length; i++) for (let j = i + 1; j < kn.length; j++) {
+    const A = kn[i], B = kn[j];
+    if (A.dock && B.dock) continue;
+    if (A.b.contains(B.b) || B.b.contains(A.b)) continue;
+    const w = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
+    const h = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
+    if (w > 3 && h > 3) raus.push({ ort, text: "UEBERDECKT: '" + (A.b.innerText || "?").slice(0, 18) + "' x '" + (B.b.innerText || "?").slice(0, 18) + "'", wOver: Math.round(w), hOver: Math.round(h) });
+  }
+  document.querySelector("main")?.scrollTo(0, 0);
   return raus;
 }, wo);
 
@@ -63,16 +100,20 @@ funde.push(...await messe("schnelles-spiel"));
 await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").includes("Zur\u00fcck")); b?.click(); });
 await page.waitForTimeout(800);
 // Hofstaat: alle vier Reiter
-await page.evaluate(() => document.querySelectorAll("nav > div > button")[1]?.click());
-await page.waitForTimeout(1000);
+// Das Dock heisst mobil <nav>, breit <aside> - wir greifen per BESCHRIFTUNG,
+// nicht per Index, damit derselbe Lauf beide Layouts traegt.
+const dock = async (name) => { await page.evaluate((n) => {
+  const bs = [...document.querySelectorAll("nav button, aside button")];
+  const z = bs.find((b) => (b.innerText || "").replace(/\s+/g, " ").trim().toLowerCase().includes(n));
+  z?.click(); }, name); await page.waitForTimeout(1050); };
+await dock("hofstaat");
 for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) {
   await page.evaluate((r) => { const b = [...document.querySelectorAll("main button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);
   await page.waitForTimeout(700);
   funde.push(...await messe("hofstaat-" + reiter));
 }
 // Profil (Segmente: Figurenstil, Sprache, Schwierigkeit)
-await page.evaluate(() => document.querySelectorAll("nav > div > button")[3]?.click());
-await page.waitForTimeout(1000);
+await dock("profil");
 funde.push(...await messe("profil"));
 
 // Kachel-Namen im Hofstaat duerfen per Bauart mit Ellipse enden (nowrap +

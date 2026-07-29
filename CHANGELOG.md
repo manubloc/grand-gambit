@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.45.1
+
+DER UEBERLAPPUNGS-WAECHTER LERNT DESKTOP UND UEBERDECKUNG (Dauerauftrag des
+Besitzers: "nie Elemente uebereinander, nie Text verschluckt - Desktop und
+mobil"):
+
+- pruefe-textfluss.mjs laeuft jetzt DREISPURIG (320, 412, 1280 px); die
+  Dock-Navigation greift per Beschriftung statt Index und traegt damit
+  beide Layoutzweige (nav unten / aside oben).
+- NEU: paarweise UEBERDECKUNGSPRUEFUNG - kein sichtbarer Knopf darf einen
+  anderen verdecken. Zwei Verfeinerungen aus echten Fehlalarmen: (1) Inhalt
+  unter dem GLAS-DOCK ist in Scroll-Mitte legitim - geprueft wird am
+  SCROLL-ENDE, wo das Bodenpolster Freiheit garantieren muss; (2) 
+  getBoundingClientRect ignoriert Clipping - ein aus main herausgescrollter
+  Knopf "ueberlappte" numerisch die Kopfleiste (top -1125, real unsichtbar);
+  der Waechter rechnet jetzt SICHTBARE Rechtecke, mit jedem overflow-
+  schneidenden Vorfahren verschnitten.
+- Befund nach Schaerfung: App auf allen drei Viewports sauber - null Funde.
+  KNOWN_ISSUES 4 damit erledigt.
+
 ## 0.45.0
 
 ACHT PUNKTE DES BESITZERS - UHR, GEGNERFIGUREN, KARTE, LEISTUNG:
