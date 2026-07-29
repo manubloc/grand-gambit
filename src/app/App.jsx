@@ -12,7 +12,7 @@ import { APP_DESIGN } from "./config.js";
 import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/icons.jsx";
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
 import { T, GOLD_CTA } from "./ui/theme.js";
-import { useShineDelay } from "./ui/Gilded.jsx";
+import { useShineDelay, GoldShineButton } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
@@ -151,6 +151,11 @@ export default function App() {
   const [match, setMatch] = useState(null);
   const [pvp, setPvp] = useState(null);
   const [quick, setQuick] = useState(null);   // running quick match (config decided in QuickSetup)
+  const startQuickNow = () => {
+    const cfg = lastQuick.current || { mapId: "classic", mode: "chess", difficulty: profile?.difficulty || "easy",
+      elo: profile?.classicElo || 1000, hotseat: false, hotseatFlip: true };
+    setTab("play"); setView("quick"); setQuick({ ...cfg, n: Date.now() });
+  };
   // THE MENU DURING A FIGHT: on desktop the rail stays on screen while a match
   // runs, and tapping it did nothing at all — the match simply kept rendering
   // over the tab you chose. It asks now, and it says what leaving costs: a
@@ -162,7 +167,10 @@ export default function App() {
   // both armies and every command played so far; the board replays them and
   // hands the single next move back. Nothing here lives in a socket.
   const [dailyGame, setDailyGame] = useState(null);
-  const lastQuick = useRef(null);             // remembered setup for the next visit
+  // Das letzte Schnellspiel-Setup ueberlebt jetzt die Sitzung (localStorage):
+  // der "Sofort spielen"-Griff im Hub startet damit ohne einen Umweg ueber
+  // die Konfiguration - wie es ein Handyspiel schuldig ist.
+  const lastQuick = useRef((() => { try { return JSON.parse(localStorage.getItem("gambit:lastQuick") || "null"); } catch { return null; } })());
   const wide = useMedia("(min-width: 900px)");
   const netRef = useRef(null);
   if (!netRef.current) netRef.current = createNet();
@@ -319,7 +327,7 @@ export default function App() {
         daily={dailyGame} onExit={() => setDailyGame(null)} />
     : tab === "play" ? (
         view === "quick" ? sub(t("hub.quick"), <QuickSetup profile={profile} dispatch={dispatch} t={t} initial={lastQuick.current}
-          onStart={(cfg) => { lastQuick.current = cfg; setQuick({ ...cfg, n: Date.now() }); }} />)
+          onStart={(cfg) => { lastQuick.current = cfg; try { localStorage.setItem("gambit:lastQuick", JSON.stringify(cfg)); } catch { /* voll/aus */ } setQuick({ ...cfg, n: Date.now() }); }} />)
         : view === "camp" ? <CampaignScreen profile={profile} dispatch={dispatch} t={t} onBack={() => setView("hub")} onStart={(id, lookLeague = null) => {
           if (lookLeague != null) { setMatch(buildStageMatch(id, profile, lookLeague)); return; } // the look back: a friendly replay, no bookkeeping
           // the first fight at a station lifts its veil: FACED is recorded at
@@ -340,7 +348,7 @@ export default function App() {
             oeffneDaily={oeffneDaily}
             onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
         : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
-        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} hallenStand={hallenSteht} />
+        : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onQuickStart={startQuickNow} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} hallenStand={hallenSteht} />
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
         : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
@@ -516,7 +524,7 @@ export const HubArt = ({ children }) => (
 const G = "#c9a45c", GH = "#e8c97e", NV = "#0e1424";
 
 
-export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null, hallenStand = false }) {
+export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null, hallenStand = false, onQuickStart = null }) {
   const en = profile.lang === "en";
   const hubWide = useMedia("(min-width: 900px)");
   const cur = nodeById(currentNodeId(profile));
@@ -560,7 +568,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             wo das Wappen haengt (nachgemessen: 176 px2 Ueberschneidung). Er
             laeuft jetzt im Fliesstext mit, links unter dem Untertitel. */}
         {extra && <div style={{ marginTop: 7, fontSize: 12.5, color: T.text, paddingRight: 92 }}>{extra}</div>}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
+        {cta && <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
           borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
           background: GOLD_CTA,
           boxShadow: `0 0 12px ${T.gold}55`,
@@ -569,7 +577,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
             animation: `ggShine ${T.mo.sheen} linear ${shineDelay} infinite` }} />}
           <span style={{ position: "relative" }}>{cta} ›</span>
-        </div>
+        </div>}
       </button>
       {children}
     </div>
@@ -588,8 +596,19 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
         art={<CrestArt src={crestArt(1)} />} style={{ gridColumn: "1 / -1" }} />
-      <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<CrestArt src={crestArt(2)} />} />
+      <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={null}
+        art={<CrestArt src={crestArt(2)} />}>
+        {/* SOFORT LOSLEGEN: ein Griff, keine Konfiguration - gestartet wird
+            mit den letzten Einstellungen (oder den Hausvorgaben). "Anpassen"
+            fuehrt auf den bisherigen Weg. Zwei ECHTE Knoepfe unterhalb des
+            Kopfes, weil Knoepfe in Knoepfen ungueltig sind. */}
+        <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", marginTop: -2 }}>
+          <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "1 1 auto", padding: "11px 14px", fontSize: 14, borderRadius: 999 }}>
+            {t("hub.playNow")} ›</GoldShineButton>
+          <Button variant="subtle" onClick={onQuick} style={{ flex: "0 0 auto", padding: "11px 14px", fontSize: 13, borderRadius: 999 }}>
+            {t("hub.adjust")}</Button>
+        </div>
+      </Card>
       <Card ruhig title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
         cta={hallenStand ? (profile.lang === "en" ? "Play" : "Spielen") : t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>

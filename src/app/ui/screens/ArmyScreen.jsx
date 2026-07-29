@@ -613,8 +613,12 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
 }
 
 const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
-  <span style={{ width: typeof size === "number" ? size : size, height: typeof size === "number" ? size : size,
-    display: "inline-grid", placeItems: "center" }}>
+  // DER DECKEL DER HUELLE: die Groesse mass sich per 9vw am VIEWPORT, nicht an
+  // der Zelle - bei 320 px standen Glyphe+Beschriftung 39 px in einer 35-px-
+  // Zelle (gemessen, pruefe-textfluss: +0x4px an acht Knoepfen). maxHeight
+  // beisst nur, wenn es eng wird; die Glyphe darin passt sich ein (gg-fit-svg).
+  <span className="gg-fit-svg" style={{ width: typeof size === "number" ? size : size, height: typeof size === "number" ? size : size,
+    maxWidth: "100%", maxHeight: "100%" }}>
     <TileArt kind={kind} size={typeof size === "number" ? size : undefined} />
   </span>
 );
@@ -1317,12 +1321,17 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     // while its painting sat right there in the gallery.
     const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
     const k = "X:" + b.id;
+    // Rueckmeldung des Besitzers (v0.44): Monster und Figuren trugen im
+    // Verzeichnis ZWEI Handschriften - die Meister ein rosa Siegel, der Hof
+    // ein goldenes. Jetzt EINE Goldpalette fuer beide; wer Meister von Hof
+    // unterscheiden will, liest es am Bild und der Herkunftszeile, nicht an
+    // einer zweiten Farbwelt.
     const sig = <PieceArt kind="X" bossId={b.id} art={b.art} size={28} level={1}
-      fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
+      fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
     const sigBig = <PieceArt kind="X" bossId={b.id} art={b.art} size={58} level={1}
-      fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent="#eac96b" />;
+      fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
     if (bribedSet.has(b.id) || ownedBossSet.has(b.id)) return <Tile key={b.id} img={img} glow sigil={sig} sigilBig={sigBig}
-      onOpen={() => setDetail(k)}
+      onOpen={() => setDetail(k)} stufe={characterLevel(profile, k) || 1}
       name={en ? b.nameEn : b.nameDe} origin={bribedSet.has(b.id) ? t("tree.allied") : t("tree.inCourt")} />;
     if (met.has(k)) {
       const can = monsterBribable(b);

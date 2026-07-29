@@ -68,13 +68,13 @@ export function MapChip({ on, locked, theme, label, onClick, title }) {
   return <button onClick={onClick} title={title}
     style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 12.5, borderRadius: 10,
       padding: "8px 11px", whiteSpace: "nowrap", flex: "0 0 auto", display: "inline-flex", alignItems: "center", gap: 8,
-      border: on ? "1px solid rgba(255,240,200,.55)" : `1px solid ${T.line}`,
-      background: on ? "linear-gradient(180deg, #e2bf55, #c9a231)" : T.panel2,
-      boxShadow: "none", minHeight: Math.max(36, T.touch - 8),
+      border: on ? `1px solid ${T.selLine}` : `1px solid ${T.line}`,
+      background: on ? `linear-gradient(165deg, ${T.sel}, #1a1030)` : T.panel2,
+      boxShadow: on ? `0 0 10px ${T.selGlow}` : "none", minHeight: Math.max(36, T.touch - 8),
       transition: `background ${T.mo.norm} ${T.mo.ease}`,
-      color: on ? T.limeInk : locked ? T.faint : T.text, opacity: locked ? T.disOpacity + 0.1 : 1 }}>
+      color: on ? T.selInk : locked ? T.faint : T.text, opacity: locked ? T.disOpacity + 0.1 : 1 }}>
     <span aria-hidden style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 3,
-      overflow: "hidden", flex: "0 0 auto", border: `1px solid ${on ? "rgba(0,0,0,.28)" : T.line}` }}>
+      overflow: "hidden", flex: "0 0 auto", border: `1px solid ${on ? T.selLine + "66" : T.line}` }}>
       {Array.from({ length: 16 }).map((_, k) => (
         <span key={k} style={{ width: 4.5, height: 4.5,
           background: ((k + Math.floor(k / 4)) % 2 === 0) ? theme.sqLight : theme.sqDark }} />
@@ -95,27 +95,30 @@ export function Chip({ children, color = T.dim, bg = T.panel2, style, className 
   return <span className={className} style={{ display: "inline-flex", alignItems: "center", gap: 4, background: bg, color, borderRadius: 99, padding: "3px 9px", fontSize: 12, fontWeight: 700, ...style }}>{children}</span>;
 }
 
-/** DIE VORLAGE DES BESITZERS SCHLAEGT DEN AUFTRAGSTEXT: die Blaetter vom
- *  29. Juli (design/vorlagen) zeigen aktive Reiter und Segmente in GOLD -
- *  ihr Grundsatzblock sagt "Gold = Aktionen, Violett = Magie/Highlights".
- *  Gewaehlt heisst also: FLACHES Gold (matter Verlauf, dunkle Tinte, kein
- *  Schein) - der glaenzende Verlauf mit Glanzlauf bleibt allein dem CTA,
- *  damit die Hierarchie haelt. Violett behaelt Fokusring, Riss und Auren.
- *  Geblieben aus v0.42: whiteSpace normal (lange Namen brechen um) und
- *  Beruehrhoehe >= T.touch-8. */
+/** AUSWAHL IST VIOLETT - ENDGUELTIG. Chronik dieser Entscheidung: v0.42
+ *  violett (Auftragstext), v0.43 gold (die GPT-Blaetter des Besitzers),
+ *  v0.44 wieder violett - der Besitzer hat das Gold LIVE gesehen und
+ *  verworfen ("Goldpille in violett geraenderter Schiene - haesslich").
+ *  Gewaehlt heisst: tiefe violette Flaeche (T.sel), violette Kontur, helle
+ *  Schrift, leiser Schein. Gold gehoert allein den Handlungen (GOLD_CTA).
+ *  Bleibt: whiteSpace normal (lange Namen brechen um), Hoehe >= T.touch-8. */
 export function Segmented({ options, value, onChange }) {
   return <div role="group" style={{ display: "flex", gap: 4, background: T.bg2, padding: 4, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
     {options.map((o) => {
       const on = value === o.value;
       return <button key={o.value} disabled={o.disabled} aria-pressed={on} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
-        border: on ? `1px solid ${T.selLine}` : "1px solid transparent", borderRadius: 8, padding: "8px 6px",
-        minHeight: Math.max(36, T.touch - 8), fontSize: 13, fontWeight: 700, fontFamily: "inherit",
+        border: on ? `1px solid ${T.selLine}` : "1px solid transparent", borderRadius: 8, padding: "8px 4px",
+        minHeight: Math.max(36, T.touch - 8), fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
+        // 320-px-Beweis (pruefe-textfluss): "Aufstellung" ist als EINZELWORT
+        // breiter als ein Viertel der Schiene - Umbruch allein rettet nichts.
+        // Silbentrennung (lang="de" steht am Dokument) + schmalere Polster.
         cursor: o.disabled ? "default" : "pointer", whiteSpace: "normal", lineHeight: 1.25,
+        overflowWrap: "break-word", hyphens: "auto", WebkitHyphens: "auto",
         opacity: o.disabled ? T.disOpacity : 1, position: "relative", overflow: "hidden",
-        background: on ? "linear-gradient(180deg, #e2bf55, #c9a231)" : "transparent",
-        boxShadow: "none",
+        background: on ? `linear-gradient(165deg, ${T.sel}, #1a1030)` : "transparent",
+        boxShadow: on ? `0 0 10px ${T.selGlow}` : "none",
         transition: `background ${T.mo.norm} ${T.mo.ease}, color ${T.mo.norm} ${T.mo.ease}`,
-        color: on ? T.limeInk : T.dim }}>
+        color: on ? T.selInk : T.dim }}>
         <span style={{ position: "relative" }}>{o.label}</span>
       </button>;
     })}

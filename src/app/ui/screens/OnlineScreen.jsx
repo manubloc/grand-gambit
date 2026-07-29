@@ -397,20 +397,7 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
               <span style={{ flex: 1 }} />
               <Button variant="subtle" onClick={() => net.close()} style={{ padding: "7px 12px", fontSize: 12.5 }}>{t("online.disconnect")}</Button>
             </Line>
-            <Line>
-              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{t("online.privacy")}:</span>
-              <Segmented value={o.privacy || "public"} onChange={setPrivacy}
-                options={[{ value: "public", label: t("online.public") }, { value: "friends", label: t("online.friendsOnly") }]} />
-            </Line>
-            {/* KEIN ZWANG: die Halle steht beim Start von selbst offen - wer
-                das nicht will, stellt es hier ab und verbindet wieder von Hand. */}
-            <Line>
-              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
-              <Segmented value={o.autoConnect === false ? "off" : "on"}
-                onChange={(v) => dispatch({ type: "SET_ONLINE", online: { ...o, autoConnect: v !== "off" } })}
-                options={[{ value: "on", label: en ? "automatic" : "automatisch" }, { value: "off", label: en ? "manual" : "von Hand" }]} />
-            </Line>
-            {!searching ? (<>
+                        {!searching ? (<>
               <Segmented value={duelMode} onChange={(m) => { if (searching) { net.send({ t: "dequeue" }); setSearching(false); } setDuelMode(m); }}
                 options={[{ value: "duel", label: t("online.duel") }, { value: "classic", label: t("mode.classic") }]} />
 
@@ -496,7 +483,22 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
                 <Button variant="subtle" onClick={findRandom} style={{ padding: "8px 18px" }}>{t("online.cancel")}</Button>
               </div>
             )}
-          </div>
+                      {/* EINSTELLUNGEN ANS ENDE: erst spielen, dann verwalten - der
+                Spielmodus (Gambit/Klassisch) steht jetzt ganz oben. */}
+<Line>
+              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{t("online.privacy")}:</span>
+              <Segmented value={o.privacy || "public"} onChange={setPrivacy}
+                options={[{ value: "public", label: t("online.public") }, { value: "friends", label: t("online.friendsOnly") }]} />
+            </Line>
+            {/* KEIN ZWANG: die Halle steht beim Start von selbst offen - wer
+                das nicht will, stellt es hier ab und verbindet wieder von Hand. */}
+            <Line>
+              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
+              <Segmented value={o.autoConnect === false ? "off" : "on"}
+                onChange={(v) => dispatch({ type: "SET_ONLINE", online: { ...o, autoConnect: v !== "off" } })}
+                options={[{ value: "on", label: en ? "automatic" : "automatisch" }, { value: "off", label: en ? "manual" : "von Hand" }]} />
+            </Line>
+</div>
         )}
         {note && <div style={{ marginTop: 8, fontSize: 12.5, color: T.gold }}>{note}</div>}
       </Panel>

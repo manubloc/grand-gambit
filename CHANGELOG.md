@@ -1,5 +1,33 @@
 # Changelog - Grand Gambit
 
+## 0.44.0
+
+RUECKMELDUNG DES BESITZERS EINGEARBEITET (Auswahl, Online, Sofortstart, Hofstaat):
+
+- AUSWAHL IST VIOLETT - ENDGUELTIG: die goldene Wahlpille (v0.43, aus den
+  GPT-Blaettern) ist nach Live-Sicht verworfen; Segmente, Reiter und
+  Kartenchips tragen wieder die tiefe violette Flaeche mit violetter Kontur
+  aus v0.42. Gold gehoert allein den Handlungen.
+- SOFORT LOSLEGEN: die Schnellspiel-Karte im Hub traegt jetzt einen echten
+  "Sofort spielen"-Griff, der ohne Konfiguration mit den letzten
+  Einstellungen startet (localStorage gambit:lastQuick, sonst Hausvorgaben);
+  "Anpassen" fuehrt auf den bisherigen Weg. Kopf der Karte oeffnet weiter
+  die Konfiguration.
+- ONLINE-DUELL: der Spielmodus (Gambit/Klassisch) steht jetzt GANZ OBEN;
+  Privatheit und "Beim Start verbinden" sind ans Ende geruext - erst
+  spielen, dann verwalten.
+- KEIN WAHLSCHALTER VERSCHLUCKT TEXT - jetzt MASCHINELL erzwungen:
+  tools/pruefe-textfluss.mjs prueft bei 320 px jede Schaltflaeche in
+  Schnellspiel, allen Hofstaat-Reitern und Profil auf Ueberlauf. Funde und
+  Kuren: 12 Reiter-Ueberlaeufe ("Aufstellung" breiter als ein Viertel der
+  Schiene) -> Silbentrennung (hyphens auto, lang=de) + engere Polster;
+  8 Aufstellungs-Zellen (+4 px) -> gg-fit-svg-Einpasshuelle mit BESTIMMTEN
+  Grid-Spuren (mit auto-Zeile ist max-height:100% unbestimmt und wird
+  ignoriert - das Bild folgte nur seinem Seitenverhaeltnis).
+- EIN VERZEICHNIS, EINE HANDSCHRIFT: Meister-Kacheln im Hofstaat tragen
+  dieselbe Goldpalette wie der Hof (das rosa Siegel ist Geschichte) und
+  verbuendete Meister zeigen ihre Stufe wie jede Hofkachel.
+
 ## 0.43.0
 
 DIE VORLAGEN DES BESITZERS (design/vorlagen/ds1-vorlage-*.png) EINGEBAUT:

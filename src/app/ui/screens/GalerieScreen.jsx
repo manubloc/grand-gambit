@@ -52,7 +52,7 @@ export function GalerieScreen() {
         <Button variant="subtle" disabled>Deaktiviert</Button>
       </Reihe>
 
-      <H>Auswahl (Gold = gewählt · Vorlage 29.7.)</H>
+      <H>Auswahl (Violett = gewählt)</H>
       <Segmented value={seg} onChange={setSeg} options={[
         { value: "a", label: "Klassisch" }, { value: "b", label: "HP-Gefecht" },
         { value: "c", label: "Scharmützel · 6×6 · langer Name" }, { value: "d", label: "Gesperrt", disabled: true }]} />

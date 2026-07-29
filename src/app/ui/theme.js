@@ -192,6 +192,21 @@ export const GLOBAL_CSS = `
   @font-face { font-family: 'Cormorant Garamond'; src: url('/fonts/cormorant-500i.woff2') format('woff2');
     font-weight: 500; font-style: italic; font-display: swap; }
   .gg-serif { font-family: ${T.serif}; }
+  /* JEDE GLYPHE PASST IN IHRE ZELLE: die Aufstellungs-Zellen sind bei 320 px
+     35 px hoch, feste Figuren-Glyphen 39 - vier Pixel Ueberlauf (gemessen,
+     pruefe-textfluss). Wer diese Klasse traegt, skaliert sein SVG hinein. */
+  .gg-fit-svg { display: grid; place-items: center; min-width: 0; min-height: 0;
+    /* BESTIMMTE SPUREN: mit einer auto-Zeile ist max-height:100% des Kindes
+       unbestimmt und wird ignoriert (gemessen: 36-px-Bild in 28,8-px-Huelle
+       TROTZ Klasse - das Bild folgte nur seinem Seitenverhaeltnis). 100%-
+       Spuren machen den Kasten zur Bezugsgroesse. */
+    grid-template-rows: 100%; grid-template-columns: 100%; }
+  /* !important mit Absicht: TileArt setzt seine Masse INLINE - eine
+     Einpass-Klasse ohne Vorfahrt waere wirkungslos (gemessen: 39-px-Bild in
+     28,8-px-Huelle trotz Klasse). Die Klasse ist opt-in; wer sie traegt,
+     will genau dieses Verhalten. */
+  .gg-fit-svg > svg, .gg-fit-svg > img { max-width: 100% !important; max-height: 100% !important;
+    width: auto !important; height: auto !important; object-fit: contain; }
   /* NUR fuer Wortmarke und grosse Titel (>=18px) - nie fuer kleine Etiketten. */
   .gg-display { font-family: ${T.display}; font-weight: 600; }
   /* WER WENIG BEWEGUNG WUENSCHT, BEKOMMT RUHE: Glanzlaeufe, Glut und
