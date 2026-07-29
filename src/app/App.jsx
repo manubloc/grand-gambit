@@ -5,7 +5,7 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
-import { setLivery, fetchHouseDesign, crestArtBunt, emblemArt, logoMenuArt } from "./ui/livery.js";
+import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { Soundtrack } from "./ui/Soundtrack.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { APP_DESIGN } from "./config.js";
@@ -28,9 +28,9 @@ import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
-// DIE GEMALTEN WAPPEN DER DREI WEGE - bunt, nicht geschnitzt. Ein Vektor-Siegel
-// war fuer die Karten der falsche Ton: drei Goldreliefs nebeneinander lesen
-// sich gleich, die bunten Wappen halten die Wege auseinander.
+// DIE GEMALTEN WAPPEN DER DREI WEGE. Kein Vektor-Siegel - der Besitzer will
+// die gemalten Bilder, und zwar in der Fassung der jeweiligen Livree: crestArt
+// folgt der Livree, liefert also im geschnitzten Haus die geschnitzten Wappen.
 const CrestArt = ({ src }) => (
   <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
     filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
@@ -571,9 +571,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
-        art={<CrestArt src={crestArtBunt(1)} />} style={{ gridColumn: "1 / -1" }} />
+        art={<CrestArt src={crestArt(1)} />} style={{ gridColumn: "1 / -1" }} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<CrestArt src={crestArtBunt(2)} />} />
+        art={<CrestArt src={crestArt(2)} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
         cta={hallenStand ? (profile.lang === "en" ? "Play" : "Spielen") : t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
@@ -587,7 +587,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
               {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
                 : (profile.lang === "en" ? "offline" : "offline")}
             </span>}
-        art={<CrestArt src={crestArtBunt(3)} />}>
+        art={<CrestArt src={crestArt(3)} />}>
         {/* DIE FERNPARTIEN STEHEN JETZT IN DER KARTE SELBST. Vorher lagen sie
             als eigener Block zwischen den Karten - der Besitzer wollte sie
             dort sehen, wo das Fernduell wohnt. Ein Griff je Partie. */}
