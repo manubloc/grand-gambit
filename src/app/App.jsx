@@ -16,6 +16,7 @@ import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
+import { GalerieScreen } from "./ui/screens/GalerieScreen.jsx";
 import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
 import { OnlineScreen, buildStats } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
@@ -138,6 +139,7 @@ const TABS = [
 ];
 
 export default function App() {
+  const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
   const [profile, dispatch] = useReducer(reducer, null);
   // which livery the house wears — asked from the Hall once per boot
   const [houseDesign, setHouseDesign] = useState(null);
@@ -278,6 +280,11 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, [inMatchNow]);
 
+  // DIE MUSTERKAMMER: interne Designsystem-Galerie, nur ueber ?galerie in der
+  // Adresse erreichbar - kein Menuepunkt, kein Spielerweg. Sitzt NACH allen
+  // Hooks (Hook-Reihenfolge bleibt stabil) und VOR Anmeldung/Spielstand,
+  // damit sie auch ohne Konto aufgeht. (DS1 §17)
+  if (galerie) return <GalerieScreen />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}

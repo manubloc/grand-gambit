@@ -151,6 +151,8 @@ export const GLOBAL_CSS = `
   input, select, textarea { border-color: ${T.line}; background-color: ${T.bg2}; color: ${T.text}; }
   input:focus, select:focus, textarea:focus { border-color: ${T.riftLine}; box-shadow: 0 0 0 3px rgba(124,58,237,.18); outline: none; }
   button:focus:not(:focus-visible), a:focus:not(:focus-visible) { outline: none; }
+  /* Tastatur-Fokus ist sichtbar und violett - Fokus ist eine Auswahl. */
+  button:focus-visible, a:focus-visible { outline: 2px solid ${T.riftLine}; outline-offset: 2px; }
   body {
     margin: 0; color: ${T.text};
     background: ${T.bg};
