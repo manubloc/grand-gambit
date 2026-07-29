@@ -61,7 +61,7 @@ export default defineConfig({
         // image's URL. The picture is then permanently broken for that visitor
         // (it "loads" but never decodes). Images are cached at runtime instead,
         // and ONLY when the response really is an image.
-        globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,webmanifest,woff2}"],
         globIgnores: ["**/painted-*"], skipWaiting: true, clientsClaim: true,
         // web push lives in its own small file, pulled into the generated sw.
         // Its hash sits in the precache manifest, so editing it rolls a normal

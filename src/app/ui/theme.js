@@ -12,7 +12,10 @@
 // design is a promise, not a leftover.
 const CLASSIC = {
   bg: "#000000", bg2: "#0a0710", panel: "#140f24", panel2: "#1c1533", line: "#2f2450",
-  text: "#f0e9d8", dim: "#a9a48e", faint: "#6f6b5e",
+  text: "#f0e9d8", dim: "#a9a48e",
+  // faint lag bei 3,51:1 auf der Tafel - unter dem lesbaren Minimum. Derselbe
+  // Ton, 18 % angehoben: 4,61:1. (Gleiche Kur wie carved in v0.31.0 bekam.)
+  faint: "#837e6f",
   lime: "#d1ad55", limeDim: "#b08f3a", limeInk: "#17110a",          // player / primary accent (gold)
   magenta: "#8fa0c0", magentaDim: "#66748f", magentaInk: "#10141d", // enemy accent (steel navy)
   gold: "#eac96b", danger: "#d5495a", green: "#58c98b", blue: "#8fa0c0",
@@ -39,9 +42,35 @@ const CLASSIC = {
   // Only what comes AFTER logging in wears the lightened carved stone. Classic
   // keeps its exact former values here (login was #000, saves inherited T.bg).
   input: "#0b0813", loginBg: "#000", savesBg: "#000", errText: "#e08f8f",
-  radius: 14, radiusSm: 10,
+  radius: 14, radiusSm: 10, radiusLg: 20,
   sqLight: "#2c3a5c", sqDark: "#1b2540", grid: "#0a0e18",
   serif: `Georgia, 'Palatino Linotype', 'Times New Roman', serif`,
+  // ── DESIGNSYSTEM 1.0: semantische Ergaenzungen ────────────────────────────
+  // AUSWAHL IST VIOLETT, AKTION IST GOLD. Bis v0.41 faerbten Segmented,
+  // MapChip und Schwierigkeitswahl ihre Selektion goldfarben - im Schnellen
+  // Spiel standen dadurch vier Goldflaechen gleichzeitig, Aktion und Auswahl
+  // waren nicht zu unterscheiden. Diese drei Tokens sind die eine Quelle fuer
+  // jeden gewaehlten Zustand: tiefe violette Flaeche, violette Kontur, helle
+  // Schrift. Gemessen: selInk auf sel(ueber bg2) 12,9:1, riftBright 9,4:1.
+  sel: "#241639", selLine: "#a78bfa", selInk: "#f5f1fd",
+  selGlow: "rgba(124,58,237,.30)",
+  // Statusstimmen, die bisher fehlten (danger/green existieren):
+  warn: "#d8a441", info: "#7fa4d6",
+  // EIN disabled fuer alle: gedimmt, ohne Glanz, ohne Schein.
+  disOpacity: 0.45,
+  // Beruehrziele: nichts Interaktives unter 44 px Hoehe (Auftrag §10.8).
+  touch: 44,
+  // ── MOTION-TOKENS: eine Uhr fuer das ganze Haus ───────────────────────────
+  // Druck ~120ms, Wechsel ~220ms, Fuellen ~450ms, Glanzlauf-Zyklus 11s mit
+  // gestaffelten Slots (Gilded.useShineDelay), Umgebungsglut 5-7s.
+  mo: { press: "120ms", fast: "160ms", norm: "220ms", slow: "280ms",
+    fill: "450ms", pop: "180ms", sheen: "11s", ambient: "5.5s",
+    ease: "cubic-bezier(.25,.7,.3,1)", easeOut: "cubic-bezier(.2,.85,.3,1)" },
+  // Schriftrollen (TYPOGRAPHY.md): display = Cinzel (Wortmarke, grosse Titel),
+  // serif = Georgia-Stapel (mittlere Titel), quill = Cormorant (Erzaehlstimme),
+  // Fliesstext = System-Sans (fuellt die Inter-Rolle ohne Ladekosten).
+  display: `'Cinzel', Georgia, 'Times New Roman', serif`,
+  quill: `'Cormorant Garamond', 'IM Fell English', Georgia, serif`,
 };
 // The carved liveries' stone: everything one to two steps lighter and warmer,
 // as if the whole app were cut from the same slate as the figures. Accents,
@@ -75,6 +104,8 @@ const CARVED = { ...CLASSIC,
   sqLight: "#41527a", sqDark: "#2d3d60", grid: "#1a2440",
   input: "#0b0813", loginBg: "#000", savesBg: "#000", errText: "#e8a6a6",
 };
+/** Die Abstandsleiter des Hauses - jeder neue Abstand greift eine Sprosse. */
+export const SPACING = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64];
 export const T = { ...CLASSIC };
 /** Swap the whole app's livery in place. Called once from App.jsx per render
  *  of a hydrated profile — every T.* read after it sees the chosen design. */
@@ -137,7 +168,24 @@ export const GLOBAL_CSS = `
   ::-webkit-scrollbar-corner { background: transparent; }
   * { scrollbar-width: thin; scrollbar-color: #2b3550 transparent; }
   input { font-family: inherit; }
+  /* Die drei Stimmen des Hauses - selbst gebuendelt (OFL, public/fonts),
+     91 KB gesamt, im Precache: sie sprechen auch offline. font-display swap
+     laesst Georgia sofort stehen, bis die echte Stimme geladen ist. */
+  @font-face { font-family: 'Cinzel'; src: url('/fonts/cinzel-600.woff2') format('woff2');
+    font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Cormorant Garamond'; src: url('/fonts/cormorant-600.woff2') format('woff2');
+    font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Cormorant Garamond'; src: url('/fonts/cormorant-500i.woff2') format('woff2');
+    font-weight: 500; font-style: italic; font-display: swap; }
   .gg-serif { font-family: ${T.serif}; }
+  /* NUR fuer Wortmarke und grosse Titel (>=18px) - nie fuer kleine Etiketten. */
+  .gg-display { font-family: ${T.display}; font-weight: 600; }
+  /* WER WENIG BEWEGUNG WUENSCHT, BEKOMMT RUHE: Glanzlaeufe, Glut und
+     Dauerpulse stehen still; Zustandswechsel bleiben (fast) sofort sichtbar. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @keyframes ggGlow { 0%,100% { box-shadow: 0 0 5px rgba(201,164,92,.22); } 50% { box-shadow: 0 0 14px rgba(201,164,92,.5); } }
   /* THE TREASURY'S MEDALLION, once its plate is opened: the ring of light
@@ -275,7 +323,7 @@ export const GLOBAL_CSS = `
     38%  { transform: translate(var(--bx, 0), var(--by, 0)); }
     100% { transform: translate(0,0); } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
-  .gg-quill { font-family: "IM Fell English", Georgia, "Times New Roman", serif; font-style: italic; }
+  .gg-quill { font-family: ${T.quill}; font-style: italic; font-weight: 500; }
   /* Der Glanz lief bisher mit ease-in-out — und bremste damit AB, WÄHREND das
      Band noch im Bild war: es sah aus, als bliebe der Schimmer bei zwei
      Dritteln stehen und löste sich dort auf. Der Lauf ist jetzt gleichförmig

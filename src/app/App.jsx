@@ -535,7 +535,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             laeuft der Fortschrittsbalken nicht mehr unter ihm hindurch. */}
         <div style={{ position: "absolute", right: 12, ...(artTop ? { top: 12 } : { top: "50%", transform: "translateY(-50%)" }),
           opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
-        <div className="gg-serif" style={{ fontSize: artTop ? 22 : 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
+        <div className="gg-display" style={{ fontSize: artTop ? 21 : 19, letterSpacing: ".04em", color: T.gold, paddingRight: 92 }}>{title}</div>
         <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
         {/* Fliesstext: nimmt die volle Breite, KEINE absolute Ecke mehr -
             darum ueberlappt hier nichts mehr, egal wie lang der Ortsname ist. */}
