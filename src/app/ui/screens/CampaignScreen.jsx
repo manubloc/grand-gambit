@@ -159,6 +159,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // the viewport: fills the whole screen below the header; we measure it and
   // fit-scale the map so the parchment always covers it (no letterboxing)
   const vpRef = useRef(null);
+  // der Welt-Container bekommt einen eigenen Griff: waehrend des Ziehens
+  // schreiben wir seine transform DIREKT, ohne React (s. Pointer-Handler)
+  const weltRef = useRef(null);
   const [vp, setVp] = useState({ w: 720, h: 560 });
   useEffect(() => {
     const el = vpRef.current;
@@ -293,10 +296,23 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         onPointerMove={(e) => { const d = dragRef.current; if (!d) return;
           const dx = e.clientX - d.px, dy = e.clientY - d.py;
           if (!d.moved && Math.hypot(dx, dy) > 6) { d.moved = true; clickSquelch.current = true; setDragging(true); try { d.el.setPointerCapture(d.id); } catch {} }
-          if (d.moved) setPanOff({ x: d.ox - dx, y: d.oy - dy }); }}
-        onPointerUp={() => { dragRef.current = null; setDragging(false); }}
-        onPointerCancel={() => { dragRef.current = null; setDragging(false); }}
+          if (d.moved) {
+            // GEMESSEN (messe-fluss, v0.45): setPanOff pro Pointer-Move rendert
+            // den ganzen Weltbaum neu - 48,4 ms mittlerer Frame, 77/92 Frames
+            // verloren. Waehrend des Zugs schreiben wir die transform DIREKT
+            // ans DOM; React erfaehrt die Lage erst beim Loslassen.
+            const pan = { x: d.ox - dx, y: d.oy - dy };
+            d.pan = pan;
+            const zielX = clamp((viewing ? 0 : nx(camNode) * zf - frameW * 0.46) + pan.x, 0, camMaxX);
+            const zielY = clamp((viewing ? camMaxY * 0.5 : ny(camNode) * zf - frameH * 0.5) + pan.y, 0, camMaxY);
+            if (weltRef.current) weltRef.current.style.transform = `translate3d(${-zielX}px, ${-zielY}px, 0) scale(${zf})`;
+          } }}
+        onPointerUp={() => { const d = dragRef.current; dragRef.current = null; setDragging(false);
+          if (d?.pan) setPanOff(d.pan); }}
+        onPointerCancel={() => { const d = dragRef.current; dragRef.current = null; setDragging(false);
+          if (d?.pan) setPanOff(d.pan); }}
         onClickCapture={(e) => { if (clickSquelch.current) { clickSquelch.current = false; e.preventDefault(); e.stopPropagation(); } }}
+        className={dragging ? "gg-karte-zieht" : undefined}
         style={{ position: "absolute", left: frameX, top: frameY, width: frameW, height: frameH,
         overflow: "hidden", borderRadius: Math.min(22, frameW / 12), background: bm ? "#000" : th.paper,
         boxShadow: "inset 0 0 26px rgba(8,10,14,.45)", touchAction: "none",
@@ -333,22 +349,22 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             {/* the faintest hint of terrain colour at the very bottom edge, UNDER
                 the sky so it never tints the blue */}
             <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
-              height: "460%", objectFit: "cover", objectPosition: "50% 0%",
-              filter: "blur(24px) brightness(.95) saturate(.95)", transform: "scaleY(-1)", opacity: 0.14,
+              height: "150%", objectFit: "cover", objectPosition: "50% 0%",
+              filter: "blur(14px) brightness(.95) saturate(.95)", transform: "scaleY(-1)", opacity: 0.14,
               WebkitMaskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)", maskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)" }} />
             <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             {/* drifting cloud PUFFS with real gaps — the sky (blue/sun/dusk)
                 stays visible between and behind them. Airy, so blue peeks through. */}
-            <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(15px)",
+            <div style={{ position: "absolute", inset: "-10% -12%", filter: "blur(10px)",
               opacity: (CLOUD_OP + 0.14) * 0.52, animation: "ggCloudA 31s ease-in-out infinite alternate, ggCloudBreath 14s ease-in-out infinite",
               background: `radial-gradient(20% 30% at 16% 30%, rgba(${CLOUD},.92), transparent 60%), radial-gradient(24% 34% at 54% 20%, rgba(${CLOUD},.78), transparent 62%), radial-gradient(18% 28% at 84% 34%, rgba(${CLOUD},.85), transparent 60%)` }} />
-            <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(20px)",
+            <div style={{ position: "absolute", inset: "-10% -12%", filter: "blur(12px)",
               opacity: (CLOUD_OP) * 0.5, animation: "ggCloudB 43s ease-in-out infinite alternate, ggCloudBreath 19s ease-in-out infinite",
               background: `radial-gradient(22% 32% at 32% 24%, rgba(${CLOUD},.8), transparent 62%), radial-gradient(20% 30% at 72% 18%, rgba(${CLOUD},.7), transparent 64%)` }} />
-            <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(26px)", mixBlendMode: "screen",
-              opacity: (CLOUD_OP + 0.1) * 0.42, animation: "ggCloudC 54s ease-in-out infinite alternate",
+            <div style={{ position: "absolute", inset: "-10% -12%", filter: "blur(13px)",
+              opacity: (CLOUD_OP + 0.1) * 0.46, animation: "ggCloudC 54s ease-in-out infinite alternate",
               background: `radial-gradient(26% 36% at 46% 16%, rgba(${CLOUD},.55), transparent 66%)` }} />
-            <div style={{ position: "absolute", inset: "-28% -40%", filter: "blur(15px)",
+            <div style={{ position: "absolute", inset: "-10% -12%", filter: "blur(10px)",
               opacity: (CLOUD_OP + 0.08) * 0.46, animation: "ggCloudD 25s ease-in-out infinite alternate, ggCloudBreath 12s ease-in-out infinite",
               background: `radial-gradient(15% 24% at 62% 34%, rgba(${CLOUD},.88), transparent 58%), radial-gradient(13% 22% at 6% 22%, rgba(${CLOUD},.82), transparent 58%)` }} />
           </div>
@@ -381,8 +397,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               background: `radial-gradient(120% 40% at 50% ${sp(dicht - 40)}, rgba(139,92,246,.34) 0%, rgba(91,33,182,.16) 46%, transparent 74%)` }} />
           </>;
         })()}
-        <div style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
-          transform: `translate(${-camX}px, ${-camY}px) scale(${zf})`,
+        <div ref={weltRef} style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
+          transform: `translate3d(${-camX}px, ${-camY}px, 0) scale(${zf})`, willChange: "transform",
           transition: dragging ? "none" : `transform .72s ${CAM_EASE}` }}>
           <svg width={WMAP} height={HM} viewBox={`0 0 ${WMAP} ${HM}`} style={{ position: "absolute", inset: 0 }}>
             <defs>
@@ -541,13 +557,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                       width: (MEDAL + 10) * (n.id === "n22" ? 2 : 1.55), height: (MEDAL + 10) * (n.id === "n22" ? 1 : 0.8),
                       borderRadius: "50%", pointerEvents: "none",
                       background: `radial-gradient(ellipse at center, ${glow}${on ? "b8" : st === "locked" ? "2e" : "70"} 0%, ${glow}${on ? "66" : "30"} 45%, transparent 72%)`,
-                      animation: isCur ? "ggPulse 2.2s ease-in-out infinite" : "none",
+                      animation: isCur ? "ggPulse 2.2s ease-in-out infinite" : "none", willChange: isCur ? "transform, opacity" : "auto",
                       transition: "background .4s" }} />;
                   })()}
                   {!bm && <svg viewBox="0 0 44 19" width={MEDAL + 10} height={Math.round((MEDAL + 10) * 19 / 44)}
                     style={{ position: "absolute", left: 0, bottom: 0, display: "block", overflow: "visible" }}>
+                    {/* Der Goldring der aktuellen Station steht jetzt STILL:
+                        sein ggPulse rasterte das Medaillon-SVG 60x/s neu -
+                        SVG-Kinder bekommen keine eigene Schicht. Den Puls
+                        traegt die HTML-Marke darueber (eigene Schicht). */}
                     {isCur && <ellipse cx="22" cy="8" rx="21" ry="8.8" fill="none" stroke={T.gold} strokeWidth="1.5"
-                      style={{ animation: "ggPulse 1.8s ease-in-out infinite", transformOrigin: "center", transformBox: "fill-box" }} />}
+                      style={{ opacity: 0.55, transformOrigin: "center", transformBox: "fill-box" }} />}
                     <path d="M2.5 8 a19.5 7.2 0 0 0 39 0 l0 3.6 a19.5 7.2 0 0 1 -39 0 Z" fill={MP.medal} fillOpacity=".42" stroke={ringCol} strokeWidth="1" strokeOpacity=".7" />
                     <path d="M2.5 8 a19.5 7.2 0 0 0 39 0 l0 3.6 a19.5 7.2 0 0 1 -39 0 Z" fill="rgba(0,0,0,.14)" />
                     <ellipse cx="22" cy="8" rx="19.5" ry="7.2" fill={MP.medal} fillOpacity=".46" stroke={ringCol} strokeWidth="1.4" strokeOpacity=".85" />
@@ -580,7 +600,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     background: "radial-gradient(circle at 38% 30%, #3a2c10 0%, #171008 100%)",
                     border: "1.5px solid #e3c07a",
                     boxShadow: "0 0 8px rgba(240,206,122,.65), 0 1px 3px rgba(0,0,0,.6)",
-                    animation: "ggGatePuls 2.6s ease-in-out infinite" }}>
+                    animation: "ggGatePuls 2.6s ease-in-out infinite", willChange: "opacity" }}>
                     <LockIc size={12} color="#f2d98c" /></span>}
                   {/* und darunter, klein, WAS genau fehlt */}
                   {st === "gated" && imLicht(n) && (gateOf(n)?.item || gateOf(n)?.gold) && <span style={{ position: "absolute", bottom: 2, right: 1, fontSize: 11, opacity: bm ? 0.85 : 1,
@@ -1063,6 +1083,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
                 <BladesIc color={node?.boss?.pure && (status === "available" || friendly) ? T.riftInk : T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
+              {/* KLARHEIT AUF DER KARTE (Besitzer, v0.45): geraeumte Stationen
+                  sagen, was eine Wiederholung wert ist - Freundschaftskampf
+                  zahlt minimal, alles andere nichts. */}
+              {status === "cleared" && (
+                <div style={{ fontSize: 10.5, lineHeight: 1.45, marginTop: 6, color: friendly ? "#4a5a2e" : "#6b6353" }}>
+                  {friendly ? t("camp.replayHint") : t("camp.replayNone")}
+                </div>
+              )}
             </div>
           )}
         </div>

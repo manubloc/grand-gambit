@@ -1,5 +1,41 @@
 # Changelog - Grand Gambit
 
+## 0.45.0
+
+ACHT PUNKTE DES BESITZERS - UHR, GEGNERFIGUREN, KARTE, LEISTUNG:
+
+- DIE UHR IST NICHT MEHR ZU UEBERSEHEN: drei Stufen (golden -> gross ab
+  20 s -> ALARM ab 10 s: 23 px, fett, rot, pulsierend), und in den letzten
+  Sekunden glimmt der Innenrand des BRETTS im Takt der Uhr (Licht statt
+  neuer Elemente; Zug-Timer: 5 s / 3 s; reduced-motion: gross+rot, still).
+- GEGNERFIGUREN NEU GERECHNET (tools/verdorben-v2.py, 57 Stueck, numerisch
+  belegt): deutlich heller (Leuchtdichte-Verhaeltnis 0,52 -> 0,66; Bauer
+  43,2 -> 55,5), leichte Lila-Toenung ueberall nachweisbar (B-R +1..+14,
+  auch beim ziegelroten Turm), und die EINGEBACKENEN BLITZE sind fort - per
+  Konstruktion, kein _ast-Aufruf existiert mehr. Nachtwesen-Bosse (helle
+  Fassung selbst dunkel) mit dokumentierter q-Ausnahme.
+- RAHMEN: die Riss-Blitze an der oberen Leiste sind ersatzlos gestrichen;
+  der 11-s-Wanderglanz ist drei OERTLICHEN Aufglaenzern gewichen (9-13-s-
+  Takte, versetzt, nie im Chor).
+- KARTE - WIEDERHOLUNGEN SIND JETZT KLAR: jede Station bleibt spielbar;
+  nur der FREUNDSCHAFTSKAMPF zahlt noch (+15 % Gold, +25 % XP), jede andere
+  Wiederholung nichts (vorher: halbes Gold!). Das Stations-Panel sagt es
+  bei geraeumten Stationen dazu (camp.replayHint/replayNone, de+en).
+- KARTE - FLUSS: der Zug laeuft jetzt DIREKT am DOM (vorher rendertee jeder
+  Pointer-Move den ganzen Weltbaum: gemessen 48 ms mittlerer Frame, 77/92
+  verloren); waehrend des Ziehens RUHT DAS WETTER (Animations-Pause-Klasse);
+  Terrain-Spiegel von 460 % Hoehe/blur24 auf 150 %/blur14; Wolken kleiner
+  und ohne mixBlendMode; Tor-Puls von box-shadow (malt!) auf Opazitaet;
+  Medaillon-Ring der aktuellen Station steht still (sein Puls rasterte das
+  SVG 60x/s). Hinweis: der Messkasten rastert ohne GPU (SwiftShader) und
+  zeigt einen Software-Composite-Boden - das Geraeteurteil hat der Besitzer.
+- BOOT: die drei Hausschriften werden vorgeladen (preload), grosse
+  Kachel-/Wappenbilder dekodieren asynchron. Boot-Messung: 17 ms mittel,
+  2-5 Ausreisser in 3,5 s.
+- HUB: "Kampagne starten" statt "Neue Kampagne starten" bei frischem Stand.
+- TEXTFLUSS-WAECHTER zweispurig (320 UND 412 px, mit Nichtmess-Schutz);
+  Desktop-Breit steht als naechster Ausbau in KNOWN_ISSUES.
+
 ## 0.44.0
 
 RUECKMELDUNG DES BESITZERS EINGEARBEITET (Auswahl, Online, Sofortstart, Hofstaat):

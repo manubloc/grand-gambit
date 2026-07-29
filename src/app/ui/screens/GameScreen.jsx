@@ -335,7 +335,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     // The purse (v0.5): every win pays gold — stages carry their own reward
     // (bosses more, replays half), free play scales with difficulty.
     summary.gold = result !== "win" ? 0
-      : campaign ? (match.firstClear ? (match.gold || 0) : Math.round((match.gold || 0) / 2))
+      // REGEL DES BESITZERS (v0.45): jede Station bleibt wiederholbar, aber
+      // nur der FREUNDSCHAFTSKAMPF zahlt noch - minimal (15 % Gold; die
+      // 25 % XP vergibt advanceCampaign). Jede andere Wiederholung: nichts.
+      // Vorher zahlte jede Wiederholung das halbe Gold.
+      : campaign ? (match.firstClear ? (match.gold || 0) : match.friendly ? Math.max(3, Math.round((match.gold || 0) * 0.15)) : 0)
       : pvp ? 6
       : winGold(difficulty);
     const { profile: next, gained } = applyResult(profile, summary);
@@ -606,6 +610,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const statusText = banner ? "" : st.check ? t("game.check") : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
   const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
+  // DIE UHR DARF NICHT ZU UEBERSEHEN SEIN (Besitzer, v0.45): "man vergisst
+  // sonst zu ziehen". Drei Stufen: hot (golden, wie gehabt) -> gross ->
+  // ALARM: die Uhr waechst deutlich, pulsiert rot und das Brett selbst
+  // glimmt im Takt (Innenrand-Schein, keine neuen Elemente auf dem Feld).
+  const clockGross = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 20);
+  const clockAlarm = clock != null && (timer?.type === "move" ? clock <= 3 : clock <= 10);
   // in a duel the FOE's glass hangs beside your own, so you can see him burn
   const foeLbl = foeClock != null ? `${Math.floor(Math.max(0, foeClock) / 60)}:${String(Math.max(0, foeClock) % 60).padStart(2, "0")}` : null;
 
@@ -640,9 +650,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
         {clockLbl && (
-          <span className="gg-serif" style={pill({ cursor: "default",
-            border: `1.5px solid ${T.gold}${clockHot ? "cc" : "55"}`, color: clockHot ? T.goldBright : T.gold,
-            letterSpacing: ".06em", fontSize: 14, gap: 5 })}><HourglassIc size={14} color={clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
+          <span className="gg-serif" style={{ ...pill({ cursor: "default",
+            border: `1.5px solid ${clockAlarm ? T.danger : T.gold + (clockHot ? "cc" : "55")}`,
+            color: clockAlarm ? "#ffd9de" : clockHot ? T.goldBright : T.gold,
+            letterSpacing: ".06em", fontSize: clockAlarm ? 23 : clockGross ? 18 : 14, gap: 5 }),
+            fontWeight: clockAlarm ? 800 : undefined,
+            background: clockAlarm ? "linear-gradient(160deg, rgba(140,28,42,.92), rgba(60,10,18,.94))" : undefined,
+            boxShadow: clockAlarm ? `0 0 18px ${T.danger}aa` : undefined,
+            animation: clockAlarm ? "ggUhrAlarm .85s ease-in-out infinite" : "none",
+            zIndex: 3 }}><HourglassIc size={clockAlarm ? 19 : clockGross ? 16 : 14}
+              color={clockAlarm ? "#ffd9de" : clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
         )}
         {foeLbl && (
           <span className="gg-serif" title={t("online.foeClock")} style={pill({ cursor: "default",
@@ -699,6 +716,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         style={{ flex: "1 1 auto", minHeight: 0, maxHeight: "calc(100vw + 8px)", position: "relative",
         margin: `${2 + boardPadTop}px 4px ${2 + boardPadBottom}px`,
         overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
+        {/* DER BRETT-ALARM: in den letzten Sekunden glimmt der Innenrand des
+            Brettfelds im Takt der Uhr - Licht statt neuer Elemente. */}
+        {clockAlarm && <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
+          borderRadius: 10, animation: "ggBrettAlarm .85s ease-in-out infinite" }} />}
         <div style={{ width: "100%", height: "100%",
           display: "grid", placeItems: "center",   // the board rests mid-air: as much sky above as below
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",

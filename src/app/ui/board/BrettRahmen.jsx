@@ -63,7 +63,6 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
   const W = 1000, H = 1000, rand = 26;   // eigenes Gitter, quadratisch
   const feind = Math.max(0, -lage);      // wie stark der Gegner führt
   const eigen = Math.max(0, lage);
-  const blitzTakt = feind > 0.12 ? Math.max(4.5, 11 - feind * 6) : 0;   // seltener, erst bei klarer Uebermacht   // Sekunden
   return (
     <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", ...style }}>
@@ -80,16 +79,15 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
           <stop offset="0%" stopColor={GOLD_HELL} /><stop offset="34%" stopColor={GOLD} />
           <stop offset="66%" stopColor={GOLD_HELL} /><stop offset="100%" stopColor={GOLD_TIEF} />
         </linearGradient>
-        {/* DER WANDERNDE GLANZ: ein heller Streifen zieht endlos um das Brett */}
-        <linearGradient id={`${id}-glanz`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0" />
-          <stop offset="42%" stopColor="#fff" stopOpacity="0" />
-          <stop offset="50%" stopColor="#fffdf4" stopOpacity=".85" />
-          <stop offset="58%" stopColor="#fff" stopOpacity="0" />
+        {/* KURZE AUFGLAENZER statt Wanderglanz - Wunsch des Besitzers (v0.45):
+            "eher hier oder da mal kurz aufglaenzen, nicht ueber den gesamten
+            Rahmen laufen". Ein weicher Lichtfleck, der an drei Stellen der
+            Leisten in langen Pausen kurz aufscheint. */}
+        <radialGradient id={`${id}-funke`}>
+          <stop offset="0%" stopColor="#fffdf4" stopOpacity=".9" />
+          <stop offset="55%" stopColor="#fdeebc" stopOpacity=".35" />
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-          <animate attributeName="x1" values="-1;1" dur="11s" repeatCount="indefinite" />
-          <animate attributeName="x2" values="0;2" dur="11s" repeatCount="indefinite" />
-        </linearGradient>
+        </radialGradient>
         <clipPath id={`${id}-leisten`}>
           <path d={`M${rand - 9} ${rand - 9} H${W - rand + 9} V${H - rand + 9} H${rand - 9} Z
                     M${rand + 9} ${rand + 9} V${H - rand - 9} H${W - rand - 9} V${rand + 9} Z`} fillRule="evenodd" />
@@ -122,30 +120,20 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
           dur="2.6s" repeatCount="indefinite" />
       </rect>}
 
-      {/* DIE BLITZE DES GEGNERS: zucken an der oberen Leiste, je öfter, je
-          klarer er führt. Drei Zacken mit versetztem Takt. */}
-      {/* DER RISS SCHLAEGT EIN: keine Blitz-Symbole mehr, die aufploppen -
-          sondern ein feiner Zickzack, der ENTLANG der oberen Leiste zuckt und
-          sofort wieder verlischt. Gezeichnet als duenne Linie ohne Fuellung,
-          damit es wie eine Entladung wirkt und nicht wie ein Bildchen. */}
-      {blitzTakt > 0 && [0.3, 0.62].map((p, i) => {
-        const x = rand + (W - 2 * rand) * p, y = rand;
-        const zack = `M${x - 34} ${y} l7 -4 l5 5 l8 -6 l6 5 l9 -4 l5 5 l8 -3`;
-        return (
-          <g key={i} opacity="0">
-            <animate attributeName="opacity" values="0;.95;0;0;0;0;0" dur={`${blitzTakt}s`}
-              begin={`${i * 1.7}s`} repeatCount="indefinite" />
-            <path d={zack} fill="none" stroke={RISS_HELL} strokeWidth="1.1"
-              strokeLinecap="round" strokeLinejoin="round" />
-            <path d={zack} fill="none" stroke={RISS} strokeWidth="2.4"
-              strokeLinecap="round" strokeLinejoin="round" opacity=".4" />
-          </g>
-        );
-      })}
-
-      {/* der wandernde Glanz, auf die Leisten beschnitten */}
+      {/* Die Riss-Blitze sind fort - Wunsch des Besitzers (v0.45):
+          "diese Blitze unbedingt weglassen". Der Vorsprung des Gegners
+          spricht weiter ueber die violette Glut der Leisten, nur ohne
+          Entladungen. */}
+      {/* drei oertliche Aufglaenzer, auf die Leisten beschnitten: jeder lebt
+          knapp eine Sekunde in einem 9-13-s-Takt, versetzt - nie im Chor */}
       <g clipPath={`url(#${id}-leisten)`}>
-        <rect x="0" y="0" width={W} height={H} fill={`url(#${id}-glanz)`} />
+        {[[0.24, rand, 9.5, 0], [1 - 0.18, H / 2, 12.5, 4.2], [0.62, H - rand, 11, 7.6]].map(([px, py, takt, start], i) => (
+          <circle key={i} cx={i === 1 ? W - rand : (W - 2 * rand) * px + rand} cy={i === 1 ? H * 0.42 : py}
+            r={26} fill={`url(#${id}-funke)`} opacity="0">
+            <animate attributeName="opacity" values="0;0;0;.8;0;0;0;0;0;0;0" dur={`${takt}s`}
+              begin={`${start}s`} repeatCount="indefinite" />
+          </circle>
+        ))}
       </g>
 
       {/* Ecken und Lilien - in eigenen Gruppen, damit sie rund bleiben */}

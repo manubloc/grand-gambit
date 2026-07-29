@@ -211,6 +211,18 @@ export const GLOBAL_CSS = `
   .gg-display { font-family: ${T.display}; font-weight: 600; }
   /* WER WENIG BEWEGUNG WUENSCHT, BEKOMMT RUHE: Glanzlaeufe, Glut und
      Dauerpulse stehen still; Zustandswechsel bleiben (fast) sofort sichtbar. */
+  /* DIE LETZTEN SEKUNDEN: Uhrpuls und Brettglimmen im selben Takt. Bei
+     reduzierter Bewegung stehen beide still - die Uhr bleibt dann gross
+     und rot, das genuegt als Signal. */
+  @keyframes ggUhrAlarm { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.16); } }
+  @keyframes ggBrettAlarm {
+    0%, 100% { box-shadow: inset 0 0 0 0 rgba(214,73,90,0); }
+    50% { box-shadow: inset 0 0 34px 6px rgba(214,73,90,.42), inset 0 0 90px rgba(122,60,255,.18); }
+  }
+  /* Waehrend der Daumen die Karte zieht, ruht das Wetter: jede Animation im
+     Rahmen haelt an, damit ALLE Frames dem Zug gehoeren (gemessen 48-62 ms
+     Frames beim Ziehen mit laufenden Wolken). */
+  .gg-karte-zieht * { animation-play-state: paused !important; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important;
       animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -239,8 +251,10 @@ export const GLOBAL_CSS = `
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
   /* das Siegel am verschlossenen Weg atmet leise */
-  @keyframes ggGatePuls { 0%, 100% { box-shadow: 0 0 8px rgba(240,206,122,.5), 0 1px 3px rgba(0,0,0,.6); }
-    50% { box-shadow: 0 0 14px rgba(240,206,122,.85), 0 1px 3px rgba(0,0,0,.6); } }
+  /* box-shadow ist eine MAL-Eigenschaft: ihr Puls strich die ganze
+     Weltschicht der Karte neu (gemessen). Jetzt fester Schein, Puls per
+     Opazitaet - das komponiert, statt zu malen. */
+  @keyframes ggGatePuls { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
   @keyframes ggSaum { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
   @keyframes ggRiftOpen { from { transform: scale(1.09); opacity: 0; } 40% { opacity: .92; } to { transform: scale(1); opacity: .92; } }
   @keyframes ggRiftPulse { 0%, 100% { box-shadow: 0 0 9px rgba(124,58,237,.35); border-color: rgba(167,139,250,.55); }

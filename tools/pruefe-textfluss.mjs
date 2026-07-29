@@ -21,7 +21,9 @@ const server = createServer(async (req, res) => {
 });
 await new Promise((r) => server.listen(4336, r));
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox"] });
-const page = await browser.newPage({ viewport: { width: 320, height: 690 }, deviceScaleFactor: 2 });
+let gesamtFunde = 0, gemessen = 0;
+for (const [vw, vh] of [[320, 690], [412, 915]]) {
+const page = await browser.newPage({ viewport: { width: vw, height: vh }, deviceScaleFactor: 2 });
 await page.goto("http://127.0.0.1:4336/", { waitUntil: "load" });
 await page.waitForTimeout(1400);
 const klick = async (text) => {
@@ -76,8 +78,14 @@ funde.push(...await messe("profil"));
 // Kachel-Namen im Hofstaat duerfen per Bauart mit Ellipse enden (nowrap +
 // title) - alles andere nicht. Wir werten NUR echte Ueberlaeufe:
 funde = funde.filter((f) => !(f.text.startsWith("ELLIPSIS") && f.ort.startsWith("hofstaat-Hofstaat")));
-for (const f of funde) console.log(`  VERSCHLUCKT [${f.ort}] "${f.text}" +${f.wOver}x${f.hOver}px`);
-console.log(`RESULT: ${funde.length === 0 ? 1 : 0} passed, ${funde.length} failed`);
-console.log(funde.length === 0 ? "== TEXTFLUSS SAUBER ==" : "== TEXT VERSCHLUCKT ==");
+const anzahl = await page.evaluate(() => document.querySelectorAll("main button").length);
+gemessen += anzahl; gesamtFunde += funde.length;
+for (const f of funde) console.log(`  VERSCHLUCKT [${vw}px · ${f.ort}] "${f.text}" +${f.wOver}x${f.hOver}px`);
+console.log(`  Viewport ${vw}x${vh}: ${anzahl} Knoepfe zuletzt sichtbar, ${funde.length} Funde`);
+await page.close();
+}
+if (gemessen < 20) { console.log("== TEXTFLUSS NICHT GEMESSEN =="); await browser.close(); server.close(); process.exit(2); }
+console.log(`RESULT: ${gesamtFunde === 0 ? 1 : 0} passed, ${gesamtFunde} failed`);
+console.log(gesamtFunde === 0 ? "== TEXTFLUSS SAUBER ==" : "== TEXT VERSCHLUCKT ==");
 await browser.close(); server.close();
-process.exit(funde.length === 0 ? 0 : 1);
+process.exit(gesamtFunde === 0 ? 0 : 1);

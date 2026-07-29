@@ -1267,7 +1267,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           sits up here; it belongs under the name, where it reads as a caption. */}
       {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
         display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
-      {img ? <img src={img} alt="" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
+      {img ? <img src={img} alt="" decoding="async" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto" }}>

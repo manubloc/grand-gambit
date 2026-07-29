@@ -33,7 +33,7 @@ import { InstallBanner } from "./ui/InstallBanner.jsx";
 // die gemalten Bilder, und zwar in der Fassung der jeweiligen Livree: crestArt
 // folgt der Livree, liefert also im geschnitzten Haus die geschnitzten Wappen.
 const CrestArt = ({ src }) => (
-  <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
+  <img src={src} alt="" aria-hidden decoding="async" style={{ width: 72, height: 84, objectFit: "contain",
     filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
 );
 
