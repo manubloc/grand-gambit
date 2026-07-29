@@ -5,8 +5,9 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
-import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
+import { setLivery, fetchHouseDesign, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { SwordsArt } from "./ui/SwordsArt.jsx";
+import { CampaignArt, DuelArt } from "./ui/HubSeals.jsx";
 import { Soundtrack } from "./ui/Soundtrack.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { APP_DESIGN } from "./config.js";
@@ -30,12 +31,6 @@ import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
 
-// the painted crests of the three roads: the wanderer's star for the campaign,
-// crossed blades for a quick bout, the keep for duels across the realm
-const CrestArt = ({ src }) => (
-  <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
-    filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
-);
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
 
 
@@ -509,77 +504,65 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   const done = clearedCount(profile), total = campaignLength(profile);
   const ch = chapterForRow(cur?.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
-  const Card = ({ title, sub, extra, cta, onGo, art, style }) => {
+  // WER NOCH NIE GESPIELT HAT, KANN NICHTS "FORTSETZEN". Der Knopf log den
+  // Neuling an: keine geraeumte Station, kein ruhender Kampf, erstes Kapitel.
+  const nieGespielt = done === 0 && !profile.pausedMatch && (profile.campaign?.league || 1) === 1;
+
+  // laufende Fernpartien aus dem letzten Hallenbesuch - braucht keine Verbindung
+  let fernpartien = [];
+  try { fernpartien = JSON.parse(localStorage.getItem("gambit:u::daily:v1") || "[]"); } catch { fernpartien = []; }
+  const amZug = fernpartien.filter((g) => g.yourTurn);
+
+  // DIE KARTE ALS HUELLE: frueher war die ganze Karte EIN Knopf, deshalb
+  // konnte nichts Anklickbares in ihr sitzen (Knoepfe in Knoepfen sind
+  // ungueltig). Jetzt traegt eine Huelle das Aussehen, der Kopfbereich ist der
+  // Knopf - und darunter ist Platz fuer eigene Griffe (die Fernpartien).
+  const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false }) => {
     const shineDelay = useShineDelay();
     return (
-    <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
-      background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: `1px solid ${T.line}`,
-      borderRadius: T.radius, padding: "16px 16px 14px", boxShadow: T.shadow, position: "relative", overflow: "hidden", ...style }}>
-      <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
-      <div className="gg-serif" style={{ fontSize: 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
-      <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
-      {extra && <div style={{ position: "absolute", right: 12, bottom: 10, fontSize: 12.5, color: T.text }}>{extra}</div>}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
-        borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
-        background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
-        boxShadow: `0 0 12px ${T.gold}55`,
-        color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
-        <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
-          background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
-          animation: `ggShine 11s ease-in-out ${shineDelay} infinite` }} />
-        <span style={{ position: "relative" }}>{cta} ›</span>
-      </div>
-    </button>
+    <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+      border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
+      position: "relative", overflow: "hidden", ...style }}>
+      <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
+        background: "none", border: "none", padding: "16px 16px 14px", display: "block", position: "relative" }}>
+        {/* Das Zeichen sitzt bei Karten MIT Fliesstext oben statt mittig - so
+            laeuft der Fortschrittsbalken nicht mehr unter ihm hindurch. */}
+        <div style={{ position: "absolute", right: 12, ...(artTop ? { top: 12 } : { top: "50%", transform: "translateY(-50%)" }),
+          opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
+        <div className="gg-serif" style={{ fontSize: artTop ? 22 : 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
+        <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
+        {/* Fliesstext: nimmt die volle Breite, KEINE absolute Ecke mehr -
+            darum ueberlappt hier nichts mehr, egal wie lang der Ortsname ist. */}
+        {body && <div style={{ marginTop: 12, fontSize: 12.5, color: T.text, paddingRight: 92 }}>{body}</div>}
+        {extra && <div style={{ position: "absolute", right: 12, bottom: 10, fontSize: 12.5, color: T.text }}>{extra}</div>}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
+          borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
+          background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
+          boxShadow: `0 0 12px ${T.gold}55`,
+          color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
+          <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
+            background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
+            animation: `ggShine 11s linear ${shineDelay} infinite` }} />
+          <span style={{ position: "relative" }}>{cta} ›</span>
+        </div>
+      </button>
+      {children}
+    </div>
   ); };
   return (
     <div style={{ display: "grid", gap: 12, gridTemplateColumns: hubWide ? "1fr 1fr" : "1fr" }}>
-      <Card title={t("camp.title")} sub={t("hub.campSub")} onGo={onCamp} cta={t("hub.continue")}
-        extra={<>
+      {/* DER FELDZUG BEKOMMT DEN GROSSEN PLATZ: eigene Zeile ueber die volle
+          Breite, groesserer Titel, der Balken laeuft unter dem Text durch
+          statt unter dem Zeichen. */}
+      <Card title={t("camp.title")} sub={t("hub.campSub")} onGo={onCamp} artTop
+        cta={nieGespielt ? t("hub.newCampaign") : t("hub.continue")}
+        body={nieGespielt
+          ? <span style={{ color: T.dim }}>{t("hub.campFresh")}</span>
+          : <>
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
-          <div style={{ marginTop: 7, maxWidth: 340 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={4} color={T.gold} /></div></>}
-        art={<CrestArt src={crestArt(1)} />} style={hubWide ? { gridColumn: "1 / -1" } : null} />
-      {/* ABKUERZUNG ZU DEN FERNPARTIEN: wer laufende Partien hat, sieht hier
-          sofort, wo er am Zug ist - und springt mit einem Griff hinein, ohne
-          erst den Online-Bereich zu oeffnen. Die Liste stammt aus dem letzten
-          Besuch der Halle und braucht keine Verbindung. */}
-      {(() => {
-        let liste = [];
-        try { liste = JSON.parse(localStorage.getItem("gambit:u::daily:v1") || "[]"); } catch { liste = []; }
-        if (!liste.length) return null;
-        const dran = liste.filter((g) => g.yourTurn);
-        const sortiert = [...dran, ...liste.filter((g) => !g.yourTurn)].slice(0, 4);
-        return <div style={{ gridColumn: "1 / -1", display: "grid", gap: 7 }}>
-          <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".13em", color: T.gold, textTransform: "uppercase" }}>
-            {t("daily.title")}{dran.length > 0 ? ` · ${dran.length}\u00d7 ${profile.lang === "en" ? "your move" : "du bist dran"}` : ""}
-          </div>
-          <div style={{ display: "grid", gap: 6, gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))" }}>
-            {sortiert.map((g) => {
-              const tage = g.deadline ? Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000)) : null;
-              return <button key={g.gameId} onClick={() => onOnline && onOnline(g.gameId)}
-                style={{ display: "flex", alignItems: "center", gap: 9, textAlign: "left", cursor: "pointer",
-                  fontFamily: "inherit", padding: "10px 12px", borderRadius: 12,
-                  background: g.yourTurn ? "linear-gradient(150deg, rgba(139,92,246,.3), rgba(12,10,22,.9) 62%)"
-                    : "linear-gradient(150deg, rgba(30,26,44,.55), rgba(10,9,16,.8))",
-                  border: `1px solid ${g.yourTurn ? T.riftLine : "rgba(120,110,150,.3)"}`,
-                  boxShadow: g.yourTurn ? "0 0 12px rgba(124,58,237,.3)" : "none" }}>
-                <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
-                  background: g.yourTurn ? T.riftBright : "rgba(150,145,180,.45)",
-                  boxShadow: g.yourTurn ? `0 0 9px ${T.riftBright}` : "none" }} />
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span className="gg-quill" style={{ display: "block", fontSize: 14, color: T.text,
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.opp}</span>
-                  <span style={{ display: "block", fontSize: 11, color: g.yourTurn ? T.riftBright : T.faint }}>
-                    {g.yourTurn ? (profile.lang === "en" ? "your move" : "du bist dran")
-                      : (profile.lang === "en" ? "waiting" : "wartet auf ihn")}
-                    {tage != null ? ` · ${tage}\u202fd` : ""}
-                  </span>
-                </span>
-              </button>;
-            })}
-          </div>
-        </div>;
-      })()}
+          <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
+        art={<CampaignArt size={62} />} style={{ gridColumn: "1 / -1" }} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<SwordsArt size={54} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
@@ -595,7 +578,42 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
               {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
                 : (profile.lang === "en" ? "offline" : "offline")}
             </span>}
-        art={<CrestArt src={crestArt(3)} />} />
+        art={<DuelArt size={54} />}>
+        {/* DIE FERNPARTIEN STEHEN JETZT IN DER KARTE SELBST. Vorher lagen sie
+            als eigener Block zwischen den Karten - der Besitzer wollte sie
+            dort sehen, wo das Fernduell wohnt. Ein Griff je Partie. */}
+        {fernpartien.length > 0 && (
+          <div style={{ borderTop: `1px solid ${T.line}`, padding: "10px 12px 12px", display: "grid", gap: 7 }}>
+            <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".13em", color: T.gold, textTransform: "uppercase" }}>
+              {t("daily.title")}{amZug.length > 0 ? ` \u00b7 ${amZug.length}\u00d7 ${en ? "your move" : "du bist dran"}` : ""}
+            </div>
+            <div style={{ display: "grid", gap: 6, gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+              {[...amZug, ...fernpartien.filter((g) => !g.yourTurn)].slice(0, 4).map((g) => {
+                const tage = g.deadline ? Math.max(0, Math.ceil((g.deadline - Date.now()) / 86400000)) : null;
+                return <button key={g.gameId} onClick={() => onOnline && onOnline(g.gameId)}
+                  style={{ display: "flex", alignItems: "center", gap: 9, textAlign: "left", cursor: "pointer",
+                    fontFamily: "inherit", padding: "10px 12px", borderRadius: 12,
+                    background: g.yourTurn ? "linear-gradient(150deg, rgba(139,92,246,.3), rgba(12,10,22,.9) 62%)"
+                      : "linear-gradient(150deg, rgba(30,26,44,.55), rgba(10,9,16,.8))",
+                    border: `1px solid ${g.yourTurn ? T.riftLine : "rgba(120,110,150,.3)"}`,
+                    boxShadow: g.yourTurn ? "0 0 12px rgba(124,58,237,.3)" : "none" }}>
+                  <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", flex: "0 0 auto",
+                    background: g.yourTurn ? T.riftBright : "rgba(150,145,180,.45)",
+                    boxShadow: g.yourTurn ? `0 0 9px ${T.riftBright}` : "none" }} />
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span className="gg-quill" style={{ display: "block", fontSize: 14, color: T.text,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.opp}</span>
+                    <span style={{ display: "block", fontSize: 11, color: g.yourTurn ? T.riftBright : T.faint }}>
+                      {g.yourTurn ? (en ? "your move" : "du bist dran") : (en ? "waiting" : "wartet auf ihn")}
+                      {tage != null ? ` \u00b7 ${tage}\u202fd` : ""}
+                    </span>
+                  </span>
+                </button>;
+              })}
+            </div>
+          </div>
+        )}
+      </Card>
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
           cursor: "pointer", background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,

@@ -70,6 +70,7 @@ const boardTexture = (match, profile) => {
   return WEAR_TEX[pool[texHash((match.nodeId || "x") + ":" + lg) % pool.length]];
 };
 import { PieceGlyph, StatOrbBadge, JewelIc } from "../board/PieceGlyph.jsx";
+import { StartMark } from "../HubSeals.jsx";
 
 function Tray({ kinds, color }) {
   if (!kinds.length) return <span style={{ color: T.faint, fontSize: 13 }}>—</span>;
@@ -800,7 +801,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <div style={{ display: "flex", gap: 8 }}>
               <GoldShineButton style={{ flex: 1, padding: "10px 12px", fontSize: 13.5, borderRadius: 10 }}
                 onClick={endScout}>
-                <JewelIc kind="power" size={13} /> {t("story.begin")}
+                <StartMark size={13} /> {t("story.begin")}
               </GoldShineButton>
               {!pvp && onArmy && <Button variant="subtle" onClick={onArmy} style={{ padding: "10px 12px", fontSize: 12.5 }}>{t("scout.army")}</Button>}
             </div>
@@ -997,7 +998,7 @@ export function QuickSetup({ profile, dispatch, t, onStart, initial = null }) {
       <GoldShineButton style={{ width: "100%", padding: "12px 16px", fontSize: 14.5, borderRadius: 12, marginTop: 16 }}
         onClick={() => { dispatch({ type: "SET_DIFFICULTY", difficulty }); if (mode === "classic") dispatch({ type: "SET_CLASSIC_ELO", elo });
           onStart({ mapId: mode === "classic" ? "classic" : mapId, mode, difficulty, elo, hotseat: foe === "hotseat", hotseatFlip: hsTurn === "turn" }); }}>
-        <JewelIc kind="power" size={15} /> {t("quick.start")}
+        <StartMark size={15} /> {t("quick.start")}
       </GoldShineButton>
     </Panel>
   );
