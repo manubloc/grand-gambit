@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 0.47.0
+
+DIE ZAHLEN IN DEN LEBENS- UND ENERGIEKUGELN STEHEN RUHIG:
+
+- Der Besitzer meldete die Kugeln als unruhig und schlecht lesbar. Die
+  Messung (NEU tools/pruefe-kugeln.mjs, liest getBBox im SVG) zeigte: der
+  Textkasten sitzt exakt mittig (Versatz dy = 0) - die Unruhe kam von der
+  SCHRIFT. Georgia bringt MEDIAEVALZIFFERN mit: 3, 4, 5, 7, 9 haengen unter
+  die Grundlinie, 6 und 8 ragen hoch. In einer Kugel wirkt das wie Wackeln.
+- Jetzt System-Sans mit LINIENDEN, TABELLARISCHEN Ziffern (tnum/lnum): alle
+  einstelligen Zahlen exakt gleich hoch (Streuung 0,02 des Fuellgrades),
+  gleiche Breite, und eine Stufe groesser gesetzt, weil Sans-Ziffern schmaler
+  bauen als Antiqua - Fuellgrad 0,65 -> 0,71. Dunklerer Kern (.62 statt .55)
+  fuer den Stand auf hellen Feldern.
+- Die Kugeln stehen jetzt in der Musterkammer (?galerie) in drei Groessen und
+  allen Ziffernlaengen - dort messen sie sich deterministisch, ohne dass ein
+  Spielmodus mitredet.
+- Lehre am Messgeraet selbst: die erste Fassung verglich ROHE Ziffernhoehen
+  ueber verschieden GROSSE Kugeln und meldete Fehlalarm; verglichen wird der
+  auf den Radius normierte Fuellgrad.
+
 ## 0.46.2
 
 AKADEMIE-KARTE NACHGERECHNET STATT NACHGEBESSERT: die Kur von v0.46.1 reichte

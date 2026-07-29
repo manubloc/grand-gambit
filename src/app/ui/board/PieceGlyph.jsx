@@ -132,6 +132,12 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   // die Zahl WEISS und fett mit dunklem Kern - endlich klar lesbar.
   const chars = String(v ?? "").length;
   const fs = size * num * (chars >= 3 ? 0.8 : chars === 2 ? 0.9 : 1);
+  // ZIFFERN NEU GESETZT (v0.47): Georgia bringt MEDIAEVALZIFFERN mit - 3, 4,
+  // 5, 7, 9 haengen unter die Grundlinie, 6 und 8 ragen hoch. In einer Kugel
+  // wirkt das wie ein Wackeln, obwohl der Textkasten mittig sitzt (gemessen:
+  // Versatz dy = 0). Jetzt der System-Sans mit LINIENDEN, TABELLARISCHEN
+  // Ziffern: gleiche Hoehe, gleiche Breite, jede Zahl steht ruhig - und eine
+  // Stufe groesser, weil Sans-Ziffern schmaler bauen als Antiqua.
   // DUNKLER GEGOSSEN (v0.38.4): die satten Toene sprangen im Kampf zu sehr
   // an - eine Stufe tiefer, damit die Kugeln zum Brett gehoeren statt es zu
   // uebertoenen. Der Goldrand haelt sie trotzdem klar abgesetzt.
@@ -155,9 +161,11 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
       <circle cx="12" cy="12" r="9.9" fill="none" stroke="#6f5526" strokeWidth=".7" opacity=".55" />
       <ellipse cx="9.2" cy="7.4" rx="4.6" ry="3" fill="rgba(255,255,255,.3)" />
       <text x="12" y="12" textAnchor="middle" dominantBaseline="central"
-        fontFamily="Georgia, serif" fontWeight="800" fontSize={24 * num * (chars >= 3 ? 0.8 : chars === 2 ? 0.9 : 1)}
-        fill="#ffffff" stroke="rgba(0,0,0,.55)" strokeWidth=".7" paintOrder="stroke"
-        style={{ userSelect: "none" }}>{v}</text>
+        fontFamily='ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        fontWeight="800" fontSize={24 * num * (chars >= 3 ? 0.82 : chars === 2 ? 0.94 : 1.06)}
+        fill="#ffffff" stroke="rgba(0,0,0,.62)" strokeWidth=".8" paintOrder="stroke"
+        style={{ userSelect: "none", fontVariantNumeric: "tabular-nums lining-nums",
+          fontFeatureSettings: '"tnum" 1, "lnum" 1' }}>{v}</text>
     </svg>
   </span>;
 }
