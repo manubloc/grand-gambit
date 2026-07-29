@@ -44,29 +44,29 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       background: "linear-gradient(135deg, #6f5526, #f0d68a 28%, #8a6d35 52%, #e9cf8a 76%, #6f5526)",
       boxShadow: `${T.shadow}, 0 0 26px #d9b56522` }}>
       <div style={{ position: "relative", overflow: "hidden", borderRadius: T.radius - 2, textAlign: "center",
-        padding: "18px 16px 15px",
+        padding: "13px 14px 11px",
         background: `radial-gradient(130% 100% at 50% 0%, #2b2410 0%, ${T.panel2} 46%, ${T.panel} 100%)` }}>
         <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%", pointerEvents: "none",
           background: "linear-gradient(90deg, transparent, rgba(255,240,190,.09), transparent)",
-          animation: "ggShine 11s ease-in-out 1.1s infinite" }} />
+          animation: `ggShine ${T.mo.sheen} linear 1.1s infinite` }} />
         {cornerDiamond({ top: 7, left: 7 })}{cornerDiamond({ top: 7, right: 7 })}
         {cornerDiamond({ bottom: 7, left: 7 })}{cornerDiamond({ bottom: 7, right: 7 })}
         <div className="gg-serif" style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".3em",
           ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("ach.wallet")}</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "9px 12%" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "7px 12%" }}>
           <span style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, #8a6d35)" }} />
           <span style={{ width: 5, height: 5, background: "#d9b565", transform: "rotate(45deg)" }} />
           <span style={{ flex: 1, height: 1, background: "linear-gradient(90deg, #8a6d35, transparent)" }} />
         </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 26, alignItems: "center", margin: "2px 0 10px" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 26, alignItems: "center", margin: "2px 0 8px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
             <SkillStar size={30} />
-            <span className="gg-serif" style={{ fontSize: 44, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.sp || 0}</span>
+            <span className="gg-serif" style={{ fontSize: 34, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.sp || 0}</span>
           </span>
           <span style={{ width: 1, height: 34, background: "#8a6d3566" }} />
           <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
             <GoldCoin size={28} />
-            <span className="gg-serif" style={{ fontSize: 36, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.gold || 0}</span>
+            <span className="gg-serif" style={{ fontSize: 29, fontWeight: 450, letterSpacing: ".02em", lineHeight: 1, ...goldText }}>{profile.gold || 0}</span>
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
@@ -96,12 +96,16 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           // what is earned. And the rim is EVEN now: the old look carried a
           // 3px gold bar down the left edge only, which read as a lopsided
           // frame rather than a rim of gold.
-          padding: ready ? 19 : 16,
+          // DS1 §15: der REWARD-RAHMEN gehoert der wartenden Belohnung. Vorher
+          // trugen ALLE 14 Platten Goldschein (gemessen) - Wert ohne Anlass.
+          // Geschlossene Platten: ruhige Kante, normaler Schatten, weniger
+          // Polster (Kartenhoehe 90 -> 84 px, mehr Ruhmestaten im Blick).
+          padding: ready ? 17 : 13,
           background: "linear-gradient(160deg, rgba(96,74,34,.62), rgba(28,21,11,.95) 62%)",
-          border: `1.5px solid ${ready ? "rgba(240,214,138,.8)" : "rgba(214,176,96,.5)"}`,
+          border: `1.5px solid ${ready ? "rgba(240,214,138,.8)" : "rgba(214,176,96,.34)"}`,
           boxShadow: ready
             ? "0 0 26px rgba(240,214,138,.32), " + T.shadow
-            : "0 0 16px rgba(240,214,138,.16), " + T.shadow }}>
+            : T.shadow }}>
           {/* THE GLEAM NOW MOVES: it used to be a fixed band painted across the
               plate. Tapping a plate sends it sweeping once, left to right —
               gold catching the light as the card turns. The key on the wrapper
@@ -199,7 +203,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
                 })}
               </div>
             </div>}
-            <div style={{ margin: "8px 0 5px", height: 7, borderRadius: 999, position: "relative",
+            <div style={{ margin: "6px 0 4px", height: 7, borderRadius: 999, position: "relative",
               background: "rgba(12,9,5,.85)", boxShadow: "inset 0 1px 2px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,240,190,.06)" }}>
               <div style={{ position: "absolute", inset: 0, width: `${pct * 100}%`, borderRadius: 999,
                 background: done

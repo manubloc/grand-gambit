@@ -18,3 +18,6 @@ Audit-Irrtum in Checkpoint 2 behoben: IM Fell English war KEINE Attrappe, sonder
 
 ### Umgebungsnotiz
 Die Bildansicht ist mitten in der Sitzung ausgefallen (bekanntes Muster, Uebergabe §0a). Ab hier werden visuelle Behauptungen ausschliesslich mit Zahlen belegt: DOM-Messungen, PIL-Pixelanalyse, Messwerkzeuge. Keine Geschmacksarbeit an Figuren.
+
+## Checkpoint 4 — Screens (Phasen 6, 7, 12, 8, 10, 13)
+Alle Zahlen in VISUAL_AUDIT.md. Entscheidungen: (a) Match-Umbau als HÖHENDECKEL statt Oben-Ausrichtung — hält transformOrigin/Kamera-Anflug intakt und zieht die Spielerzeile unters Brett; auf breiten Schirmen greift der Deckel nie. (b) Hub-Glanz nur auf der Kampagne (Hauptweg). (c) Schatzkammer-Wächter test_ui.jsx auf neue Polster nachgezogen (Absicht bleibt geprüft). (d) Dock bereits §18-konform — unangetastet. (e) Phasen 5/9/11 nach Prüfung zurückgestellt: Login erfüllt §19.1 strukturell, Figurendetail erbt Tokens, Kampagnen-Pergament ist die gewollte Ausnahme (in Kontrastsuite verdrahtet); Phase 14 ohne Bedarf (Manifest).

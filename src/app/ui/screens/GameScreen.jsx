@@ -687,7 +687,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         // the balance rides on the MARGIN, not on padding: the board's own
         // viewport is an absolutely positioned child, and those measure from
         // the padding box — padding here would have been invisible to it.
-        style={{ flex: "1 1 auto", minHeight: 0, position: "relative",
+        // DS1 Phase 12: DAS BRETT BEGINNT FRUEHER. Der Block wuchs bisher ueber
+        // die ganze Restflaeche und zentrierte das Brett darin - gemessen lagen
+        // 160 px totes Band zwischen Gegnerzeile und Brettoberkante. Ein Deckel
+        // auf die Blockhoehe (~eine Brettbreite) statt Oben-Ausrichtung: so
+        // rutscht das Brett unter die Gegnerzeile UND die Spielerzeile folgt
+        // direkt darunter, waehrend die Zoom-Mathematik (transformOrigin 50 %,
+        // Kamera-Anflug) unveraendert um die Blockmitte rechnet. Auf breiten
+        // Schirmen ist die Hoehe ohnehin knapper als die Breite - dort greift
+        // der Deckel nie und nichts aendert sich.
+        style={{ flex: "1 1 auto", minHeight: 0, maxHeight: "calc(100vw + 8px)", position: "relative",
         margin: `${2 + boardPadTop}px 4px ${2 + boardPadBottom}px`,
         overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
         <div style={{ width: "100%", height: "100%",

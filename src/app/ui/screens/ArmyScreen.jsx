@@ -1354,15 +1354,24 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
   const crownIn = CROWN_IDS.filter((c) => unlocked.has(c));
   const shadowIn = SHADOW_IDS.filter((c) => unlocked.has(c));
   const alliedIn = BOSSES.filter((b) => bribedSet.has(b.id));
+  // DS1 Phase 8: Vesnas Vorrede stand dauerhaft vierzeilig ueber dem
+  // Verzeichnis. Jetzt zwei Zeilen (-webkit-line-clamp), ein Tipp klappt den
+  // Rest auf - die Chronikstimme bleibt, die Figuren ruecken nach oben.
+  const [introOffen, setIntroOffen] = useState(false);
+  const Vorrede = () => <div onClick={() => setIntroOffen((v) => !v)} role="button" tabIndex={0}
+    style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4, cursor: "pointer",
+      display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: introOffen ? "unset" : 2, overflow: "hidden" }}>
+    {t("tree.intro")}{!introOffen && <span style={{ color: T.gold }}> … {t("tree.more")}</span>}
+  </div>;
   if (!artReady) return <div style={{ }}>
-    <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
+    <Vorrede />
     <div style={{ padding: "48px 0", display: "grid", placeItems: "center" }}>
       <div style={{ width: 26, height: 26, borderRadius: "50%", border: `2px solid ${T.line}`,
         borderTopColor: T.gold, animation: "spin .8s linear infinite" }} />
     </div>
   </div>;
   return <div style={{ }}>
-    <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 4 }}>{t("tree.intro")}</div>
+    <Vorrede />
     <H>{t("tree.court")}</H><div style={grid}>
       {COURT_IDS.map((c) => champTile(c))}
       {crownIn.map((c) => champTile(c, t("tree.fromCrown")))}
