@@ -1,5 +1,37 @@
 # Changelog - Grand Gambit
 
+## 0.46.0
+
+DIE GEGNER WERDEN HELL, DER RISSBODEN ZIEHT EIN:
+
+- VERDORBENE SEITE, DRITTE FASSUNG: "sehr viel heller, mehr Farbtoene
+  durchscheinen lassen". Restfarbe 0.16 -> 0.55 (die Figur behaelt ueber die
+  Haelfte ihrer eigenen Farbe), Abdunklung fast aufgehoben: Leuchtdichte-
+  Verhaeltnis q von 0,66 auf 0,88-1,02. Die UNTERSCHEIDUNG traegt jetzt die
+  Toenung statt der Dunkelheit: violetter Saum fast verdoppelt (0,5 -> 0,95).
+  Neuer Torwaechter mit drei Bedingungen je Figur - Farbabstand zur hellen
+  Schwester >=14 (gemessen 35-65), Saettigung >=12, nachweisbare Kuehl-
+  Toenung (Chroma-Richtung gegen das eigene Grau, mit Zweitmessung fuer
+  Figuren, deren Grundfarbe schon kuehl ist).
+- REPARATUR: ein abgebrochener Erzeugungslauf hatte zwei Dateien halb
+  geschrieben (queen, guardian) und sechs auf altem Stand gelassen - alle
+  acht nachgerechnet, danach ALLE 57 auf Unversehrtheit und Frische geprueft.
+- DER RISSBODEN (10 Bilder des Besitzers, 188 KB): unten fixiert hinter jedem
+  Menue, nach oben in Schwarz auslaufend, waechst mit HOFWERT UND KAMPAGNE
+  je zur Haelfte - Stufe 1 ungebrochener Boden, Stufe 10 offener Riss. Im
+  Kampf und auf der Karte bleibt er fort.
+- BRETT BREITER: Seitenrand 4 -> 1 px, gemessen 376 -> 382 px bei 390 px.
+- HUB: auf "Schnelles Spiel" ragte das Wappen 6 px oben und 2 px unten aus
+  dem Kartenkopf (gemessen) - seit die CTA-Pille zwei eigenen Griffen wich,
+  war der Kopf kuerzer als das 84-px-Bild. Der Kopf haelt jetzt Mindesthoehe.
+
+Drei Fallen, die diese Fassung gestellt hat und die in die Uebergabe gehoeren:
+(1) Der Rissboden lag zuerst NUR im Breit-Zweig von App.jsx - die App hat
+ZWEI Rueckgaben. (2) Gleicher zIndex wie MysticBackground: bei Gleichstand
+gewinnt der spaeter gezeichnete, der Boden lag unter deckendem Schwarz.
+(3) import.meta.glob bricht die Rauchprobe (esbuild/Node kennt es nicht) -
+zehn gewoehnliche Importe tun es auch.
+
 ## 0.45.1
 
 DER UEBERLAPPUNGS-WAECHTER LERNT DESKTOP UND UEBERDECKUNG (Dauerauftrag des

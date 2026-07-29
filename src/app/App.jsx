@@ -26,6 +26,7 @@ import { GameScreen, QuickSetup } from "./ui/screens/GameScreen.jsx";
 import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
+import { RissBoden } from "./ui/RissBoden.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
@@ -419,6 +420,10 @@ export default function App() {
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
       padding: immersive ? "10px 10px 10px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
+      {/* DER RISSBODEN liegt unten fixiert hinter jedem Menue und waechst mit
+          Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
+          bleibt er fort - dort gehoert der Blick dem Brett bzw. der Karte. */}
+      {!immersive && !inMatch && !(tab === "play" && view === "camp") && <RissBoden profile={profile} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
@@ -459,6 +464,7 @@ export default function App() {
     <div style={{ maxWidth: 560, margin: "0 auto", height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column",
       ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
+      {!immersive && !inMatch && <RissBoden profile={profile} />}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
@@ -553,8 +559,14 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
     <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
       position: "relative", overflow: "hidden", ...style }}>
+      {/* GEMESSEN (v0.46): auf der Karte "Schnelles Spiel" ragte das Wappen
+          oben 6 px und unten 2 px aus dem Kopf heraus - seit der CTA-Pille
+          dort zwei eigene Griffe abgeloest haben, ist der Kopf kuerzer als
+          das 84 px hohe Bild. Der Kopf haelt jetzt Mindesthoehe fuer sein
+          Zeichen (84 + Polster). */}
       <button onClick={onGo} style={{ textAlign: "left", fontFamily: "inherit", cursor: "pointer", width: "100%",
-        background: "none", border: "none", padding: "16px 16px 14px", display: "block", position: "relative" }}>
+        background: "none", border: "none", padding: "16px 16px 14px", display: "block", position: "relative",
+        minHeight: art ? 114 : undefined }}>
         {/* Das Zeichen sitzt bei Karten MIT Fliesstext oben statt mittig - so
             laeuft der Fortschrittsbalken nicht mehr unter ihm hindurch. */}
         <div style={{ position: "absolute", right: 12, ...(artTop ? { top: 12 } : { top: "50%", transform: "translateY(-50%)" }),
