@@ -256,7 +256,9 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   ok("the treasury actually draws its plates", (bare.match(/background:linear-gradient\(160deg, rgba/g) || []).length >= 14);
 
   // a waiting purse enlarges its plate and its button
-  ok("a claimable plate sits roomier than the rest", rich.includes("padding:19px") && bare.includes("padding:16px"));
+  // DS1 §19.6: die Platten sind kompakter (17/13 statt 19/16, gemessen 84 px
+  // Kartenhoehe) - die ABSICHT des Waechters bleibt: belohnbar > geschlossen.
+  ok("a claimable plate sits roomier than the rest", rich.includes("padding:17px") && bare.includes("padding:13px"));
   ok("an untouched treasury offers nothing to claim", !bare.includes("padding:19px"));
   ok("the claim button is full width with air above it",
     rich.includes("padding:13px 18px 12px") && rich.includes("margin-top:9px"));

@@ -1,5 +1,33 @@
 # Changelog - Grand Gambit
 
+## 0.42.0
+
+DESIGNSYSTEM 1.0 - DIE GROSSE UI-UEBERARBEITUNG (alles gemessen, nichts geschaetzt):
+
+- AUSWAHL IST VIOLETT, AKTION IST GOLD: Segmented und MapChip lesen die neuen
+  Tokens T.sel/selLine/selInk - im Schnellen Spiel standen vorher vier
+  Goldflaechen gleichzeitig, jetzt null; lange Optionsnamen brechen um statt
+  abgeschnitten zu werden; Beruehrziele auf Hausmass (T.touch 44).
+- HUB BEGINNT OBEN: Luecke Kopfleiste->Karte 67->22 px, nur noch EIN
+  Glanzlauf (Kampagne) statt drei im Chor.
+- DAS BRETT RUECKT AN DIE GEGNERZEILE: Blockdeckel statt Zentrierung, totes
+  Band 160->2 px, Brett 366->376 px, Spielerzeile direkt darunter,
+  Zoom-Mathematik unangetastet.
+- SCHATZKAMMER KOMPAKT: Hero 200->175 px, Platte 90->84 px, Dauerglow
+  14->0 (Reward-Rahmen nur bei wartender Belohnung), 7 statt 6 Ruhmestaten
+  im Blick. Hofstaat-Vorrede: 2 Zeilen + "Mehr".
+- DIE DREI STIMMEN ALS ECHTE SCHRIFTEN: Cinzel 600 (Wortmarke, grosse Titel)
+  und Cormorant Garamond 600/500i (Erzaehlstimme) - selbst subsettet, OFL
+  beigelegt, 91 KB, offline im Precache; IM-Fell-Doppellast entfernt
+  (Precache netto 2770->2533 KiB).
+- KONTRAST ALS 19. SUITE: test_kontrast.mjs rechnet jede Textrolle gegen ihre
+  ECHTE (gemischte) Flaeche in beiden Livreen - fand classic faint bei
+  3,51:1, angehoben auf 4,61:1. NEUES KETTENSOLL: 791 gruen / 19 Suiten.
+- Dazu: prefers-reduced-motion, sichtbarer violetter Tastaturfokus,
+  einheitliches disabled, Motion-Uhr T.mo, Musterkammer unter ?galerie,
+  Foto-Tour + Lage-/Schatz-Messwerkzeuge, 19 Doku-Dateien unter
+  docs/grand_gambit_design/ inkl. Rollback-Anleitung.
+
 ## 0.32.2
 
 ELFTES KAPITEL: KRUMMHOLZ - DIE BAUMGRENZE ZWISCHEN EICHWALD UND GRAUWACHT:

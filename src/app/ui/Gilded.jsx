@@ -42,7 +42,7 @@ export function GildedFrame({ children, pad = "14px 16px", center = false, corne
         background: `radial-gradient(130% 100% at 50% 0%, #241e0e 0%, ${T.panel2} 46%, ${T.panel} 100%)` }}>
         <div aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%", pointerEvents: "none",
           background: "linear-gradient(90deg, transparent, rgba(255,240,190,.08), transparent)",
-          animation: `ggShine ${SHINE_DUR} ease-in-out ${shineDelay} infinite` }} />
+          animation: `ggShine ${SHINE_DUR} linear ${shineDelay} infinite` }} />
         {corners && <>
           <Diamond top={7} left={7} /><Diamond top={7} right={7} />
           <Diamond bottom={7} left={7} /><Diamond bottom={7} right={7} />
@@ -59,7 +59,7 @@ export function GoldShineButton({ children, onClick, disabled = false, style }) 
   const shineDelay = useShineDelay();
   return (
     <button onClick={onClick} disabled={disabled}
-      style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "9px 16px",
+      style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 13, borderRadius: 999, padding: "9px 16px", minHeight: Math.max(38, T.touch - 6),
         border: disabled ? `1px solid ${T.line}` : "1px solid rgba(255,240,200,.5)", position: "relative", overflow: "hidden", whiteSpace: "nowrap",
         display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 5,
         background: disabled ? T.panel : "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
@@ -68,7 +68,7 @@ export function GoldShineButton({ children, onClick, disabled = false, style }) 
         color: disabled ? T.faint : "#17110a", cursor: disabled ? "default" : "pointer", ...style }}>
       {!disabled && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%",
         pointerEvents: "none", background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
-        animation: `ggShine ${SHINE_DUR} ease-in-out ${shineDelay} infinite` }} />}
+        animation: `ggShine ${SHINE_DUR} linear ${shineDelay} infinite` }} />}
       <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 5 }}>{children}</span>
     </button>
   );

@@ -2,7 +2,12 @@ import { T } from "./theme.js";
 
 
 export function Button({ variant = "primary", disabled, style, children, ...p }) {
-  const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.45 : 1, transition: "filter .15s", WebkitTapHighlightColor: "transparent" };
+  // DS1: Beruehrziel mindestens T.touch hoch; disabled ist EIN Zustand fuer
+  // alle - gedimmt (T.disOpacity), ohne Glow, ohne Zeiger. Uebergaenge laufen
+  // auf der Hausuhr (T.mo), nicht auf verstreuten Literalen.
+  const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", minHeight: T.touch,
+    fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer",
+    opacity: disabled ? T.disOpacity : 1, transition: `filter ${T.mo.fast} ${T.mo.ease}`, WebkitTapHighlightColor: "transparent" };
   const variants = {
     // clean gold for the CTA, quiet dark for the rest — the marble wash is gone
     primary: { background: "linear-gradient(165deg, #e0b76c, #b78d43)",
@@ -18,7 +23,9 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
     subtle: { background: `linear-gradient(172deg, ${T.panel2}, ${T.panel})`,
       color: T.text, border: `1px solid ${T.line}` },
   };
-  return <button disabled={disabled} style={{ ...base, ...variants[variant], ...style }} {...p}>{children}</button>;
+  const v = { ...variants[variant] };
+  if (disabled) delete v.boxShadow; // kein Schein an totem Griff
+  return <button disabled={disabled} style={{ ...base, ...v, ...style }} {...p}>{children}</button>;
 }
 
 /** Jeder Bereich traegt denselben sanften blauen Verlauf: oben in der Mitte
@@ -60,11 +67,13 @@ export function MapChip({ on, locked, theme, label, onClick, title }) {
   return <button onClick={onClick} title={title}
     style={{ cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 12.5, borderRadius: 10,
       padding: "8px 11px", whiteSpace: "nowrap", flex: "0 0 auto", display: "inline-flex", alignItems: "center", gap: 8,
-      border: on ? "1px solid rgba(255,240,200,.5)" : `1px solid ${T.line}`,
-      background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : T.panel2,
-      color: on ? T.limeInk : locked ? T.faint : T.text, opacity: locked ? 0.55 : 1 }}>
+      border: on ? `1px solid ${T.selLine}` : `1px solid ${T.line}`,
+      background: on ? `linear-gradient(165deg, ${T.sel}, #1a1030)` : T.panel2,
+      boxShadow: on ? `0 0 10px ${T.selGlow}` : "none", minHeight: Math.max(36, T.touch - 8),
+      transition: `background ${T.mo.norm} ${T.mo.ease}`,
+      color: on ? T.selInk : locked ? T.faint : T.text, opacity: locked ? T.disOpacity + 0.1 : 1 }}>
     <span aria-hidden style={{ display: "inline-grid", gridTemplateColumns: "repeat(4, 4.5px)", borderRadius: 3,
-      overflow: "hidden", flex: "0 0 auto", border: `1px solid ${on ? "#00000033" : T.line}` }}>
+      overflow: "hidden", flex: "0 0 auto", border: `1px solid ${on ? T.selLine + "66" : T.line}` }}>
       {Array.from({ length: 16 }).map((_, k) => (
         <span key={k} style={{ width: 4.5, height: 4.5,
           background: ((k + Math.floor(k / 4)) % 2 === 0) ? theme.sqLight : theme.sqDark }} />
@@ -77,7 +86,7 @@ export function MapChip({ on, locked, theme, label, onClick, title }) {
 export function Bar({ pct = 0, color = T.lime, height = 8, track = "#0009" }) {
   const w = Math.max(0, Math.min(1, pct)) * 100;
   return <div style={{ background: track, borderRadius: 99, height, overflow: "hidden" }}>
-    <div style={{ width: w + "%", height: "100%", background: color, borderRadius: 99, transition: "width .45s ease" }} />
+    <div style={{ width: w + "%", height: "100%", background: color, borderRadius: 99, transition: `width ${T.mo.fill} ${T.mo.ease}` }} />
   </div>;
 }
 
@@ -85,17 +94,26 @@ export function Chip({ children, color = T.dim, bg = T.panel2, style, className 
   return <span className={className} style={{ display: "inline-flex", alignItems: "center", gap: 4, background: bg, color, borderRadius: 99, padding: "3px 9px", fontSize: 12, fontWeight: 700, ...style }}>{children}</span>;
 }
 
+/** DS1: AUSWAHL IST VIOLETT, AKTION IST GOLD. Bis v0.41 trug die gewaehlte
+ *  Option denselben Goldverlauf wie der Primaerknopf - im Schnellen Spiel
+ *  standen dadurch vier Goldflaechen gleichzeitig und nichts sagte mehr
+ *  "druecke MICH". Gewaehlt heisst jetzt: tiefe violette Flaeche (T.sel),
+ *  violette Kontur, helle Schrift, leiser Schein. Gold bleibt dem einen CTA.
+ *  Ausserdem: whiteSpace normal - lange Namen ("Scharmuetzel - 6x6") brechen
+ *  um statt abgeschnitten zu werden, und jede Option ist >= T.touch hoch. */
 export function Segmented({ options, value, onChange }) {
-  return <div style={{ display: "flex", gap: 4, background: T.bg2, padding: 4, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
+  return <div role="group" style={{ display: "flex", gap: 4, background: T.bg2, padding: 4, borderRadius: T.radiusSm, border: `1px solid ${T.line}` }}>
     {options.map((o) => {
       const on = value === o.value;
-      return <button key={o.value} disabled={o.disabled} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
-        border: on ? "1px solid rgba(255,240,200,.5)" : "1px solid transparent", borderRadius: 8, padding: "9px 6px",
-        fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: o.disabled ? "default" : "pointer", whiteSpace: "nowrap",
-        opacity: o.disabled ? 0.45 : 1, position: "relative", overflow: "hidden",
-        background: on ? "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" : "transparent",
-        boxShadow: on ? `0 0 12px ${T.gold}55` : "none",
-        color: on ? "#17110a" : T.dim }}>
+      return <button key={o.value} disabled={o.disabled} aria-pressed={on} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
+        border: on ? `1px solid ${T.selLine}` : "1px solid transparent", borderRadius: 8, padding: "8px 6px",
+        minHeight: Math.max(36, T.touch - 8), fontSize: 13, fontWeight: 700, fontFamily: "inherit",
+        cursor: o.disabled ? "default" : "pointer", whiteSpace: "normal", lineHeight: 1.25,
+        opacity: o.disabled ? T.disOpacity : 1, position: "relative", overflow: "hidden",
+        background: on ? `linear-gradient(165deg, ${T.sel}, #1a1030)` : "transparent",
+        boxShadow: on ? `0 0 10px ${T.selGlow}` : "none",
+        transition: `background ${T.mo.norm} ${T.mo.ease}, color ${T.mo.norm} ${T.mo.ease}`,
+        color: on ? T.selInk : T.dim }}>
         <span style={{ position: "relative" }}>{o.label}</span>
       </button>;
     })}

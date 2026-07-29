@@ -56,7 +56,7 @@ export function Emblem({ size = 250, animate = true }) {
 export function Wordmark({ scale = 1, animate = false }) {
   const a = (name, dur, delay) => animate ? { animation: `${name} ${dur}s ease ${delay}s both` } : {};
   return (
-    <div className="gg-serif" style={{ color: GOLD, lineHeight: 1, userSelect: "none" }}>
+    <div className="gg-display" style={{ color: GOLD, lineHeight: 1, userSelect: "none" }}>
       <div style={{ fontSize: 13 * scale, letterSpacing: ".42em", textIndent: ".42em", textAlign: "center",
         color: GOLD_HI, ...a("splashText", 0.9, 0.75) }}>GRAND</div>
       <div style={{ fontSize: 26 * scale, letterSpacing: ".18em", textIndent: ".18em", textAlign: "center",

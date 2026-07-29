@@ -16,6 +16,7 @@ import { useShineDelay } from "./ui/Gilded.jsx";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
+import { GalerieScreen } from "./ui/screens/GalerieScreen.jsx";
 import { currentAccount, clearSession, signOutCloud, resumeCloudSession, writeSave, recordStage } from "../meta/index.js";
 import { OnlineScreen, buildStats } from "./ui/screens/OnlineScreen.jsx";
 import { createNet } from "../platform/net.web.js";
@@ -138,6 +139,7 @@ const TABS = [
 ];
 
 export default function App() {
+  const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
   const [profile, dispatch] = useReducer(reducer, null);
   // which livery the house wears — asked from the Hall once per boot
   const [houseDesign, setHouseDesign] = useState(null);
@@ -278,6 +280,11 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, [inMatchNow]);
 
+  // DIE MUSTERKAMMER: interne Designsystem-Galerie, nur ueber ?galerie in der
+  // Adresse erreichbar - kein Menuepunkt, kein Spielerweg. Sitzt NACH allen
+  // Hooks (Hook-Reihenfolge bleibt stabil) und VOR Anmeldung/Spielstand,
+  // damit sie auch ohne Konto aufgeht. (DS1 §17)
+  if (galerie) return <GalerieScreen />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
@@ -432,7 +439,11 @@ export default function App() {
         maxWidth: immersive ? "none" : 1020, // menus run as wide as the header bar
         ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
-          ? { display: "flex", flexDirection: "column", justifyContent: "center", minHeight: "calc(100dvh / var(--vhz, 1) - 72px)" } : {}) }}>{screen}</main>
+          // DS1 Phase 6: nicht mehr vertikal zentriert - die Zentrierung
+          // schob die Haelfte des Leerraums ZWISCHEN Kopfleiste und Karten
+          // (gemessen: 67 px Luecke). Inhalt beginnt oben, der Rest der Buehne
+          // gehoert dem MysticBackground.
+          ? { display: "flex", flexDirection: "column", justifyContent: "flex-start", minHeight: "calc(100dvh / var(--vhz, 1) - 72px)" } : {}) }}>{screen}</main>
     </div>
   );
 
@@ -460,7 +471,7 @@ export default function App() {
           menu). */}
       <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overflowX: "hidden", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px 108px",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
-          ? { display: "flex", flexDirection: "column", justifyContent: "center" } : {}),
+          ? { display: "flex", flexDirection: "column", justifyContent: "flex-start" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {/* die Melodie des Hauses - abschaltbar unter Profil */}
       <Soundtrack an={profile.sound !== false} />
@@ -523,7 +534,10 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   // konnte nichts Anklickbares in ihr sitzen (Knoepfe in Knoepfen sind
   // ungueltig). Jetzt traegt eine Huelle das Aussehen, der Kopfbereich ist der
   // Knopf - und darunter ist Platz fuer eigene Griffe (die Fernpartien).
-  const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false }) => {
+  // `ruhig`: der Gold-CTA ohne Glanzlauf. Im Hub laeuft der Glanz nur noch
+  // auf der Kampagne (dem Hauptweg) - vorher glaenzten drei Knoepfe im Chor
+  // (gemessen), und "dominant" verliert seinen Sinn, wenn es alle sind.
+  const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false, ruhig = false }) => {
     const shineDelay = useShineDelay();
     return (
     <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
@@ -535,7 +549,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             laeuft der Fortschrittsbalken nicht mehr unter ihm hindurch. */}
         <div style={{ position: "absolute", right: 12, ...(artTop ? { top: 12 } : { top: "50%", transform: "translateY(-50%)" }),
           opacity: 0.95, filter: "drop-shadow(0 3px 6px rgba(0,0,0,.35))" }}>{art}</div>
-        <div className="gg-serif" style={{ fontSize: artTop ? 22 : 20, letterSpacing: ".06em", color: T.gold, paddingRight: 92 }}>{title}</div>
+        <div className="gg-display" style={{ fontSize: artTop ? 21 : 19, letterSpacing: ".04em", color: T.gold, paddingRight: 92 }}>{title}</div>
         <div style={{ fontSize: 12.5, color: T.dim, marginTop: 4, paddingRight: 92 }}>{sub}</div>
         {/* Fliesstext: nimmt die volle Breite, KEINE absolute Ecke mehr -
             darum ueberlappt hier nichts mehr, egal wie lang der Ortsname ist. */}
@@ -549,9 +563,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
           boxShadow: `0 0 12px ${T.gold}55`,
           color: "#17110a", fontWeight: 800, fontSize: 13.5 }}>
-          <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
+          {!ruhig && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
             background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
-            animation: `ggShine 11s linear ${shineDelay} infinite` }} />
+            animation: `ggShine ${T.mo.sheen} linear ${shineDelay} infinite` }} />}
           <span style={{ position: "relative" }}>{cta} ›</span>
         </div>
       </button>
@@ -572,9 +586,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
         art={<CrestArt src={crestArt(1)} />} style={{ gridColumn: "1 / -1" }} />
-      <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
+      <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
         art={<CrestArt src={crestArt(2)} />} />
-      <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
+      <Card ruhig title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
         cta={hallenStand ? (profile.lang === "en" ? "Play" : "Spielen") : t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
           : <span title={hallenStand ? (profile.lang === "en" ? "Connected" : "Verbunden")

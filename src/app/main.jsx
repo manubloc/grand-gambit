@@ -1,5 +1,6 @@
-import "@fontsource/im-fell-english/400.css";
-import "@fontsource/im-fell-english/400-italic.css";
+// IM Fell English ist ausgezogen: die Erzaehlstimme spricht jetzt Cormorant
+// Garamond (theme.js, DS1 §13) - die alte Antiqua war auf kleinen Schirmen
+// schwer lesbar. Die Fontsource-Importe hier waeren doppelte Schriftlast.
 import { StrictMode, Component } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
