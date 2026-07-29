@@ -1,5 +1,15 @@
 # Changelog - Grand Gambit
 
+## 0.46.2
+
+AKADEMIE-KARTE NACHGERECHNET STATT NACHGEBESSERT: die Kur von v0.46.1 reichte
+dem Besitzer nicht - und die Messung gab ihm recht. Flaeche gegen Grund lag
+bei 1,57:1, die Goldkante gegen die Flaeche bei 2,39:1, also UNTER dem
+3:1-Minimum fuer nicht-textliche Kanten. Jetzt Violett 20 % heller im
+gleichen Ton (#594684 -> #3a2c59, deckend statt 96 %) und Kante auf 60 %
+Deckkraft: 1,93:1 bzw. 3,14:1, Text bleibt bei 8,08:1. Die Karte bleibt
+sekundaer - kein Gold-CTA, kein Glanzlauf.
+
 ## 0.46.0
 
 DIE GEGNER WERDEN HELL, DER RISSBODEN ZIEHT EIN:
