@@ -95,6 +95,11 @@ export const bgHall = () => pick(hallC, hallK);
 export const boardFrame = () => pick(frameC, frameK);
 export const leagueShield = () => pick(shieldC, shieldK);
 export const crestArt = (n) => pick([crest1C, crest2C, crest3C], [crest1K, crest2K, crest3K])[n - 1] || null;
+// DIE BUNTEN WAPPEN, UNABHAENGIG VON DER LIVREE. Der Hub trug bis v0.41 die
+// GESCHNITZTEN Fassungen, weil crestArt der Livree folgt - und die steht per
+// APP_DESIGN auf "carved". Der Besitzer meint aber die bunt gemalten: sie
+// unterscheiden die drei Wege deutlicher als drei Goldreliefs nebeneinander.
+export const crestArtBunt = (n) => [crest1C, crest2C, crest3C][n - 1] || null;
 // Das Wappen ist seit v0.36 der RISS IM GOLDRING - dasselbe Zeichen, das als
 // App-Symbol und Favicon steht. Es gilt in beiden Livreen.
 export const emblemArt = () => emblemRiss;

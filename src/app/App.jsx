@@ -5,9 +5,7 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
-import { setLivery, fetchHouseDesign, emblemArt, logoMenuArt } from "./ui/livery.js";
-import { SwordsArt } from "./ui/SwordsArt.jsx";
-import { CampaignArt, DuelArt } from "./ui/HubSeals.jsx";
+import { setLivery, fetchHouseDesign, crestArtBunt, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { Soundtrack } from "./ui/Soundtrack.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
 import { APP_DESIGN } from "./config.js";
@@ -29,6 +27,14 @@ import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
+
+// DIE GEMALTEN WAPPEN DER DREI WEGE - bunt, nicht geschnitzt. Ein Vektor-Siegel
+// war fuer die Karten der falsche Ton: drei Goldreliefs nebeneinander lesen
+// sich gleich, die bunten Wappen halten die Wege auseinander.
+const CrestArt = ({ src }) => (
+  <img src={src} alt="" aria-hidden style={{ width: 72, height: 84, objectFit: "contain",
+    filter: "drop-shadow(0 4px 9px rgba(0,0,0,.55))" }} />
+);
 
 
 import { ProfileScreen } from "./ui/screens/ProfileScreen.jsx";
@@ -534,7 +540,10 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         {/* Fliesstext: nimmt die volle Breite, KEINE absolute Ecke mehr -
             darum ueberlappt hier nichts mehr, egal wie lang der Ortsname ist. */}
         {body && <div style={{ marginTop: 12, fontSize: 12.5, color: T.text, paddingRight: 92 }}>{body}</div>}
-        {extra && <div style={{ position: "absolute", right: 12, bottom: 10, fontSize: 12.5, color: T.text }}>{extra}</div>}
+        {/* Der Verbindungsstand sass in der rechten unteren Ecke - genau dort,
+            wo das Wappen haengt (nachgemessen: 176 px2 Ueberschneidung). Er
+            laeuft jetzt im Fliesstext mit, links unter dem Untertitel. */}
+        {extra && <div style={{ marginTop: 7, fontSize: 12.5, color: T.text, paddingRight: 92 }}>{extra}</div>}
         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 12, padding: "9px 16px",
           borderRadius: 999, position: "relative", overflow: "hidden", border: "1px solid rgba(255,240,200,.5)",
           background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)",
@@ -562,9 +571,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
-        art={<CampaignArt size={62} />} style={{ gridColumn: "1 / -1" }} />
+        art={<CrestArt src={crestArtBunt(1)} />} style={{ gridColumn: "1 / -1" }} />
       <Card title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={t("camp.play")}
-        art={<SwordsArt size={54} />} />
+        art={<CrestArt src={crestArtBunt(2)} />} />
       <Card title={t("online.title")} sub={t("online.sub")} onGo={onOnline}
         cta={hallenStand ? (profile.lang === "en" ? "Play" : "Spielen") : t("online.connect")}
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
@@ -578,7 +587,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
               {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
                 : (profile.lang === "en" ? "offline" : "offline")}
             </span>}
-        art={<DuelArt size={54} />}>
+        art={<CrestArt src={crestArtBunt(3)} />}>
         {/* DIE FERNPARTIEN STEHEN JETZT IN DER KARTE SELBST. Vorher lagen sie
             als eigener Block zwischen den Karten - der Besitzer wollte sie
             dort sehen, wo das Fernduell wohnt. Ein Griff je Partie. */}

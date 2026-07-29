@@ -126,6 +126,15 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const mode = quick?.mode || "chess";
   // CLASSIC: pure standard chess — plain level-1 armies, classic art, Elo bot
   const classic = mode === "classic" || (pvp && pvp.rules === "chess");
+  // WER SCHACH SPIELT, SOLL SCHACHFIGUREN SEHEN. Der creme/anthrazit-Satz kam
+  // bis v0.41 NIRGENDS an: die Livree wurde vor dem Modus geprueft, und die
+  // steht per APP_DESIGN auf "carved" - also lag ueberall der geschnitzte
+  // Goldsatz, auch im reinen Schach. Nachgewiesen mit tools/pruefe-klassiksatz.mjs.
+  // Die Fernpartie zaehlt mit: sie traegt ihr Regelwerk in daily.rules, war
+  // aber in `classic` nie enthalten (dort haengen auch Kartenwahl und Suchtiefe
+  // dran, die fuer die Fernpartie anders laufen) - darum ein eigenes Merkmal
+  // nur fuer die OPTIK.
+  const klassikOptik = classic || (daily && (daily.rules || "hp") === "chess");
   const map = daily ? mapById(daily.map) : pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
   const rules = daily ? (daily.rules || "hp") : pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
   const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
@@ -687,11 +696,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={classic} lastMove={state.lastMove} animateFor={null} hotseat={hotseat}
+        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
-          texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : livery() === "carved" ? "carved" : classic ? "classic" : "painted"} friendly={!!match?.friendly}
+          texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : klassikOptik ? "classic" : livery() === "carved" ? "carved" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />

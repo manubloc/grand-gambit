@@ -65,11 +65,11 @@ const befund = await page.evaluate(() => {
   };
   const karten = [...document.querySelectorAll("main div")].filter((d) => {
     const b = d.querySelector(":scope > button");
-    return b && b.querySelector("svg") && d.getBoundingClientRect().width > 200;
+    return b && b.querySelector("svg, img") && d.getBoundingClientRect().width > 200;
   });
   return karten.slice(0, 3).map((k) => {
     const kopf = k.querySelector(":scope > button");
-    const svg = kopf.querySelector("svg");
+    const svg = kopf.querySelector("svg, img");
     const zeichen = svg.getBoundingClientRect();
     let schlimm = 0, wer = "";
     for (const e of textFelder(kopf)) {
