@@ -679,7 +679,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           // einem Grund von 24. Sie bleibt SEKUNDAER (kein Gold-CTA, kein
           // Glanz), bekommt aber eine sichtbare Kante und eine eigene Flaeche.
           border: `1px solid ${T.gold}66`, borderRadius: T.radius,
-          boxShadow: `${T.shadow}, inset 0 0 0 1px rgba(255,255,255,.04)`,
+          boxShadow: T.shadow,
           padding: "13px 14px 14px", color: T.text, fontSize: 13 }}>
           {/* line one: the title, a touch smaller, flanked by the twin diamonds */}
           <span style={{ display: "block" }}>
