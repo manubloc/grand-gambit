@@ -631,7 +631,11 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
     const shineDelay = useShineDelay();
     return (
     <div style={{ background: bild
-        ? `linear-gradient(90deg, rgba(10,9,16,.9) 0%, rgba(10,9,16,.5) 42%, rgba(10,9,16,.08) 68%, rgba(10,9,16,0) 100%), url(${bild}) right center / cover no-repeat, #0a0910`
+        // HALB SO GROSS, RECHTS UNTEN (Besitzer, v0.52): das Motiv sitzt als
+        // kleines Bild in der Ecke (Hoehe ~52 % der Kachel), der Rest ist der
+        // eigene schwarze Grund - die Assets sind dafuer eng aufs Motiv
+        // beschnitten. Der Schleier von links sichert weiter die Schrift.
+        ? `linear-gradient(90deg, rgba(10,9,16,.88) 0%, rgba(10,9,16,.45) 46%, rgba(10,9,16,0) 72%), url(${bild}) right bottom / auto 52% no-repeat, #0a0910`
         : `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
       position: "relative", overflow: "hidden", ...style }}>
@@ -690,11 +694,19 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             mit den letzten Einstellungen (oder den Hausvorgaben). "Anpassen"
             fuehrt auf den bisherigen Weg. Zwei ECHTE Knoepfe unterhalb des
             Kopfes, weil Knoepfe in Knoepfen ungueltig sind. */}
+        {/* GLEICHE HOEHE wie die CTA-Pillen der Nachbarkacheln (9px/16px,
+            13,5) - und "Anpassen" traegt das LILA AUSWAHL-GEWAND aus dem
+            Profil: violetter Verlauf, leuchtende lila Kontur (T.sel-Familie
+            der Segmented-Auswahl). */}
         <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", marginTop: -2 }}>
-          <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "1 1 auto", padding: "11px 14px", fontSize: 14, borderRadius: 999 }}>
+          <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "1 1 auto", padding: "9px 16px", fontSize: 13.5, borderRadius: 999 }}>
             {t("hub.playNow")} ›</GoldShineButton>
-          <Button variant="subtle" onClick={onQuick} style={{ flex: "0 0 auto", padding: "11px 14px", fontSize: 13, borderRadius: 999 }}>
-            {t("hub.adjust")}</Button>
+          <button onClick={onQuick} style={{ flex: "0 0 auto", padding: "9px 16px", fontSize: 13, borderRadius: 999,
+            fontFamily: "inherit", fontWeight: 800, cursor: "pointer",
+            border: `1px solid ${T.selLine}`, color: T.selInk,
+            background: `linear-gradient(165deg, ${T.sel}, #1a1030)`,
+            boxShadow: `0 0 10px ${T.selGlow}` }}>
+            {t("hub.adjust")}</button>
         </div>
       </Card>
       <Card ruhig title={t("online.title")} sub={t("online.sub")} onGo={onOnline}

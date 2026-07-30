@@ -73,7 +73,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
           <Chip color={T.dim} bg={T.panel2}>{tiersDone} / {tiersTotal} {t("ach.tiers")}</Chip>
           {claimable > 0 && <Chip color={"#17110a"} bg={T.gold}>{t("ach.claimable", { n: claimable })}</Chip>}
         </div>
-        <div style={{ fontSize: 11.5, color: VELLUM, marginTop: 9 }}><SkillStar size={11} /> {t("ach.spHint")}</div>
+        {/* v0.52: Skillpunkt-Erklaerung raus - das lehrt der Herald/die Akademie. */}
       </div>
     </div>
 

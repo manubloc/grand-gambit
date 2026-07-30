@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.52.0
+
+HUB-FEINSCHLIFF, AUFGERAEUMTE MENUES, DAS GESICHT DES GEGNERS:
+
+- KACHELBILDER HALB SO GROSS, RECHTS UNTEN (Besitzer): die Assets sind eng
+  aufs Motiv beschnitten (640 px, 12-17 KB) und sitzen als kleines Bild in
+  der Ecke (Hoehe 52 % der Kachel, right bottom) auf dem eigenen schwarzen
+  Grund; der Schleier von links sichert weiter die Schrift.
+- KNOPFHOEHEN VEREINT: "Sofort spielen" und "Anpassen" tragen jetzt exakt
+  die Pillenmasse der Nachbar-CTAs (9/16 px, gemessen beide 38 px) - und
+  "Anpassen" traegt das LILA AUSWAHL-GEWAND aus dem Profil: violetter
+  Verlauf, leuchtende lila Kontur (gemessen: selLine-Rand + selGlow-Schein).
+- INFO-TEXTE RAUS: der Skillpunkt-Hinweis der Schatzkammer und der
+  Aufstellungs-Erklaertext des Hofstaats sind gestrichen - dieses Wissen
+  wohnt seit v0.51 in Herald und Akademie. Vesnas Chronik-Vorrede bleibt:
+  sie ist Stimme, kein Hinweiszettel.
+- DAS GEGNERPORTRAET (Kampagne): der Boss schaut dir jetzt ins Gesicht -
+  sein gemaltes Bildnis steht bis zur Schulter HINTER dem oberen Brettrand
+  (z=-1: die Gegnerzeile deckt den Kopfansatz, der Brettkasten den Rumpf),
+  seitlich und oben ins Dunkel maskiert, im Gegner-Filter. Hoffiguren-Bosse
+  (pb_) nutzen ihr Figurenportraet. Geraetesicht ausstehend - der Messkasten
+  spielt keine Boss-Partien.
+
 ## 0.51.0
 
 AKADEMIE VERSCHMOLZEN, DIE MENUES STELLEN SICH SELBST VOR:

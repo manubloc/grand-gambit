@@ -698,7 +698,26 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       </div>
 
 </>);
+  // Portraetquelle: der Kampagnen-Boss traegt sein gemaltes Bildnis; Hof-
+  // figuren-Bosse (pb_) nutzen ihr Figurenportraet. Ohne Boss kein Portraet.
+  const gegnerPortraet = (() => {
+    if (!campaign || !match?.boss?.bossId) return null;
+    const bid = match.boss.bossId;
+    try { return paintedById(bid.startsWith("pb_") ? bid.slice(3) : bid); } catch { return null; }
+  })();
   const boardBlock = (<>
+      {gegnerPortraet && !banner && (
+        <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: -4, zIndex: -1,
+          display: "grid", justifyItems: "center", pointerEvents: "none" }}>
+          <img src={gegnerPortraet} alt="" decoding="async" draggable={false}
+            style={{ height: 176, objectFit: "contain", opacity: 0.92, userSelect: "none",
+              filter: `${ENEMY_FILTER} drop-shadow(0 6px 14px rgba(0,0,0,.65))`,
+              // oben und seitlich ins Dunkel auslaufen - unten schneidet der
+              // Brettkasten den Rumpf ab (er malt spaeter im Baum)
+              WebkitMaskImage: "radial-gradient(115% 105% at 50% 62%, #000 52%, transparent 90%)",
+              maskImage: "radial-gradient(115% 105% at 50% 62%, #000 52%, transparent 90%)" }} />
+        </div>
+      )}
       {/* THE BOARD — fixed viewport, fills all remaining space, never scrolls */}
       <div ref={zoomBox} onPointerDown={zoomDown} onPointerMove={zoomMove} onPointerUp={zoomUp} onPointerCancel={zoomUp}
         onWheel={zoomWheel} onClickCapture={(e) => { if (zDragged.current) { e.stopPropagation(); e.preventDefault(); zDragged.current = false; } }}

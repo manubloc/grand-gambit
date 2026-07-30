@@ -725,7 +725,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
   return <>
   <Panel>
     <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
-    <div style={{ fontSize: 12, color: T.dim, marginBottom: 10 }}>{map.classic ? t("army.classicHint") : t("army.formationHint")}</div>
+    {/* v0.52: Aufstellungs-Erklaertext raus - Herald und Akademie tragen das Wissen. */}
     {/* A RESTING FIGHT KEEPS ITS RANKS. Verified: resuming decodes the board
         from its snapshot, so nothing you do here can reach into a match that
         is already under way — but nobody was told, which invites the fear of
