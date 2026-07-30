@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.60.0
+
+PROFIL NICHT MEHR BREITER, DER RISSBODEN GEZAEHMT:
+
+- BREITEN-FUND (Besitzer): unterm Admin war das Profil breiter als alle
+  anderen Reiter. Taeter: die Kapitel-Schnellwahl des Admin-Werkzeugs -
+  zehn Knoepfe in einer NICHT umbrechenden Flex-Zeile sprengten am Handy
+  die Kachelbreite. Jetzt bricht die Reihe um; alle Reiter messen gleich.
+- RISSBODEN (der Transparenz-Streifen unten, der Effekt bleibt!):
+  (1) beginnt viel weiter unten - Hoehe min(30vh, 270px) statt
+  min(58vh, 520px), am Referenzgeraet 253 statt ~490 px;
+  (2) schimmert dezenter - Deckkraft 0,6 statt 0,85;
+  (3) wird schneller deckend - Maske rgba(.55) bei 30 % -> voll bei 58 %
+  (vorher .45/26 % -> 62 %).
+- MEHR SCROLLWEG in BEIDEN Zweigen: Scroll-Polster um die Bodenhoehe
+  erweitert (min(30vh, 270px) Reserve) - das Unterste laesst sich UEBER
+  den Streifen scrollen und bleibt lesbar. Messbeleg: Polster 361 px,
+  178 px Ueberhang schon im leeren Hub.
+
 ## 0.59.0
 
 HUB-KACHELN AUF ECHTEM SCHWARZ, FUGENLOSE BILDER, STATUS AUS DEM MOTIV:

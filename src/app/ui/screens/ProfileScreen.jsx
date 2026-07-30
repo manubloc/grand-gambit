@@ -192,7 +192,10 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
     {account?.isAdmin && <Panel>
       <PanelTitle tag="Admin">{t("profile.devTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.devHint")}</div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+      {/* UMBRECHEN (Besitzer, v0.60): zehn Knoepfe in einer nowrap-Zeile
+          sprengten am Handy die Kachelbreite - der Grund, warum das
+          Profil unterm Admin breiter war als alle anderen Reiter. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
         <span className="gg-serif" style={{ fontSize: 12.5, color: T.dim }}>{t("profile.devLeague")}</span>
         {[1,2,3,4,5,6,7,8,9,10].map((lg) => (
           <button key={lg} onClick={() => setDevLg(lg)}

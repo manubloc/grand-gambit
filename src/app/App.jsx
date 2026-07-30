@@ -492,7 +492,7 @@ export default function App() {
         // the fixed dock (~76px) + Safari's home-bar safe-area float OVER the
         // scroll area: without this reserve the last buttons (e.g. sign-out on
         // the profile) end up UNDER the dock, which then swallows the tap
-        paddingBottom: immersive ? 0 : "calc(94px + env(safe-area-inset-bottom))",
+        paddingBottom: immersive ? 0 : "calc(94px + min(30vh, 270px) + env(safe-area-inset-bottom))", // v0.60: Reserve in Bodenhoehe - das Unterste kann UEBER den Riss-Streifen scrollen
         maxWidth: immersive ? "none" : 1020, // menus run as wide as the header bar
         ...(immersive ? { display: "flex", flexDirection: "column", flex: "1 1 auto", minHeight: 0 } : {}),
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
@@ -561,7 +561,7 @@ export default function App() {
           the viewport — before this, header ran at 10, dock at 12, content at
           14, three different alignments (the profile looked narrower than the
           menu). */}
-      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overflowX: "hidden", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px 108px",
+      <main style={{ flex: 1, minHeight: 0, overflowY: immersive ? "hidden" : "auto", overflowX: "hidden", overscrollBehavior: "none", padding: immersive ? (mapView ? "0 6px calc(72px + env(safe-area-inset-bottom))" : "0 3px") : inMatch ? "8px 6px 12px" : "22px 10px calc(108px + min(30vh, 270px))",
         ...(tab === "play" && view === "hub" && !inMatch && !immersive
           ? { display: "flex", flexDirection: "column", justifyContent: "flex-start" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>

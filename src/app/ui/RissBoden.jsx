@@ -48,16 +48,16 @@ export function RissBoden({ profile, staerke = 1 }) {
   return (
     <div aria-hidden data-riss={stufe} style={{
       position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none",
-      height: "min(58vh, 520px)",
+      height: "min(30vh, 270px)", // v0.60: kurzer Bodenstreifen statt halber Schirm
       backgroundImage: `url(${bild})`,
       backgroundSize: "cover",
       backgroundPosition: "50% 100%",
       backgroundRepeat: "no-repeat",
-      opacity: 0.85 * staerke,
+      opacity: 0.6 * staerke,      // v0.60: schimmert dezenter durch
       // nach oben in reines Schwarz ausblenden: der Boden bleibt Boden und
       // faellt der Schrift nicht in den Ruecken
-      WebkitMaskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.45) 26%, #000 62%)",
-      maskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.45) 26%, #000 62%)",
+      WebkitMaskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%)",
+      maskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%)",
     }} />
   );
 }
