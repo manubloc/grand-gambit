@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.54.0
+
+GAMBIT GEHEILT, DIE FIGURENWERKSTATT, KLASSISCHE FIGUREN AN BORD:
+
+- GAMBIT-RESTAURATION: die sechs unbeschaedigten Ur-Zeichnungen (v0.32.0)
+  sind aus dem Git-Verlauf zurueckgeholt - die Rasterfaerbung der damaligen
+  Cluster-Umfaerbung (v0.32.1) ist damit aus der App verschwunden. Die sechs
+  Schattenwesen-Zwillinge wurden aus den restaurierten Hellen frisch
+  gerechnet (verdorben-v2, Torwaechter 6/6 ok) und tragen das v5-Rezept.
+- DIE FIGURENWERKSTATT (?werkstatt): das Besitzer-Tool. Alle 57 Figuren-
+  paare, je Figur Regler fuer Tonwertspreizung, Farbe der Grau-Zone, Farbe
+  des Lila-Koerpers, Glimmen-Schwelle/-Leuchtkraft/-Sattheit und ein
+  Farbwinkel-Ersetzer; Einstellungen wohnen je Figur im Geraet
+  (localStorage), v5-Startwerte per Knopf, helle Schwester als Referenz
+  daneben. "Zip exportieren" rechnet ALLE Gegenseiten mit ihren Reglern und
+  liefert gegenseite.zip (eigener Zip-Schreiber, plus einstellungen.json) -
+  das Paket ist die Gegenseite, wie sie sein soll.
+- KLASSISCHE FIGUREN (vom Besitzer geliefert): Bauer, Laeufer, Koenig, Dame,
+  Springer der dunklen Seite freigestellt (weisser Grund und Schlagschatten
+  entfernt), auf 640x800 bodenverankert und unter assets/klassisch/
+  eingelagert. Es fehlen noch: der TURM und die HELLE Seite - erst dann kann
+  der Stil als Brettfiguren-Option verdrahtet werden.
+
 ## 0.53.0
 
 DIE VERDORBENEN, NEU AUSGELEUCHTET (Tonwert-Rezept v5, Besitzer-abgenommen):

@@ -28,6 +28,7 @@ import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
+import { WerkstattScreen } from "./ui/WerkstattScreen.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
@@ -145,6 +146,7 @@ const TABS = [
 
 export default function App() {
   const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
+  const werkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("werkstatt");
   const [profile, dispatch] = useReducer(reducer, null);
   // which livery the house wears — asked from the Hall once per boot
   const [houseDesign, setHouseDesign] = useState(null);
@@ -298,6 +300,8 @@ export default function App() {
   // Hooks (Hook-Reihenfolge bleibt stabil) und VOR Anmeldung/Spielstand,
   // damit sie auch ohne Konto aufgeht. (DS1 §17)
   if (galerie) return <GalerieScreen />;
+  // DIE FIGURENWERKSTATT (Besitzer, v0.54): nur ueber ?werkstatt erreichbar.
+  if (werkstatt) return <WerkstattScreen />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
