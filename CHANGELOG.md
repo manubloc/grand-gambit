@@ -1,5 +1,37 @@
 # Changelog - Grand Gambit
 
+## 0.49.0
+
+DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN - ROCHADE UND EN PASSANT:
+
+- ROCHADE: Koenig ungezogen, Turm ungezogen in seiner Ecke der Heimreihe,
+  Gasse frei - dann zieht der Koenig ZWEI Felder zum Turm und der Turm
+  springt im selben Zug auf seine Innenseite. Beide Seiten (kurz und lang),
+  auf jedem Brett mit Eckturm - auch auf dem 10x10-Hausbrett. Aus dem Schach
+  heraus gibt es keine Rochade, und das KREUZFELD darf nicht bedroht sein
+  (die Wache sitzt in legalMoves; attacks.js importiert den Zuggenerator,
+  ein Gegenimport waere ein Zyklus).
+- EN PASSANT: stand der gegnerische Bauer im LETZTEN Zug per Doppelschritt
+  neben dem eigenen, darf er im Vorbeigehen geschlagen werden - Zug aufs
+  uebersprungene Feld, der ueberholte Bauer verschwindet von seinem. Genau
+  einen Zug lang, danach ist das Fenster zu. Nur ausserhalb des HP-Modus:
+  dort gibt es kein "Vorbeiziehen", Schlagen ist Schaden auf dem Zielfeld.
+- UMWANDLUNG und DOPPELSCHRITT gab es bereits - damit ist der klassische
+  Sonderzug-Satz vollstaendig.
+- lastMove traegt die Zeugen (double, epCapture, rookFrom/rookTo) fuer die
+  kommende Zugliste unter dem Brett; auf dem Brett erscheint die Rochade
+  von selbst als Zwei-Felder-Zug des angewaehlten Koenigs.
+- NEUE SUITE test_sonderzuege.mjs (19 Pruefungen: Angebot, Verweigerung bei
+  gezogenem Koenig/Turm, blockierter Gasse, bedrohtem Kreuzfeld, Ausfuehrung
+  mit Turmsprung und Bauernverschwinden, Fensterschluss) - die eiserne Kette
+  zaehlt jetzt 20 SUITEN / 810 Pruefungen. Die Suite ist layout-agnostisch:
+  alle Koordinaten werden aus dem Brett gescannt (Lehre: das Hausbrett ist
+  10x10, geratene 8x8-Geometrie schlug fehl).
+- Zwei gefixte Engine-Fallen: (1) beim En-passant-Probelauf starb die
+  lastMove-Buchung am leeren Zielfeld (captured true, target null) - sie
+  greift jetzt auf das Opfer zurueck; (2) der Turmsprung setzt hasMoved,
+  damit derselbe Turm nie zweimal rochiert.
+
 ## 0.50.0
 
 DIE AKADEMIE WIRD DAS LERNHAUS DES HOFES (Auftrag: "Hauptsache man lernt
