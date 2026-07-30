@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 0.55.0
+
+DIE WERKSTATT LAEDT DIREKT ZU GITHUB (Admin-Weg ohne Umweg):
+
+- Neuer Abschnitt "Nur Admin" in der Figurenwerkstatt: eigenes GitHub-Token
+  einfuegen (Empfehlung: feinkoerniges Token, nur dieses Repo, nur
+  Contents: Read and write) - dann laedt "Geaenderte Figuren zu GitHub
+  laden" alle Figuren mit gespeicherten Reglern als EINEN Commit auf main
+  (Git-Data-API: Blobs -> Baum -> Commit -> Ref); Cloudflare deployt danach
+  von selbst.
+- SICHERHEITS-BAUART: das Token steckt NIE im Spiel (Bundle-Beweis: null
+  Token-Muster) - es lebt ausschliesslich im Geraet des Admins (localStorage,
+  abschaltbar) und ist zugleich das Tor: ohne Token ist der Ladeknopf
+  gesperrt (Sondenbeweis). Die Pfade werden strikt aus dem Figurenkatalog
+  gebaut - das Tool kann nur carved-*-dark.webp anfassen, nichts sonst.
+- Der Zip-Export bleibt unveraendert daneben bestehen.
+
 ## 0.54.0
 
 GAMBIT GEHEILT, DIE FIGURENWERKSTATT, KLASSISCHE FIGUREN AN BORD:

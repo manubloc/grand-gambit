@@ -173,6 +173,64 @@ export function WerkstattScreen() {
   const aufAlle = () => { const n = {}; for (const f of KATALOG) n[f.id] = p; setAlle(n); schreibeAlle(n); setStatus("Auf alle Figuren angewandt"); };
   const zuruecksetzen = () => { const n = { ...alle }; delete n[fig.id]; setAlle(n); schreibeAlle(n); setP({ ...STANDARD }); setStatus(`Zurückgesetzt: ${fig.id}`); };
 
+  // ── DIREKT ZU GITHUB (Besitzer, v0.55): "dass ich's direkt lade, ohne
+  // dich". Bauart-Entscheid: das Token wird NIE eingebaut - es lebt nur im
+  // Geraet (localStorage) und IST das Admin-Tor: ohne Token kein Laden.
+  // Ein einziger Commit ueber die Git-Data-API (Blobs -> Baum -> Commit ->
+  // Ref), Pfade strikt aus dem Katalog gebaut - das Tool kann nur
+  // Figurendateien anfassen, nichts sonst. Cloudflare deployt danach von
+  // selbst (~3 Minuten).
+  const [token, setToken] = useState(() => { try { return localStorage.getItem("gg_werkstatt_token") || ""; } catch { return ""; } });
+  const [merken, setMerken] = useState(true);
+  const gh = async (pfad, methode = "GET", koerper = null) => {
+    const r = await fetch(`https://api.github.com/repos/manubloc/grand-gambit${pfad}`, {
+      method: methode,
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json",
+        ...(koerper ? { "Content-Type": "application/json" } : {}) },
+      body: koerper ? JSON.stringify(koerper) : undefined,
+    });
+    if (!r.ok) throw new Error(`${methode} ${pfad}: ${r.status} ${(await r.text()).slice(0, 120)}`);
+    return r.json();
+  };
+  const ladeZuGithub = async () => {
+    const geaenderte = KATALOG.filter((f) => alle[f.id]);
+    if (!token) { setStatus("Ohne Token kein Laden — Token oben einfügen."); return; }
+    if (!geaenderte.length) { setStatus("Keine Figur hat gespeicherte Regler — nichts zu laden."); return; }
+    try {
+      if (merken) { try { localStorage.setItem("gg_werkstatt_token", token); } catch {} }
+      setStatus("Hole Stand von main …");
+      const ref = await gh("/git/ref/heads/main");
+      const basis = ref.object.sha;
+      const basisCommit = await gh(`/git/commits/${basis}`);
+      const baum = [];
+      for (let i = 0; i < geaenderte.length; i++) {
+        const f = geaenderte[i];
+        setStatus(`Rechne und lade ${i + 1}/${geaenderte.length}: ${f.id}`);
+        const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = f.dunkel; });
+        const cv = document.createElement("canvas");
+        cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+        const cx = cv.getContext("2d", { willReadFrequently: true });
+        cx.drawImage(img, 0, 0);
+        const id2 = cx.getImageData(0, 0, cv.width, cv.height);
+        rechne(id2, cv.width, cv.height, { ...STANDARD, ...alle[f.id] });
+        cx.putImageData(id2, 0, 0);
+        const blob = await new Promise((res) => cv.toBlob(res, "image/webp", 0.92));
+        const puffer = new Uint8Array(await blob.arrayBuffer());
+        let bin = ""; for (let j = 0; j < puffer.length; j += 8192) bin += String.fromCharCode(...puffer.subarray(j, j + 8192));
+        const b = await gh("/git/blobs", "POST", { content: btoa(bin), encoding: "base64" });
+        const datei = (f.id.startsWith("b") && f.id.length === 3 ? `carved-boss-${f.id}-dark` : `carved-${f.id}-dark`) + ".webp";
+        baum.push({ path: `src/app/ui/assets/carved/${datei}`, mode: "100644", type: "blob", sha: b.sha });
+      }
+      setStatus("Baue Commit …");
+      const neuerBaum = await gh("/git/trees", "POST", { base_tree: basisCommit.tree.sha, tree: baum });
+      const commit = await gh("/git/commits", "POST", {
+        message: `Figurenwerkstatt: ${geaenderte.length} Gegenseiten vom Besitzer geladen (${geaenderte.map((f) => f.id).join(", ")})`,
+        tree: neuerBaum.sha, parents: [basis] });
+      await gh("/git/refs/heads/main", "PATCH", { sha: commit.sha });
+      setStatus(`Geladen: Commit ${commit.sha.slice(0, 7)} mit ${geaenderte.length} Figuren — Cloudflare deployt in ~3 Minuten.`);
+    } catch (e) { setStatus("Fehlgeschlagen: " + String(e.message || e).slice(0, 160)); }
+  };
+
   const exportiere = async () => {
     setStatus("Exportiere …");
     const eintraege = [];
@@ -263,6 +321,26 @@ export function WerkstattScreen() {
         <button style={knopf} onClick={zuruecksetzen}>Zurücksetzen</button>
         <button style={{ ...knopf, background: `linear-gradient(160deg,#f0d68a,#d9b565 55%,#b08c44)`, color: "#17110a", border: "none" }}
           onClick={exportiere}>Zip exportieren</button>
+      </div>
+      <div style={{ borderTop: `1px solid ${T.line}`, marginTop: 14, paddingTop: 10 }}>
+        <div className="gg-serif" style={{ fontSize: 14, color: T.goldBright, marginBottom: 4 }}>Nur Admin: direkt zu GitHub laden</div>
+        <div style={{ fontSize: 11, color: T.dim, lineHeight: 1.5, marginBottom: 8 }}>
+          Dein Token bleibt AUSSCHLIESSLICH auf diesem Gerät (es steckt nie im Spiel) und ist zugleich das Tor:
+          ohne Token lädt hier niemand etwas. Geladen werden nur Figuren mit gespeicherten Reglern, als EIN Commit
+          auf main — danach deployt Cloudflare von selbst (~3 Min). Empfohlen: feinkörniges Token, nur dieses Repo,
+          nur „Contents: Read and write".</div>
+        <input type="password" placeholder="GitHub-Token (fine-grained, Contents: write)" value={token}
+          onChange={(e) => setToken(e.target.value)}
+          style={{ width: "100%", padding: "9px 10px", borderRadius: 10, border: `1px solid ${T.line}`,
+            background: T.panel, color: T.text, fontFamily: "inherit", fontSize: 12.5, marginBottom: 6 }} />
+        <label style={{ fontSize: 11.5, color: T.dim, display: "flex", gap: 7, alignItems: "center", marginBottom: 8 }}>
+          <input type="checkbox" checked={merken} onChange={(e) => setMerken(e.target.checked)} />
+          Token auf diesem Gerät merken</label>
+        <button onClick={ladeZuGithub} disabled={!token}
+          style={{ ...knopf, width: "100%", opacity: token ? 1 : 0.5,
+            background: token ? `linear-gradient(160deg,#f0d68a,#d9b565 55%,#b08c44)` : T.panel,
+            color: token ? "#17110a" : T.dim, border: token ? "none" : `1px solid ${T.line}` }}>
+          Geänderte Figuren zu GitHub laden ({Object.keys(alle).length})</button>
       </div>
       <div style={{ fontSize: 11.5, color: T.dim, marginTop: 8, minHeight: 16 }}>{status}</div>
     </div>
