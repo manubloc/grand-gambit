@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.57.0
+
+HUB-KACHELN IN VOLLER PRACHT, DER KNOPF ENDLICH SCHMAL, DAS ADMIN-PORTAL:
+
+- Die Kachelbilder im Hauptmenue fuellen jetzt die VOLLE Kachelhoehe (oben
+  und unten klebend) und stehen rechts buendig (right center / auto 100%);
+  der Links-Schleier fuer die Textlesbarkeit bleibt. Messbeleg: drei
+  Kacheln mit auto-100%-Hintergrund, Lage 100% 50%.
+- "Sofort spielen" war trotz Pillenmass noch VOLLBREIT GESTRECKT (flex
+  1 1 auto) - der Besitzer hatte zweimal recht. Jetzt inhaltsbreit
+  (flex 0 0 auto, gemessen 151 px statt Kachelbreite).
+- DAS ADMIN-PORTAL (?admin): eine Tuer zu allen Werkbaenken - Figuren-
+  werkstatt, Musterkammer, zurueck ins Spiel - mit Kurzbeschreibung je
+  Seite. Nicht verlinkt, wie die Werkbaenke selbst.
+- Sondenlehre: der Modal-Abraeumer traf mit /Start/i den Knopf
+  "Herausforderung starten" und stolperte in die Kampagne - Muster
+  entschaerft.
+
 ## 0.56.0
 
 DIE WERKSTATT WIRD RETUSCHE-TISCH - ZOOM, PINSEL, PIPETTE, RADIERER:

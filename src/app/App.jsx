@@ -29,6 +29,7 @@ import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { WerkstattScreen } from "./ui/WerkstattScreen.jsx";
+import { AdminPortal } from "./ui/AdminPortal.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
@@ -147,6 +148,7 @@ const TABS = [
 export default function App() {
   const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
   const werkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("werkstatt");
+  const adminPortal = typeof location !== "undefined" && new URLSearchParams(location.search).has("admin");
   const [profile, dispatch] = useReducer(reducer, null);
   // which livery the house wears — asked from the Hall once per boot
   const [houseDesign, setHouseDesign] = useState(null);
@@ -302,6 +304,8 @@ export default function App() {
   if (galerie) return <GalerieScreen />;
   // DIE FIGURENWERKSTATT (Besitzer, v0.54): nur ueber ?werkstatt erreichbar.
   if (werkstatt) return <WerkstattScreen />;
+  // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
+  if (adminPortal) return <AdminPortal />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
   if (!slot) return <SavesScreen account={account} initialLang={profile?.lang || "de"}
@@ -639,7 +643,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         // kleines Bild in der Ecke (Hoehe ~52 % der Kachel), der Rest ist der
         // eigene schwarze Grund - die Assets sind dafuer eng aufs Motiv
         // beschnitten. Der Schleier von links sichert weiter die Schrift.
-        ? `linear-gradient(90deg, rgba(10,9,16,.88) 0%, rgba(10,9,16,.45) 46%, rgba(10,9,16,0) 72%), url(${bild}) right bottom / auto 52% no-repeat, #0a0910`
+        ? `linear-gradient(90deg, rgba(10,9,16,.88) 0%, rgba(10,9,16,.45) 46%, rgba(10,9,16,0) 72%), url(${bild}) right center / auto 100% no-repeat, #0a0910`
         : `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
       position: "relative", overflow: "hidden", ...style }}>
@@ -697,13 +701,15 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         {/* SOFORT LOSLEGEN: ein Griff, keine Konfiguration - gestartet wird
             mit den letzten Einstellungen (oder den Hausvorgaben). "Anpassen"
             fuehrt auf den bisherigen Weg. Zwei ECHTE Knoepfe unterhalb des
-            Kopfes, weil Knoepfe in Knoepfen ungueltig sind. */}
+            Kopfes, weil Knoepfe in Knoepfen ungueltig sind. Beide Knoepfe
+            INHALTSBREIT (v0.57: flex 0 0 auto) - der Besitzer fand den
+            gestreckten Gold-Knopf zweimal zu breit, er hatte recht. */}
         {/* GLEICHE HOEHE wie die CTA-Pillen der Nachbarkacheln (9px/16px,
             13,5) - und "Anpassen" traegt das LILA AUSWAHL-GEWAND aus dem
             Profil: violetter Verlauf, leuchtende lila Kontur (T.sel-Familie
             der Segmented-Auswahl). */}
         <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", marginTop: -2 }}>
-          <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "1 1 auto", padding: "9px 16px", fontSize: 13.5, borderRadius: 999 }}>
+          <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "0 0 auto", padding: "9px 16px", fontSize: 13.5, borderRadius: 999 }}>
             {t("hub.playNow")} ›</GoldShineButton>
           <button onClick={onQuick} style={{ flex: "0 0 auto", padding: "9px 16px", fontSize: 13, borderRadius: 999,
             fontFamily: "inherit", fontWeight: 800, cursor: "pointer",
