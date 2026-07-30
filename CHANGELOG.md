@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 0.52.1
+
+DESIGN-ENTSCHEID DES BESITZERS, FESTGESCHRIEBEN: GESCHNITZT IST FUEHREND.
+
+- Das gemalte ("detailreiche") Design wird NICHT weiterentwickelt. Alle
+  painted-Assets sind als design/archiv/detailreich.zip (72 Dateien, 11,8 MB)
+  konserviert, mit LIES-MICH: nichts Neues im gemalten Stil; der Rueckbau
+  der letzten App-Stellen, die noch painted laden (Brettstil "Detailreich",
+  Freischalt-Portraets, Gegnerportraet), ist der naechste Migrationsschritt -
+  erst danach duerfen die Ordner-Dateien fallen.
+- Geraeteurteil des Besitzers eingetragen: die Kampagnenkarte ruckelt NICHT
+  mehr - KNOWN_ISSUES 5 geschlossen, der SVG-Raster-Hebel wird nie gebraucht.
+- Der Zerreisser (b22): zwei GESCHNITZTE Kandidaten per Bild-zu-Bild auf dem
+  Familiensockel erzeugt (Referenzen b21/b20/b23; Vorgabe: massiger als die
+  Familie, gerissene Basaltplatten, rote Innenglut) - gemessen Deck 40/56 %
+  (altes b22: duerre 14 %), L 32/33, Rot-Dominanz +15/+10. Einbau erst nach
+  Besitzer-Wahl.
 ## 0.52.0
 
 HUB-FEINSCHLIFF, AUFGERAEUMTE MENUES, DAS GESICHT DES GEGNERS:
