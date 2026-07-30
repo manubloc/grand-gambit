@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.48.0
+
+DIE GROSSEN KACHELN ERZAEHLEN JETZT DIE GESCHICHTE (drei Bilder des
+Besitzers):
+
+- Kampagne: die Bauernfigur von hinten vor dem leuchtenden Riss. Schnelles
+  Spiel: die Sanduhr mit violettem Sand auf dem geborstenen Brett.
+  Online-Duell: zwei Koenige am Riss. Motiv rechts, Titel und Griffe auf der
+  linken, nachgemessen fast schwarzen Zone (L 0,9-1,6), dazu ein leiser
+  Schleier von links. Die Wappen-Grafiken entfallen auf diesen drei Karten.
+- Assets rechts beschnitten (das Cover-Fitting quetschte sonst die halbe
+  Schwarzflaeche der Quellen in die Kachel und das Motiv wurde winzig) und
+  auf 14-20 KB gepackt; Motivnachweis per Glanzlicht-Perzentil (p99 159-204).
+- Designleitsatz des Besitzers dazu im Quelltext verankert: mehr Flaeche
+  heisst echte Bildsprache, nicht Symbolik.
+- messe-hub versteht Bildkacheln: die Zeichen-gegen-Schrift-Pruefung gilt
+  nur noch, wo ein diskretes Zeichen existiert (Lehre: der erste Fallback
+  mass den ganzen Kopf gegen seine eigene Schrift - 4560 px2 Unsinnswert).
+
 ## 0.47.0
 
 DIE ZAHLEN IN DEN LEBENS- UND ENERGIEKUGELN STEHEN RUHIG:

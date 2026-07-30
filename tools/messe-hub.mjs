@@ -65,11 +65,19 @@ const befund = await page.evaluate(() => {
   };
   const karten = [...document.querySelectorAll("main div")].filter((d) => {
     const b = d.querySelector(":scope > button");
-    return b && b.querySelector("svg, img") && d.getBoundingClientRect().width > 200;
+    // v0.48: die grossen Karten tragen ihr Motiv als CSS-Hintergrundbild -
+    // es gibt kein <img> mehr im Kopf. Eine Karte ist, was einen Kopf-Knopf
+    // mit Titelzeile hat und breit genug ist.
+    return b && (b.innerText || "").trim().length > 3 && d.getBoundingClientRect().width > 200;
   });
-  return karten.slice(0, 3).map((k) => {
+  return karten.slice(0, 5).map((k) => {
     const kopf = k.querySelector(":scope > button");
+    // Bildkacheln (CSS-Hintergrund) haben KEIN diskretes Zeichen - dort gibt
+    // es nichts, das mit Schrift kollidieren koennte; die Pruefung entfaellt
+    // fuer sie (artFrei) statt gegen den ganzen Kopf zu messen (Unsinnswert
+    // 4560 px2 in der ersten Fassung dieser Anpassung).
     const svg = kopf.querySelector("svg, img");
+    if (!svg) return { titel: (kopf.querySelector(".gg-serif")?.textContent || "?").slice(0, 24), artFrei: true, ueberlappung_px2: 0 };
     const zeichen = svg.getBoundingClientRect();
     let schlimm = 0, wer = "";
     for (const e of textFelder(kopf)) {

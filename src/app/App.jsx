@@ -27,6 +27,9 @@ import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
+import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
+import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
+import karteOnline from "./ui/assets/karten/karte-online.webp";
 import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
@@ -553,10 +556,18 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   // `ruhig`: der Gold-CTA ohne Glanzlauf. Im Hub laeuft der Glanz nur noch
   // auf der Kampagne (dem Hauptweg) - vorher glaenzten drei Knoepfe im Chor
   // (gemessen), und "dominant" verliert seinen Sinn, wenn es alle sind.
-  const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false, ruhig = false }) => {
+  // `bild`: die grosse Kachel traegt ein echtes Bild (Designleitsatz des
+  // Besitzers, v0.48: "wenn wir mehr Flaeche haben, gehen wir in eine
+  // ordentliche Bildsprache und erzaehlen die Geschichte"). Die Motive sitzen
+  // rechts, die linke Textzone der Bilder ist nachgemessen fast schwarz
+  // (L 0,9-1,6 von 255) - ein leiser Schleier von links sichert die Schrift
+  // zusaetzlich, die Wappen-Grafik entfaellt auf diesen Karten.
+  const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false, ruhig = false, bild = null }) => {
     const shineDelay = useShineDelay();
     return (
-    <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+    <div style={{ background: bild
+        ? `linear-gradient(90deg, rgba(10,9,16,.9) 0%, rgba(10,9,16,.5) 42%, rgba(10,9,16,.08) 68%, rgba(10,9,16,0) 100%), url(${bild}) right center / cover no-repeat, #0a0910`
+        : `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
       position: "relative", overflow: "hidden", ...style }}>
       {/* GEMESSEN (v0.46): auf der Karte "Schnelles Spiel" ragte das Wappen
@@ -607,9 +618,9 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
-        art={<CrestArt src={crestArt(1)} />} style={{ gridColumn: "1 / -1" }} />
+        bild={karteKampagne} art={null} style={{ gridColumn: "1 / -1" }} />
       <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={null}
-        art={<CrestArt src={crestArt(2)} />}>
+        bild={karteSchnell} art={null}>
         {/* SOFORT LOSLEGEN: ein Griff, keine Konfiguration - gestartet wird
             mit den letzten Einstellungen (oder den Hausvorgaben). "Anpassen"
             fuehrt auf den bisherigen Weg. Zwei ECHTE Knoepfe unterhalb des
@@ -634,7 +645,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
               {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
                 : (profile.lang === "en" ? "offline" : "offline")}
             </span>}
-        art={<CrestArt src={crestArt(3)} />}>
+        bild={karteOnline} art={null}>
         {/* DIE FERNPARTIEN STEHEN JETZT IN DER KARTE SELBST. Vorher lagen sie
             als eigener Block zwischen den Karten - der Besitzer wollte sie
             dort sehen, wo das Fernduell wohnt. Ein Griff je Partie. */}
