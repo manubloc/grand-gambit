@@ -11,6 +11,7 @@ import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitiv
 import { LeaveMatchAsk } from "../../App.jsx";
 import { BoardView } from "../board/BoardView.jsx";
 import { CHARACTERS, ABILITIES } from "../../../content/index.js";
+import { KampfLeiste } from "../KampfLeiste.jsx";
 import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
@@ -738,7 +739,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             ? (match.boss.bossId && !match.boss.bossId.startsWith("pb_") ? 0.9 : 0.7)
             : ({ easy: 0.25, normal: 0.4, hard: 0.6 }[(campaign && match?.node?.difficulty) || difficulty] ?? 0.4)} />
         </div>
-        {inspect && state.board[inspect.i] && !banner && (() => {
+        {/* v0.50: die EIGENE Figur berichtet jetzt in der KAMPFLEISTE unter dem
+            Brett (Figur gross, Talente als goldene Bubbles) - hier schwebt nur
+            noch der Spaeher-Blick auf GEGNER ueber dem Feld. */}
+        {inspect && inspect.mode !== "own" && state.board[inspect.i] && !banner && (() => {
           const pc = state.board[inspect.i];
           const own = inspect.mode === "own";
           const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);
@@ -943,7 +947,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {headerBar}
         {enemyStrip}
         <div style={{ flex: 1, minHeight: 14 }} />
+        {/* Die Kampfleiste steht IM FLUSS UNTER der Ausruestungs-Legende: dort
+            liegen die freien 371 px (gemessen), und sie bleibt ausserhalb der
+            botChrome-Messung, deren Hoehe den tight-Modus fuettert - in-flow
+            ZWISCHEN Brett und Legende sank das Brett um 51 px. */}
         {yourStrip}
+        <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
       </aside>
       {dailyDoneEl}
       {bannerEl}{raus}
@@ -956,6 +965,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
+      <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
       {dailyDoneEl}
       {bannerEl}{raus}
     </div>

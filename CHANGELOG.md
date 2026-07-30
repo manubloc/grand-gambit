@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 0.50.0
+
+DIE KAMPFLEISTE - FIGUR GROSS, TALENTE ALS ECHTE SCHALTFLAECHEN:
+
+- Tippt man eine eigene Figur an, erscheint sie unten GROSS (die geschnitzte
+  Kunst vom Brett, gemessen 75 px) mit Name, Stufe und den Lebens-/Kraft-
+  Kugeln - und daneben ihre Talente als GOLDGERAHMTE BUBBLE-SCHALTFLAECHEN
+  (Goldring, violettes Email, Talentzeichen). Ein Druck oeffnet die
+  BESCHREIBUNG als Karte ueber der Leiste; verbrauchte Einmal-Zauber stehen
+  entsaettigt da.
+- Die SONDERZUEGE stehen mit in der Liste: steht der Rochade- oder
+  En-passant-Augenblick offen (aus denselben legalen Zuegen wie die
+  Brettmarkierungen), traegt die Figur die Bubble dazu - mit Erklaerung, wie
+  der Zug ausgefuehrt wird. Genau der Wunsch "Rochade als eine Art
+  Faehigkeit gelistet".
+- Der alte schwebende Eigen-Dossier-Chip entfaellt; der Spaeher-Blick auf
+  GEGNER (oben ueber dem Feld) bleibt unveraendert.
+- Die Ausruestung (Trank, Zeitriss, Sanduhr) bleibt die feste Legende; die
+  Leiste steht IM FLUSS DARUNTER, wo 371 px frei liegen. Zwei verworfene
+  Bauarten, gemessen: in-flow ZWISCHEN Brett und Legende kippte die
+  Hoehenbilanz in den tight-Modus (Brett sank 51 px); schwebend UEBER der
+  Legende landete sie im Mobil-Zweig auf den unteren Brettreihen. Offene
+  Geschmacksfrage an den Besitzer: Talente ueber oder unter der Ausruestung.
+- Brettzellen tragen jetzt data-zelle-Adressen (Sonden und Werkzeuge).
+- Sondenlehre: das Willkommens-Modal (z=60) verschluckte in Messlaeufen alle
+  Brettklicks - Sonden raeumen Modale jetzt ueber ihren Hauptknopf ab.
+
 ## 0.49.0
 
 DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN - ROCHADE UND EN PASSANT:

@@ -388,7 +388,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const fileLbl = showCoords && rr === H - 1 ? "abcdefghij"[f] : null;
       const rankLbl = showCoords && ff === 0 ? String(r + 1) : null;
       cells.push(
-        <div key={i} onClick={() => tap(i)} style={{ position: "relative",
+        <div key={i} data-zelle={i} onClick={() => tap(i)} style={{ position: "relative",
           // the flat colour + a soft diagonal light stand INSTANTLY — no loading
           // state at all; the marble whisper fades in per square once every slab
           // is preloaded, so nothing ever pops
