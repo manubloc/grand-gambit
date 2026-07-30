@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.59.0
+
+HUB-KACHELN AUF ECHTEM SCHWARZ, FUGENLOSE BILDER, STATUS AUS DEM MOTIV:
+
+- Kachelgrund von #0a0910 auf ECHTES SCHWARZ (#000) - die nachtschwarzen
+  Story-Bilder sinken fugenlos ein.
+- Besitzer-Fund einer sichtbaren NAHT: der linke Schleier endete bei 72 %,
+  die linke Bildkante beginnt aber je nach Seitenverhaeltnis erst bei
+  ~75-85 % der Kachelbreite. Der Verlauf laeuft jetzt sanft bis 94 %
+  (0,92 -> 0,55 -> 0,24 -> 0) und legt sich ueber jede Bildkante.
+  Messbeleg: Grund rgb(0,0,0), Verlaufsende 94 %.
+- Kampagnen-Kachel: "Naechster Halt" stand hinten ins Motiv hinein - jetzt
+  eigene Zeile mit rechtem Polster in Bildbreite (min(30 %, 130 px)),
+  gemessen 131 px frei bis zur Kachelkante.
+
 ## 0.58.0
 
 WERKSTATT: RASTER MIT SOLL-MASS, FIGUR VERSCHIEBEN UND SKALIEREN, LADE-HEILUNG:

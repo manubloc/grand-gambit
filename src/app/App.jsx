@@ -639,11 +639,13 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
     const shineDelay = useShineDelay();
     return (
     <div style={{ background: bild
-        // HALB SO GROSS, RECHTS UNTEN (Besitzer, v0.52): das Motiv sitzt als
-        // kleines Bild in der Ecke (Hoehe ~52 % der Kachel), der Rest ist der
-        // eigene schwarze Grund - die Assets sind dafuer eng aufs Motiv
-        // beschnitten. Der Schleier von links sichert weiter die Schrift.
-        ? `linear-gradient(90deg, rgba(10,9,16,.88) 0%, rgba(10,9,16,.45) 46%, rgba(10,9,16,0) 72%), url(${bild}) right center / auto 100% no-repeat, #0a0910`
+        // VOLLE HOEHE RECHTS (v0.57) auf ECHTEM SCHWARZ (Besitzer, v0.59):
+        // die Story-Bilder sind selbst nachtschwarz - Grund #000 laesst sie
+        // fugenlos einsinken. Der Schleier laeuft bis 94 % (alt: 72 %), denn
+        // die linke BILDKANTE liegt je nach Seitenverhaeltnis erst bei
+        // ~75-85 % der Kachelbreite - vorher endete der Verlauf davor und
+        // die Naht stand sichtbar im Raum (Besitzer-Fund).
+        ? `linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,.24) 76%, rgba(0,0,0,0) 94%), url(${bild}) right center / auto 100% no-repeat, #000`
         : `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
       position: "relative", overflow: "hidden", ...style }}>
@@ -693,7 +695,11 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           ? <span style={{ color: T.dim }}>{t("hub.campFresh")}</span>
           : <>
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".06em" }}>{t("camp.leagueNo", { r: ["I","II","III","IV","V"][(profile.campaign?.league || 1) - 1] || profile.campaign?.league })}</span> <span style={{ color: T.faint }}>·</span> <span className="gg-serif" style={{ color: T.dim, letterSpacing: ".06em" }}>{t("story.chapter", { r: roman })} · {en ? ch.titleEn : ch.titleDe}</span><br />
-          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span> · {t("hub.nextStop")}: <b>{cur?.place}</b>
+          {/* STATUS OHNE BILDBERUEHRUNG (Besitzer, v0.59): der "Naechste
+              Halt" stand hinten ins Motiv hinein - jetzt eigene Zeile mit
+              rechtem Polster in Bildbreite, das Motiv bleibt frei. */}
+          <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span><br />
+          <span style={{ display: "inline-block", paddingRight: "min(30%, 130px)" }}>{t("hub.nextStop")}: <b>{cur?.place}</b></span>
           <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
         bild={karteKampagne} art={null} style={{ gridColumn: "1 / -1" }} />
       <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={null}
