@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.56.0
+
+DIE WERKSTATT WIRD RETUSCHE-TISCH - ZOOM, PINSEL, PIPETTE, RADIERER:
+
+- ZOOM (bis 800 %) mit Verschieben-Werkzeug; PINSEL mit Farbwahl und
+  PIPETTE (tippt eine Stelle an und uebernimmt deren Farbe, wechselt dann
+  selbst zum Pinsel); RADIERER, der ehrlich ins Transparente radiert.
+  PINSEL UND RADIERER mit GROESSE (2-90 px) und HAERTE (0-100 %, weicher
+  Verlaufsstempel). RUECKGAENGIG ueber sechs Schritte.
+- EBENEN-BAUART: Grundbild -> Regler-Rechnung -> Strich-Ebene -> Radier-
+  Maske. Handstriche ueberleben dadurch jeden Reglerzug und wandern mit in
+  Vorschau, Zip-Export und GitHub-Ladung. Gespeichert wohnen sie je Figur
+  als kompakte webp-DataURLs im Geraet (mit Platz-Warnung).
+- Sondenbeweise: Pinselstrich faerbt den Messpixel in Pinselfarbe, der
+  Radierer senkt sein Alpha (255 -> 69 am weichen Rand), Zoomanzeige 150 %.
+  Sondenlehre: setPointerCapture kann werfen und haette den Malvorgang
+  abgewuergt - jetzt gefangen.
+
 ## 0.55.0
 
 DIE WERKSTATT LAEDT DIREKT ZU GITHUB (Admin-Weg ohne Umweg):
