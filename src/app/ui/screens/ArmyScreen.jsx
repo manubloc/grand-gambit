@@ -1551,10 +1551,9 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
       { value: "gear", label: t("army.tabGear") },
-      { value: "chron", label: t("army.tabChron") },
     ]} />
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
-    {tab === "chron" && <ChroniclePanel profile={profile} t={t} en={en} account={account} />}
+    {/* Die Chronik wohnt seit v0.51 in der AKADEMIE - ChroniclePanel bleibt hier nur exportiert. */}
     {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
   </div>;

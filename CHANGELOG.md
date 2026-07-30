@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.51.0
+
+AKADEMIE VERSCHMOLZEN, DIE MENUES STELLEN SICH SELBST VOR:
+
+- AKADEMIE auf DREI Reiter (Besitzer: "Regeln, Figuren und Chronik sind doch
+  dasselbe" - stimmt): CHRONIK (jede Figur lehrt ihre Gangart selbst, die
+  klassischen sechs eingeschlossen; hierher zieht die Chronik ENDGUELTIG aus
+  dem Hofstaat um), SPIELWEISE (Ziel, Zugrecht, die Sonderzuege, HP, Energie,
+  Ausruestung, Kampagne und der HOFWERT samt seiner Online-Bedeutung - die
+  frueheren Regel-Tafeln stehen hier vorn) und SCHNELLKURS.
+- Der Hofstaat traegt nur noch Stammbaum, Aufstellung, Ausruestung -
+  aufgeraeumter, wie gewuenscht. Der Chronik-Waechter in test_ui zog mit um.
+- ERSTBESUCH-HERALDE: beim ersten Betreten eines Menues stellt sich der Raum
+  EINMAL vor (Titel, ein Satz, kurzer Text) - "Verstanden" bringt genau
+  dieses Menue zum Schweigen, "Alle Vorstellungen ueberspringen" alle.
+  Gemerkt im Spielstand (profile.gesehen). Datensatz MENUE_LEHREN in
+  src/content/lehren.js - dieselbe Quelle traegt spaeter auch die Kurztexte,
+  die aus den Menues weichen.
+- Die festen Messwerkzeuge bestaetigen Heralde jetzt wie ein Mensch (Haupt-
+  knopf per Beschriftung) - Lehre: ein Abraeumer, der stumpf den LETZTEN
+  Knopf drueckt, trifft im Herald "Alle ueberspringen" (so wurde immerhin
+  der Ueberspringen-Pfad bewiesen).
+
 ## 0.50.0
 
 DIE KAMPFLEISTE - FIGUR GROSS, TALENTE ALS ECHTE SCHALTFLAECHEN:

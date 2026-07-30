@@ -27,6 +27,7 @@ import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
+import { MENUE_LEHREN } from "../content/lehren.js";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
@@ -427,6 +428,38 @@ export default function App() {
           Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
           bleibt er fort - dort gehoert der Blick dem Brett bzw. der Karte. */}
       {!immersive && !inMatch && !(tab === "play" && view === "camp") && <RissBoden profile={profile} />}
+      {(() => {
+        // ── ERSTBESUCH-HERALD (v0.51): beim ersten Betreten eines Menues
+        // stellt sich der Raum EINMAL vor - danach schweigt er fuer immer
+        // (profile.gesehen). "Alle ueberspringen" bringt alle zum Schweigen.
+        const ml = MENUE_LEHREN[profile?.lang === "en" ? "en" : "de"];
+        const eintrag = ml && ml[tab];
+        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !inMatch && !(profile?.gesehen || {})[tab];
+        if (!zeigen) return null;
+        const merken = (alle) => dispatch({ type: "REPLACE", profile: { ...profile,
+          gesehen: alle ? Object.fromEntries(Object.keys(ml).map((k) => [k, true]))
+                        : { ...(profile.gesehen || {}), [tab]: true } } });
+        return (
+          <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
+            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+            <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+              border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
+              boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
+              <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
+              <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
+              <button onClick={() => merken(false)} style={{ width: "100%", padding: "11px 14px", borderRadius: 12,
+                border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 900, fontSize: 14.5, color: "#17110a",
+                background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" }}>
+                {profile?.lang === "en" ? "Got it" : "Verstanden"}</button>
+              <button onClick={() => merken(true)} style={{ width: "100%", marginTop: 8, padding: "9px 14px", borderRadius: 12,
+                border: `1px solid ${T.line}`, cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12.5,
+                color: T.dim, background: "transparent" }}>
+                {profile?.lang === "en" ? "Skip all introductions" : "Alle Vorstellungen überspringen"}</button>
+            </div>
+          </div>
+        );
+      })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
@@ -468,6 +501,38 @@ export default function App() {
       ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {!immersive && !inMatch && <RissBoden profile={profile} />}
+      {(() => {
+        // ── ERSTBESUCH-HERALD (v0.51): beim ersten Betreten eines Menues
+        // stellt sich der Raum EINMAL vor - danach schweigt er fuer immer
+        // (profile.gesehen). "Alle ueberspringen" bringt alle zum Schweigen.
+        const ml = MENUE_LEHREN[profile?.lang === "en" ? "en" : "de"];
+        const eintrag = ml && ml[tab];
+        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !inMatch && !(profile?.gesehen || {})[tab];
+        if (!zeigen) return null;
+        const merken = (alle) => dispatch({ type: "REPLACE", profile: { ...profile,
+          gesehen: alle ? Object.fromEntries(Object.keys(ml).map((k) => [k, true]))
+                        : { ...(profile.gesehen || {}), [tab]: true } } });
+        return (
+          <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
+            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+            <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+              border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
+              boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
+              <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
+              <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
+              <button onClick={() => merken(false)} style={{ width: "100%", padding: "11px 14px", borderRadius: 12,
+                border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 900, fontSize: 14.5, color: "#17110a",
+                background: "linear-gradient(160deg, #f0d68a, #d9b565 55%, #b08c44)" }}>
+                {profile?.lang === "en" ? "Got it" : "Verstanden"}</button>
+              <button onClick={() => merken(true)} style={{ width: "100%", marginTop: 8, padding: "9px 14px", borderRadius: 12,
+                border: `1px solid ${T.line}`, cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12.5,
+                color: T.dim, background: "transparent" }}>
+                {profile?.lang === "en" ? "Skip all introductions" : "Alle Vorstellungen überspringen"}</button>
+            </div>
+          </div>
+        );
+      })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}

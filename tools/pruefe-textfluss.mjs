@@ -102,10 +102,23 @@ await page.waitForTimeout(800);
 // Hofstaat: alle vier Reiter
 // Das Dock heisst mobil <nav>, breit <aside> - wir greifen per BESCHRIFTUNG,
 // nicht per Index, damit derselbe Lauf beide Layouts traegt.
+// ERSTBESUCH-HERALDS (v0.51) stellen jeden Raum einmal vor - der Waechter
+// bestaetigt sie wie ein Mensch (Hauptknopf), sonst laege der Schleier
+// ueber allen Messungen.
+const abraeumen = async () => { for (let i = 0; i < 6; i++) {
+  const g = await page.evaluate(() => {
+    const sch = [...document.querySelectorAll("div")].find((d) => { const cs = getComputedStyle(d);
+      return cs.position === "fixed" && cs.zIndex === "60" && d.getBoundingClientRect().width > 300; });
+    if (!sch) return false;
+    const kn = [...sch.querySelectorAll("button")].filter((b) => b.getBoundingClientRect().height > 30);
+    (kn.find((b) => /Los geht|Weiter|Verstanden|Got it|Start/.test(b.innerText)) || kn[kn.length - 1])?.click();
+    return true; });
+  if (!g) break; await page.waitForTimeout(650); } };
 const dock = async (name) => { await page.evaluate((n) => {
   const bs = [...document.querySelectorAll("nav button, aside button")];
   const z = bs.find((b) => (b.innerText || "").replace(/\s+/g, " ").trim().toLowerCase().includes(n));
-  z?.click(); }, name); await page.waitForTimeout(1050); };
+  z?.click(); }, name); await page.waitForTimeout(1050); await abraeumen(); };
+await abraeumen();
 await dock("hofstaat");
 for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) {
   await page.evaluate((r) => { const b = [...document.querySelectorAll("main button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);

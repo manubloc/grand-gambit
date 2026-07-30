@@ -1,10 +1,10 @@
 // ── DIE AKADEMIE ────────────────────────────────────────────────────────────
-// Auftrag des Besitzers (v0.50): ein Lernhaus mit Reitern wie im Hofstaat -
-// REGELN (Schach samt der neuen Sonderzuege), FIGUREN (die klassischen sechs
-// und die Hausfiguren), SPIELWEISE (HP, Energie, Ausruestung, Kampagne und
-// vor allem der HOFWERT samt seiner Online-Bedeutung), CHRONIK (dieselbe
-// Stimme wie im Hofstaat, hier eingebettet) und der SCHNELLKURS (die alte
-// Zwei-Minuten-Akademie, unveraendert). Alle Texte kommen aus EINEM
+// Besitzer-Feedback (v0.51): "Regeln, Figuren und Chronik sind doch das
+// gleiche" - stimmt. DREI Reiter statt fuenf: CHRONIK (jede Figur lehrt ihre
+// Gangart selbst, die klassischen sechs eingeschlossen), SPIELWEISE (Ziel,
+// Sonderzuege, HP, Energie, Ausruestung, Kampagne und der HOFWERT samt
+// seiner Online-Bedeutung - die frueheren Regeln-Tafeln stehen hier vorn)
+// und der SCHNELLKURS. Alle Texte kommen aus EINEM
 // Datensatz (src/content/lehren.js), den spaeter auch die Erstbesuch-Popups
 // der Menues lesen - Kurz- und Langfassung laufen nie auseinander.
 import { useState } from "react";
@@ -31,16 +31,14 @@ function Lehrtafel({ eintrag }) {
 }
 
 export function AkademieScreen({ profile, t, en = false, account = null, onDone }) {
-  const [tab, setTab] = useState("regeln");
+  const [tab, setTab] = useState("chron");
   const L = LEHREN[en ? "en" : "de"];
-  const liste = tab === "regeln" ? L.regeln : tab === "figuren" ? L.figuren : tab === "spielweise" ? L.spielweise : null;
+  const liste = tab === "spielweise" ? [...L.regeln, ...L.spielweise] : null;
   return (
     <div style={{ display: "grid", gap: 12, paddingTop: 8 }}>
       <Segmented value={tab} onChange={setTab} options={[
-        { value: "regeln", label: en ? "Rules" : "Regeln" },
-        { value: "figuren", label: en ? "Pieces" : "Figuren" },
-        { value: "spielweise", label: en ? "Playstyle" : "Spielweise" },
         { value: "chron", label: en ? "Chronicle" : "Chronik" },
+        { value: "spielweise", label: en ? "Playstyle" : "Spielweise" },
         { value: "kurs", label: en ? "Crash course" : "Schnellkurs" },
       ]} />
       {liste && (
@@ -58,7 +56,7 @@ export function AkademieScreen({ profile, t, en = false, account = null, onDone 
       {tab === "kurs" && (
         <div style={{ display: "grid", gap: 10 }}>
           <GoldRule />
-          <TutorialScreen t={t} en={en} onDone={() => setTab("regeln")} />
+          <TutorialScreen t={t} en={en} onDone={() => setTab("chron")} />
         </div>
       )}
     </div>

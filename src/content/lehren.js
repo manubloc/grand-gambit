@@ -81,3 +81,32 @@ export const LEHREN = {
     ],
   },
 };
+
+
+// ── DIE MENUE-LEHREN ────────────────────────────────────────────────────────
+// Erstbesuch-Popups (Besitzer, v0.51): "Alle Info-Texte aus den Menues raus -
+// beim ersten Klick auf einen Menuepunkt erklaert ein Popup mit Ueberspringen-
+// Knopf, was hier wohnt." Eigener Export, damit die App sie ohne Umbau der
+// LEHREN-Struktur lesen kann; gleiche Bauart { titel, kurz, text }.
+export const MENUE_LEHREN = {
+  de: {
+    play: { titel: "Spielen", kurz: "Dein Weg aufs Brett.",
+      text: "Hier beginnt alles: die KAMPAGNE erzählt deine Reise durch zehn Ligen, das SCHNELLE SPIEL wirft dich sofort auf ein Brett deiner Wahl, und im ONLINE-DUELL wartet ein echter Gegner. Die Akademie darunter erklärt Schach und alles, was dieses Spiel darüber hinaus kann." },
+    army: { titel: "Hofstaat", kurz: "Deine Figuren, deine Aufstellung.",
+      text: "Dein Hof versammelt alle Figuren, die dir folgen. Im STAMMBAUM verteilst du Erfahrungspunkte und schaltest Fähigkeiten frei, in der AUFSTELLUNG bestimmst du, wer aufs Brett zieht, und unter AUSRÜSTUNG rüstest du deine Kämpfer. Je stärker der Hof, desto höher dein HOFWERT — und der entscheidet online über faire Paarungen." },
+    ach: { titel: "Schatzkammer", kurz: "Gold wird zu Stärke.",
+      text: "Hier gibst du dein erspieltes Gold aus: Tränke für HP-Gefechte, Sanduhren für einen zurückgenommenen Zug, Truhen und mehr. Alles Gekaufte liegt danach im Hofstaat unter Ausrüstung bereit — und die Ruhmeshalle deiner Taten wohnt gleich mit hier." },
+    profile: { titel: "Profil", kurz: "Konto, Spielstände, Einstellungen.",
+      text: "Hier wohnen deine Spielstände, dein Konto für Online-Duelle, Sprache, Musik und die Darstellung der Brettfiguren. Auch das Neuladen der App nach einem Update findest du hier." },
+  },
+  en: {
+    play: { titel: "Play", kurz: "Your way onto the board.",
+      text: "Everything starts here: the CAMPAIGN tells your journey through ten leagues, QUICK PLAY drops you onto any board at once, and an ONLINE DUEL brings a real opponent. The Academy below teaches chess and everything this game adds on top." },
+    army: { titel: "Court", kurz: "Your pieces, your formation.",
+      text: "Your court gathers every piece that follows you. In the TREE you spend experience and unlock talents, FORMATION decides who takes the board, and GEAR equips your fighters. The stronger the court, the higher your COURT VALUE — and online, that value drives fair matchmaking." },
+    ach: { titel: "Treasury", kurz: "Gold becomes strength.",
+      text: "Spend your earned gold here: potions for HP battles, hourglasses to take back a move, chests and more. Everything you buy waits in your court under Gear — and your Hall of Fame lives right here too." },
+    profile: { titel: "Profile", kurz: "Account, saves, settings.",
+      text: "Your save slots live here, plus your account for online duels, language, music and the board-piece style. Reloading the app after an update is here too." },
+  },
+};

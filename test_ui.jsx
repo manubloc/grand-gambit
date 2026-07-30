@@ -21,6 +21,7 @@ import { LeaveMatchAsk, GameIntro } from "./src/app/App.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN, TIME_MODES, timeModeById, clockFor } from "./src/content/index.js";
+import { AkademieScreen } from "./src/app/ui/screens/AkademieScreen.jsx";
 import { ArmyScreen, GearPanel } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile, evaluate } from "./src/meta/index.js";
@@ -280,8 +281,10 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
 // entry shows BOTH faces — the battle painting and the plain vector sigil.
 {
   const t = makeT("de");
-  const chron = (account) => html(<ArmyScreen profile={defaultProfile()} dispatch={() => {}}
-    t={t} initialTab="chron" account={account} />);
+  // v0.51: die Chronik wohnt in der AKADEMIE (Besitzer: "Regeln, Figuren und
+  // Chronik sind dasselbe") - der Waechter zieht mit um und prueft sie dort.
+  const chron = (account) => html(<AkademieScreen profile={defaultProfile()}
+    t={t} en={false} account={account} onDone={() => {}} />);
   const player = chron(null);
   const admin = chron({ id: "a", name: "Admin", isAdmin: true });
 
