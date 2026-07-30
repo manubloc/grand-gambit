@@ -1,5 +1,34 @@
 # Changelog - Grand Gambit
 
+## 0.49.0
+
+DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN - ROCHADE UND EN PASSANT (Umwandlung
+und Doppelschritt gab es schon):
+
+- ROCHADE: Koenig ungezogen, Turm ungezogen in seiner Ecke der Heimreihe,
+  Gasse frei - dann zieht der Koenig ZWEI Felder zum Turm und der Turm
+  springt im selben Zug auf die Innenseite. Kein Weg aus dem Schach heraus,
+  kein Weg ueber ein bedrohtes Kreuzfeld. Funktioniert auf dem 8x8- wie dem
+  10x10-Brett (die Bedingung liest die Ecke, nicht eine feste Spalte). Auf
+  dem Brett erscheint sie als markierter Zwei-Felder-Zug des Koenigs.
+- EN PASSANT: zog der gegnerische Nachbar-Bauer im LETZTEN Zug per
+  Doppelschritt vorbei, darf er im Vorbeigehen geschlagen werden - Zug aufs
+  uebersprungene Feld, der Bauer verschwindet von seinem. Genau einen Zug
+  lang. Nur ausserhalb des HP-Modus (dort ist Schlagen Schaden am Zielfeld,
+  ein "Vorbeiziehen" gibt es nicht).
+- Beides laeuft durch UI, KI, PvP und Fernpartien unveraendert durch: das
+  volle Zugobjekt reist vom Brett-Tipp bis in den Netz-Befehl.
+- NEUE SUITE 20 (test_sonderzuege.mjs, 17 Pruefungen) in der Kette:
+  KETTEN-SOLL AB JETZT 808 PRUEFUNGEN / 20 SUITEN.
+
+Drei Funde auf dem Weg, fuer die Uebergabe:
+(1) Das Hausbrett ist 10x10 - die Suite scannt seither ALLE Koordinaten aus
+dem Brett statt 8x8 zu raten. (2) isSquareAttacked zaehlt nur SCHLAG-Zuege -
+ein leeres Kreuzfeld ist fuer sie nie bedroht; die Wache stellt den Koenig
+jetzt probeweise aufs Kreuzfeld und fragt die normale Schachprobe. (3) Bei
+En passant ist das Zielfeld leer (target null), geschlagen wird trotzdem -
+der lastMove-Bau kennt jetzt das Opfer (Crash "reading 'kind' of null").
+
 ## 0.48.0
 
 DIE GROSSEN KACHELN ERZAEHLEN JETZT DIE GESCHICHTE (drei Bilder des

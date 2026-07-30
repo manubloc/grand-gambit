@@ -185,7 +185,20 @@ export function applyMove(state, move, opts) {
     }
   }
 
-  const captured = hp ? lethal : (!!target && !bounced);
+  // SONDERZUEGE (v0.49) - Rochade: der Turm springt im selben Zug auf die
+  // Innenseite des Koenigs. En passant: der ueberholte Bauer verschwindet
+  // von SEINEM Feld - das Zielfeld des Schlagzugs war leer, der stille
+  // Zweig oben hat den Schlaeger bereits gezogen.
+  if (move.special === "castle") {
+    const rk = b[move.rookFrom];
+    if (rk && rk.kind === "R") { b[move.rookTo] = rk; b[move.rookFrom] = null; rk.hasMoved = true; }
+  }
+  let epOpfer = null;
+  if (move.special === "enpassant") {
+    epOpfer = b[move.epCapture] || null;
+    if (epOpfer) { ns.captured[piece.color].push(epOpfer.kind); b[move.epCapture] = null; }
+  }
+  const captured = hp ? lethal : ((!!target && !bounced) || !!epOpfer);
   // an armed TIME RIFT (magic circle) lets this move keep the turn — once
   if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
   else ns.turn = other(state.turn);
@@ -194,11 +207,16 @@ export function applyMove(state, move, opts) {
     from: move.from, to: move.to, color: piece.color, kind: move.kind, byHero: !!piece.hero,
     capture: captured, bounced, damaged, dmg, lethal,
     targetHpAfter: hp && target ? Math.max(0, target.hp) : null,
-    captured: captured ? target.kind : null,
-    hitKind: target ? target.kind : null,
-    hitColor: target ? target.color : null,
-    hitHero: target ? !!target.hero : false,
+    // Bei EN PASSANT ist das Zielfeld leer (target null), geschlagen wird
+    // trotzdem - das Opfer stand auf seinem eigenen Feld (Crash-Befund:
+    // "Cannot read properties of null" genau hier).
+    captured: captured ? (target ? target.kind : epOpfer ? epOpfer.kind : null) : null,
+    hitKind: target ? target.kind : epOpfer ? epOpfer.kind : null,
+    hitColor: target ? target.color : epOpfer ? epOpfer.color : null,
+    hitHero: target ? !!target.hero : !!(epOpfer && epOpfer.hero),
     special: move.special || null, promotion: move.promotion || null,
+    double: !!move.double, epCapture: move.epCapture ?? null,
+    rookFrom: move.rookFrom ?? null, rookTo: move.rookTo ?? null,
   };
   if (record) ns.history = state.history.concat([state]);
   return ns;
@@ -210,9 +228,23 @@ export function legalMoves(state, color = state.turn) {
   const pseudo = pseudoMoves(state, color);
   if (state.rules === "hp") return pseudo;
   const out = [];
+  const imSchach = inCheck(state, color);
   for (let i = 0; i < pseudo.length; i++) {
-    const ns = applyMove(state, pseudo[i]);
-    if (!inCheck(ns, color)) out.push(pseudo[i]);
+    const m = pseudo[i];
+    // ROCHADE-SICHERHEIT (v0.49): aus dem Schach heraus gibt es keine
+    // Rochade, und das KREUZFELD des Koenigs darf nicht bedroht sein - das
+    // Zielfeld prueft die normale Schachprobe darunter ohnehin.
+    if (m.special === "castle") {
+      if (imSchach) continue;
+      // isSquareAttacked zaehlt nur SCHLAG-Zuege - ein LEERES Kreuzfeld ist
+      // fuer sie nie bedroht (gemessen: Turm zielte frei darauf, Antwort
+      // false). Der ehrliche Test: den Koenig probeweise EINEN Schritt auf
+      // das Kreuzfeld stellen und die normale Schachprobe fragen.
+      const zwischen = applyMove(state, { from: m.from, to: m.cross });
+      if (inCheck(zwischen, color)) continue;
+    }
+    const ns = applyMove(state, m);
+    if (!inCheck(ns, color)) out.push(m);
   }
   return out;
 }

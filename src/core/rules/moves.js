@@ -45,7 +45,7 @@ function slide(moves, from, f0, r0, dirs, piece, board, D) {
   }
 }
 
-function pawnMoves(moves, from, f, r, piece, board, D) {
+function pawnMoves(moves, from, f, r, piece, board, D, state) {
   const dir = dirOf(piece.color);
   const early = hasAbility(piece, "pawn_early_promo");
   const promoR = promoRank(piece.color, D.h);
@@ -67,6 +67,23 @@ function pawnMoves(moves, from, f, r, piece, board, D) {
     if (t && t.color !== piece.color)
       push(moves, from, ix(cf, cr, D), piece, true, t.kind, isPromo(cr) ? { promotion: KIND.QUEEN } : {});
   }
+  // ── EN PASSANT (v0.49): stand der Nachbar-Bauer des Gegners im LETZTEN Zug
+  // per Doppelschritt neben uns, darf er im Vorbeigehen geschlagen werden -
+  // Zug auf das UEBERSPRUNGENE Feld, der Bauer verschwindet von seinem.
+  // Nur ausserhalb des HP-Modus: dort gibt es kein "Vorbeiziehen", Schlagen
+  // ist Schaden auf dem Zielfeld.
+  if (state && state.rules !== "hp") {
+    const lm = state.lastMove;
+    if (lm && lm.kind === KIND.PAWN && lm.double && !lm.capture) {
+      const lf = fileOf(lm.to, D.w), lr = rankOf(lm.to, D.w);
+      if (lr === r && Math.abs(lf - f) === 1) {
+        const ziel = ix(lf, r + dir, D);
+        if (onBoard(lf, r + dir, D) && !board[ziel])
+          push(moves, from, ziel, piece, true, KIND.PAWN, { special: "enpassant", epCapture: lm.to });
+      }
+    }
+  }
+
   // ABILITY: forward capture (once)
   if (hasAbility(piece, "pawn_forward_capture") && onBoard(f, fwd, D)) {
     const t = board[ix(f, fwd, D)];
@@ -104,9 +121,33 @@ export function pieceMoves(state, sqIndex) {
   const f = fileOf(sqIndex, D.w), r = rankOf(sqIndex, D.w), from = sqIndex, moves = [];
 
   switch (piece.kind) {
-    case KIND.PAWN: pawnMoves(moves, from, f, r, piece, board, D); break;
+    case KIND.PAWN: pawnMoves(moves, from, f, r, piece, board, D, state); break;
     case KIND.KNIGHT: for (const [df, dr] of KNIGHT_JUMPS) step(moves, from, f + df, r + dr, piece, board, D); break;
-    case KIND.KING: for (const [df, dr] of KING_STEPS) step(moves, from, f + df, r + dr, piece, board, D); break;
+    case KIND.KING: {
+      for (const [df, dr] of KING_STEPS) step(moves, from, f + df, r + dr, piece, board, D);
+      // ROCHADE (v0.49): Koenig ungezogen, Turm ungezogen in seiner Ecke der
+      // Heimreihe, dazwischen frei - dann zieht der Koenig ZWEI Felder zum
+      // Turm und der Turm springt auf die Innenseite. Die Sicherheit von
+      // Stand- und Kreuzfeld prueft legalMoves (attacks.js importiert dieses
+      // Modul - ein Gegenimport waere ein Zyklus). Funktioniert auf jedem
+      // Brett, dessen Ecke ein ungezogener eigener Turm hueten.
+      if (!piece.hasMoved && !piece.moveSpec) {
+        for (const [rf, richtung] of [[D.w - 1, 1], [0, -1]]) {
+          if (D.holes.size && D.holes.has(ix(rf, r, D))) continue;
+          const turm = board[ix(rf, r, D)];
+          if (!turm || turm.kind !== KIND.ROOK || turm.color !== piece.color || turm.hasMoved) continue;
+          let frei = true;
+          for (let ff = Math.min(f, rf) + 1; ff < Math.max(f, rf); ff++)
+            if (!onBoard(ff, r, D) || board[ix(ff, r, D)]) { frei = false; break; }
+          if (!frei) continue;
+          const zf = f + 2 * richtung;
+          if (!onBoard(zf, r, D)) continue;
+          push(moves, from, ix(zf, r, D), piece, false, null,
+            { special: "castle", rookFrom: ix(rf, r, D), rookTo: ix(f + richtung, r, D), cross: ix(f + richtung, r, D) });
+        }
+      }
+      break;
+    }
     case KIND.BISHOP: slide(moves, from, f, r, DIAG, piece, board, D); break;
     case KIND.ROOK: slide(moves, from, f, r, ORTHO, piece, board, D); break;
     case KIND.QUEEN: slide(moves, from, f, r, KING_STEPS, piece, board, D); break;
