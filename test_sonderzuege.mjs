@@ -55,6 +55,14 @@ ok("und der Turm auf der Innenseite des Koenigs", g5.board[ix(kF + 1, kR)]?.kind
 ok("die Ecke ist leer", !g5.board[ix(W - 1, kR)]);
 ok("beide Rochade-Zeugen sind im lastMove notiert", g5.lastMove.special === "castle" && g5.lastMove.rookTo === ix(kF + 1, kR));
 
+// Lange Rochade: die andere Seite raeumen
+const gl = structuredClone(g0);
+for (let f = 1; f < kF; f++) gl.board[ix(f, kR)] = null;
+const lang = cast(gl);
+ok("die LANGE Rochade wird angeboten, wenn ihre Gasse frei ist", lang.length === 1 && lang[0].to === ix(kF - 2, kR));
+const gl2 = applyMove(gl, lang[0]);
+ok("lange Rochade: Turm springt auf die Innenseite", gl2.board[ix(kF - 1, kR)]?.kind === "R" && !gl2.board[ix(0, kR)]);
+
 // ── En passant ──────────────────────────────────────────────────────────────
 // Weisser Bauer vier Reihen vor (zwei Doppelschritte simuliert per Chirurgie),
 // schwarzer Nachbar zieht Doppelschritt vorbei - genau EINEN Zug lang darf

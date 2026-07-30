@@ -30,3 +30,8 @@ Zwei GPT-Blaetter nachgereicht (design/vorlagen). Entscheidungen: (a) VORLAGE SC
 
 ## Checkpoint 7 — Rueckmeldung des Besitzers (v0.44.0)
 Auswahl endgueltig violett (Chronik: v0.42 violett -> v0.43 gold per Vorlage -> v0.44 violett nach Live-Sicht). Sofort-spielen-Griff im Hub (persistierte letzte Einstellungen). Online: Modus ganz oben, Einstellungen ans Ende. NEU pruefe-textfluss.mjs als 320-px-Torwaechter: 20 Funde, alle behoben (Silbentrennung; gg-fit-svg mit bestimmten Spuren - Lehrstueck: percent-max-height gegen auto-Grid-Zeilen ist unbestimmt). Hofstaat: eine Handschrift fuer Hof und Meister, Stufen auch an Verbuendeten. Hinweis: im Hub laufen jetzt ZWEI gestaffelte Glanzlaeufe (Kampagne + Sofort spielen) - bewusste Ausnahme von der Ein-Glanz-Regel zugunsten des Sofortstarts; die Staffelung (useShineDelay) verhindert den Chor.
+
+## v0.49.0 - Sonderzuege
+Kettensoll: **810 gruen / 20 Suiten** (vorher 791/19; neu: test_sonderzuege.mjs).
+Rochade + En passant in Engine (moves.js, transitions.js), Kreuzfeld-Wache in
+legalMoves, lastMove traegt double/epCapture/rookFrom/rookTo.

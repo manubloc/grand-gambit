@@ -2,6 +2,34 @@
 
 ## 0.49.0
 
+ROCHADE UND EN PASSANT - DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN:
+
+- ROCHADE: Koenig ungezogen, Turm ungezogen in seiner Ecke der Heimreihe,
+  Gasse frei - dann zieht der Koenig ZWEI Felder zum Turm und der Turm
+  springt im selben Zug auf seine Innenseite. Aus dem Schach heraus gibt es
+  keine Rochade, und das Kreuzfeld darf nicht bedroht sein (die Wache sitzt
+  in legalMoves - attacks.js importiert den Zuggenerator, ein Gegenimport
+  waere ein Zyklus). Funktioniert auf jedem Brett mit Eckturm, also auch auf
+  dem 10x10-Hausbrett (kurz UND lang).
+- EN PASSANT: zog der gegnerische Nachbarbauer im LETZTEN Zug per
+  Doppelschritt vorbei, darf er im Voruebergehen geschlagen werden - Zug auf
+  das uebersprungene Feld, das Opfer verschwindet von seinem eigenen. Nur
+  einen Zug lang, und nur ausserhalb des HP-Modus (dort gibt es kein
+  "Vorbeiziehen", Schlagen ist Schaden auf dem Zielfeld).
+- Beide Zuege erscheinen OHNE UI-Umbau direkt auf dem Brett: die Feldwahl
+  reicht den vollen generierten Zug durch (BoardView targets.get), der
+  Reducer wendet ihn samt rookFrom/epCapture an. Die Zugliste unter dem
+  Brett und die Listung der Rochade als Faehigkeit kommen mit dem
+  Kampfleisten-Umbau.
+- NEUE SUITE test_sonderzuege.mjs (19 Pruefungen, layout-agnostisch - alles
+  wird aus dem Brett gescannt, nichts geraten): Angebot, alle Verweigerungen
+  (gezogen, blockiert, Kreuzfeld bedroht, Fenster zu), Ausfuehrung beider
+  Seiten, Schlagbuchung. DAS KETTENSOLL STEIGT VON 791/19 AUF 810/20.
+- Crash-Befund behoben: bei En passant ist das Zielfeld leer (target null),
+  geschlagen wird trotzdem - lastMove bucht das Opfer jetzt von SEINEM Feld.
+
+## 0.49.0
+
 DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN - ROCHADE UND EN PASSANT (Umwandlung
 und Doppelschritt gab es schon):
 
