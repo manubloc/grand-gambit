@@ -18,6 +18,12 @@ const STANDARD = {
 };
 const V5 = { ...STANDARD, spreizen: 1, sattGrau: 0.28, sattLila: 0.75, glimmStaerke: 1.62, glimmChroma: 1.18 };
 const SCHLUESSEL = "gg_werkstatt_v1";
+// MIGRATIONSLESER (v0.57.1): v0.54/55 speicherte die Regler FLACH als
+// alle[id] = {spreizen,...}; v0.56 erwartete alle[id].regler und ignorierte
+// dadurch alle alten Speicherstaende - "meine Aenderungen werden nicht
+// dargestellt". Dieser Leser versteht beide Formen.
+const holeRegler = (e) => e?.regler ?? (e && typeof e === "object" && "spreizen" in e ? e : {});
+const holeLage = (e) => ({ dx: 0, dy: 0, skala: 1, ...(e?.lage || {}) });
 const leseAlle = () => { try { return JSON.parse(localStorage.getItem(SCHLUESSEL) || "{}"); } catch { return {}; } };
 const schreibeAlle = (d) => { try { localStorage.setItem(SCHLUESSEL, JSON.stringify(d)); return true; } catch { return false; } };
 
@@ -117,14 +123,20 @@ export function WerkstattScreen() {
   const [idx,setIdx]=useState(0);
   const [alle,setAlle]=useState(leseAlle);
   const fig=KATALOG[idx];
-  const [p,setP]=useState(()=>({ ...STANDARD, ...(leseAlle()[KATALOG[0]?.id]?.regler||{}) }));
+  const [p,setP]=useState(()=>({ ...STANDARD, ...holeRegler(leseAlle()[KATALOG[0]?.id]) }));
   const [status,setStatus]=useState("");
+  const pRef=useRef(p); pRef.current=p;
   const [werkzeug,setWerkzeug]=useState("bewegen"); // bewegen|pinsel|radierer|pipette
   const [groesse,setGroesse]=useState(18);
   const [haerte,setHaerte]=useState(0.7);
   const [farbe,setFarbe]=useState("#b9a4ff");
   const [zoom,setZoom]=useState(1);
   const [kannZurueck,setKannZurueck]=useState(0);
+  const [raster,setRaster]=useState(true);
+  const lageRef=useRef({dx:0,dy:0,skala:1});      // Figur-Verschiebung/-Groesse
+  const [lageSchau,setLageSchau]=useState({dx:0,dy:0,skala:1});
+  const [mass,setMass]=useState(null);            // gemessener Sockel/Hoehe
+  const SOLL_SOCKEL=303;
 
   const dispRef=useRef(null);
   const procRef=useRef(null);       // gerechnete Ebene (Regler)
@@ -145,23 +157,73 @@ export function WerkstattScreen() {
     cx.clearRect(0,0,dc.width,dc.height);
     cx.imageSmoothingEnabled = zoom<2;
     cx.setTransform(zoom,0,0,zoom,offRef.current.x,offRef.current.y);
-    // Schachbrettgrund fuer Transparenz-Sicht bleibt dunkel-schlicht
+    // FIGUR-LAGE: um die Bodenmitte verankert - Skalieren waechst aus dem
+    // Sockel, Verschieben wandert frei. Wirkt auf ALLE Ebenen gleich.
+    const {dx,dy,skala}=lageRef.current;
+    cx.save();
+    cx.translate(pc.width/2+dx, pc.height+dy);
+    cx.scale(skala,skala);
+    cx.translate(-pc.width/2, -pc.height);
     cx.drawImage(pc,0,0);
     cx.drawImage(strichRef.current,0,0);
-    cx.save(); cx.globalCompositeOperation="destination-out";
-    cx.drawImage(radierRef.current,0,0); cx.restore();
+    cx.globalCompositeOperation="destination-out";
+    cx.drawImage(radierRef.current,0,0);
+    cx.restore();
+    // RASTER mit SOLL-MASS: 40er-Netz, Mittelachse, Bodenlinie und das
+    // Soll-Sockel-Band (303 px) - alles im Rahmenraum, zoomt also mit.
+    if (raster) {
+      cx.save();
+      cx.lineWidth=1/zoom;
+      cx.strokeStyle="rgba(233,207,138,.14)";
+      cx.beginPath();
+      for(let x=0;x<=pc.width;x+=40){cx.moveTo(x,0);cx.lineTo(x,pc.height);}
+      for(let y=pc.height;y>=0;y-=40){cx.moveTo(0,y);cx.lineTo(pc.width,y);}
+      cx.stroke();
+      cx.strokeStyle="rgba(233,207,138,.38)";
+      cx.beginPath(); cx.moveTo(pc.width/2,0); cx.lineTo(pc.width/2,pc.height);
+      cx.moveTo(0,pc.height-.5); cx.lineTo(pc.width,pc.height-.5); cx.stroke();
+      const l=(pc.width-SOLL_SOCKEL)/2, r=(pc.width+SOLL_SOCKEL)/2;
+      cx.strokeStyle="rgba(140,225,160,.55)";
+      cx.beginPath(); cx.moveTo(l,pc.height); cx.lineTo(l,pc.height-70);
+      cx.moveTo(r,pc.height); cx.lineTo(r,pc.height-70); cx.stroke();
+      cx.fillStyle="rgba(140,225,160,.8)";
+      cx.font=`${14/zoom < 11 ? 11 : 14}px system-ui`;
+      cx.fillText(`Soll-Sockel ${SOLL_SOCKEL} px`, l+6, pc.height-52);
+      cx.restore();
+    }
+  };
+  // MASSBAND: Sockelbreite (breiteste Zeile der unteren 10 %) und Hoehe der
+  // komponierten Figur IN ihrer Lage - der Zahlenbeleg neben dem Raster.
+  const vermesse=()=>{
+    const pc=procRef.current; if(!pc) return;
+    const t=mach(pc.width,pc.height); const tc=t.getContext("2d",{willReadFrequently:true});
+    const {dx,dy,skala}=lageRef.current;
+    tc.translate(pc.width/2+dx,pc.height+dy); tc.scale(skala,skala); tc.translate(-pc.width/2,-pc.height);
+    tc.drawImage(pc,0,0); tc.drawImage(strichRef.current,0,0);
+    tc.globalCompositeOperation="destination-out"; tc.drawImage(radierRef.current,0,0);
+    const d=tc.getImageData(0,0,t.width,t.height).data;
+    let oben=-1,unten=-1;
+    for(let y=0;y<t.height&&oben<0;y++)for(let x=0;x<t.width;x++)if(d[(y*t.width+x)*4+3]>32){oben=y;break;}
+    for(let y=t.height-1;y>=0&&unten<0;y--)for(let x=0;x<t.width;x++)if(d[(y*t.width+x)*4+3]>32){unten=y;break;}
+    if(oben<0){setMass(null);return;}
+    const h=unten-oben+1; let sockel=0;
+    for(let y=unten;y>unten-Math.max(1,h*0.10);y--){let z=0;
+      for(let x=0;x<t.width;x++)if(d[(y*t.width+x)*4+3]>32)z++;
+      if(z>sockel)sockel=z;}
+    setMass({sockel,hoehe:h});
   };
 
   const komponiere=(zielCx,w,h,einst)=>{ // fuer Export/GitHub: volle Pipeline
     const id=zielCx.getImageData(0,0,w,h);
-    rechne(id,w,h,{ ...STANDARD, ...(einst?.regler||{}) });
+    rechne(id,w,h,{ ...STANDARD, ...holeRegler(einst) });
     zielCx.putImageData(id,0,0);
   };
 
   // Figur laden: Grundbild, Ebenen (aus Speicher), Rechnen, Malen
   useEffect(()=>{
     if(!fig) return;
-    setP({ ...STANDARD, ...(alle[fig.id]?.regler||{}) });
+    setP({ ...STANDARD, ...holeRegler(alle[fig.id]) });
+    lageRef.current = holeLage(alle[fig.id]); setLageSchau(lageRef.current);
     setZoom(1); offRef.current={x:0,y:0}; undoRef.current=[]; setKannZurueck(0);
     const img=new Image();
     img.onload=async()=>{
@@ -185,12 +247,12 @@ export function WerkstattScreen() {
     cx.clearRect(0,0,pc.width,pc.height);
     cx.drawImage(img,0,0);
     const id=cx.getImageData(0,0,pc.width,pc.height);
-    rechne(id,pc.width,pc.height,p);
+    rechne(id,pc.width,pc.height,pRef.current);
     cx.putImageData(id,0,0);
-    male();
+    male(); vermesse();
   };
   useEffect(()=>{const t=setTimeout(rechneNeu,120);return()=>clearTimeout(t);},[p]);
-  useEffect(male,[zoom]);
+  useEffect(male,[zoom,raster,lageSchau]);
 
   // ── Zeichnen: Stempel mit Haerte-Verlauf ─────────────────────────────────
   const stempel=(cv,x,y,farbeCss)=>{
@@ -208,7 +270,9 @@ export function WerkstattScreen() {
   const brettPunkt=(e)=>{
     const dc=dispRef.current, r=dc.getBoundingClientRect();
     const px=(e.clientX-r.left)*(dc.width/r.width), py=(e.clientY-r.top)*(dc.height/r.height);
-    return { x:(px-offRef.current.x)/zoom, y:(py-offRef.current.y)/zoom, px, py };
+    const fx=(px-offRef.current.x)/zoom, fy=(py-offRef.current.y)/zoom;      // Rahmenraum
+    const {dx,dy,skala}=lageRef.current, w=dc.width,h=dc.height;             // -> Werkraum
+    return { x:(fx-(w/2+dx))/skala+w/2, y:(fy-(h+dy))/skala+h, fx, fy, px, py };
   };
   const sichere=()=>{ // Undo-Schnappschuss beider Ebenen (Deckel 6)
     const s=mach(strichRef.current.width,strichRef.current.height);
@@ -244,6 +308,7 @@ export function WerkstattScreen() {
       return;
     }
     if (werkzeug==="bewegen") { zeichnetRef.current={art:"schieben", letzt:{px:pt.px,py:pt.py}}; return; }
+    if (werkzeug==="figur") { zeichnetRef.current={art:"figur", letzt:{fx:pt.fx,fy:pt.fy}}; return; }
     sichere();
     zeichnetRef.current={art:werkzeug, letzt:pt};
     if (werkzeug==="pinsel") stempel(strichRef.current,pt.x,pt.y,rgba(farbe,1));
@@ -257,6 +322,11 @@ export function WerkstattScreen() {
       offRef.current={x:offRef.current.x+(pt.px-z.letzt.px), y:offRef.current.y+(pt.py-z.letzt.py)};
       z.letzt={px:pt.px,py:pt.py}; male(); return;
     }
+    if (z.art==="figur") {
+      lageRef.current={ ...lageRef.current,
+        dx: lageRef.current.dx+(pt.fx-z.letzt.fx), dy: lageRef.current.dy+(pt.fy-z.letzt.fy) };
+      z.letzt={fx:pt.fx,fy:pt.fy}; setLageSchau({...lageRef.current}); male(); return;
+    }
     const cv=z.art==="pinsel"?strichRef.current:radierRef.current;
     const cssF=z.art==="pinsel"?rgba(farbe,1):"rgba(0,0,0,1)";
     const dx=pt.x-z.letzt.x, dy=pt.y-z.letzt.y;
@@ -265,7 +335,7 @@ export function WerkstattScreen() {
     stempel(cv,pt.x,pt.y,cssF);
     z.letzt=pt; male();
   };
-  const hoch=()=>{ zeichnetRef.current=null; };
+  const hoch=()=>{ const war=zeichnetRef.current; zeichnetRef.current=null; if(war&&war.art!=="schieben") vermesse(); };
 
   // ── Speichern / Sammel-Aktionen ──────────────────────────────────────────
   const packeManuell=()=>{
@@ -278,13 +348,14 @@ export function WerkstattScreen() {
   };
   const speichern=()=>{
     const man=packeManuell();
-    const eintrag={ regler:p, ...(man?{manuell:man}:{}) };
+    const eintrag={ regler:p, lage:lageRef.current, ...(man?{manuell:man}:{}) };
     const n={ ...alle, [fig.id]: eintrag };
     setAlle(n);
     setStatus(schreibeAlle(n)?`Gespeichert: ${fig.id}${man?" (mit Handstrichen)":""}`:"Speicher voll! Zip exportieren und Figuren zurücksetzen.");
   };
   const aufAlle=()=>{ const n={};
     for(const f of KATALOG) n[f.id]={ ...(alle[f.id]||{}), regler:p };
+    // (Lage und Handstriche bleiben je Figur)
     setAlle(n); schreibeAlle(n); setStatus("Regler auf alle Figuren angewandt (Handstriche bleiben je Figur)"); };
   const zuruecksetzen=()=>{ const n={ ...alle }; delete n[fig.id]; setAlle(n); schreibeAlle(n);
     setP({ ...STANDARD });
@@ -298,13 +369,22 @@ export function WerkstattScreen() {
     cx.drawImage(img,0,0);
     const einst=alle[f.id];
     if(einst) komponiere(cx,w,h,einst);
+    const lg=holeLage(einst);
     if(einst?.manuell){
       const lade=(url)=>new Promise((res)=>{if(!url)return res(null);const e=new Image();e.onload=()=>res(e);e.onerror=()=>res(null);e.src=url;});
       const [st,rd]=await Promise.all([lade(einst.manuell.striche),lade(einst.manuell.radierung)]);
       if(st) cx.drawImage(st,0,0);
       if(rd){cx.save();cx.globalCompositeOperation="destination-out";cx.drawImage(rd,0,0);cx.restore();}
     }
-    const blob=await new Promise((res)=>cv.toBlob(res,"image/webp",0.92));
+    // LAGE anwenden: fertige Ebenen bodenmitte-verankert in einen frischen
+    // Rahmen zeichnen - exakt die Sicht der Vorschau.
+    let fertig=cv;
+    if (lg.dx||lg.dy||lg.skala!==1){
+      fertig=mach(w,h); const fx=fertig.getContext("2d");
+      fx.translate(w/2+lg.dx,h+lg.dy); fx.scale(lg.skala,lg.skala); fx.translate(-w/2,-h);
+      fx.drawImage(cv,0,0);
+    }
+    const blob=await new Promise((res)=>fertig.toBlob(res,"image/webp",0.92));
     return new Uint8Array(await blob.arrayBuffer());
   };
   const dateiname=(f)=>(f.id.startsWith("b")&&f.id.length===3?`carved-boss-${f.id}-dark`:`carved-${f.id}-dark`)+".webp";
@@ -404,10 +484,29 @@ export function WerkstattScreen() {
         {werkzeugKnopf("pinsel","🖌","Pinsel")}
         {werkzeugKnopf("radierer","◨","Radierer")}
         {werkzeugKnopf("pipette","💧","Pipette (Farbe aufnehmen)")}
+        {werkzeugKnopf("figur","⤢","Figur verschieben")}
         <button style={{...knopf,flex:1}} onClick={()=>setZoom(Math.min(8,+(zoom*1.5).toFixed(2)))}>＋</button>
         <button style={{...knopf,flex:1}} onClick={()=>{const z=Math.max(1,+(zoom/1.5).toFixed(2));setZoom(z);if(z===1)offRef.current={x:0,y:0};}}>－</button>
         <button style={{...knopf,flex:1,opacity:kannZurueck?1:0.45}} onClick={zurueck} disabled={!kannZurueck}>↶</button>
+        <button style={{...knopf,flex:1,borderColor:raster?T.selLine:T.line}} onClick={()=>setRaster(!raster)} title="Raster">⊞</button>
       </div>
+      {werkzeug==="figur" && (
+        <div style={{display:"flex",gap:10,alignItems:"center",marginBottom:4}}>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:11}}>
+              <span>Figur-Größe</span><span style={{color:T.goldBright,fontWeight:800}}>{Math.round(lageSchau.skala*100)} %</span></div>
+            <input type="range" min={0.4} max={1.8} step={0.01} value={lageSchau.skala}
+              onChange={(e)=>{lageRef.current={...lageRef.current,skala:+e.target.value};setLageSchau({...lageRef.current});male();vermesse();}}
+              style={{width:"100%"}}/>
+          </div>
+          <button style={knopf} onClick={()=>{lageRef.current={dx:0,dy:0,skala:1};setLageSchau({...lageRef.current});male();vermesse();}}>Lage 0</button>
+        </div>
+      )}
+      {mass && (
+        <div style={{fontSize:11.5,color:mass.sockel>=SOLL_SOCKEL-10&&mass.sockel<=SOLL_SOCKEL+10?"#8ce1a0":T.dim,marginBottom:6}}>
+          Gemessen: Sockel <b>{mass.sockel} px</b> (Soll {SOLL_SOCKEL}) · Höhe <b>{mass.hoehe} px</b>
+        </div>
+      )}
       <div style={{display:"flex",gap:10,alignItems:"center",marginBottom:4}}>
         <input type="color" value={farbe} onChange={(e)=>setFarbe(e.target.value)}
           style={{width:38,height:30,border:"none",background:"none",padding:0}}/>

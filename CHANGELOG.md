@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.58.0
+
+WERKSTATT: RASTER MIT SOLL-MASS, FIGUR VERSCHIEBEN UND SKALIEREN, LADE-HEILUNG:
+
+- RASTER (Knopf, an/aus): 40er-Netz, Mittelachse, Bodenlinie und das gruene
+  SOLL-SOCKEL-BAND (303 px) mit Beschriftung - zoomt mit der Ansicht mit.
+  Dazu das MASSBAND: gemessener Sockel und gemessene Hoehe der Figur in
+  ihrer aktuellen Lage, gruen sobald der Sockel im Soll-Fenster liegt.
+- FIGUR-WERKZEUG: die Figur selbst VERSCHIEBEN (ziehen) und SKALIEREN
+  (40-180 %, bodenmitte-verankert - Skalieren waechst aus dem Sockel),
+  "Lage 0" setzt zurueck. Die Lage wird je Figur gespeichert und wandert in
+  Zip-Export und GitHub-Ladung - was die Vorschau zeigt, geht live.
+- LADE-HEILUNG (der gemeldete Fehler "meine Aenderungen werden nicht
+  dargestellt"): v0.56 brach das Speicherformat (flach -> verschachtelt) -
+  alte Speicherstaende wurden ignoriert. Jetzt versteht ein Migrationsleser
+  beide Formen. Zusaetzlich eine Stale-Closure-Haertung: der Lade-Pfad las
+  Regler aus einem veralteten Render - jetzt immer der aktuelle Stand.
+- Beweise: eingepflanzter v0.54-Altstand wird geladen (Reglerstand 1.00 /
+  0.00 sichtbar, Anzeige-Saettigung 7,84 vs. roh 15,88 - Rezept wirkt);
+  Skala 130 % hebt das Massband von Sockel 344 auf 447 px. Sondenlehre:
+  Ein-Pixel-Urteile taeuschen (Violett-Zone behaelt Farbe) - Ganzbildmasse
+  entscheiden.
+
 ## 0.57.0
 
 HUB-KACHELN IN VOLLER PRACHT, DER KNOPF ENDLICH SCHMAL, DAS ADMIN-PORTAL:
