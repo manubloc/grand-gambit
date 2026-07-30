@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.53.0
+
+DIE VERDORBENEN, NEU AUSGELEUCHTET (Tonwert-Rezept v5, Besitzer-abgenommen):
+
+- Alle 57 Schattenwesen und verdorbenen Monster tragen jetzt das v5-Rezept:
+  TONWERTSPREIZUNG (p2->p98 auf 5..243, farbtreu) holt die inneren Konturen
+  zurueck - Gesichter, Schnitzkanten, nicht nur die Silhouette; der KOERPER
+  geht Richtung GRAUSTUFEN (28 % Chroma in den nicht-violetten Zonen,
+  gemessen z.B. Knight 0,49 -> 0,11); VIOLETT bleibt die einzige Farbstimme
+  (violetter Koerperanteil haelt 75 %); und die LILA-KONTUR GLIMMT STAERKER
+  (nur das hellste Viertel der Violett-Pixel zaehlt als Kontur, x1,62
+  Leuchtkraft plus Chroma-Nachschub gegen Weissausbrennen - Konturhelligkeit
+  206-229 statt 140-160).
+- Drei kalibrierte Fehlversuche dokumentiert: Unscharfmaskierung ueberschoss
+  auf +294 % Kantenenergie (Knusper); ein zu breites Lila-Band schuetzte den
+  ganzen violetten Koerper vor der Entfaerbung (113k statt 28k Pixel beim
+  Knight) - die Kontur ist der HELLE Violett-Anteil, nicht das Violett.
+- TORWAECHTER vor dem Einbau: 57/57 Dateien geprueft (Groesse, Alphamaske
+  auf 0,2 % genau, nie bunter als der Bestand), 0 verweigert.
+
 ## 0.52.1
 
 DESIGN-ENTSCHEID DES BESITZERS, FESTGESCHRIEBEN: GESCHNITZT IST FUEHREND.
