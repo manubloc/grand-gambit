@@ -261,7 +261,7 @@ function MoveDiagram({ kind, moveSpec, extra = null }) {
 const MOVE_LEGEND = { de: "Blau: Gleiten · Gelb: Sprung · ✦ die Figur", en: "Blue: slide · Yellow: leap · ✦ the piece" };
 const MOVE_LEGEND_ABILITY = { de: "Grün: neue Felder durch diese Fähigkeit", en: "Green: squares this ability adds" };
 
-function ChroniclePanel({ profile, t, en, account = null }) {
+export function ChroniclePanel({ profile, t, en, account = null }) {
   const [openId, setOpenId] = useState(null);
   const met = new Set(profile.codex?.met || []);
   // THE KEEPER OF THE RECORD sees the whole record. For a player the chronicle

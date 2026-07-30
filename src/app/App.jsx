@@ -30,7 +30,7 @@ import { RissBoden } from "./ui/RissBoden.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
-import { TutorialScreen } from "./ui/screens/TutorialScreen.jsx";
+import { AkademieScreen } from "./ui/screens/AkademieScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
 // DIE GEMALTEN WAPPEN DER DREI WEGE. Kein Vektor-Siegel - der Besitzer will
@@ -351,7 +351,7 @@ export default function App() {
           : <OnlineScreen profile={profile} dispatch={dispatch} t={t} net={netRef.current} account={account}
             oeffneDaily={oeffneDaily}
             onDaily={(gameId) => netRef.current.send({ t: "daily:open", gameId })} />)
-        : view === "tutorial" ? sub(t("tut.title"), <TutorialScreen t={t} en={profile.lang === "en"} onDone={() => setView("hub")} />)
+        : view === "tutorial" ? sub(t("tut.title"), <AkademieScreen profile={profile} t={t} en={profile.lang === "en"} account={account} onDone={() => setView("hub")} />)
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onQuickStart={startQuickNow} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} hallenStand={hallenSteht} />
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />

@@ -1,5 +1,31 @@
 # Changelog - Grand Gambit
 
+## 0.50.0
+
+DIE AKADEMIE WIRD DAS LERNHAUS DES HOFES (Auftrag: "Hauptsache man lernt
+Schach und die Regeln dieses erweiterten Schachs - und den Hofwert muss man
+erklaeren, auch seine Online-Bedeutung"):
+
+- FUENF REITER wie im Hofstaat: REGELN (Ziel, Zugrecht, ROCHADE, EN PASSANT,
+  Umwandlung, Hausbrett/Loecher), FIGUREN (die klassischen sechs mit Gangart
+  UND die Hausfiguren: Kanzler, Erzbischof, Falke, Amazone, Drache, Grand
+  Gambit), SPIELWEISE (HP-Modus, Energie mit der Ein-Zauber-Regel,
+  Ausruestung, Kampagne samt Wiederholungsregel - und der HOFWERT), CHRONIK
+  (dieselbe Stimme wie im Hofstaat, hier eingebettet - ChroniclePanel wird
+  wiederverwendet, nicht kopiert) und SCHNELLKURS (die alte Zwei-Minuten-
+  Akademie, unveraendert erreichbar).
+- DER HOFWERT, ehrlich aus dem Code erklaert (src/meta/rating.js): +100 je
+  geraeumter Station, +200 je Liga, Gefaehrten nach Figurenwert, +40 je
+  Stufe, +30 je Stern, +15 je Faehigkeit - und online stellt die
+  Zufallssuche Gegner mit AEHNLICHEM Hofwert: Band ab +/-150, alle fuenf
+  Sekunden um 60 weiter.
+- EIN DATENSATZ fuer alles Erklaeren: src/content/lehren.js traegt jede
+  Lehre mit Kurzfassung (fuers kommende Erstbesuch-Popup) und Langtext
+  (Akademie), de und en. Die Popups der Menues sind der dokumentierte
+  naechste Ausbauschritt - sie lesen denselben Datensatz.
+- Gepureft per Sonde: alle fuenf Reiter rendern echten Inhalt (7/8/6/3/6
+  Tafeln, 392-1914 Zeichen).
+
 ## 0.49.0
 
 ROCHADE UND EN PASSANT - DIE SONDERZUEGE DES SCHACHS ZIEHEN EIN:
