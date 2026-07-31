@@ -15,6 +15,7 @@ const STANDARD = {
   spreizen: 0, sattGrau: 1.0, sattLila: 1.0,
   glimmSchwelle: 72, glimmStaerke: 1.0, glimmChroma: 1.0,
   ersatzAn: false, ersatzVon: 200, ersatzToleranz: 40, ersatzNach: 275,
+  konturAn: false, kantenBreite: 2, kantenHell: 11, glaettung: 6, // Leuchtende Konturen (Bildprogramm-Art)
 };
 const V5 = { ...STANDARD, spreizen: 1, sattGrau: 0.28, sattLila: 0.75, glimmStaerke: 1.62, glimmChroma: 1.18 };
 const SCHLUESSEL = "gg_werkstatt_v1";
@@ -85,6 +86,52 @@ function rechne(id, w, h, p) {
       b=Math.max(0,Math.min(255,l3+(b-l3)*p.glimmChroma));
     }
     d[i*4]=r; d[i*4+1]=g; d[i*4+2]=b;
+  }
+  // ── LEUCHTENDE KONTUREN (Besitzer, v0.67, nach Bildprogramm-Vorbild) ──
+  // Kantenbreite / Kantenhelligkeit / Glaettung wie im Original: erst wird
+  // je Farbkanal geglaettet (Kastenweichzeichner), dann findet Sobel die
+  // Kanten, die Helligkeit skaliert sie, die Breite verdickt sie (Max-
+  // Filter) - alles Flache faellt ins Schwarze, die Kanten gluehen in der
+  // Farbe der Figur. Das Alpha bleibt unangetastet.
+  if (p.konturAn) {
+    const K = [new Float32Array(n), new Float32Array(n), new Float32Array(n)];
+    for (let i = 0; i < n; i++) { K[0][i]=d[i*4]; K[1][i]=d[i*4+1]; K[2][i]=d[i*4+2]; }
+    const rb = Math.max(0, Math.round((p.glaettung||0) / 2));
+    const glatt = (q) => { if (!rb) return q;
+      const t = new Float32Array(n);
+      for (let y = 0; y < h; y++) { let sum = 0; const z = y*w;
+        for (let x = -rb; x <= rb; x++) sum += q[z + Math.max(0, Math.min(w-1, x))];
+        for (let x = 0; x < w; x++) { t[z+x] = sum / (2*rb+1);
+          sum += q[z + Math.min(w-1, x+rb+1)] - q[z + Math.max(0, x-rb)]; } }
+      const u = new Float32Array(n);
+      for (let x = 0; x < w; x++) { let sum = 0;
+        for (let y = -rb; y <= rb; y++) sum += t[Math.max(0, Math.min(h-1, y))*w + x];
+        for (let y = 0; y < h; y++) { u[y*w+x] = sum / (2*rb+1);
+          sum += t[Math.min(h-1, y+rb+1)*w + x] - t[Math.max(0, y-rb)*w + x]; } }
+      return u; };
+    const faktor = (p.kantenHell || 11) / 5.5;
+    for (let c = 0; c < 3; c++) {
+      const q = glatt(K[c]); const m = new Float32Array(n);
+      for (let y = 1; y < h-1; y++) for (let x = 1; x < w-1; x++) {
+        const z = y*w+x;
+        const gx = q[z-w-1] + 2*q[z-1] + q[z+w-1] - q[z-w+1] - 2*q[z+1] - q[z+w+1];
+        const gy = q[z-w-1] + 2*q[z-w] + q[z-w+1] - q[z+w-1] - 2*q[z+w] - q[z+w+1];
+        m[z] = Math.min(255, Math.sqrt(gx*gx + gy*gy) * faktor * 0.25);
+      }
+      let e = m;
+      for (let t2 = 1; t2 < Math.min(8, p.kantenBreite || 1); t2++) {
+        const dick = new Float32Array(n);
+        for (let y = 1; y < h-1; y++) for (let x = 1; x < w-1; x++) {
+          const z = y*w+x;
+          dick[z] = Math.max(e[z], e[z-1], e[z+1], e[z-w], e[z+w]);
+        }
+        e = dick;
+      }
+      K[c] = e;
+    }
+    for (let i = 0; i < n; i++) if (d[i*4+3] > 32) {
+      d[i*4] = K[0][i]; d[i*4+1] = K[1][i]; d[i*4+2] = K[2][i];
+    }
   }
   return id;
 }
@@ -611,6 +658,20 @@ export function WerkstattScreen() {
               <span style={{color:T.goldBright,fontWeight:800}}>{p[k]}°</span></div>
             <input type="range" min={k==="ersatzToleranz"?5:0} max={k==="ersatzToleranz"?120:360} step={1}
               value={p[k]} onChange={(e)=>setP({...p,[k]:+e.target.value})} style={{width:"100%"}}/>
+          </div>
+        ))}
+      </div>
+
+      <div style={{borderTop:`1px solid ${T.line}`,margin:"10px 0",paddingTop:8}}>
+        <label style={{fontSize:12,display:"flex",gap:8,alignItems:"center",marginBottom:6}}>
+          <input type="checkbox" checked={p.konturAn} onChange={(e)=>setP({...p,konturAn:e.target.checked})}/>
+          Leuchtende Konturen (wie im Bildprogramm)</label>
+        {p.konturAn && [["kantenBreite","Kantenbreite",1,8,1],["kantenHell","Kantenhelligkeit",1,20,1],["glaettung","Glättung",0,14,1]].map(([k,name,min,max,schritt])=>(
+          <div key={k} style={{marginBottom:6}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:11.5}}>
+              <span>{name}</span><span style={{color:T.goldBright,fontWeight:800}}>{p[k]}</span></div>
+            <input type="range" min={min} max={max} step={schritt} value={p[k]}
+              onChange={(e)=>setP({...p,[k]:+e.target.value})} style={{width:"100%"}}/>
           </div>
         ))}
       </div>

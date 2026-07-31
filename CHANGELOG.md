@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.67.0
+
+DER NEUE HETZER UND DIE LEUCHTENDEN KONTUREN:
+
+- DER HETZER (b02), vom Besitzer neu gezeichnet, ist eingebaut: aufs
+  Familienmass gebracht (Sockel exakt 307 px, Hoehe 356 statt vormals 279
+  - er steht endlich wie seine Brueder), Schattenzwilling frisch via
+  verdorben-v2 (Torwaechter sauber). Der Upload kam bereits freigestellt
+  und wurde ROH uebernommen (Alpha gemessen, Lehre aus v0.63.1).
+- LEUCHTENDE KONTUREN in der Figurenwerkstatt, nach Bildprogramm-Vorbild
+  und mit denselben drei Reglern: KANTENBREITE (Max-Filter verdickt),
+  KANTENHELLIGKEIT (skaliert das Gluehen), GLAETTUNG (Kastenweichzeichner
+  vor der Sobel-Kantensuche). Alles Flache faellt ins Schwarze, die
+  Kanten gluehen in der Farbe der Figur; das Alpha bleibt unangetastet.
+  Wird je Figur gespeichert und wandert wie alles in Zip-Export und
+  GitHub-Ladung. Sondenbeleg: Mittel-Helligkeit 101 -> 18 bei stehendem
+  Maximum 207.
+
 ## 0.66.0
 
 DIE FELDER DES BESITZERS AUF JEDEM BRETT, AKADEMIE-KACHEL, RISS NACH KAPITEL:
