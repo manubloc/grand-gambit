@@ -1,5 +1,21 @@
 # Changelog - Grand Gambit
 
+## 0.64.1
+
+DER RISSBODEN AUF DESKTOP GEZAEHMT - 1280er-BAND MIT RANDVERLAEUFEN:
+
+- Besitzer-Fund: auf Desktop skalierten die Menue-Boeden "voellig falsch,
+  viel zu gross". Zwei Taeter: cover auf voller Fensterbreite UND der
+  Desktop-Shell-Zoom (#root zoom 1,15/1,3 ab 1440/1760 px), der jedes
+  Layout-Pixel multipliziert.
+- Heilung: der Boden ist jetzt ein ZENTRIERTES BAND von sichtbar
+  hoechstens 1280 px (Gegenrechnung ueber die --vhz-Variable neutralisiert
+  den Shell-Zoom), und links wie rechts laeuft das Bild in einem WEICHEN
+  VERLAUF INS SCHWARZE aus (Quermaske schneidet sich mit dem bestehenden
+  Hoch-Verlauf, mask-composite intersect).
+- Messbeleg am 1680er-Fenster: Bandbreite exakt 1280 px, zentriert,
+  Querverlauf aktiv.
+
 ## 0.64.0
 
 DIE KAMPFLEISTE NACH DER VORLAGE DES BESITZERS, DIE LUPE FAELLT:

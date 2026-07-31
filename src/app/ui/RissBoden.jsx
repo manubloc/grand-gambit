@@ -46,18 +46,32 @@ export function RissBoden({ profile, staerke = 1 }) {
   if (typeof document !== "undefined") document.documentElement.dataset.rissDiag = "stufen=" + STUFEN.length + " stufe=" + stufe + " bild=" + (bild ? "ja" : "nein");
   if (!bild) return null;
   return (
+    // DESKTOP-DECKEL (Besitzer, v0.64.1): auf breiten Schirmen blies "cover"
+    // das Bild auf volle Fensterbreite - viel zu gross. Jetzt: der Boden ist
+    // ein ZENTRIERTES BAND von hoechstens 1280 px, und links wie rechts
+    // laeuft das Bild in einem weichen Verlauf ins Schwarze aus. Der alte
+    // Hoch-Verlauf bleibt; beide Masken schneiden sich (mask-composite).
     <div aria-hidden data-riss={stufe} style={{
       position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none",
       height: "min(30vh, 270px)", // v0.60: kurzer Bodenstreifen statt halber Schirm
+      // Der Desktop-Shell-Zoom (theme.js: #root zoom 1.15/1.3 ab 1440/1760 px)
+      // multipliziert Layout-Pixel - 1280 wurden sichtbar 1472. Gegenrechnung
+      // ueber die --vhz-Variable: das Band ist auf JEDEM Schirm sichtbar
+      // hoechstens 1280 px breit.
+      maxWidth: "calc(1280px / var(--vhz, 1))", margin: "0 auto",
       backgroundImage: `url(${bild})`,
       backgroundSize: "cover",
       backgroundPosition: "50% 100%",
       backgroundRepeat: "no-repeat",
       opacity: 0.6 * staerke,      // v0.60: schimmert dezenter durch
-      // nach oben in reines Schwarz ausblenden: der Boden bleibt Boden und
-      // faellt der Schrift nicht in den Ruecken
-      WebkitMaskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%)",
-      maskImage: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%)",
+      WebkitMaskImage:
+        "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%), " +
+        "linear-gradient(90deg, transparent 0%, #000 clamp(48px, 9%, 130px), #000 calc(100% - clamp(48px, 9%, 130px)), transparent 100%)",
+      maskImage:
+        "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%), " +
+        "linear-gradient(90deg, transparent 0%, #000 clamp(48px, 9%, 130px), #000 calc(100% - clamp(48px, 9%, 130px)), transparent 100%)",
+      WebkitMaskComposite: "source-in",
+      maskComposite: "intersect",
     }} />
   );
 }
