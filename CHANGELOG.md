@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.62.0
+
+DER KLASSISCHE SATZ DES BESITZERS IST KOMPLETT AM BRETT, MENUES LOESEN
+SICH AN DER LEISTE AUF:
+
+- KLASSISCH IN MARMOR UND NACHTBLAU: alle zwoelf Figuren des Besitzers
+  (hell: Elfenbein-Marmor mit Goldringen · dunkel: Nachtblau mit Tuerkis-
+  ringen) freigestellt, bodenverankert und als klassischer Brettsatz
+  verdrahtet - sie ERSETZEN den schmucklosen Creme/Grau-Satz aus v0.40 in
+  assets/klassik/ (null Code-Aenderung noetig, das Klassik-System stand).
+  Byte-Beweis: die neuen Dateien liegen im Build.
+- AUFLOESUNG AN DER MENUELEISTE (Besitzer): in ALLEN Menues - besonders
+  der Schatzkammer - blendet der Scrollinhalt jetzt in einem kurzen Band
+  ueber dem Dock aus und ist an dessen Oberkante 100 % TRANSPARENT;
+  nichts schimmert mehr halb hinter der Leiste. Maske in BEIDEN
+  Layout-Zweigen, im Kampf und in der Kartenwelt aus. Sondenbeleg: Maske
+  aktiv in Hub und Schatzkammer, Endstop voll transparent.
+
 ## 0.61.0
 
 AUFGEBEN MIT WUERDE - ECHTES POPUP, KLARE WORTE, KEIN STILLER ABGANG:
