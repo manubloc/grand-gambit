@@ -409,21 +409,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               const quelle = finale ? feldDunkel : feld;
               const groesse = finale ? "200% auto" : "260% auto";
               const px = finale ? fx * 100 : dark ? 81.25 + fx * 18.75 : fx * 18.75;
-              const schleier = hexA(dark ? sqD0 : sqL0, dark ? 0.3 : 0.26, friendly ? 0.22 : 0.08);
+              // ROHDATEN ANEINANDER (Besitzer, v0.67.1): kein Schleier,
+              // keine Fase, keine Fuge - die Kacheln stehen Kante an Kante,
+              // genau wie geliefert. Nur Freundschaftskaempfe dimmen leicht.
               return <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-                background: `linear-gradient(${schleier}, ${schleier}), url(${quelle}) ${px}% ${fy * 100}% / ${groesse} no-repeat`,
-                opacity: friendly ? 0.5 : 1 }} />;
+                background: `url(${quelle}) ${px}% ${fy * 100}% / ${groesse} no-repeat`,
+                opacity: friendly ? 0.55 : 1 }} />;
             }
             if (ground) return null;
             return <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
               background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
               opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />;
           })()}
-          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          {!ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />}
-          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          {!ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 1.5px 1.5px 0 rgba(255,238,200,.14), inset -2px -2px 3px rgba(0,0,0,.42)" }} />}
-          {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          {ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: carvedBoard
               // the parting line: every square owns a real edge again
               ? "inset 0 0 0 1px rgba(10,14,24,.52), inset 1.5px 1.5px 0 rgba(255,248,226,.18), inset -3px -3px 8px -3px rgba(0,0,0,.30)"

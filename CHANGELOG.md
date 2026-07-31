@@ -1,5 +1,16 @@
 # Changelog - Grand Gambit
 
+## 0.67.1
+
+DIE FELDER STEHEN ROH, KANTE AN KANTE:
+
+- Besitzer-Wunsch: alle Schattierungen und Effekte ZWISCHEN den Kacheln
+  sind fort, sobald seine Felder anliegen - kein Schleier, keine Fase,
+  keine Fugenlinie. Die Rohdaten stehen Kante an Kante, genau wie
+  geliefert; nur Freundschaftskaempfe dimmen weiter leicht. Der Goldrahmen
+  bleibt. Sondenbeleg: eine Felder-Zelle traegt genau EINE Ebene - den
+  Streifen, ohne boxShadow, ohne Verlauf.
+
 ## 0.67.0
 
 DER NEUE HETZER UND DIE LEUCHTENDEN KONTUREN:
