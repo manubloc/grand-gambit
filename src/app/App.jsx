@@ -785,6 +785,10 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
                     cursor: "pointer",
+          // GLEICHE KACHELHOEHE (Besitzer, v0.67.2): die Akademie war mit
+          // 79 px ein flacher Streifen neben 145er-Geschwistern - das
+          // nachtdunkle Buchmotiv hatte keine Buehne. Jetzt Kachelmass.
+          minHeight: 132,
           // AKADEMIE MIT EIGENEM KACHELBILD (Besitzer, v0.66): dieselbe
           // Bauart wie die anderen Kacheln - schwarzer Grund, Motiv rechts
           // in voller Hoehe, Schleier von links bis 94 % (keine harte Kante).

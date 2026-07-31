@@ -1,5 +1,19 @@
 # Changelog - Grand Gambit
 
+## 0.67.2
+
+DIE AKADEMIE-KACHEL BEKOMMT IHRE BUEHNE:
+
+- Besitzer-Nachfrage "Was ist mit dem Bild bei Akademie?" - Befund: das
+  Bild WAR verdrahtet, aber unsichtbar klein: der Akademie-Knopf mass nur
+  79 px Hoehe (Geschwister 145+), und der erste Zuschnitt trug den
+  dunklen Leerraum ueber dem Buch mit - vom Nachtmotiv blieb ein
+  schwarzer Splitter.
+- Heilung: engster BUCH-ZUSCHNITT ueber die Leuchtkern-BBox (nur Buch und
+  Figuren, der matte Lichtstrahl faellt raus) und KACHELMASS fuer die
+  Akademie (minHeight 132 statt 79, gemessen wie die Geschwister). Sonde:
+  Bild sitzt rechts in voller Hoehe, Kachel 132 px.
+
 ## 0.67.1
 
 DIE FELDER STEHEN ROH, KANTE AN KANTE:
