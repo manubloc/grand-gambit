@@ -9,6 +9,7 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { LeaveMatchAsk } from "../../App.jsx";
+import { FELD_KAPITEL, FELD_CLASSIC, FELD_FINALE } from "../board/feldArt.js";
 import { BoardView } from "../board/BoardView.jsx";
 import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { KampfLeiste } from "../KampfLeiste.jsx";
@@ -136,6 +137,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // dran, die fuer die Fernpartie anders laufen) - darum ein eigenes Merkmal
   // nur fuer die OPTIK.
   const klassikOptik = classic || (daily && (daily.rules || "hp") === "chess");
+
   const map = daily ? mapById(daily.map) : pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
   const rules = daily ? (daily.rules || "hp") : pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
   const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
@@ -607,6 +609,22 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp && !(daily && dailySent);
   const st = status(state);
   const hpMode = state.rules === "hp";
+  // DIE FELDER DES BESITZERS (v0.66): Kampagne traegt den Streifen ihres
+  // Kapitels; der Endboss des letzten Kapitels bekommt die Blitz-Kachel auf
+  // den dunklen Feldern; klassische Partien wechseln durch drei Streifen
+  // (je Partie fest, damit "ein bisschen Aenderung im Spiel ist").
+  const classicWurf = useMemo(() => Math.floor(Math.random() * 3), []);
+  const { feld, feldDunkel } = useMemo(() => {
+    if (campaign) {
+      const lg = (((profile?.campaign?.league || 1) - 1) % 12) + 1;
+      const fin = lg >= 11 && !!match?.boss;
+      return { feld: FELD_KAPITEL[lg - 1], feldDunkel: fin ? FELD_FINALE : null };
+    }
+    if (!hpMode) return { feld: FELD_CLASSIC[classicWurf], feldDunkel: null };
+    return { feld: null, feldDunkel: null };
+  }, [campaign, hpMode, classicWurf]);
+  // die Streifen vorwaermen, damit das Brett nicht nackt aufwacht
+  useEffect(() => { for (const q of [feld, feldDunkel]) if (q) { const im = new Image(); im.src = q; } }, [feld, feldDunkel]);
   const F = hpMode ? forces(state.board) : null;
   const statusText = banner ? "" : st.check ? t("game.check") : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
@@ -773,7 +791,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat}
+        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}

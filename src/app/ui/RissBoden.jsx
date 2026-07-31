@@ -31,13 +31,13 @@ const STUFEN = [riss01, riss02, riss03, riss04, riss05, riss06, riss07, riss08, 
  *  (wie viel des Weges ist geraeumt). Beide 0..1, gemittelt, auf 1..10
  *  abgebildet - so waechst der Riss auch, wenn nur eine Seite vorankommt. */
 export function rissStufe(profile) {
+  // KAPITELGETRIEBEN (Besitzer, v0.66): "abhaengig, in welchem Kapitel ich
+  // bin". Die alte Mischung aus Hofwert und Weganteil blieb selbst im
+  // letzten Kapitel bei Stufe 3 haengen (Werkbank-Befund) - jetzt zaehlt
+  // schlicht das Kapitel: 1 -> Bild 1 ... 10+ -> Bild 10.
   if (!profile) return 1;
-  const hof = (profile.campaign?.unlocked || []).length;
-  const hofAnteil = Math.min(1, hof / 14);          // 14 Gefaehrten = voll
-  const weg = campaignLength(profile) || 1;
-  const wegAnteil = Math.min(1, clearedCount(profile) / weg);
-  const misch = (hofAnteil + wegAnteil) / 2;
-  return Math.max(1, Math.min(STUFEN.length, 1 + Math.round(misch * (STUFEN.length - 1))));
+  const lg = profile.campaign?.league || 1;
+  return Math.max(1, Math.min(STUFEN.length, lg));
 }
 
 export function RissBoden({ profile, staerke = 1 }) {

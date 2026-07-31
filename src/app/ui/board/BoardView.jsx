@@ -130,7 +130,7 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -394,9 +394,31 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           // is preloaded, so nothing ever pops
           background: `${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
-          {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
-            opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />}
+          {(feld || !ground) && (() => {
+            // DIE FELDER DES BESITZERS (v0.66) SIEGEN AUCH UEBER DEM BODEN:
+            // seine Kacheln SIND die Felder - der gemalte Grund weicht. liegt ein Kapitel-Streifen an,
+            // schneidet sich jede Zelle ihr Fenster aus der richtigen Haelfte
+            // (links hell, rechts dunkel) - Hash haelt das Fenster je Zelle
+            // fest, der Schleier darueber ist DUENNER als beim Marmor, damit
+            // die Malerei traegt. Die Finale-Kachel (feldDunkel) ist ein
+            // GANZES Bild und ersetzt nur die dunklen Felder.
+            if (feld) {
+              const fx = (((i * 2654435761) >>> 9) % 997) / 997;
+              const fy = (((i * 40503) >>> 3) % 991) / 991;
+              const finale = dark && feldDunkel;
+              const quelle = finale ? feldDunkel : feld;
+              const groesse = finale ? "200% auto" : "260% auto";
+              const px = finale ? fx * 100 : dark ? 81.25 + fx * 18.75 : fx * 18.75;
+              const schleier = hexA(dark ? sqD0 : sqL0, dark ? 0.3 : 0.26, friendly ? 0.22 : 0.08);
+              return <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+                background: `linear-gradient(${schleier}, ${schleier}), url(${quelle}) ${px}% ${fy * 100}% / ${groesse} no-repeat`,
+                opacity: friendly ? 0.5 : 1 }} />;
+            }
+            if (ground) return null;
+            return <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+              background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
+              opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />;
+          })()}
           {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />}
           {!ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",

@@ -33,6 +33,7 @@ import { AdminPortal } from "./ui/AdminPortal.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
+import karteAkademie from "./ui/assets/karten/karte-akademie.webp";
 import { AkademieScreen } from "./ui/screens/AkademieScreen.jsx";
 import { InstallBanner } from "./ui/InstallBanner.jsx";
 
@@ -783,7 +784,11 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
       </Card>
       {onTutorial && (
         <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
-                    cursor: "pointer", background: "linear-gradient(170deg, #594684, #3a2c59)",
+                    cursor: "pointer",
+          // AKADEMIE MIT EIGENEM KACHELBILD (Besitzer, v0.66): dieselbe
+          // Bauart wie die anderen Kacheln - schwarzer Grund, Motiv rechts
+          // in voller Hoehe, Schleier von links bis 94 % (keine harte Kante).
+          background: `linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,.24) 76%, rgba(0,0,0,0) 94%), url(${karteAkademie}) right center / auto 100% no-repeat, #000`,
           // Die Akademie war nicht mehr zu sehen (Besitzer, v0.47): ihre Kante
           // stand bei 27 % Deckkraft (#8a6d3544) auf einer ohnehin fast
           // schwarzen Flaeche - gemessen lag die Karte bei Helligkeit 27 auf

@@ -14,9 +14,9 @@
 // Die Übermacht kommt als Zahl `lage` herein: -1 (Gegner klar vorn) bis +1
 // (du klar vorn), 0 = ausgeglichen.
 
-const GOLD_HELL = "#f2ddab";
-const GOLD = "#c89a4e";
-const GOLD_TIEF = "#7d5417";
+const GOLD_HELL = "#caa45c"; // v0.66: dunkler, Besitzer fand das Gold zu hell
+const GOLD = "#9a7430";
+const GOLD_TIEF = "#5c3d10";
 const RISS_HELL = "#e6dcff";
 const RISS = "#a78bfa";
 
@@ -104,9 +104,8 @@ export function BrettRahmen({ id = "br", lage = 0, style }) {
       <rect x={rand - 8} y={rand} width="16" height={H - 2 * rand} fill={`url(#${id}-s)`} />
       <rect x={W - rand - 8} y={rand} width="16" height={H - 2 * rand} fill={`url(#${id}-s)`} />
 
-      {/* innere Haarlinie */}
-      <rect x={rand + 26} y={rand + 26} width={W - 2 * (rand + 26)} height={H - 2 * (rand + 26)}
-        fill="none" stroke={`url(#${id}-q)`} strokeWidth="4" />
+      {/* Die innere Haarlinie ist fort (Besitzer, v0.66): "nur der
+          aeussere Rand" - der Doppelrahmen war zuviel. */}
 
       {/* WETTER: die Seite, die führt, färbt ihre Leiste */}
       {eigen > 0.05 && <rect x={rand} y={H - rand - 8} width={W - 2 * rand} height="16"

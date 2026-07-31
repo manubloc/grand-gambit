@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.66.0
+
+DIE FELDER DES BESITZERS AUF JEDEM BRETT, AKADEMIE-KACHEL, RISS NACH KAPITEL:
+
+- FELDERBRETT: fuer jedes Kapitel (1-12) ein eigenes Felderpaar aus den
+  Streifenbildern des Besitzers (links hell, rechts dunkel) - jede Zelle
+  schneidet sich ihr Fenster zur Laufzeit per Hash aus der richtigen
+  Haelfte (Marmor-Prinzip ohne 190 Einzeldateien; Sondenbeleg: 64 Zellen,
+  64 verschiedene Fenster). Seine Kacheln SIND die Felder und siegen auch
+  ueber dem gemalten Boden. KLASSISCHE Partien wechseln je Partie durch
+  drei Streifen; der ENDBOSS des letzten Kapitels traegt die Blitz-Kachel
+  auf den dunklen Feldern.
+- RAHMEN: nur noch der aeussere Rand (die innere Haarlinie ist fort - der
+  Doppelrahmen war zuviel) und das Gold deutlich dunkler (#caa45c/#9a7430/
+  #5c3d10 statt der hellen Toene).
+- AKADEMIE-KACHEL: das neue Motiv des Besitzers (Schachbuch im Dunkel) im
+  selben Kartenkleid wie alle Kacheln - schwarzer Grund, Motiv rechts in
+  voller Hoehe, Schleier von links bis 94 %, keine harte Kante.
+- RISSBODEN NACH KAPITEL: die alte Mischformel (Hofwert+Weganteil) blieb
+  selbst im letzten Kapitel bei Bild 3 haengen (Werkbank-Befund des
+  Besitzers) - jetzt zaehlt schlicht das Kapitel: 1 -> Bild 1 ... 10+ ->
+  Bild 10.
+
 ## 0.65.0
 
 DIE GROSSE KARTEN-WARTUNG (sieben Besitzer-Punkte; ein verwaister
