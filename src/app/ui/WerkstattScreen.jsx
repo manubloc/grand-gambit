@@ -133,6 +133,8 @@ export function WerkstattScreen() {
   const [zoom,setZoom]=useState(1);
   const [kannZurueck,setKannZurueck]=useState(0);
   const [raster,setRaster]=useState(true);
+  const [brett,setBrett]=useState(false);   // Schachbrett-Muster unterlegen
+  const quelleRef=useRef(null);             // Stempel-Quelle im Werkraum
   const lageRef=useRef({dx:0,dy:0,skala:1});      // Figur-Verschiebung/-Groesse
   const [lageSchau,setLageSchau]=useState({dx:0,dy:0,skala:1});
   const [mass,setMass]=useState(null);            // gemessener Sockel/Hoehe
@@ -157,6 +159,21 @@ export function WerkstattScreen() {
     cx.clearRect(0,0,dc.width,dc.height);
     cx.imageSmoothingEnabled = zoom<2;
     cx.setTransform(zoom,0,0,zoom,offRef.current.x,offRef.current.y);
+    // SCHACHBRETT-MUSTER (Besitzer, v0.63): fest im RAHMEN, die Figur
+    // bewegt sich RELATIV dazu. Ein Feld ist 320 px breit und liegt
+    // mittig unter dem Sockel (Spielmass: Soll-Sockel 303 auf einem Feld).
+    if (brett) {
+      const w=pc.width,h=pc.height,F=320;
+      for(let reihe=0;reihe*F<h+F;reihe++){
+        for(let sp=-1;sp*F<w+F;sp++){
+          const x=160+ (sp-1)*F, y=h-(reihe+1)*F;
+          cx.fillStyle=((sp+reihe)%2===0)?"#b3a78f":"#232532";
+          cx.fillRect(x,y,F,F);
+        }
+      }
+      cx.strokeStyle="rgba(233,207,138,.35)"; cx.lineWidth=2/zoom;
+      cx.strokeRect(160,h-320,320,320); // DAS Feld der Figur
+    }
     // FIGUR-LAGE: um die Bodenmitte verankert - Skalieren waechst aus dem
     // Sockel, Verschieben wandert frei. Wirkt auf ALLE Ebenen gleich.
     const {dx,dy,skala}=lageRef.current;
@@ -168,6 +185,14 @@ export function WerkstattScreen() {
     cx.drawImage(strichRef.current,0,0);
     cx.globalCompositeOperation="destination-out";
     cx.drawImage(radierRef.current,0,0);
+    cx.globalCompositeOperation="source-over";
+    // STEMPEL-QUELLE sichtbar machen (im Werkraum, wandert mit der Figur)
+    if (werkzeug==="stempel" && quelleRef.current) {
+      cx.strokeStyle="rgba(140,225,160,.9)"; cx.lineWidth=2;
+      cx.beginPath(); cx.arc(quelleRef.current.x,quelleRef.current.y,Math.max(4,groesse/2),0,Math.PI*2); cx.stroke();
+      cx.beginPath(); cx.moveTo(quelleRef.current.x-6,quelleRef.current.y); cx.lineTo(quelleRef.current.x+6,quelleRef.current.y);
+      cx.moveTo(quelleRef.current.x,quelleRef.current.y-6); cx.lineTo(quelleRef.current.x,quelleRef.current.y+6); cx.stroke();
+    }
     cx.restore();
     // RASTER mit SOLL-MASS: 40er-Netz, Mittelachse, Bodenlinie und das
     // Soll-Sockel-Band (303 px) - alles im Rahmenraum, zoomt also mit.
@@ -252,7 +277,7 @@ export function WerkstattScreen() {
     male(); vermesse();
   };
   useEffect(()=>{const t=setTimeout(rechneNeu,120);return()=>clearTimeout(t);},[p]);
-  useEffect(male,[zoom,raster,lageSchau]);
+  useEffect(male,[zoom,raster,lageSchau,brett,werkzeug,groesse]);
 
   // ── Zeichnen: Stempel mit Haerte-Verlauf ─────────────────────────────────
   const stempel=(cv,x,y,farbeCss)=>{
@@ -273,6 +298,28 @@ export function WerkstattScreen() {
     const fx=(px-offRef.current.x)/zoom, fy=(py-offRef.current.y)/zoom;      // Rahmenraum
     const {dx,dy,skala}=lageRef.current, w=dc.width,h=dc.height;             // -> Werkraum
     return { x:(fx-(w/2+dx))/skala+w/2, y:(fy-(h+dy))/skala+h, fx, fy, px, py };
+  };
+  // ── DER STEMPEL (Besitzer, v0.63, wie im Bildprogramm): Alt+Klick oder
+  // erster Tipp setzt die QUELLE; danach malt jeder Zug eine Kopie der
+  // Komposition von der Quelle hierher - die Quelle wandert klassisch mit
+  // dem Strichversatz. Groesse und Haerte gelten wie beim Pinsel. ──
+  const fotografiere=()=>{
+    const pc=procRef.current;
+    const t=mach(pc.width,pc.height); const tc=t.getContext("2d");
+    tc.drawImage(pc,0,0); tc.drawImage(strichRef.current,0,0);
+    tc.globalCompositeOperation="destination-out"; tc.drawImage(radierRef.current,0,0);
+    return t;
+  };
+  const kopiere=(foto,zx,zy,qx,qy)=>{
+    const d=Math.max(2,groesse), r=d/2;
+    const st=mach(d,d); const sc=st.getContext("2d");
+    sc.drawImage(foto, qx-r,qy-r,d,d, 0,0,d,d);
+    const g=sc.createRadialGradient(r,r,0,r,r,r);
+    const kern=Math.max(0,Math.min(0.99,haerte));
+    g.addColorStop(0,"rgba(0,0,0,1)"); g.addColorStop(kern,"rgba(0,0,0,1)"); g.addColorStop(1,"rgba(0,0,0,0)");
+    sc.globalCompositeOperation="destination-in";
+    sc.fillStyle=g; sc.fillRect(0,0,d,d);
+    strichRef.current.getContext("2d").drawImage(st, zx-r, zy-r);
   };
   const sichere=()=>{ // Undo-Schnappschuss beider Ebenen (Deckel 6)
     const s=mach(strichRef.current.width,strichRef.current.height);
@@ -309,6 +356,18 @@ export function WerkstattScreen() {
     }
     if (werkzeug==="bewegen") { zeichnetRef.current={art:"schieben", letzt:{px:pt.px,py:pt.py}}; return; }
     if (werkzeug==="figur") { zeichnetRef.current={art:"figur", letzt:{fx:pt.fx,fy:pt.fy}}; return; }
+    if (werkzeug==="stempel") {
+      if (e.altKey || !quelleRef.current) {
+        quelleRef.current={x:pt.x,y:pt.y};
+        setStatus("Stempel-Quelle gesetzt — jetzt an der Zielstelle malen (Alt+Klick: Quelle neu).");
+        male(); return;
+      }
+      sichere();
+      zeichnetRef.current={art:"stempel", letzt:pt,
+        versatz:{x:pt.x-quelleRef.current.x, y:pt.y-quelleRef.current.y}, foto:fotografiere()};
+      kopiere(zeichnetRef.current.foto, pt.x, pt.y, pt.x-zeichnetRef.current.versatz.x, pt.y-zeichnetRef.current.versatz.y);
+      male(); return;
+    }
     sichere();
     zeichnetRef.current={art:werkzeug, letzt:pt};
     if (werkzeug==="pinsel") stempel(strichRef.current,pt.x,pt.y,rgba(farbe,1));
@@ -326,6 +385,16 @@ export function WerkstattScreen() {
       lageRef.current={ ...lageRef.current,
         dx: lageRef.current.dx+(pt.fx-z.letzt.fx), dy: lageRef.current.dy+(pt.fy-z.letzt.fy) };
       z.letzt={fx:pt.fx,fy:pt.fy}; setLageSchau({...lageRef.current}); male(); return;
+    }
+    if (z.art==="stempel") {
+      const dx=pt.x-z.letzt.x, dy=pt.y-z.letzt.y;
+      const strecke=Math.hypot(dx,dy), schritt=Math.max(1,groesse*0.30);
+      for(let sw=schritt;sw<=strecke;sw+=schritt){
+        const x=z.letzt.x+dx*sw/strecke, y=z.letzt.y+dy*sw/strecke;
+        kopiere(z.foto, x, y, x-z.versatz.x, y-z.versatz.y);
+      }
+      kopiere(z.foto, pt.x, pt.y, pt.x-z.versatz.x, pt.y-z.versatz.y);
+      z.letzt=pt; male(); return;
     }
     const cv=z.art==="pinsel"?strichRef.current:radierRef.current;
     const cssF=z.art==="pinsel"?rgba(farbe,1):"rgba(0,0,0,1)";
@@ -484,11 +553,13 @@ export function WerkstattScreen() {
         {werkzeugKnopf("pinsel","🖌","Pinsel")}
         {werkzeugKnopf("radierer","◨","Radierer")}
         {werkzeugKnopf("pipette","💧","Pipette (Farbe aufnehmen)")}
+        {werkzeugKnopf("stempel","⧉","Stempel: erster Tipp/Alt+Klick setzt die Quelle, dann malen")}
         {werkzeugKnopf("figur","⤢","Figur verschieben")}
         <button style={{...knopf,flex:1}} onClick={()=>setZoom(Math.min(8,+(zoom*1.5).toFixed(2)))}>＋</button>
         <button style={{...knopf,flex:1}} onClick={()=>{const z=Math.max(1,+(zoom/1.5).toFixed(2));setZoom(z);if(z===1)offRef.current={x:0,y:0};}}>－</button>
         <button style={{...knopf,flex:1,opacity:kannZurueck?1:0.45}} onClick={zurueck} disabled={!kannZurueck}>↶</button>
         <button style={{...knopf,flex:1,borderColor:raster?T.selLine:T.line}} onClick={()=>setRaster(!raster)} title="Raster">⊞</button>
+        <button style={{...knopf,flex:1,borderColor:brett?T.selLine:T.line,background:brett?`linear-gradient(165deg, ${T.sel}, #1a1030)`:T.panel}} onClick={()=>setBrett(!brett)} title="Schachbrett-Muster: zeigt, wie die Figur auf ihrem Feld sitzt">♟</button>
       </div>
       {werkzeug==="figur" && (
         <div style={{display:"flex",gap:10,alignItems:"center",marginBottom:4}}>

@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 0.63.0
+
+DIE WERKSTATT BEKOMMT DIE ORIGINALE ZURUECK, DEN STEMPEL UND DAS BRETT:
+
+- DIE ORIGINALE SIND WIEDER DIE BASIS: v0.53 hatte das v5-Rezept FEST in
+  die 57 dunklen Dateien eingebrannt - "Zuruecksetzen" konnte darum nie
+  das Original zeigen (Besitzer-Fund, und er hatte recht). Jetzt sind
+  alle 57 unbearbeiteten Gegenseiten restauriert (51 aus dem Git-Verlauf,
+  die 6 Gambit-Schatten frisch roh gerechnet, Torwaechter sauber).
+  ZURUECKSETZEN = ORIGINAL; das v5-Rezept bleibt als Startwerte-Knopf je
+  Figur waehlbar. Das Spiel zeigt damit wieder die Originale, bis der
+  Besitzer seine eigene Fassung laedt.
+- DER STEMPEL (wie im Bildprogramm): erster Tipp oder Alt+Klick setzt die
+  QUELLE (gruener Fadenkreuz-Marker), danach malt jeder Zug eine Kopie
+  der Komposition an die Zielstelle - die Quelle wandert klassisch mit
+  dem Strichversatz. Groesse und Haerte gelten wie beim Pinsel;
+  Rueckgaengig deckt ihn ab. Pixelbeweis: Zielstelle traegt nach dem
+  Stempeln das kopierte Figurenmaterial.
+- SCHACHBRETT-MUSTER einblendbar (Knopf ♟): ein 320er-Felderteppich fest
+  im Rahmen, das Feld der Figur golden umrandet - man sieht, wie die
+  Figur auf ihrem Feld sitzt, und Raster wie Brett stehen FEST, waehrend
+  die Figur sich relativ dazu bewegt.
+
 ## 0.62.0
 
 DER KLASSISCHE SATZ DES BESITZERS IST KOMPLETT AM BRETT, MENUES LOESEN
