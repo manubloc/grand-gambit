@@ -1,5 +1,33 @@
 # Changelog - Grand Gambit
 
+## 0.65.0
+
+DIE GROSSE KARTEN-WARTUNG (sieben Besitzer-Punkte; ein verwaister
+Arbeitsstand einer frueheren Sitzung wurde analysiert, glattgezogen und
+zu Ende gebracht):
+
+- ROTE KAPITEL-SCHRIFT FORT: der karmesinrote "KAPITEL X"-Schriftzug und
+  die Kapitel-Banner auf den Karten sind entfernt (Sondenbeleg: kein
+  KAPITEL-Text mehr auf der Karte; das goldene "WELTKARTE" im Atlas
+  bleibt).
+- WOLKEN NUR AM HIMMEL DES BILDES: die Wolkenschicht blendet mit der
+  Kameranaehe zum oberen Kartenrand ein und erlischt ganz, wenn man
+  unten unterwegs ist (gemessen 0,88 beim Einflug oben).
+- DER GAMBIT REIST IMMER MIT: beim Durchblaettern der Kapitel steht der
+  Wanderer auf Station 1 des betrachteten Bodens statt zu verschwinden.
+- KONTUR OBEN WIE UNTEN: der getoente Verlauf am Oberrand und der
+  gespiegelte Blur-Streifen (der "seltsame Rand") sind fort - der Rahmen
+  traegt ringsum dasselbe ruhige Dunkel.
+- DESKTOP-POPUP IN VOLLER GROESSE: ab 760 px Rahmenbreite steht das
+  Stations-Panel 400 px breit rechts unten (gemessen) und weicht nach
+  links aus, wenn es den Gambit deckte - keine geschrumpften,
+  umbrechenden Schriften mehr.
+- KUGEL-ZIFFERN IM POPUP: eine Stufe kleiner gesetzt (num 0,52 statt
+  0,58, Kugel 28) - die Zahl sitzt ruhig mittig.
+- WELTKARTE OEFFNET WEITER: jedes Kapitel zeigt deutlich mehr Welt
+  (Radius 36/27+ statt 26/15) - voll erspielt bleibt nur noch ein leiser
+  schwarzer Saum am Aussenrand.
+
 ## 0.64.1
 
 DER RISSBODEN AUF DESKTOP GEZAEHMT - 1280er-BAND MIT RANDVERLAEUFEN:

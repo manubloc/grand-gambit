@@ -247,8 +247,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // ── the embedded node panel: parchment overlay near the selected medallion,
   //    projected into viewport coords so text never scales with zoom ─────────
   const seaLock = !viewing && th.sea && !seaAccessible(profile);
-  const panelW = Math.min(352, frameW - 28);
-  const panelLeft = 14;
+  const breit = frameW >= 760;
+  // DESKTOP (Besitzer, v0.65): das Popup steht in VOLLER Groesse - breiter,
+  // rechts unten - und weicht nach links aus, wenn es den Gambit deckte.
+  const panelW = Math.min(breit ? 400 : 352, frameW - 28);
+  let panelLeft = 14;
   // DER GAMBIT BLEIBT SICHTBAR: das Panel erscheint auf der Seite, auf der
   // er NICHT steht. Zwei Lehren aus v0.37.1: (1) top braucht frameY, sonst
   // schiesst das Panel UEBER die Karte hinaus; (2) die Seite darf nur von der
@@ -270,6 +273,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const imLicht = (n) => viewing || !bm || ny(n) >= lichtFront - 120;
   const LEISTE = 12 + 40 + 10;   // Abstand + Knopfhoehe + Luft darunter
   const panelOben = tokenScreenY > frameH * 0.52 && (tokenScreenY - 82 - 24 - LEISTE) >= 190;
+  const tokenScreenX = tokenNode ? nx(tokenNode) * zf - camX : frameW * 0.5;
+  if (breit) {
+    const deckt = tokenScreenX > frameW - panelW - 56 &&
+      (panelOben ? tokenScreenY < frameH * 0.55 : tokenScreenY > frameH * 0.42);
+    panelLeft = deckt ? 14 : frameW - panelW - 14;
+  }
   const panelPos = panelOben
     ? { top: frameY + LEISTE, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - LEISTE), overflowY: "auto" }
     : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
@@ -285,7 +294,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           around the window — the map hangs like a canvas over the chrome */}
       <div aria-hidden style={{ position: "absolute", left: frameX - 3, top: frameY - 3,
         width: frameW + 6, height: frameH + 6, borderRadius: Math.min(24, frameW / 12),
-        background: `linear-gradient(180deg, rgba(${labelTint(viewLeague)},.5) 0%, rgba(${labelTint(viewLeague)},.2) 42%, rgba(9,11,16,.95) 100%)`,
+        // OBEN WIE UNTEN (Besitzer, v0.65): der Rahmen lief oben getoent
+        // (labelTint) und unten dunkel - der "seltsame Rand oben". Jetzt
+        // traegt er ringsum dasselbe ruhige Dunkel wie an der Unterkante.
+        background: "rgba(9,11,16,.95)",
         // die Karte traegt die Riss-Kontur des Hauses
         border: "1px solid rgba(167,139,250,.55)",
         boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 18px rgba(124,58,237,.3), 0 0 40px rgba(124,58,237,.14)",
@@ -335,10 +347,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           const rad = Math.min(22, frameW / 12);
           // fade the WHOLE band out toward its lower edge — a long, gentle mask so
           // the clouds dissolve into the map with no hard cut whatsoever.
+          const himmelSicht = Math.max(0, Math.min(1, 1 - camY / Math.max(1, HM * zf * 0.16)));
           const softMask = "linear-gradient(180deg, #000 0%, #000 30%, rgba(0,0,0,.7) 62%, rgba(0,0,0,.28) 84%, transparent 100%)";
+          // WOLKEN NUR AM HIMMEL DES BILDES (Besitzer, v0.65): steht die
+          // Kamera nicht am oberen Kartenrand, gibt es nichts zu sehen - die
+          // Schicht blendet mit dem Hinabziehen aus und erlischt ganz.
           return (
           <div aria-hidden style={{ position: "absolute", top: 0, left: 0, right: 0, height: "30%", zIndex: 5,
             pointerEvents: "none", overflow: "hidden", borderRadius: `${rad}px ${rad}px 0 0`,
+            opacity: himmelSicht, display: himmelSicht <= 0.02 ? "none" : undefined,
             WebkitMaskImage: softMask, maskImage: softMask }}>
             {/* the SKY is the base: a full wash of the world's weather — blue +
                 sun in green worlds, dusk/purple in the deep. Clouds drift over
@@ -348,10 +365,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             {/* the faintest hint of terrain colour at the very bottom edge, UNDER
                 the sky so it never tints the blue */}
-            <img src={bmDef.url} alt="" draggable={false} style={{ position: "absolute", top: 0, left: "-20%", width: "140%",
-              height: "150%", objectFit: "cover", objectPosition: "50% 0%",
-              filter: "blur(14px) brightness(.95) saturate(.95)", transform: "scaleY(-1)", opacity: 0.14,
-              WebkitMaskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)", maskImage: "linear-gradient(180deg, transparent 0%, transparent 72%, #000 100%)" }} />
+{/* der gespiegelte Blur-Streifen ist fort - er war der seltsame Oberrand. */}
             <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             {/* drifting cloud PUFFS with real gaps — the sky (blue/sun/dusk)
                 stays visible between and behind them. Airy, so blue peeks through. */}
@@ -479,18 +493,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             </> : Keep({ x: WMAP - 84, y: ny({ col: 2 }) - 10, s: 1.7, fill: MP.liga, k: "k2" }))}
           </svg>
 
-          {/* chapter banners (drawn maps only — painted worlds carry a fixed pill in the chrome) */}
-          {!bm && CHAPTERS.map((c) => (
-            <div key={"ch" + c.n} className="gg-quill" style={{ position: "absolute", top: 12,
-              left: LEFT + ((c.fromRow + c.toRow) / 2) * STEP, transform: "translateX(-50%)",
-              background: "rgba(239,233,218,.42)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(201,191,164,.6)", borderRadius: 999, padding: "8px 15px",
-              fontSize: 12.5, color: MP.ink, whiteSpace: "nowrap", boxShadow: "0 0 18px rgba(30,25,15,.14)" }}>
-              {(en ? "CHAPTER " : "KAPITEL ")}{["I", "II", "III", "IV"][c.n - 1]} · {chapterTitle(viewLeague, c.n, en).toUpperCase()}
-            </div>
-          ))}
-          <div className="gg-serif" style={{ position: "absolute", top: Math.max(14, ny({ col: 2 }) - 74), left: Math.min(WMAP - 84, WMAP - 14), transform: "translateX(-50%)",
-            color: MP.liga, fontSize: 19, letterSpacing: ".22em", fontWeight: 700, whiteSpace: "nowrap" }}>❖ {(en ? "CHAPTER " : "KAPITEL ")}{ROMAN[viewLeague - 1] || viewLeague} ❖</div>
+          {/* Kapitel-Banner auf Karten sind fort (Besitzer, v0.65). */}
+          <span aria-hidden style={{ display: "none" }} />
           {/* medallions + labels — small waypoints now; the wanderer is the star */}
           {CAMPAIGN.map((n) => {
             if (!nodeInLeague(n, viewLeague)) return null; // nur das betrachtete Kapitel betritt seine Karte
@@ -631,8 +635,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               </div>
             );
           })}
-          {/* the traveller — the Grand Gambit walks the trail, larger than life */}
-          {!viewing && (() => {
+          {/* the traveller — the Grand Gambit walks the trail, larger than life.
+              ER REIST IMMER MIT (Besitzer, v0.65): auch beim Durchblaettern
+              der Kapitel steht er auf Station 1 des betrachteten Bodens. */}
+          {(() => {
             // DER WANDERER IST NIE NIRGENDWO: kennt das Spiel seine Station
             // nicht, oder gehoert sie zu einem anderen Kapitel, dann stellt er
             // den Fuss auf Station 1 dieses Kapitels - statt zu verschwinden.
@@ -823,8 +829,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   if (ax == null) continue;
                   // das juengste Kapitel leuchtet am weitesten, aeltere etwas enger
                   const alter = bis - lg;                       // 0 = das neueste
-                  const r = alter === 0 ? 26 : Math.max(15, 23 - alter * 1.6);
-                  const kern = alter === 0 ? 0.62 : 0.55;
+                  // WEITER GEOEFFNET (Besitzer, v0.65): jedes Kapitel zeigt
+                  // deutlich mehr Welt - voll erspielt bleibt nur noch ein
+                  // leiser schwarzer Saum am Aussenrand.
+                  const r = alter === 0 ? 36 : Math.max(27, 33 - alter * 0.8);
+                  const kern = alter === 0 ? 0.7 : 0.62;
                   kreise.push(`radial-gradient(${r}% ${r * 1.7}% at ${ax}% ${ay}%, #000 0%, #000 ${Math.round(kern * 100)}%, rgba(0,0,0,.45) 78%, transparent 100%)`);
                 }
                 if (!kreise.length) return null;
@@ -997,7 +1006,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
                 <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 2, filter: "drop-shadow(0 1px 2px rgba(0,0,0,.35))" }}>
-                    <StatOrbBadge kind="power" v={boss.atk} size={30} /><StatOrbBadge kind="life" v={boss.hp} size={30} /></span>
+                    <StatOrbBadge kind="power" v={boss.atk} size={28} num={0.52} /><StatOrbBadge kind="life" v={boss.hp} size={28} num={0.52} /></span>
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>
