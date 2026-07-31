@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 0.64.0
+
+DIE KAMPFLEISTE NACH DER VORLAGE DES BESITZERS, DIE LUPE FAELLT:
+
+- DIE LUPE IST FORT: der Nahansicht-Knopf im Gefecht verschwindet (das
+  Feldglas ruht, die Maschinerie bleibt stumm im Code).
+- KARTEN-SCHALTFLAECHEN statt nackter Bubbles, nach der Bildvorlage:
+  schmale violette Kartenrahmen, darin der bewaehrte Goldring, darunter
+  der Name in Kapitaelchen. Sonderzuege (Rochade, En passant) stehen
+  gruen markiert voran. Die Reihe scrollt seitlich, wenn mehr Karten da
+  sind, als der Schirm traegt.
+- KEIN GROSS-PORTRAET mehr in der Leiste: die gewaehlte Figur steht ja
+  bereits gross markiert auf dem Brett - die Leiste gehoert jetzt ganz
+  den Faehigkeiten (schlanke Kopfzeile: Name, Stufe, Kugeln).
+- DIE NAECHSTE GESPERRTE FAEHIGKEIT erscheint als Schloss-Karte mit
+  ihrer Stufe (immer nur EINE, wie gewuenscht); ihre Beschreibung nennt
+  den Weg: freischaltbar im Hofstaat ab Lv X. Sondenbeleg: Level-1-Bauer
+  zeigt genau die Schloss-Karte "Sturmschritt Lv 3".
+- Die Ausruestung (Trank, Zeitriss, Sanduhr) bleibt figurunabhaengig in
+  ihrer Legende darunter - immer da, wie es der Besitzer beschrieb.
+
 ## 0.63.1
 
 KLASSISCHE FIGUREN: DIE ORIGINALE DES BESITZERS, UNANGETASTET:

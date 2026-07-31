@@ -836,15 +836,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             </div>
           );
         })()}
-        <button onClick={toggleZoom} title={t("game.zoom")}
-          style={{ position: "absolute", right: 8, bottom: 8, zIndex: 6, cursor: "pointer",
-            width: 42, height: 42, borderRadius: "50%", display: "grid", placeItems: "center",
-            background: zoomMode ? "rgba(240,206,122,.2)" : "rgba(8, 11, 20, .55)",
-            border: `1px solid rgba(233, 210, 150, ${zoomMode ? ".8" : ".42"})`,
-            boxShadow: "0 2px 10px rgba(0,0,0,.4)",
-            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
-          <ZoomIc size={19} />
-        </button>
+        {/* DIE LUPE IST FORT (Besitzer, v0.64): der Nahansicht-Knopf
+            stoerte - das Feldglas ruht, die Maschinerie bleibt stumm. */}
         {firstMeet && (() => {
           const pc = firstMeet.piece;
           const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);
