@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.63.1
+
+KLASSISCHE FIGUREN: DIE ORIGINALE DES BESITZERS, UNANGETASTET:
+
+- Besitzer-Fund, doppelt berechtigt: seine zwoelf Klassik-Figuren waren
+  BEREITS sauber freigestellt (RGBA, Ecken-Alpha 0, gemessen) - die
+  zusaetzliche "Freistellung" von v0.54/0.62 war ueberfluessig und hat
+  in den fertigen Bildern geschnitten (u. a. deckende Ecken am hellen
+  Bauern belegt).
+- Heilung: alle zwoelf ROH neu eingebettet - nur Alpha-Zuschnitt,
+  Einpassen auf 640x800, Bodenanker. NULL Pixel-Aenderung an Farbe oder
+  Alpha. Beweis: alle Ecken wieder transparent.
+- Das Zwischenlager assets/klassisch/ (verarbeitete Zweitkopien) ist
+  entfernt; eingebaut ist allein assets/klassik/.
+
 ## 0.63.0
 
 DIE WERKSTATT BEKOMMT DIE ORIGINALE ZURUECK, DEN STEMPEL UND DAS BRETT:
