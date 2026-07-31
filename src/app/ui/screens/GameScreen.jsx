@@ -632,7 +632,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const headerBar = (<>
       {/* top bar: ‹ back · context · clock · ⚑ resign — everything floats, nothing scrolls */}
       <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, padding: "10px 10px 6px", flex: "0 0 auto" }}>
-        {onExit && (
+        {/* KEIN ZURUECK in Online-Partien mit Uhr (Besitzer, v0.61): der
+            einzige Ausgang aus einer laufenden Schnellpartie ist Aufgeben -
+            wer die Uhr angenommen hat, laeuft nicht einfach vom Tisch. */}
+        {onExit && !(pvp && timer) && (
           <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.gold}88`, color: T.gold })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
@@ -668,19 +671,40 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             opacity: state.turn === myColor ? 0.65 : 1 })}>
             <HourglassIc size={13} color={T.magenta} /> {foeLbl}</span>
         )}
-        {armResign ? (
-          <span style={pill({ cursor: "default", border: `1.5px solid ${T.gold}`, color: T.goldBright, gap: 9,
-            animation: "ggGlow 1.6s ease-in-out infinite" })}>
-            {t("game.confirmResign")}
-            <span onClick={resign} style={{ cursor: "pointer", fontWeight: 900, padding: "0 2px" }}>✓</span>
-            <span onClick={() => setArmResign(false)} style={{ cursor: "pointer", opacity: 0.75, padding: "0 2px" }}>✕</span>
-          </span>
-        ) : (
-          <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro || scout}
-            style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro || scout ? 0.5 : 1,
-              cursor: banner || intro || scout ? "default" : "pointer" })}>
-            <FlagIc size={13} /> {t("game.resign")}
-          </button>
+        <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro || scout}
+          style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro || scout ? 0.5 : 1,
+            cursor: banner || intro || scout ? "default" : "pointer" })}>
+          <FlagIc size={13} /> {t("game.resign")}
+        </button>
+        {/* DAS AUFGEBEN-POPUP (Besitzer, v0.61): ein echter Dialog mit
+            ordentlichen Schaltflaechen statt der Mini-Pille. Online und in
+            der klassischen Partie sagt er UNMISSVERSTAENDLICH, dass damit
+            die Partie endet. */}
+        {armResign && (
+          <div onClick={() => setArmResign(false)} style={{ position: "fixed", inset: 0, zIndex: 70,
+            display: "grid", placeItems: "center", padding: 18,
+            background: "rgba(5,4,10,.72)", backdropFilter: "blur(3px)" }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 340,
+              background: T.panel, border: `1.5px solid ${T.gold}66`, borderRadius: 16,
+              padding: "18px 18px 14px", boxShadow: T.shadow }}>
+              <div className="gg-serif" style={{ fontSize: 18, color: T.goldBright, letterSpacing: ".05em", marginBottom: 6 }}>
+                ⚑ {t("game.resignTitle")}</div>
+              <div style={{ fontSize: 13, color: T.text, lineHeight: 1.55, marginBottom: 6 }}>{t("game.resignBody")}</div>
+              {pvp && <div style={{ fontSize: 12.5, color: T.danger, fontWeight: 800, lineHeight: 1.5, marginBottom: 6 }}>
+                {t("game.resignOnline")}</div>}
+              {!hpMode && !pvp && <div style={{ fontSize: 12.5, color: T.gold, fontWeight: 700, lineHeight: 1.5, marginBottom: 6 }}>
+                {t("game.resignClassic")}</div>}
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button onClick={() => setArmResign(false)} style={{ flex: 1, padding: "11px 10px", borderRadius: 12,
+                  border: `1px solid ${T.line}`, background: T.panel2, color: T.text, fontFamily: "inherit",
+                  fontWeight: 800, fontSize: 13.5, cursor: "pointer" }}>{t("game.resignStay")}</button>
+                <button onClick={() => { setArmResign(false); resign(); }} style={{ flex: 1, padding: "11px 10px",
+                  borderRadius: 12, border: `1.5px solid ${T.danger}`, background: "rgba(180,50,60,.16)",
+                  color: "#ffb9c1", fontFamily: "inherit", fontWeight: 900, fontSize: 13.5, cursor: "pointer" }}>
+                  ⚑ {t("game.resign")}</button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

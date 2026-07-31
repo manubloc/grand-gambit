@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 0.61.0
+
+AUFGEBEN MIT WUERDE - ECHTES POPUP, KLARE WORTE, KEIN STILLER ABGANG:
+
+- Der Mini-Pillen-Dialog (winzige Haken/Kreuz-Ziele) ist Geschichte:
+  Aufgeben oeffnet jetzt ein ECHTES POPUP mit ordentlichen Schaltflaechen
+  ("Weiterspielen" / roter "Aufgeben"-Knopf, gemessen 147x40 px).
+- KLARE WORTE ueber die Folgen: online warnt der Dialog unmissverstaend-
+  lich, dass die Partie fuer beide Seiten endgueltig endet und der Gegner
+  den Sieg erhaelt; in der klassischen Partie steht ebenso deutlich, dass
+  sie sofort endet und als Niederlage zaehlt.
+- KEIN "ZURUECK" in Online-Partien mit Uhr: wer die Schnellpartie mit
+  Zeit angenommen hat, laeuft nicht einfach vom Tisch - der einzige Weg
+  hinaus ist das ehrliche Aufgeben.
+- Sondenbeweis: Dialog erscheint, Klassik-Hinweis sitzt, "Weiterspielen"
+  schliesst ohne Nebenwirkung.
+
 ## 0.60.0
 
 PROFIL NICHT MEHR BREITER, DER RISSBODEN GEZAEHMT:
