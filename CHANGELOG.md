@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.70.2
+
+LEUCHTEND v3 - BRETTFESTE GLUTLINIEN:
+
+- Besitzer-Befund: im Spiel wirkten die Gegner-Konturen "komplett weg".
+  Wahrer Taeter war die SKALIERUNG: 640-px-Quellen stehen am Brett mit
+  ~52 px - die 3-px-Linien schrumpften auf 0,3 px und fielen unter die
+  Wahrnehmungsschwelle (Werkstatt und Bildprogramm zeigen Vollbild,
+  darum leuchtete es dort).
+- Rezept v3: vier Verdickungen statt zwei, Helligkeit x1,6 und ein
+  LEUCHT-HALO (weichgezeichnete Kanten x1,7 unter den Linien), der die
+  Verkleinerung ueberlebt. MESSBELEG IN BRETTGROESSE (52 px): Turm-
+  Mittel 121, Max 255, 87 % der sichtbaren Pixel ueber Schwelle 60 -
+  vorher praktisch schwarz.
+
 ## 0.70.1
 
 LEUCHTEND v2 - NUR DIE GEGENSEITE GLUEHT:
