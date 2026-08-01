@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 0.70.1
+
+LEUCHTEND v2 - NUR DIE GEGENSEITE GLUEHT:
+
+- Besitzer-Korrektur: beide Seiten leuchtend war Quatsch. Jetzt gluehen
+  NUR die Gegner (heller: Faktor x1,4, und breiter: Kantenbreite 3 statt
+  2), die EIGENEN Figuren bleiben im Leuchtend-Stil die Geschnitzten -
+  Lagerlesbarkeit pur: warme Schnitzerei gegen violette Glutlinien.
+- Die hellen Leucht-Dateien sind entfernt (57 statt 114, Buendel um
+  3,2 MB schlanker); die Tausch-Karte greift nur auf den dunklen
+  Saetzen, alles andere faellt auf Geschnitzt zurueck. Sondenbeleg:
+  16 Gegner-Glow, 16 eigene Geschnitzte, 0 eigene Glow.
+
 ## 0.70.0
 
 DER LEUCHTENDE STIL - DAS WERKSTATT-REZEPT WIRD SPIELBAR:
