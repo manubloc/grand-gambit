@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.68.0
+
+DIE AKADEMIE IST EINE ECHTE KARTE - "GENAU, GENAU GLEICH":
+
+- Kein Sonder-Knopf mehr: die Akademie nutzt jetzt DIESELBE Card wie
+  Kampagne, Schnellspiel und Online-Duell - lila Flaeche mit Goldkante,
+  Titel und Untertitel LINKS in derselben Schrift (Sondenbeleg: Titel
+  15 px / 0,6 px Sperrung identisch mit der Kampagne, gleiche Kante,
+  gleicher Grundtyp), das Buchmotiv rechts in voller Hoehe hinter dem
+  Schleier.
+- Der Text ist kuerzer ("Regeln, Figuren & Chronik") und der Absprung ein
+  ruhiger Pfeil-CTA ("Jetzt lernen") - bewusst KEIN Gold-Glanzknopf: die
+  Akademie bleibt sekundaer, in der Anpassen-Klasse, wie vom Besitzer
+  angedacht.
+
 ## 0.67.2
 
 DIE AKADEMIE-KACHEL BEKOMMT IHRE BUEHNE:

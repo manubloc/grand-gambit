@@ -783,39 +783,18 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         )}
       </Card>
       {onTutorial && (
-        <button onClick={onTutorial} style={{ gridColumn: "1 / -1", textAlign: "center", fontFamily: "inherit",
-                    cursor: "pointer",
-          // GLEICHE KACHELHOEHE (Besitzer, v0.67.2): die Akademie war mit
-          // 79 px ein flacher Streifen neben 145er-Geschwistern - das
-          // nachtdunkle Buchmotiv hatte keine Buehne. Jetzt Kachelmass.
-          minHeight: 132,
-          // AKADEMIE MIT EIGENEM KACHELBILD (Besitzer, v0.66): dieselbe
-          // Bauart wie die anderen Kacheln - schwarzer Grund, Motiv rechts
-          // in voller Hoehe, Schleier von links bis 94 % (keine harte Kante).
-          background: `linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,.24) 76%, rgba(0,0,0,0) 94%), url(${karteAkademie}) right center / auto 100% no-repeat, #000`,
-          // Die Akademie war nicht mehr zu sehen (Besitzer, v0.47): ihre Kante
-          // stand bei 27 % Deckkraft (#8a6d3544) auf einer ohnehin fast
-          // schwarzen Flaeche - gemessen lag die Karte bei Helligkeit 27 auf
-          // einem Grund von 24. Sie bleibt SEKUNDAER (kein Gold-CTA, kein
-          // Glanz), bekommt aber eine sichtbare Kante und eine eigene Flaeche.
-          // NACHGERECHNET (v0.47): die Kur von v0.46.1 reichte nicht - Flaeche
-          // gegen Grund 1,57:1, Goldkante gegen Flaeche 2,39:1 (unter dem
-          // 3:1-Minimum fuer Nicht-Text). Violett 20 % heller im gleichen Ton
-          // und Kante auf 60 % ergibt 1,93:1 bzw. 3,14:1; Text bleibt 8,08:1.
-          border: `1px solid ${T.gold}99`, borderRadius: T.radius,
-          boxShadow: T.shadow,
-          padding: "13px 14px 14px", color: T.text, fontSize: 13 }}>
-          {/* line one: the title, a touch smaller, flanked by the twin diamonds */}
-          <span style={{ display: "block" }}>
-            <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
-              transform: "rotate(45deg)", verticalAlign: "2px", marginRight: 10 }} />
-            <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".08em", fontSize: 13.5 }}>{t("tut.title")}</span>
-            <span aria-hidden style={{ display: "inline-block", width: 5, height: 5, background: "#d9b565",
-              transform: "rotate(45deg)", verticalAlign: "2px", marginLeft: 10 }} />
-          </span>
-          {/* line two: what awaits, quiet underneath */}
-          <span style={{ display: "block", marginTop: 4, fontSize: 12.5 }}>{t("tut.sub")}</span>
-        </button>
+        /* DIE AKADEMIE ALS ECHTE KARTE (Besitzer, v0.68): "mach es wirklich
+           genau, genau gleich" - also kein Sonder-Knopf mehr, sondern
+           dieselbe Card wie Kampagne, Schnellspiel und Online-Duell: lila
+           Flaeche mit Goldkante, Titel und Untertitel LINKS in derselben
+           Schrift, Buchmotiv rechts in voller Hoehe hinter dem Schleier.
+           Der Text ist kuerzer, der Absprung ein ruhiger Pfeil-CTA wie bei
+           der Kampagne - bewusst KEIN Gold-Glanzknopf, die Akademie bleibt
+           sekundaer (Anpassen-Klasse, wie vom Besitzer angedacht). */
+        <div style={{ gridColumn: "1 / -1" }}>
+          <Card ruhig title={t("tut.title")} sub={t("tut.subKurz")} onGo={onTutorial}
+            cta={t("tut.cta")} bild={karteAkademie} art={null} />
+        </div>
       )}
     </div>
   );
