@@ -656,7 +656,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             einzige Ausgang aus einer laufenden Schnellpartie ist Aufgeben -
             wer die Uhr angenommen hat, laeuft nicht einfach vom Tisch. */}
         {onExit && !(pvp && timer) && (
-          <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.selLine}66`, color: T.gold })}>
+          <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.selLine}`, color: T.selInk,
+            background: `linear-gradient(165deg, ${T.sel}, #1a1030)`, boxShadow: `0 0 10px ${T.selGlow}` })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
@@ -692,7 +693,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <HourglassIc size={13} color={T.magenta} /> {foeLbl}</span>
         )}
         <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro || scout}
-          style={pill({ border: `1.5px solid ${T.selLine}66`, color: T.gold, opacity: banner || intro || scout ? 0.5 : 1,
+          style={pill({ border: `1px solid ${T.selLine}`, color: T.selInk,
+            background: `linear-gradient(165deg, ${T.sel}, #1a1030)`, boxShadow: `0 0 10px ${T.selGlow}`,
+            opacity: banner || intro || scout ? 0.5 : 1,
             cursor: banner || intro || scout ? "default" : "pointer" })}>
           <FlagIc size={13} /> {t("game.resign")}
         </button>

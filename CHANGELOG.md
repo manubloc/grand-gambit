@@ -1,5 +1,14 @@
 # Changelog - Grand Gambit
 
+## 0.69.1
+
+ZURUECK UND AUFGEBEN IM EXAKTEN ANPASSEN-GEWAND:
+
+- Die beiden Gefechts-Pillen tragen jetzt BUCHSTAEBLICH den Stil des
+  Anpassen-Knopfs der Schnellspiel-Kachel: voller selLine-Rand, selInk-
+  Schrift, Verlauf T.sel -> #1a1030 (165 Grad) und der selGlow-Schein.
+  Sondenbeleg: identischer Verlaufsstring am Zurueck-Knopf.
+
 ## 0.69.0
 
 DAS LILA GEFECHTSKLEID - DAS SPIEL SPRICHT DIE MENUESPRACHE:
