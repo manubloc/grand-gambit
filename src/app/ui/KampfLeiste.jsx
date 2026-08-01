@@ -103,7 +103,7 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
       {beschreibung && (
         <div onClick={() => setOffen(null)} style={{ position: "absolute", left: 10, right: 10, bottom: "100%",
           marginBottom: 6, zIndex: 8, borderRadius: 12, padding: "9px 12px 10px", cursor: "pointer",
-          background: "rgba(12, 10, 22, .94)", border: "1px solid rgba(233,210,150,.55)",
+          background: "rgba(28, 19, 50, .95)", border: "1px solid rgba(167,139,250,.5)",
           boxShadow: "0 8px 24px rgba(0,0,0,.55)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 3, flexWrap: "wrap" }}>
             <span className="gg-serif" style={{ fontSize: 14, color: T.goldBright, letterSpacing: ".04em" }}>
@@ -124,8 +124,8 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
       )}
 
       <div style={{ minHeight: 108, borderRadius: 14, display: "flex", flexDirection: "column", justifyContent: "center",
-        gap: 6, padding: "7px 10px", background: "linear-gradient(180deg, rgba(18,15,30,.86), rgba(10,9,16,.9))",
-        border: "1px solid rgba(233,210,150,.28)", boxShadow: "0 4px 16px rgba(0,0,0,.4)" }}>
+        gap: 6, padding: "7px 10px", background: "linear-gradient(180deg, rgba(40,27,70,.88), rgba(16,11,32,.92))", // v0.69: das Lila-Gefechtskleid
+        border: "1px solid rgba(167,139,250,.32)", boxShadow: "0 4px 16px rgba(0,0,0,.4)" }}>
         {pc ? (<>
           {/* KOPFZEILE: Name, Stufe, Kugeln - schlank, kein Portraet (die
               gewaehlte Figur steht ja gross markiert auf dem Brett) */}

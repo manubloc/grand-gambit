@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.69.0
+
+DAS LILA GEFECHTSKLEID - DAS SPIEL SPRICHT DIE MENUESPRACHE:
+
+- ALLE Bedienelemente um das Brett tragen jetzt das Auswahl-Violett des
+  Menues: die Pillen (Zurueck, Aufgeben) stehen auf lila Verlauf mit
+  Goldschrift und selLine-Kante, alle sieben Chips der Kopf- und
+  Fusszeile (Stationsname wie "Alte Wacht", Gegner, Uhr, Zugstatus)
+  wechseln von Panel-Grau auf T.sel, und auch Trank-, Zeitriss- und
+  Zeitenwender-Knoepfe stehen auf Violett.
+- DIE AUSRUESTUNG ZIEHT GANZ NACH UNTEN: Trank, Zeitriss und
+  Zeitenwender sind figurunabhaengige Gegenstaende und haben jetzt ihre
+  eigene beschriftete Lila-Zeile ("AUSRUESTUNG") UNTER der Kampfleiste,
+  am Fuss des Gefechts - in beiden Layout-Zweigen, ausserhalb der
+  tight-Modus-Messung. Sondenbeleg: Zeile sitzt 6 px unter der Leiste.
+- Die KAMPFLEISTE selbst und ihre Beschreibungskarte tragen denselben
+  violetten Grund mit selLine-Kante.
+
 ## 0.68.0
 
 DIE AKADEMIE IST EINE ECHTE KARTE - "GENAU, GENAU GLEICH":

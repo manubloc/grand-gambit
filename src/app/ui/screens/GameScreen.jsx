@@ -111,7 +111,9 @@ function ForceBadge({ hp, atk, neon, t }) {
 // The floating pill style shared by ‹ Back and ⚑ Resign (same shape, the
 // resign just wears a slightly different tone — exactly as requested).
 const pill = (extra) => ({ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
-  background: "#0d1017d9", borderRadius: 999, padding: "8px 13px", fontFamily: "inherit", fontWeight: 800,
+  // DAS LILA GEFECHTSKLEID (Besitzer, v0.69): alles um das Brett traegt
+  // das Auswahl-Violett des Menues - Grund T.sel-Verlauf, Goldschrift bleibt.
+  background: "linear-gradient(165deg, rgba(46,31,80,.94), rgba(22,14,42,.96))", borderRadius: 999, padding: "8px 13px", fontFamily: "inherit", fontWeight: 800,
   fontSize: 13, boxShadow: "0 3px 10px rgba(0,0,0,.4)", whiteSpace: "nowrap", flex: "0 0 auto",
   backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", ...extra });
 
@@ -654,22 +656,22 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             einzige Ausgang aus einer laufenden Schnellpartie ist Aufgeben -
             wer die Uhr angenommen hat, laeuft nicht einfach vom Tisch. */}
         {onExit && !(pvp && timer) && (
-          <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.gold}88`, color: T.gold })}>
+          <button onClick={leaveAsk} style={pill({ border: `1px solid ${T.selLine}66`, color: T.gold })}>
             <span style={{ fontSize: 15, lineHeight: 1 }}>‹</span> {t("common.back")}
           </button>
         )}
         <div style={{ flex: "1 1 130px", minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, overflow: "hidden" }}>
           {pvp ? <>
-              <Chip color={T.gold} bg={T.panel}><JewelIc kind="power" size={12} /> {pvp.oppName}</Chip>
-              <Chip color={T.dim} bg={T.panel}>{pvp.oppScore}</Chip>
-              {desync && <Chip color={"#b4636c"} bg={T.panel}>{t("online.desync")}</Chip>}
+              <Chip color={T.gold} bg={T.sel}><JewelIc kind="power" size={12} /> {pvp.oppName}</Chip>
+              <Chip color={T.dim} bg={T.sel}>{pvp.oppScore}</Chip>
+              {desync && <Chip color={"#b4636c"} bg={T.sel}>{t("online.desync")}</Chip>}
             </>
             : campaign ? <>
-              <Chip color={T.gold} bg={T.panel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
-              {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.panel}>{match.boss.bossId?.startsWith("pb_") ? <JewelIc kind="power" size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
+              <Chip color={T.gold} bg={T.sel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
+              {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.sel}>{match.boss.bossId?.startsWith("pb_") ? <JewelIc kind="power" size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
-            : hotseat ? <Chip color={T.text} bg={T.panel}>{t("quick.hotseat")}</Chip>
-            : <Chip color={T.text} bg={T.panel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
+            : hotseat ? <Chip color={T.text} bg={T.sel}>{t("quick.hotseat")}</Chip>
+            : <Chip color={T.text} bg={T.sel}>{t("game.ai")} · {t("diff." + difficulty)}</Chip>}
         </div>
         {clockLbl && (
           <span className="gg-serif" style={{ ...pill({ cursor: "default",
@@ -690,7 +692,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             <HourglassIc size={13} color={T.magenta} /> {foeLbl}</span>
         )}
         <button onClick={() => setArmResign(true)} disabled={!!banner || !!intro || scout}
-          style={pill({ border: `1.5px solid ${T.gold}66`, color: T.dim, opacity: banner || intro || scout ? 0.5 : 1,
+          style={pill({ border: `1.5px solid ${T.selLine}66`, color: T.gold, opacity: banner || intro || scout ? 0.5 : 1,
             cursor: banner || intro || scout ? "default" : "pointer" })}>
           <FlagIc size={13} /> {t("game.resign")}
         </button>
@@ -925,9 +927,27 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
         padding: `2px ${HUD_PAD}px calc(10px + env(safe-area-inset-bottom))` }}>
         <Chip color={hotseat && state.turn === BLACK ? T.magentaInk : T.limeInk} bg={hotseat && state.turn === BLACK ? T.magenta : T.lime}>{hotseat ? t(state.turn === WHITE ? "hs.white" : "hs.black") : t("game.you")}</Chip>
+        <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
+          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
+        <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
+        {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
+      </div>
+</>);
+
+
+  // DIE AUSRUESTUNG GANZ UNTEN (Besitzer, v0.69): Trank, Zeitriss und
+  // Zeitenwender sind figurunabhaengige Gegenstaende - sie bekommen ihre
+  // eigene lila Zeile UNTER der Kampfleiste, am Fuss des Gefechts.
+  const ruestungsZeile = (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flex: "0 0 auto",
+      padding: "0 10px calc(8px + env(safe-area-inset-bottom))" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "6px 12px",
+        background: "linear-gradient(165deg, rgba(40,27,70,.9), rgba(18,12,36,.94))",
+        border: `1px solid ${T.selLine}44`, boxShadow: "0 3px 12px rgba(0,0,0,.4)" }}>
+        <span className="gg-serif" style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".08em" }}>{en ? "GEAR" : "AUSRÜSTUNG"}</span>
         {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
           <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
-            style={{ background: potionArm ? T.gold : T.panel, color: potionArm ? "#17110a" : T.gold,
+            style={{ background: potionArm ? T.gold : T.sel, color: potionArm ? "#17110a" : T.gold,
               border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
               fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5,
               display: "inline-flex", alignItems: "center", gap: 5 }}>
@@ -937,7 +957,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {!pvp && !hotseat && hpMode && !banner && ((state.shifts?.w || 0) > 0 || state.shiftArmed === WHITE) && (
           <button onClick={() => { if (state.shiftArmed || !myTurn) return; setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
             disabled={!myTurn || state.shiftArmed === WHITE} title={t("game.riftHint")}
-            style={{ background: state.shiftArmed === WHITE ? "#8a7ab8" : T.panel,
+            style={{ background: state.shiftArmed === WHITE ? "#8a7ab8" : T.sel,
               color: state.shiftArmed === WHITE ? "#171125" : "#b3a4e0",
               border: "1.5px solid #8a7ab8", borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
               fontWeight: 900, fontSize: 12.5, cursor: myTurn && state.shiftArmed !== WHITE ? "pointer" : "default",
@@ -946,20 +966,17 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             ⧗ {state.shiftArmed === WHITE ? t("game.riftArmed") : (state.shifts?.w || 0)}
           </button>
         )}
-        <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
-          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
-        <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
         {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
           <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
             style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, borderRadius: 10,
-              border: `1px solid ${hourglassLeft > 0 ? T.gold + "88" : T.line}`, background: T.panel,
+              border: `1px solid ${hourglassLeft > 0 ? T.selLine + "88" : T.line}`, background: T.sel,
               color: T.gold, fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
               padding: "0 9px", opacity: !state.history.length || banner || hourglassLeft <= 0 ? 0.45 : 1 }}>
             <ItemIcon id="hourglass" size={16} /> {hourglassLeft}</button>
         )}
-        {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
       </div>
-</>);
+    </div>
+  );
 
   // the victory/defeat banner lives at the TOP of the screen tree (not inside
   // the zoomable board), so it always floats OVER every piece and overlay
@@ -1007,6 +1024,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             ZWISCHEN Brett und Legende sank das Brett um 51 px. */}
         {yourStrip}
         <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
+        {ruestungsZeile}
       </aside>
       {dailyDoneEl}
       {bannerEl}{raus}
@@ -1020,6 +1038,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
       <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
+      {ruestungsZeile}
       {dailyDoneEl}
       {bannerEl}{raus}
     </div>
