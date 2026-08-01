@@ -1,3 +1,12 @@
+// HEAP-VORSPANN (v0.70): der Einzelbau traegt inzwischen >60 MB eingebettete
+// Kunst - jsdom braucht dafuer mehr Alt-Heap, sonst stirbt der Harness mit
+// "Ineffective mark-compacts". Der Lauf spannt sich selbst neu auf.
+if (!process.env.GG_BOOT_RESPAWN) {
+  const { spawnSync } = await import("node:child_process");
+  const r = spawnSync(process.execPath, ["--max-old-space-size=4096", ...process.argv.slice(1)],
+    { stdio: "inherit", env: { ...process.env, GG_BOOT_RESPAWN: "1" } });
+  process.exit(r.status ?? 1);
+}
 // Boots the REAL single-file build inside jsdom and fails on any runtime
 // error — exactly what a phone browser would hit on opening gambit-handy.html.
 import { readFileSync, existsSync } from "fs";

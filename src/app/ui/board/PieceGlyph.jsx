@@ -3,6 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
+import { glowForPiece } from "./glowArt.js";
 import { carvedForPiece, carvedFitFor } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
@@ -274,12 +275,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // The carved set only covers the six basic ranks; anything it has no figure
   // for (court, bosses, the risen Gambit) drops through to the gallery, so the
   // style switch never leaves a square empty.
-  const carving = artStyle === "carved" ? carvedForPiece(paintPiece) : null;
+  const carving = artStyle === "carved" ? carvedForPiece(paintPiece)
+    : artStyle === "glow" ? glowForPiece(paintPiece) : null; // v0.70: der Leuchtstil
   const painting = carving
     ? carving
     : artStyle === "classic"
     ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
-    : (artStyle === "painted" || artStyle === "carved")
+    : (artStyle === "painted" || artStyle === "carved" || artStyle === "glow")
     ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
     : null;
   // every painting fitted to one box (uniform height) and dropped onto one

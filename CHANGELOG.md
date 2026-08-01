@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.70.0
+
+DER LEUCHTENDE STIL - DAS WERKSTATT-REZEPT WIRD SPIELBAR:
+
+- NEUER WAEHLBARER BRETTSTIL "LEUCHTEND" (Profil -> Brettfiguren, dritte
+  Option neben Detailreich und Simpel): alle 114 Figuren - Hof, Helden-
+  stufen, Bosse, beide Seiten - als Leuchtkonturen nach dem exakten
+  Besitzer-Rezept aus der Werkstatt (Kantenbreite 2 - Kantenhelligkeit
+  20 - Glaettung 2), lokal aus den Geschnitzten gerechnet mit demselben
+  Algorithmus wie der Werkstatt-Regler.
+- Die Zuordnung laeuft als Tausch-Karte ueber die Geschnitzt-Logik: Bosse,
+  Hofstaats-Bosse (pb_) und Gambit-Stufen erben automatisch. Klassische
+  Partien behalten den Klassik-Satz. Sondenbeleg: Profil auf Leuchtend,
+  Schnellspiel gestartet - 32 Glow-Bilder auf dem Brett.
+- Boot-Harness mit Heap-Vorspann (4 GB): der Einzelbau traegt jetzt
+  >60 MB eingebettete Kunst; jsdom starb ohne Vorspann an
+  "Ineffective mark-compacts". Der Lauf spannt sich selbst neu auf.
+
 ## 0.69.1
 
 ZURUECK UND AUFGEBEN IM EXAKTEN ANPASSEN-GEWAND:
