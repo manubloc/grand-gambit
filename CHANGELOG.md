@@ -1,5 +1,16 @@
 # Changelog - Grand Gambit
 
+## 0.70.3
+
+ZWEI PILLEN WENIGER IM GEFECHT:
+
+- Die Stationsnamen-Pille ("Alte Wacht") und die "Du"-Pille sind
+  gestrichen (Besitzer: "kannst du dir sparen") - die Kampagnenkarte
+  nennt die Station laengst, und wem die untere Reihe gehoert, ist
+  offensichtlich. Der Hotseat behaelt seine Pille, denn dort traegt sie
+  die Zugfarbe (Weiss/Schwarz am selben Geraet). Sondenbeleg: beide
+  Texte im Gefecht verschwunden.
+
 ## 0.70.2
 
 LEUCHTEND v3 - BRETTFESTE GLUTLINIEN:

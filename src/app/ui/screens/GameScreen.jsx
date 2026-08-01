@@ -668,7 +668,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
               {desync && <Chip color={"#b4636c"} bg={T.sel}>{t("online.desync")}</Chip>}
             </>
             : campaign ? <>
-              <Chip color={T.gold} bg={T.sel} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", lineHeight: "17px" }}>{campaignTag(match.node, en)}</Chip>
+              {/* Stationsname-Pille gestrichen (Besitzer, v0.70.3): die
+                  Kampagnenkarte nennt die Station bereits. */}
               {match.boss && <Chip color={match.boss.bossId?.startsWith("pb_") ? T.gold : "#b4636c"} bg={T.sel}>{match.boss.bossId?.startsWith("pb_") ? <JewelIc kind="power" size={12} /> : <SkullIc color="#b4636c" size={12} />} {en ? match.boss.nameEn : match.boss.nameDe}</Chip>}
             </>
             : hotseat ? <Chip color={T.text} bg={T.sel}>{t("quick.hotseat")}</Chip>
@@ -929,7 +930,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       {/* your strip: badges · status · captured · undo */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
         padding: `2px ${HUD_PAD}px calc(10px + env(safe-area-inset-bottom))` }}>
-        <Chip color={hotseat && state.turn === BLACK ? T.magentaInk : T.limeInk} bg={hotseat && state.turn === BLACK ? T.magenta : T.lime}>{hotseat ? t(state.turn === WHITE ? "hs.white" : "hs.black") : t("game.you")}</Chip>
+        {hotseat && <Chip color={state.turn === BLACK ? T.magentaInk : T.limeInk} bg={state.turn === BLACK ? T.magenta : T.lime}>{t(state.turn === WHITE ? "hs.white" : "hs.black")}</Chip>}
         <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
           textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
         <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
