@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 0.71.10
+
+DER STARTKNOPF IST IMMER GOLDEN, DER FLIESSTEXT SCHWARZ:
+
+- Besitzer-Fund "warum ploetzlich lila?": eine alte Regel faerbte den
+  Startknopf violett, wenn an der Station ein pures Risswesen wartet -
+  und verriet damit obendrein Geheimnis-Stationen. Der Zweig ist fort:
+  der Knopf traegt IMMER Gold.
+- Der kursive Fliesstext im Stations-Popup steht jetzt SCHWARZ
+  (#171310 statt des blassen Graugolds #6f6752) - sauber lesbar auf dem
+  hellen Pergamentgrund.
+
 ## 0.71.9
 
 NAME UEBER DER FIGUR, SCHWARZER KARTENHIMMEL, DIE WELT IM KAPITELKLEID:

@@ -40,7 +40,7 @@ const tiefeStation = (y, H) => 0.86 + 0.14 * Math.max(0, Math.min(1, y / Math.ma
 const tiefeWanderer = (y, H) => 0.78 + 0.22 * Math.max(0, Math.min(1, y / Math.max(1, H)));
 // parchment palette for the embedded node panel — map-world UI, not app chrome
 const PP = { bg: "linear-gradient(170deg, #f4eee0, #ece4cf)", bg2: "#e7dfc9", line: "#c9bfa4",
-  ink: MP.ink, dim: "#6f6752", chipInk: "#4a4433", green: "#3e7d47" };
+  ink: MP.ink, dim: "#171310" /* v0.71.10: Fliesstext SCHWARZ - Lesbarkeit (Besitzer) */, chipInk: "#4a4433", green: "#3e7d47" };
 
 const EMPTY_SCENERY = { clouds: [], ridges: [], dunes: [], floors: [], drifts: [], isles: [], mistsBack: [],
   stonesAt: null, ruin: false, crystals: [], rocks: [], grass: [], leafy: [], blossoms: [], cacti: [], fields: [],
@@ -1082,17 +1082,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   // Steht an der Station ein Wesen des Risses, traegt der Knopf
                   // SEIN Licht - violett statt Gold. Gewoehnliche Partien
                   // bleiben golden: Gold ist die Krone, Violett der Riss.
+                  // v0.71.10 (Besitzer): der Knopf ist IMMER golden - der alte
+                  // Riss-Zweig (violett bei purem Risswesen) verriet obendrein
+                  // Geheimnis-Stationen. Gold ist die Krone, Punkt.
                   ...(status === "available" || friendly
-                    ? (node?.boss?.pure
-                        ? { background: "rgba(124,58,237,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
-                            border: `1px solid ${T.riftLine}`, boxShadow: `0 0 18px ${T.riftGlow}`, color: T.riftInk }
-                        : { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
-                            border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)" })
+                    ? { background: "rgba(201,164,92,.72)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,240,200,.55)", boxShadow: "0 0 16px rgba(201,164,92,.3)", color: "#17110a" }
                     : { background: "#dcd3ba", color: PP.ink }) }}>
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={node?.boss?.pure && (status === "available" || friendly) ? T.riftInk : T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
               {/* KLARHEIT AUF DER KARTE (Besitzer, v0.45): geraeumte Stationen
                   sagen, was eine Wiederholung wert ist - Freundschaftskampf
