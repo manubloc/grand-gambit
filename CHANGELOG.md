@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 0.71.6
+
+VOLLE BREITE, DER GOLDRAHMEN FAELLT BEI DEN BESITZER-FELDERN:
+
+- Der Breiten-Sicherheitsteiler faellt GANZ (1,0 statt 1,018) und der
+  Block-Hoehendeckel steigt auf 110 vw, damit die Kopf-Reserve der
+  Grundreihe nicht laenger die Brettbreite frisst. Messbeleg: Brett
+  376 px auf dem 390er-Schirm - nur der hauchduenne Schwarzsaum bleibt.
+- Bei den Besitzer-Feldern FAELLT der Goldrahmen ganz: die Kacheln
+  tragen ihren eigenen Rand, mehr braucht es nicht. (Marmor-Bretter
+  ohne Besitzer-Felder behalten ihren Rahmen.) Damit verschwindet auch
+  die zuletzt verdeckte Rahmenleiste am unteren Rand.
+
 ## 0.71.5
 
 DAS GESAMTE BRETT WAECHST:

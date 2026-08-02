@@ -523,7 +523,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     // as shoved off-centre. Dividing by 1.052 keeps rail and all inside.
     // v0.71.5 (Besitzer: "das GESAMTE Brett groesser"): der Sicherheits-
     // teiler schrumpft von 1,052 auf 1,018 - rund +3,3 % Kantenlaenge.
-    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) / 1.018 - (W - 1) * GAP) / W;
+    // v0.71.6 (Besitzer): Teiler faellt GANZ - volle Breite, nur der
+    // 1-px-Blockrand bleibt als hauchduenner Schwarzsaum.
+    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) - (W - 1) * GAP) / W;
     // Reserve HEADROOM above the top rank AND FOOTROOM below the first: a
     // selected piece grows 1.58x from its footpoint, so its head rises almost a
     // full cell over the square — and the value orbs ride a little UNDER the
@@ -573,7 +575,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             glimmen, und wer die Oberhand hat, faerbt seine Leiste - fuehrt
             der Gegner, zucken oben Riss-Blitze, je klarer sein Vorsprung,
             desto haeufiger. */}
-        <div aria-hidden style={{ position: "absolute",
+        {/* v0.71.6: bei Besitzer-Feldern faellt der Goldrahmen ganz - die
+            Kacheln tragen ihren eigenen Rand. */}
+        {!feld && <div aria-hidden style={{ position: "absolute",
           // v0.71.1: mit Koordinaten rueckt der Goldrahmen weiter nach AUSSEN,
           // damit er Buchstaben und Zahlen nicht ueberdeckt (Besitzer).
           // v0.71.4: bei Besitzer-Feldern ruecken die Goldleisten GANZ nach
@@ -581,7 +585,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           inset: feld ? "-5.6%" : showCoords ? "-4.8%" : "-2.6%", pointerEvents: "none",
           filter: "drop-shadow(0 2px 6px rgba(0,0,0,.45))" }}>
           <BrettRahmen lage={lageAusBrett(state.board, pov)} />
-        </div>
+        </div>}
         {/* ── THE BIG DRAGON: one sprite over four squares ── */}
         {state.board.map((pc, a) => {
           if (!pc || !pc.big || pc.kind !== "D") return null;

@@ -781,7 +781,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         // Kamera-Anflug) unveraendert um die Blockmitte rechnet. Auf breiten
         // Schirmen ist die Hoehe ohnehin knapper als die Breite - dort greift
         // der Deckel nie und nichts aendert sich.
-        style={{ flex: "1 1 auto", minHeight: 0, maxHeight: "calc(100vw + 2px)", position: "relative",
+        style={{ flex: "1 1 auto", minHeight: 0, maxHeight: "calc(110vw + 2px)" /* v0.71.6: Kopf-Reserve ausserhalb der Brettbreite */, position: "relative",
         // BRETT BREITER (Besitzer, v0.46): der Seitenrand faellt von 4 auf 1 px,
         // der Deckel gibt die gewonnene Breite frei. Gemessen bei 390 px:
         // Brettseite 376 -> 382.
