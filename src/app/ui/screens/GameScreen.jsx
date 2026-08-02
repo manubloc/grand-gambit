@@ -895,41 +895,45 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // Zeitenwender sind figurunabhaengige Gegenstaende - sie bekommen ihre
   // eigene lila Zeile UNTER der Kampfleiste, am Fuss des Gefechts.
   const ruestungsZeile = (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flex: "0 0 auto",
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flex: "0 0 auto",
       padding: "0 10px calc(8px + env(safe-area-inset-bottom))" }}>
-      {/* v0.71.7 (Besitzer): keine Kapsel-Kachel mehr - die Knoepfe stehen frei. */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "2px 4px" }}>
-        <span className="gg-serif" style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".08em" }}>{en ? "GEAR" : "AUSRÜSTUNG"}</span>
-        {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
-          <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}
-            style={{ background: potionArm ? T.gold : T.sel, color: potionArm ? "#17110a" : T.gold,
-              border: `1.5px solid ${T.gold}`, borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
-              fontWeight: 900, fontSize: 12.5, cursor: myTurn ? "pointer" : "default", opacity: myTurn ? 1 : 0.5,
-              display: "inline-flex", alignItems: "center", gap: 5 }}>
-            <ItemIcon id="potion" size={14} /> {state.potions.w}
-          </button>
-        )}
-        {!pvp && !hotseat && hpMode && !banner && ((state.shifts?.w || 0) > 0 || state.shiftArmed === WHITE) && (
-          <button onClick={() => { if (state.shiftArmed || !myTurn) return; setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
-            disabled={!myTurn || state.shiftArmed === WHITE} title={t("game.riftHint")}
-            style={{ background: state.shiftArmed === WHITE ? "#8a7ab8" : T.sel,
-              color: state.shiftArmed === WHITE ? "#171125" : "#b3a4e0",
-              border: "1.5px solid #8a7ab8", borderRadius: 999, padding: "4px 11px", fontFamily: "inherit",
-              fontWeight: 900, fontSize: 12.5, cursor: myTurn && state.shiftArmed !== WHITE ? "pointer" : "default",
-              opacity: myTurn || state.shiftArmed === WHITE ? 1 : 0.5,
-              display: "inline-flex", alignItems: "center", gap: 5 }}>
-            ⧗ {state.shiftArmed === WHITE ? t("game.riftArmed") : (state.shifts?.w || 0)}
-          </button>
-        )}
-        {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
-          <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
-            style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, borderRadius: 10,
-              border: `1px solid ${hourglassLeft > 0 ? T.selLine + "88" : T.line}`, background: T.sel,
-              color: T.gold, fontSize: 12.5, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", flex: "0 0 auto",
-              padding: "0 9px", opacity: !state.history.length || banner || hourglassLeft <= 0 ? 0.45 : 1 }}>
-            <ItemIcon id="hourglass" size={16} /> {hourglassLeft}</button>
-        )}
-      </div>
+      {/* v0.71.11 (Besitzer): ALLE Knoepfe GLEICH GROSS und quadratisch -
+          schwarzer Grund, lila Kontur, das Icon gross und perfekt mittig,
+          die ZAHL DARUNTER. Nichts Ungleiches mehr. */}
+      <span className="gg-serif" style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".08em", marginRight: 2 }}>{en ? "GEAR" : "AUSRÜSTUNG"}</span>
+      {(() => {
+        const kasten = (aktiv, an = true) => ({
+          width: 52, height: 56, borderRadius: 12, flex: "0 0 auto", fontFamily: "inherit", cursor: an ? "pointer" : "default",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3,
+          background: aktiv ? "rgba(124,58,237,.28)" : "#07050d",
+          border: `1.5px solid ${aktiv ? T.selLine : `${T.selLine}55`}`,
+          boxShadow: aktiv ? `0 0 10px ${T.selGlow}` : "none",
+          opacity: an ? 1 : 0.45, padding: 0 });
+        const zahl = { fontSize: 10.5, fontWeight: 900, color: T.gold, lineHeight: 1 };
+        return (<>
+          {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
+            <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn} style={kasten(potionArm, myTurn)}>
+              <ItemIcon id="potion" size={22} />
+              <span style={zahl}>{state.potions.w}</span>
+            </button>
+          )}
+          {!pvp && !hotseat && hpMode && !banner && ((state.shifts?.w || 0) > 0 || state.shiftArmed === WHITE) && (
+            <button onClick={() => { if (state.shiftArmed || !myTurn) return; setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
+              disabled={!myTurn || state.shiftArmed === WHITE} title={t("game.riftHint")}
+              style={kasten(state.shiftArmed === WHITE, myTurn || state.shiftArmed === WHITE)}>
+              <span style={{ fontSize: 21, lineHeight: 1, color: "#b3a4e0" }}>⧗</span>
+              <span style={zahl}>{state.shiftArmed === WHITE ? "✓" : (state.shifts?.w || 0)}</span>
+            </button>
+          )}
+          {!pvp && !hotseat && (profile.items?.hourglass || 0) > 0 && (
+            <button onClick={doUndo} disabled={!state.history.length || !!banner || hourglassLeft <= 0} title={t("game.undo")}
+              style={kasten(false, !(!state.history.length || banner || hourglassLeft <= 0))}>
+              <ItemIcon id="hourglass" size={22} />
+              <span style={zahl}>{hourglassLeft}</span>
+            </button>
+          )}
+        </>);
+      })()}
     </div>
   );
 

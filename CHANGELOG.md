@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 0.71.11
+
+DIE AUSRUESTUNG IN GLEICHEN QUADRATEN:
+
+- Besitzer-Wunsch: die Knoepfe unten waren ungleich gross und trugen
+  die Zahl daneben. Jetzt kommen alle drei (Trank, Zeitriss,
+  Zeitenwender) aus DERSELBEN kasten()-Fabrik: exakt 52x56 px,
+  annaehernd quadratisch, SCHWARZER Grund, LILA Kontur, das Icon gross
+  und perfekt mittig, die ZAHL DARUNTER. Aktivierte Knoepfe (Trank
+  scharf, Zeitriss gespannt) fuellen sich leicht violett mit Schein;
+  der gespannte Zeitriss zeigt ein Haekchen statt der Zahl.
+
 ## 0.71.10
 
 DER STARTKNOPF IST IMMER GOLDEN, DER FLIESSTEXT SCHWARZ:
