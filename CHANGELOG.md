@@ -1,5 +1,19 @@
 # Changelog - Grand Gambit
 
+## 0.71.9
+
+NAME UEBER DER FIGUR, SCHWARZER KARTENHIMMEL, DIE WELT IM KAPITELKLEID:
+
+- Der Figurenname steht jetzt MITTIG UEBER der freigestellten Figur in
+  der Kampfleiste (winzig, besondere Schrift, keine Pille); die kleinen
+  Kugeln bleiben oben links.
+- Der LILA SCHWEIF am Himmel der Kapitelkarte (violetter Radialverlauf)
+  ist ersatzlos fort - einfach schwarz, wie gewuenscht.
+- DIE WELTKARTE steht wie die Kapitelkarte: volle Breite, DIESELBE
+  ruhige Kontur (dunkle Linie, gleicher Grund, gleiche Tiefe), und das
+  Overlay liegt jetzt UNTER dem Menue-Dock (zIndex 5 statt 30) - die
+  Menueleiste bleibt sichtbar.
+
 ## 0.71.8
 
 DIE SCHWEBENDE PILL FAELLT - DIE LEISTE DIENT BEIDEN SEITEN:

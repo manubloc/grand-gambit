@@ -406,9 +406,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
               borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
               background: `linear-gradient(180deg, #000 0%, #000 ${sp(dicht)}, rgba(2,1,6,.96) ${sp(dicht + 120)}, rgba(8,5,18,.55) ${sp(front - 140)}, transparent ${sp(klar)})` }} />
-            <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
-              borderRadius: Math.min(22, frameW / 12), overflow: "hidden",
-              background: `radial-gradient(120% 40% at 50% ${sp(dicht - 40)}, rgba(139,92,246,.34) 0%, rgba(91,33,182,.16) 46%, transparent 74%)` }} />
+{/* v0.71.9 (Besitzer): der lila Schweif am Kartenhimmel ist fort - einfach schwarz. */}
           </>;
         })()}
         <div ref={weltRef} style={{ position: "relative", width: WMAP, height: HM, transformOrigin: "0 0", zIndex: 2,
@@ -783,7 +781,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 el.scrollTop = Math.max(0, img.offsetTop + img.offsetHeight * ay - el.clientHeight / 2);
               });
             }}
-            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "fixed", inset: 0, zIndex: 30,
+            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "fixed", inset: 0, zIndex: 5, /* v0.71.9: unter dem Menue-Dock - die Leiste bleibt sichtbar */
             // VOLLBILD: der Atlas lag bisher mit inset 0 IM Kartenrahmen und
             // stand deshalb nur im oberen Drittel, unten abgeschnitten. Als
             // fixes Vollbild-Overlay nimmt er den ganzen Schirm - und laesst
@@ -800,9 +798,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
             <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
-              width: "100%", maxWidth: `min(100%, calc((72dvh - 40px) * ${WORLD_MAP.w} / ${WORLD_MAP.h}))`, margin: "0 auto",
-              borderRadius: 14, overflow: "hidden", border: "1px solid rgba(233,210,150,.35)",
-              boxShadow: "0 14px 40px rgba(0,0,0,.6)" }}>
+              // v0.71.9 (Besitzer): die Weltkarte steht wie die Kapitelkarte -
+              // volle Breite, dieselbe ruhige Kontur, dieselbe Tiefe.
+              width: "100%", margin: "0 auto",
+              borderRadius: 14, overflow: "hidden",
+              background: "rgba(9,11,16,.95)",
+              border: "1px solid rgba(22,18,34,.9)",
+              boxShadow: "0 10px 34px rgba(0,0,0,.5)" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
