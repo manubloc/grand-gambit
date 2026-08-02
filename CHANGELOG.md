@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.71.0
+
+DAS LETZTE TALENT BLEIBT SICHTBAR, FELDER OHNE FUGEN, KARTE OHNE SCHEIN:
+
+- DAS LETZTE TALENT: wie der letzte Zug bleibt jetzt sichtbar, ob und
+  welches Talent zuletzt verbraucht wurde - von dir (gruenlich) oder vom
+  Gegner (roetlich), als schmaler violetter Chip ueber der Kampfleiste.
+  Traeger ist das neue additive Feld lastMove.consumed im Kern (drei
+  Stellen, ueberlebt Speichern/Fortsetzen, da der Codec lastMove ganz
+  durchreicht). Beweis: Gegner-Teleport landet als consumed:"teleport".
+- FELDER OHNE AUFGELEGTEN RAND: bei Besitzer-Kacheln fallen die
+  Gitterfugen (gap 0) und die 1-px-Haarlinie des Bretts - die Kacheln
+  bringen ihren eigenen Rand mit; nur der Goldrahmen bleibt. Messbeleg:
+  Fuge zwischen Nachbarzellen exakt 0 px.
+- DER LILA SCHEIN um die Kampagnenkarte ist fort (nur der schwarze
+  Tiefenschatten bleibt); Bundle-Beleg: Schein-Signatur nicht mehr im
+  Buendel.
+
 ## 0.70.3
 
 ZWEI PILLEN WENIGER IM GEFECHT:

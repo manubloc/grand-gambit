@@ -70,7 +70,14 @@ function Karte({ icon, label, unter, dry, gruen, active, lock, onTap }) {
 }
 
 export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false }) {
-  const [offen, setOffen] = useState(null); // { art: "ab"|"sonder"|"lock", id, level? }
+  const [offen, setOffen] = useState(null);
+  // DAS LETZTE TALENT (Besitzer, v0.71): wie der letzte Zug bleibt sichtbar,
+  // ob und welches Talent zuletzt verbraucht wurde - von DIR oder vom Gegner.
+  const [letztes, setLetztes] = useState(null);
+  useEffect(() => {
+    const lm = state?.lastMove;
+    if (lm?.consumed && ABILITIES[lm.consumed]) setLetztes({ id: lm.consumed, color: lm.color });
+  }, [state]); // { art: "ab"|"sonder"|"lock", id, level? }
   const pc = inspect && inspect.mode === "own" && state.board[inspect.i] ? state.board[inspect.i] : null;
   useEffect(() => { setOffen(null); }, [inspect && inspect.i, state]);
   if (banner) return null;
@@ -100,6 +107,16 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
 
   return (
     <div style={{ position: "relative", flex: "0 0 auto", padding: "0 10px 6px" }}>
+      {letztes && !banner && (
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
+          <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: ".04em", borderRadius: 999,
+            padding: "3px 10px", border: "1px solid rgba(167,139,250,.4)",
+            background: "linear-gradient(165deg, rgba(40,27,70,.9), rgba(18,12,36,.94))",
+            color: letztes.color === myColor ? "#cdebd2" : "#e8c9cf" }}>
+            {ABILITIES[letztes.id].icon} {en ? ABILITIES[letztes.id].nameEn : ABILITIES[letztes.id].nameDe}
+            {" — "}{letztes.color === myColor ? (en ? "you" : "Du") : (en ? "foe" : "Gegner")}</span>
+        </div>
+      )}
       {beschreibung && (
         <div onClick={() => setOffen(null)} style={{ position: "absolute", left: 10, right: 10, bottom: "100%",
           marginBottom: 6, zIndex: 8, borderRadius: 12, padding: "9px 12px 10px", cursor: "pointer",

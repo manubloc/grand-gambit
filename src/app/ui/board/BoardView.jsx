@@ -533,9 +533,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
-        display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
+        display: "grid", gap: feld ? 0 : GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
         background: "#05070c",
-        border: `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
+        // Besitzer-Felder bringen ihren eigenen Rand mit (v0.71): keine Fugen,
+        // keine Haarlinie obendrauf - nur der Goldrahmen bleibt.
+        border: feld ? "none" : `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
         {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${ground})`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         {cells}

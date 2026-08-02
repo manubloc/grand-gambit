@@ -300,7 +300,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         background: "rgba(9,11,16,.95)",
         // die Karte traegt die Riss-Kontur des Hauses
         border: "1px solid rgba(167,139,250,.55)",
-        boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 18px rgba(124,58,237,.3), 0 0 40px rgba(124,58,237,.14)",
+        boxShadow: "0 10px 34px rgba(0,0,0,.5)", // v0.71: der lila Schein um die Karte ist fort (Besitzer)
         pointerEvents: "none" }} />
       <div
         onPointerDown={(e) => { if (seaLock) return;

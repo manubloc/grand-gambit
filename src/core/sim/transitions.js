@@ -73,7 +73,7 @@ export function applyMove(state, move, opts) {
     }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
-    ns.lastMove = { from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
+    ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null, from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
     ns.moveCount = state.moveCount + 1;
     if (record) { ns.history = [...state.history, state]; }
     return ns;
@@ -121,7 +121,7 @@ export function applyMove(state, move, opts) {
     piece.hasMoved = true;
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
-    ns.lastMove = { from: move.from, to: settled ? move.to : move.from, color: piece.color, kind: piece.kind,
+    ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null, from: move.from, to: settled ? move.to : move.from, color: piece.color, kind: piece.kind,
       capture: lethal, damaged, lethal, special: move.special, bounced: !settled };
     ns.moveCount = state.moveCount + 1;
     if (record) { ns.history = [...state.history, state]; }
@@ -203,7 +203,7 @@ export function applyMove(state, move, opts) {
   if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
   else ns.turn = other(state.turn);
   ns.moveCount = state.moveCount + 1;
-  ns.lastMove = {
+  ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null,
     from: move.from, to: move.to, color: piece.color, kind: move.kind, byHero: !!piece.hero,
     capture: captured, bounced, damaged, dmg, lethal,
     targetHpAfter: hp && target ? Math.max(0, target.hp) : null,
