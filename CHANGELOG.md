@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 0.71.12
+
+KUGELN UNTER DER FIGUR, GROSSER WAECHTER, WELTKARTE GEHEILT, STIL GILT GLOBAL:
+
+- KAMPFLEISTE: die HP/Angriffs-Kugeln stehen jetzt wie auf dem Brett
+  DIREKT UNTER der freigestellten Figur - im Massstab der grossen Figur
+  (24 px); Name und Stufe stehen winzig darueber, der alte Kopf-Block
+  oben links ist fort.
+- POPUP: das Boss-Portraet fuellt seine Box (bis 196 px statt 148) und
+  der Titel steht SCHWARZ und groesser. Bosse stehen auch AUF DEM BRETT
+  groesser (1,14em - der Waechter war kaum zu erkennen; Asset-Messung
+  zeigte: nicht das Bild war klein, die Buehne).
+- WELTKARTE GEHEILT: v0.71.9 hatte sie mit zIndex 5 HINTER die
+  Kapitelkarte gelegt ("sehe gar nichts") - jetzt Ebene 8 (ueber der
+  Karte, unter dem Dock). Neu nach Besitzer-Wunsch: das Querbild klebt
+  oben/unten/links an der Box in VOLLER HOEHE und wird nach RECHTS
+  gescrollt, je mehr Welt sich oeffnet.
+- DER BRETTSTIL GILT GLOBAL: steht das Profil auf Leuchtend, tragen
+  auch das Popup-Portraet und die Gegnerfigur in der Kampfleiste die
+  Leuchtkonturen; erst ein GOLDENER (angeworbener) Boss verliert sie.
+
 ## 0.71.11
 
 DIE AUSRUESTUNG IN GLEICHEN QUADRATEN:

@@ -16,7 +16,8 @@ import { Button, Chip } from "../primitives.jsx";
 import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
-import { carvedById } from "../board/carvedArt.js";
+import { carvedById, carvedForPiece } from "../board/carvedArt.js";
+import { glowForPiece } from "../board/glowArt.js";
 import { livery } from "../livery.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
@@ -781,7 +782,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 el.scrollTop = Math.max(0, img.offsetTop + img.offsetHeight * ay - el.clientHeight / 2);
               });
             }}
-            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "fixed", inset: 0, zIndex: 5, /* v0.71.9: unter dem Menue-Dock - die Leiste bleibt sichtbar */
+            onClick={() => { setWorldSel(null); setWorld(false); }} style={{ position: "fixed", inset: 0, zIndex: 8, /* v0.71.12: UEBER der Karte, UNTER dem Dock (9) - v0.71.9 hatte sie hinter die Karte gelegt */
             // VOLLBILD: der Atlas lag bisher mit inset 0 IM Kartenrahmen und
             // stand deshalb nur im oberen Drittel, unten abgeschnitten. Als
             // fixes Vollbild-Overlay nimmt er den ganzen Schirm - und laesst
@@ -797,14 +798,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 soll so gross stehen wie die Kapitelkarte. Sie fuellt die
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
-            <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
-              // v0.71.9 (Besitzer): die Weltkarte steht wie die Kapitelkarte -
-              // volle Breite, dieselbe ruhige Kontur, dieselbe Tiefe.
-              width: "100%", margin: "0 auto",
-              borderRadius: 14, overflow: "hidden",
-              background: "rgba(9,11,16,.95)",
-              border: "1px solid rgba(22,18,34,.9)",
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", height: "calc(100dvh - 200px)",
+              borderRadius: 14, border: "1px solid rgba(22,18,34,.9)", background: "rgba(9,11,16,.95)",
               boxShadow: "0 10px 34px rgba(0,0,0,.5)" }}>
+            <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
+              // v0.71.12 (Besitzer): das Querbild klebt oben/unten/links an der
+              // Box - volle HOEHE, und nach RECHTS wird gescrollt, je mehr
+              // Welt sich oeffnet.
+              height: "100%", width: `calc((100dvh - 200px) * ${WORLD_MAP.w} / ${WORLD_MAP.h})`, minWidth: "100%" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
@@ -915,6 +916,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 );
               })()}
             </div>
+            </div>{/* v0.71.12: Quer-Scroller zu */}
 
           </div>
         );
@@ -981,7 +983,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           </div>
           {boss && (status === "cleared" || facedSet.has(sel)) && (() => {
             // room for the name and the two value orbs (60px) stays reserved
-            const bossArtS = Math.round(Math.max(96, Math.min(148, (panelW - 50) * 0.46)));
+            const bossArtS = Math.round(Math.max(128, Math.min(196, (panelW - 50) * 0.62))); // v0.71.12: der Waechter fuellt die Box
             return (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
@@ -994,7 +996,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   clipping. Sized off the panel so it breathes on phones too. */}
               <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto" }}>
                 {(() => {
-                  const painting = paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
+                  // v0.71.12 (Besitzer): der gewaehlte BRETTSTIL gilt GLOBAL -
+                  // steht das Profil auf Leuchtend, traegt auch das Popup-
+                  // Portraet die Leuchtkonturen (der Gegner gehoert dem Riss;
+                  // erst wenn er zu dir kommt, verliert er sie - golden).
+                  const stueck = { kind: boss.kind, art: boss.art, bossId: boss.bossId, color: "b" };
+                  const painting = (!golden && profile.pieceStyle === "glow" && glowForPiece(stueck))
+                    || paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
                   return painting
                     ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
                         objectFit: "contain", objectPosition: "bottom",

@@ -982,7 +982,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             botChrome-Messung, deren Hoehe den tight-Modus fuettert - in-flow
             ZWISCHEN Brett und Legende sank das Brett um 51 px. */}
         {yourStrip}
-        <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
+        <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />
         {ruestungsZeile}
       </aside>
       {dailyDoneEl}
@@ -996,7 +996,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
-      <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} />
+      <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />
       {ruestungsZeile}
       {dailyDoneEl}
       {bannerEl}{raus}

@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { legalMovesFrom } from "../../core/index.js";
 import { ABILITIES, CHARACTERS } from "../../content/index.js";
 import { carvedForPiece } from "./board/carvedArt.js";
+import { glowForPiece } from "./board/glowArt.js";
 import { StatOrbBadge } from "./board/PieceGlyph.jsx";
 import { T } from "./theme.js";
 
@@ -70,7 +71,7 @@ function Karte({ icon, label, unter, dry, gruen, active, lock, onTap }) {
   );
 }
 
-export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false }) {
+export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false, stil = "painted" }) {
   const [offen, setOffen] = useState(null);
   // DAS LETZTE TALENT (Besitzer, v0.71): wie der letzte Zug bleibt sichtbar,
   // ob und welches Talent zuletzt verbraucht wurde - von DIR oder vom Gegner.
@@ -152,16 +153,26 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
           auf dem Schwarz: links die gewaehlte Figur FREIGESTELLT, daneben
           Kopfzeile und die Karten-Knoepfe. */}
       <div style={{ minHeight: 96, display: "flex", alignItems: "center", gap: 10, padding: "2px 2px" }}>
-        {pc && (() => { const bild = carvedForPiece(pc); return bild ? (
+        {pc && (() => { const bild = (!eigen && stil === "glow" && glowForPiece(pc)) || carvedForPiece(pc); return bild ? (
           <div style={{ position: "relative", flex: "0 0 auto", alignSelf: "flex-end",
             display: "flex", flexDirection: "column", alignItems: "center" }}>
             {/* v0.71.9 (Besitzer): der Name steht MITTIG UEBER der Figur -
                 winzig, besondere Schrift, keine Pille. */}
             <span className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".06em", marginBottom: 1,
               color: eigen ? T.goldBright : "#cbbcf5", opacity: 0.92, whiteSpace: "nowrap",
-              maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", textAlign: "center" }}>{nm}</span>
+              maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", textAlign: "center" }}>
+              {nm}{(pc.level || 1) > 1 ? ` · Lv ${pc.level}` : ""}</span>
             <img src={bild} alt="" draggable={false} style={{ height: 108,
               filter: "drop-shadow(0 3px 8px rgba(0,0,0,.6))" }} />
+            {/* v0.71.12 (Besitzer): die Kugeln stehen wie auf dem Brett DIREKT
+                UNTER der Figur - und im Massstab der grossen Figur. */}
+            {(pc.maxHp > 0 || pc.atk != null || pc.shield > 0) && (
+              <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 2 }}>
+                {pc.maxHp > 0 && <StatOrbBadge kind="life" v={pc.hp} size={24} />}
+                {pc.atk != null && <StatOrbBadge kind="power" v={pc.atk} size={24} />}
+                {pc.shield > 0 && <span style={{ fontSize: 11.5, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
+              </div>
+            )}
           </div>
         ) : null; })()}
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 6 }}>
@@ -169,13 +180,7 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
           {/* v0.71.8 (Besitzer): kein Kopfzeilen-Balken mehr - der Name steht
               WINZIG in der besonderen Schrift oben links, nimmt keinen Platz
               und traegt keine Pille; die Kugeln haengen klein daneben. */}
-          <div style={{ position: "absolute", top: 0, left: 12, display: "flex", alignItems: "center",
-            gap: 6, pointerEvents: "none", maxWidth: "80%" }}>
-            {(pc.level || 1) > 1 && <span style={{ fontSize: 9.5, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-            {pc.maxHp > 0 && <StatOrbBadge kind="life" v={pc.hp} size={15} />}
-            {pc.atk != null && <StatOrbBadge kind="power" v={pc.atk} size={15} />}
-            {pc.shield > 0 && <span style={{ fontSize: 9.5, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
-          </div>
+          {/* v0.71.12: der Kopf-Block oben links ist fort - alles wohnt an der Figur. */}
           {/* DIE KARTENREIHE: Sonderzuege · Faehigkeiten · die naechste Gesperrte */}
           <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 2, scrollbarWidth: "none" }}>
             {sonder.map((k) => (
