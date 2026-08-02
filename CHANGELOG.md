@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 0.71.13
+
+AUCH DIE KUGELN DUCKEN SICH UNTER DEN DIALOG:
+
+- Besitzer-Fund: v0.71.1 hatte nur das Popup ueber die grosse Auswahl-
+  Figur gehoben - deren WERTKUGELN standen aber auf einer eigenen,
+  hoeheren Ebene und ragten weiter darueber.
+- Jetzt kennt das Brett einen RUHIG-Zustand: steht ein Dialog offen
+  (Aufgeben oder Sieg/Niederlage), faellt die Auswahl KOMPLETT in ihre
+  Reihe zurueck - Figur und Kugeln gemeinsam. Messbeleg: bei offenem
+  Popup existiert keine erhobene Ebene (40/41) mehr.
+
 ## 0.71.12
 
 KUGELN UNTER DER FIGUR, GROSSER WAECHTER, WELTKARTE GEHEILT, STIL GILT GLOBAL:

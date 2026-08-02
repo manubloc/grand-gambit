@@ -130,7 +130,7 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -467,7 +467,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // its LEFT edge — every court figure drifted (em-cell)/2 = ~4-5px
             // right while the slimmer pawns stayed true. Pinning the layer to
             // the square (inset 0) makes the flex centre the overflow evenly.
-            position: "absolute", inset: 0, zIndex: (isSel || isSpy) ? 40 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
+            position: "absolute", inset: 0,
+            // v0.71.13 (Besitzer): steht ein Dialog offen, faellt die Auswahl
+            // in die Reihe zurueck - sonst ragten Figur UND Kugeln darueber.
+            zIndex: (!ruhig && (isSel || isSpy)) ? 40 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
             fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide
@@ -484,7 +487,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {piece && !piece.big && piece.atk != null && piece.maxHp > 0 &&
             <div aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 0,
               display: "flex", justifyContent: "center", pointerEvents: "none",
-              zIndex: (isSel || isSpy) ? 41 : rr + 4 }}>
+              zIndex: (!ruhig && (isSel || isSpy)) ? 41 : rr + 4 }}>
               <StatTriad piece={piece} focus={isSel || isSpy} />
             </div>}
           {tgt && (tgt.capture
