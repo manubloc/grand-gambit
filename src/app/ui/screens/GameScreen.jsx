@@ -786,7 +786,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         // der Deckel gibt die gewonnene Breite frei. Gemessen bei 390 px:
         // Brettseite 376 -> 382.
         margin: `${2 + boardPadTop}px 1px ${2 + boardPadBottom}px`,
-        overflow: "hidden", touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
+        overflow: zoomMode ? "hidden" : "visible", /* v0.71.7: das ruhende Zoomfenster koepfte den Figuren-Schimmer */ touchAction: zoomMode ? "none" : "auto", cursor: zoomMode && zv.z > 1.01 ? "grab" : undefined }}>
         {/* DER BRETT-ALARM: in den letzten Sekunden glimmt der Innenrand des
             Brettfelds im Takt der Uhr - Licht statt neuer Elemente. */}
         {clockAlarm && <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
@@ -945,9 +945,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const ruestungsZeile = (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flex: "0 0 auto",
       padding: "0 10px calc(8px + env(safe-area-inset-bottom))" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "6px 12px",
-        background: "linear-gradient(165deg, rgba(40,27,70,.9), rgba(18,12,36,.94))",
-        border: `1px solid ${T.selLine}44`, boxShadow: "0 3px 12px rgba(0,0,0,.4)" }}>
+      {/* v0.71.7 (Besitzer): keine Kapsel-Kachel mehr - die Knoepfe stehen frei. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "2px 4px" }}>
         <span className="gg-serif" style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".08em" }}>{en ? "GEAR" : "AUSRÜSTUNG"}</span>
         {!pvp && !hotseat && hpMode && (state.potions?.w || 0) > 0 && !banner && (
           <button onClick={() => setPotionArm((a) => !a)} disabled={!myTurn}

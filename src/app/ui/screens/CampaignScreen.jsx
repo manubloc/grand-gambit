@@ -299,7 +299,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         // traegt er ringsum dasselbe ruhige Dunkel wie an der Unterkante.
         background: "rgba(9,11,16,.95)",
         // die Karte traegt die Riss-Kontur des Hauses
-        border: "1px solid rgba(167,139,250,.55)",
+        border: "1px solid rgba(22,18,34,.9)", // v0.71.7: der lila Schimmer war diese Linie - jetzt dunkel
         boxShadow: "0 10px 34px rgba(0,0,0,.5)", // v0.71: der lila Schein um die Karte ist fort (Besitzer)
         pointerEvents: "none" }} />
       <div

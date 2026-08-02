@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 0.71.7
+
+SCHIMMER-DETEKTIVARBEIT UND DIE FREIE LEISTE:
+
+- DER LILA "SCHIMMER" UM DIE KARTE war die violette RANDLINIE
+  (rgba(167,139,250,.55)) - sie steht jetzt dunkel (rgba(22,18,34,.9)).
+- DER GEKOEPFTE FIGUREN-SCHIMMER: das ruhende Zoom-Sichtfenster
+  (overflow hidden, seit dem Fall der Lupe ohne Amt) endete 2 px ueber
+  der Kopfzone der obersten Reihe und schnitt Schein und Koepfe. Es
+  steht jetzt offen (hidden nur im - stummen - Zoom-Modus). Messbeleg:
+  der enge Clipper (81-512 px) ist aus der Vorfahrenkette verschwunden.
+- DIE KAMPFLEISTE STEHT FREI (Besitzer): keine Panel-Kachel mehr -
+  links die gewaehlte Figur FREIGESTELLT (88 px, nur Schlagschatten),
+  daneben Kopfzeile und die Faehigkeiten als freie Karten-Knoepfe.
+  Auch die AUSRUESTUNG verliert ihre Kapsel: freie Knoepfe mit kleinem
+  Wort. Sondenbeleg: Panelgrund fort, freigestellte Figur erscheint.
+
 ## 0.71.6
 
 VOLLE BREITE, DER GOLDRAHMEN FAELLT BEI DEN BESITZER-FELDERN:

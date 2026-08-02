@@ -12,6 +12,7 @@
 import { useState, useEffect } from "react";
 import { legalMovesFrom } from "../../core/index.js";
 import { ABILITIES, CHARACTERS } from "../../content/index.js";
+import { carvedForPiece } from "./board/carvedArt.js";
 import { StatOrbBadge } from "./board/PieceGlyph.jsx";
 import { T } from "./theme.js";
 
@@ -140,9 +141,15 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
         </div>
       )}
 
-      <div style={{ minHeight: 108, borderRadius: 14, display: "flex", flexDirection: "column", justifyContent: "center",
-        gap: 6, padding: "7px 10px", background: "linear-gradient(180deg, rgba(40,27,70,.88), rgba(16,11,32,.92))", // v0.69: das Lila-Gefechtskleid
-        border: "1px solid rgba(167,139,250,.32)", boxShadow: "0 4px 16px rgba(0,0,0,.4)" }}>
+      {/* v0.71.7 (Besitzer): KEINE Panel-Kachel mehr - die Leiste steht frei
+          auf dem Schwarz: links die gewaehlte Figur FREIGESTELLT, daneben
+          Kopfzeile und die Karten-Knoepfe. */}
+      <div style={{ minHeight: 96, display: "flex", alignItems: "center", gap: 10, padding: "2px 2px" }}>
+        {pc && (() => { const bild = carvedForPiece(pc); return bild ? (
+          <img src={bild} alt="" draggable={false} style={{ height: 88, flex: "0 0 auto",
+            filter: "drop-shadow(0 3px 8px rgba(0,0,0,.6))", alignSelf: "flex-end" }} />
+        ) : null; })()}
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 6 }}>
         {pc ? (<>
           {/* KOPFZEILE: Name, Stufe, Kugeln - schlank, kein Portraet (die
               gewaehlte Figur steht ja gross markiert auf dem Brett) */}
@@ -185,6 +192,7 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
             {en ? "Tap one of your pieces — its talents and special moves appear here."
                 : "Tippe eine deiner Figuren an — ihre Talente und Sonderzüge erscheinen hier."}</span>
         )}
+        </div>
       </div>
     </div>
   );
