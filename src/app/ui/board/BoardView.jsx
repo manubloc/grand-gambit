@@ -403,12 +403,15 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // die Malerei traegt. Die Finale-Kachel (feldDunkel) ist ein
             // GANZES Bild und ersetzt nur die dunklen Felder.
             if (feld) {
-              const fx = (((i * 2654435761) >>> 9) % 997) / 997;
-              const fy = (((i * 40503) >>> 3) % 991) / 991;
+              // v0.71.2 (Besitzer): KEINE Hash-Fenster mehr - jedes Feld zeigt
+              // seine GANZE Kachel, unbeschnitten: helle Haelfte links (0 %),
+              // dunkle rechts (100 %), senkrecht mittig. Die Finale-Kachel
+              // deckt als Ganzbild.
               const finale = dark && feldDunkel;
               const quelle = finale ? feldDunkel : feld;
-              const groesse = finale ? "200% auto" : "260% auto";
-              const px = finale ? fx * 100 : dark ? 81.25 + fx * 18.75 : fx * 18.75;
+              const groesse = finale ? "cover" : "200% auto";
+              const px = finale ? 50 : dark ? 100 : 0;
+              const fy = 0.5;
               // ROHDATEN ANEINANDER (Besitzer, v0.67.1): kein Schleier,
               // keine Fase, keine Fuge - die Kacheln stehen Kante an Kante,
               // genau wie geliefert. Nur Freundschaftskaempfe dimmen leicht.
@@ -540,7 +543,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         // Besitzer-Felder bringen ihren eigenen Rand mit (v0.71): keine Fugen,
         // keine Haarlinie obendrauf - nur der Goldrahmen bleibt.
         border: feld ? "none" : `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
-        {ground && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+        {ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${ground})`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         {cells}
         {/* THE GILDED FRAME: an ornate rail laid around every board so the

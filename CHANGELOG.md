@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.71.2
+
+GANZE KACHELN JE FELD, BODEN ENTLASTET, KOENIGE IN DER ONLINE-KACHEL:
+
+- Besitzer-Korrektur: die Zellen zoomten per Hash-Fenster in die Kacheln
+  hinein (~38-%-Ausschnitt, "wie beschnitten"). Jetzt zeigt JEDES FELD
+  SEINE GANZE KACHEL: helle Haelfte links (0 %), dunkle rechts (100 %),
+  senkrecht mittig, keine Fenster mehr. Sondenbeleg: 64 Zellen, exakt
+  ZWEI Positionen. Die Finale-Kachel deckt als Ganzbild.
+- Der GEMALTE BODEN wird nicht mehr unsichtbar unter den Besitzer-
+  Feldern geladen und gemalt - er faellt ganz, wenn Felder anliegen.
+- Die ONLINE-KACHEL traegt das neue Koenigsmotiv des Besitzers (zwei
+  Koenige am Riss im Lichtschacht), Leuchtkern-Zuschnitt wie bei der
+  Akademie.
+
 ## 0.71.1
 
 KLASSIK-FEINSCHLIFF UND VIER GRIFFE:
