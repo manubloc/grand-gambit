@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.71.4
+
+VERSATZ GEHEILT, VERLAUFS-SCHWEIF, GANZE KACHEL ZURUECK, RAHMEN OHNE UEBERLAPPUNG:
+
+- ANIMATIONS-VERSATZ + SCHWARZER STREIFEN rechts/unten: beides EIN
+  Fehler von mir - bei gap 0 unter den Besitzer-Feldern rechneten
+  Kastenmasse (bw/bh) weiter mit Fuge: der Rahmenkasten war 14 px zu
+  gross (schwarzer Rest) und die Zug-Animation lief auf falschen
+  Prozentkoordinaten. Jetzt teilt EIN effektiver Gap Layout, Kasten und
+  Animation. Messbeleg: rechtsRest 0 px, untenRest 0 px.
+- DER SCHWEIF ist kein Kreis-Punktezug mehr, sondern ein WEICHER
+  VERLAUF: zwei Strahlen mit runden Kappen (breit zart + fein hell),
+  beide von durchsichtig am Start zu Gold am Ziel.
+- GANZE KACHEL ZURUECK (200 %, 0/100 %): der Eigenrand der Besitzer-
+  Kacheln ist ihm wichtig und bleibt KOMPLETT sichtbar - der 215-%-Zoom
+  aus v0.71.3 ist zurueckgenommen.
+- DER GOLDRAHMEN rueckt bei Besitzer-Feldern GANZ nach aussen (-5,6 %):
+  keine Leiste ueberlappt die Kacheln.
+
 ## 0.71.3
 
 DIE KACHELN EINEN SCHRITT GROESSER:

@@ -412,8 +412,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               // v0.71.3 (Besitzer: "noch etwas groesser"): sanft hinein - die
               // Kachel fuellt mehr, ihr Eigenrand bleibt als feine Kante.
               // 215 %-Breite, mittig auf der jeweiligen Haelfte verankert.
-              const groesse = finale ? "cover" : "215% auto";
-              const px = finale ? 50 : dark ? 96.7 : 3.3;
+              // v0.71.4: zurueck zur GANZEN Kachel - der Eigenrand ist dem
+              // Besitzer "megageil" und bleibt KOMPLETT drin.
+              const groesse = finale ? "cover" : "200% auto";
+              const px = finale ? 50 : dark ? 100 : 0;
               const fy = 0.5;
               // ROHDATEN ANEINANDER (Besitzer, v0.67.1): kein Schleier,
               // keine Fase, keine Fuge - die Kacheln stehen Kante an Kante,
@@ -507,7 +509,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // Integer cell size from the measured box — SSR / first paint fall back to a
   // fluid grid; the client snaps to exact pixels right after mount, so every
   // tile is the same size on every screen (no fr-track rounding drift).
-  const GAP = 2; // dark seams between the slabs — the board reads as separate stone plates
+  const GAP0 = 2; // dark seams between the slabs — the board reads as separate stone plates
+  // v0.71.4: EIN effektiver Gap fuer ALLES (Besitzer-Fund: bei gap 0 unter
+  // seinen Feldern rechnete bw/bh weiter mit Fuge - der Rahmenkasten war
+  // 14 px zu gross [schwarzer Streifen rechts+unten] und die Zug-Animation
+  // lief versetzt). Layout, Kasten und Animation teilen jetzt dieselbe Zahl.
+  const GAP = feld ? 0 : GAP0;
   let cell = 0, tight = false;   // tight = height is the binding constraint
   if (avail.w > 0) {
     // THE FRAME OVERHANG: the gilded rail blooms 2.6 percent past each edge.
@@ -541,7 +548,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
-        display: "grid", gap: feld ? 0 : GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
+        display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
         background: "#05070c",
         // Besitzer-Felder bringen ihren eigenen Rand mit (v0.71): keine Fugen,
         // keine Haarlinie obendrauf - nur der Goldrahmen bleibt.
@@ -565,7 +572,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         <div aria-hidden style={{ position: "absolute",
           // v0.71.1: mit Koordinaten rueckt der Goldrahmen weiter nach AUSSEN,
           // damit er Buchstaben und Zahlen nicht ueberdeckt (Besitzer).
-          inset: showCoords ? "-4.8%" : "-2.6%", pointerEvents: "none",
+          // v0.71.4: bei Besitzer-Feldern ruecken die Goldleisten GANZ nach
+          // aussen - nichts ueberlappt die Kacheln; mit Koordinaten ohnehin.
+          inset: feld ? "-5.6%" : showCoords ? "-4.8%" : "-2.6%", pointerEvents: "none",
           filter: "drop-shadow(0 2px 6px rgba(0,0,0,.45))" }}>
           <BrettRahmen lage={lageAusBrett(state.board, pov)} />
         </div>
@@ -619,11 +628,22 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         return (
           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"
             style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-            {Array.from({ length: 6 }).map((_, k) => {
-              const q = (k + 1) / 7;
-              return <circle key={k} cx={a.x + (b.x - a.x) * q} cy={a.y + (b.y - a.y) * q}
-                r={0.55 + q * 1.15} fill={T.gold} opacity={0.06 + q * 0.2} />;
-            })}
+            {/* v0.71.4 (Besitzer): kein Kreis-Schweif mehr - ein WEICHER
+                VERLAUF zeigt den Zug: breiter zarter Strahl darunter, feiner
+                hellerer darueber, beide von durchsichtig (Start) zu Gold
+                (Ziel), runde Kappen. */}
+            <defs>
+              <linearGradient id="zugschweif" gradientUnits="userSpaceOnUse"
+                x1={a.x} y1={a.y} x2={b.x} y2={b.y}>
+                <stop offset="0%" stopColor={T.gold} stopOpacity="0" />
+                <stop offset="55%" stopColor={T.gold} stopOpacity="0.16" />
+                <stop offset="100%" stopColor={T.gold} stopOpacity="0.42" />
+              </linearGradient>
+            </defs>
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="url(#zugschweif)"
+              strokeWidth="3.1" strokeLinecap="round" />
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="url(#zugschweif)"
+              strokeWidth="1.3" strokeLinecap="round" opacity="0.9" />
           </svg>
         );
       })()}
