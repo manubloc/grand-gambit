@@ -809,57 +809,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {/* v0.50: die EIGENE Figur berichtet jetzt in der KAMPFLEISTE unter dem
             Brett (Figur gross, Talente als goldene Bubbles) - hier schwebt nur
             noch der Spaeher-Blick auf GEGNER ueber dem Feld. */}
-        {inspect && inspect.mode !== "own" && state.board[inspect.i] && !banner && (() => {
-          const pc = state.board[inspect.i];
-          const own = inspect.mode === "own";
-          const ch = Object.values(CHARACTERS).find((c) => c.kind === pc.kind);
-          const nm = pc.name ? (en ? pc.name.en : pc.name.de) : ch ? (en ? ch.nameEn : ch.nameDe) : pc.kind;
-          const abIds = pc.abilities || [];
-          return (
-            <div style={{ position: "absolute", zIndex: 7, pointerEvents: "none", display: "flex",
-              // the LAYOUT LAW: your own piece reports BELOW (the action zone),
-              // the enemy's secrets pop up ABOVE the field
-              ...(own ? { left: HUD_PAD, right: 58, bottom: HUD_PAD, justifyContent: "flex-start" }
-                      : { left: HUD_PAD, right: HUD_PAD, top: HUD_PAD, justifyContent: "center" }) }}>
-              <div style={{ pointerEvents: "auto", maxWidth: 380, borderRadius: 12, padding: "8px 11px 8px",
-                background: "rgba(9, 12, 20, .88)", border: `1px solid ${own ? "rgba(233,210,150,.5)" : "rgba(167,139,250,.55)"}`,
-                boxShadow: "0 6px 20px rgba(0,0,0,.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap", minWidth: 0 }}>
-                    <span className="gg-serif" style={{ fontSize: 13.5, color: own ? T.goldBright : "#cbbcf5", letterSpacing: ".04em" }}>{nm}</span>
-                    {(pc.level || 1) > 1 && <span style={{ fontSize: 12, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-                    {pc.maxHp > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#cfd8c9", display: "inline-flex", alignItems: "center", gap: 4 }}><StatOrbBadge kind="life" v={pc.hp} size={17} /> / {pc.maxHp}</span>}
-                    {pc.atk != null && <span style={{ display: "inline-flex" }}><StatOrbBadge kind="power" v={pc.atk} size={17} /></span>}
-                    {pc.shield > 0 && <span style={{ fontSize: 12, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
-                  </div>
-                </div>
-                {abIds.length > 0 && (
-                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 6 }}>
-                    {abIds.map((id) => {
-                      const ab = ABILITIES[id];
-                      // the fog of war: a foe's talent stays "???" until the piece has
-                      // USED it before your eyes — unless a seer reads it for you
-                      const seen = own || seerVision || !!(pc.used || {})[id];
-                      // ONE SPELL PER GAME: once any talent fired, the book is closed
-                      const dry = Object.keys(pc.used || {}).length > 0;
-                      return (
-                        <span key={id} title={dry ? t("ins.noEnergy") : undefined}
-                          style={{ fontSize: 10.5, padding: "3px 8px", borderRadius: 999,
-                          border: `1px solid ${seen ? (dry ? "#5a5142" : "#a5813c") : "#39415c"}`,
-                          background: seen ? (dry ? "rgba(24,26,32,.6)" : "rgba(58,47,18,.55)") : "rgba(16,20,34,.6)",
-                          color: seen ? (dry ? T.faint : "#e9d296") : T.faint,
-                          opacity: seen && dry ? 0.75 : 1 }}>
-                          {seen && ab ? <>{ab.icon} {en ? ab.nameEn : ab.nameDe}</>
-                            : t("ins.unknown")}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })()}
+        {/* v0.71.8 (Besitzer): das schwebende Namens-/Dossier-Schild ueber dem
+            Brett ist FORT - es wurde von den Figuren verdeckt. Die Auskunft
+            wohnt jetzt fuer BEIDE Seiten in der Kampfleiste. */}
         {/* DIE LUPE IST FORT (Besitzer, v0.64): der Nahansicht-Knopf
             stoerte - das Feldglas ruht, die Maschinerie bleibt stumm. */}
         {firstMeet && (() => {

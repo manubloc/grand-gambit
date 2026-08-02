@@ -79,14 +79,17 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
     const lm = state?.lastMove;
     if (lm?.consumed && ABILITIES[lm.consumed]) setLetztes({ id: lm.consumed, color: lm.color });
   }, [state]); // { art: "ab"|"sonder"|"lock", id, level? }
-  const pc = inspect && inspect.mode === "own" && state.board[inspect.i] ? state.board[inspect.i] : null;
+  // v0.71.8: die Leiste dient BEIDEN Seiten - eigene Figuren voll, fremde
+  // mit Nebelregel (ein Talent bleibt "???", bis die Figur es gezeigt hat).
+  const pc = inspect && state.board[inspect.i] ? state.board[inspect.i] : null;
+  const eigen = pc ? pc.color === myColor : true;
   useEffect(() => { setOffen(null); }, [inspect && inspect.i, state]);
   if (banner) return null;
 
   const abIds = pc ? (pc.abilities || []).filter((id) => ABILITIES[id] && ABILITIES[id].live) : [];
   const dry = pc ? Object.keys(pc.used || {}).length > 0 : false;
   let sonder = [];
-  if (pc && pc.color === myColor) {
+  if (pc && eigen) {
     try {
       const setS = new Set(legalMovesFrom(state, inspect.i).map((m) => m.special).filter(Boolean));
       sonder = ["castle", "enpassant"].filter((k) => setS.has(k));
@@ -98,13 +101,17 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
   // DIE NAECHSTE GESPERRTE: der erste Leiter-Eintrag der Figur, dessen
   // Faehigkeit sie noch nicht traegt - nur EINER, wie gewuenscht. Der Held
   // traegt seinen eigenen Baum im Hofstaat und bleibt hier ohne Schloss.
-  const naechste = (pc && !pc.hero && ch?.ladder)
+  const naechste = (pc && eigen && !pc.hero && ch?.ladder)
     ? ch.ladder
         .filter((e) => e.ability && ABILITIES[e.ability]?.live && !abIds.includes(e.ability))
         .sort((a, b) => a.level - b.level)[0] || null
     : null;
 
-  const beschreibung = offen && (offen.art === "sonder" ? SONDER[offen.id] : ABILITIES[offen.id]);
+  const beschreibung = offen && (offen.nebel
+    ? { nameDe: "Verborgenes Talent", nameEn: "Hidden talent",
+        descDe: "Noch im Nebel: dieses Talent zeigt sich erst, wenn die Figur es im Gefecht einsetzt.",
+        descEn: "Still veiled: this talent reveals itself only once the piece uses it in battle." }
+    : offen.art === "sonder" ? SONDER[offen.id] : ABILITIES[offen.id]);
 
   return (
     <div style={{ position: "relative", flex: "0 0 auto", padding: "0 10px 6px" }}>
@@ -146,20 +153,23 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
           Kopfzeile und die Karten-Knoepfe. */}
       <div style={{ minHeight: 96, display: "flex", alignItems: "center", gap: 10, padding: "2px 2px" }}>
         {pc && (() => { const bild = carvedForPiece(pc); return bild ? (
-          <img src={bild} alt="" draggable={false} style={{ height: 88, flex: "0 0 auto",
+          <img src={bild} alt="" draggable={false} style={{ height: 108, flex: "0 0 auto", /* v0.71.8: groesser */
             filter: "drop-shadow(0 3px 8px rgba(0,0,0,.6))", alignSelf: "flex-end" }} />
         ) : null; })()}
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 6 }}>
         {pc ? (<>
-          {/* KOPFZEILE: Name, Stufe, Kugeln - schlank, kein Portraet (die
-              gewaehlte Figur steht ja gross markiert auf dem Brett) */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span className="gg-serif" style={{ fontSize: 13, color: T.goldBright, letterSpacing: ".04em",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 170 }}>{nm}</span>
-            {(pc.level || 1) > 1 && <span style={{ fontSize: 11, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
-            {pc.maxHp > 0 && <StatOrbBadge kind="life" v={pc.hp} size={19} />}
-            {pc.atk != null && <StatOrbBadge kind="power" v={pc.atk} size={19} />}
-            {pc.shield > 0 && <span style={{ fontSize: 11, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
+          {/* v0.71.8 (Besitzer): kein Kopfzeilen-Balken mehr - der Name steht
+              WINZIG in der besonderen Schrift oben links, nimmt keinen Platz
+              und traegt keine Pille; die Kugeln haengen klein daneben. */}
+          <div style={{ position: "absolute", top: 0, left: 12, display: "flex", alignItems: "center",
+            gap: 6, pointerEvents: "none", maxWidth: "80%" }}>
+            <span className="gg-serif" style={{ fontSize: 11, letterSpacing: ".06em",
+              color: eigen ? T.goldBright : "#cbbcf5", opacity: 0.92,
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{nm}</span>
+            {(pc.level || 1) > 1 && <span style={{ fontSize: 9.5, fontWeight: 800, color: "#f0d68a" }}>Lv {pc.level}</span>}
+            {pc.maxHp > 0 && <StatOrbBadge kind="life" v={pc.hp} size={15} />}
+            {pc.atk != null && <StatOrbBadge kind="power" v={pc.atk} size={15} />}
+            {pc.shield > 0 && <span style={{ fontSize: 9.5, fontWeight: 800, color: "#9fc1e8" }}>⛨ {pc.shield}</span>}
           </div>
           {/* DIE KARTENREIHE: Sonderzuege · Faehigkeiten · die naechste Gesperrte */}
           <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 2, scrollbarWidth: "none" }}>
@@ -168,12 +178,14 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false 
                 active={offen?.art === "sonder" && offen.id === k}
                 onTap={() => setOffen((o) => o?.id === k ? null : { art: "sonder", id: k })} />
             ))}
-            {abIds.map((id) => (
-              <Karte key={id} icon={ABILITIES[id].icon}
-                label={en ? ABILITIES[id].nameEn : ABILITIES[id].nameDe}
+            {abIds.map((id) => {
+              const gezeigt = eigen || !!(pc.used && pc.used[id]);
+              return (
+              <Karte key={id} icon={gezeigt ? ABILITIES[id].icon : "?"}
+                label={gezeigt ? (en ? ABILITIES[id].nameEn : ABILITIES[id].nameDe) : "???"}
                 dry={dry && ABILITIES[id].once} active={offen?.art === "ab" && offen.id === id}
-                onTap={() => setOffen((o) => o?.id === id ? null : { art: "ab", id })} />
-            ))}
+                onTap={() => setOffen((o) => o?.id === id ? null : { art: "ab", id, nebel: !gezeigt })} />
+            ); })}
             {naechste && (
               <Karte lock icon="🔒"
                 label={en ? ABILITIES[naechste.ability].nameEn : ABILITIES[naechste.ability].nameDe}

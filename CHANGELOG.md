@@ -1,5 +1,21 @@
 # Changelog - Grand Gambit
 
+## 0.71.8
+
+DIE SCHWEBENDE PILL FAELLT - DIE LEISTE DIENT BEIDEN SEITEN:
+
+- Das schwebende Namens-/Dossier-Schild ueber dem Brett ist FORT (es
+  wurde von den Figuren verdeckt). Die Auskunft wohnt jetzt fuer BEIDE
+  Seiten in der Kampfleiste: fremde Figuren erscheinen dort mit ihrer
+  dunklen freigestellten Kunst und der NEBELREGEL - ein Talent bleibt
+  "???" (mit eigener Nebel-Beschreibung), bis die Figur es im Gefecht
+  gezeigt hat. Damit ist auch die Audit-Luecke der unsichtbaren
+  Gegner-Talente geschlossen.
+- Die freigestellte Figur waechst auf 108 px (Besitzer: "duerfen noch
+  ein bisschen groesser"), und der KOPFZEILEN-BALKEN ist fort: der Name
+  steht WINZIG in der besonderen Schrift oben links (absolut, kein
+  Platzverbrauch, keine Pille), die Kugeln klein daneben.
+
 ## 0.71.7
 
 SCHIMMER-DETEKTIVARBEIT UND DIE FREIE LEISTE:
