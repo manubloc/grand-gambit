@@ -521,12 +521,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     // Without carving that out of the width budget, board+frame overflow the
     // viewport on phones - the page gains sideways scroll and the board reads
     // as shoved off-centre. Dividing by 1.052 keeps rail and all inside.
-    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) / 1.052 - (W - 1) * GAP) / W;
+    // v0.71.5 (Besitzer: "das GESAMTE Brett groesser"): der Sicherheits-
+    // teiler schrumpft von 1,052 auf 1,018 - rund +3,3 % Kantenlaenge.
+    const byW = (Math.min(avail.w, fitBox ? avail.w : maxPx) / 1.018 - (W - 1) * GAP) / W;
     // Reserve HEADROOM above the top rank AND FOOTROOM below the first: a
     // selected piece grows 1.58x from its footpoint, so its head rises almost a
     // full cell over the square — and the value orbs ride a little UNDER the
     // bottom rank. The zoom viewport clips both without this reserve.
-    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.95 + 0.3) : Infinity;
+    // ... und der Hoehen-Vorhalt wird schlanker (0,78 statt 1,25 Zellen
+    // Luft) - die Koepfe der Grundreihe brauchen weniger Reserve als gedacht.
+    const byH = fitBox && avail.h > 0 ? (avail.h - (H - 1) * GAP) / (H + 0.62 + 0.16) : Infinity;
     cell = Math.max(8, Math.floor(Math.min(byW, byH)));
     tight = byH <= byW;          // the reserves only need defending when height decides
   }

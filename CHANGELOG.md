@@ -1,5 +1,16 @@
 # Changelog - Grand Gambit
 
+## 0.71.5
+
+DAS GESAMTE BRETT WAECHST:
+
+- Besitzer-Klarstellung: nicht die Kacheln, das GANZE Brett soll
+  groesser. Zwei Schrauben: der Sicherheitsteiler der Breite schrumpft
+  (1,018 statt 1,052, ~+3,3 %) und der Hoehen-Vorhalt wird schlanker
+  (0,78 statt 1,25 Zellen Luft - die Grundreihen-Koepfe ragen weiter
+  frei in den Himmel, overflow bleibt sichtbar). Messbeleg: Brett
+  352 px auf dem 390er-Schirm, Raender weiterhin exakt 0.
+
 ## 0.71.4
 
 VERSATZ GEHEILT, VERLAUFS-SCHWEIF, GANZE KACHEL ZURUECK, RAHMEN OHNE UEBERLAPPUNG:
