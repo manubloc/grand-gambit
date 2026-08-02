@@ -69,9 +69,9 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
         style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceStyle")}</div>
-      <Segmented value={profile.pieceStyle === "svg" ? "svg" : profile.pieceStyle === "glow" ? "glow" : "painted"}
+      <Segmented value={profile.pieceStyle === "svg" ? "svg" : "painted"}
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
-        options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }, { value: "glow", label: t("profile.styleGlow") }]} />
+        options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
       {/* DIE MELODIE DES HAUSES: laeuft in der Schleife, sobald man das Spiel
           einmal beruehrt hat (kein Browser spielt ungefragt) - und schweigt,

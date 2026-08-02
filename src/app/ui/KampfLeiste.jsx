@@ -13,7 +13,6 @@ import { useState, useEffect } from "react";
 import { legalMovesFrom } from "../../core/index.js";
 import { ABILITIES, CHARACTERS } from "../../content/index.js";
 import { carvedForPiece } from "./board/carvedArt.js";
-import { glowForPiece } from "./board/glowArt.js";
 import { StatOrbBadge } from "./board/PieceGlyph.jsx";
 import { T } from "./theme.js";
 
@@ -153,7 +152,7 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false,
           auf dem Schwarz: links die gewaehlte Figur FREIGESTELLT, daneben
           Kopfzeile und die Karten-Knoepfe. */}
       <div style={{ minHeight: 96, display: "flex", alignItems: "center", gap: 10, padding: "2px 2px" }}>
-        {pc && (() => { const bild = (!eigen && stil === "glow" && glowForPiece(pc)) || carvedForPiece(pc); return bild ? (
+        {pc && (() => { const bild = carvedForPiece(pc); /* v0.71.14: ueberall dieselbe Kunst */ return bild ? (
           <div style={{ position: "relative", flex: "0 0 auto", alignSelf: "flex-end",
             display: "flex", flexDirection: "column", alignItems: "center" }}>
             {/* v0.71.9 (Besitzer): der Name steht MITTIG UEBER der Figur -

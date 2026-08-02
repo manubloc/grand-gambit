@@ -688,7 +688,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
           {!ruhig && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "46%", pointerEvents: "none",
             background: "linear-gradient(90deg, transparent, rgba(255,252,235,.4), transparent)",
             animation: `ggShine ${T.mo.sheen} linear ${shineDelay} infinite` }} />}
-          <span style={{ position: "relative" }}>{cta} ›</span>
+          <span style={{ position: "relative" }}>{cta}</span>
         </div>}
       </button>
       {children}
@@ -726,7 +726,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
             der Segmented-Auswahl). */}
         <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", marginTop: -2 }}>
           <GoldShineButton onClick={onQuickStart || onQuick} style={{ flex: "0 0 auto", padding: "9px 16px", fontSize: 13.5, borderRadius: 999 }}>
-            {t("hub.playNow")} ›</GoldShineButton>
+            {t("hub.playNow")}</GoldShineButton>
           <button onClick={onQuick} style={{ flex: "0 0 auto", padding: "9px 16px", fontSize: 13, borderRadius: 999,
             fontFamily: "inherit", fontWeight: 800, cursor: "pointer",
             border: `1px solid ${T.selLine}`, color: T.selInk,
@@ -895,7 +895,7 @@ export function GameIntro({ t, dispatch, onStart }) {
           style={{ marginTop: 15, width: "100%", padding: "12px 14px", borderRadius: 10,
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
-            cursor: "pointer", letterSpacing: ".04em" }}>{t("setup.go")} ›</button>
+            cursor: "pointer", letterSpacing: ".04em" }}>{t("setup.go")}</button>
       </div>
     </div>
   );
@@ -951,7 +951,7 @@ function TeachPopup({ which, t, dispatch }) {
           style={{ width: "100%", padding: "12px 14px", borderRadius: 10,
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit", cursor: "pointer", letterSpacing: ".04em" }}>
-          {t("teach.ok")} ›</button>
+          {t("teach.ok")}</button>
       </div>
     </div>
   );

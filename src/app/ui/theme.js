@@ -215,6 +215,20 @@ export const GLOBAL_CSS = `
      reduzierter Bewegung stehen beide still - die Uhr bleibt dann gross
      und rot, das genuegt als Signal. */
   @keyframes ggUhrAlarm { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.16); } }
+  /* v0.71.14: DER RISS ZUCKT - ein greller Schlag, dann langes Ausglimmen.
+     Traegt die Figur, die zuletzt gezogen hat. */
+  @keyframes ggRissBlitz {
+    0%   { filter: brightness(0.94) contrast(1.12) drop-shadow(0 0 1px rgba(150,105,255,.62)) drop-shadow(0 0 2.5px rgba(150,105,255,.31)); }
+    6%   { filter: brightness(1.55) contrast(1.2) drop-shadow(0 0 3px rgba(232,220,255,1)) drop-shadow(0 0 9px rgba(168,120,255,.95)) drop-shadow(0 0 20px rgba(124,58,237,.8)); }
+    14%  { filter: brightness(1.12) contrast(1.14) drop-shadow(0 0 2px rgba(198,168,255,.8)) drop-shadow(0 0 7px rgba(150,105,255,.6)); }
+    22%  { filter: brightness(1.42) contrast(1.18) drop-shadow(0 0 3px rgba(240,232,255,.95)) drop-shadow(0 0 12px rgba(150,105,255,.85)); }
+    100% { filter: brightness(0.94) contrast(1.12) drop-shadow(0 0 1px rgba(150,105,255,.62)) drop-shadow(0 0 2.5px rgba(150,105,255,.31)); }
+  }
+  @keyframes ggGoldBlitz {
+    0%   { filter: brightness(1.10) contrast(1.10) drop-shadow(0 0 1px rgba(240,214,138,.5)); }
+    8%   { filter: brightness(1.4) contrast(1.14) drop-shadow(0 0 3px rgba(255,246,214,.95)) drop-shadow(0 0 10px rgba(240,214,138,.7)); }
+    100% { filter: brightness(1.10) contrast(1.10) drop-shadow(0 0 1px rgba(240,214,138,.5)); }
+  }
   @keyframes ggBrettAlarm {
     0%, 100% { box-shadow: inset 0 0 0 0 rgba(214,73,90,0); }
     50% { box-shadow: inset 0 0 34px 6px rgba(214,73,90,.42), inset 0 0 90px rgba(122,60,255,.18); }

@@ -17,7 +17,6 @@ import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
 import { carvedById, carvedForPiece } from "../board/carvedArt.js";
-import { glowForPiece } from "../board/glowArt.js";
 import { livery } from "../livery.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
@@ -300,8 +299,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         // traegt er ringsum dasselbe ruhige Dunkel wie an der Unterkante.
         background: "rgba(9,11,16,.95)",
         // die Karte traegt die Riss-Kontur des Hauses
-        border: "1px solid rgba(22,18,34,.9)", // v0.71.7: der lila Schimmer war diese Linie - jetzt dunkel
-        boxShadow: "0 10px 34px rgba(0,0,0,.5)", // v0.71: der lila Schein um die Karte ist fort (Besitzer)
+        // v0.71.14 (Besitzer): die LEUCHTENDE LILA KONTUR kommt zurueck - sie
+        // gefiel ihm; nur der breite Nebelschein bleibt fort.
+        border: "1px solid rgba(167,139,250,.62)",
+        boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 12px rgba(124,58,237,.28)",
         pointerEvents: "none" }} />
       <div
         onPointerDown={(e) => { if (seaLock) return;
@@ -788,24 +789,24 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             // fixes Vollbild-Overlay nimmt er den ganzen Schirm - und laesst
             // unten Platz fuer die Menueleiste.
             background: "rgba(4,6,10,.94)",
-            overflowY: "auto", WebkitOverflowScrolling: "touch",
+            overflowY: "hidden", // v0.71.14: die Welt scrollt NUR quer
             padding: "calc(18px + env(safe-area-inset-top)) 12px calc(104px + env(safe-area-inset-bottom))" }}>
-            <div className="gg-serif" style={{ textAlign: "center", color: "#e9d296", letterSpacing: ".24em",
-              fontSize: 15, marginBottom: 4 }}>❖ {t("camp.world").toUpperCase()} ❖</div>
-            <div style={{ textAlign: "center", color: "rgba(233,210,150,.55)", fontSize: 11.5, marginBottom: 12 }}>{t("camp.worldHint")}</div>
+            {/* v0.71.14: Ueberschrift und Untertitel der Weltkarte fort - die Ansicht spricht fuer sich. */}
             {/* DIE WELTKARTE NIMMT DEN GANZEN SCHIRM: die alte Bremse von 430px
                 stammt von der schmalen Hochkantkarte - die neue liegt quer und
                 soll so gross stehen wie die Kapitelkarte. Sie fuellt die
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
-            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", height: "calc(100dvh - 200px)",
-              borderRadius: 14, border: "1px solid rgba(22,18,34,.9)", background: "rgba(9,11,16,.95)",
-              boxShadow: "0 10px 34px rgba(0,0,0,.5)" }}>
+            <div style={{ overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch",
+              height: "min(calc(100dvh - 190px), 78vw)", // wie die Kapitelkarte
+              borderRadius: 14, background: "rgba(9,11,16,.95)",
+              border: "1px solid rgba(167,139,250,.62)",
+              boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 12px rgba(124,58,237,.28)" }}>
             <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
               // v0.71.12 (Besitzer): das Querbild klebt oben/unten/links an der
               // Box - volle HOEHE, und nach RECHTS wird gescrollt, je mehr
               // Welt sich oeffnet.
-              height: "100%", width: `calc((100dvh - 200px) * ${WORLD_MAP.w} / ${WORLD_MAP.h})`, minWidth: "100%" }}>
+              height: "100%", width: `calc(min(calc(100dvh - 190px), 78vw) * ${WORLD_MAP.w} / ${WORLD_MAP.h})`, minWidth: "100%" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
@@ -983,7 +984,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           </div>
           {boss && (status === "cleared" || facedSet.has(sel)) && (() => {
             // room for the name and the two value orbs (60px) stays reserved
-            const bossArtS = Math.round(Math.max(128, Math.min(196, (panelW - 50) * 0.62))); // v0.71.12: der Waechter fuellt die Box
+            const bossArtS = Math.round(Math.max(104, Math.min(132, (panelW - 50) * 0.40))); // v0.71.14: schmal - der Text braucht Platz
             return (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
@@ -994,18 +995,21 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   the widest figure (a sprawling monster) spans 0.918 of that
                   height, so a SQUARE frame holds every one of them without
                   clipping. Sized off the panel so it breathes on phones too. */}
-              <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto" }}>
+              <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto", overflow: "hidden" }}>
                 {(() => {
                   // v0.71.12 (Besitzer): der gewaehlte BRETTSTIL gilt GLOBAL -
                   // steht das Profil auf Leuchtend, traegt auch das Popup-
                   // Portraet die Leuchtkonturen (der Gegner gehoert dem Riss;
                   // erst wenn er zu dir kommt, verliert er sie - golden).
-                  const stueck = { kind: boss.kind, art: boss.art, bossId: boss.bossId, color: "b" };
-                  const painting = (!golden && profile.pieceStyle === "glow" && glowForPiece(stueck))
-                    || paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
+                  const painting = paintedForPiece({ kind: boss.kind, art: boss.art, bossId: boss.bossId });
                   return painting
                     ? <img src={painting} alt="" draggable={false} style={{ width: "100%", height: "100%",
-                        objectFit: "contain", objectPosition: "bottom",
+                        // v0.71.14 (Besitzer): NICHT die Box verbreitern - das BILD
+                        // beschneiden: die Malerei traegt viel Luft, also 1,42-fach
+                        // hineinzoomen und ueberstehendes kappen. Figur gross,
+                        // Textspalte bleibt breit.
+                        objectFit: "contain", objectPosition: "bottom", transform: "scale(1.42)",
+                        transformOrigin: "50% 100%",
                         filter: golden ? "drop-shadow(0 2px 2px rgba(40,32,16,.35))" : `${ENEMY_FILTER} drop-shadow(0 2px 2px rgba(40,32,16,.35))`,
                         userSelect: "none", pointerEvents: "none" }} />
                     : <PieceArt kind={boss.kind} art={boss.art} fill={golden ? "#c9a45c" : "#242d44"} rim={golden ? "#f0dfae" : "#93a0bb"}

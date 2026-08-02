@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 0.72.0
+
+EINE KUNST FUER ALLE, RISS-BLITZE AM LETZTEN ZUG, WELT UND POPUP GERADEGERUECKT:
+
+- DER LEUCHTSTIL IST FORT (Besitzer: "man erkennt sie nicht mehr sauber"):
+  ueberall - Brett, Kampfleiste, Popup - stehen DIESELBEN Figuren wie die
+  eigenen. Option, Modul und 57 Glow-Bilder entfernt (Buendel ~3,6 MB
+  schlanker).
+- ALLE FIGUREN HELLER UND KONTRASTREICHER: eigene brightness 1,10 /
+  contrast 1,10, die Gegenseite dieselbe Kunst nur eine Spur dunkler
+  (0,94 / 1,12). Die Zugehoerigkeit tragen weiterhin Goldschein und
+  Riss-Violett.
+- DER RISS ZUCKT: die Figur, die ZULETZT GEZOGEN hat, bekommt einen
+  Blitz - ein greller weiss-violetter Schlag, ein zweites Zucken, dann
+  langes Ausglimmen (2,6 s, einmalig). Gegner violett, eigene golden.
+  Nur diese eine Figur, und bei offenem Dialog ruht sie.
+- DIE LEUCHTENDE LILA KONTUR ist zurueck - um die Kapitelkarte UND um
+  die Weltkarte (v0.71.7 hatte sie mit dem Nebelschein zusammen
+  erschlagen).
+- WELTKARTE: scrollt NUR noch quer (vertikal gesperrt), steht in
+  derselben Groesse und Kontur wie die Kapitelkarte, Ueberschrift und
+  Untertitel sind fort.
+- POPUP: die Portraetbox wird wieder SCHMAL (bis 132 statt 196 px) - der
+  Waechter wird stattdessen durch ZUSCHNITT gross (1,42-fach hinein-
+  gezoomt, ueberstehendes gekappt). Der Text behaelt seine Spalte.
+- Die Pfeilzeichen hinter den Menue-Knoepfen sind fort.
+
 ## 0.71.13
 
 AUCH DIE KUGELN DUCKEN SICH UNTER DEN DIALOG:

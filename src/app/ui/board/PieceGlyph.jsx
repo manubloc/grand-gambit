@@ -3,7 +3,6 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { glowForPiece } from "./glowArt.js";
 import { carvedForPiece, carvedFitFor } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
@@ -257,13 +256,22 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     `drop-shadow(0 0 1px rgba(${r},${g2},${b2},${(1 * staerke).toFixed(2)})) `
     + `drop-shadow(0 0 2.5px rgba(${r},${g2},${b2},${(0.5 * staerke).toFixed(2)}))`;
   const gewaehlt = !!piece.selected;
+  // v0.71.14 (Besitzer): DIE FIGUR DES LETZTEN ZUGES zuckt einmal auf und
+  // glimmt langsam aus - Gegner im Riss-Violett, eigene im Gold. Nur DIESE
+  // eine Figur, sonst wird der Schirm unruhig.
+  const zuletzt = !!piece.justMoved;
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 0.9 : 0.34)      // eigene: leise, beim Zug hell
     : kante(150, 105, 255, gewaehlt ? 1.0 : 0.62);     // Gegner: der Riss
   const klassisch = artStyle === "classic";
+  // v0.71.14: alle Figuren minimal aufgehellt und kontrastreicher; die
+  // Gegenseite traegt DIESELBE Kunst, nur eine Spur dunkler - die Trennung
+  // leisten Goldschein (eigene) und Riss-Violett (Gegner).
+  const tonung = white ? "brightness(1.10) contrast(1.10) saturate(1.04)"
+                       : "brightness(0.94) contrast(1.12) saturate(0.98)";
   const glow = klassisch
     ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
-    : "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
+    : tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65))"
     + " " + SIDE_GLOW
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
     + (piece.hero ? " " + HERO_SHEEN : "")
@@ -277,13 +285,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // The carved set only covers the six basic ranks; anything it has no figure
   // for (court, bosses, the risen Gambit) drops through to the gallery, so the
   // style switch never leaves a square empty.
-  const carving = artStyle === "carved" ? carvedForPiece(paintPiece)
-    : artStyle === "glow" ? glowForPiece(paintPiece) : null; // v0.70: der Leuchtstil
+  // v0.71.14 (Besitzer): der Leuchtstil ist fort - UEBERALL dieselben Figuren.
+  const carving = artStyle === "carved" ? carvedForPiece(paintPiece) : null;
   const painting = carving
     ? carving
     : artStyle === "classic"
     ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
-    : (artStyle === "painted" || artStyle === "carved" || artStyle === "glow")
+    : (artStyle === "painted" || artStyle === "carved")
     ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
     : null;
   // every painting fitted to one box (uniform height) and dropped onto one
@@ -294,7 +302,8 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: big ? "center" : "flex-end",
-      paddingBottom: big ? 0 : "0.015em", animation: "pop .18s ease",
+      paddingBottom: big ? 0 : "0.015em",
+      animation: zuletzt ? `${white ? "ggGoldBlitz" : "ggRissBlitz"} 2.6s ease-out both, pop .18s ease` : "pop .18s ease",
       boxSizing: "border-box" }}>
 
       {/* the head may rise above the square: the art gets MORE than the tile.
