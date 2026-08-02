@@ -1,5 +1,15 @@
 # Changelog - Grand Gambit
 
+## 0.71.3
+
+DIE KACHELN EINEN SCHRITT GROESSER:
+
+- Besitzer: "schon besser, aber kann noch etwas groesser werden" - die
+  Felder zoomen sanft in die Kachel (215 % statt 200 %, mittig auf der
+  jeweiligen Haelfte verankert): der Stein fuellt mehr, der Eigenrand
+  der Kachel bleibt als feine Kante. Sonde unveraendert sauber (64
+  Zellen, zwei Positionen, Fuge 0).
+
 ## 0.71.2
 
 GANZE KACHELN JE FELD, BODEN ENTLASTET, KOENIGE IN DER ONLINE-KACHEL:

@@ -409,8 +409,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               // deckt als Ganzbild.
               const finale = dark && feldDunkel;
               const quelle = finale ? feldDunkel : feld;
-              const groesse = finale ? "cover" : "200% auto";
-              const px = finale ? 50 : dark ? 100 : 0;
+              // v0.71.3 (Besitzer: "noch etwas groesser"): sanft hinein - die
+              // Kachel fuellt mehr, ihr Eigenrand bleibt als feine Kante.
+              // 215 %-Breite, mittig auf der jeweiligen Haelfte verankert.
+              const groesse = finale ? "cover" : "215% auto";
+              const px = finale ? 50 : dark ? 96.7 : 3.3;
               const fy = 0.5;
               // ROHDATEN ANEINANDER (Besitzer, v0.67.1): kein Schleier,
               // keine Fase, keine Fuge - die Kacheln stehen Kante an Kante,
