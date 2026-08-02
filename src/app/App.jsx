@@ -422,7 +422,8 @@ export default function App() {
   );
   const headerBar = (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-      <img src={emblemArt()} alt="Grand Gambit" style={{ height: 34, display: "block", flex: "0 0 auto",
+      <img src={emblemArt()} alt="Grand Gambit" onClick={() => setTab("play")}
+        style={{ cursor: "pointer", height: 34, display: "block", flex: "0 0 auto",
         filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
       <div style={{ flex: 1 }} />
       {currencyRow}
@@ -482,7 +483,8 @@ export default function App() {
           border: "1px solid rgba(167,139,250,.5)", borderRadius: 20, padding: "10px 16px",
           boxShadow: `${T.shadow}, 0 0 16px rgba(124,58,237,.34), 0 0 34px rgba(124,58,237,.16)`,
           display: "flex", alignItems: "center", gap: 10 }}>
-          <img src={emblemArt()} alt="Grand Gambit" style={{ height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
+          <img src={emblemArt()} alt="Grand Gambit" onClick={() => setTab("play")}
+            style={{ cursor: "pointer", height: 40, display: "block", flex: "0 0 auto", paddingRight: 6,
             filter: "drop-shadow(0 0 5px rgba(139,92,246,.4)) drop-shadow(0 0 11px rgba(124,58,237,.22))" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flex: "1 1 auto", minWidth: 0 }}>{railItems}</div>
           {currencyRow}
@@ -646,7 +648,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false, ruhig = false, bild = null }) => {
     const shineDelay = useShineDelay();
     return (
-    <div style={{ background: bild
+    <div style={{ position: "relative", background: bild
         // VOLLE HOEHE RECHTS (v0.57) auf ECHTEM SCHWARZ (Besitzer, v0.59):
         // die Story-Bilder sind selbst nachtschwarz - Grund #000 laesst sie
         // fugenlos einsinken. Der Schleier laeuft bis 94 % (alt: 72 %), denn
@@ -738,11 +740,13 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
         extra={!SERVER_URL ? <Chip color={"#17110a"} bg={T.gold}>{t("hub.soon")}</Chip>
           : <span title={hallenStand ? (profile.lang === "en" ? "Connected" : "Verbunden")
               : (profile.lang === "en" ? "Not connected" : "Nicht verbunden")}
-              style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700,
-                letterSpacing: ".05em", color: hallenStand ? "#9fe8b4" : T.faint }}>
+              data-hallenstand
+              style={{ position: "absolute", top: 10, right: 12, // v0.71.1: rechts oben in der Kachel
+                display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 800,
+                letterSpacing: ".05em", color: hallenStand ? "#cdbcf7" : T.faint }}>
               <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%",
-                background: hallenStand ? "#5ad48a" : "rgba(150,150,170,.5)",
-                boxShadow: hallenStand ? "0 0 8px #5ad48a" : "none" }} />
+                background: hallenStand ? "#a78bfa" : "rgba(150,150,170,.5)",
+                boxShadow: hallenStand ? "0 0 10px #8b5cf6, 0 0 4px #a78bfa" : "none" }} />
               {hallenStand ? (profile.lang === "en" ? "online" : "verbunden")
                 : (profile.lang === "en" ? "offline" : "offline")}
             </span>}

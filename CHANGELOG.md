@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.71.1
+
+KLASSIK-FEINSCHLIFF UND VIER GRIFFE:
+
+- KLASSISCHE FIGUREN einen Hauch kleiner (0,9em statt 1,0em - Besitzer:
+  "noch etwas zu gross").
+- GOLDRAHMEN RUECKT NACH AUSSEN, sobald Koordinaten am Brett stehen
+  (-4,8 % statt -2,6 %): Buchstaben und Zahlen sind frei - und sie
+  stehen jetzt in GLAENZENDEM GOLD (warmer Schimmer + Bodenschatten).
+- FEHLER BEHOBEN: die gross gestellte Auswahl-Figur lag UEBER dem
+  Aufgeben-Popup. Popup jetzt auf Ebene 200, Auswahl auf 40/41 -
+  Sondenbeleg per elementFromPoint: der Punkt ueber der Figur gehoert
+  dem Popup.
+- DAS EMBLEM OBEN LINKS fuehrt jetzt per Tipp ins SPIELEN-Menue (beide
+  Zweige).
+- DER HALLEN-STAND wohnt RECHTS OBEN in der Online-Kachel und leuchtet
+  bei Verbindung LILA (violetter Punkt mit Schein) statt gruen; offline
+  bleibt grau.
+
 ## 0.71.0
 
 DAS LETZTE TALENT BLEIBT SICHTBAR, FELDER OHNE FUGEN, KARTE OHNE SCHEIN:

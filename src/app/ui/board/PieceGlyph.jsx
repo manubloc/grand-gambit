@@ -268,7 +268,8 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
     + (piece.hero ? " " + HERO_SHEEN : "")
     + (royal ? " " + ROYAL_HALO : "");
-  const pieceSize = hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em"; // the figures own the square now
+  // v0.71.1: klassische Figuren einen Hauch kleiner (Besitzer: "noch etwas zu gross")
+  const pieceSize = klassisch ? "0.9em" : hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em";
 
   // Resolve the painting up-front (if any) so we can level its base width. The
   // enemy's gallery is turned to steel; the risen Gambit wears his tier portrait.

@@ -432,9 +432,11 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               : "inset 4px 4px 10px -4px rgba(255,252,236,.14), inset -4px -4px 10px -4px rgba(0,0,0,.18)" }} />}
 
           {fileLbl && <span style={{ position: "absolute", right: "5%", bottom: "1%", fontSize: "0.22em", fontWeight: 800,
-            color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
+            color: "#f0d68a", textShadow: "0 0 4px rgba(240,214,138,.55), 0 1px 1px rgba(0,0,0,.9)",
+            opacity: 0.95, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{fileLbl}</span>}
           {rankLbl && <span style={{ position: "absolute", left: "5%", top: "4%", fontSize: "0.22em", fontWeight: 800,
-            color: coordCol, opacity: 0.85, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{rankLbl}</span>}
+            color: "#f0d68a", textShadow: "0 0 4px rgba(240,214,138,.55), 0 1px 1px rgba(0,0,0,.9)",
+            opacity: 0.95, lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>{rankLbl}</span>}
           {isLast && <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
             background: i === lastMove.to
               ? `radial-gradient(circle at 50% 52%, ${T.lime}59, ${T.lime}14 68%, transparent 78%)`
@@ -457,7 +459,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // its LEFT edge — every court figure drifted (em-cell)/2 = ~4-5px
             // right while the slimmer pawns stayed true. Pinning the layer to
             // the square (inset 0) makes the flex centre the overflow evenly.
-            position: "absolute", inset: 0, zIndex: (isSel || isSpy) ? 60 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
+            position: "absolute", inset: 0, zIndex: (isSel || isSpy) ? 40 : rr + 3, // selection floats above ALL rows so its value orbs stay readable; otherwise row-by-row layering
             fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide
@@ -474,7 +476,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           {piece && !piece.big && piece.atk != null && piece.maxHp > 0 &&
             <div aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 0,
               display: "flex", justifyContent: "center", pointerEvents: "none",
-              zIndex: (isSel || isSpy) ? 61 : rr + 4 }}>
+              zIndex: (isSel || isSpy) ? 41 : rr + 4 }}>
               <StatTriad piece={piece} focus={isSel || isSpy} />
             </div>}
           {tgt && (tgt.capture
@@ -554,7 +556,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             glimmen, und wer die Oberhand hat, faerbt seine Leiste - fuehrt
             der Gegner, zucken oben Riss-Blitze, je klarer sein Vorsprung,
             desto haeufiger. */}
-        <div aria-hidden style={{ position: "absolute", inset: "-2.6%", pointerEvents: "none",
+        <div aria-hidden style={{ position: "absolute",
+          // v0.71.1: mit Koordinaten rueckt der Goldrahmen weiter nach AUSSEN,
+          // damit er Buchstaben und Zahlen nicht ueberdeckt (Besitzer).
+          inset: showCoords ? "-4.8%" : "-2.6%", pointerEvents: "none",
           filter: "drop-shadow(0 2px 6px rgba(0,0,0,.45))" }}>
           <BrettRahmen lage={lageAusBrett(state.board, pov)} />
         </div>

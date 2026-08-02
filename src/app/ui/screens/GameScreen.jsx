@@ -705,7 +705,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             der klassischen Partie sagt er UNMISSVERSTAENDLICH, dass damit
             die Partie endet. */}
         {armResign && (
-          <div onClick={() => setArmResign(false)} style={{ position: "fixed", inset: 0, zIndex: 70,
+          <div onClick={() => setArmResign(false)} style={{ position: "fixed", inset: 0, zIndex: 200, // v0.71.1: ueber der grossen Auswahl-Figur
             display: "grid", placeItems: "center", padding: 18,
             background: "rgba(5,4,10,.72)", backdropFilter: "blur(3px)" }}>
             <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 340,
