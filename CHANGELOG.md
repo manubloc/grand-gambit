@@ -1,5 +1,35 @@
 # Changelog - Grand Gambit
 
+## 0.74.0
+
+DER AUFTRITT: LANDINGPAGE, RECHTSTEXTE, ICONS - BEREIT FUER DIE WELT:
+
+- LANDINGPAGE NEU (public/landing.html) mit echtem Bildmaterial aus dem
+  Spiel: zusammengesetztes klassisches Brett in Startaufstellung (aus
+  den Besitzer-Kacheln + Klassikfiguren gebaut), sechs Freisteller
+  (Koenig, Dame, Gambit, Amazone, Waechter, Bestie), drei Chronik-
+  Blaetter mit CSS-Zugdiagrammen (Springer, der 2x2-Drache, der
+  Waechter), vier Modus-Karten (Kampagne, Schnell, Online, Klassisch
+  pur) und die Weltkarte gross in lila Kontur. Struktur-Daten
+  (schema.org VideoGame), OG/Twitter-Karten, Hinweis-Banner zur lokalen
+  Speicherung (einmalig, "Verstanden").
+- DATENSCHUTZ (Stand 3. Aug 2026): neuer Absatz "Grobe Herkunft &
+  Geraete-Fingerabdruck" - Land/Region/Stadt via Cloudflare, IP NUR als
+  nicht rueckrechenbarer Hash, Zweck/Rechtsgrundlage (Art. 6 I f),
+  Spielerbuch als zugangsgeschuetzter Verwaltungsbereich, Widerspruch
+  und Loeschung geregelt.
+- NUTZUNGSBEDINGUNGEN (Stand 3. Aug 2026): Virtuelle Inhalte ohne
+  Geldwert, App-Store-Absatz (Google Play), Fairness-Regeln.
+- ICONS RING-ZENTRIERT NEU aus dem freigestellten Emblem: die
+  Sternzacke zog die Mitte hoch, der Goldring sass zu hoch - jetzt ist
+  der RING-Aequator exakt die Bildmitte (belegt: 255/256 bzw. 15/16
+  Pixel). Alle Groessen neu (16/32/180/192/512/maskable), favicon.ico
+  und favicon.svg aus derselben Quelle - App-Icons und Favicon teilen
+  jetzt EIN Motiv.
+- index.html-Metadaten auf Stand (zwoelf Kapitel, 27 Helden,
+  klassisches Schach benannt); Admin-Portal-Tuer "Landingpage" fuehrt
+  jetzt wirklich auf /landing.html (zeigte zuvor auf die App).
+
 ## 0.73.1
 
 FUENF GRIFFE AUS DEM SPIEL:
