@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.73.1
+
+FUENF GRIFFE AUS DEM SPIEL:
+
+- POPUP-KOPF: der groessere Titel (v0.71.12) brachte Zeilenluft ueber
+  sich - jetzt oben so knapp wie unten (Polster 9 statt 12, Titelzeile
+  eng gefasst, Kopfzeile flex-start). Beide Panels.
+- DER ERLEDIGT-HAKEN auf der Karte leuchtet LILA statt gruen (Bosse:
+  violettes Siegel mit Schein, Stationen: heller Haken mit Riss-Licht) -
+  klarer Kontrast auf dem anthrazitfarbenen Grund.
+- DAS BRETT SPRINGT NICHT MEHR: beim Anwaehlen wuchs die grosse Figur
+  kurz in die Kastenmessung hinein und das ganze Brett skalierte mit.
+  Der Kasten misst jetzt fest (contain: layout size) - was waechst,
+  waechst UEBER ihn hinaus statt ihn zu dehnen.
+- DAS WORT "AUSRUESTUNG" ist fort; stattdessen trennt eine feine
+  violette Linie den Fuss - nur noch die Karten stehen dort.
+- DER TRANK-HINWEIS war ein nackter Schluessel (game.potionPick hatte
+  NIE einen Text!) - jetzt steht dort: "Waehle die Figur, die den Trank
+  trinken soll".
+
 ## 0.73.0
 
 DAS SPIELERBUCH - WER SPIELT, WIE WEIT, WOHER:

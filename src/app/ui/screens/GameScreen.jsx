@@ -792,6 +792,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {clockAlarm && <div aria-hidden style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none",
           borderRadius: 10, animation: "ggBrettAlarm .85s ease-in-out infinite" }} />}
         <div style={{ width: "100%", height: "100%",
+          // v0.73.1 (Besitzer): beim Anwaehlen wuchs kurz der Inhalt und das
+          // Brett skalierte mit - der Kasten misst jetzt fest, was drin
+          // waechst, waechst ueber ihn hinaus statt ihn zu dehnen.
+          contain: "layout size", overflow: "visible",
           display: "grid", placeItems: "center",   // the board rests mid-air: as much sky above as below
           transform: zoomMode ? `translate(${zv.x}px, ${zv.y}px) scale(${zv.z})` : "none",
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
@@ -896,11 +900,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // eigene lila Zeile UNTER der Kampfleiste, am Fuss des Gefechts.
   const ruestungsZeile = (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flex: "0 0 auto",
-      padding: "0 10px calc(8px + env(safe-area-inset-bottom))" }}>
+      borderTop: `1px solid ${T.selLine}22`, marginTop: 4, paddingTop: 8,
+      padding: "8px 10px calc(8px + env(safe-area-inset-bottom))" }}>
       {/* v0.71.11 (Besitzer): ALLE Knoepfe GLEICH GROSS und quadratisch -
           schwarzer Grund, lila Kontur, das Icon gross und perfekt mittig,
           die ZAHL DARUNTER. Nichts Ungleiches mehr. */}
-      <span className="gg-serif" style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".08em", marginRight: 2 }}>{en ? "GEAR" : "AUSRÜSTUNG"}</span>
+      {/* v0.73.1 (Besitzer): das Wort faellt - eine feine Linie ordnet den Fuss. */}
       {(() => {
         const kasten = (aktiv, an = true) => ({
           width: 52, height: 56, borderRadius: 12, flex: "0 0 auto", fontFamily: "inherit", cursor: an ? "pointer" : "default",

@@ -590,11 +590,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   </div>
                   {st === "cleared" && (bm
                     ? <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-72%)",
-                        fontSize: 12, fontWeight: 800, color: "#3e6b3a", opacity: 0.8,
-                        textShadow: "0 1px 2px rgba(255,250,230,.7)" }}>✓</span>
+                        // v0.73.1 (Besitzer): der Haken leuchtet LILA, nicht gruen
+                        fontSize: 12, fontWeight: 900, color: "#c4a6ff", opacity: 1,
+                        textShadow: "0 0 6px rgba(139,92,246,.95), 0 1px 2px rgba(0,0,0,.85)" }}>✓</span>
                     : <span style={{ position: "absolute", top: 2, right: 2, width: 13, height: 13, borderRadius: "50%",
-                        background: T.gold, color: "#17110a", fontSize: 8.5, fontWeight: 900, display: "flex", alignItems: "center",
-                        justifyContent: "center", border: "1.5px solid #efe9da" }}>✓</span>)}
+                        background: "linear-gradient(160deg,#a78bfa,#6d28d9)", color: "#fdfbff", fontSize: 8.5, fontWeight: 900,
+                        boxShadow: "0 0 8px rgba(139,92,246,.85)", display: "flex", alignItems: "center",
+                        justifyContent: "center", border: "1.5px solid #e3d8ff" }}>✓</span>)}
                   {/* DAS SCHLOSS AM WEG: eine verschlossene Station traegt ein
                       deutliches goldenes Siegel - man sieht auf einen Blick, wo
                       es nicht weitergeht; das Antippen erklaert im Panel, was
@@ -933,7 +935,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div key={"vw" + sel} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
           WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
-          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px" }}>
+          boxShadow: "0 0 30px rgba(30,25,15,.2)",
+          // v0.73.1 (Besitzer): oben wie unten - die Zeilenluft des groesseren
+          // Titels wird gekappt statt zusaetzlich gepolstert.
+          padding: "9px 13px 13px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
             <span className="gg-serif" style={{ fontSize: 15.5, fontWeight: 700 }}>{placeFor(node, viewLeague)}</span>
             <span style={{ fontSize: 11, color: PP.dim }}>{en ? mapById(effectiveMap(node, viewLeague)).nameEn : mapById(effectiveMap(node, viewLeague)).nameDe}</span>
@@ -956,14 +961,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <div key={sel + (token.at === sel ? "@" : "")} style={{ position: "absolute", left: frameX + panelLeft, width: panelW, ...panelPos,
           zIndex: 7, background: "rgba(240,233,216,.6)", backdropFilter: "blur(16px) saturate(1.15)",
           WebkitBackdropFilter: "blur(16px) saturate(1.15)", border: `1px solid ${PP.line}`, borderRadius: 18, color: PP.ink,
-          boxShadow: "0 0 30px rgba(30,25,15,.2)", padding: "12px 13px 13px" }}>
+          boxShadow: "0 0 30px rgba(30,25,15,.2)",
+          // v0.73.1 (Besitzer): oben wie unten - die Zeilenluft des groesseren
+          // Titels wird gekappt statt zusaetzlich gepolstert.
+          padding: "9px 13px 13px" }}>
           {(() => {
             const br = { a1: "blades", b1: "magic", c1: "order", d1: "power", e1: "wisdom" }[sel];
             return br ? <div className="gg-quill" style={{ fontSize: 12.5, color: PP.dim, marginBottom: 2 }}>
               {BRANCHES[br][en ? "nameEn" : "nameDe"]}</div> : null;
           })()}
-          <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
-            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.05 }}>{node ? placeFor(node, league) : ""}</div>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 7 }}>
+            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.0, marginTop: -1 }}>{node ? placeFor(node, league) : ""}</div>
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
               color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>
           </div>
