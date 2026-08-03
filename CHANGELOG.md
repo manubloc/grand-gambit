@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 0.72.1
+
+DIE WELTKARTE AUF VOLLE HOEHE, DIE KUGELN UNTER DEN WAECHTER:
+
+- Besitzer-Fund "nur halbe Hoehe": mein Deckel war eine eigene Formel
+  (min(100dvh-190px, 78vw)) - auf hohen Handys biss die 78-vw-Bremse.
+  Die Weltkarte nutzt jetzt EXAKT dieselbe frameH-Rechnung wie die
+  Kapitelkarte; die Breite folgt daraus (Querformat, nur seitlich
+  scrollbar).
+- POPUP: Angriffs- und Lebenskugel wandern UNTER die Figur (kleiner
+  Abstand zum Sockel) - Ueberschrift und Fliesstext stehen dadurch
+  sauber untereinander und gewinnen ihre Zeilenbreite zurueck.
+
 ## 0.72.0
 
 EINE KUNST FUER ALLE, RISS-BLITZE AM LETZTEN ZUG, WELT UND POPUP GERADEGERUECKT:

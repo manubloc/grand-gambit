@@ -798,7 +798,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
             <div style={{ overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch",
-              height: "min(calc(100dvh - 190px), 78vw)", // wie die Kapitelkarte
+              height: frameH, // v0.72.1: EXAKT die Hoehe der Kapitelkarte (dieselbe frameH-Rechnung)
               borderRadius: 14, background: "rgba(9,11,16,.95)",
               border: "1px solid rgba(167,139,250,.62)",
               boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 12px rgba(124,58,237,.28)" }}>
@@ -806,7 +806,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               // v0.71.12 (Besitzer): das Querbild klebt oben/unten/links an der
               // Box - volle HOEHE, und nach RECHTS wird gescrollt, je mehr
               // Welt sich oeffnet.
-              height: "100%", width: `calc(min(calc(100dvh - 190px), 78vw) * ${WORLD_MAP.w} / ${WORLD_MAP.h})`, minWidth: "100%" }}>
+              height: "100%", width: Math.round(frameH * WORLD_MAP.w / WORLD_MAP.h), minWidth: "100%" }}>
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
@@ -995,6 +995,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   the widest figure (a sprawling monster) spans 0.918 of that
                   height, so a SQUARE frame holds every one of them without
                   clipping. Sized off the panel so it breathes on phones too. */}
+            <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
               <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto", overflow: "hidden" }}>
                 {(() => {
                   // v0.71.12 (Besitzer): der gewaehlte BRETTSTIL gilt GLOBAL -
@@ -1016,11 +1017,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                         detail={golden ? "#59421a" : "#9aa8c6"} accent={boss.accent || T.gold} size="100%" level={1} />;
                 })()}
               </div>
+              {/* v0.72.1 (Besitzer): Angriff und Leben stehen UNTER der Figur
+                  (kleiner Abstand zum Sockel); Ueberschrift und Fliesstext
+                  ruecken dadurch sauber untereinander. */}
+              <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 1 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 2, filter: "drop-shadow(0 1px 2px rgba(0,0,0,.35))" }}>
+                    <StatOrbBadge kind="power" v={boss.atk} size={28} num={0.52} /><StatOrbBadge kind="life" v={boss.hp} size={28} num={0.52} /></span>
+              </div>
+            </div>
               <div style={{ minWidth: 0, paddingBottom: 3 }}>
                 <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
                 <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: 2, filter: "drop-shadow(0 1px 2px rgba(0,0,0,.35))" }}>
-                    <StatOrbBadge kind="power" v={boss.atk} size={28} num={0.52} /><StatOrbBadge kind="life" v={boss.hp} size={28} num={0.52} /></span>
+                  
                   {(() => { const f = familyOf(boss.kind);
                     return f ? <><span style={{ opacity: .55 }}>·</span> {f === "crown" ? (en ? "Crown" : "Kronenfiguren") : (en ? "Shadows" : "Schattenwesen")}</> : null; })()}
                 </div>
