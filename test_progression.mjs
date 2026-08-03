@@ -100,18 +100,23 @@ ok("upgrades raise the retinue score", retinueScore({ ...dp2(), pieces: { levels
 
 // ── stage clock (v0.4): time pressure begins in league 5, only on SOME nodes ─
 import { stageTimer, buildStageMatch as bsm2 } from "./src/meta/index.js";
-import { nodeById as nb2 } from "./src/content/index.js";
-ok("no clock before league 5", stageTimer(nb2("L01s44"), 4) === null && stageTimer(nb2("L01s03"), 1) === null);
+import { nodeById as nb2, CAMPAIGN as CAMPX } from "./src/content/index.js";
+// v0.77: Kapitel I ist bis zur Mitte reines Schach - die erste Monsterstation
+// (das ERWACHEN) sitzt nicht mehr an fester Stelle. Darum wird sie gesucht,
+// statt eine Kennung einzutippen, die beim naechsten Umbau wieder wandert.
+const ERWACHEN = CAMPX.find((n) => n.league === 1 && n.haupt && n.rules === "hp" && n.boss?.pure && !n.final).id;
+const SCHACHSTATION = CAMPX.find((n) => n.league === 1 && n.haupt && n.rules === "chess" && !n.boss).id;
+ok("no clock before league 5", stageTimer(nb2("L01s44"), 4) === null && stageTimer(nb2(ERWACHEN), 1) === null);
 ok("plain stages never get a clock", stageTimer(nb2("L01s00"), 7) === null);
-const tMon = stageTimer(nb2("L01s03"), 5);
+const tMon = stageTimer(nb2(ERWACHEN), 5);
 ok("league 5 monster boss: 6-minute total budget", tMon?.type === "total" && tMon.seconds === 360);
 const tEli = stageTimer(nb2("L03s23"), 5);
 ok("league 5 elite piece boss: 20s per move", tEli?.type === "move" && tEli.seconds === 20);
 ok("clocks tighten but stay bounded", stageTimer(nb2("L01s44"), 30).seconds === 180 && stageTimer(nb2("L03s23"), 30).seconds === 12);
 ok("buildStageMatch carries the clock", (() => {
   const p = { ...dp2(), campaign: { league: 5, cleared: [], unlocked: [] } };
-  const m = bsm2("L01s03", p);
-  return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2("L01s03", dp2()).timer === null;
+  const m = bsm2(ERWACHEN, p);
+  return m.timer?.type === "total" && m.timer.seconds === 360 && bsm2(ERWACHEN, dp2()).timer === null;
 })());
 
 // ── the purse (v0.5): visible gold per win, tolls, richer claims ─────────────
@@ -120,9 +125,9 @@ import { CAMPAIGN as CAMP3, ITEM_LIST as IL3 } from "./src/content/index.js";
 
 // end bosses simply carry more gold
 ok("stage gold grows down the road and peaks at the League Keep",
-  stageGold(nb2("L01s44"), 1) > stageGold(nb2("L01s03"), 1) && stageGold(nb2("L01s03"), 1) > stageGold(nb2("L01s00"), 1));
+  stageGold(nb2("L01s44"), 1) > stageGold(nb2(ERWACHEN), 1) && stageGold(nb2(ERWACHEN), 1) > stageGold(nb2("L01s00"), 1));
 ok("pure monster bosses pay a premium over plain sites",
-  stageGold(nb2("L01s03"), 1) - stageGold(nb2("L01s01"), 1) >= 8);
+  stageGold(nb2(ERWACHEN), 1) - stageGold(nb2(SCHACHSTATION), 1) >= 8);
 ok("league scaling multiplies the purse", stageGold(nb2("L01s44"), 3) === Math.round(stageGold(nb2("L01s44"), 1) * 2));
 ok("quick-play purses scale with difficulty", winGold("easy") < winGold("normal") && winGold("normal") < winGold("hard"));
 
@@ -236,7 +241,14 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
     ok("hoard boss dragon carries the big flag", !!m.aiArmy.back.find((s) => s && s.kind === "D" && s.big));
   }
   ok("potion veiled at the very start", !itemRevealed(fresh, ITEMS.potion));
-  ok("potion revealed after the first win", itemRevealed({ campaign: { league: 1, cleared: ["L01s00"] } }, ITEMS.potion));
+  // v0.77: Der Trank kommt NICHT mehr nach dem ersten Sieg - erst wenn die
+  // alte Magie erwacht ist, gibt es Lebenspunkte zu heilen.
+  ok("potion still veiled after the first win", !itemRevealed({ campaign: { league: 1, cleared: ["L01s00"] } }, ITEMS.potion));
+  {
+    const schachwege = CAMPX.filter((n) => n.league === 1 && n.haupt && n.rules === "chess").map((n) => n.id);
+    ok("potion revealed once the old magic wakes",
+      itemRevealed({ campaign: { league: 1, cleared: schachwege } }, ITEMS.potion));
+  }
   ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));
   const mid = { campaign: { league: 1, cleared: ["L01s00","L01s01","L01s03","L01s22","L01s23"] } };
   ok("machete revealed after 4 stages", itemRevealed(mid, ITEMS.machete));

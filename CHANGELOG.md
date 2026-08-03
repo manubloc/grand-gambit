@@ -1,5 +1,56 @@
 # Changelog - Grand Gambit
 
+## 0.77.0
+
+KAPITEL I WIRD ZUR SCHULE DES SCHACHS, DER HAENDLER BEKOMMT SEIN ORIGINAL,
+SIEBEN NEUE KLAENGE:
+
+- KAMPAGNE (Besitzerwunsch): Die erste HAELFTE von Kapitel I laeuft nach
+  REINEN SCHACHREGELN - 22 Schachstationen statt zwei, elf davon auf dem
+  Hauptast, elf in den Nebenaesten, auf allen fuenf Karten (classic,
+  skirmish, courtyard, gauntlet, arena). Bei NEBELMOOR, der Mitte des
+  Hauptastes, erwacht die alte Magie ("Figuren bluten, Figuren halten
+  stand") - ab da HP. Nebenaeste folgen ihrem Ankerpunkt: ein Abstecher
+  aus der Schachhaelfte bleibt Schach.
+- Beide Werbungen von Kapitel I (Magier, Paladin) liegen jetzt HINTER dem
+  Erwachen. Die Schachhaelfte kommt ohne neue Figuren aus; es geht nur um
+  Zuege und die Zug-Faehigkeiten der Leiter.
+- DER LEBENSTRANK ist vorher weder sichtbar noch kaeuflich (needsHp am
+  Gegenstand, itemRevealed fragt hpUnlocked). Ein Trank ohne Lebenspunkte
+  waere eine Luege im Laden.
+- HP-TALENTE SCHLAFEN, bis die Magie erwacht: Lebensraub, Regeneration,
+  Bollwerk, Schockwelle, Kettenblitz, Enterhaken tragen hpOnly und sind
+  nicht kaeuflich, solange es keine Lebenspunkte gibt - sonst verbrennt
+  man in der Schachhaelfte Sternenstaub fuer nichts. Die Karte sagt es an:
+  "Schlaeft, bis die alte Magie erwacht."
+- ENGINE: Der FERNSCHUSS haelt sein Versprechen jetzt auch unter
+  Schachregeln - das Ziel faellt, der Schuetze BLEIBT STEHEN. Bisher zog er
+  faelschlich auf das Zielfeld und damit bis zu vier Felder weit in jede
+  Richtung.
+- DER HAENDLER traegt sein Original: 1024x1024, byte-gleich wie geliefert
+  (sha256 geprueft), bereits sauber freigestellt. Die alte Fassung war von
+  mir auf 520 px verkleinert und auf dunklen Grund plattgerechnet worden -
+  daher der matschige Eindruck. Neuer png-Loader in JEDEM esbuild-Skript,
+  sonst faellt so ein Import still aus.
+- KLANG: sieben neue Klaenge ueber die ElevenLabs-API nach
+  design/KLANG-PROMPTS.md, geschnitten (Einsatz 0 ms) und auf -3 dBFS
+  gebracht wie die vier davor. Endlich besetzt: der SETZ-KLANG. Dazu
+  Schach, Sieg, Niederlage, Stufenaufstieg, Faehigkeit freigeschaltet und
+  Gold - an ihren Stellen verdrahtet (Schach nur beim Wechsel, Remis
+  bleibt still). Zwei weitere Setz-Varianten und der Riss-Blitz warten auf
+  das Ohr des Besitzers und sind NICHT eingebaut.
+
+## 0.76.0
+
+DIE STILLSTANDSREGEL:
+
+- HP-REMIS: Bleiben 120 Halbzuege (60 Zuege je Seite) ohne jeden Schaden,
+  endet das Gefecht unentschieden. Zaehler ohneSchaden im Kern, durch
+  cloneState und den Codec getragen; Banner nennt den Stillstand, das
+  Statusband warnt die letzten zehn Zuege vorher. Nur HP-Regeln.
+  Gemessen: KI-Selbstspiel erreicht hoechstens 88 schadenfreie Halbzuege -
+  die Regel schneidet keine echte Partie ab.
+
 ## 0.75.2
 
 DIE KLANGWAHL DES BESITZERS:

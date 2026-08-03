@@ -184,7 +184,11 @@ export function applyMove(state, move, opts) {
     } else {
       if (target) ns.captured[piece.color].push(target.kind);
       if (dragonAnchor >= 0) clearDragon(dragonAnchor);
-      b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
+      /* Ein Schuss aus der Ferne traegt den Schuetzen NICHT ans Ziel - unter
+         HP-Regeln stand das laengst so, im Schach zog er faelschlich auf das
+         Feld (und damit vier Felder weit in jede Richtung). */
+      if (move.noAdvance) { b[move.to] = null; }
+      else { b[move.to] = piece; b[move.from] = null; piece.hasMoved = true; }
       if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
       if (move.promotion) piece.kind = move.promotion;
     }

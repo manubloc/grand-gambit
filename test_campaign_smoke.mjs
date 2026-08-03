@@ -6,7 +6,8 @@
 import { CAMPAIGN, mapById } from "./src/content/index.js";
 import { buildStageMatch, effectiveMap } from "./src/meta/campaign.js";
 import { createGame, applyMove, legalMoves, status } from "./src/core/index.js";
-import { buildArmyForMap, withProgressPct, defaultProfile, summarizeMatch, applyResult } from "./src/meta/index.js";
+import { buildArmyForMap, withProgressPct, defaultProfile, summarizeMatch, applyResult, itemRevealed, hpWach } from "./src/meta/index.js";
+import { ITEMS } from "./src/content/items.js";
 
 let pass = 0, fail = 0;
 const ok = (name, cond) => { if (cond) { pass++; } else { fail++; console.log("  FAIL - " + name); } };
@@ -69,6 +70,34 @@ ok("every dragon node unfolds its 2x2 block with valid wing refs", dragonNodes >
   const maxL = (m) => Math.max(...m.aiArmy.back.filter((s) => s).map((s) => s.level));
   ok("look-back foes scale to the OLD league (weaker than today)", maxL(look) < maxL(now));
   ok("look-back never dangles a recruit reward", !look.boss || look.boss.unlocks == null);
+}
+
+// ── KAPITEL I IST DIE SCHULE DES SCHACHS (v0.77) ─────────────────────────────
+{
+  const k1 = CAMPAIGN.filter((n) => n.league === 1);
+  const haupt = k1.filter((n) => n.haupt);
+  const schach = k1.filter((n) => n.rules === "chess");
+  ok("Kapitel I traegt mindestens 20 Schachstationen", schach.length >= 20);
+  ok("Schach gibt es NUR in Kapitel I", CAMPAIGN.every((n) => n.rules !== "chess" || n.league === 1));
+  const ersteHp = haupt.findIndex((n) => n.rules === "hp");
+  ok("die Schachhaelfte reicht bis zur Mitte des Hauptastes",
+    ersteHp >= Math.floor(haupt.length * 0.4) && ersteHp <= Math.ceil(haupt.length * 0.6));
+  ok("ab dem Erwachen bleibt es bei HP", haupt.slice(ersteHp).every((n) => n.rules === "hp"));
+  ok("das Erwachen traegt seine Geschichte", /erwacht/.test(haupt[ersteHp].storyDe || ""));
+  ok("in der Schachhaelfte wechseln die Karten",
+    new Set(haupt.slice(0, ersteHp).map((n) => n.map)).size >= 4);
+  ok("die Schachhaelfte wirbt keine Figur an", haupt.slice(0, ersteHp).every((n) => !n.boss?.piece));
+}
+
+// ── Was ohne Lebenspunkte nichts tut, ist vorher nicht zu haben ──────────────
+{
+  const frisch = defaultProfile();
+  ok("der Lebenstrank ist am Anfang nicht einmal sichtbar", !itemRevealed(frisch, ITEMS.potion));
+  ok("die alte Magie schlaeft am Anfang", !hpWach(frisch));
+  const bis = CAMPAIGN.filter((n) => n.league === 1 && n.rules === "chess" && n.haupt).map((n) => n.id);
+  const weit = { ...frisch, campaign: { ...frisch.campaign, league: 1, cleared: bis } };
+  ok("nach der Schachhaelfte erwacht sie", hpWach(weit));
+  ok("und der Trank steht im Laden", itemRevealed(weit, ITEMS.potion));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

@@ -4,7 +4,7 @@ export {
   charXpForLevel, playerXpForLevel, charLevelForXp, playerLevelForXp,
   charXpProgress, playerXpProgress,
   resolveCharacter, characterLevel, nextReward, chosenAbilities, dupeCount, skillPoints, SP_PER_PLAYER_LEVEL, spForXpJump, heroColFor,
-  abilityCost, canUnlockAbility, unlockAbility, respecPiece, RESPEC_GOLD,
+  abilityCost, hpWach, canUnlockAbility, unlockAbility, respecPiece, RESPEC_GOLD,
   MAX_PIECE_LEVEL, GAMBIT_MAX_LEVEL, maxLevelFor, gambitTier, upgradeCost, canUpgrade, upgradePiece,
   isUnlocked, unlockedCharacterIds,
   buildArmyFrom, buildArmy, buildAiArmy, buildAiArmyScaled, buildArmyForMap, buildAiArmyForMap, hasForesight,

@@ -304,7 +304,16 @@ ok("the AI values the hero above a common pawn", (() => {
 // ── Unlocks ride on campaign reach ───────────────────────────────────────────
 const fresh = { xp: 0, campaign: { cleared: [], unlocked: [] } };
 ok("fresh profile: only classic, no HP", mapUnlocked(fresh, "classic") && !mapUnlocked(fresh, "skirmish") && !hpUnlocked(fresh));
-ok("hp opens once the awakening is reachable", hpUnlocked(advanceCampaign(advanceCampaign(fresh, "L01s00"), "L01s01")));
+// v0.77: Das Erwachen sitzt in der MITTE von Kapitel I - erst wer die
+// Schachhaelfte hinter sich hat, sieht Lebenspunkte. Zwei Siegen reicht nicht
+// mehr; der Weg wird darum wirklich gegangen.
+{
+  const schachweg = CAMPAIGN.filter((n) => n.league === 1 && n.haupt && n.rules === "chess");
+  const halb = schachweg.slice(0, 2).reduce((p, n) => advanceCampaign(p, n.id), fresh);
+  ok("hp stays shut through the chess half", !hpUnlocked(halb));
+  const ganz = schachweg.reduce((p, n) => advanceCampaign(p, n.id), fresh);
+  ok("hp opens once the awakening is reachable", hpUnlocked(ganz));
+}
 ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish") && mapUnlocked(prof, "courtyard") && !mapUnlocked(prof, "arena"));
 
 

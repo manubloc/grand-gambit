@@ -18,6 +18,10 @@ export const clearedCount = (profile) => clearedIds(profile).length;
  *  journey has reached it — by league, and within its league by stages
  *  cleared. Before that it sits in the chest as a veiled mystery. */
 export function itemRevealed(profile, item) {
+  // Was nur unter HP-Regeln wirkt, existiert vor dem Erwachen nicht einmal
+  // als Gedanke: Kapitel I ist bis zur Mitte reines Schach, und ein
+  // Lebenstrank ohne Lebenspunkte waere eine Luege im Laden.
+  if (item.needsHp && !hpUnlocked(profile)) return false;
   const lg = profile?.campaign?.league || 1;
   const min = item.minLeague || 1;
   if (lg > min) return true;

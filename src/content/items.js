@@ -5,6 +5,7 @@
 export const ITEMS = {
   potion: {
     id: "potion", emoji: "🧪", kind: "consumable", gold: 25, max: 3, minCleared: 1,
+    needsHp: true,   // v0.77: erst wenn die alte Magie erwacht ist, gibt es Lebenspunkte - und damit Traenke
     nameDe: "Lebenstrank", nameEn: "Healing draught",
     textDe: "Heilt im Kampf eine Figur um 2 Lebenspunkte (kostet den Zug).",
     textEn: "Heals a piece for 2 life points in battle (spends the turn).",

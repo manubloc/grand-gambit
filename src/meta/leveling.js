@@ -3,6 +3,27 @@ import { DEFAULT_BACK_RANK, FLANK_SLOTS } from "../core/index.js";
 import { bossById, bossSpec, LEAGUE_BOSSES } from "../content/bosses.js";
 import { CHARACTERS, CHARACTER_LIST, KIND_TO_CHAR } from "../content/index.js";
 import { difficultyById, mapById, MAPS } from "../content/index.js";
+import { ABILITIES, CAMPAIGN } from "../content/index.js";
+
+/* IST DIE ALTE MAGIE ERWACHT? Kapitel I laeuft bis zur Mitte nach reinen
+   Schachregeln; Lebenspunkte gibt es erst ab dem Erwachen. Bewusst OHNE
+   Rueckgriff auf meta/campaign.js gerechnet - das wuerde einen Importkreis
+   schliessen. Dieselbe Schwelle wie hpUnlocked dort: eine HP-Station ist
+   ERREICHT, sobald sie selbst geschafft ist oder von einer geschafften
+   Station aus offensteht. */
+export function hpWach(profile) {
+  const erledigt = profile?.campaign?.cleared || [];
+  if (!erledigt.length) return false;          // vor dem ersten Sieg schlaeft alles
+  const fertig = new Set(erledigt);
+  for (const n of CAMPAIGN) {
+    if (n.rules === "hp" && fertig.has(n.id)) return true;
+    if (fertig.has(n.id) && (n.next || []).some((t) => {
+      const z = CAMPAIGN.find((m) => m.id === t);
+      return z && z.rules === "hp";
+    })) return true;
+  }
+  return false;
+}
 
 // ── XP curves ───────────────────────────────────────────────────────────────
 export const charXpForLevel = (n) => (n <= 1 ? 0 : Math.round(40 * Math.pow(n - 1, 1.7)));
@@ -95,6 +116,10 @@ export function canUnlockAbility(profile, charId, abilityId) {
   const ch = CHARACTERS[charId];
   const rung = ch?.ladder.find((e) => e.ability === abilityId);
   if (!rung) return false;
+  // Talente, die nur an Lebenspunkten wirken, schlafen bis zum Erwachen der
+  // alten Magie - sonst verbrennt ein Spieler in der Schachhaelfte von
+  // Kapitel I Sternenstaub fuer eine Wirkung, die es noch nicht gibt.
+  if (ABILITIES[abilityId]?.hpOnly && !hpWach(profile)) return false;
   if (chosenAbilities(profile, charId).includes(abilityId)) return false;
   if (characterLevel(profile, charId) < rung.level) return false;
   return skillPoints(profile) >= abilityCost(rung.level);

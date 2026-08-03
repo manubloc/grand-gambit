@@ -72,11 +72,14 @@ function loneBoss(boss) {
   ok("at least 25 bosses exist", BOSSES.length >= 25);
   ok("every boss has a unique move spec", new Set(BOSSES.map((b) => JSON.stringify(b.moveSpec))).size === BOSSES.length);
   const bossStages = CAMPAIGN.filter((st) => st.boss);
+  // v0.77: Die ERWACHENS-Station wandert mit der Schachhaelfte von Kapitel I -
+  // darum wird sie gesucht statt eingetippt.
+  const ERWACHEN = CAMPAIGN.find((st) => st.league === 1 && st.haupt && st.boss?.rotation && !st.final).id;
   ok("the twelve chapters field 44 boss stages", bossStages.length === 44);
   ok("20 of them are recruitable piece bosses, one per key figure", bossStages.filter((st) => st.boss.piece).length === 20
     && new Set(bossStages.filter((st) => st.boss.piece).map((st) => st.boss.piece)).size === 20);
   ok("every pure boss resolves", bossStages.filter((st) => st.boss.pure).every((st) => bossById(st.boss.pure)));
-  const m = buildStageMatch("L01s03");
+  const m = buildStageMatch(ERWACHEN);
   ok("boss replaces the enemy queen", m.aiArmy.back.some((sp) => sp.kind === "X") && !m.aiArmy.back.some((sp) => sp.kind === "Q"));
   ok("stage match exposes the boss for the UI", m.boss && m.boss.bossId === "b01");
   const pm = buildStageMatch("L06s12", { campaign: { league: 6 } }); // der Attentaeter wohnt in Kapitel VI
@@ -86,8 +89,8 @@ function loneBoss(boss) {
     buildStageMatch("L07s41", { campaign: { league: 7 } }).boss.unlocks === null
     && buildStageMatch("L07s41", { campaign: { league: 7, bossWins: { dragon: 1 } } }).boss.unlocks === "dragon");
   ok("the awakening rotates its monster with the world laps", (() => {
-    const a = buildStageMatch("L01s03", { campaign: { league: 1 } });
-    const b = buildStageMatch("L01s03", { campaign: { league: 13 } });
+    const a = buildStageMatch(ERWACHEN, { campaign: { league: 1 } });
+    const b = buildStageMatch(ERWACHEN, { campaign: { league: 13 } });
     return a.boss.bossId === "b01" && b.boss.bossId === "b03" && a.boss.unlocks === null;
   })());
   // monster stations rotate their champion by league — the whole bestiary marches
@@ -95,7 +98,7 @@ function loneBoss(boss) {
   ok("each chapter ends at its own fixed master", nodeBossSpec(nA5("L01s44"), 1).bossId === "b12"  // v0.38.1: Osric ans Ende, Kapitel I endet beim Richter
     && nA5("L05s16").boss.rotation[0] === "b22" && nodeBossSpec(nA5("L05s16"), 5).bossId === "b22"
     && nodeBossSpec(nA5("L05s16"), 17).bossId === "b04");
-  ok("every rotated monster resolves to a real boss", ["L01s03","L05s16"].every((id) =>
+  ok("every rotated monster resolves to a real boss", [ERWACHEN,"L05s16"].every((id) =>
     (nA5(id).boss.rotation || []).every((b) => bossById(b))));
 }
 

@@ -4,7 +4,12 @@ import { carvedForPiece, carvedById } from "./carvedArt.js";
 // painting. Pieces without a painting yet fall back to the drawn SVG silently,
 // so the set may grow one figure at a time.
 import pPawn from "../assets/painted/painted-pawn.webp";
-import pHaendler from "../assets/painted/painted-haendler.webp";  // der fahrende Haendler am Stand
+import pHaendler from "../assets/painted/painted-haendler.png";  // der fahrende Haendler am Stand
+/* v0.77 (Besitzer): SEIN Original, Byte fuer Byte - keine Freistellung, keine
+   weiche Kante, keine Skalierung, kein Umkodieren. Die alte Fassung war von
+   mir auf 520 px verkleinert und auf dunklen Grund plattgerechnet worden
+   (Transparenz weg) - daher der matschige Eindruck. Das Original ist bereits
+   sauber freigestellt: 1024x1024, 568102 durchsichtige Pixel. */
 import pGambit from "../assets/painted/painted-gambit.webp";
 // the risen hero: tier portraits (Stufe II/III) — currently placeholder copies
 // of the base painting; the user's generated art replaces these files 1:1

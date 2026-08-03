@@ -53,7 +53,7 @@ export const CAMPAIGN12 = [
   "row": 2,
   "map": "courtyard",
   "chapter": 2,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [],
@@ -73,7 +73,7 @@ export const CAMPAIGN12 = [
   "map": "courtyard",
   "chapter": 1,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
   "next": [
@@ -83,17 +83,8 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 42
   },
-  "storyDe": "Vergessener Schrein: die alte Magie erwacht - Figuren bluten, Figuren halten stand.",
-  "storyEn": "Vergessener Schrein: the old magic wakes - pieces bleed, pieces endure.",
-  "boss": {
-   "pure": "b01",
-   "rotation": [
-    "b01",
-    "b03",
-    "b02"
-   ]
-  },
-  "tier": 1
+  "storyDe": "Der Weg beginnt bei Vergessener Schrein.",
+  "storyEn": "The road begins at Vergessener Schrein."
  },
  {
   "id": "L01s04",
@@ -104,7 +95,7 @@ export const CAMPAIGN12 = [
   "map": "gauntlet",
   "chapter": 1,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
   "next": [
@@ -124,7 +115,7 @@ export const CAMPAIGN12 = [
   "row": 2,
   "map": "classic",
   "chapter": 2,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -145,7 +136,7 @@ export const CAMPAIGN12 = [
   "map": "arena",
   "chapter": 1,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
   "next": [
@@ -165,7 +156,7 @@ export const CAMPAIGN12 = [
   "row": 3,
   "map": "courtyard",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -190,7 +181,7 @@ export const CAMPAIGN12 = [
   "row": 3,
   "map": "gauntlet",
   "chapter": 2,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -211,7 +202,7 @@ export const CAMPAIGN12 = [
   "map": "classic",
   "chapter": 1,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
   "next": [
@@ -232,7 +223,7 @@ export const CAMPAIGN12 = [
   "map": "skirmish",
   "chapter": 2,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "easy",
   "bump": 1,
   "next": [
@@ -252,7 +243,7 @@ export const CAMPAIGN12 = [
   "row": 3,
   "map": "skirmish",
   "chapter": 2,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -272,7 +263,7 @@ export const CAMPAIGN12 = [
   "row": 4,
   "map": "courtyard",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -293,7 +284,7 @@ export const CAMPAIGN12 = [
   "map": "courtyard",
   "chapter": 2,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "normal",
   "bump": 1,
   "next": [
@@ -314,7 +305,7 @@ export const CAMPAIGN12 = [
   "map": "gauntlet",
   "chapter": 2,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "normal",
   "bump": 1,
   "next": [
@@ -325,12 +316,7 @@ export const CAMPAIGN12 = [
    "xp": 60
   },
   "storyDe": "Der Pfad führt weiter über Sonnenheiligtum.",
-  "storyEn": "The path leads on across Sonnenheiligtum.",
-  "boss": {
-   "piece": "mage",
-   "wins": 1
-  },
-  "tier": 2
+  "storyEn": "The path leads on across Sonnenheiligtum."
  },
  {
   "id": "L01s15",
@@ -359,7 +345,7 @@ export const CAMPAIGN12 = [
   "row": 4,
   "map": "skirmish",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -381,7 +367,7 @@ export const CAMPAIGN12 = [
   "map": "arena",
   "chapter": 2,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "normal",
   "bump": 1,
   "next": [
@@ -401,7 +387,7 @@ export const CAMPAIGN12 = [
   "row": 5,
   "map": "gauntlet",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [],
@@ -441,7 +427,7 @@ export const CAMPAIGN12 = [
   "map": "classic",
   "chapter": 2,
   "haupt": true,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "normal",
   "bump": 1,
   "next": [
@@ -492,8 +478,17 @@ export const CAMPAIGN12 = [
   "reward": {
    "xp": 69
   },
-  "storyDe": "Die Prüfung wartet bei Nebelmoor.",
-  "storyEn": "The trial waits at Nebelmoor."
+  "storyDe": "Nebelmoor: die alte Magie erwacht - Figuren bluten, Figuren halten stand.",
+  "storyEn": "Nebelmoor: the old magic wakes - pieces bleed, pieces endure.",
+  "boss": {
+   "pure": "b01",
+   "rotation": [
+    "b01",
+    "b03",
+    "b02"
+   ]
+  },
+  "tier": 1
  },
  {
   "id": "L01s23",
@@ -503,7 +498,7 @@ export const CAMPAIGN12 = [
   "row": 5,
   "map": "gauntlet",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -577,7 +572,12 @@ export const CAMPAIGN12 = [
    "xp": 75
   },
   "storyDe": "Die Prüfung wartet bei Waldfeste.",
-  "storyEn": "The trial waits at Waldfeste."
+  "storyEn": "The trial waits at Waldfeste.",
+  "boss": {
+   "piece": "mage",
+   "wins": 1
+  },
+  "tier": 2
  },
  {
   "id": "L01s27",
@@ -587,7 +587,7 @@ export const CAMPAIGN12 = [
   "row": 6,
   "map": "courtyard",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [
@@ -687,7 +687,7 @@ export const CAMPAIGN12 = [
   "row": 6,
   "map": "courtyard",
   "chapter": 1,
-  "rules": "hp",
+  "rules": "chess",
   "difficulty": "hard",
   "bump": 1,
   "next": [],
@@ -758,12 +758,7 @@ export const CAMPAIGN12 = [
    "xp": 81
   },
   "storyDe": "Die Prüfung wartet bei Kronenstadt.",
-  "storyEn": "The trial waits at Kronenstadt.",
-  "boss": {
-   "piece": "paladin",
-   "wins": 1
-  },
-  "tier": 2
+  "storyEn": "The trial waits at Kronenstadt."
  },
  {
   "id": "L01s36",
@@ -866,7 +861,12 @@ export const CAMPAIGN12 = [
    "xp": 90
   },
   "storyDe": "Der letzte Anstieg:  Hohes Heiligtum.",
-  "storyEn": "The final ascent:  Hohes Heiligtum."
+  "storyEn": "The final ascent:  Hohes Heiligtum.",
+  "boss": {
+   "piece": "paladin",
+   "wins": 1
+  },
+  "tier": 2
  },
  {
   "id": "L01s41",

@@ -263,6 +263,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   }
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
+  const warSchach = useRef(false);   /* v0.77: der Schach-Klang nur beim Wechsel, nicht bei jedem Neuzeichnen */
 
   // ── the stage clock (v0.4): some campaign stages from league 5 carry time
   // pressure — a total budget (bosses) or a per-move limit (hard stages).
@@ -327,6 +328,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   function finish(result, reason) {
     if (finished.current) return;
     finished.current = true;
+    /* v0.77: der Abpfiff bekommt seinen Klang. Remis bleibt still - weder
+       Jubel noch Trauer waeren ehrlich. */
+    if (result === "win") klang("sieg");
+    else if (result === "loss") klang("niederlage");
     if (hotseat) {
       setBanner({ result, reason, hotseat: true,
         gained: { gold: 0, sp: 0, xp: 0, levelBefore: 0, levelAfter: 0, newAchievements: [] } });
@@ -427,6 +432,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   useEffect(() => {
     if (finished.current) return;
     const st = status(state);
+    if (st.check && !warSchach.current) { try { klang("schach"); } catch {} }
+    warSchach.current = !!st.check;
     if (st.over) {
       if (st.winner === myColor) finish("win", st.result);
       else if (st.winner === oppColor) finish("loss", st.result);

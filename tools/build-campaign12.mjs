@@ -41,7 +41,7 @@ const MITTE = [["b01","b03"],["b02","b11"],["b24","b05"],["b09","b13"],["b22","b
   ["b21","b07"],["b15","b06"],["b01","b09"],["b13","b22"],["b05","b24"],["b07","b21"],["b15","b04"]];
 // Schluesselfiguren: [liga, anteilImHauptast 0..1] bzw. Nebenast-Pool je Liga.
 const HAUPTFIGUR = {
-  1:[["mage",.38],["paladin",.72]], 2:[["hawk",.55]], 3:[["alchemist",.55]],
+  1:[["mage",.62],["paladin",.86]],   /* v0.77: beide Werbungen liegen HINTER dem Erwachen - die Schachhaelfte kommt ohne neue Figuren aus */ 2:[["hawk",.55]], 3:[["alchemist",.55]],
   4:[["sorceress",.55]], 5:[["guardian",.55]], 6:[["assassin",.55]],
   7:[["dragon",.55]], 8:[["warlock",.55]], 9:[["inquisitor",.55]],
   10:[["archbishop",.42],["engineer",.75]], 11:[["chancellor",.42],["standard",.75]],
@@ -58,6 +58,16 @@ const PHASEN = [
 const AST_DE = ["Ein Seitenpfad zweigt ab nach", "Abseits des Weges liegt", "Ein stiller Umweg f\u00fchrt zu"];
 const AST_EN = ["A side path branches toward", "Off the road lies", "A quiet detour leads to"];
 const MAPS = ["classic", "skirmish", "courtyard", "gauntlet", "arena"];
+
+// KAPITEL I IST DIE SCHULE DES SCHACHS (Besitzerwunsch, v0.77): die erste
+// HAELFTE des Hauptastes wird auf WECHSELNDEN Karten nach reinen Schachregeln
+// gespielt - keine Lebenspunkte, keine Traenke, alles dreht sich um Zuege und
+// die Zug-Faehigkeiten der Leiter. Erst in der MITTE des Kapitels erwacht die
+// alte Magie; ab dieser Station gilt HP, und erst dann kennt der Hof den
+// Lebenstrank (der Laden zeigt ihn vorher nicht, siehe meta/campaign.js).
+// Nebenaeste folgen ihrem Ankerpunkt am Hauptast - ein Abstecher aus der
+// Schachhaelfte bleibt Schach.
+const HP_AB_ANTEIL = 0.5;
 
 // Liga I hat keinen Block in placeNames - ihre Orte leben in der alten
 // 51-Knoten-Kampagne. Liga XII ist neu und bekommt hier ihren Meerespool.
@@ -151,6 +161,7 @@ SLOTS.forEach(([key, name, roman], si) => {
   const namen = namenFuer(roman, pk.length, liga, haupt);
   const H = haupt.length;
   const schwer = Math.max(0, Math.round((30 - H) / 8));   // kurzer Hauptast = schwerer
+  const hpAb = liga === 1 ? Math.round(H * HP_AB_ANTEIL) : 0;  // Hauptast-Rang, ab dem HP gilt
 
   const figuren = (HAUPTFIGUR[liga] || []).map(([f, a]) => [haupt[Math.min(H - 1, Math.round(a * (H - 1)))], f]);
   const figAt = Object.fromEntries(figuren);
@@ -189,12 +200,11 @@ SLOTS.forEach(([key, name, roman], si) => {
     const ort = namen[i];
     const g = astVon[i];
     const len = g ? astLen[g] : 0;
-    let phase;
-    if (imHaupt) phase = Math.min(3, Math.floor((rang / Math.max(1, H - 1)) * 4));
-    else {
-      const anker = g ? Number(g.split(".")[0]) - 1 : 0;   // Hauptast-Rang aus "7.1"
-      phase = Math.min(3, Math.floor((anker / Math.max(1, H - 1)) * 4));
-    }
+    // Ankerrang: fuer Hauptaststationen ihr eigener Rang, fuer Nebenaeste der
+    // Rang ihres Abzweigs ("7.1" -> Hauptaststation 7). Er treibt die Phase
+    // UND (in Kapitel I) die Frage Schach oder HP.
+    const ankerRang = imHaupt ? rang : (g ? Number(g.split(".")[0]) - 1 : 0);
+    const phase = Math.min(3, Math.floor((ankerRang / Math.max(1, H - 1)) * 4));
     const tiefe = g ? String(v.nummern[i]).split(".").length : 0;
     const blatt = g && !((nb[i] || []).some(w => astVon[w] === g && (dist[w] ?? 0) > (dist[i] ?? 0)));
 
@@ -205,7 +215,7 @@ SLOTS.forEach(([key, name, roman], si) => {
       map: MAPS[(rang ?? i) % MAPS.length],
       chapter: phase + 1,
       haupt: imHaupt || undefined,
-      rules: liga === 1 && imHaupt && rang < 2 ? "chess" : "hp",
+      rules: liga === 1 && ankerRang < hpAb ? "chess" : "hp",
       difficulty: imHaupt
         ? (rang < H * 0.3 ? "easy" : rang < H * 0.7 ? "normal" : "hard")
         : (len >= 4 ? "hard" : "normal"),
@@ -232,7 +242,7 @@ SLOTS.forEach(([key, name, roman], si) => {
       } else if (i === mitteAt && liga > 1) {
         n.boss = { pure: MITTE[si][0], rotation: MITTE[si] };
         n.tier = Math.min(4, 1 + Math.floor(liga / 5) + schwer);
-      } else if (liga === 1 && rang === 2) {   // das Erwachen wie gehabt
+      } else if (liga === 1 && rang === hpAb) {   // das Erwachen: hier faellt der erste Schaden
         n.boss = { pure: "b01", rotation: ["b01", "b03", "b02"] };
         n.tier = 1;
         n.storyDe = `${ort}: die alte Magie erwacht - Figuren bluten, Figuren halten stand.`;

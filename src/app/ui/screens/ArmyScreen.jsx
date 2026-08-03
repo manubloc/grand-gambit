@@ -11,8 +11,9 @@ import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
   formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId, crownSlots,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
-  itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus } from "../../../meta/index.js";
+  itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus, hpWach } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
+import { klang } from "../klang.js";   /* v0.77: Stufe, Freischalten, Gold bekommen ihren Klang */
 import { T } from "../theme.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
@@ -77,7 +78,7 @@ function SheetRow({ label, children }) {
 // one talent as an ACCORDION row: the header always shows the icon, name,
 // TYPE badge (movement/attack/passive…) and cost; tapping it unfolds the full
 // description (and move diagram, when the talent changes how the piece strides).
-function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, open, onToggle, onBuy }) {
+function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, open, onToggle, onBuy, schlaeft }) {
   const typeName = en ? tg.nameEn : tg.nameDe;
   return <div style={{ borderRadius: 11, overflow: "hidden",
     border: `1px solid ${owned ? tg.color + "77" : can ? "#e3c07acc" : reach ? "#6f5a30" : "#3a4360"}`,
@@ -115,6 +116,11 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
           background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)", color: "#f6e9a4",
           border: "1px solid #e3c07a", boxShadow: "0 0 10px rgba(64,110,220,.35)" }}>
         {en ? "Learn" : "Erlernen"} · {price} <SkillStar size={11} /></button>}
+      {/* v0.77: Was nur an Lebenspunkten wirkt, ist vor dem Erwachen nicht
+          kaeuflich - sonst verbrennt man Sternenstaub fuer nichts. */}
+      {reach && !owned && schlaeft && <div className="gg-serif" style={{ marginTop: 9, fontSize: 11.5, color: "#9a92cf",
+        fontStyle: "italic", display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <LockIc size={11} /> {en ? "Sleeps until the old magic wakes" : "Schläft, bis die alte Magie erwacht"}</div>}
       {!reach && <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a856f", display: "inline-flex", alignItems: "center", gap: 6 }}>
         <LockIc size={11} /> {en ? "Unlocks at level" : "Ab Stufe"} {price != null ? "" : ""}<b style={{ color: "#b9b295" }}>{ab._lvl}</b></div>}
     </div>}
@@ -551,7 +557,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
-          onClick={() => dispatch({ type: "UPGRADE_PIECE", id: char.id })}
+          onClick={() => { klang("stufe"); dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
           className={affordable ? "gg-funkenkontur" : undefined}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
@@ -615,9 +621,9 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           const cost = 0; // energy is gone — talents are once-per-game now
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
           return <AbilityAccordion key={rg.id} ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
-            owned={owned} reach={reach} can={can} kind={char.kind} en={en}
+            owned={owned} reach={reach} can={can} kind={char.kind} en={en} schlaeft={!!ab.hpOnly && !hpWach(profile)}
             open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
-            onBuy={() => dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id })} />;
+            onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} />;
         })}
         {chosen.length > 0 && (
           <button onClick={() => dispatch({ type: "RESPEC", id: char.id })} disabled={(profile.gold || 0) < RESPEC_GOLD}
@@ -1071,7 +1077,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
               </div>
               <div style={{ fontSize: 11.5, color: T.dim }}>{en ? it.textEn : it.textDe}</div>
             </div>
-            <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "BUY_ITEM", id: it.id }); }} disabled={!can}
+            <button onClick={(e) => { e.stopPropagation(); klang("gold"); dispatch({ type: "BUY_ITEM", id: it.id }); }} disabled={!can}
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
                 border: `1.5px solid ${can ? T.gold : T.line}`, background: can ? T.gold : T.panel,
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default", whiteSpace: "nowrap" }}>
@@ -1139,7 +1145,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
                     : "Die Splitter dieses Kapitels sind alle gehoben. Die nächsten warten im nächsten Kapitel."}
               </div>
             )}
-            <button onClick={() => { if (!can) return; dispatch(shard ? { type: "BUY_SP_SHARD" } : { type: "BUY_ITEM", id: it.id }); setGearInfo(null); }}
+            <button onClick={() => { if (!can) return; klang("gold"); dispatch(shard ? { type: "BUY_SP_SHARD" } : { type: "BUY_ITEM", id: it.id }); setGearInfo(null); }}
               disabled={!can} style={{ width: "100%", marginTop: 14, fontFamily: "inherit", fontWeight: 900, fontSize: 14,
                 borderRadius: 999, padding: "12px 16px", border: "1px solid rgba(255,240,200,.5)", whiteSpace: "nowrap",
                 display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,

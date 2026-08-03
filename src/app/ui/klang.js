@@ -18,21 +18,40 @@ import waehlenKlang from "./assets/klang/waehlen.webm";
 import trefferKlang from "./assets/klang/treffer.webm";
 import fallKlang from "./assets/klang/fall.webm";
 import gesperrtKlang from "./assets/klang/gesperrt.webm";
+/* v0.77: sieben neue Klaenge, ueber ElevenLabs nach design/KLANG-PROMPTS.md
+   erzeugt, geschnitten und auf -3 dBFS gebracht wie die vier davor. */
+import zugKlang from "./assets/klang/zug.webm";
+import schachKlang from "./assets/klang/schach.webm";
+import siegKlang from "./assets/klang/sieg.webm";
+import niederlageKlang from "./assets/klang/niederlage.webm";
+import stufeKlang from "./assets/klang/stufe.webm";
+import freiKlang from "./assets/klang/frei.webm";
+import goldKlang from "./assets/klang/gold.webm";
 
 // v0.75.2: DIE WAHL DES BESITZERS - genau diese vier Takes haben bestanden.
-// "zug" bleibt vorerst LEER: kein Setz-Klang hat ihm getaugt, und ein
-// schlechter Klang, den man hundertmal hoert, ist schlimmer als keiner.
+// v0.77: "zug" ist endlich besetzt (der Take mit EINEM Anschlag, 1144 Hz -
+// holzig, 0,22 s). Zwei weitere Setz-Varianten und der Riss-Blitz warten noch
+// auf das Ohr des Besitzers und sind bewusst NICHT eingebaut.
 const QUELLEN = {
   wahl: [waehlenKlang],
-  zug: [],
+  zug: [zugKlang],
   treffer: [trefferKlang],
   fall: [fallKlang],
   nein: [gesperrtKlang],
+  // v0.77: die Klaenge um das Brett herum
+  schach: [schachKlang],
+  sieg: [siegKlang],
+  niederlage: [niederlageKlang],
+  stufe: [stufeKlang],
+  frei: [freiKlang],
+  gold: [goldKlang],
 };
 
 // Lautstaerke je Art: der Zug klingt hundertmal, der Sturz selten - also darf
 // der Sturz lauter sein, ohne aufdringlich zu werden.
-const PEGEL = { wahl: 0.55, zug: 0.85, treffer: 1.0, fall: 1.0, nein: 0.7 };
+const PEGEL = { wahl: 0.55, zug: 0.85, treffer: 1.0, fall: 1.0, nein: 0.7,
+  // Seltene Klaenge duerfen lauter stehen, haeufige bleiben zurueckhaltend.
+  schach: 0.8, sieg: 0.9, niederlage: 0.85, stufe: 0.85, frei: 0.8, gold: 0.75 };
 
 let ctx = null;
 let meister = null;          // Summenregler
@@ -84,7 +103,7 @@ export function klangEinstellen({ ein, lautstaerke }) {
 
 /**
  * Einen Klang spielen.
- * @param {"wahl"|"zug"|"treffer"|"fall"|"nein"} art
+ * @param {"wahl"|"zug"|"treffer"|"fall"|"nein"|"schach"|"sieg"|"niederlage"|"stufe"|"frei"|"gold"} art
  */
 export function klang(art) {
   // leere Liste = dieser Klang ist (noch) nicht besetzt - stumm bleiben

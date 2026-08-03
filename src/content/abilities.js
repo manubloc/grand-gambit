@@ -47,12 +47,12 @@ export const ABILITIES = {
   teleport:             { id: "teleport",             icon: "✸", tag: "blink", once: true,  live: true, nameDe: "Blinzeln",     nameEn: "Blink",         descDe: "Teleportiert 1× auf ein freies Feld in der Nähe.",     descEn: "Teleport to a nearby empty square once." },
 
   // ── sustain (live) ──
-  lifesteal:            { id: "lifesteal",            icon: "❦", tag: "sustain", once: false, live: true, nameDe: "Lebensraub",  nameEn: "Lifesteal",     descDe: "Heilt sich beim Schaden zufügen um die Hälfte des Schadens.", descEn: "Heals for half the damage it deals." },
-  regen:                { id: "regen",                icon: "✚", tag: "sustain", once: false, live: true, nameDe: "Regeneration", nameEn: "Regen",        descDe: "Heilt 1 HP, wann immer sie zieht.",                   descEn: "Heals 1 HP whenever it moves." },
-  bulwark:              { id: "bulwark",              icon: "⛨", tag: "sustain", once: false, live: true, nameDe: "Bollwerk",     nameEn: "Bulwark",       descDe: "Erleidet 1 Schaden weniger pro Treffer.",             descEn: "Takes 1 less damage per hit." },
+  lifesteal:            { id: "lifesteal",            icon: "❦", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Lebensraub",  nameEn: "Lifesteal",     descDe: "Heilt sich beim Schaden zufügen um die Hälfte des Schadens.", descEn: "Heals for half the damage it deals." },
+  regen:                { id: "regen",                icon: "✚", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Regeneration", nameEn: "Regen",        descDe: "Heilt 1 HP, wann immer sie zieht.",                   descEn: "Heals 1 HP whenever it moves." },
+  bulwark:              { id: "bulwark",              icon: "⛨", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Bollwerk",     nameEn: "Bulwark",       descDe: "Erleidet 1 Schaden weniger pro Treffer.",             descEn: "Takes 1 less damage per hit." },
 
   // ── upcoming (shown in the tree, mechanic rolling out) ──
-  blast:                { id: "blast",                icon: "✺", tag: "aoe", once: true,  live: false, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "Ein Angriff trifft auch alle angrenzenden Gegner.",   descEn: "An attack also hits all adjacent enemies." },
-  chain:                { id: "chain",                icon: "↯", tag: "aoe", once: true,  live: false, nameDe: "Kettenblitz",  nameEn: "Chain",          descDe: "Schaden springt auf einen weiteren nahen Gegner über.", descEn: "Damage arcs to another nearby enemy." },
-  pull:                 { id: "pull",                 icon: "⇲", tag: "control", once: true, live: false, nameDe: "Enterhaken",  nameEn: "Hook",           descDe: "Zieht einen Gegner in Sichtlinie zu dir heran.",      descEn: "Pulls an enemy in line toward you." },
+  blast:                { id: "blast",                icon: "✺", tag: "aoe", hpOnly: true, once: true,  live: false, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "Ein Angriff trifft auch alle angrenzenden Gegner.",   descEn: "An attack also hits all adjacent enemies." },
+  chain:                { id: "chain",                icon: "↯", tag: "aoe", hpOnly: true, once: true,  live: false, nameDe: "Kettenblitz",  nameEn: "Chain",          descDe: "Schaden springt auf einen weiteren nahen Gegner über.", descEn: "Damage arcs to another nearby enemy." },
+  pull:                 { id: "pull",                 icon: "⇲", tag: "control", hpOnly: true, once: true, live: false, nameDe: "Enterhaken",  nameEn: "Hook",           descDe: "Zieht einen Gegner in Sichtlinie zu dir heran.",      descEn: "Pulls an enemy in line toward you." },
 };
