@@ -30,7 +30,6 @@ const GRUPPEN = [
   ]],
   ["Talente & Vorräte", [
     ["talentGold", "Talent des Hofes", "goldener Schimmer über Holz"],
-    ["talentRiss", "Talent des Risses", "gläsernes Schnappen, kalt"],
     ["sturmschritt", "Sturmschritt", "rasches Schleifen nach vorn"],
     ["trank", "Lebenstrank", "Korken, Schluck, warmes Glimmen"],
     ["zeitenwender", "Zeitenwender", "Sand rieselt rückwärts"],
@@ -54,7 +53,8 @@ const GRUPPEN = [
     ["blattZu", "Blatt schließen", "Pergament wird abgelegt"],
     ["karteStation", "Station antippen", "hölzerne Marke drückt in die Karte"],
     ["karteFrei", "Station freigeschaltet", "Schimmer läuft übers Pergament"],
-    ["herold", "Herold", "ferner Hornruf zur Ansage"],
+    ["kapitel", "Neues Kapitel", "die Karte rollt sich auf, ferner Hornruf"],
+    ["karteSchritt", "Gambit rückt vor", "Holz rutscht über Stein"],
   ]],
 ];
 

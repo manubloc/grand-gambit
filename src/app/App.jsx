@@ -494,7 +494,6 @@ export default function App() {
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
-              <HeraldKlang />
               <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
               <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
               <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
@@ -574,7 +573,6 @@ export default function App() {
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
-              <HeraldKlang />
               <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
               <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
               <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
@@ -635,15 +633,6 @@ export default function App() {
       )}
     </div>
   );
-}
-
-/* v0.79: der HEROLD KLINGT, wenn sein Blatt erscheint - ein einziger ferner
-   Hornruf beim Aufgehen, nie beim Neuzeichnen. Als Begleiter im Blatt
-   montiert, damit BEIDE Rueckgabezweige (breit/mobil) denselben Klang
-   bekommen, ohne die Logik zu doppeln. */
-function HeraldKlang() {
-  useEffect(() => { try { klang("herold"); } catch {} }, []);
-  return null;
 }
 
 // ── hub emblems: heraldic shields, fully inside the card, bold shapes ───────

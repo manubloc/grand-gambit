@@ -1,5 +1,40 @@
 # Changelog - Grand Gambit
 
+## 0.82.0
+
+DAS OHR DES BESITZERS HAT ENTSCHIEDEN - DREIZEHN KLAENGE NEU, ALLES LEISER:
+
+- ALLES EINE STUFE ZURUECK ("das muss viel weniger sein"): die Aufnahmen
+  selbst sind leiser gemeistert (-22 bis -33 dBFS) UND die Pegeltafel ist
+  durchgehend gesenkt. Zwei Bremsen statt einer.
+- NEU ERZEUGT nach dem Hoerurteil: gesperrt (sanftes dumpfes Nein, 260 Hz),
+  Rochade (zwei leise Tocks nacheinander), Sturmschritt (drei eilige
+  Holzschritte statt Rauschen), Zeitenwender (fast unhoerbar statt
+  stoerend), Sieg (warme wuerdevolle Aufloesung), Meister (Stein und Atem
+  wie die gelobte Bestie, dazu ferne Glocke und Chor), Stufenaufstieg und
+  Faehigkeit-frei (beide im Geist der gelobten Kroenung), Station antippen
+  (fast nichts), Held rekrutiert, Fernangriff (OHNE das Pfeifen).
+- UMBELEGT: das Talent des Risses klingt jetzt wie das Talent des Hofes -
+  ein Haus, ein Zeichen; sein alter Charakter lebt im Stufenaufstieg
+  weiter, wo der Besitzer ihn passender fand.
+- DER HEROLD IST FORT: er klang nur beim allerersten Oeffnen eines
+  Menue-Blattes - so selten, dass er sich nicht zuordnen liess.
+- ZWEI NEUE KLAENGE DER WELTKARTE: der Gambit rueckt vor (Holz rutscht ueber
+  Stein, leise, bei jedem Zug auf der Karte) und ein NEUES KAPITEL tut sich
+  auf (Pergament rollt, ferner Hornruf) - letzteres nur, wenn der Weg
+  wirklich ueber eine Kapitelgrenze fuehrt.
+- PROFIL, UX: SPIELSTAND WECHSELN und ABMELDEN stehen jetzt OBEN beim
+  Namen statt weit unten hinter Schwierigkeit und Figurenstil. Wer das
+  Profil oeffnet, sucht meist genau das - und musste bisher scrollen.
+- LADESCHIRM: der Komet lief 7 % AUSSERHALB der Kontur und zog einen 64 px
+  langen Schweif - zusammen las sich das als starrer Strich. Jetzt laeuft
+  er dicht an der Kontur (inset 3 %), der Schweif ist 34 px kurz und
+  duenner, und statt vier fliegen SIEBEN Funken tangential weg.
+- design/IDEEN-UND-OFFENES.md angelegt: die Kartenerzaehlung (Gegner tritt
+  aus dem Dunkel in den Weg, Rueckkehr zur Karte nach dem Sieg), Mauern und
+  Fallen als Ausruestung, Namenspflicht beim Anlegen, Ladeschirm auch ohne
+  Ladevorgang - alles festgehalten, noch nicht gebaut.
+
 ## 0.81.0
 
 DER HELD TRITT SPAETER AUF, DAS BRETT KLINGT HOELZERN, DIE MUSIK ATMET:

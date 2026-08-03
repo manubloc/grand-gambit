@@ -36,11 +36,9 @@ import sprungKlang from "./assets/klang/sprung.webm";
    Sturz und Treffer sind auf Besitzerwunsch DUMPFER (Tiefpass: Sturz
    851->622 Hz, Treffer 485->358 Hz - Holz auf Holzplatte, kein Klingen). */
 import pfeilKlang from "./assets/klang/pfeil.webm";
-import pfeil2Klang from "./assets/klang/pfeil-2.webm";
 import rochadeKlang from "./assets/klang/rochade.webm";
 import kroenungKlang from "./assets/klang/kroenung.webm";
 import talentGoldKlang from "./assets/klang/talentgold.webm";
-import talentRissKlang from "./assets/klang/talentriss.webm";
 import sturmschrittKlang from "./assets/klang/sturmschritt.webm";
 import drachenflugKlang from "./assets/klang/drachenflug.webm";
 import trankKlang from "./assets/klang/trank.webm";
@@ -56,7 +54,8 @@ import blattAufKlang from "./assets/klang/blattauf.webm";
 import blattZuKlang from "./assets/klang/blattzu.webm";
 import karteStationKlang from "./assets/klang/kartestation.webm";
 import karteFreiKlang from "./assets/klang/kartefrei.webm";
-import heroldKlang from "./assets/klang/herold.webm";
+import kapitelKlang from "./assets/klang/kapitel.webm";
+import karteSchrittKlang from "./assets/klang/karteschritt.webm";
 import schachKlang from "./assets/klang/schach.webm";
 import siegKlang from "./assets/klang/sieg.webm";
 import niederlageKlang from "./assets/klang/niederlage.webm";
@@ -95,11 +94,14 @@ const QUELLEN = {
   frei: [freiKlang],
   gold: [goldKlang],
   // v0.79: Sonderzuege und Faehigkeiten
-  pfeil: [pfeilKlang, pfeil2Klang],
+  pfeil: [pfeilKlang],
   rochade: [rochadeKlang],
   kroenung: [kroenungKlang],
   talentGold: [talentGoldKlang],
-  talentRiss: [talentRissKlang],
+  /* v0.82 (Hoerurteil): der Riss-Klang war "eher gut fuer einen
+     Stufenaufstieg" - also wandert sein Charakter dorthin, und ein Talent
+     klingt auf BEIDEN Seiten wie das Talent des Hofes. Ein Haus, ein Zeichen. */
+  talentRiss: [talentGoldKlang],
   sturmschritt: [sturmschrittKlang],
   drachenflug: [drachenflugKlang],
   trank: [trankKlang],
@@ -117,21 +119,29 @@ const QUELLEN = {
   blattZu: [blattZuKlang],
   karteStation: [karteStationKlang],
   karteFrei: [karteFreiKlang],
-  herold: [heroldKlang],
+  /* Der HEROLD ist fort: er klang nur beim allerersten Oeffnen eines
+     Menue-Blattes - so selten, dass er sich niemandem zuordnen liess.
+     Dafuer zwei neue Klaenge der Weltkarte: */
+  kapitel: [kapitelKlang],           // ein neues Kapitel tut sich auf
+  karteSchritt: [karteSchrittKlang], // der Gambit rueckt vor: Holz auf Stein
 };
 
 // Lautstaerke je Art: der Zug klingt hundertmal, der Sturz selten - also darf
 // der Sturz lauter sein, ohne aufdringlich zu werden.
-const PEGEL = { wahl: 0.55, zug: 0.85, treffer: 1.0, fall: 1.0, nein: 0.7,
-  // Seltene Klaenge duerfen lauter stehen, haeufige bleiben zurueckhaltend.
-  sprung: 0.7, schach: 0.8, sieg: 0.9, niederlage: 0.85, stufe: 0.85, frei: 0.8, gold: 0.75,
-  pfeil: 0.9, rochade: 0.85, kroenung: 0.85, talentGold: 0.7, talentRiss: 0.7,
-  sturmschritt: 0.8, drachenflug: 0.95, trank: 0.75, zeitenwender: 0.75,
-  zeitriss: 0.75, rissBlitz: 0.65, bestie: 0.9, meister: 0.95, werbung: 0.85,
-  kapitelEnde: 0.9,
+/* v0.82 (Besitzer: "das muss viel weniger sein"): die ganze Tafel ist eine
+   Stufe zurueckgenommen. Was oft klingt, klingt leise; was selten kommt, darf
+   tragen - aber keiner mehr auf Anschlag. Die Aufnahmen selbst wurden
+   zusaetzlich leiser gemeistert (-22 bis -33 dBFS); dieser Pegel ist die
+   zweite Bremse, nicht die erste. */
+const PEGEL = { wahl: 0.5, zug: 0.7, treffer: 0.85, fall: 0.85, nein: 0.45,
+  sprung: 0.6, schach: 0.7, sieg: 0.8, niederlage: 0.75, stufe: 0.7, frei: 0.65, gold: 0.6,
+  pfeil: 0.7, rochade: 0.6, kroenung: 0.8, talentGold: 0.6, talentRiss: 0.6,
+  sturmschritt: 0.5, drachenflug: 0.8, trank: 0.6, zeitenwender: 0.4,
+  zeitriss: 0.6, rissBlitz: 0.5, bestie: 0.8, meister: 0.8, werbung: 0.65,
+  kapitelEnde: 0.75,
   // Menue und Karte: das Minimalste im Haus - fuehlbar, nie aufdringlich.
-  menue: 0.28, blattAuf: 0.4, blattZu: 0.35, karteStation: 0.45, karteFrei: 0.6,
-  herold: 0.6 };
+  menue: 0.22, blattAuf: 0.3, blattZu: 0.26, karteStation: 0.3, karteFrei: 0.5,
+  kapitel: 0.6, karteSchritt: 0.4 };
 
 let ctx = null;
 let meister = null;          // Summenregler

@@ -63,6 +63,17 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         {profile.name || account?.name || "—"}</div>
       {account?.name && <div style={{ fontSize: 12, color: T.dim, marginTop: 3 }}>
         {account.name}{account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" ? " · Admin" : ""}</div>}
+      {/* v0.82 (Besitzer): SPIELSTAND WECHSELN und ABMELDEN gehoeren nach OBEN,
+          zum Namen - dorthin, wo jeder sie erwartet. Vorher standen sie weit
+          unten hinter Schwierigkeit und Figurenstil; man musste scrollen, um
+          sich abzumelden. Das ist keine Kleinigkeit: es ist die Handlung, die
+          man am haeufigsten sucht, wenn man das Profil ueberhaupt oeffnet. */}
+      {(onSwitchSave || onLogout) && (
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 12 }}>
+          {onSwitchSave && <Button kind="ghost" onClick={onSwitchSave}>{t("profile.switchSave")}</Button>}
+          {onLogout && <Button kind="ghost" onClick={onLogout}>{t("profile.signout")}</Button>}
+        </div>
+      )}
     </GildedFrame>
     <Panel>
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
@@ -97,11 +108,6 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div style={{ fontSize: 11.5, color: T.gold, margin: "6px 2px 0", letterSpacing: 0.2 }}>
         {t("profile.campDiffElo_" + (profile.campDifficulty || "normal"))}</div>
       <div style={{ fontSize: 11.5, color: T.faint, margin: "3px 2px 0", lineHeight: 1.45 }}>{t("profile.campDiffHint")}</div>
-      <div style={{ fontSize: 12, color: T.faint, margin: "16px 0 6px" }}>{t("profile.session")}</div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {onSwitchSave && <Button kind="ghost" onClick={onSwitchSave}>{t("profile.switchSave")}</Button>}
-        {onLogout && <Button kind="ghost" onClick={onLogout}>{t("profile.signout")}</Button>}
-      </div>
       <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("profile.artHint")}</div>
       {!inApp() && (() => {
         // Safari on iPhone/iPad has NO install prompt at all — the ONLY road is

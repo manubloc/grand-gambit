@@ -154,7 +154,18 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
     }
     setToken({ at: id, moving: true });
     setPanOff({ x: 0, y: 0 }); // the camera returns to the wanderer
-    walkT.current = setTimeout(() => setToken({ at: id, moving: false }), 760);
+    /* v0.82 (Besitzerwunsch): der Gambit hoppelt ueber die Karte - man hoert
+       ihn: Holz, das ueber Stein rutscht. Leise (Pegel 0,4) und nur beim
+       echten Vorruecken, nicht beim blossen Umsehen. */
+    try { klang("karteSchritt"); } catch {}
+    /* Und wenn der Weg in ein NEUES KAPITEL fuehrt, rollt sich die Karte auf:
+       ein ferner Hornruf, sobald er drueben ankommt. */
+    const vorher = nodeById(token.at), nachher = nodeById(id);
+    const neuesKapitel = vorher && nachher && vorher.league !== nachher.league;
+    walkT.current = setTimeout(() => {
+      setToken({ at: id, moving: false });
+      if (neuesKapitel) { try { klang("kapitel"); } catch {} }
+    }, 760);
   }
   const scenery = useScenery(th);
   // the viewport: fills the whole screen below the header; we measure it and
