@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.72.2
+
+DAS LAGER: SCHATZKAMMER UND HAENDLER UNTER EINEM DACH:
+
+- Die vierte Menuetuer heisst jetzt LAGER (en: Stores) und traegt zwei
+  Raeume: SCHATZKAMMER (Taten, Beutel) und HAENDLER (en: Trader) - die
+  fruehere Ausruestung, die aus dem Hofstaat umgezogen ist. Im HOFSTAAT
+  bleiben Hof und Aufstellung. Sondenbeleg: Menuewort "LAGER", beide
+  Raeume erreichbar, der Haendler oeffnet mit seiner Warenkunde; im
+  Hofstaat kein Ausruestungswort mehr.
+- Der Haendler-Zweig bleibt fuer DIREKTAUFRUFE erhalten (Blattverweise
+  aus Taten und Popups nutzen initialTab="gear") - er steht nur nicht
+  mehr in der Hofstaat-Tableiste. (Der Testlauf hatte den Wegfall
+  bemerkt: 4 Fehler, sofort geheilt, wieder 810/0/20.)
+
 ## 0.72.1
 
 DIE WELTKARTE AUF VOLLE HOEHE, DIE KUGELN UNTER DEN WAECHTER:

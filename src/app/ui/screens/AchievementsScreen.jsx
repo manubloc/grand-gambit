@@ -2,6 +2,8 @@
 // in-house icon in a medallion: earned tiers glow gold, untouched ones sit
 // grayed and quiet. Progress is a single number and a thin bar — no clutter.
 import { useState } from "react";
+import { GearPanel } from "./ArmyScreen.jsx";
+import { Segmented } from "../primitives.jsx";
 import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../meta/index.js";
 import { T, GOLD_CTA } from "../theme.js";
 import { Panel, Bar, Chip } from "../primitives.jsx";
@@ -28,6 +30,10 @@ const cornerDiamond = (pos) => (
 );
 
 export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null }) {
+  // v0.72.2 (Besitzer): DAS LAGER - zwei Raeume unter einem Dach: die
+  // Schatzkammer (Taten, Beutel) und der HAENDLER (ehemals Ausruestung im
+  // Hofstaat).
+  const [lagerTab, setLagerTab] = useState("schatz");
   const [openId, setOpenId] = useState(initialOpenId);
   // one counter per plate — a tap bumps it and replays the sweep of light
   const [sheenAt, setSheenAt] = useState({});
@@ -38,7 +44,20 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
   const claimable = claimableCount(profile);
   const wide = useMedia("(min-width: 900px)");
 
+  if (lagerTab === "haendler") return <div style={{ display: "grid", gap: 10 }}>
+    <Segmented value={lagerTab} onChange={setLagerTab} options={[
+      { value: "schatz", label: t("lager.tabSchatz") },
+      { value: "haendler", label: t("lager.tabHaendler") },
+    ]} />
+    <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />
+  </div>;
   return <div style={{ display: "grid", gap: 10, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
+    <div style={{ gridColumn: wide ? "1 / -1" : undefined }}>
+      <Segmented value={lagerTab} onChange={setLagerTab} options={[
+        { value: "schatz", label: t("lager.tabSchatz") },
+        { value: "haendler", label: t("lager.tabHaendler") },
+      ]} />
+    </div>
     {/* ── the vault: a gilded frame, a passing gleam, real coinage ── */}
     <div style={{ gridColumn: "1 / -1", position: "relative", borderRadius: T.radius, padding: 1.5,
       background: "linear-gradient(135deg, #6f5526, #f0d68a 28%, #8a6d35 52%, #e9cf8a 76%, #6f5526)",

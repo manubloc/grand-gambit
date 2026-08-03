@@ -2,7 +2,8 @@ export const BRAND = "GAMBIT";
 export const TAGLINE = { de: "Schach, das mit dir wächst.", en: "Chess that levels up with you." };
 
 const DE = {
-  "nav.play": "Spielen", "nav.army": "Hofstaat", "nav.camp": "Kampagne", "nav.ach": "Schatzkammer", "nav.profile": "Profil",
+  "lager.tabSchatz": "Schatzkammer", "lager.tabHaendler": "Händler",
+  "nav.play": "Spielen", "nav.army": "Hofstaat", "nav.camp": "Kampagne", "nav.ach": "Lager", "nav.profile": "Profil",
   "home.level": "Level", "home.next": "Nächstes Level",
   "game.you": "Du", "game.ai": "Gegner", "game.turnYou": "Du bist am Zug", "game.turnAi": "Gegner denkt …",
   "game.check": "Schach!", "game.win": "Gewonnen!", "game.lose": "Verloren", "game.draw": "Remis",
@@ -91,7 +92,8 @@ const DE = {
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
 };
 const EN = {
-  "nav.play": "Play", "nav.army": "Court", "nav.camp": "Campaign", "nav.ach": "Treasury", "nav.profile": "Profile",
+  "lager.tabSchatz": "Treasury", "lager.tabHaendler": "Trader",
+  "nav.play": "Play", "nav.army": "Court", "nav.camp": "Campaign", "nav.ach": "Stores", "nav.profile": "Profile",
   "home.level": "Level", "home.next": "Next level",
   "game.you": "You", "game.ai": "Opponent", "game.turnYou": "Your move", "game.turnAi": "Opponent thinking …",
   "game.check": "Check!", "game.win": "You win!", "game.lose": "Defeated", "game.draw": "Draw",

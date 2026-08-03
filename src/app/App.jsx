@@ -365,7 +365,7 @@ export default function App() {
         : <PlayHub profile={profile} t={t} onQuick={() => setView("quick")} onQuickStart={startQuickNow} onCamp={() => setView("camp")} onOnline={(gid) => { oeffneDaily.current = gid || null; setView("online"); }} onTutorial={() => setView("tutorial")} hallenStand={hallenSteht} />
       )
       : tab === "army" ? <ArmyScreen key={armyTab.n} profile={profile} dispatch={dispatch} t={t} initialTab={armyTab.tab} account={account} />
-        : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} />
+        : tab === "ach" ? <AchievementsScreen profile={profile} dispatch={dispatch} t={t} en={profile.lang === "en"} />
           : <ProfileScreen profile={profile} dispatch={dispatch} t={t} account={account}
               onSwitchSave={() => setSlot(null)}
               onLogout={hardLogout} />;

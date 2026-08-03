@@ -1547,14 +1547,18 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
   return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip", paddingTop: 8 }}>
     <CharLightbox char={zoomChar} en={profile.lang === "en"} onClose={() => setZoomChar(null)} />
     {/* three rooms instead of one endless scroll */}
-    <Segmented value={tab} onChange={setTab} options={[
+    {/* v0.72.2 (Besitzer): der HAENDLER ist ins LAGER umgezogen - im Hofstaat
+        bleiben Hof und Aufstellung. */}
+    <Segmented value={tab === "gear" ? "tree" : tab} onChange={setTab} options={[
       { value: "tree", label: t("army.tabTree") },
       { value: "formation", label: t("army.tabFormation") },
-      { value: "gear", label: t("army.tabGear") },
     ]} />
+    {/* v0.72.2: der Haendler-Zweig BLEIBT fuer Direktaufrufe (Blatt-Verweise
+        aus Taten und Popups nutzen initialTab="gear") - er steht nur nicht
+        mehr in der Tab-Leiste, denn sein Zuhause ist jetzt das Lager. */}
+    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
     {tab === "formation" && <FormationEditor profile={profile} dispatch={dispatch} t={t} en={en} />}
     {/* Die Chronik wohnt seit v0.51 in der AKADEMIE - ChroniclePanel bleibt hier nur exportiert. */}
-    {tab === "gear" && <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} initialGearInfo={initialGearInfo} />}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
   </div>;
 }
