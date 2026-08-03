@@ -137,5 +137,6 @@ export function createInitialState(whiteArmy = defaultArmy(), blackArmy = defaul
     history: [],                // previous states, for undo
     lastMove: null,
     moveCount: 0,
+    ohneSchaden: 0,           // Halbzuege ohne Schaden (HP-Remis)
   };
 }

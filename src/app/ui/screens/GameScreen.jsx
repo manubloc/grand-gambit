@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
-import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
@@ -430,7 +430,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (st.over) {
       if (st.winner === myColor) finish("win", st.result);
       else if (st.winner === oppColor) finish("loss", st.result);
-      else finish("draw", st.result);
+      else finish("draw", st.grund === "ohneSchaden" ? "ohneSchaden" : st.result);
       return;
     }
     if (!pvp && !daily && !hotseat && state.turn === BLACK) {   // no engine in a correspondence game — a human owes the reply
@@ -635,7 +635,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // die Streifen vorwaermen, damit das Brett nicht nackt aufwacht
   useEffect(() => { for (const q of [feld, feldDunkel]) if (q) { const im = new Image(); im.src = q; } }, [feld, feldDunkel]);
   const F = hpMode ? forces(state.board) : null;
-  const statusText = banner ? "" : st.check ? t("game.check") : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
+  /* Stillstand-Warnung: die letzten zehn Zuege vor dem HP-Remis ansagen. */
+  const stillstandRest = hpMode ? Math.ceil((HP_REMIS_HALBZUEGE - (state.ohneSchaden || 0)) / 2) : 99;
+  const statusText = banner ? "" : st.check ? t("game.check") : stillstandRest <= 10 ? t("game.stillstandIn", { n: Math.max(0, stillstandRest) }) : hotseat ? t(state.turn === WHITE ? "hs.turnWhite" : "hs.turnBlack") : myTurn ? t("game.turnYou") : pvp ? t("online.turnOpp") : t("game.turnAi");
   const clockLbl = clock != null ? `${Math.floor(Math.max(0, clock) / 60)}:${String(Math.max(0, clock) % 60).padStart(2, "0")}` : null;
   const clockHot = clock != null && (timer?.type === "move" ? clock <= 5 : clock <= 30);
   // DIE UHR DARF NICHT ZU UEBERSEHEN SEIN (Besitzer, v0.45): "man vergisst
@@ -1196,6 +1198,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
     : banner.reason === "checkmate" ? t("game.checkmate")
     : banner.reason === "regicide" ? t("game.regicide")
     : banner.reason === "time" ? t("game.timeout")
+    : banner.reason === "ohneSchaden" ? t("game.stillstandSub")
     : (banner.reason === "stalemate" || banner.reason === "draw") ? t("game.stalemate")
     : t("game.resigned");
   const g = banner.gained;

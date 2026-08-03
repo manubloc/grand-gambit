@@ -1,4 +1,4 @@
-import { createGame, reduce, moveCommand, legalMoves, legalMovesFrom, applyMove, status, idx } from "./src/core/index.js";
+import { createGame, reduce, moveCommand, legalMoves, legalMovesFrom, applyMove, status, idx, HP_REMIS_HALBZUEGE } from "./src/core/index.js";
 import { mapById } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
@@ -229,6 +229,41 @@ import { bossSpec, bossById } from "./src/content/index.js";
   const after = legalMovesFrom(s2, idx(0, 1, 8));
   ok("after ONE cast every further talent is sealed", after.every((m) => !m.consumes));
   ok("plain chess moves remain", after.length > 0);
+}
+
+// ── Stillstand: 60 Zuege ohne Schaden enden remis ────────────────────────────
+{
+  const g = createGame(a8, a8, { map: classic, rules: "hp", seed: 3 });
+  ok("the standstill counter starts at zero", g.ohneSchaden === 0);
+  const still = legalMoves(g).find((m) => !g.board[m.to]);
+  const s1 = applyMove(g, still);
+  ok("a harmless move raises the counter", s1.ohneSchaden === 1);
+  const s2 = applyMove(s1, legalMoves(s1).find((m) => !s1.board[m.to]));
+  ok("the counter keeps rising", s2.ohneSchaden === 2);
+  ok("HP_REMIS_HALBZUEGE is 120 halfmoves = 60 moves", HP_REMIS_HALBZUEGE === 120);
+  ok("shortly before the limit the game runs on", !status({ ...s2, ohneSchaden: HP_REMIS_HALBZUEGE - 1 }).over);
+  const ende = status({ ...s2, ohneSchaden: HP_REMIS_HALBZUEGE });
+  ok("at the limit the match is a draw", ende.over && ende.result === "draw" && ende.winner === null);
+  ok("the draw names its reason", ende.grund === "ohneSchaden");
+  const c = createGame(a8, a8, { map: classic, rules: "chess", seed: 3 });
+  ok("plain chess ignores the standstill rule", !status({ ...c, ohneSchaden: 999 }).over);
+  const roundtrip = decodeState(encodeState({ ...s2, ohneSchaden: 47 }));
+  ok("the counter survives save and load", roundtrip.ohneSchaden === 47);
+}
+
+// ── every blow resets the standstill counter ─────────────────────────────────
+{
+  const brett = new Array(64).fill(null);
+  brett[idx(0, 0, 8)] = W("Q", { hp: 7, maxHp: 7, atk: 4 });
+  brett[idx(0, 1, 8)] = B("R", { hp: 5, maxHp: 5, atk: 3 });
+  brett[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  brett[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  const vor = { ...hpState(brett), ohneSchaden: 100 };
+  const schlag = legalMoves(vor).find((m) => m.from === idx(0, 0, 8) && m.to === idx(0, 1, 8));
+  const nach = reduce(vor, moveCommand(schlag)).state;
+  ok("a wound resets the standstill counter", nach.ohneSchaden === 0);
+  const ruhig = legalMoves(vor).find((m) => !vor.board[m.to]);
+  ok("a move that draws no blood does not reset it", reduce(vor, moveCommand(ruhig)).state.ohneSchaden === 101);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

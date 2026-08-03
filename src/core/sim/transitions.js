@@ -1,4 +1,4 @@
-import { other, WHITE, BLACK, BASE_HP, BASE_ATK } from "../domain/constants.js";
+import { other, WHITE, BLACK, BASE_HP, BASE_ATK, HP_REMIS_HALBZUEGE } from "../domain/constants.js";
 import { cloneBoard, findKing } from "../domain/board.js";
 import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
@@ -17,6 +17,7 @@ export function cloneState(state) {
     history: state.history, // shared by reference; only real moves push to it
     lastMove: state.lastMove,
     moveCount: state.moveCount,
+    ohneSchaden: state.ohneSchaden || 0,
     log: state.log,
     seed: state.seed,
   };
@@ -64,17 +65,20 @@ export function applyMove(state, move, opts) {
   // ── spawn: the piece stays put and creates a pawn on an empty adjacent
   // square (bosses with a spawn budget). Costs the turn like any move. ──
   if (move.special === "spawn") {
+    let geschaffen = false;
     if ((piece.spawnLeft || 0) > 0 && !target) {
       const pawn = { id: (state.moveCount + 1) * 100000 + move.to, kind: "P", color: piece.color,
         level: 1, abilities: [], shield: 0, used: {}, hasMoved: true };
       if (hp) { pawn.maxHp = BASE_HP.P; pawn.hp = pawn.maxHp; pawn.atk = BASE_ATK.P; }
       b[move.to] = pawn;
       piece.spawnLeft -= 1;
+      geschaffen = true;
     }
     if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
     else ns.turn = other(state.turn);
     ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null, from: move.from, to: move.to, color: piece.color, kind: piece.kind, capture: false, spawned: true, special: "spawn" };
     ns.moveCount = state.moveCount + 1;
+    ns.ohneSchaden = geschaffen ? 0 : (state.ohneSchaden || 0) + 1;
     if (record) { ns.history = [...state.history, state]; }
     return ns;
   }
@@ -124,6 +128,7 @@ export function applyMove(state, move, opts) {
     ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null, from: move.from, to: settled ? move.to : move.from, color: piece.color, kind: piece.kind,
       capture: lethal, damaged, lethal, special: move.special, bounced: !settled };
     ns.moveCount = state.moveCount + 1;
+    ns.ohneSchaden = (damaged || lethal) ? 0 : (state.ohneSchaden || 0) + 1;
     if (record) { ns.history = [...state.history, state]; }
     return ns;
   }
@@ -203,6 +208,7 @@ export function applyMove(state, move, opts) {
   if (ns.shiftArmed === piece.color) { ns.turn = piece.color; ns.shiftArmed = null; }
   else ns.turn = other(state.turn);
   ns.moveCount = state.moveCount + 1;
+  ns.ohneSchaden = (damaged || lethal || captured) ? 0 : (state.ohneSchaden || 0) + 1;
   ns.lastMove = { consumed: (typeof move !== "undefined" && move && move.consumes) || null,
     from: move.from, to: move.to, color: piece.color, kind: move.kind, byHero: !!piece.hero,
     capture: captured, bounced, damaged, dmg, lethal,
@@ -264,7 +270,10 @@ export function status(state) {
     const bk = findKing(state.board, BLACK, state.w);
     if (!wk || !bk) return { over: true, result: "regicide", winner: wk ? WHITE : BLACK, check: false };
     const legal = legalMoves(state, color);
-    if (legal.length === 0) return { over: true, result: "draw", winner: null, check: false };
+    if (legal.length === 0) return { over: true, result: "draw", winner: null, check: false, grund: "keinZug" };
+    /* Stillstand: faellt 120 Halbzuege lang kein Schaden, ist die Partie remis. */
+    if ((state.ohneSchaden || 0) >= HP_REMIS_HALBZUEGE)
+      return { over: true, result: "draw", winner: null, check: false, grund: "ohneSchaden" };
     return { over: false, result: "ongoing", winner: null, check: false, legalCount: legal.length };
   }
   const legal = legalMoves(state, color);

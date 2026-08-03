@@ -19,6 +19,7 @@ export function encodeState(state) {
     captured: state.captured,
     lastMove: state.lastMove,
     moveCount: state.moveCount,
+    ohneSchaden: state.ohneSchaden || 0,
     seed: state.seed ?? 0,
     log: state.log ?? [],
   });
@@ -39,6 +40,7 @@ export function decodeState(json) {
     history: [], // fresh; undo starts over after a load
     lastMove: o.lastMove || null,
     moveCount: o.moveCount || 0,
+    ohneSchaden: o.ohneSchaden || 0,
     seed: o.seed || 0,
     log: o.log || [],
   };
