@@ -232,6 +232,8 @@ ok("his file defaults to the center and clamps to the board",
   heroColFor(hp0, mapBy2("arena")) === 5 &&
   heroColFor({ ...hp0, loadout: { ...hp0.loadout, heroCols: { arena: 99 } } }, mapBy2("arena")) === 9);
 const hpX = { ...prof, loadout: { flank: ["knight", "knight"], formations: {}, heroCols: { arena: 2 } },
+  /* v0.81: der Held zieht erst mit, wenn er erwacht ist (drei Stationen). */
+  campaign: { ...(prof.campaign || {}), cleared: ["L01s01", "L01s02", "L01s03"] },
   pieces: { levels: { gambit: 4 }, abilities: { gambit: ["pawn_sidestep"] } } };
 const hg2 = cg3(bArmy(hpX), undefined, { rules: "hp", seed: 5 });
 const heroes2 = hg2.board.filter((x) => x && x.hero);

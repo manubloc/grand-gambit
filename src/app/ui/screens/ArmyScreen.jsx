@@ -4,7 +4,7 @@ import { AbilityIcon, abilityTint } from "../AbilityIcons.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
-import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL } from "../../../meta/index.js";
+import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
@@ -1111,7 +1111,12 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
         const price = it ? it.gold : SP_SHARD_GOLD;
         const can = !full && (profile.gold || 0) >= price;
         return <div onClick={() => setGearInfo(null)} style={{ position: "fixed", inset: 0, zIndex: 56,
-          background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center",
+          background: "rgba(4,6,10,.74)", display: "grid", justifyItems: "center", alignItems: "start",
+          /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
+             Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
+             unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
+             gleich wie gross sein Inhalt ist, und scrollt in sich. */
+          
           /* v0.80: <main> traegt eine mask-image und bildet damit einen
              Stapelkontext - Menueleiste (breit, oben) und Dock (unten) liegen
              IMMER ueber diesem Popup, egal welcher z-Index. Also weicht die
@@ -1119,7 +1124,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
              Huelle. */
           padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
           <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
-            maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
+            maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
             background: "radial-gradient(130% 120% at 50% -12%, rgba(240,206,122,.16) 0%, rgba(24,19,11,.97) 44%, rgba(10,8,5,.99) 100%)",
             border: "1px solid rgba(227,192,122,.55)",
             boxShadow: "0 18px 50px rgba(0,0,0,.6), 0 0 22px rgba(240,206,122,.16)" }}>
@@ -1420,7 +1425,11 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
   return <div style={{ }}>
     <Vorrede />
     <H>{t("tree.court")}</H><div style={grid}>
-      {COURT_IDS.map((c) => champTile(c))}
+      {/* v0.81: DER GAMBIT FEHLT HIER, BIS ER ERWACHT. Vor dem dritten
+          geschafften Gefecht gibt es ihn nicht - kein Name, kein Bild, kein
+          leerer Platz mit Fragezeichen. Erst wenn er sich selbst entdeckt,
+          steht er im Verzeichnis. */}
+      {(gambitWach(profile) ? COURT_IDS : COURT_IDS.filter((c) => c !== "gambit")).map((c) => champTile(c))}
       {crownIn.map((c) => champTile(c, t("tree.fromCrown")))}
       {shadowIn.map((c) => champTile(c, t("tree.fromShadow")))}
       {alliedIn.map(monsterTile)}
@@ -1446,7 +1455,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
       const fam = FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : b.art;
       return <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center",
+        display: "grid", justifyItems: "center", alignItems: "start",
+          /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
+             Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
+             unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
+             gleich wie gross sein Inhalt ist, und scrollt in sich. */
+          
         padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 420px)",
           borderRadius: 22, overflow: "hidden", boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
@@ -1456,7 +1470,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", padding: "18px 16px 16px" }}>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", padding: "18px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
               {img && <img src={img} alt="" onClick={(e) => { e.stopPropagation(); onZoom && onZoom({ boss: true, bid: b.id, art: b.art, nameDe: b.nameDe, nameEn: b.nameEn, flavorDe: b.flavorDe, flavorEn: b.flavorEn }); }}
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
@@ -1546,7 +1560,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     })()}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center",
+        display: "grid", justifyItems: "center", alignItems: "start",
+          /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
+             Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
+             unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
+             gleich wie gross sein Inhalt ist, und scrollt in sich. */
+          
         padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
           borderRadius: 22, overflow: "hidden",
@@ -1559,7 +1578,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto" }}>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto" }}>
             <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
               onZoom={onZoom} open bigArt />
           </div>

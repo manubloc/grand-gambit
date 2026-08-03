@@ -489,13 +489,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         const lm = next.lastMove || {};
         const schuss = lm.special === "shot";
         const einschlag = lm.lethal || (lm.capture && !lm.damaged) ? "fall" : lm.damaged ? "treffer" : null;
+        /* v0.81 (Besitzer): WER SPRINGT, SCHLEIFT NICHT. Ein Sprungzug
+           (Springer, oder jeder Zug, der nicht auf einer Linie liegt) macht
+           beim Abheben KEINEN Laut - gehoert wird nur die Landung, ein
+           leises hoelzernes Tock. Deshalb wandert der Sprungklang ans Ende
+           der Flugzeit; das Schleifen dagegen IST der Weg und beginnt
+           sofort. Dieselbe Unterscheidung wie in der Gleit-Animation. */
+        const fF = lm.from % (next.w || 8), fR = Math.floor(lm.from / (next.w || 8));
+        const tF = lm.to % (next.w || 8), tR = Math.floor(lm.to / (next.w || 8));
+        const dF = Math.abs(tF - fF), dR = Math.abs(tR - fR);
+        const springt = !lm.bounced && (lm.kind === "N" || !!(dF && dR && dF !== dR));
+        const flug = zugDauerMs(lm, myColor, hotseat, next.w);
         if (schuss) klang("pfeil");
         else if (lm.special === "castle") klang("rochade");
         else if (lm.special === "dragonFly") klang("drachenflug");
+        else if (springt) setTimeout(() => { try { klang("sprung"); } catch {} }, flug);
         else klang("zug");
         if (einschlag && !schuss) {
-          const wartezeit = zugDauerMs(lm, myColor, hotseat, next.w);
-          setTimeout(() => { try { klang(einschlag); if (next.welle) klang("treffer"); } catch {} }, wartezeit);
+          setTimeout(() => { try { klang(einschlag); if (next.welle) klang("treffer"); } catch {} }, flug);
         } else if (einschlag) {
           setTimeout(() => { try { klang(einschlag); } catch {} }, 160);   // der Pfeil braucht einen Wimpernschlag
         }

@@ -25,13 +25,12 @@ import gesperrtKlang from "./assets/klang/gesperrt.webm";
    Spitze und tragen nur 1-6 % ihrer Energie in den ersten 30 ms; der alte
    Anschlag hatte 4 ms und 60 %. Schlag und Sturz liegen bei 485/983 Hz bzw.
    851/2063 Hz - kein heller Anteil. */
-import zug2Klang from "./assets/klang/zug-2.webm";
-import zug3Klang from "./assets/klang/zug-3.webm";
 import treffer2Klang from "./assets/klang/treffer-2.webm";
 import fall2Klang from "./assets/klang/fall-2.webm";
 /* v0.77: sieben neue Klaenge, ueber ElevenLabs nach design/KLANG-PROMPTS.md
    erzeugt, geschnitten und auf -3 dBFS gebracht wie die vier davor. */
 import zugKlang from "./assets/klang/zug.webm";
+import sprungKlang from "./assets/klang/sprung.webm";
 /* v0.79: DER GANZE KATALOG. Jede Art traegt ihre Quelle(n); was am Brett oder
    im Menue haeufig klingt, steht leiser als das Seltene und Feierliche.
    Sturz und Treffer sind auf Besitzerwunsch DUMPFER (Tiefpass: Sturz
@@ -72,7 +71,19 @@ import goldKlang from "./assets/klang/gold.webm";
 // ist erzeugt, liegt zum Hoeren bereit und wartet auf das Urteil des Besitzers.
 const QUELLEN = {
   wahl: [waehlenKlang],
-  zug: [zugKlang, zug2Klang, zug3Klang],
+  /* v0.81 (Besitzer): GENAU EINE Aufnahme fuer den Zug. Vorher lagen hier drei
+     Varianten, aus denen zufaellig gewaehlt wurde - und weiter unten sorgte
+     eine Regel dafuer, dass NIE zweimal dieselbe kam. Dein Zug und die
+     Antwort des Gegners folgen unmittelbar aufeinander, klangen also
+     zwangslaeufig verschieden. Genau der Eindruck, den der Besitzer gemeldet
+     hat. Eine Aufnahme fuer beide Seiten, fertig.
+     Der Klang selbst ist neu: hoelzern statt metallisch (Schwerpunkt 538 statt
+     1893 Hz) und leiser (-23,5 statt -18 dBFS). */
+  zug: [zugKlang],
+  /* Wer SPRINGT, schleift nicht: der Springer (und jeder Sprungzug) setzt nur
+     mit einem leisen hoelzernen Tock auf - 0,12 s, 707 Hz. Beim Abheben
+     bleibt es still, gehoert wird allein die Landung. */
+  sprung: [sprungKlang],
   treffer: [trefferKlang, treffer2Klang],
   fall: [fallKlang, fall2Klang],
   nein: [gesperrtKlang],
@@ -113,7 +124,7 @@ const QUELLEN = {
 // der Sturz lauter sein, ohne aufdringlich zu werden.
 const PEGEL = { wahl: 0.55, zug: 0.85, treffer: 1.0, fall: 1.0, nein: 0.7,
   // Seltene Klaenge duerfen lauter stehen, haeufige bleiben zurueckhaltend.
-  schach: 0.8, sieg: 0.9, niederlage: 0.85, stufe: 0.85, frei: 0.8, gold: 0.75,
+  sprung: 0.7, schach: 0.8, sieg: 0.9, niederlage: 0.85, stufe: 0.85, frei: 0.8, gold: 0.75,
   pfeil: 0.9, rochade: 0.85, kroenung: 0.85, talentGold: 0.7, talentRiss: 0.7,
   sturmschritt: 0.8, drachenflug: 0.95, trank: 0.75, zeitenwender: 0.75,
   zeitriss: 0.75, rissBlitz: 0.65, bestie: 0.9, meister: 0.95, werbung: 0.85,

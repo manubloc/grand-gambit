@@ -89,7 +89,15 @@ ok("the climb grows steep: 2/3/4/6/8/10 SP by tier", upgradeCost("gambit", 1) ==
 ok("the full road to 60 costs 328 SP", Array.from({ length: 59 }, (_, i) => upgradeCost("gambit", i + 1)).reduce((a, b) => a + b, 0) === 328);
 ok("the risen gambit banks shields all the way: 6 at L30, 11 at L60", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6 && resolveCharacter(CHARACTERS.gambit, 60, null).shield === 11 && resolveCharacter(CHARACTERS.gambit, 10, null).shield === 2);
 ok("the gambit can be upgraded past ten", characterLevel(upgradePiece({ sp: 99, pieces: { levels: { gambit: 10 } } }, "gambit"), "gambit") === 11);
-ok("the hero spec carries his tier onto the board", buildArmyForMap({ pieces: { levels: { gambit: 15 } } }, mapById("arena")).hero.spec.tier === 2);
+/* v0.81: DER HELD TRITT ERST NACH DREI GESCHAFFTEN STATIONEN AN. Vorher
+   fuehrt niemand die Armee - die Bauernreihe ist eine Bauernreihe. */
+const wach = { pieces: { levels: { gambit: 15 } }, campaign: { cleared: ["L01s01", "L01s02", "L01s03"] } };
+ok("vor dem Erwachen fuehrt KEIN Held die Armee",
+  buildArmyForMap({ pieces: { levels: { gambit: 15 } }, campaign: { cleared: ["L01s01", "L01s02"] } }, mapById("arena")).hero === undefined);
+ok("nach drei Stationen steht er wieder in Reih und Glied", !!buildArmyForMap(wach, mapById("arena")).hero);
+ok("the hero spec carries his tier onto the board", buildArmyForMap(wach, mapById("arena")).hero.spec.tier === 2);
+ok("der Erwachte traegt im Bild mindestens Stufe II",
+  buildArmyForMap({ pieces: { levels: { gambit: 1 } }, campaign: { cleared: ["a", "b", "c"] } }, mapById("arena")).hero.spec.tier === 2);
 
 // ── retinue score: monotonic with progress ──────────────────────────────────
 import { retinueScore, defaultProfile as dp2, advanceCampaign as adv2 } from "./src/meta/index.js";

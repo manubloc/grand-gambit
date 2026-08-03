@@ -25,6 +25,24 @@ export function hpWach(profile) {
   return false;
 }
 
+/* IST DER GRAND GAMBIT ERWACHT? (v0.81, Besitzerentscheid)
+   Die Geschichte beginnt OHNE Helden. Die ersten Gefechte sind schlichtes
+   Schach: ein Bauer wie jeder andere, kein eigener Name, kein eigenes
+   Gesicht - er taucht auch im Hofstaat nicht auf. Erst wenn drei Stationen
+   gefallen sind, merkt dieser eine Bauer, dass er ein anderer sein will:
+   er erwacht, hebt sich eine Stufe (und traegt darum ab jetzt Kapuze, Stab
+   und Klinge statt der Bauernkutte) - und von da an beginnt die Story um
+   ihn. Vorher gibt es ihn schlicht nicht.
+
+   Bewusst an der ZAHL DER GESCHAFFTEN STATIONEN gemessen, nicht an einer
+   bestimmten Station: dann bleibt der Moment auch dann heil, wenn die
+   Kampagne spaeter umgebaut wird. */
+export const GAMBIT_ERWACHT_AB = 3;
+export function gambitWach(profile) {
+  const erledigt = profile?.campaign?.cleared || [];
+  return erledigt.length >= GAMBIT_ERWACHT_AB;
+}
+
 // ── XP curves ───────────────────────────────────────────────────────────────
 export const charXpForLevel = (n) => (n <= 1 ? 0 : Math.round(40 * Math.pow(n - 1, 1.7)));
 export const playerXpForLevel = (n) => (n <= 1 ? 0 : Math.round(60 * Math.pow(n - 1, 1.45)));
@@ -357,7 +375,12 @@ function heroSpec(profile, chess = false) {
   const ch = CHARACTERS.gambit;
   const level = chess ? 1 : Math.max(1, characterLevel(profile, "gambit") || 1);
   const { abilities, shield } = resolveCharacter(ch, level, chess ? null : chosenAbilities(profile, "gambit"));
-  return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level), ...(ch.big ? { big: true } : {}) };
+  /* Der Auftritt ist ein Bruch, kein Uebergang: wer erwacht, sieht anders aus.
+     Darum traegt der Held ab dem ersten Atemzug MINDESTENS Stufe II (Kapuze,
+     Stab, Klinge) - nur im Bild, nicht in der Kraft: Stufe, Faehigkeiten und
+     Schilde bleiben unberuehrt, sonst haette das Erwachen die Waage
+     verschoben. */
+  return { kind: ch.kind, level, abilities, shield, tier: Math.max(2, gambitTier(level)), ...(ch.big ? { big: true } : {}) };
 }
 
 /** Foresight: if the army that will take the field carries a SEER — the
@@ -406,8 +429,11 @@ export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   if (excludeId) formation = formation.map((cid, i) =>
     cid === excludeId ? (map.defaultFormation[i] !== excludeId ? map.defaultFormation[i] : "knight") : cid);
   const army = buildArmyFromFormation(levelOf, formation, chosenOf, boostOf);
-  // the Grand Gambit leads every army — even in pure chess he holds his file
-  army.hero = { col: heroColFor(profile, map), spec: heroSpec(profile, chess) };
+  /* v0.81: DER HELD TRITT SPAETER AUF. Vor dem Erwachen (drei geschaffte
+     Stationen) fuehrt niemand die Armee an - die Bauernreihe ist eine
+     Bauernreihe, und das Spiel ist schlicht Schach. Danach haelt der Gambit
+     wie gehabt seine Linie, auch im reinen Schach. */
+  if (gambitWach(profile)) army.hero = { col: heroColFor(profile, map), spec: heroSpec(profile, chess) };
   return army;
 }
 

@@ -56,7 +56,14 @@ const g2 = SEEDS.map((s) => playStage("L07s41", dragonProf, s));
 ok(`the dragon's lair holds longer than a skirmish — shortest ${floorOver(g2)} plies (>= 16)`, floorOver(g2) >= 16);
 
 // 3) the League Keep, the hardest table of league I
-const g3 = SEEDS.map((s) => playStage("L01s44", fresh, s));
+/* v0.81: Wer bis zum Bergfried kommt, hat laengst mehrere Stationen hinter
+   sich - und damit den erwachten Gambit an der Spitze. Das frische Profil
+   von oben bildete eine Lage ab, die es im Spiel nicht gibt (Station 44
+   ohne einen einzigen Sieg), und maass darum eine Armee ohne Anfuehrer:
+   die Belagerung fiel auf 14 Halbzuege. Mit dem Weg, den der Ort
+   voraussetzt, steht sie wieder. */
+const keepProf = { ...fresh, campaign: { ...(fresh.campaign || {}), cleared: ["L01s00", "L01s01", "L01s02", "L01s03"] } };
+const g3 = SEEDS.map((s) => playStage("L01s44", keepProf, s));
 ok(`the League Keep is a real siege — shortest ${floorOver(g3)} plies (>= 16)`, floorOver(g3) >= 16);
 ok("the Keep duel reaches a decisive end", anyFinished(g3));
 

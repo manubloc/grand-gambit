@@ -1,5 +1,48 @@
 # Changelog - Grand Gambit
 
+## 0.81.0
+
+DER HELD TRITT SPAETER AUF, DAS BRETT KLINGT HOELZERN, DIE MUSIK ATMET:
+
+- EIN KLANG FUER BEIDE SEITEN (gemeldeter Fehler, Ursache gefunden): fuer
+  den Zug lagen DREI Aufnahmen bereit, aus denen zufaellig gewaehlt wurde -
+  und eine Regel erzwang, dass nie zweimal dieselbe kam. Eigener Zug und
+  Antwort des Gegners folgen unmittelbar aufeinander, klangen also
+  ZWANGSLAEUFIG verschieden. Jetzt: genau eine Aufnahme, beide Seiten.
+- DER ZUG IST HOELZERN, NICHT METALLISCH: neu erzeugt und tiefpassgefiltert,
+  Schwerpunkt 538 statt 1893 Hz, Pegel -23,5 statt -18 dBFS (leiser, damit
+  er auf Dauer nicht nervt).
+- WER SPRINGT, SCHLEIFT NICHT: Springer und jeder nicht-lineare Zug sind
+  beim Abheben STILL und setzen nur mit einem leisen hoelzernen Tock auf
+  (0,12 s, 707 Hz), getaktet auf das Ende der Flugzeit.
+- DIE MUSIK BLENDET SANFT: 6 s statt 1,8 s, und NACHEINANDER statt
+  gleichzeitig - erst sinkt das alte Stueck ueber 3,4 s, dann steigt das
+  neue ueber 4,6 s, beides auf einer weichen Kosinuskurve statt einer
+  Geraden. Kein Moment mehr, in dem zwei Melodien gegeneinander stehen.
+- NEUES MENUESTUECK: das alte klang asiatisch; die Neufassung fuehrt ein
+  TIEFES SOLO-CELLO und schliesst im Auftrag asiatische Instrumente und
+  pentatonische Skalen ausdruecklich aus. Zwei weitere Fassungen (Hof,
+  Froh) liegen dem Besitzer zur Wahl vor.
+- DER GRAND GAMBIT TRITT SPAETER AUF (Besitzerentscheid): das Wappen aus
+  v0.80 ist wieder fort. Stattdessen beginnt die Geschichte OHNE Helden -
+  die ersten drei Gefechte sind schlichtes Schach, die Bauernreihe ist
+  eine Bauernreihe, und im Hofstaat steht kein Gambit (kein Name, kein
+  Bild, kein leerer Platz). Nach drei geschafften Stationen erwacht er:
+  ab da fuehrt er wieder seine Linie und traegt IM BILD mindestens Stufe
+  II - Kapuze, Stab und Klinge statt Bauernkutte. Nur die Darstellung,
+  nicht die Kraft: Stufe, Faehigkeiten und Schilde bleiben unberuehrt.
+  Sondenbeleg: Hofstaat vorher [Bauer..Koenig], nachher [Grand Gambit,
+  Bauer..Koenig].
+- POPUPS OBEN VERANKERT (Besitzervorschlag, richtig): zentriert wuchsen
+  sie in BEIDE Richtungen und schoben ihren Kopf unter die Leiste. Jetzt
+  beginnt jedes Popup auf DERSELBEN Hoehe und scrollt in sich. Gemessen am
+  groessten (Turm): schmal 14 px, breit 118 px (Leiste endet ~100).
+- Zwei Pruefungen mitgezogen: eine erwartete den Helden bedingungslos; die
+  andere spielte den Bergfried (Station 44) mit einem Profil OHNE einen
+  einzigen Sieg - eine Lage, die es im Spiel nicht gibt. Mit dem Weg, den
+  der Ort voraussetzt, steht die Belagerung wieder bei 24 statt 14
+  Halbzuegen.
+
 ## 0.80.0
 
 DAS SPIEL BEKOMMT SEINE MUSIK, DER HELD SEIN WAPPEN, DER FERNANGRIFF SEIN

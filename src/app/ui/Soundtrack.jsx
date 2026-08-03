@@ -24,7 +24,17 @@ import spurMeister from "./assets/audio/musik-meister.mp3";
 const SPUREN = { menue: spurMenue, karte: spurKarte, kampf: spurKampf,
   kampfSpannung: spurSpannung, meister: spurMeister };
 const LAUT = 0.34;          // Zielpegel: unter dem Spiel, nie darueber
-const BLENDE_MS = 1800;     // Kreuzblende zwischen zwei Bereichen
+/* v0.81 (Besitzer): "viel sanfter" - die Kreuzblende dauert jetzt SECHS
+   Sekunden statt 1,8, und sie laeuft NACHEINANDER statt gleichzeitig: erst
+   sinkt das alte Stueck ueber 3,4 s ins Nichts, dann steigt das neue ueber
+   4,6 s herauf (mit 2,2 s Ueberlappung). So gibt es keinen Moment, in dem
+   zwei Melodien gleich laut gegeneinander stehen - genau das erzeugt sonst
+   den harten Eindruck. Die Blende folgt zudem einer weichen Kurve statt
+   einer Geraden: leise Passagen brauchen laenger, damit das Ohr den Wechsel
+   nicht als Sprung liest. */
+const BLENDE_AUS_MS = 3400; // das alte Stueck sinkt
+const BLENDE_EIN_MS = 4600; // das neue steigt
+const VERZUG_MS = 1200;     // ... und beginnt erst, wenn das alte schon leiser ist
 const SCHRITT_MS = 50;
 
 export function Soundtrack({ an = true }) {
@@ -55,13 +65,16 @@ export function Soundtrack({ an = true }) {
       k++;
       const s = spieler.current[i];
       if (!s) { clearInterval(timer.current[i]); return; }
-      s.volume = Math.max(0, Math.min(1, von + (ziel - von) * (k / schritte)));
+      // weiche Kurve (kosinus) statt Gerade - das Ohr hoert Lautheit nicht linear
+      const t = Math.min(1, k / schritte);
+      const w = 0.5 - 0.5 * Math.cos(Math.PI * t);
+      s.volume = Math.max(0, Math.min(1, von + (ziel - von) * w));
       if (k >= schritte) { clearInterval(timer.current[i]); timer.current[i] = null; if (ziel === 0) s.pause(); }
     }, SCHRITT_MS);
   };
 
   // Der Kern: auf den gewuenschten Bereich WECHSELN - weich, nie doppelt.
-  const wechsle = (name, blende = BLENDE_MS) => {
+  const wechsle = (name, blende = 0) => {
     const url = SPUREN[name] || SPUREN.menue;
     const alt = spieler.current[aktiv.current];
     if (!alt) return;
@@ -78,12 +91,20 @@ export function Soundtrack({ an = true }) {
     neu.src = url;
     aktiv.current = naechster;
     if (!frei.current || !anRef.current || document.hidden) return;   // startet spaeter, mit dem Freibrief
-    neu.play().then(() => { fahre(naechster, LAUT, blende); fahre(1 - naechster, 0, blende); }).catch(() => {});
+    // erst das alte sinken lassen, das neue kommt verzoegert und langsamer nach
+    fahre(1 - naechster, 0, blende ? Math.round(blende * 0.57) : BLENDE_AUS_MS);
+    neu.volume = 0;
+    neu.play().then(() => {
+      setTimeout(() => {
+        if (aktiv.current === naechster && anRef.current && !document.hidden)
+          fahre(naechster, LAUT, blende ? Math.round(blende * 0.77) : BLENDE_EIN_MS);
+      }, blende ? Math.round(blende * 0.2) : VERZUG_MS);
+    }).catch(() => {});
   };
 
   useEffect(() => {
     // Erstbestueckung + Abo auf die Regie
-    wechsle(musikAktuell(), 900);
+    wechsle(musikAktuell(), 1500);
     const ab = musikAbo((b) => wechsle(b));
 
     const starte = () => {

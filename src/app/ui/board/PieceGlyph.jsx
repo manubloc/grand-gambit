@@ -347,28 +347,6 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : " brightness(1.16) saturate(0.98)"),
               userSelect: "none", pointerEvents: "none" }} />
           : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} bossId={piece.bossId} hero={showHero} />}
-        {/* ── v0.80 (Besitzer): DER GAMBIT TRAEGT SEIN WAPPEN SICHTBAR ──────
-            Die Stufe-1-Schnitzerei ist mit Absicht ein Bauer unter Bauern
-            (geboren, geopfert zu werden) - aber der FELDHERR muss fuer den
-            eigenen Blick auffindbar sein: faellt er, ist die Schlacht
-            verloren. Darum sitzt an seiner Schulter ein kleiner Wappenschild
-            in den Hausfarben (Gold auf Nachtblau, wie jedes Wappen des
-            Spiels). Er folgt showHero und verschwindet also mit der
-            MASKERADE aus dem Blick des Gegners - der eigene sieht ihn immer.
-            Innerhalb der Bildkiste montiert, damit er jede Auswahl-Skalierung
-            und jede Gleit-Animation mitmacht. */}
-        {showHero && !big && painting && (
-          <span aria-hidden style={{ position: "absolute", top: "0.02em", right: "-0.055em", zIndex: 2,
-            width: "0.3em", height: "0.36em", pointerEvents: "none",
-            filter: "drop-shadow(0 0.02em 0.03em rgba(0,0,0,.7))" }}>
-            <svg viewBox="0 0 20 24" width="100%" height="100%">
-              <path d="M10 1 L18.3 4 V12 C18.3 17.6 14.6 21.4 10 23.2 C5.4 21.4 1.7 17.6 1.7 12 V4 Z"
-                fill={white ? "#0c111e" : "#1a1030"} stroke={white ? "#E9CF8A" : "#b9a8f0"} strokeWidth="1.7" strokeLinejoin="round" />
-              <path d="M10 5.6 L11.5 9.2 L15.3 9.5 L12.4 11.9 L13.3 15.6 L10 13.5 L6.7 15.6 L7.6 11.9 L4.7 9.5 L8.5 9.2 Z"
-                fill={white ? "#E9CF8A" : "#c4b5fd"} />
-            </svg>
-          </span>
-        )}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
