@@ -13,6 +13,13 @@ import { DurableObject } from "cloudflare:workers";
 import { HallCore } from "./logic.mjs";
 import { generateVapid, deliverPushes, pushText } from "./webpush.mjs";
 
+// kurzer, nicht rueckrechenbarer Fingerabdruck einer IP (FNV-1a, 8 Zeichen)
+function kurzHash(v) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < v.length; i++) { h ^= v.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, "0");
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -21,7 +28,7 @@ export default {
       return env.HALL.get(id).fetch(request);
     }
     // health + the error-report endpoints all live in the one Hall
-    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design") {
+    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design" || url.pathname === "/spielerbuch") {
       const id = env.HALL.idFromName("hall");
       return env.HALL.get(id).fetch(request);
     }
@@ -217,12 +224,54 @@ export class Hall extends DurableObject {
       }));
       return new Response(JSON.stringify({ rows }), { headers: { "content-type": "application/json", ...cors } });
     }
+    // ── DAS SPIELERBUCH (Besitzer, v0.73) ────────────────────────────────
+    // Wer spielt, wie weit ist er, woher kommt er - und ein paar Zahlen ueber
+    // das Spiel im Ganzen. Nur mit Admin-Wort.
+    if (url.pathname === "/spielerbuch" && request.method === "GET") {
+      const token = url.searchParams.get("token") || "";
+      const admin = this.core.adminToken;
+      if (!admin || token !== admin) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json", ...cors } });
+      const jetzt = Date.now();
+      const alle = Object.values(this.core.store.dumpPlayers());
+      const spieler = alle.map((p) => {
+        const truhe = this.core.store.vaultList ? (this.core.store.vaultList(p.id) || []) : [];
+        const best = truhe[0] || null;
+        return {
+          id: p.id, name: p.name || "—", punkte: p.score || 0, wertung: p.rating ?? null,
+          sprache: p.lang || "de", privat: p.privacy || "public",
+          zuletzt: p.seen || null, online: this.core.isOnline ? this.core.isOnline(p.id) : false,
+          kapitel: best?.league ?? null, gold: best?.gold ?? null, staende: truhe.length,
+          freunde: (p.friends || []).length,
+          siege: p.stats?.wins ?? null, partien: p.stats?.games ?? null,
+          land: p.land || null, region: p.region || null, stadt: p.stadt || null, geraet: p.ipHash || null,
+        };
+      }).sort((a, b) => (b.zuletzt || 0) - (a.zuletzt || 0));
+      const tag = 864e5;
+      const laender = {};
+      for (const s2 of spieler) if (s2.land) laender[s2.land] = (laender[s2.land] || 0) + 1;
+      const zahlen = {
+        spieler: spieler.length,
+        online: spieler.filter((x) => x.online).length,
+        aktiv24h: spieler.filter((x) => x.zuletzt && jetzt - x.zuletzt < tag).length,
+        aktiv7t: spieler.filter((x) => x.zuletzt && jetzt - x.zuletzt < 7 * tag).length,
+        mitFortschritt: spieler.filter((x) => (x.kapitel || 0) > 1).length,
+        kapitelSchnitt: (() => { const v = spieler.map((x) => x.kapitel).filter(Boolean); return v.length ? +(v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) : null; })(),
+        partienGesamt: spieler.reduce((a, x) => a + (x.partien || 0), 0),
+        laender,
+      };
+      return new Response(JSON.stringify({ zahlen, spieler }), { headers: { "content-type": "application/json", ...cors } });
+    }
     if (request.headers.get("Upgrade") !== "websocket") return new Response("expected websocket", { status: 426 });
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     // hibernatable accept: the Hall sleeps between moves, connections stay up
     this.ctx.acceptWebSocket(server);
-    server.serializeAttachment({ id: null, ip: request.headers.get("cf-connecting-ip") || "?" });
+    // v0.73 (Besitzer): DATENSPARSAME HERKUNFT fuers Spielerbuch - Land und
+    // Region kommen von Cloudflare, die IP wird NUR GEHASHT gemerkt (kurzer
+    // Fingerabdruck zum Zaehlen von Geraeten, nicht rueckrechenbar).
+    const cf = request.cf || {};
+    server.serializeAttachment({ id: null, ip: request.headers.get("cf-connecting-ip") || "?",
+      herkunft: { land: cf.country || null, region: cf.region || null, stadt: cf.city || null, knoten: cf.colo || null } });
     return new Response(null, { status: 101, webSocket: client });
   }
 
@@ -233,6 +282,7 @@ export class Hall extends DurableObject {
     // pushes) are delivered by id, so the socket must already carry it.
     const preSeat = msg.t === "hello" && msg.id && att.id !== msg.id;
     if (preSeat) ws.serializeAttachment({ ...att, id: msg.id });
+    if (msg && msg.t === "hello") msg.__herkunft = { ...(att.herkunft || {}), ipHash: kurzHash(att.ip || "") };
     try {
       const id = this.core.handle(att.id, msg, att.ip || "?");
       if (id && id !== att.id) ws.serializeAttachment({ ...att, id });

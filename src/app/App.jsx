@@ -29,6 +29,7 @@ import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { WerkstattScreen } from "./ui/WerkstattScreen.jsx";
+import { SpielerbuchScreen } from "./ui/SpielerbuchScreen.jsx";
 import { AdminPortal } from "./ui/AdminPortal.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
 import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
@@ -306,6 +307,8 @@ export default function App() {
   // DIE FIGURENWERKSTATT (Besitzer, v0.54): nur ueber ?werkstatt erreichbar.
   if (werkstatt) return <WerkstattScreen />;
   // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
+  // DAS SPIELERBUCH (Besitzer, v0.73): Liste, Fortschritt, Herkunft.
+  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch")) return <SpielerbuchScreen />;
   if (adminPortal) return <AdminPortal />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;

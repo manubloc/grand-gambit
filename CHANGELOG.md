@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 0.73.0
+
+DAS SPIELERBUCH - WER SPIELT, WIE WEIT, WOHER:
+
+- Neue Admin-Seite ?spielerbuch: LISTE ALLER ANGEMELDETEN SPIELER mit
+  Fortschritt (Kapitel, Gold, Partien, Siege, Punkte), wer gerade online
+  ist, wann er zuletzt da war, Suche ueber Name/Kennung/Land/Stadt.
+- ZAHLEN ueber das Spiel im Ganzen: Spielerzahl, gerade online, aktiv in
+  24 h und 7 Tagen, wie viele Fortschritt haben, Kapitel im Schnitt,
+  Partien gesamt - dazu eine Laenderverteilung als Chips.
+- HERKUNFT DATENSPARSAM: Land, Region und Stadt liefert Cloudflares
+  Kantennetz beim Verbindungsaufbau; die IP wird NIE im Klartext
+  gespeichert, sondern nur als kurzer, nicht rueckrechenbarer
+  Fingerabdruck (Geraete zaehlen statt Personen verfolgen). Ein
+  Merkzettel auf der Seite erinnert an die Datenschutzerklaerung.
+- Halle: neuer Endpunkt /spielerbuch (nur mit Admin-Wort), Herkunft wird
+  beim hello am Spieler vermerkt.
+- ADMIN-PORTAL: zwei neue Tueren - Das Spielerbuch und Die Landingpage
+  (oeffnet grandgambit.win in neuem Tab).
+- WICHTIG: der Endpunkt lebt im Worker - das Buch bleibt leer, bis
+  Manuel `cd worker && npx wrangler deploy` gefahren hat.
+
 ## 0.72.3
 
 DER GROSSE DRACHE STEHT ENDLICH RICHTIG IM BLATT:

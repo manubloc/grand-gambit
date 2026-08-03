@@ -10,6 +10,10 @@ const SEITEN = [
     was: "Alle 57 Figurenpaare: Regler (v5-Rezept), Pinsel mit Pipette, Radierer, Zoom — je Figur speichern, als Zip exportieren oder direkt zu GitHub laden." },
   { ziel: "?galerie", name: "Die Musterkammer",
     was: "Die Designsystem-Galerie: Farben, Knöpfe, Karten, Kugeln und Bausteine des Spiels in einer Schau." },
+  { ziel: "?spielerbuch", name: "Das Spielerbuch",
+    was: "Alle angemeldeten Spieler mit Fortschritt (Kapitel, Gold, Partien, Siege), wer gerade online ist, grobe Herkunft und Zahlen über das Spiel im Ganzen. Braucht das Admin-Wort." },
+  { ziel: "https://grandgambit.win/", name: "Die Landingpage",
+    was: "Die öffentliche Seite, so wie Besucher sie sehen — in neuem Tab." },
   { ziel: "/", name: "Zurück ins Spiel",
     was: "Das Hauptmenü — der normale Weg für alle." },
 ];
@@ -20,7 +24,7 @@ export function AdminPortal() {
       <div className="gg-serif" style={{ fontSize: 22, color: T.goldBright, letterSpacing: ".05em" }}>Admin-Portal</div>
       <div style={{ fontSize: 12, color: T.dim, marginBottom: 14 }}>Alle Werkbänke des Spiels hinter einer Tür. Diese Seite ist nicht verlinkt — wer sie kennt, gehört hierher.</div>
       {SEITEN.map((s) => (
-        <a key={s.ziel} href={s.ziel} style={{ display: "block", textDecoration: "none", color: "inherit",
+        <a key={s.ziel} href={s.ziel} target={s.ziel.startsWith("http") ? "_blank" : undefined} rel={s.ziel.startsWith("http") ? "noreferrer" : undefined} style={{ display: "block", textDecoration: "none", color: "inherit",
           border: `1px solid ${T.line}`, borderRadius: 14, background: T.panel, padding: "13px 14px", marginBottom: 10 }}>
           <div className="gg-serif" style={{ fontSize: 16, color: T.goldBright, letterSpacing: ".04em", marginBottom: 3 }}>{s.name} ›</div>
           <div style={{ fontSize: 12, color: T.dim, lineHeight: 1.5 }}>{s.was}</div>

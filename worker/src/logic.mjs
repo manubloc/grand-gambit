@@ -315,7 +315,13 @@ export class HallCore {
         name: String(name).slice(0, 20), score: score | 0,
         privacy: privacy === "friends" ? "friends" : "public",
         lang: msg.lang === "en" ? "en" : (ex?.lang || "de"),
-        seen: this.now(), stats: cleanStats(msg.stats) || ex?.stats || null });
+        seen: this.now(), stats: cleanStats(msg.stats) || ex?.stats || null,
+        // v0.73: grobe Herkunft fuers Spielerbuch (Land/Region/Stadt von
+        // Cloudflare, IP nur als kurzer Fingerabdruck - nie im Klartext).
+        land: msg.__herkunft?.land || ex?.land || null,
+        region: msg.__herkunft?.region || ex?.region || null,
+        stadt: msg.__herkunft?.stadt || ex?.stadt || null,
+        ipHash: msg.__herkunft?.ipHash || ex?.ipHash || null });
       me = id;
       this.connect(me);
       const p = this.player(me);
