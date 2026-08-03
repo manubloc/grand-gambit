@@ -158,6 +158,37 @@ export function applyMove(state, move, opts) {
       target.hp -= dmg;
       if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes
       if (has("lifesteal")) piece.hp = Math.min(piece.maxHp, piece.hp + Math.ceil(dmg / 2));
+      /* ── SCHOCKWELLE (v0.79, blast): EINMAL pro Partie trifft der erste
+         Nahkampfschlag auch alle GEGNER rings um das Ziel - mit HALBEM
+         Schaden (Besitzerregel: eine Flaeche schlaegt nie so hart wie die
+         Klinge selbst). Drachenfluegel leiten auf den Drachen um; jeder
+         Getroffene zaehlt nur einmal. Nur Nahkampf: ein Schuss aus der
+         Ferne traegt keine Welle. ─────────────────────────────────────── */
+      const welle = [];
+      if (has("blast") && !piece.used.blast && !afar) {
+        piece.used.blast = true;
+        const wDmg = Math.max(1, Math.ceil(dmg / 2));
+        const rund = [ti - W - 1, ti - W, ti - W + 1, ti - 1, ti + 1, ti + W - 1, ti + W, ti + W + 1];
+        const getroffen = new Set();
+        for (const n of rund) {
+          if (n < 0 || n >= W * H2) continue;
+          if (Math.abs((n % W) - tf) > 1) continue;          // kein Umlauf ueber den Rand
+          let oc = b[n];
+          if (!oc || oc.color === piece.color) continue;
+          let ocAnker = -1;
+          if (oc.kind === "D+") { ocAnker = oc.ref; oc = b[oc.ref]; }
+          else if (oc.big && oc.kind === "D") ocAnker = n;
+          if (!oc || oc === target || getroffen.has(oc)) continue;
+          getroffen.add(oc);
+          oc.hp -= wDmg;
+          welle.push({ at: n, kind: oc.kind, dmg: wDmg, tot: oc.hp <= 0 });
+          if (oc.hp <= 0) {
+            ns.captured[piece.color].push(oc.kind);
+            if (ocAnker >= 0) clearDragon(ocAnker); else b[n] = null;
+          }
+        }
+        if (welle.length) damaged = true;
+      }
       if (target.hp <= 0) {                       // kill
         lethal = true;
         ns.captured[piece.color].push(target.kind);
@@ -171,6 +202,7 @@ export function applyMove(state, move, opts) {
       } else {
         damaged = true;                            // bump / ranged hit: attacker stays, target wounded
       }
+      if (welle.length) ns.welle = welle;          // fuer Klang und Anzeige
     } else {                                       // quiet move
       b[move.to] = piece; b[move.from] = null; piece.hasMoved = true;
       if (move.consumes) piece.used[move.consumes] = true; // one spell per game: the book closes

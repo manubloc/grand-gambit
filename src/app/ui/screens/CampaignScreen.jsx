@@ -1,5 +1,6 @@
 // Campaign — a HORIZONTAL illustrated journey, now a full-screen WINDOW onto
 import { familyOf } from "../../../core/index.js";
+import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen leise */
 // the world: the map IS the screen (100dvh minus the app header), every piece
 // of UI floats above it. The Old Watch stands on the left, the crimson LIGA
 // keep on the far right; the dotted trail winds through four chapters of
@@ -548,7 +549,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   filter: st === "locked" ? "grayscale(.6)" : "none" }}>
                   <SiteGlyph type={siteTypeFor(n)} width={n.id === "n22" ? 54 : 44} />
                 </div>}
-                <button onClick={() => { setSel(n.id); setPanelOpen(true); if (!viewing) walkTo(n.id); }}
+                <button onClick={() => { try { klang("karteStation"); } catch {} setSel(n.id); setPanelOpen(true); if (!viewing) walkTo(n.id); }}
                   style={{ width: HIT, height: HIT, background: "none", border: "none", padding: 0, cursor: "pointer",
                     position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center",
                     opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1 }}>
@@ -649,7 +650,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               tn = CAMPAIGN.find((n) => nodeInLeague(n, viewLeague)) || null;
             }
             if (!tn) return null;
-            return <div onClick={(e) => { e.stopPropagation(); setSel(token.at); setPanelOpen(true); }}
+            return <div onClick={(e) => { e.stopPropagation(); try { klang("karteStation"); } catch {} setSel(token.at); setPanelOpen(true); }}
               title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn),
                 width: Math.round(96 * tiefeWanderer(ny(tn), HM)), height: Math.round(98 * tiefeWanderer(ny(tn), HM)), zIndex: 5,
               pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,

@@ -52,7 +52,7 @@ export const ABILITIES = {
   bulwark:              { id: "bulwark",              icon: "⛨", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Bollwerk",     nameEn: "Bulwark",       descDe: "Erleidet 1 Schaden weniger pro Treffer.",             descEn: "Takes 1 less damage per hit." },
 
   // ── upcoming (shown in the tree, mechanic rolling out) ──
-  blast:                { id: "blast",                icon: "✺", tag: "aoe", hpOnly: true, once: true,  live: false, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "Ein Angriff trifft auch alle angrenzenden Gegner.",   descEn: "An attack also hits all adjacent enemies." },
+  blast:                { id: "blast",                icon: "✺", tag: "aoe", hpOnly: true, once: true,  live: true, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "1× pro Partie: Der erste Nahkampfschlag trifft auch alle Gegner rings um das Ziel — mit halbem Schaden.",   descEn: "Once per battle: your first melee strike also hits every enemy around the target — at half damage." },
   chain:                { id: "chain",                icon: "↯", tag: "aoe", hpOnly: true, once: true,  live: false, nameDe: "Kettenblitz",  nameEn: "Chain",          descDe: "Schaden springt auf einen weiteren nahen Gegner über.", descEn: "Damage arcs to another nearby enemy." },
   pull:                 { id: "pull",                 icon: "⇲", tag: "control", hpOnly: true, once: true, live: false, nameDe: "Enterhaken",  nameEn: "Hook",           descDe: "Zieht einen Gegner in Sichtlinie zu dir heran.",      descEn: "Pulls an enemy in line toward you." },
 };

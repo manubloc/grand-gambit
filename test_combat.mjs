@@ -284,5 +284,75 @@ import { bossSpec, bossById } from "./src/content/index.js";
   ok("der Schlag zaehlt als Schlag", nach.captured.w.includes("R"));
 }
 
+// ── Fernangriff reicht 2-3 Felder (v0.79) ────────────────────────────────────
+{
+  const brett = new Array(64).fill(null);
+  const sch = W("R", { hp: 5, maxHp: 5, atk: 3 }); sch.abilities = ["ranged_volley"];
+  brett[idx(0, 0, 8)] = sch;
+  brett[idx(0, 2, 8)] = B("P", { hp: 2, maxHp: 2, atk: 1 });   // Distanz 2
+  brett[idx(1, 0, 8)] = B("N", { hp: 3, maxHp: 3, atk: 2 });   // Distanz 1
+  brett[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  brett[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(brett);
+  const schuesse = legalMoves(st).filter((m) => m.special === "shot" && m.from === idx(0, 0, 8));
+  ok("Distanz 2 ist schiessbar", schuesse.some((m) => m.to === idx(0, 2, 8)));
+  ok("Distanz 1 ist NICHT schiessbar (dafuer gibt es die Klinge)", !schuesse.some((m) => m.to === idx(1, 0, 8)));
+  const weit = new Array(64).fill(null);
+  const sch2 = W("R", { hp: 5, maxHp: 5, atk: 3 }); sch2.abilities = ["ranged_volley"];
+  weit[idx(0, 0, 8)] = sch2;
+  weit[idx(0, 4, 8)] = B("P", { hp: 2, maxHp: 2, atk: 1 });    // Distanz 4
+  weit[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  weit[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  ok("Distanz 4 liegt ausser Reichweite",
+    !legalMoves(hpState(weit)).some((m) => m.special === "shot" && m.to === idx(0, 4, 8)));
+}
+
+// ── Schockwelle: der erste Nahkampfschlag trifft die Runde - halb (v0.79) ────
+{
+  const brett = new Array(64).fill(null);
+  const q = W("Q", { hp: 7, maxHp: 7, atk: 4 }); q.abilities = ["blast"];
+  brett[idx(1, 0, 8)] = q;
+  brett[idx(1, 1, 8)] = B("R", { hp: 5, maxHp: 5, atk: 3 });   // das Ziel
+  brett[idx(0, 1, 8)] = B("P", { hp: 2, maxHp: 2, atk: 1 });   // neben dem Ziel -> Welle toetet (2 Schaden)
+  brett[idx(2, 2, 8)] = B("N", { hp: 3, maxHp: 3, atk: 2 });   // diagonal am Ziel -> Welle verwundet
+  brett[idx(0, 0, 8)] = W("P", { hp: 2, maxHp: 2, atk: 1 });   // EIGENER Mann daneben -> unberuehrt
+  brett[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  brett[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(brett);
+  const schlag = legalMoves(st).find((m) => m.from === idx(1, 0, 8) && m.to === idx(1, 1, 8));
+  const r = reduce(st, moveCommand(schlag));
+  const nb = r.state.board;
+  ok("das Ziel traegt den vollen Schlag", nb[idx(1, 1, 8)].hp === 1);
+  ok("die Welle trifft den Nachbarn mit halber Kraft toedlich", nb[idx(0, 1, 8)] === null);
+  ok("die Welle verwundet auch diagonal", nb[idx(2, 2, 8)].hp === 1);
+  ok("der eigene Mann bleibt heil", nb[idx(0, 0, 8)] && nb[idx(0, 0, 8)].hp === 2);
+  ok("der Wellentote steht im Beutebuch", r.state.captured.w.includes("P"));
+  ok("die Welle ist verbraucht", nb[idx(1, 0, 8)].used.blast === true);
+  ok("der Zug meldet die Welle", Array.isArray(r.state.welle) && r.state.welle.length === 2);
+  // zweiter Schlag: keine Welle mehr
+  const zwei = r.state;
+  const antwort = legalMoves(zwei).find((m) => !zwei.board[m.to]);
+  const s2 = applyMove(zwei, antwort);
+  const wieder = legalMoves(s2).find((m) => m.from === idx(1, 0, 8) && m.to === idx(1, 1, 8));
+  const r2 = reduce(s2, moveCommand(wieder));
+  ok("die zweite Welle bleibt aus", !r2.state.welle && r2.state.board[idx(2, 2, 8)].hp === 1);
+}
+
+// ── Schockwelle traegt sich NICHT auf den Fernschuss ─────────────────────────
+{
+  const brett = new Array(64).fill(null);
+  const b1 = W("B", { hp: 3, maxHp: 3, atk: 2 }); b1.abilities = ["blast", "ranged_volley"];
+  brett[idx(0, 0, 8)] = b1;
+  brett[idx(0, 2, 8)] = B("R", { hp: 5, maxHp: 5, atk: 3 });
+  brett[idx(1, 2, 8)] = B("P", { hp: 2, maxHp: 2, atk: 1 });
+  brett[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  brett[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(brett);
+  const schuss = legalMoves(st).find((m) => m.special === "shot" && m.to === idx(0, 2, 8));
+  const r = reduce(st, moveCommand(schuss));
+  ok("ein Schuss aus der Ferne traegt keine Welle",
+    !r.state.welle && r.state.board[idx(1, 2, 8)].hp === 2 && r.state.board[idx(0, 0, 8)].used.blast !== true);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -172,6 +172,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         {[["?admin", "Admin-Portal", "Alle Werkbänke hinter einer Tür"],
           ["?spielerbuch", "Das Spielerbuch", "Spieler, Fortschritt, Herkunft, Zahlen"],
           ["?werkstatt", "Die Figurenwerkstatt", "Figurenpaare malen und ausspielen"],
+          ["?klangwerkstatt", "Die Klangwerkstatt", "Alle Klänge abhören, wie sie im Spiel klingen"],
           ["?galerie", "Die Musterkammer", "Farben, Knöpfe, Bausteine"],
           ["/landing.html", "Die Landingpage", "Die öffentliche Seite"]].map(([ziel, name, was]) => (
           <a key={ziel} href={ziel} target={ziel.startsWith("/landing") ? "_blank" : undefined}

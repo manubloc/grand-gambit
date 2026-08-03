@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { klangEinstellen, klangVorwaermen } from "./ui/klang.js";
+import { klang, klangEinstellen, klangVorwaermen } from "./ui/klang.js";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
@@ -30,6 +30,7 @@ import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { WerkstattScreen } from "./ui/WerkstattScreen.jsx";
+import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
 import { SpielerbuchScreen } from "./ui/SpielerbuchScreen.jsx";
 import { AdminPortal } from "./ui/AdminPortal.jsx";
 import karteKampagne from "./ui/assets/karten/karte-kampagne.webp";
@@ -151,6 +152,7 @@ const TABS = [
 export default function App() {
   const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
   const werkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("werkstatt");
+  const klangwerkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("klangwerkstatt");
   const adminPortal = typeof location !== "undefined" && new URLSearchParams(location.search).has("admin");
   const [profile, dispatch] = useReducer(reducer, null);
   // which livery the house wears — asked from the Hall once per boot
@@ -307,6 +309,9 @@ export default function App() {
   if (galerie) return <GalerieScreen />;
   // DIE FIGURENWERKSTATT (Besitzer, v0.54): nur ueber ?werkstatt erreichbar.
   if (werkstatt) return <WerkstattScreen />;
+  // DIE KLANGWERKSTATT (Besitzer, v0.79): alle Klaenge zum Abhoeren, ueber die
+  // echte klang()-Schicht - nur ueber ?klangwerkstatt erreichbar.
+  if (klangwerkstatt) return <KlangWerkstattScreen />;
   // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
   // DAS SPIELERBUCH (Besitzer, v0.73): Liste, Fortschritt, Herkunft.
   if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch")) return <SpielerbuchScreen />;
@@ -388,6 +393,7 @@ export default function App() {
     return (
       <button key={tb.id} onClick={() => {
         if (inMatch && tb.id !== tab) { setLeaveTo(tb.id); return; }
+        if (tb.id !== tab) { try { klang("menue"); } catch {} }   /* v0.79: der leiseste Klang im Haus */
         setTab(tb.id); setView("hub");
       }} style={{ position: "relative",
         display: "flex", alignItems: "center", gap: wide ? 12 : 0, flexDirection: wide ? "row" : "column",
@@ -459,6 +465,7 @@ export default function App() {
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
+              <HeraldKlang />
               <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
               <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
               <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
@@ -538,6 +545,7 @@ export default function App() {
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
+              <HeraldKlang />
               <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em", marginBottom: 4 }}>{eintrag.titel}</div>
               <div style={{ fontSize: 12.5, fontWeight: 800, color: "#cbbcf5", marginBottom: 8 }}>{eintrag.kurz}</div>
               <div style={{ fontSize: 12.5, lineHeight: 1.62, color: T.text, marginBottom: 14 }}>{eintrag.text}</div>
@@ -598,6 +606,15 @@ export default function App() {
       )}
     </div>
   );
+}
+
+/* v0.79: der HEROLD KLINGT, wenn sein Blatt erscheint - ein einziger ferner
+   Hornruf beim Aufgehen, nie beim Neuzeichnen. Als Begleiter im Blatt
+   montiert, damit BEIDE Rueckgabezweige (breit/mobil) denselben Klang
+   bekommen, ohne die Logik zu doppeln. */
+function HeraldKlang() {
+  useEffect(() => { try { klang("herold"); } catch {} }, []);
+  return null;
 }
 
 // ── hub emblems: heraldic shields, fully inside the card, bold shapes ───────

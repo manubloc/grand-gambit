@@ -110,14 +110,15 @@ const hpState = (board) => ({ board, w: 8, h: 8, holes: new Set(), rules: "hp", 
 {
   const board = new Array(64).fill(null);
   board[idx(0, 0, 8)] = Wp("A", { hp: 5, maxHp: 5, atk: 4, abilities: ["ranged_volley"] });
-  board[idx(0, 4, 8)] = Bp("R", { hp: 5, maxHp: 5, atk: 3 });
+  /* v0.79: die Reichweite endet bei DREI Feldern - das Ziel rueckt von 4 auf 3. */
+  board[idx(0, 3, 8)] = Bp("R", { hp: 5, maxHp: 5, atk: 3 });
   board[idx(7, 7, 8)] = Bp("K", { hp: 10, maxHp: 10, atk: 3 });
   board[idx(7, 0, 8)] = Wp("K", { hp: 10, maxHp: 10, atk: 3 });
   const st = hpState(board);
-  const shot = legalMovesFrom(st, idx(0, 0, 8)).find((m) => m.special === "shot" && m.to === idx(0, 4, 8));
+  const shot = legalMovesFrom(st, idx(0, 0, 8)).find((m) => m.special === "shot" && m.to === idx(0, 3, 8));
   ok("the volley finds its line", !!shot);
   const after = applyMove(st, shot);
-  ok("a shot lands at half force and the shooter stays", after.board[idx(0, 4, 8)].hp === 3 && after.board[idx(0, 0, 8)]?.kind === "A");
+  ok("a shot lands at half force and the shooter stays", after.board[idx(0, 3, 8)].hp === 3 && after.board[idx(0, 0, 8)]?.kind === "A");
 }
 // the crowned head hardens faster: +2 HP per level (queen only +1)
 {

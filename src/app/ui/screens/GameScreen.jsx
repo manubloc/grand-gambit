@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE } from "../../../core/index.js";
-import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
+import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS, KIND_TO_CHAR } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
 import { T } from "../theme.js";
@@ -11,7 +11,7 @@ import { stateHash } from "../../../platform/net.web.js";
 import { Button, Panel, Segmented, Chip, FieldLabel, MapChip } from "../primitives.jsx";
 import { LeaveMatchAsk } from "../../App.jsx";
 import { FELD_KAPITEL, FELD_CLASSIC, FELD_FINALE } from "../board/feldArt.js";
-import { BoardView } from "../board/BoardView.jsx";
+import { BoardView, zugDauerMs } from "../board/BoardView.jsx";
 import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { KampfLeiste } from "../KampfLeiste.jsx";
 import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
@@ -222,7 +222,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     setPotionArm(false);
     setState((s) => {
       const r = reduce(s, potionCommand(WHITE, i));
-      if (r.state !== s) potionsUsedRef.current++;
+      if (r.state !== s) { potionsUsedRef.current++; try { klang("trank"); } catch {} }
       return r.state;
     });
   }
@@ -233,6 +233,15 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // the life-battle briefing rides just behind the story card, every match,
   // until the player waves it off for good
   const [dailySent, setDailySent] = useState(false);
+  /* v0.79: der AUFTRITT. Steht ein Monster oder der Kapitelmeister auf der
+     anderen Seite, klingt sein Erscheinen einmal beim Einstieg - der Meister
+     mit Glocke und Chor, die Bestie mit Stein und Atem. */
+  useEffect(() => {
+    if (resume || !match?.boss?.bossId || match.boss.bossId.startsWith("pb_")) return;
+    const feierlich = match?.node?.final;
+    const t0 = setTimeout(() => { try { klang(feierlich ? "meister" : "bestie"); } catch {} }, 700);
+    return () => clearTimeout(t0);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [brief, setBrief] = useState(() => !resume && !profile.notices?.hpBrief);
   // THE SEERESS'S GAZE: with a seer actively fielded, the enemy array lies
   // open BEFORE the first horn — study it, or step back to rearrange.
@@ -264,6 +273,31 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const [thinking, setThinking] = useState(false);
   const finished = useRef(false);
   const warSchach = useRef(false);   /* v0.77: der Schach-Klang nur beim Wechsel, nicht bei jedem Neuzeichnen */
+  /* v0.79 (Besitzer): DIE MELDUNGSPLAKETTE. "Du bist am Zug" stand als nackte
+     Schrift verloren im Raum - jetzt gibt es EINEN festen Platz fuer alles,
+     was das Spiel zu sagen hat: wer dran ist, Schach, Stillstand, und fuer
+     ein paar Sekunden das letzte Ereignis ("Laeufer gefallen", "Treffer -
+     Turm -3"). Das Ereignis erscheint MIT dem Einschlag, nicht vorher -
+     dieselbe Dauerformel wie Animation und Klang. */
+  const [ereignis, setEreignis] = useState(null);
+  useEffect(() => {
+    const lm = state.lastMove;
+    if (!lm || finished.current) return;
+    const wer = (kind) => {
+      const ch = CHARACTERS_BY_ID[KIND_TO_CHAR[kind]];
+      return ch ? (en ? ch.nameEn : ch.nameDe) : (en ? "Piece" : "Figur");
+    };
+    let text = null;
+    if ((lm.capture || lm.lethal) && lm.hitKind) text = en ? `${wer(lm.hitKind)} falls` : `${wer(lm.hitKind)} gefallen`;
+    else if (lm.damaged && lm.hitKind) text = en ? `Hit — ${wer(lm.hitKind)} −${lm.dmg || 1}` : `Treffer — ${wer(lm.hitKind)} −${lm.dmg || 1}`;
+    else if (lm.special === "castle") text = en ? "Castled" : "Rochade";
+    else if (lm.promotion) text = en ? "Promoted!" : "Krönung!";
+    if (!text) return;
+    const dauer = zugDauerMs(lm, myColor, hotseat, state.w);
+    const t1 = setTimeout(() => setEreignis(text), dauer);
+    const t2 = setTimeout(() => setEreignis(null), dauer + 2600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [state.lastMove]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── the stage clock (v0.4): some campaign stages from league 5 carry time
   // pressure — a total budget (bosses) or a per-move limit (hard stages).
@@ -329,8 +363,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (finished.current) return;
     finished.current = true;
     /* v0.77: der Abpfiff bekommt seinen Klang. Remis bleibt still - weder
-       Jubel noch Trauer waeren ehrlich. */
-    if (result === "win") klang("sieg");
+       Jubel noch Trauer waeren ehrlich. v0.79: Nach dem Sieg feiert die
+       Feier gestaffelt weiter - erst der Hornruf der WERBUNG (wenn ein Held
+       beitritt), oder das KAPITELENDE mit Glocke und Blatt. */
+    if (result === "win") {
+      klang("sieg");
+      const beitritt = campaign && match?.boss?.unlocks;
+      const kapitelZu = campaign && match?.node?.final;
+      if (beitritt) setTimeout(() => { try { klang("werbung"); } catch {} }, 2200);
+      else if (kapitelZu) setTimeout(() => { try { klang("kapitelEnde"); } catch {} }, 2300);
+    }
     else if (result === "loss") klang("niederlage");
     if (hotseat) {
       setBanner({ result, reason, hotseat: true,
@@ -409,9 +451,29 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       const next = reduce(s, cmd).state;
       // DER KLANG FOLGT DEM ERGEBNIS, nicht der Absicht: erst nach dem Zug
       // steht fest, ob nur gesetzt, getroffen oder gestuerzt wurde.
+      // v0.79 (Besitzer): DER TREFFER KLINGT BEIM EINSCHLAG, nicht beim
+      // Loslassen. Das Schleifen beginnt sofort (es IST der Weg), der Schlag
+      // oder Sturz wartet, bis die Gleit-Animation ankommt - dieselbe
+      // Dauerformel wie im Brett (zugDauerMs), damit nichts auseinanderlaeuft.
+      // Ein Pfeil fliegt sofort: der Schuetze bewegt sich ja nicht.
       try {
         const lm = next.lastMove || {};
-        klang(lm.lethal || (lm.capture && !lm.damaged) ? "fall" : lm.damaged ? "treffer" : "zug");
+        const schuss = lm.special === "shot";
+        const einschlag = lm.lethal || (lm.capture && !lm.damaged) ? "fall" : lm.damaged ? "treffer" : null;
+        if (schuss) klang("pfeil");
+        else if (lm.special === "castle") klang("rochade");
+        else if (lm.special === "dragonFly") klang("drachenflug");
+        else klang("zug");
+        if (einschlag && !schuss) {
+          const wartezeit = zugDauerMs(lm, myColor, hotseat, next.w);
+          setTimeout(() => { try { klang(einschlag); if (next.welle) klang("treffer"); } catch {} }, wartezeit);
+        } else if (einschlag) {
+          setTimeout(() => { try { klang(einschlag); } catch {} }, 160);   // der Pfeil braucht einen Wimpernschlag
+        }
+        // ein verbrauchtes Talent klingt nach seiner Seite
+        if (lm.consumed && lm.consumed !== "ranged_shot")
+          klang(lm.color === myColor ? "talentGold" : "talentRiss");
+        if (lm.promotion) klang("kroenung");
       } catch {}
       if (pvp) pvp.net.send({ t: "cmd", matchId: pvp.matchId, cmd, n: next.log.length, hash: stateHash(encodeState(next)) });
       if (daily) {
@@ -490,6 +552,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       if (n === s) return s;
       if (n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; }
       hourglassUsedRef.current++;
+      try { klang("zeitenwender"); } catch {}
       return n;
     });
   }
@@ -903,8 +966,24 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto",
         padding: `2px ${HUD_PAD}px calc(10px + env(safe-area-inset-bottom))` }}>
         {hotseat && <Chip color={state.turn === BLACK ? T.magentaInk : T.limeInk} bg={state.turn === BLACK ? T.magenta : T.lime}>{t(state.turn === WHITE ? "hs.white" : "hs.black")}</Chip>}
-        <div style={{ flex: 1, textAlign: "center", fontWeight: 800, fontSize: 13, minWidth: 0, overflow: "hidden",
-          textOverflow: "ellipsis", whiteSpace: "nowrap", color: st.check ? T.goldBright : T.dim }}>{statusText}</div>
+        {/* v0.79: DIE MELDUNGSPLAKETTE - ein fester, gefasster Ort fuer die
+            Stimme des Spiels. Punkt links: gold = du, violett = Gegner,
+            hellgold pulsierend = Schach. Ein frisches Ereignis verdraengt
+            den Zugstand fuer ein paar Sekunden. */}
+        <div style={{ flex: 1, minWidth: 0, display: "flex", justifyContent: "center" }}>
+          {(ereignis || statusText) && <div style={{ display: "inline-flex", alignItems: "center", gap: 7, maxWidth: "100%",
+            border: `1px solid ${st.check ? T.gold + "aa" : ereignis ? "rgba(240,206,122,.5)" : "rgba(167,139,250,.32)"}`,
+            background: "linear-gradient(180deg, rgba(26,18,44,.72), rgba(12,9,22,.8))",
+            borderRadius: 999, padding: "4px 12px",
+            boxShadow: st.check ? "0 0 12px rgba(240,206,122,.28)" : "inset 0 1px 0 rgba(255,240,200,.05)" }}>
+            <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, flex: "0 0 auto",
+              background: st.check || ereignis ? T.goldBright : myTurn || (hotseat && state.turn === WHITE) ? T.gold : "#8b7bd8",
+              boxShadow: st.check ? `0 0 8px ${T.goldBright}` : "none" }} />
+            <span className="gg-serif" style={{ fontWeight: 700, fontSize: 12.5, letterSpacing: ".04em", minWidth: 0,
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              color: st.check ? T.goldBright : ereignis ? "#f0e4bc" : "#c9c2ab" }}>{ereignis || statusText}</span>
+          </div>}
+        </div>
         <span data-gg-tray="b"><Tray kinds={state.captured.w} color="b" /></span>
         {hpMode && <ForceBadge hp={F.w.hp} atk={F.w.atk} neon={T.lime} t={t} />}
       </div>
@@ -939,7 +1018,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             </button>
           )}
           {!pvp && !hotseat && hpMode && !banner && ((state.shifts?.w || 0) > 0 || state.shiftArmed === WHITE) && (
-            <button onClick={() => { if (state.shiftArmed || !myTurn) return; setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
+            <button onClick={() => { if (state.shiftArmed || !myTurn) return; try { klang("zeitriss"); } catch {} setState((s) => reduce(s, shiftCommand(WHITE)).state); }}
               disabled={!myTurn || state.shiftArmed === WHITE} title={t("game.riftHint")}
               style={kasten(state.shiftArmed === WHITE, myTurn || state.shiftArmed === WHITE)}>
               <span style={{ fontSize: 21, lineHeight: 1, color: "#b3a4e0" }}>⧗</span>

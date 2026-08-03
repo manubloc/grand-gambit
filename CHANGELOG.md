@@ -1,5 +1,45 @@
 # Changelog - Grand Gambit
 
+## 0.79.0
+
+DER GANZE KLANGKATALOG SPIELT, DIE ENGINE LERNT WELLE UND KURZE BOGEN,
+DAS SPIEL BEKOMMT SEINE STIMME AN EINEM FESTEN ORT:
+
+- TIMING (Besitzerwunsch): Treffer und Sturz klingen BEIM EINSCHLAG, nicht
+  beim Loslassen. Die Dauerformel der Gleit-Animation ist als zugDauerMs
+  aus dem Brett ausgefuehrt; Klang und Ereignismeldung warten exakt so
+  lange. Das Schleifen beginnt sofort - es IST der Weg. Beide Seiten
+  nutzen dieselben Klaenge (der KI-Zug lief schon immer durch dieselbe
+  Stelle).
+- DUMPFER: Sturz 851->622 Hz, Treffer 485->358 Hz (Tiefpass, nachgemessen)
+  - Holz auf Holzplatte, kein Klingen.
+- ALLE 29 KATALOGKLAENGE im Repo und verdrahtet: Rochade, Kroenung,
+  PFEIL fuer den Fernangriff (2 Varianten: Sehne, Flug, hoelzerner
+  Einschlag), Talente (gold fuer den Hof, violett fuer den Riss),
+  Drachenflug, Trank, Zeitenwender, Zeitriss, BESTIE beim Monsterauftritt,
+  MEISTER beim Kapitelfinale, Werbung und Kapitelende gestaffelt nach dem
+  Siegesklang, Kartenstation, Herold beim Erstbesuchsblatt (in BEIDEN
+  App-Zweigen), Menue-Tipp am Dock - bewusst der leiseste Klang im Haus
+  (Pegel 0,28), nur beim Wechsel.
+- ENGINE: Der FERNANGRIFF reicht 2-3 Felder statt 2-4 - kurz, wertig,
+  ueber Koepfe hinweg, kein Ersatz fuer eine Laufbahn. Die SCHOCKWELLE
+  ist scharf: einmal pro Partie trifft der erste Nahkampfschlag alle
+  Gegner rings um das Ziel mit HALBEM Schaden; eigene Figuren bleiben
+  heil, Drachenfluegel leiten auf den Drachen um, kein Uebertrag auf
+  Schuesse. 16 neue Pruefungen.
+- DIE MELDUNGSPLAKETTE: "Du bist am Zug" stand als nackte Schrift
+  verloren im Raum - jetzt sitzt die Stimme des Spiels in EINER gefassten
+  Kapsel mit Statuspunkt (gold = du, violett = Gegner, hellgold =
+  Schach). Ein frisches Ereignis ("Bauer gefallen", "Treffer - Turm -3",
+  "Rochade", "Kroenung!") verdraengt den Zugstand fuer ein paar Sekunden
+  und erscheint MIT dem Einschlag. Sondenbeleg: Foto mit "Bauer gefallen".
+- DIE KLANGWERKSTATT (?klangwerkstatt, in der Verwaltung verlinkt): alle
+  Klaenge in fuenf Gruppen, abgespielt ueber die ECHTE klang()-Schicht
+  mit denselben Pegeln und der +-4%-Streuung; eigener Abhoerregler, der
+  das Profil nicht anfasst.
+- WERKZEUGPFLEGE: messe-knoepfe kannte noch Hofstaat und Schatzkammer
+  (heissen seit v0.72/74 Figuren und Lager) - nachgezogen, wieder gruen.
+
 ## 0.78.0
 
 DAS HAENDLERBILD LEICHTER, DER KLANGKATALOG RICHTIGGESTELLT:

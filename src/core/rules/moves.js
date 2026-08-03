@@ -262,7 +262,10 @@ export function pieceMoves(state, sqIndex) {
   // ── ranged attack: hit the first enemy in line of sight (you stay put) ──
   if (hasAbility(piece, "ranged_volley") || hasAbility(piece, "ranged_shot")) {
     const consume = hasAbility(piece, "ranged_volley") ? null : "ranged_shot";
-    const MAXR = 4;
+    /* v0.79 (Besitzer): Reichweite 2-3 Felder statt 2-4. Der Fernangriff soll
+       sich von einer weit ziehenden Figur unterscheiden - kurz, wertig,
+       ueber Koepfe hinweg, aber kein Ersatz fuer eine Laufbahn. */
+    const MAXR = 3;
     for (const [df, dr] of KING_STEPS) {
       let af = f + df, ar = r + dr, dist = 1;
       while (dist <= MAXR && onBoard(af, ar, D)) {

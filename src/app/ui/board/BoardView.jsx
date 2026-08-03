@@ -131,6 +131,20 @@ export function preloadBoardArt() {
 }
 if (typeof window !== "undefined") preloadBoardArt(); // warm the stone while the menus are still open
 
+/* v0.79: DIE EINE DAUERFORMEL. Der Klang eines Treffers gehoert in den Moment,
+   in dem die Figur ANKOMMT - also braucht der GameScreen dieselbe Rechnung wie
+   die Gleit-Animation hier. Eine Formel, zwei Nutzer, kein Auseinanderlaufen. */
+export function zugDauerMs(lastMove, pov, hotseat, w) {
+  if (!lastMove || lastMove.from == null || lastMove.to == null) return 0;
+  const W = w || 8;
+  const foe = !hotseat && lastMove.color !== pov;
+  const fF = lastMove.from % W, fR = (lastMove.from / W) | 0;
+  const tF = lastMove.to % W, tR = (lastMove.to / W) | 0;
+  const dF = Math.abs(tF - fF), dR = Math.abs(tR - fR);
+  const leaps = !lastMove.bounced && (lastMove.kind === "N" || !!(dF && dR && dF !== dR));
+  return Math.round((leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52)) * 1000);
+}
+
 export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
@@ -261,7 +275,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     // leaps read slower AND higher — a real jump takes its time in the air.
     // own leap a touch longer than before so the hop feels complete (the foe's
     // is already well-paced), plain glides quick.
-    const durS = leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52);
+    const durS = zugDauerMs(lastMove, pov, hotseat, W) / 1000;
     const animId = ++animSeq.current;
     const a = { from: lastMove.from, to: lastMove.to, piece: glider, phase: 0,
       bounced: !!lastMove.bounced, foe, leaps, dur: durS, id: animId };

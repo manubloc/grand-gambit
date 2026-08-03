@@ -143,11 +143,13 @@ const sammle = async (name) => { await page.waitForTimeout(800); const l = await
 
 console.log("Start-Body:", (await page.evaluate(() => document.body.innerText.slice(0, 140))).replace(/\n/g, " | "));
 await sammle("Start");
-for (const [knopf, name] of [["Profil", "Profil"], ["Hofstaat", "Hofstaat"], ["Schatzkammer", "Schatzkammer"], ["Spielen", "Spielen"]]) {
+/* v0.79: die Menues heissen inzwischen Figuren und Lager (v0.72/74) -
+   das Werkzeug lief seither ins Leere. */
+for (const [knopf, name] of [["Profil", "Profil"], ["Figuren", "Figuren"], ["Lager", "Lager"], ["Spielen", "Spielen"]]) {
   const ok = await klick(knopf);
   console.log("klick", knopf, ok ? "ok" : "NICHT GEFUNDEN");
   if (ok) await sammle(name);
-  if (name === "Hofstaat") {
+  if (name === "Figuren") {   /* der Hofstaat heisst seit v0.74.1 Figuren */
     await page.waitForFunction(() => /MEISTER|MASTERS/.test(document.body.innerText), { timeout: 9000 }).catch(() => {});
     await page.waitForTimeout(600);
     // DER MONSTER-KLICK: eine Bestien-Kachel im Verzeichnis muss ihr Popup
