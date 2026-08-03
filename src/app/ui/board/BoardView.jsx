@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useLayoutEffect, useRef } from "react";
+import { klang } from "../klang.js";
 // useLayoutEffect on the client (fires before paint → no flicker), plain
 // useEffect on the server (no SSR warning; the board never animates there).
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -335,7 +336,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     if (pick && onPick) { const pc = state.board[i]; if (pc && pc.color === pick) onPick(i); return; }
     if (sel != null && targets.has(i)) { onMove(targets.get(i)); setSel(null); return; }
     const piece = state.board[i];
-    if (piece && piece.color === state.turn) { setSel(i === sel ? null : i); setSpy(null); }
+    if (piece && piece.color === state.turn) { klang("wahl"); setSel(i === sel ? null : i); setSpy(null); }
     else if (piece) {
       if (onEnemyTap) onEnemyTap(i, spyAllowed(piece));      // the hall notices your curiosity (first-meet tales)
       if (spyAllowed(piece)) setSpy(i === spy ? null : i);   // known or seen-through: study its moves

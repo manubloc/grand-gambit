@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
+import { klangEinstellen, klangVorwaermen } from "./ui/klang.js";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
@@ -580,6 +581,7 @@ export default function App() {
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {/* die Melodie des Hauses - abschaltbar unter Profil */}
       <Soundtrack an={profile.sound !== false} />
+      <KlangRegie an={profile.sfx !== false} />
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {(!immersive || mapView) && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
@@ -958,4 +960,15 @@ function TeachPopup({ which, t, dispatch }) {
       </div>
     </div>
   );
+}
+
+// ── DIE KLANGREGIE ──────────────────────────────────────────────────────────
+// Meldet den Profilschalter an die Klangschicht und waermt die Puffer vor,
+// damit der erste Zug nicht auf das Entschluesseln wartet.
+function KlangRegie({ an }) {
+  useEffect(() => {
+    klangEinstellen({ ein: an, lautstaerke: 0.6 });
+    if (an) klangVorwaermen();
+  }, [an]);
+  return null;
 }

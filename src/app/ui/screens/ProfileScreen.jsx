@@ -80,6 +80,14 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       {/* Der Schalter der Vorlage: An = violette Bahn, cremefarbener Knauf. */}
       <Toggle on={profile.sound !== false} label={profile.sound !== false ? (en ? "on" : "an") : (en ? "off" : "aus")}
         onChange={(an) => dispatch({ type: "SET_SOUND", on: an })} />
+      {/* v0.75 (Besitzer): DIE KLAENGE haben einen EIGENEN Schalter - wer die
+          Musik mag, aber kein Klacken will (oder umgekehrt), bekommt beides. */}
+      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{en ? "Sound effects" : "Klänge"}</div>
+      <Toggle on={profile.sfx !== false} label={profile.sfx !== false ? (en ? "on" : "an") : (en ? "off" : "aus")}
+        onChange={(an) => dispatch({ type: "REPLACE", profile: { ...profile, sfx: an } })} />
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>
+        {en ? "Wood on stone: selecting, moving, striking."
+            : "Holz auf Stein: Anwählen, Setzen, Schlagen."}</div>
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />

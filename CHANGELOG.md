@@ -1,5 +1,29 @@
 # Changelog - Grand Gambit
 
+## 0.75.0
+
+DAS BRETT KLINGT - DIE ERSTEN FUENF KLAENGE:
+
+- Aus den fuenf Aufnahmen des Besitzers (je ~62 s mit vielen Takes) wurden
+  automatisch die BESTEN 11 Einzelanschlaege geschnitten: bewertet nach
+  Rauschabstand, Anschlagschaerfe und Ausklang, dann auf -18 dBFS RMS
+  normiert, Spitzen unter -3 dBFS, Einsatz in den ersten Millisekunden,
+  weicher Ausklang. Als Opus/webm abgelegt - alle elf zusammen 76 KB.
+- VARIANTEN gegen Ohrmuedigkeit: Setzen und Anwaehlen dreifach, Schlagen
+  und Sturz doppelt; nie zweimal hintereinander dieselbe Aufnahme, dazu
+  +-4 % Tonhoehenstreuung je Anschlag.
+- KLANGSCHICHT (src/app/ui/klang.js): EIN AudioContext, Puffer einmal
+  entschluesselt, je Anschlag eine frische Quelle - latenzarm, ueberlagert
+  sauber, wuergt sich nicht ab. Wird beim Start vorgewaermt.
+- DER KLANG FOLGT DEM ERGEBNIS, nicht der Absicht: erst nach dem Zug steht
+  fest, ob gesetzt (zug), getroffen (treffer) oder gestuerzt wurde (fall) -
+  gelesen aus lastMove.
+- EIGENER SCHALTER im Profil ("Klänge"), getrennt von der Musik: wer das
+  eine mag und das andere nicht, bekommt beides.
+- esbuild-Falle erwischt: .webm brauchte in ZWEI Skripten einen eigenen
+  Loader - ohne ihn fiel der Testlauf still von 20 auf 12 Suiten
+  (812 -> 393). Behoben, wieder 812/0/20.
+
 ## 0.74.1
 
 DER HAENDLER BEKOMMT EIN GESICHT, DIE RAEUME BEKOMMEN ZEICHEN:

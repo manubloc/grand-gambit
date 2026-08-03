@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
@@ -401,6 +402,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     setState((s) => {
       const cmd = moveCommand(move);
       const next = reduce(s, cmd).state;
+      // DER KLANG FOLGT DEM ERGEBNIS, nicht der Absicht: erst nach dem Zug
+      // steht fest, ob nur gesetzt, getroffen oder gestuerzt wurde.
+      try {
+        const lm = next.lastMove || {};
+        klang(lm.lethal || (lm.capture && !lm.damaged) ? "fall" : lm.damaged ? "treffer" : "zug");
+      } catch {}
       if (pvp) pvp.net.send({ t: "cmd", matchId: pvp.matchId, cmd, n: next.log.length, hash: stateHash(encodeState(next)) });
       if (daily) {
         // ONE MOVE, THEN THE GAME GOES BACK ON THE SHELF. The command is filed
