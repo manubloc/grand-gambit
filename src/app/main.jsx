@@ -107,6 +107,15 @@ style.textContent = GLOBAL_CSS + `
   img[data-gg-loading] { opacity: 0; }
   img[data-gg-loaded] { animation: ggImgIn .45s ease both; }
   @keyframes ggImgIn { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+  /* v0.80: der Riss-Stern eines Fernangriffs - schnell aufbersten, lange
+     nachglimmen, mit leichter Drehung im Verloeschen. */
+  @keyframes ggRissStern {
+    0%   { opacity: 0; transform: scale(.22) rotate(-14deg); }
+    7%   { opacity: 1; transform: scale(1.22) rotate(0deg); }
+    16%  { opacity: .96; transform: scale(.92) rotate(4deg); }
+    55%  { opacity: .5; transform: scale(1.0) rotate(10deg); }
+    100% { opacity: 0; transform: scale(1.08) rotate(16deg); }
+  }
 `;
 document.head.appendChild(style);
 

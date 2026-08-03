@@ -1111,9 +1111,15 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
         const price = it ? it.gold : SP_SHARD_GOLD;
         const can = !full && (profile.gold || 0) >= price;
         return <div onClick={() => setGearInfo(null)} style={{ position: "fixed", inset: 0, zIndex: 56,
-          background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center", padding: 16 }}>
+          background: "rgba(4,6,10,.74)", display: "grid", placeItems: "center",
+          /* v0.80: <main> traegt eine mask-image und bildet damit einen
+             Stapelkontext - Menueleiste (breit, oben) und Dock (unten) liegen
+             IMMER ueber diesem Popup, egal welcher z-Index. Also weicht die
+             Karte ihnen aus: die Freiraeume kommen als CSS-Variablen aus der
+             Huelle. */
+          padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
           <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
-            maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
+            maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
             background: "radial-gradient(130% 120% at 50% -12%, rgba(240,206,122,.16) 0%, rgba(24,19,11,.97) 44%, rgba(10,8,5,.99) 100%)",
             border: "1px solid rgba(227,192,122,.55)",
             boxShadow: "0 18px 50px rgba(0,0,0,.6), 0 0 22px rgba(240,206,122,.16)" }}>
@@ -1440,7 +1446,8 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
       const fam = FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : b.art;
       return <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center", padding: 16 }}>
+        display: "grid", placeItems: "center",
+        padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 420px)",
           borderRadius: 22, overflow: "hidden", boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
           border: `1px solid ${T.riftLine}`,
@@ -1449,7 +1456,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto", padding: "18px 16px 16px" }}>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", padding: "18px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
               {img && <img src={img} alt="" onClick={(e) => { e.stopPropagation(); onZoom && onZoom({ boss: true, bid: b.id, art: b.art, nameDe: b.nameDe, nameEn: b.nameEn, flavorDe: b.flavorDe, flavorEn: b.flavorEn }); }}
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
@@ -1539,7 +1546,8 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     })()}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", placeItems: "center", padding: 16 }}>
+        display: "grid", placeItems: "center",
+        padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
         <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
           borderRadius: 22, overflow: "hidden",
           // dasselbe Gewand wie die Monsterkarte: Riss-Kontur, violetter
@@ -1551,7 +1559,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(84dvh / var(--vhz, 1))", overflowY: "auto" }}>
+          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 46px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto" }}>
             <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
               onZoom={onZoom} open bigArt />
           </div>

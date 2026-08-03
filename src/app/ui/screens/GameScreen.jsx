@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
-import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE } from "../../../core/index.js";
+import { musikBereich } from "../musik.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE, VALUE } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS, KIND_TO_CHAR } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
@@ -242,6 +243,34 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     const t0 = setTimeout(() => { try { klang(feierlich ? "meister" : "bestie"); } catch {} }, 700);
     return () => clearTimeout(t0);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  /* v0.80: DIE MUSIK DER PARTIE. Kapitelfinale traegt durchweg das
+     Meisterthema; sonst beginnt die Partie ruhig und kippt in die
+     SPANNUNGSSTUFE, sobald das Kraefteverhaeltnis deutlich auseinanderlaeuft
+     (unter 0,72 hinein, ueber 0,90 wieder heraus - die Hysterese verhindert
+     Flattern an der Schwelle). Gemessen wird, was zaehlt: im HP-Gefecht die
+     Lebenspunkte, im Schach der Figurenwert. */
+  const kampfFinale = !!(campaign && match?.node?.final);
+  const spannungRef = useRef(false);
+  useEffect(() => {
+    try { musikBereich(kampfFinale ? "meister" : "kampf"); } catch {}
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (kampfFinale || finished.current) return;
+    let mir = 0, ihm = 0;
+    for (const p of state.board) {
+      if (!p || p.kind === "D+") continue;
+      const w = hpMode ? Math.max(1, p.hp || 1) : (VALUE[p.kind] || 300) / 100;
+      if (p.color === myColor) mir += w; else ihm += w;
+    }
+    const q = mir / Math.max(ihm, 0.001);
+    const drin = q < 0.72 || q > 1 / 0.72;
+    const raus = q > 0.9 && q < 1 / 0.9;
+    const eng = drin ? true : raus ? false : spannungRef.current;
+    if (eng !== spannungRef.current) {
+      spannungRef.current = eng;
+      try { musikBereich(eng ? "kampfSpannung" : "kampf"); } catch {}
+    }
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
   const [brief, setBrief] = useState(() => !resume && !profile.notices?.hpBrief);
   // THE SEERESS'S GAZE: with a seer actively fielded, the enemy array lies
   // open BEFORE the first horn — study it, or step back to rearrange.

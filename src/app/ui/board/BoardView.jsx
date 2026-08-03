@@ -296,6 +296,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         fly: iWon ? -1 : 1 });   // -1 up (foe's tray up top), +1 down (my tray below)
     }
     // arm the glide: phase 0 paints the ghost at FROM, then the next frame(s)
+    // (Riss-Sterne: siehe eigener Effekt unter diesem Block)
     // flip to phase 1 so the CSS transition carries it to TO. A double rAF plus
     // a tiny timeout guarantees the FROM frame is painted first on every device
     // — without it the ghost can appear straight at TO (the "clip onto my
@@ -316,6 +317,30 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     const tDeath = setTimeout(() => { setDeath((cur) => (cur && cur.id === a.id + 100000 ? null : cur)); }, durS * 1000 + 1500);
     return () => { cancelAnimationFrame(raf); cancelAnimationFrame(raf2); clearTimeout(tDone); clearTimeout(t); clearTimeout(tDeath); };
   }, [lastMove, animateFor, hotseat, pov]); // eslint-disable-line
+
+  /* ── v0.80 (Besitzer): DIE RISS-STERNE. Ein Fernangriff braucht ein BILD:
+     auf jedem getroffenen Feld birst ein leuchtender violetter Stern auf und
+     GLIMMT NACH, damit man auch einen Wimpernschlag spaeter noch sieht, wo
+     der Schlag sass. Dasselbe Zeichen tragen die Felder der SCHOCKWELLE -
+     dort gestaffelt NACH der Ankunft des Schlaegers (zugDauerMs), beim
+     Schuss mit dem Pfeil-Einschlag (160 ms). */
+  const [sterne, setSterne] = useState(null);
+  useEffect(() => {
+    const lm = lastMove;
+    if (!lm) { setSterne(null); return; }
+    const treffer = [];
+    if (lm.special === "shot" && (lm.damaged || lm.capture || lm.lethal))
+      treffer.push({ at: lm.to, delay: 160 });
+    if (Array.isArray(state.welle) && state.welle.length) {
+      const basis = zugDauerMs(lm, pov, hotseat, state.w || FILES) + 60;
+      for (const e of state.welle) treffer.push({ at: e.at, delay: basis });
+    }
+    if (!treffer.length) { setSterne(null); return; }
+    setSterne({ id: Date.now(), list: treffer });
+    const t = setTimeout(() => setSterne(null),
+      Math.max(...treffer.map((e) => e.delay)) + 2600);
+    return () => clearTimeout(t);
+  }, [lastMove]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const W = state.w ?? FILES, H = state.h ?? RANKS;
   const holes = state.holes; // Set of blocked indices (or undefined)
@@ -752,6 +777,33 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
 
       {/* the FALLEN: spins off and lands exactly on its captor's tray */}
       {death && <DeathFlyer death={death} disp={disp} W={W} H={H} pov={pov} artStyle={artStyle} />}
+      {sterne && sterne.list.map((e, i) => {
+        const d = disp(e.at);
+        return (
+          <span key={sterne.id + "-" + i} aria-hidden style={{ position: "absolute",
+            left: d.x + "%", top: d.y + "%", width: (118 / W) + "%", height: (118 / H) + "%",
+            transform: "translate(-50%,-50%)", pointerEvents: "none", zIndex: 6 }}>
+            <span style={{ position: "absolute", inset: 0, opacity: 0,
+              animation: "ggRissStern 2.5s cubic-bezier(.2,.7,.3,1) both",
+              animationDelay: e.delay + "ms" }}>
+              <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <radialGradient id={"ggStGl" + i} cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#e9defd" stopOpacity=".95" />
+                  <stop offset="34%" stopColor="#a78bfa" stopOpacity=".55" />
+                  <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
+                </radialGradient>
+                <circle cx="50" cy="50" r="46" fill={"url(#ggStGl" + i + ")"} />
+                {/* der Stern: vier lange, vier kurze Zacken - eine Sternschnuppe im Stand */}
+                <path d="M50 6 L55.5 42 L50 50 L44.5 42 Z M94 50 L58 55.5 L50 50 L58 44.5 Z M50 94 L44.5 58 L50 50 L55.5 58 Z M6 50 L42 44.5 L50 50 L42 55.5 Z"
+                  fill="#d8ccfb" />
+                <path d="M74 26 L54.5 45.5 L50 50 L58 42 Z M74 74 L54.5 54.5 L50 50 L58 58 Z M26 74 L45.5 54.5 L50 50 L42 58 Z M26 26 L45.5 45.5 L50 50 L42 42 Z"
+                  fill="#b9a4f7" opacity=".85" />
+                <circle cx="50" cy="50" r="6.5" fill="#f2ecff" />
+              </svg>
+            </span>
+          </span>
+        );
+      })}
     </div>
   );
   // MEASURED (390x844 phone): this box aligned its content to the END, so on a

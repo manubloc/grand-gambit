@@ -1,5 +1,50 @@
 # Changelog - Grand Gambit
 
+## 0.80.0
+
+DAS SPIEL BEKOMMT SEINE MUSIK, DER HELD SEIN WAPPEN, DER FERNANGRIFF SEIN
+BILD - UND DIE POPUPS WEICHEN DEN LEISTEN AUS:
+
+- BEREICHSMUSIK (Besitzerwunsch): fuenf eigens komponierte Stuecke
+  (ElevenLabs-Musik, rein akustisch-mittelalterlich, keine Elektronik, als
+  Endlosschleifen gebaut, alle auf -21,3 dBFS wie der alte Soundtrack):
+  MENUE warm und einladend, KARTE hell-pastoral, KAMPF ruhig und
+  konzentriert, KAMPF-SPANNUNG mit Trommeln und Draengen, MEISTER mit
+  Glocke und Chor. Die Musikregie (musik.js) kennt den Bereich, der neue
+  Soundtrack blendet mit zwei Spielern in 1,8 s weich ueber. Die Partie
+  kippt nach KRAEFTEVERHAELTNIS in die Spannungsstufe (HP-Summe bzw.
+  Figurenwert; hinein unter 0,72, heraus ueber 0,90 - Hysterese gegen
+  Flattern), das Kapitelfinale traegt durchweg das Meisterthema.
+- ZWEI-ZWEIGE-FALLE BEHOBEN: der breite Zweig der App hatte NIE Soundtrack
+  oder Klang-Regie - der Schreibtisch spielt jetzt dasselbe Haus.
+- REACT-#310-FALLE: der Musik-Hook der Huelle stand zuerst NACH den
+  bedingten Rueckkehrstellen und stuerzte die App - die Sonde fing es vor
+  dem Push; der Hook rechnet inMatch/mapView jetzt selbst und steht vor
+  allen Rueckkehrstellen.
+- DER GAMBIT TRAEGT SEIN WAPPEN: die Stufe-1-Schnitzerei ist mit Absicht
+  ein Bauer unter Bauern - aber fuer den eigenen Blick sitzt jetzt ein
+  kleiner Wappenschild (Gold auf Nachtblau, Stern) an seiner Schulter;
+  beim Gegner-Helden violett. Er folgt showHero, verschwindet also mit der
+  Maskerade aus dem Blick des Gegners, und sitzt in der Bildkiste, damit
+  er Auswahl-Skalierung und Gleit-Animation mitmacht. Sondenfoto: ein
+  einziges Wappen auf dem Brett, am Helden. (Der Simpel-Stil zeichnete den
+  Helden schon immer eigen - gekroent, mit Sternschild.)
+- DIE RISS-STERNE: ein Fernangriff zeigt sein Ziel - auf jedem getroffenen
+  Feld birst ein violetter Stern auf und GLIMMT 2,5 s nach; die Felder der
+  Schockwelle tragen dasselbe Zeichen, gestaffelt nach der Ankunft des
+  Schlaegers (zugDauerMs), der Schuss mit dem Pfeil-Einschlag (160 ms).
+- POPUP-FREIRAEUME: <main> traegt eine mask-image und bildet einen
+  Stapelkontext - Menueleiste (breit, oben) und Dock (unten) liegen darum
+  IMMER ueber jedem Popup in <main>, kein z-Index hilft. Die Huelle setzt
+  jetzt --gg-popfrei-oben/-unten (breit 104px oben, schmal 92px+Sicherheit
+  unten), die drei Hofstaat-Popups polstern damit und deckeln ihre
+  Innenhoehe. Nachgemessen: breit beginnt die Karte bei 125px (Leiste
+  endet ~100), schmal endet sie bei 729px (Dock ab ~735).
+- WELTKARTE: minimal mehr Luft zu den Menues (schmal 8/10/84 statt
+  0/6/72, breit 14/16 statt 10/10).
+- Der Hofstaat- und der Karten-Klang aus v0.79 bleiben unveraendert; die
+  fuenf Musikstuecke liegen zusaetzlich als mp3 beim Besitzer zur Abnahme.
+
 ## 0.79.0
 
 DER GANZE KLANGKATALOG SPIELT, DIE ENGINE LERNT WELLE UND KURZE BOGEN,

@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { klang, klangEinstellen, klangVorwaermen } from "./ui/klang.js";
+import { musikBereich } from "./ui/musik.js";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
@@ -302,6 +303,30 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, [inMatchNow]);
 
+  /* v0.80: die Huelle meldet der Musikregie ihren Bereich. Im Kampf meldet
+     die Partie selbst (kampf/kampfSpannung/meister) - deshalb schweigt die
+     Huelle, solange eine Partie laeuft, und uebernimmt beim Verlassen.
+     WICHTIG: dieser Hook MUSS vor allen bedingten Rueckkehrstellen stehen
+     (Musterkammer, Werkstaetten, Anmeldung) - ein Hook dahinter aendert die
+     Hook-Reihenfolge zwischen den Renderlaeufen und stuerzt mit React #310
+     ab. Genau das ist beim ersten Einbau passiert; die Sonde hat es vor dem
+     Push gefangen. Darum rechnet er inMatch/mapView selbst. */
+  useEffect(() => {
+    const im = !!match || !!pvp || !!quick || !!dailyGame;
+    if (im) return;
+    try { musikBereich(tab === "play" && view === "camp" ? "karte" : "menue"); } catch {}
+  }, [match, pvp, quick, dailyGame, tab, view]);
+  /* v0.80: DIE POPUP-FREIRAEUME. <main> traegt eine mask-image und bildet
+     damit einen Stapelkontext: die Menueleiste (breit, oben) und das Dock
+     (schmal, unten) liegen darum IMMER ueber jedem Popup, das in <main>
+     wohnt - kein z-Index hilft. Also sagen wir jedem Popup per CSS-Variable,
+     wie viel Rand es oben und unten freihalten muss. */
+  useEffect(() => {
+    const r = document.documentElement;
+    r.style.setProperty("--gg-popfrei-oben", wide ? "104px" : "0px");
+    r.style.setProperty("--gg-popfrei-unten", wide ? "16px" : "calc(92px + env(safe-area-inset-bottom))");
+  }, [wide]);
+
   // DIE MUSTERKAMMER: interne Designsystem-Galerie, nur ueber ?galerie in der
   // Adresse erreichbar - kein Menuepunkt, kein Spielerweg. Sitzt NACH allen
   // Hooks (Hook-Reihenfolge bleibt stabil) und VOR Anmeldung/Spielstand,
@@ -442,7 +467,11 @@ export default function App() {
 
   if (wide) return (
     <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
-      padding: immersive ? "10px 10px 10px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
+      padding: immersive ? "14px 16px 14px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
+      {/* v0.80: der breite Zweig hatte NIE Musik oder Effekt-Regie - die
+          Zwei-Zweige-Falle. Jetzt spielt der Schreibtisch dasselbe Haus. */}
+      <Soundtrack an={profile.sound !== false} />
+      <KlangRegie an={profile.sfx !== false} />
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {/* DER RISSBODEN liegt unten fixiert hinter jedem Menue und waechst mit
           Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
