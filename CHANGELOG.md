@@ -1,5 +1,19 @@
 # Changelog - Grand Gambit
 
+## 0.75.2
+
+DIE KLANGWAHL DES BESITZERS:
+
+- Aus den elf zerlegten Takes hat der Besitzer VIER bestaetigt: Anwaehlen
+  (tap-select-3), Treffer (hit-3), Sturz (capture-kill-2) und Gesperrt
+  (denied-2). Die Klangschicht nutzt jetzt genau diese - die uebrigen
+  sieben Aufnahmen sind aus dem Buendel entfernt.
+- DER SETZ-KLANG BLEIBT STUMM: keiner der Takes hat dem Besitzer
+  getaugt, und ein mittelmaessiger Klang, den man hundertmal je Partie
+  hoert, ist schlimmer als gar keiner. Die Liste ist leer angelegt und
+  der Abspieler faengt das ab (kein Leerlauf, kein Fehler) - sobald ein
+  Take sitzt, ist es ein Einzeiler.
+
 ## 0.75.1
 
 DER HAENDLER: DAS RICHTIGE BILD AN DER RICHTIGEN STELLE:

@@ -14,24 +14,20 @@
 // ermuedet das Ohr nach zwanzig Zuegen. Zusaetzlich streut die Tonhoehe um
 // +-4 %, damit auch dieselbe Aufnahme nie zweimal gleich klingt.
 
-import tap1 from "./assets/klang/tap-select-1.webm";
-import tap2 from "./assets/klang/tap-select-2.webm";
-import tap3 from "./assets/klang/tap-select-3.webm";
-import setz1 from "./assets/klang/move-place-1.webm";
-import setz2 from "./assets/klang/move-place-2.webm";
-import setz3 from "./assets/klang/move-place-3.webm";
-import schlag1 from "./assets/klang/hit-1.webm";
-import schlag2 from "./assets/klang/hit-2.webm";
-import fall1 from "./assets/klang/capture-kill-1.webm";
-import fall2 from "./assets/klang/capture-kill-2.webm";
-import nein1 from "./assets/klang/denied-1.webm";
+import waehlenKlang from "./assets/klang/waehlen.webm";
+import trefferKlang from "./assets/klang/treffer.webm";
+import fallKlang from "./assets/klang/fall.webm";
+import gesperrtKlang from "./assets/klang/gesperrt.webm";
 
+// v0.75.2: DIE WAHL DES BESITZERS - genau diese vier Takes haben bestanden.
+// "zug" bleibt vorerst LEER: kein Setz-Klang hat ihm getaugt, und ein
+// schlechter Klang, den man hundertmal hoert, ist schlimmer als keiner.
 const QUELLEN = {
-  wahl: [tap1, tap2, tap3],
-  zug: [setz1, setz2, setz3],
-  treffer: [schlag1, schlag2],
-  fall: [fall1, fall2],
-  nein: [nein1],
+  wahl: [waehlenKlang],
+  zug: [],
+  treffer: [trefferKlang],
+  fall: [fallKlang],
+  nein: [gesperrtKlang],
 };
 
 // Lautstaerke je Art: der Zug klingt hundertmal, der Sturz selten - also darf
@@ -91,7 +87,8 @@ export function klangEinstellen({ ein, lautstaerke }) {
  * @param {"wahl"|"zug"|"treffer"|"fall"|"nein"} art
  */
 export function klang(art) {
-  if (!an || !QUELLEN[art]) return;
+  // leere Liste = dieser Klang ist (noch) nicht besetzt - stumm bleiben
+  if (!an || !QUELLEN[art] || !QUELLEN[art].length) return;
   const c = wecke();
   if (!c) return;
   if (c.state === "suspended") c.resume().catch(() => {});
