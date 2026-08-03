@@ -119,7 +119,12 @@ export function Segmented({ options, value, onChange }) {
         boxShadow: on ? `0 0 10px ${T.selGlow}` : "none",
         transition: `background ${T.mo.norm} ${T.mo.ease}, color ${T.mo.norm} ${T.mo.ease}`,
         color: on ? T.selInk : T.dim }}>
-        <span style={{ position: "relative" }}>{o.label}</span>
+        <span style={{ position: "relative", display: "inline-flex", alignItems: "center",
+          justifyContent: "center", gap: 5 }}>
+          {/* v0.74.1 (Besitzer): Raum-Zeichen im violetten Knopf - es nimmt die
+              Knopffarbe an (currentColor), also hell wenn gewaehlt. */}
+          {o.icon ? <span style={{ display: "inline-flex", flex: "0 0 auto" }}>{o.icon}</span> : null}
+          {o.label}</span>
       </button>;
     })}
   </div>;

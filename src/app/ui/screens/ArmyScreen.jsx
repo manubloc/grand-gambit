@@ -1,4 +1,5 @@
 import { StatOrbBadge as SheetOrb, JewelIc } from "../board/PieceGlyph.jsx";
+import { FigurenIc, AufstellungIc } from "../RaumIcons.jsx";
 import { AbilityIcon, abilityTint } from "../AbilityIcons.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
@@ -1569,8 +1570,8 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     {/* v0.72.2 (Besitzer): der HAENDLER ist ins LAGER umgezogen - im Hofstaat
         bleiben Hof und Aufstellung. */}
     <Segmented value={tab === "gear" ? "tree" : tab} onChange={setTab} options={[
-      { value: "tree", label: t("army.tabTree") },
-      { value: "formation", label: t("army.tabFormation") },
+      { value: "tree", label: t("army.tabTree"), icon: <FigurenIc /> },
+      { value: "formation", label: t("army.tabFormation"), icon: <AufstellungIc /> },
     ]} />
     {/* v0.72.2: der Haendler-Zweig BLEIBT fuer Direktaufrufe (Blatt-Verweise
         aus Taten und Popups nutzen initialTab="gear") - er steht nur nicht

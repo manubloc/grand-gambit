@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.74.1
+
+DER HAENDLER BEKOMMT EIN GESICHT, DIE RAEUME BEKOMMEN ZEICHEN:
+
+- DAS HAENDLERBILD des Besitzers (geschnitzter Verkaufsstand mit
+  Baldachin, Traenken, Sanduhr und Beutel) ist freigestellt (weisser
+  Grund entfernt, weiche Kante) und steht im Lager ueber der Warenliste.
+- VIER RAUM-ZEICHEN als Vektoren in den violetten Schienen-Knoepfen:
+  Figuren (zwei Gestalten, die vordere gekroent), Aufstellung
+  (Brettausschnitt mit besetzten Feldern), Schatzkammer (Truhe mit
+  Beschlag), Haendler (Stand mit gezacktem Baldachin und Flaeschchen).
+  Sie nehmen die Knopffarbe an - hell wenn gewaehlt, gedimmt sonst.
+- HOFSTAAT HEISST JETZT FIGUREN (Menuewort und Tab; en: Pieces).
+- VERWALTUNG IM PROFIL: wer als Admin angemeldet ist, findet unter
+  Profil einen Block mit allen Tueren - Admin-Portal, Spielerbuch,
+  Figurenwerkstatt, Musterkammer und die oeffentliche Landingpage.
+  Fuer alle anderen existiert der Block nicht.
+- Sondenbelege: Menue zeigt SPIELEN/FIGUREN/LAGER/PROFIL, alle vier
+  Schienen-Knoepfe tragen ihr Zeichen, das Haendlerbild erscheint.
+
 ## 0.74.0
 
 DER AUFTRITT: LANDINGPAGE, RECHTSTEXTE, ICONS - BEREIT FUER DIE WELT:

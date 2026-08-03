@@ -153,6 +153,31 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       )}
     </Panel>
 
+    {/* ── DIE VERWALTUNG (Besitzer, v0.74.1) ──────────────────────────────
+        Wer als Admin angemeldet ist, findet hier EINE Tuer zu allen
+        Unterseiten - Portal, Spielerbuch, Werkstatt, Musterkammer und die
+        oeffentliche Landingpage. Fuer alle anderen existiert der Block nicht. */}
+    {account?.isAdmin && <Panel>
+      <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase",
+        color: T.goldBright, marginBottom: 8 }}>Verwaltung</div>
+      <div style={{ display: "grid", gap: 6 }}>
+        {[["?admin", "Admin-Portal", "Alle Werkbänke hinter einer Tür"],
+          ["?spielerbuch", "Das Spielerbuch", "Spieler, Fortschritt, Herkunft, Zahlen"],
+          ["?werkstatt", "Die Figurenwerkstatt", "Figurenpaare malen und ausspielen"],
+          ["?galerie", "Die Musterkammer", "Farben, Knöpfe, Bausteine"],
+          ["/landing.html", "Die Landingpage", "Die öffentliche Seite"]].map(([ziel, name, was]) => (
+          <a key={ziel} href={ziel} target={ziel.startsWith("/landing") ? "_blank" : undefined}
+            rel={ziel.startsWith("/landing") ? "noreferrer" : undefined}
+            style={{ display: "block", textDecoration: "none", color: "inherit", borderRadius: 10,
+              border: `1px solid ${T.selLine}44`, background: `linear-gradient(165deg, ${T.sel}, #1a1030)`,
+              padding: "9px 11px" }}>
+            <div className="gg-serif" style={{ fontSize: 13.5, color: T.goldBright, letterSpacing: ".03em" }}>{name}</div>
+            <div style={{ fontSize: 11, color: T.dim, marginTop: 1 }}>{was}</div>
+          </a>
+        ))}
+      </div>
+    </Panel>}
+
     {account?.isAdmin && <Panel>
       <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim }}>{t("profile.design")}</div>
       <Segmented value={profile.design === "carved" ? "carved" : profile.design === "classic" ? "classic" : "carved"}
