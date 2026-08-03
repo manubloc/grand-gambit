@@ -1001,9 +1001,11 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
                 : `Neu im Bündel — ${neuDa.length === 1 ? "ein Stück" : neuDa.length + " Stücke"}, die du heute zahlen kannst.`)
           : (en ? "Look your fill. What I have, I have honestly." : "Sieh dich um. Was ich habe, habe ich ehrlich.");
         return <div style={{ display: "flex", alignItems: "flex-end", gap: 12, marginBottom: 12 }}>
+          {/* v0.74.2 (Besitzer): sein neues Bildnis, FREIGESTELLT wie alle
+              anderen Figuren - nur ein ehrlicher Schlagschatten, kein Schimmer. */}
           <img src={paintedById("haendler")} alt="" draggable={false}
-            style={{ width: 92, height: 108, objectFit: "contain", objectPosition: "bottom", flex: "0 0 auto",
-              filter: "drop-shadow(0 3px 6px rgba(0,0,0,.55)) drop-shadow(0 0 10px rgba(240,206,122,.22))" }} />
+            style={{ width: 116, height: 130, objectFit: "contain", objectPosition: "bottom", flex: "0 0 auto",
+              filter: "drop-shadow(0 4px 8px rgba(0,0,0,.6))" }} />
           <div style={{ flex: 1, minWidth: 0, paddingBottom: 6 }}>
             <div className="gg-quill" style={{ fontSize: 18, color: T.goldBright, textShadow: "0 0 10px rgba(240,206,122,.3)" }}>
               {en ? "Corvo the Pedlar" : "Corvo, der Krämer"}</div>

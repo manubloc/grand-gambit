@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 0.75.1
+
+DER HAENDLER: DAS RICHTIGE BILD AN DER RICHTIGEN STELLE:
+
+- Besitzer-Ruege, berechtigt: der Haendler hatte im Warenraum LAENGST ein
+  Bildnis (painted-haendler). Ich hatte sein neues Bild zusaetzlich
+  darueber gehaengt, statt das alte zu ERSETZEN. Jetzt ist es ersetzt -
+  eine Datei, ein Auftritt, alle Aufrufer unveraendert; mein doppelter
+  Block im Lager ist wieder fort.
+- Der GOLDENE SCHIMMER um sein Bildnis faellt weg: freigestellt wie alle
+  anderen Figuren, nur ein ehrlicher Schlagschatten. Dafuer steht er
+  etwas groesser (116x130 statt 92x108).
+
 ## 0.75.0
 
 DAS BRETT KLINGT - DIE ERSTEN FUENF KLAENGE:

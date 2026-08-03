@@ -3,7 +3,6 @@
 // grayed and quiet. Progress is a single number and a thin bar — no clutter.
 import { useState } from "react";
 import { SchatzIc, HaendlerIc } from "../RaumIcons.jsx";
-import haendlerBild from "../assets/haendler.webp";
 import { GearPanel } from "./ArmyScreen.jsx";
 import { Segmented } from "../primitives.jsx";
 import { evaluate, claimedTiers, claimReward, claimableCount } from "../../../meta/index.js";
@@ -51,12 +50,6 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       { value: "schatz", label: t("lager.tabSchatz"), icon: <SchatzIc /> },
       { value: "haendler", label: t("lager.tabHaendler"), icon: <HaendlerIc /> },
     ]} />
-    {/* v0.74.1 (Besitzer): DER HAENDLER hat ein Gesicht - sein Stand steht
-        ueber der Warenliste, freigestellt auf dem dunklen Grund. */}
-    <div style={{ display: "flex", justifyContent: "center", marginTop: -2, marginBottom: -6 }}>
-      <img src={haendlerBild} alt="" draggable={false}
-        style={{ height: 150, filter: "drop-shadow(0 6px 14px rgba(0,0,0,.65))" }} />
-    </div>
     <GearPanel profile={profile} dispatch={dispatch} t={t} en={en} />
   </div>;
   return <div style={{ display: "grid", gap: 10, gridTemplateColumns: wide ? "1fr 1fr" : "1fr", alignItems: "start" }}>
