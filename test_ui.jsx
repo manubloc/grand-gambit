@@ -22,7 +22,7 @@ import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN, TIME_MODES, timeModeById, clockFor } from "./src/content/index.js";
 import { AkademieScreen } from "./src/app/ui/screens/AkademieScreen.jsx";
-import { ArmyScreen, GearPanel } from "./src/app/ui/screens/ArmyScreen.jsx";
+import { ArmyScreen, GearPanel, MoveDiagram } from "./src/app/ui/screens/ArmyScreen.jsx";
 import { CHARACTER_LIST } from "./src/content/index.js";
 import { defaultProfile, evaluate } from "./src/meta/index.js";
 import { makeT } from "./src/app/i18n/strings.js";
@@ -468,6 +468,15 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
   const t = makeT("de");
   const prof = withProgressPct(defaultProfile(), 100, 5);
   const tree = html(<ArmyScreen profile={prof} dispatch={() => {}} t={t} initialTab="tree" />);
+  // ── DER GROSSE DRACHE IM BLATT (Besitzer, v0.72.3) ──────────────────────
+  // Er deckt 2x2 und schiebt diesen Block - das Blatt zeigte ihn als Punkt.
+  {
+    const dia = html(<MoveDiagram kind="D" />);
+    const gold = (dia.match(/linear-gradient\(160deg,#e7c877,#b1863c\)/g) || []).length;
+    ok("the dragon covers four squares, not one", gold >= 4);
+    const blau = (dia.match(/rgba\(74,163,232,\.42\)/g) || []).length;
+    ok("and his step reaches beyond the block", blau >= 8);
+  }
 
   ok("the register opens", tree.length > 1000);
   // the chronicle waits for its paintings, so the grid itself is proven in the
@@ -661,7 +670,7 @@ import { IC_SPELLSTAR, IC_COIN, IC_SKILL } from "./src/app/ui/assets/icons/iconA
 // apart. These checks hold that shape.
 {
   const bosses = BOSSES.map((b) => BOSS_ART[b.id]).filter(Boolean);
-  ok("every master has a drawing", bosses.length === BOSSES.length);
+ok("every master has a drawing", bosses.length === BOSSES.length);
 
   // the shared armature: the queen's skirt and collar, literally the same path
   const SKIRT = "M20 27 L28 27";

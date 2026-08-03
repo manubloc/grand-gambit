@@ -217,13 +217,22 @@ const ABILITY_MOVE = {
   pawn_forward_capture: { leaps: [[0, 1]] },
   pawn_charge: { leaps: [[0, 2]] },
   pawn_backstep: { leaps: [[0, -1]] },
-  dragon_flight: { leaps: [[0, 2], [0, -2], [2, 0], [-2, 0], [2, 2], [-2, 2], [2, -2], [-2, -2]] },
-  dragon_flight2: { leaps: [[0, 3], [0, -3], [3, 0], [-3, 0], [3, 3], [-3, 3], [3, -3], [-3, -3]] },
-  dragon_flight3: { leaps: [[0, 3], [0, -3], [3, 0], [-3, 0], [3, 3], [-3, 3], [3, -3], [-3, -3]] },
+  // v0.72.3 (Besitzer-Befund): der GROSSE Drache fliegt auf JEDES Feld im
+  // Umkreis seiner Schwinge (so rechnet es die Engine) - nicht nur ueber
+  // Achsen und Diagonalen.
+  dragon_flight: { leaps: [[-2, -2], [-2, -1], [-2, 0], [-2, 1], [-2, 2], [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], [0, -2], [0, -1], [0, 1], [0, 2], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2], [2, -2], [2, -1], [2, 0], [2, 1], [2, 2]] },
+  dragon_flight2: { leaps: [[-3, -3], [-3, -2], [-3, -1], [-3, 0], [-3, 1], [-3, 2], [-3, 3], [-2, -3], [-2, -2], [-2, -1], [-2, 0], [-2, 1], [-2, 2], [-2, 3], [-1, -3], [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], [-1, 3], [0, -3], [0, -2], [0, -1], [0, 1], [0, 2], [0, 3], [1, -3], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2], [1, 3], [2, -3], [2, -2], [2, -1], [2, 0], [2, 1], [2, 2], [2, 3], [3, -3], [3, -2], [3, -1], [3, 0], [3, 1], [3, 2], [3, 3]] },
+  dragon_flight3: { leaps: [[-3, -3], [-3, -2], [-3, -1], [-3, 0], [-3, 1], [-3, 2], [-3, 3], [-2, -3], [-2, -2], [-2, -1], [-2, 0], [-2, 1], [-2, 2], [-2, 3], [-1, -3], [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], [-1, 3], [0, -3], [0, -2], [0, -1], [0, 1], [0, 2], [0, 3], [1, -3], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2], [1, 3], [2, -3], [2, -2], [2, -1], [2, 0], [2, 1], [2, 2], [2, 3], [3, -3], [3, -2], [3, -1], [3, 0], [3, 1], [3, 2], [3, 3]] },
 };
-function MoveDiagram({ kind, moveSpec, extra = null }) {
+export function MoveDiagram({ kind, moveSpec, extra = null }) {
   const sp = specForKind(kind, moveSpec);
-  if (!sp && !extra) return null;
+  // DER GROSSE DRACHE (Besitzer, v0.72.3): er ist KEIN einzelnes Feld - er
+  // deckt 2x2 und schiebt diesen Block um ein Feld in die vier Richtungen.
+  // Bisher zeigte das Blatt ihn als Punkt mit 3x3-Umfeld; richtig sind ein
+  // goldener VIERERBLOCK und die Felder, die der geschobene Block neu
+  // betritt (Gesamtausdehnung 4x4).
+  const grossDrache = kind === "D";
+  if (!sp && !extra && !grossDrache) return null;
   const R = 3;                                     // radius → 7x7 board (fits knight L and 2-3 slides)
   const N = R * 2 + 1;
   const reach = new Map();                          // "df,dr" → "slide" | "leap" | "extra"
@@ -237,10 +246,20 @@ function MoveDiagram({ kind, moveSpec, extra = null }) {
   // ability squares glow green, ON TOP of the base pattern
   if (extra) for (const [df, dr] of extra.leaps || [])
     if (Math.abs(df) <= R && Math.abs(dr) <= R) reach.set(`${df},${dr}`, "extra");
+  // Der Block sitzt auf (0,0) und (1,0) sowie (0,1) und (1,1).
+  const blockFelder = grossDrache ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]];
+  if (grossDrache) {
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
+      for (const [bx, by] of blockFelder) {
+        const f = bx + dx, r = by + dy;
+        if (blockFelder.some(([qx, qy]) => qx === f && qy === r)) continue;   // eigener Block
+        if (Math.abs(f) <= R && Math.abs(r) <= R) reach.set(`${f},${r}`, "slide");
+      }
+  }
   const cells = [];
   for (let r = R; r >= -R; r--) for (let f = -R; f <= R; f++) {
-    const here = f === 0 && r === 0;
-    const mark = reach.get(`${f},${r}`);
+    const here = blockFelder.some(([bx, by]) => bx === f && by === r);
+    const mark = here ? null : reach.get(`${f},${r}`);
     const light = (f + r + 100) % 2 === 0;
     cells.push({ f, r, here, mark, light });
   }
@@ -253,7 +272,7 @@ function MoveDiagram({ kind, moveSpec, extra = null }) {
         : c.mark === "extra" ? "rgba(62,224,137,.62)"
         : c.light ? "rgba(255,255,255,.05)" : "rgba(255,255,255,.02)",
       boxShadow: c.here ? "0 0 5px rgba(231,200,119,.7)" : c.mark === "extra" ? "inset 0 0 0 1px rgba(120,255,180,.5)" : c.mark ? "inset 0 0 0 1px rgba(255,255,255,.18)" : "none" }}>
-      {c.here && <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+      {c.here && c.f === 0 && c.r === 0 && <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
         fontSize: 8, fontWeight: 900, color: "#1a1206" }}>✦</span>}
     </div>)}
   </div>;

@@ -1,5 +1,21 @@
 # Changelog - Grand Gambit
 
+## 0.72.3
+
+DER GROSSE DRACHE STEHT ENDLICH RICHTIG IM BLATT:
+
+- Besitzer-Befund (ein alter Fehler): das Zugdiagramm zeigte den Drachen
+  als EINZELNES Feld mit 3x3-Umfeld - er deckt aber 2x2 und schiebt
+  diesen Block. Jetzt zeigt das Blatt einen GOLDENEN VIERERBLOCK und die
+  Felder, die der geschobene Block neu betritt (Ausdehnung 4x4, Ecken
+  bleiben frei, weil er nur orthogonal schiebt - genau wie die Engine
+  rechnet).
+- Auch sein FLUG stimmt jetzt: er landet auf JEDEM Feld im Umkreis
+  seiner Schwinge (Reichweite 2, mit den Schwingen-Faehigkeiten 3), nicht
+  nur ueber Achsen und Diagonalen.
+- Zwei neue Pruefungen sichern das ab (812 statt 810 Zusicherungen):
+  vier goldene Felder, acht Schrittfelder ausserhalb des Blocks.
+
 ## 0.72.2
 
 DAS LAGER: SCHATZKAMMER UND HAENDLER UNTER EINEM DACH:
