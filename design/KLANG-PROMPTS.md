@@ -8,8 +8,13 @@ steht nur, wofür der Klang gedacht ist.
 
 Zwei Materialien, klar getrennt — daran hängt die ganze Bildsprache des Spiels:
 
-- **Der Hof (eigene Seite, Gold):** geschnitztes Holz auf Stein. Warm, trocken,
+- **Der Hof (eigene Seite, Gold):** geschnitztes Holz auf **Holz**. Warm, trocken,
   kurz, handgemacht. Kein Fantasy-Kitsch, keine Glöckchen, keine Zauberstäbe.
+  *Korrektur des Besitzers (v0.78, nach dem Spielen gehört):* Das Brett ist eine
+  **Holzplatte**, kein Stein. Und ein Zug ist kein Anschlag — die Figur wird
+  über das Brett **geschleift**. Wer schlägt, macht Holz auf Holz: dumpf,
+  hohl, ohne helles „Ding". Alle Brett-Prompts unten sind entsprechend
+  umgeschrieben.
 - **Der Riss (Gegner, Violett):** dieselbe Welt, aber elektrisiert. Entladung,
   Kristall, umgekehrte Hallfahnen, ein Hauch Chor — nie Horror, nie Splatter.
 
@@ -30,6 +35,9 @@ Handyspiel klingt, ist er falsch.
 - **Wichtig fürs Gefühl:** Zug- und Schlagklänge brauchen 2–3 Varianten, sonst
   ermüdet das Ohr nach zwanzig Zügen. Beim Abspielen zufällig wählen und die
   Tonhöhe um ±4 % streuen.
+- **Immer in den Prompt:** „One single sound, no repetitions, no music bed, no
+  voice." Ohne diesen Satz liefert das Werkzeug ganze Bänder statt eines
+  Ereignisses — das kostete in v0.75 eine halbe Sitzung.
 
 ---
 
@@ -37,17 +45,23 @@ Handyspiel klingt, ist er falsch.
 
 Diese fünf tragen das ganze Spielgefühl. Hier lohnt die meiste Mühe.
 
-**Figur anwählen** — *tap-select.wav*, 3 Varianten
-> A single small wooden chess piece being lifted off a stone board, very short and dry, soft wooden knock with a faint stone scrape, close-miked, no reverb, no music, 150 ms
+**Figur anwählen** — *tap-select.wav*, 3 Varianten · **sitzt bereits, vom Besitzer bestätigt**
+> A single small wooden chess piece being lifted off a wooden board, very short and dry, soft wooden knock with a faint woody scrape, close-miked, no reverb, no music, 150 ms
 
-**Figur setzen (normaler Zug)** — *move-place.wav*, 3 Varianten
-> A carved wooden chess piece placed firmly on a stone chessboard, one crisp warm knock with a short woody body, close-miked, dry, no reverb tail, 200 ms
+**Figur ziehen (normaler Zug)** — *move-drag.wav*, 3 Varianten
+> A carved wooden chess piece dragged slowly across a wooden board, a dry woody scrape with fine grain texture, ending in a soft settle, close-miked, no reverb, 600 ms
+
+Nicht klopfen, **schleifen**. Der Klang darf ruhig eine Spur länger stehen als
+ein Anschlag — er begleitet die Bewegung, statt sie zu beenden.
 
 **Schlagen ohne Tod (HP-Schaden)** — *hit.wav*, 2 Varianten
-> Wooden figure struck hard by another wooden figure, dull cracking impact with a low woody thud, small splinter detail, dry and close, no music, 250 ms
+> A wooden chess piece struck hard by another wooden piece, dull wood-on-wood knock, low and hollow, no ring, no bright ding, close-miked, dry, 500 ms
 
-**Tödlicher Schlag (Figur fällt)** — *capture-kill.wav*
-> A wooden chess piece knocked over and falling onto a stone slab, sharp impact then a short hollow wooden roll that settles, dry, close-miked, no reverb, 500 ms
+**Tödlicher Schlag (Figur fällt)** — *capture-kill.wav*, 3 Varianten
+> A carved wooden chess piece toppling over and falling flat onto a wooden board, hollow wooden clack then a short settle, dry, close-miked, no reverb, 700 ms
+
+Beides ist **Holz auf Holz**. Kein metallischer Anteil, kein heller Ton — was
+klingelt, klingt nach Spielzeug.
 
 **Ungültiger Zug / gesperrt** — *denied.wav*
 > A short muted wooden bump against a solid stop, damped and low, no ring, no beep, felt rather than heard, 120 ms
@@ -57,7 +71,7 @@ Diese fünf tragen das ganze Spielgefühl. Hier lohnt die meiste Mühe.
 ## 2. Die Sonderzüge des Schachs
 
 **Rochade** — *castle.wav*
-> Two wooden chess pieces sliding and settling in quick succession on stone, a soft double placement, the second slightly deeper, dry and warm, 400 ms
+> Two wooden chess pieces sliding and settling in quick succession on a wooden board, a soft double placement, the second slightly deeper, dry and warm, 800 ms
 
 **Bauernumwandlung** — *promote.wav*
 > A warm ascending shimmer of struck wood and soft brass, like a small carved figure growing taller, ending on a bright confident note, gentle and dignified, no fanfare cliché, 1200 ms
@@ -76,7 +90,7 @@ Diese fünf tragen das ganze Spielgefühl. Hier lohnt die meiste Mühe.
 > A quick woody scrape rushing forward, air movement and a firm landing knock, dry, urgent, no whoosh cliché, 350 ms
 
 **Drachenflug** — *dragon-flight.wav*
-> Heavy carved wings beating twice, deep air displacement, then a weighty landing thud on stone that shakes slightly, wooden and massive, dry, 900 ms
+> Heavy carved wings beating twice, deep air displacement, then a weighty landing thud on wood that shakes slightly, wooden and massive, dry, 1200 ms
 
 **Lebenstrank trinken** — *potion.wav*
 > A small glass vial uncorked with a soft pop, a short liquid swallow, then a warm gentle glow tone rising, close and intimate, 800 ms
@@ -122,7 +136,7 @@ Immer eine Spur kälter, elektrischer, mit umgekehrten Fahnen. Nie Horror.
 > A carved stone lock turning and opening, then a warm golden shimmer blooming out of it, satisfying and earned, 1200 ms
 
 **Held rekrutiert** — *recruit.wav*
-> A wooden figure set down firmly on a stone base, followed by a short warm horn call in the distance, ceremonial and brief, 1600 ms
+> A wooden figure set down firmly on a wooden base, followed by a short warm horn call in the distance, ceremonial and brief, 1800 ms
 
 **Kapitel abgeschlossen** — *chapter-done.wav*
 > A distant church bell struck once over a warm string swell, a page of parchment turning, closing and peaceful, 2400 ms

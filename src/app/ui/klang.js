@@ -18,6 +18,17 @@ import waehlenKlang from "./assets/klang/waehlen.webm";
 import trefferKlang from "./assets/klang/treffer.webm";
 import fallKlang from "./assets/klang/fall.webm";
 import gesperrtKlang from "./assets/klang/gesperrt.webm";
+/* v0.78 - HOERURTEIL DES BESITZERS: Das Brett ist eine HOLZPLATTE. Ein Zug
+   ist kein Anschlag, sondern ein SCHLEIFEN der Figur ueber das Holz; Schlag
+   und Sturz sind Holz auf Holz, dumpf und hohl, ohne helles "Ding".
+   Gemessen statt geraten - die neuen Zug-Klaenge brauchen 99-274 ms bis zur
+   Spitze und tragen nur 1-6 % ihrer Energie in den ersten 30 ms; der alte
+   Anschlag hatte 4 ms und 60 %. Schlag und Sturz liegen bei 485/983 Hz bzw.
+   851/2063 Hz - kein heller Anteil. */
+import zug2Klang from "./assets/klang/zug-2.webm";
+import zug3Klang from "./assets/klang/zug-3.webm";
+import treffer2Klang from "./assets/klang/treffer-2.webm";
+import fall2Klang from "./assets/klang/fall-2.webm";
 /* v0.77: sieben neue Klaenge, ueber ElevenLabs nach design/KLANG-PROMPTS.md
    erzeugt, geschnitten und auf -3 dBFS gebracht wie die vier davor. */
 import zugKlang from "./assets/klang/zug.webm";
@@ -29,14 +40,15 @@ import freiKlang from "./assets/klang/frei.webm";
 import goldKlang from "./assets/klang/gold.webm";
 
 // v0.75.2: DIE WAHL DES BESITZERS - genau diese vier Takes haben bestanden.
-// v0.77: "zug" ist endlich besetzt (der Take mit EINEM Anschlag, 1144 Hz -
-// holzig, 0,22 s). Zwei weitere Setz-Varianten und der Riss-Blitz warten noch
-// auf das Ohr des Besitzers und sind bewusst NICHT eingebaut.
+// v0.78: "zug" traegt DREI Schleif-Varianten, Schlag und Sturz je zwei -
+// so ermuedet das Ohr nicht. Der uebrige Katalog (Rochade, Kroenung, Talente,
+// Trank, Zeitenwender, Riss, Bestie, Meister, Werbung, Kapitel, Menue, Karte)
+// ist erzeugt, liegt zum Hoeren bereit und wartet auf das Urteil des Besitzers.
 const QUELLEN = {
   wahl: [waehlenKlang],
-  zug: [zugKlang],
-  treffer: [trefferKlang],
-  fall: [fallKlang],
+  zug: [zugKlang, zug2Klang, zug3Klang],
+  treffer: [trefferKlang, treffer2Klang],
+  fall: [fallKlang, fall2Klang],
   nein: [gesperrtKlang],
   // v0.77: die Klaenge um das Brett herum
   schach: [schachKlang],

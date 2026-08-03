@@ -1,5 +1,29 @@
 # Changelog - Grand Gambit
 
+## 0.78.0
+
+DAS HAENDLERBILD LEICHTER, DER KLANGKATALOG RICHTIGGESTELLT:
+
+- HAENDLERBILD: dasselbe Original, nur VERLUSTFREI nach WebP umkodiert -
+  2 276 039 B -> 1 513 750 B bei nachgemessen NULL Abweichung in RGB UND
+  Alpha (groesste Abweichung je Kanal: 0). Es bleibt bei 1024x1024 und der
+  vom Besitzer gelieferten Freistellung; kein Verkleinern, kein Weichzeichnen.
+- KLANG-KATALOG (design/KLANG-PROMPTS.md) nach dem Hoerurteil des Besitzers
+  umgeschrieben: Das Brett ist eine HOLZPLATTE, kein Stein. Ein Zug ist kein
+  Anschlag, sondern ein SCHLEIFEN ueber das Brett. Schlag und Sturz sind
+  Holz auf Holz - dumpf, hohl, ohne helles "Ding". Dazu die Pflichtzeile
+  "One single sound, no repetitions" fest im Katalog vermerkt.
+- DER GESAMTE RESTKATALOG erzeugt (Rochade, Kroenung, Talente, Trank,
+  Zeitenwender, Zeitriss, Riss-Blitz, Bestie, Meister, Werbung, Kapitel,
+  Menue und Karte) und je Klang die beste Aufnahme nach Messung gewaehlt.
+  Sie liegen zum Hoeren bereit; die Wahl trifft der Besitzer.
+- EINGEBAUT sind die drei Brettklaenge, an denen das Hoerurteil hing:
+  ZIEHEN traegt jetzt drei SCHLEIF-Varianten (99-274 ms bis zur Spitze, nur
+  1-6 % der Energie in den ersten 30 ms - der alte Anschlag hatte 4 ms und
+  60 %), SCHLAG und STURZ je zwei Holz-auf-Holz-Aufnahmen bei 485/983 Hz
+  bzw. 851/2063 Hz, ohne hellen Anteil. Anwaehlen bleibt, wie es war -
+  der Besitzer hat es bestaetigt.
+
 ## 0.77.0
 
 KAPITEL I WIRD ZUR SCHULE DES SCHACHS, DER HAENDLER BEKOMMT SEIN ORIGINAL,
