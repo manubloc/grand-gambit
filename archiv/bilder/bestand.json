@@ -1,0 +1,83 @@
+{
+ "stand": "2026-08-04",
+ "orte": [
+  {
+   "ort": "src/app/ui/assets/",
+   "was": "Spielfassungen — klein, verlustbehaftet",
+   "mb": 49,
+   "imSpiel": true
+  },
+  {
+   "ort": "archiv/bilder/",
+   "was": "Bild-Originale, aus fal.ai gerettet",
+   "mb": 139,
+   "imSpiel": false
+  },
+  {
+   "ort": "archiv/musik/",
+   "was": "36 Musikstücke",
+   "mb": 37,
+   "imSpiel": false
+  }
+ ],
+ "gruppen": [
+  {
+   "gruppe": "Geschnitzte Figuren",
+   "gesamt": 57,
+   "original": 24,
+   "fehlt": 33
+  },
+  {
+   "gruppe": "Gemalte Figuren",
+   "gesamt": 71,
+   "original": 21,
+   "fehlt": 50
+  },
+  {
+   "gruppe": "Turnierfiguren",
+   "gesamt": 6,
+   "original": 0,
+   "fehlt": 6
+  },
+  {
+   "gruppe": "Ausrüstung",
+   "gesamt": 27,
+   "original": 2,
+   "fehlt": 25
+  },
+  {
+   "gruppe": "Auszeichnungen",
+   "gesamt": 28,
+   "original": 8,
+   "fehlt": 20
+  },
+  {
+   "gruppe": "Bodentexturen",
+   "gesamt": 16,
+   "original": 1,
+   "fehlt": 15
+  }
+ ],
+ "offen": [
+  {
+   "was": "Turnierfiguren (klassisches Set)",
+   "anzahl": 6,
+   "wo": "Besitzer hat sie noch — reicht sie nach"
+  },
+  {
+   "was": "Farbiger geschnitzter Satz: Springer, Läufer, Turm, Dame, König",
+   "anzahl": 5,
+   "wo": "aimlapi oder ChatGPT"
+  },
+  {
+   "was": "Gemalte Portraits",
+   "anzahl": 50,
+   "wo": "älteste Bilder — ChatGPT-Verlauf, ältere Chats"
+  },
+  {
+   "was": "Ausrüstung, Auszeichnungen, Bodentexturen",
+   "anzahl": 60,
+   "wo": "Herkunft unklar"
+  }
+ ]
+}

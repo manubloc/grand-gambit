@@ -28,6 +28,7 @@ import { T } from "./theme.js";
    sie holt die Liste aus einer kleinen Beilage, die der Bau erzeugt. Kein
    Buendler sieht die Bilder je - weder Vite noch esbuild. */
 const VERZEICHNIS = "/schaukammer.json";
+const BESTAND = "/bildarchiv/bestand.json";
 
 const GRUPPEN = [
   ["Geschnitzte Figuren", /\/assets\/carved\//],
@@ -67,6 +68,15 @@ export function SchaukammerScreen() {
     return g;
   }, [ALLE]);
   const [gruppe, setGruppe] = useState(null);
+  /* v0.95 (Besitzerfrage: "kann ich das im Admin einsehen?"): ja - die
+     Bestandsaufnahme steht jetzt hier, nicht nur als Datei im Bestand.
+     Sie sagt, welche Spielfassung ihr Original hat und welche nicht. */
+  const [bestand, setBestand] = useState(null);
+  useEffect(() => {
+    let lebt = true;
+    fetch(BESTAND).then((r) => r.json()).then((b) => lebt && setBestand(b)).catch(() => {});
+    return () => { lebt = false; };
+  }, []);
   const zeigeGruppe = gruppe || gruppen[0];
   const [suche, setSuche] = useState("");
   const [gross, setGross] = useState(null);
@@ -94,6 +104,33 @@ export function SchaukammerScreen() {
           {ALLE.length} Bilder des Hauses. Antippen zeigt gross, der Knopf lädt das Original.
         </div>
 
+        {bestand && (
+          <div style={{ background: "linear-gradient(165deg,rgba(30,22,52,.55),rgba(14,10,24,.6))",
+            border: "1px solid rgba(167,139,250,.26)", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+            <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".12em", textTransform: "uppercase",
+              color: T.goldBright, marginBottom: 8 }}>Bestand · haben wir die Originale?</div>
+            <div style={{ display: "grid", gap: 5 }}>
+              {bestand.gruppen.map((g) => {
+                const anteil = g.gesamt ? Math.round((g.original / g.gesamt) * 100) : 0;
+                return (
+                  <div key={g.gruppe} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 12.5 }}>
+                    <span style={{ flex: "1 1 auto", minWidth: 0 }}>{g.gruppe}</span>
+                    <span style={{ flex: "0 0 92px", height: 7, borderRadius: 99, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                      <span style={{ display: "block", width: anteil + "%", height: "100%",
+                        background: anteil > 60 ? "#6fbf59" : anteil > 25 ? "#d3ae5c" : "#c2606a" }} />
+                    </span>
+                    <span style={{ flex: "0 0 74px", textAlign: "right", color: g.fehlt ? "#e0a0a8" : "#a7e08f" }}>
+                      {g.original}/{g.gesamt}{g.fehlt ? ` · ${g.fehlt} fehlt` : ""}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="gg-serif" style={{ fontSize: 11.5, color: T.dim, fontStyle: "italic", marginTop: 9, lineHeight: 1.5 }}>
+              {bestand.offen.map((o) => `${o.was} (${o.anzahl}) — ${o.wo}`).join(" · ")}
+            </div>
+          </div>
+        )}
         <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 10 }}>
           {gruppen.map((g) => {
             const n = ALLE.filter((e) => e.gruppe === g).length;

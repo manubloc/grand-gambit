@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 0.95.0
+
+DIE BESTANDSAUFNAHME STEHT IN DER SCHAUKAMMER
+
+- Auf die Frage des Besitzers, ob er das im Admin einsehen kann: ja, jetzt.
+  Die Schaukammer (?werkstatt) zeigt oben, welche Spielfassung ihr Original
+  hat und welche nicht - je Gruppe ein Balken, die Zahl daneben, fehlende
+  rot. Gemessen, nicht geschaetzt: jede Datei per Bildvergleich gegen die
+  93 geretteten Originale geprueft.
+- Stand: geschnitzte Figuren 24/57, gemalte 21/71, Turnierfiguren 0/6,
+  Ausruestung 2/27, Auszeichnungen 8/28, Bodentexturen 1/16 - zusammen
+  149 fehlende Originale.
+- Darunter steht, wo das Fehlende noch liegen koennte (Besitzer hat die
+  Turnierfiguren noch; farbiger Satz bei aimlapi oder ChatGPT; die alten
+  Portraits im ChatGPT-Verlauf).
+- Die Daten kommen aus archiv/bilder/bestand.json und werden zur Laufzeit
+  geholt - das Buendel bleibt unberuehrt.
+
 ## 0.94.0
 
 DIE RETTUNG WAR UNVOLLSTAENDIG - JETZT 93 STATT 54
