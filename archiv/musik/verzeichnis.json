@@ -92,20 +92,56 @@
  {
   "datei": "kapitel-1.mp3",
   "gruppe": "Kapitel",
-  "titel": "Kapitel I · Kronland (G-Dur)",
-  "bemerkung": "v0.88, derzeit im Spiel"
+  "titel": "Kapitel I · Kronland (D-Dur)",
+  "bemerkung": "v0.91, jetzt im Spiel — der gelobte Stil"
  },
  {
   "datei": "kapitel-2.mp3",
   "gruppe": "Kapitel",
-  "titel": "Kapitel II · Kornmark (D-Dur)",
-  "bemerkung": "v0.88"
+  "titel": "Kapitel II · Kornmark (a-Moll)",
+  "bemerkung": "v0.91, neu"
  },
  {
   "datei": "kapitel-3.mp3",
   "gruppe": "Kapitel",
   "titel": "Kapitel III · Eichwald (e-Moll)",
   "bemerkung": "v0.88"
+ },
+ {
+  "datei": "kapitel-4.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel IV · Krummholz (d-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "kapitel-9.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel IX · Die Wunde (h-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "kapitel-5.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel V · Grauwacht (e-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "kapitel-6.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel VI · Wolkenjoch (F-Dur)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "kapitel-7.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel VII · Sattelweite (g-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "kapitel-8.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel VIII · Aschgrund (c-Moll)",
+  "bemerkung": "v0.91"
  },
  {
   "datei": "gefecht-a.mp3",
@@ -138,6 +174,24 @@
   "bemerkung": "v0.88, derzeit im Spiel"
  },
  {
+  "datei": "meister-c.mp3",
+  "gruppe": "Meister",
+  "titel": "Meister C · Zähne am Anfang (f-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "halle-2.mp3",
+  "gruppe": "Weitere",
+  "titel": "Die Halle B · Gleichmäßig (a-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "halle-3.mp3",
+  "gruppe": "Weitere",
+  "titel": "Die Halle C · Später, feierlich (d-Moll)",
+  "bemerkung": "v0.91"
+ },
+ {
   "datei": "halle.mp3",
   "gruppe": "Weitere",
   "titel": "Die Halle · Warten auf einen Gegner",
@@ -148,5 +202,17 @@
   "gruppe": "Weitere",
   "titel": "Schnelles Spiel",
   "bemerkung": "v0.88"
+ },
+ {
+  "datei": "schnell-2.mp3",
+  "gruppe": "Weitere",
+  "titel": "Schnelles Spiel B · Rollend (F-Dur)",
+  "bemerkung": "v0.91"
+ },
+ {
+  "datei": "schnell-3.mp3",
+  "gruppe": "Weitere",
+  "titel": "Schnelles Spiel C · Munter (G-Dur)",
+  "bemerkung": "v0.91"
  }
 ]

@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 0.91.0
+
+DREIZEHN STUECKE MEHR - DIE HANDSCHRIFT VON KAPITEL II ALS MASSSTAB:
+
+- KAPITEL I TRAEGT JETZT DAS GELOBTE STUECK: das bisherige Kapitel II
+  (D-Dur, geduldiger Puls) ist ans erste Kapitel gerueckt; Kapitel II
+  bekam eine neue Melodie in a-Moll.
+- DER STIL WURDE GEMESSEN, NICHT GERATEN: Kapitel II liegt bei Grundton
+  219 Hz (A3), 59 % der Energie unter 300 Hz, ein Anschlag alle 350 ms.
+  Der Meister liegt bei 131 Hz (C3) und 74 %. Genau diese Zahlen stehen
+  jetzt im Auftrag - tiefe gezupfte Saiten zwischen A2 und A3, Anschlag
+  alle 350 ms, nichts ueber 300 Hz tragend.
+- SIEBEN NEUE KAPITELSTUECKE, mehr Moll als Dur wie gewuenscht: Kornmark
+  (a-Moll), Krummholz (d-Moll), Grauwacht (e-Moll), Wolkenjoch (F-Dur),
+  Sattelweite (g-Moll), Aschgrund (c-Moll), Die Wunde (h-Moll).
+- ZWEI WEITERE FUER DIE HALLE und ZWEI FUERS SCHNELLE SPIEL, damit dort
+  nichts langweilig wird - dazu ein dritter Meister in f-Moll.
+- Nachgemessen: alle zwoelf treffen die Lage (40-76 % unter 300 Hz), und
+  keines ist grell - der hoechste Hoehenanteil liegt bei 4,2 %.
+- Das Archiv in der Klangwerkstatt fasst jetzt 36 Stuecke: Menue 12,
+  Weltkarte 3, Kapitel 9, Gefecht 3, Meister 3, Weitere 6.
+
 ## 0.90.0
 
 MAUERN, ZAEUNE UND FALLEN - DIE MECHANIK STEHT (20 neue Pruefungen):
