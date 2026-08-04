@@ -44,3 +44,19 @@ for (const e of await readdir(MQ, { withFileTypes: true })) {
   if (e.name.endsWith(".mp3")) anzahl++;
 }
 console.log(`klangarchiv: ${anzahl} Stuecke nach ${MZ}`);
+
+// Und die BILD-ORIGINALE: sie liegen unter archiv/bilder und werden - wie
+// Musik und Schaukammer - neben das Spiel gelegt, nie hineingebunden.
+// (Gerettet aus der fal.ai-Auftragshistorie, siehe archiv/bilder/LIESMICH.md)
+const BQ = "archiv/bilder", BZ = "dist/bildarchiv";
+await rm(BZ, { recursive: true, force: true });
+let bilder = 0;
+async function kopiereBaum(von, nach) {
+  await mkdir(nach, { recursive: true });
+  for (const e of await readdir(von, { withFileTypes: true })) {
+    if (e.isDirectory()) await kopiereBaum(join(von, e.name), join(nach, e.name));
+    else { await copyFile(join(von, e.name), join(nach, e.name)); if (!e.name.endsWith(".md")) bilder++; }
+  }
+}
+await kopiereBaum(BQ, BZ);
+console.log(`bildarchiv: ${bilder} Originale nach ${BZ}`);

@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.93.0
+
+54 ORIGINALE AUS DER FAL.AI-HISTORIE GERETTET
+
+- Der Besitzer fragte, ob die verlorenen Figuren-Originale noch irgendwo
+  liegen. Drei Orte geprueft: die GIT-HISTORIE gibt nichts her (jede Datei
+  nur EINMAL committet, bereits klein), die Sitzungsprotokolle reichen nicht
+  weit genug zurueck - aber FAL.AI bewahrt die Auftragshistorie.
+- Der Weg: rest.alpha.fal.ai/requests/ mit Zeitraum liefert jeden Auftrag
+  samt json_output, und darin stehen die fal.media-Adressen der Ergebnisse.
+  50 Auftraege im Juli 2026, 54 Bildadressen - und ALLE 54 werden noch
+  ausgeliefert. Keine einzige verloren.
+- Gerettet: 43 Bilder in 1024x1024 und 11 in 1024x1536, echtes RGBA,
+  zusammen 91 MB - die geschnitzten Figurensaetze (cremeweiss und
+  naturhell), die Gambit-Stufen und die Bestien.
+- Sie liegen jetzt unter archiv/bilder/figuren mit Herkunftsverzeichnis und
+  werden - wie Musik- und Schaukammer-Bestand - beim Bau NEBEN das Spiel
+  gelegt (dist/bildarchiv), nie hineingebunden. Buendel unveraendert
+  1,75 MB.
+
 ## 0.92.0
 
 DER GASTZUGANG IST FORT - UND ALLES, WAS IHN VERSPRACH:
