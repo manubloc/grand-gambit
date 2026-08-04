@@ -5,10 +5,16 @@
 // map, the academy — it wears the same face.
 import { ICON_ART } from "./art.generated.js";
 import { itemArt } from "./assets/items/itemArt.js";
+import { schlichtAn } from "./board/paintedArt.js";
 import { ITEMS } from "../../content/index.js";
 
 export function ItemIcon({ id, size = 22, style = null }) {
-  const painted = itemArt(id);
+  /* v0.84 (Besitzer): im schlichten Stil zeichnet ueberall dieselbe Hand -
+     auch beim Trank und beim Zubehoer. Das gemalte Bild tritt zurueck, die
+     Vektorzeichnung uebernimmt. Entweder das eine oder das andere; ein
+     Haus aus gemalten Truhen und schlichten Figuren war der Zwitter, den
+     der Besitzer zu Recht bemaengelt hat. */
+  const painted = schlichtAn() ? null : itemArt(id);
   if (painted) {
     return <img src={painted} alt="" draggable={false} decoding="async" aria-hidden="true"
       style={{ width: size, height: size, objectFit: "contain", display: "block",

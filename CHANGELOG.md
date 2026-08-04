@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 0.84.0
+
+DAS ZUBEHOER FOLGT DEM STIL, VIER SYMBOLE NEU GEZEICHNET:
+
+- ItemIcon fragt jetzt den Stilschalter: im schlichten Stil weicht das
+  gemalte Bild der Vektorzeichnung - Trank, Sanduhr, Fackel, Kompass und
+  alles Uebrige. Entweder das eine oder das andere; ein Haus aus gemalten
+  Truhen und schlichten Figuren war der Zwitter, den der Besitzer zu Recht
+  bemaengelt hat.
+- VIER SYMBOLE NEU: die KRIEGSAXT las sich als Pilz (vier Anlaeufe: Pilz,
+  Fahne, Scheibe, endlich Axt - der Fehler war jedes Mal ein rundes statt
+  eines geschnittenen Blattes; jetzt mit eingezogener Taille am Schaft und
+  ausholender Schneide). Die MACHETE war ein schraeger Stab, jetzt eine
+  gebogene Haumesserklinge mit Ruecken, Spitze und gewickeltem Griff. Die
+  BRIEFTAUBE las sich als Blatt, jetzt Kopf, Schnabel, Fluegel, Schwanz
+  und die Botschaft am Bein. Das BOOT hatte als einziges Symbol ein
+  cremefarbenes Segel - vergoldet.
+- design/BILD-PROMPTS-KAPITEL.md: zwoelf vollstaendige Prompts fuer die
+  Kapitel-Einstiege (der Gambit von hinten, davor die Landschaft, unteres
+  Viertel ruhig fuer den Text). Dazu eine Kopierseite mit einem Knopf je
+  Bild - Markdown kann keine Knoepfe, darum liegt beides vor.
+
 ## 0.83.0
 
 DIE WELTKARTE LIESS SICH NICHT BEDIENEN - JETZT SCHON:

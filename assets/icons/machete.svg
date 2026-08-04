@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" data-gg="icon:machete"><path d="M6 24 L20 6 q5-3 7 0 q1 3-3 6 L11 26 q-3 2-5 0 z" fill="#dcbb78"/><path d="M8 22l4 4-2 2q-3 1-4-1t2-5z" fill="#a3803c"/></svg>
+<!-- MACHETE: vorher ein schraeger Stab ohne Klingenprofil. Jetzt eine
+     breite, gebogene Haumesserklinge mit Ruecken und Spitze, dazu ein
+     abgesetzter Griff mit Wicklung. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" data-gg="icon:machete">
+  <path d="M26 4 q3 6-2 12 q-5 6-13 10 l-2.6-3 q8-4 12-9 q4-5 3-10z" fill="#dcbb78"/>
+  <path d="M25.4 6.4 q1.6 4.6-2.4 9.4 q-4 4.8-10.4 8.4 l-1-1.2 q6.4-3.6 10.2-8.2 q3.8-4.6 3.6-8.4z" fill="#f8e7b4" opacity=".5"/>
+  <path d="M8.4 23 l3.4 4 -3.2 2.4 q-2.4 1-3.6-1 q-1-2 1-3.6z" fill="#a3803c"/>
+  <path d="M6.6 25.2 l3.2 3.8 M5.4 26.6 l3.2 3.8" stroke="#dcbb78" stroke-width=".9" opacity=".7"/>
+</svg>
