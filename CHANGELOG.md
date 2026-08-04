@@ -1,5 +1,38 @@
 # Changelog - Grand Gambit
 
+## 0.88.0
+
+ELF NEUE STUECKE IN EINER HANDSCHRIFT, DIE SCHAUKAMMER, KORRIGIERTE PROMPTS:
+
+- MUSIK: zehn Stuecke neu, alle in derselben Sprache (tiefe GEZUPFTE Saiten,
+  im Auftrag ausdruecklich ohne gestrichene Streicher, Blaeser, Chor,
+  Glocken - nichts Grelles). Drei Menue-Abwandlungen, je ein Stueck fuer
+  Halle und Schnelles Spiel, eigene Melodien fuer Kapitel I (G-Dur,
+  freundlich), II (D-Dur, warm) und III (e-Moll, dunkler), ein
+  zurueckhaltendes Gefecht (nur schneller, 104 BPM - kein Aufbau, kein
+  Hoehepunkt) und ein Meister, der seine Zaehne NUR in den ersten Sekunden
+  zeigt. Alle auf -23,5 dBFS gemischt, also leiser als zuvor: Hintergrund
+  soll Hintergrund bleiben.
+- Ein Stueck war zu grell (22 % Hoehenanteil ueber 3 kHz) - messbasiert um
+  11 dB gedaempft, jetzt 6,9 %. Alle anderen lagen schon unter 4 %.
+- DIE SPANNUNGSSTUFE IM GEFECHT IST STILLGELEGT: der Wechsel war "viel zu
+  krass". Es gibt ein einziges, ruhiges Gefechtsthema.
+- DRACHENFLUG laenger und lauter: 1,59 statt 1,19 s, -18,9 statt -20,9 dB.
+- DIE SCHAUKAMMER (?werkstatt) ersetzt die Figurenwerkstatt: alle 382 Bilder
+  des Hauses nach Gruppen, zum Scrollen, mit Titel und Dateiname, gross
+  anzeigbar und einzeln als Original herunterladbar. Kein Auswahlfeld mehr.
+  ZWEI FEHLVERSUCHE davor, beide gemessen: statische Importe bliesen das
+  Buendel von 1,7 auf 2,82 MB (Bau brach ab), import.meta.glob warf im
+  Rauchtest und liess die Einzeldatei auf 119 MB wachsen. Jetzt legt der
+  Bau die Bilder als Kopie neben das Spiel und die Kammer holt sie zur
+  Laufzeit - kein Buendler sieht sie je. Buendel wieder 1,75 MB.
+- BILD-PROMPTS KORRIGIERT: die Landschaften folgen jetzt der Weltkarte.
+  Kapitel I war strohig-golden beschrieben - das ist die Kornmark; Kronland
+  ist gruen mit weisser Stadt. Sattelweite und Aschgrund waren vertauscht,
+  und ein zwoelftes Kapitel "Osrics Halle" hatte ich erfunden: XI ist Die
+  Kueste, XII das Endlose Meer. Dazu neue Prompts fuer Mauer, Falle und
+  Zaun.
+
 ## 0.87.0
 
 DIE KAMPAGNENFIGUREN SIND ZURUECK - MEIN FEHLER AUS v0.86:

@@ -31,7 +31,7 @@ import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
-import { WerkstattScreen } from "./ui/WerkstattScreen.jsx";
+import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
 import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
 import { SpielerbuchScreen } from "./ui/SpielerbuchScreen.jsx";
 import { AdminPortal } from "./ui/AdminPortal.jsx";
@@ -373,7 +373,11 @@ export default function App() {
   // damit sie auch ohne Konto aufgeht. (DS1 §17)
   if (galerie) return <GalerieScreen />;
   // DIE FIGURENWERKSTATT (Besitzer, v0.54): nur ueber ?werkstatt erreichbar.
-  if (werkstatt) return <WerkstattScreen />;
+  /* v0.88: aus der Figurenwerkstatt wurde die SCHAUKAMMER - kein Werkzeug
+     zum Verstellen mehr, sondern der volle Blick auf alles Bildmaterial des
+     Hauses, mit Titel, Dateiname und Ladeknopf. Der alte Weg ?werkstatt
+     bleibt bestehen. */
+  if (werkstatt) return <SchaukammerScreen />;
   // DIE KLANGWERKSTATT (Besitzer, v0.79): alle Klaenge zum Abhoeren, ueber die
   // echte klang()-Schicht - nur ueber ?klangwerkstatt erreichbar.
   if (klangwerkstatt) return <KlangWerkstattScreen />;

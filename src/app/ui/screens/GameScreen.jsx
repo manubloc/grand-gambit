@@ -268,7 +268,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     const eng = drin ? true : raus ? false : spannungRef.current;
     if (eng !== spannungRef.current) {
       spannungRef.current = eng;
-      try { musikBereich(eng ? "kampfSpannung" : "kampf"); } catch {}
+      /* v0.88 (Besitzer: "das Gefecht ist viel zu krass"): die Partie
+         WECHSELT DAS STUECK NICHT MEHR. Es gibt ein einziges, zurueckhaltendes
+         Gefechtsthema - dieselbe gezupfte Sprache, nur etwas draengender im
+         Puls. Die Kraeftemessung bleibt stehen (sie kostet nichts und trug
+         schon einmal), aber sie schaltet keine Musik mehr um: Hintergrund
+         soll Hintergrund bleiben. */
     }
   }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
   const [brief, setBrief] = useState(() => !resume && !profile.notices?.hpBrief);
