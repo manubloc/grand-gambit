@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 0.85.0
+
+DIE MUSIK LIEGT JETZT AUCH IN DER WERKSTATT (Besitzerfrage, Antwort war
+NEIN - bis jetzt):
+
+- Die Klangwerkstatt (?klangwerkstatt) hat eine MUSIKABTEILUNG bekommen:
+  alle fuenf Bereichsstuecke mit eigenem Spieler, eines nach dem anderen,
+  erneutes Tippen haelt an. Der Abhoerregler gilt auch fuer sie.
+- ANALYSE STATT RATEN: Der Besitzer mochte "den Anfang" des Menuestuecks,
+  ohne benennen zu koennen, was dort spielt. Nachgemessen: in den ersten
+  Sekunden liegen 90 % der Energie unter 300 Hz, der tragende Ton ist A3
+  (221 Hz), und die Anschlaege kommen alle 0,72 s - exakt die 84 BPM des
+  Auftrags. Es sind also TIEFE GEZUPFTE SAITEN (Cello-Pizzicato,
+  Bassgambe) mit sehr wenigen Obertoenen; daher der dumpfe, fast
+  tastenartige Eindruck.
+- Drei neue Menuefassungen erzeugt, die NUR das spielen - im Auftrag
+  ausdruecklich ohne gestrichene Streicher, ohne Geige, ohne Blaeser und
+  Chor. Dazu eine helle, entspannte Kartenfassung mit gezupfter
+  Nylonsaiten-Gitarre fuer das erste Kapitel. Alle vier liegen dem
+  Besitzer zur Wahl vor, zusammen mit dem Vorbild-Ausschnitt.
+
 ## 0.84.0
 
 DAS ZUBEHOER FOLGT DEM STIL, VIER SYMBOLE NEU GEZEICHNET:
