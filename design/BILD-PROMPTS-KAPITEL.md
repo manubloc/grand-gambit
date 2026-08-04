@@ -89,3 +89,36 @@ A painted fantasy landscape in 16:9, seen from behind a lone hooded figure stand
 ```
 A painted fantasy interior in 16:9, seen from behind a lone hooded figure standing small in the lower third: a carved wooden chess pawn given human form, dark cloak, staff in hand, facing away from the viewer into the hall. Before him waits the throne room of a fallen king — a vast checkered floor of black and white stone, broken columns, a high throne on a dais wreathed in violet light, tattered banners. One crowned silhouette sits waiting. Oil painting, warm impasto, deep shadows, night-blue #0c111e and antique gold #E9CF8A dominant, cinematic depth, no text, no logo, the lower quarter kept dark and calm for a caption.
 ```
+
+
+---
+
+# Spielobjekte im Figurenstil
+
+Diese Bilder stehen NICHT hinter dem Text, sondern auf der Karte und dem
+Brett - sie muessen darum aussehen wie die geschnitzten Figuren selbst.
+
+**Gemessen an `carved-gambit-light.webp`:** 640x800, Licht klar von LINKS
+(Helligkeit links 88, rechts 58), Palette aus warmem Holz (`#a06020`,
+`#804000`) und gedaempftem Gruen (`#204000`, `#406020`), weiche gemalte
+Kanten, freigestellt auf Transparenz.
+
+## Das Boot (der Gambit setzt sich hinein)
+
+Das Boot wird HINTER die Gambit-Figur gelegt: sie steht davor, das Boot
+umschliesst sie unten - so sieht es aus, als saesse er darin. Darum ist die
+Mitte offen und leer, und der Rumpf steigt links und rechts an.
+
+```
+A single small carved wooden rowboat, hand-carved folk-art toy style, painted in soft matte colours: warm honey and walnut wood tones (#a06020, #804000) for the hull planks, muted forest green (#204000, #406020) for the painted trim and the inner boards. Seen from slightly above and straight from the front, the bow pointing toward the viewer, so the open hull forms a wide shallow cradle. The MIDDLE OF THE BOAT IS COMPLETELY EMPTY — no figure, no oars crossing the centre, no mast, no sail — leaving a clear open seat where a small carved figure can later be placed. The gunwales rise on the left and right like low arms. Visible chisel facets and soft rounded edges, gentle hand-painted texture, tiny nicks in the wood, one pair of oars resting flat along the outer sides. Soft warm light from the UPPER LEFT, deep soft shadow to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred, no scene, no water, no base, no text. Painted illustration, not a photo, not 3D render, matte finish.
+```
+
+**Nach dem Erzeugen:** freigestellt als PNG mit Alpha ablegen, Breite so
+skalieren, dass die Innenoeffnung etwa 1,6x so breit ist wie die
+Gambit-Figur - dann sitzt sie mittig und beruehrt die Bordwaende nicht.
+
+## Ersatzfassung, falls die erste zu flach wirkt
+
+```
+A small carved wooden boat in hand-carved folk-art toy style, three-quarter front view, tilted slightly toward the viewer so the empty interior is clearly visible. Hull of warm honey and walnut wood (#a06020, #804000) with muted forest-green painted trim (#204000, #406020) along the top edge and a green-painted inner floor. Chunky, sturdy, slightly stylised proportions like a carved chess-set piece. The interior is EMPTY — one simple crossbench at the back only, nothing in the middle. Two short oars strapped to the outside of the hull. Chisel marks, soft rounded corners, matte hand-painted surface, small honest imperfections. Warm light from the UPPER LEFT, soft shadow falling lower right. Isolated on a transparent background, no water, no ground, no base, no text, centred. Painted illustration, matte, not photographic, not 3D.
+```
