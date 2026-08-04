@@ -140,7 +140,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   // aber in `classic` nie enthalten (dort haengen auch Kartenwahl und Suchtiefe
   // dran, die fuer die Fernpartie anders laufen) - darum ein eigenes Merkmal
   // nur fuer die OPTIK.
-  const klassikOptik = classic || (daily && (daily.rules || "hp") === "chess");
+  const klassikBasis = classic || (daily && (daily.rules || "hp") === "chess");
 
   const map = daily ? mapById(daily.map) : pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
   const rules = daily ? (daily.rules || "hp") : pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
@@ -728,6 +728,30 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp && !(daily && dailySent);
   const st = status(state);
   const hpMode = state.rules === "hp";
+  /* v0.86 (Besitzer): REINES SCHACH IST REINES SCHACH - gleich, auf welchem
+     Weg man hineingeraten ist. Zuvor wurde nur die Betriebsart gefragt
+     (classic / Tagesraetsel); ein SCHNELLES SPIEL mit Schachregeln fiel
+     durchs Raster und zeigte weiter die Faehigkeiten- und Ausruestungs-
+     leisten, die es dort gar nicht gibt. Jetzt entscheidet die REGEL der
+     laufenden Partie - und die kennt erst der Zustand, darum steht diese
+     Zeile hier und nicht oben bei den Betriebsarten. */
+  const klassikOptik = klassikBasis || state.rules === "chess";
+  /* v0.86 (Besitzer): "bei klassischem Schach ist die Leiste unnoetig". Der
+     Modus allein reicht als Bedingung aber nicht - auch im Modus SCHACH hat
+     oft keine Figur Faehigkeiten (etwa bevor der Gambit erwacht), und dann
+     steht dort eine leere Schublade. Darum entscheidet nicht die Spielart,
+     sondern der Inhalt: hat auch nur EINE eigene Figur ein Talent, einen
+     Schild oder eine Stufe ueber 1, erscheint die Leiste - sonst gehoert
+     der Platz dem Brett. */
+  const leisteNoetig = useMemo(() => {
+    if (klassikOptik) return false;
+    for (const p of state.board) {
+      if (!p || p.color !== (hotseat ? state.turn : myColor)) continue;
+      if ((p.abilities && p.abilities.length) || p.shield || (p.level || 1) > 1 || p.hero) return true;
+    }
+    return false;
+  }, [state.board, klassikOptik, hotseat, state.turn, myColor]);
+
   // DIE FELDER DES BESITZERS (v0.66): Kampagne traegt den Streifen ihres
   // Kapitels; der Endboss des letzten Kapitels bekommt die Blitz-Kachel auf
   // den dunklen Feldern; klassische Partien wechseln durch drei Streifen
@@ -1122,8 +1146,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             botChrome-Messung, deren Hoehe den tight-Modus fuettert - in-flow
             ZWISCHEN Brett und Legende sank das Brett um 51 px. */}
         {yourStrip}
-        <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />
-        {ruestungsZeile}
+        {/* v0.86 (Besitzer): IM KLASSISCHEN SCHACH SCHWEIGT DIE LEISTE. Dort
+            haben die Figuren keine Talente und keine Sonderzuege - eine Leiste,
+            die nichts zu sagen hat, nimmt nur Platz und Aufmerksamkeit. Das
+            Brett bekommt den ganzen Blick. */}
+        {leisteNoetig && <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />}
+        {!klassikOptik && ruestungsZeile}
       </aside>
       {dailyDoneEl}
       {bannerEl}{raus}
@@ -1132,12 +1160,20 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%",
-      display: "flex", flexDirection: "column" }}>
+      display: "flex", flexDirection: "column",
+      /* v0.86: im reinen Schach fallen die Leisten weg - dann bliebe unten
+         ein grosses Loch und das Brett klebte oben. Also rueckt es in die
+         MITTE des freien Raums, wie der Besitzer es wollte. */
+      justifyContent: klassikOptik ? "center" : "flex-start" }}>
       <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
       {boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
-      <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />
-      {ruestungsZeile}
+      {/* v0.86 (Besitzer): IM KLASSISCHEN SCHACH SCHWEIGT DIE LEISTE. Dort
+            haben die Figuren keine Talente und keine Sonderzuege - eine Leiste,
+            die nichts zu sagen hat, nimmt nur Platz und Aufmerksamkeit. Das
+            Brett bekommt den ganzen Blick. */}
+        {leisteNoetig && <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />}
+      {!klassikOptik && ruestungsZeile}
       {dailyDoneEl}
       {bannerEl}{raus}
     </div>

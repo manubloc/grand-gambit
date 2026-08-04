@@ -1,5 +1,35 @@
 # Changelog - Grand Gambit
 
+## 0.86.0
+
+REINES SCHACH IST REINES SCHACH - UND DIE FIGUREN STEHEN AUF EINER LINIE:
+
+- SECHS KLAENGE NACH DEM HOERURTEIL NEU: Stufenaufstieg jetzt im Geist der
+  gelobten Kroenung (dunkle Bronzeglocke, 537 statt 1440 Hz), Faehigkeit
+  frei ebenso aber kuerzer (1,0 s), Drachenflug als WIND (142 Hz, kein
+  Gebruell), Fernangriff als kurzes Pfeifen eines vorbeifliegenden Pfeils,
+  Niederlage KUERZER (0,72 statt 0,92 s), Held rekrutiert neu und laenger
+  (Hornruf, Harfe, ein Trommelschlag - 3,4 s).
+- SCHNELLES SPIEL MIT SCHACHREGELN ZEIGTE FAELSCHLICH DIE KAMPFLEISTE UND
+  DIE AUSRUESTUNGSZEILE: Ursache war, dass nur die BETRIEBSART gefragt
+  wurde (classic / Tagesraetsel) - ein Schnelles Spiel mit Schachregeln
+  fiel durchs Raster. Jetzt entscheidet die REGEL der laufenden Partie;
+  die Zeile musste dafuer hinter den Zustand wandern, denn erst er kennt
+  sie. Im reinen Schach schweigen beide Leisten - und das BRETT RUECKT IN
+  DIE MITTE. Nachgemessen: 234 px Luft oben, 234 px unten.
+- ALLE 114 GESCHNITZTEN FIGURENBILDER AUF EINE LINIE GEBRACHT: Der Turm
+  war nur 458 px hoch (Bauer: 538) - weil alle Bilder auf dieselbe
+  Kastenhoehe skaliert werden, erschien er dadurch rund 18 % breiter, samt
+  Sockel. Genau das hat der Besitzer gesehen. Jetzt ist nicht mehr die
+  Bildhoehe massgeblich, sondern die SOCKELBREITE: jede Figur wurde so
+  skaliert, dass ihr Sockel 252 px misst, und alle stehen auf derselben
+  Grundlinie (786). Streuung der Sockelbreiten von 46 px auf 25 px
+  gefallen, alle Figuren zugleich etwas kleiner.
+- Beim Normieren hat der Zeitausfall EINE Datei mitten im Schreiben
+  zerrissen (carved-gambit-t5-dark.webp); sie wurde aus dem Bestand
+  wiederhergestellt und einzeln nachgezogen - geprueft: alle 114 Dateien
+  lesbar.
+
 ## 0.85.0
 
 DIE MUSIK LIEGT JETZT AUCH IN DER WERKSTATT (Besitzerfrage, Antwort war
