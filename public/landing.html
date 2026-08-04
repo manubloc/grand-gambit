@@ -81,7 +81,10 @@
     @media (min-width:640px){ .modi { grid-template-columns:1fr 1fr; } }
     @media (min-width:980px){ .modi { grid-template-columns:repeat(4,1fr); } }
     .modus { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--card); }
-    .modus img { height:130px; width:100%; object-fit:cover; object-position:center 30%; }
+    /* v0.92 (Besitzer): die Kacheln zeigten nur einen 130-px-Streifen eines
+       fast quadratischen Bildes (588x560) - man erkannte nicht, was der Modus
+       ist. Jetzt steht das ganze Bild in seinem eigenen Verhaeltnis. */
+    .modus img { width:100%; height:auto; aspect-ratio:588/560; object-fit:contain; background:#0b0912; display:block; }
     .modus .inner { padding:13px 14px 15px; }
     .modus h3 { color:var(--goldhell); font-size:16.5px; letter-spacing:.03em; margin-bottom:5px; }
     .modus p { color:#b8b3a5; font-size:13.5px; line-height:1.55; }
@@ -274,7 +277,10 @@
     <h2>Vom Kronland bis zum Endlosen Meer</h2>
     <p class="h2u sans">Zwölf Länder auf einer gemalten Weltkarte — jedes Kapitel mit eigener Landschaft,
       eigenem Brett und eigenem Meister.</p>
-    <div class="weltrahmen"><img src="/landing/weltkarte.webp" alt="Die gemalte Weltkarte von Grand Gambit — zwölf Länder vom Kronland bis zum Endlosen Meer" width="1400" height="720" loading="lazy" /></div>
+    <!-- v0.92: nur der ANFANG der Welt. Die ganze Karte war schon vor dem
+         ersten Zug zu sehen - sie ist aber das, was man sich erspielt. -->
+    <div class="weltrahmen"><img src="/landing/weltkarte-ausschnitt.webp" alt="Das Kronland auf der gemalten Weltkarte von Grand Gambit — der Anfang von zwölf Ländern" width="532" height="788" loading="lazy" /></div>
+    <p class="h2u sans" style="text-align:center;margin-top:10px;font-style:italic">Das Kronland — der Anfang. Elf weitere Länder liegen dahinter.</p>
   </div>
 </section>
 

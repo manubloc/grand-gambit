@@ -4,7 +4,7 @@
 // over automatically once Supabase is configured (SUPABASE-SETUP.md).
 import { useState } from "react";
 import { T } from "../theme.js";
-import { register, login, loginGuest, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
+import { register, login, cloudConfigured, signInWithProvider, signInEmailCloud, signUpEmailCloud } from "../../../meta/index.js";
 import { logoArt } from "../livery.js";
 
 const STR = {
@@ -153,11 +153,11 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
         </div>}
         {cloudNote && !cloud && <div style={{ color: T.dim, fontSize: 12.5, lineHeight: 1.45, padding: "0 3px" }}>{s.cloudOff}</div>}
 
-        <button disabled={busy} onClick={() => run(() => loginGuest())}
-          style={{ background: "none", border: `1px dashed ${T.line}`, color: T.dim, borderRadius: 12,
-            padding: "9px 14px", fontFamily: "inherit", fontSize: 13, cursor: "pointer", marginTop: 2 }}>
-          {s.guest}
-        </button>
+        {/* v0.92 (Besitzerentscheid): DER GASTWEG IST FORT. Wer spielen will,
+            legt ein Konto an - sonst haengt kein Fortschritt an einem Namen,
+            die Halle findet niemanden wieder, und beim naechsten Start ist
+            alles verloren. Der stille Seitenweg hat mehr gekostet als
+            gebracht. */}
       </div>
       </div>
       <div style={{ marginTop: "auto", paddingTop: 14, color: "rgba(240,233,216,.28)", fontSize: 10.5,

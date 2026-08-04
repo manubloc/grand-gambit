@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 0.92.0
+
+DER GASTZUGANG IST FORT - UND ALLES, WAS IHN VERSPRACH:
+
+- Der Knopf "Als Gast spielen" ist aus der Anmeldung entfernt. Wer spielen
+  will, legt ein Konto an; sonst haengt kein Fortschritt an einem Namen und
+  beim naechsten Start ist alles verloren.
+- DATENSCHUTZ UND NUTZUNGSBEDINGUNGEN NACHGEZOGEN - nicht bloss das Wort
+  getauscht, sondern die Zusagen berichtigt: "Ein Konto ist optional" wurde
+  zu "zum Spielen wird ein Konto benoetigt", die Ueberschrift "Nutzerkonto
+  (optional)" heisst jetzt schlicht "Nutzerkonto", und die Stellen ueber
+  Gastspiel als Alternative sind fort. Kein Rest des Wortes bleibt.
+- LANDINGPAGE: die Modus-Kacheln zeigten nur einen 130-px-Streifen eines
+  fast quadratischen Bildes (588x560) - man erkannte nicht, worum es geht.
+  Jetzt steht jedes Bild in seinem eigenen Verhaeltnis.
+- Die WELTKARTE verriet sich ganz, bevor man den ersten Zug getan hat.
+  Jetzt zeigt die Seite nur das Kronland (das erste Drittel) mit dem
+  Hinweis, dass elf Laender dahinterliegen.
+
+NOCH OFFEN: das Loeschen fremder Konten - siehe Bericht.
+
 ## 0.91.0
 
 DREIZEHN STUECKE MEHR - DIE HANDSCHRIFT VON KAPITEL II ALS MASSSTAB:
