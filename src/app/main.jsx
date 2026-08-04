@@ -109,6 +109,9 @@ style.textContent = GLOBAL_CSS + `
   @keyframes ggImgIn { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
   /* v0.80: der Riss-Stern eines Fernangriffs - schnell aufbersten, lange
      nachglimmen, mit leichter Drehung im Verloeschen. */
+  /* v0.82: solange ein Blatt (Popup) offen ist, weicht das Installations-
+     Banner - sonst liegt es ueber dem Blattkopf. */
+  html[data-gg-popup="1"] .gg-install-banner { display: none !important; }
   @keyframes ggRissStern {
     0%   { opacity: 0; transform: scale(.22) rotate(-14deg); }
     7%   { opacity: 1; transform: scale(1.22) rotate(0deg); }

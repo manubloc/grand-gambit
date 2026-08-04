@@ -19,7 +19,7 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { paintedById, paintedForPiece } from "../board/paintedArt.js";
+import { paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -30,6 +30,10 @@ const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 /** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
  *  so no bottom-anchoring, no hp padding, no badge chrome. */
 function TileArt({ kind, size, hero = false, level = 1 }) {
+  /* v0.83: im schlichten Stil zeichnet ueberall dieselbe Hand - auch hier,
+     nicht nur auf dem Brett. Sonst sitzt man vor einem Zwitter aus schlichtem
+     Brett und gemaltem Hofstaat. */
+  if (schlichtAn()) return <PieceArt kind={kind} size={size ?? "100%"} level={level} hero={hero} />;
   const src = paintedForPiece({ kind, color: "w", hero, level });
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
@@ -320,7 +324,7 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
               on the board. The chronicle is a reference, so it shows both. */}
           <span style={{ display: "flex", alignItems: "flex-end", gap: 6, flex: "0 0 auto" }}>
             <span style={{ width: 40, height: 50, display: "grid", placeItems: "center" }}>
-              {paintedById(ch.id)
+              {(!schlichtAn() && paintedById(ch.id))
                 ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
                     filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
                 : <PieceArt kind={ch.kind} size={32} level={1} />}
@@ -993,6 +997,14 @@ function FormationEditor({ profile, dispatch, t, en }) {
 // Gear & supplies — its own room now (tab 2), no longer part of one long scroll.
 export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) {
   const [gearInfo, setGearInfo] = useState(initialGearInfo);   // ein angetipptes Stück zeigt sein Blatt
+  /* v0.82: solange ein Blatt offen ist, traegt das Wurzelelement eine Marke -
+     daran erkennt das Installations-Banner (reines CSS), dass es weichen
+     muss. Ohne das lag es auf dem Telefon ueber dem Blattkopf. */
+  useEffect(() => {
+    if (!gearInfo) return;
+    document.documentElement.dataset.ggPopup = "1";
+    return () => { delete document.documentElement.dataset.ggPopup; };
+  }, [gearInfo]);
   return (
     <div style={{ background: "radial-gradient(140% 120% at 50% -14%, rgba(240,206,122,.13) 0%, rgba(26,20,12,.62) 44%, rgba(10,8,6,.55) 100%)",
       backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)",
@@ -1111,7 +1123,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
         const price = it ? it.gold : SP_SHARD_GOLD;
         const can = !full && (profile.gold || 0) >= price;
         return <div onClick={() => setGearInfo(null)} style={{ position: "fixed", inset: 0, zIndex: 56,
-          background: "rgba(4,6,10,.74)", display: "grid", justifyItems: "center", alignItems: "start",
+          background: "rgba(4,6,10,.74)", display: "block", overflow: "hidden",
           /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
              Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
              unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
@@ -1122,9 +1134,11 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
              IMMER ueber diesem Popup, egal welcher z-Index. Also weicht die
              Karte ihnen aus: die Freiraeume kommen als CSS-Variablen aus der
              Huelle. */
-          padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
+        }}>
           <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
-            maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
+            position: "absolute", left: "50%", transform: "translateX(-50%)",
+            top: "calc(14px + var(--gg-popfrei-oben, 0px))",
+            maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
             background: "radial-gradient(130% 120% at 50% -12%, rgba(240,206,122,.16) 0%, rgba(24,19,11,.97) 44%, rgba(10,8,5,.99) 100%)",
             border: "1px solid rgba(227,192,122,.55)",
             boxShadow: "0 18px 50px rgba(0,0,0,.6), 0 0 22px rgba(240,206,122,.16)" }}>
@@ -1293,7 +1307,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null }) => (
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null, kind = null, hero = false, lvl = 1 }) => (
     <div onClick={onOpen} style={{ position: "relative",
       // der leichte Riss-Verlauf der Menueleisten, eine Stufe stiller
       background: "radial-gradient(130% 120% at 50% -12%, rgba(124,58,237,.20) 0%, rgba(34,22,60,.55) 46%, rgba(12,8,22,.7) 100%)",
@@ -1306,7 +1320,13 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           sits up here; it belongs under the name, where it reads as a caption. */}
       {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
         display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
-      {img ? <img src={img} alt="" decoding="async" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
+      {/* v0.83: im schlichten Stil steht hier die schlichte Figur - nicht das
+          Gemaelde und auch nicht die Notsilhouette. */}
+      {schlichtAn() && kind ? <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto",
+        opacity: dark ? 0.5 : dim ? 0.7 : 1, filter: dark ? "brightness(0.35)" : "none" }}>
+          <PieceArt kind={kind} size={72} level={lvl} hero={hero} />
+        </div>
+      : img ? <img src={img} alt="" decoding="async" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto" }}>
@@ -1331,9 +1351,14 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     </div>
   );
   const [detail, setDetail] = useState(null); // a tapped figure opens its FULL card (level, ladder, upgrades)
+  useEffect(() => {   // dieselbe Marke fuer das Figuren- und Monsterblatt
+    if (!detail) return;
+    document.documentElement.dataset.ggPopup = "1";
+    return () => { delete document.documentElement.dataset.ggPopup; };
+  }, [detail]);
   const champTile = (cid, origin) => {
     const ch = CHARACTERS[cid]; if (!ch) return null;
-    const img = paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: characterLevel(profile, cid) || 1 });
+    const img = schlichtAn() ? null : paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: characterLevel(profile, cid) || 1 });
     const own = unlocked.has(cid) || COURT_IDS.includes(cid);
     const seen = met.has(ch.kind);
     const wins = bossWinsFor(profile, cid) || 0;
@@ -1341,10 +1366,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
     const sigBig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={58} level={1}
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
-    if (own) return <Tile key={cid} img={img} stufe={unlocked.has(cid) ? characterLevel(profile, cid) : null} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
+    if (own) return <Tile key={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} stufe={unlocked.has(cid) ? characterLevel(profile, cid) : null} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
-      return <Tile key={cid} img={img} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}
+      return <Tile key={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}
         action={wins >= 1 ? <button onClick={(e) => { e.stopPropagation(); bribe(ch); }} disabled={gold < price}
           title={t("tree.bribeHint")}
           style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
@@ -1455,14 +1480,16 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       const img = paintedById("boss-" + b.id) || paintedById("boss-" + b.art);
       const fam = FAM_LABEL[b.art] ? (en ? FAM_LABEL[b.art][1] : FAM_LABEL[b.art][0]) : b.art;
       return <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", justifyItems: "center", alignItems: "start",
+        display: "block", overflow: "hidden",
           /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
              Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
              unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
              gleich wie gross sein Inhalt ist, und scrollt in sich. */
-          
-        padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
-        <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 420px)",
+        }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", transform: "translateX(-50%)",
+          top: "calc(14px + var(--gg-popfrei-oben, 0px))",
+          maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))",
+          display: "flex", flexDirection: "column", width: "min(100%, 420px)",
           borderRadius: 22, overflow: "hidden", boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
           border: `1px solid ${T.riftLine}`,
           background: "radial-gradient(130% 110% at 50% -10%, rgba(124,58,237,.28) 0%, rgba(26,16,44,.97) 46%, rgba(8,5,14,.99) 100%)" }}>
@@ -1470,7 +1497,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", padding: "18px 16px 16px" }}>
+          <div className="gg-thinbar" style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", padding: "18px 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
               {img && <img src={img} alt="" onClick={(e) => { e.stopPropagation(); onZoom && onZoom({ boss: true, bid: b.id, art: b.art, nameDe: b.nameDe, nameEn: b.nameEn, flavorDe: b.flavorDe, flavorEn: b.flavorEn }); }}
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
@@ -1560,14 +1587,16 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     })()}
     {detail && CHARACTERS[detail] && (
       <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 55, background: "rgba(4,6,10,.72)",
-        display: "grid", justifyItems: "center", alignItems: "start",
+        display: "block", overflow: "hidden",
           /* v0.81 (Besitzer): OBEN VERANKERT statt zentriert. Eine zentrierte
              Karte waechst in BEIDE Richtungen - ist sie hoch, wandert ihr Kopf
              unter die Leiste. Jetzt beginnt jedes Popup auf DERSELBEN Hoehe,
              gleich wie gross sein Inhalt ist, und scrollt in sich. */
-          
-        padding: "calc(14px + var(--gg-popfrei-oben, 0px)) 16px calc(16px + var(--gg-popfrei-unten, 0px))" }}>
-        <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "min(100%, 440px)",
+        }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", transform: "translateX(-50%)",
+          top: "calc(14px + var(--gg-popfrei-oben, 0px))",
+          maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))",
+          display: "flex", flexDirection: "column", width: "min(100%, 440px)",
           borderRadius: 22, overflow: "hidden",
           // dasselbe Gewand wie die Monsterkarte: Riss-Kontur, violetter
           // Schein, halbdurchsichtiger dunkler Grund
@@ -1578,7 +1607,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             width: 30, height: 30, borderRadius: "50%", display: "grid", placeItems: "center", cursor: "pointer",
             background: "rgba(10,13,20,.72)", border: `1px solid ${T.riftLine}`, color: T.riftBright,
             fontFamily: "inherit", fontSize: 13, lineHeight: 1 }}>✕</button>
-          <div className="gg-thinbar" style={{ maxHeight: "calc(100dvh / var(--vhz, 1) - 58px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto" }}>
+          <div className="gg-thinbar" style={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto" }}>
             <CharCard char={CHARACTERS[detail]} profile={profile} dispatch={dispatch} t={t} en={en}
               onZoom={onZoom} open bigArt />
           </div>

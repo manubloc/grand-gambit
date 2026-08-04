@@ -138,6 +138,17 @@ let STIL = "painted";
 export function setPieceStyle(stil) { STIL = stil === "carved" ? "carved" : "painted"; }
 export function pieceStyle() { return STIL; }
 
+/* ── DER SCHLICHTE STIL, DURCHGEZOGEN (v0.83, Besitzerentscheid) ───────────
+   Wer im Profil auf "Simpel" stellt, will ihn UEBERALL: auf dem Brett, im
+   Hofstaat, im Lager, in jeder Karte. Bisher wirkte die Wahl nur auf dem
+   Brett, alles andere blieb gemalt - ein Zwitter. Dieser Schalter ist die
+   eine Wahrheit; App.jsx stellt ihn nach dem Profil, alle Ansichten fragen
+   ihn. Der HAENDLER bleibt bewusst gemalt: er ist keine Spielfigur, sondern
+   ein Bild. */
+let SCHLICHT = false;
+export function setSchlicht(an) { SCHLICHT = !!an; }
+export function schlichtAn() { return SCHLICHT; }
+
 // kind letter -> character id (pawn wins the shared "P"; the hero flag decides gambit)
 const KIND2ID = {
   P: "pawn", N: "knight", B: "bishop", R: "rook", Q: "queen", K: "king",

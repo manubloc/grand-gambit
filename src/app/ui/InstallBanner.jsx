@@ -67,7 +67,11 @@ export function InstallBanner({ en = false }) {
 
   if (gone || (!prompt && !ios) || isStandalone()) return null;
   return (
-    <div style={{ position: "fixed", left: "50%", transform: "translateX(-50%)",
+    /* v0.82: das Banner liegt fix ueber allem in <main> (dessen mask-image
+       einen Stapelkontext bildet) - auf dem Telefon war es GENAU der Balken,
+       hinter dem der Kopf eines Figuren-Blattes verschwand. Es weicht jetzt,
+       solange ein Blatt offen ist; die Klasse schaltet reines CSS. */
+    <div className="gg-install-banner" style={{ position: "fixed", left: "50%", transform: "translateX(-50%)",
       top: "calc(10px + env(safe-area-inset-top))", zIndex: 40, width: "min(94vw, 420px)",
       background: "linear-gradient(172deg, #141926, #0e1320)", border: `1px solid ${T.gold}55`,
       borderRadius: 14, padding: "12px 14px", boxShadow: "0 10px 30px rgba(0,0,0,.55)",

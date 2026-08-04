@@ -40,7 +40,7 @@ export const LEHREN = {
       { id: "kampagne", titel: "Kampagne & Ligen", kurz: "Zehn Kapitel, verzweigte Pfade — Siege rekrutieren Gefährten.",
         text: "Die KAMPAGNE führt durch zehn Ligen mit verzweigten Pfaden und Geheimwegen. Siege über Herausforderer REKRUTIEREN sie in deinen Hofstaat. Geräumte Stationen bleiben bespielbar, aber nur der FREUNDSCHAFTSKAMPF zahlt noch (+15 % Gold, +25 % Erfahrung) — alles andere ist Übung." },
       { id: "hofwert", titel: "Der Hofwert", kurz: "Eine Zahl für die Stärke deines Hofes — online entscheidet sie, wer gegen dich antritt.",
-        text: "Der HOFWERT ist die eine Zahl für die Stärke deines Hofes. Er wächst mit allem, was dich stärker macht: jeder geräumten Station (+100), jeder erreichten Liga (+200), jedem rekrutierten Gefährten (nach seinem Figurenwert), jeder gekauften Stufe (+40), jedem Duplikat-Stern (+30) und jeder gelernten Fähigkeit (+15).\n\nONLINE ist er dein Schild und dein Maß: Die Zufallssuche stellt dir Gegner mit ÄHNLICHEM Hofwert gegenüber — das Suchband beginnt bei ±150 und weitet sich beim Warten alle fünf Sekunden um 60, bis jemand gefunden ist. So trifft ein junger Hof keinen Veteranen, und dein Fortschritt im Feldzug zählt auch im Duell." },
+        text: "Der HOFWERT ist die eine Zahl für die Stärke deines Hofes. Er wächst mit allem, was dich stärker macht: jeder geräumten Station (+100), jedem erreichten Kapitel (+200), jedem rekrutierten Gefährten (nach seinem Figurenwert), jeder gekauften Stufe (+40), jedem Duplikat-Stern (+30) und jeder gelernten Fähigkeit (+15).\n\nONLINE ist er dein Schild und dein Maß: Die Zufallssuche stellt dir Gegner mit ÄHNLICHEM Hofwert gegenüber — das Suchband beginnt bei ±150 und weitet sich beim Warten alle fünf Sekunden um 60, bis jemand gefunden ist. So trifft ein junger Hof keinen Veteranen, und dein Fortschritt im Feldzug zählt auch im Duell." },
     ],
   },
   en: {
@@ -77,7 +77,7 @@ export const LEHREN = {
       { id: "kampagne", titel: "Campaign & leagues", kurz: "Ten chapters, branching paths — victories recruit companions.",
         text: "The CAMPAIGN crosses ten leagues on branching paths. Beating challengers RECRUITS them. Cleared sites stay playable, but only the FRIENDLY MATCH still pays (+15% gold, +25% XP)." },
       { id: "hofwert", titel: "Court value", kurz: "One number for your court's strength — online it decides who faces you.",
-        text: "The COURT VALUE is the one number for your court's strength: +100 per cleared site, +200 per league reached, recruits by their piece value, +40 per purchased level, +30 per duplicate star, +15 per learned ability.\n\nONLINE it is your shield and your measure: random search pairs you with opponents of SIMILAR court value — the band starts at ±150 and widens by 60 every five seconds while you wait. A young court never meets a veteran, and your campaign progress counts in the duel." },
+        text: "The COURT VALUE is the one number for your court's strength. It grows with every cleared station, chapter, companion, level and ability.\n\nOnline it is your shield: search pairs you with opponents of similar court value, so a young court never meets a veteran." },
     ],
   },
 };

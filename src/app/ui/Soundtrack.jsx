@@ -32,9 +32,16 @@ const LAUT = 0.34;          // Zielpegel: unter dem Spiel, nie darueber
    den harten Eindruck. Die Blende folgt zudem einer weichen Kurve statt
    einer Geraden: leise Passagen brauchen laenger, damit das Ohr den Wechsel
    nicht als Sprung liest. */
-const BLENDE_AUS_MS = 3400; // das alte Stueck sinkt
-const BLENDE_EIN_MS = 4600; // das neue steigt
-const VERZUG_MS = 1200;     // ... und beginnt erst, wenn das alte schon leiser ist
+/* v0.83: noch laenger und noch sanfter (zweite Bitte des Besitzers). Neun
+   Sekunden Gesamtblende - das alte Stueck sinkt fuenf Sekunden lang, das neue
+   steigt sieben, und es beginnt erst nach zwei Sekunden. Dazu sind Menue- und
+   Kartenthema jetzt GESCHWISTER: dieselbe Besetzung (Cello, Gambe, Laute,
+   Blockfloete), dieselbe Tonart (d-Moll), dasselbe Tempo (84) - nur die
+   Haltung wechselt von ruhend zu wandernd. Ein harter Schnitt ist damit
+   nicht mehr moeglich, weil es nichts Hartes mehr zu schneiden gibt. */
+const BLENDE_AUS_MS = 5000; // das alte Stueck sinkt
+const BLENDE_EIN_MS = 7000; // das neue steigt
+const VERZUG_MS = 2000;     // ... und beginnt erst, wenn das alte schon leiser ist
 const SCHRITT_MS = 50;
 
 export function Soundtrack({ an = true }) {

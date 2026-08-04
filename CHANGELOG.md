@@ -1,5 +1,39 @@
 # Changelog - Grand Gambit
 
+## 0.83.0
+
+DIE WELTKARTE LIESS SICH NICHT BEDIENEN - JETZT SCHON:
+
+- FEHLER GEFUNDEN: Das Kapitelblatt sass ABSOLUT IM KARTENBILD (left 50 % des
+  Bildes) - und dieses Bild ist um ein Vielfaches breiter als der Schirm. Wer
+  Kapitel I ganz links antippte, bekam sein Blatt weit rechts ausserhalb des
+  Ausschnitts: es sah aus, als passiere gar nichts. Jetzt haengt es am
+  SCHIRM, fest unten in der Mitte. Sondenbeleg: Blatt sichtbar auf 390x844
+  und 360x640.
+- DIE WELTKARTE BEKOMMT DEN GLEICHEN KASTEN WIE DIE KAPITELKARTE. Zuvor lag
+  sie in einem eigenen Vollbild-Polster (18/104), waehrend ihre Hoehe aus
+  frameH kam - einer Rechnung fuer einen ANDEREN Raum. Beides passte nur
+  zufaellig zusammen; je nach Geraet stand die Welt zu hoch oder ragte ueber
+  den oberen Rand. Jetzt misst sie die Lage des Kartenbereichs und belegt ihn
+  exakt. Nachgemessen: Kapitelrahmen und Weltkasten sind PIXELGLEICH
+  (12/12/366/740 bzw. 12/12/336/536).
+- DER SCHLICHTE STIL GILT IM GANZEN HAUS (Besitzerentscheid): Wer im Profil
+  "Simpel" waehlt, bekommt ihn nicht nur auf dem Brett, sondern auch im
+  Hofstaat, in der Aufstellung und in jeder Figurenkarte - ein Schalter
+  (setSchlicht/schlichtAn) ist die eine Wahrheit, alle Ansichten fragen ihn.
+  Der Haendler bleibt gemalt: er ist ein Bild, keine Spielfigur.
+- MUSIK: Menue- und Kartenthema sind GESCHWISTER geworden - dieselbe
+  Besetzung (Cello, Gambe, Laute, Blockfloete), dieselbe Tonart (d-Moll),
+  dasselbe Tempo (84); nur die Haltung wechselt von ruhend zu wandernd. Die
+  Blende dauert jetzt NEUN Sekunden (aus 5 s, ein 7 s, Beginn nach 2 s). Ein
+  harter Schnitt ist damit nicht mehr moeglich.
+- ERKLAERTEXTE: das Wort LIGA ist getilgt (es gibt nur Kapitel), und der
+  laengste Text (634 Zeichen Rechenliste) ist auf das Noetige gekuerzt -
+  deutsch wie englisch.
+- ABSTURZ VOR DEM PUSH GEFANGEN: der neue Stil-Hook las profile.pieceStyle,
+  waehrend profile beim Start noch null ist - die Sonde fing es, nicht der
+  Besitzer.
+
 ## 0.82.0
 
 DAS OHR DES BESITZERS HAT ENTSCHIEDEN - DREIZEHN KLAENGE NEU, ALLES LEISER:

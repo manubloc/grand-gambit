@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { klang, klangEinstellen, klangVorwaermen } from "./ui/klang.js";
 import { musikBereich } from "./ui/musik.js";
+import { setSchlicht } from "./ui/board/paintedArt.js";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
 import { nodeById, chapterForRow, buyItem, CHARACTER_LIST, clockFor } from "../content/index.js";
 import { verifyPin } from "../platform/index.js";
@@ -321,10 +322,49 @@ export default function App() {
      (schmal, unten) liegen darum IMMER ueber jedem Popup, das in <main>
      wohnt - kein z-Index hilft. Also sagen wir jedem Popup per CSS-Variable,
      wie viel Rand es oben und unten freihalten muss. */
+  /* v0.82, dritter Anlauf: NICHT MEHR RATEN, SONDERN MESSEN. Zweimal habe
+     ich hier Zahlen gesetzt (104 px breit, 0 px schmal) und zweimal lag ich
+     daneben - auf dem Telefon klebt naemlich ebenfalls eine Leiste oben (die
+     Zaehler mit Wappen, Funken, Kronen, Gold), und zeitweise auch das
+     Installations-Banner. Also fragt die Huelle jetzt den Bildschirm selbst:
+     Wie tief reicht das, was oben festklebt? Der groesste gemessene Wert
+     wird zum Freiraum, plus etwas Luft. Das haelt auch, wenn morgen eine
+     weitere Leiste dazukommt. */
+  /* v0.83: der schlichte Stil gilt im GANZEN Haus, nicht nur auf dem Brett. */
+  /* Vorsicht: dieser Hook laeuft VOR dem Laden des Spielstands, wenn profile
+     noch null ist - ohne den Fragezeichen-Zugriff stuerzt die App beim Start
+     ab (von der Sonde gefangen, nicht live). */
+  useEffect(() => { setSchlicht(profile?.pieceStyle === "svg"); }, [profile?.pieceStyle]);
   useEffect(() => {
     const r = document.documentElement;
-    r.style.setProperty("--gg-popfrei-oben", wide ? "104px" : "0px");
-    r.style.setProperty("--gg-popfrei-unten", wide ? "16px" : "calc(92px + env(safe-area-inset-bottom))");
+    const messen = () => {
+      let unterkante = 0;
+      // 1. die Leisten, die sich selbst zu erkennen geben (Kopfleiste breit,
+      //    Zaehlerleiste schmal) - unabhaengig davon, WIE sie positioniert
+      //    sind: im breiten Zweig liegt die Leiste im Fluss, nicht fixiert.
+      //    Genau daran ist die reine Heuristik zuvor gescheitert.
+      for (const el of document.querySelectorAll("[data-gg-leiste='oben']")) {
+        const k = el.getBoundingClientRect();
+        if (k.height > 2 && k.top < 40) unterkante = Math.max(unterkante, k.bottom);
+      }
+      // 2. alles Uebrige, das oben festklebt (etwa das Installations-Banner)
+      for (const el of document.querySelectorAll("body *")) {
+        const cs = getComputedStyle(el);
+        if (cs.position !== "fixed" && cs.position !== "sticky") continue;
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        const k = el.getBoundingClientRect();
+        if (k.height < 8 || k.height > 190) continue;      // keine Vollflaechen
+        if (k.width < innerWidth * 0.35) continue;          // keine Knoepfchen
+        if (k.top > 24) continue;                           // klebt es wirklich oben?
+        unterkante = Math.max(unterkante, k.bottom);
+      }
+      r.style.setProperty("--gg-popfrei-oben", Math.round(unterkante) + "px");
+      r.style.setProperty("--gg-popfrei-unten", wide ? "16px" : "calc(92px + env(safe-area-inset-bottom))");
+    };
+    messen();
+    const iv = setInterval(messen, 900);   // Leisten kommen und gehen (Banner!)
+    window.addEventListener("resize", messen);
+    return () => { clearInterval(iv); window.removeEventListener("resize", messen); };
   }, [wide]);
 
   // DIE MUSTERKAMMER: interne Designsystem-Galerie, nur ueber ?galerie in der
@@ -516,7 +556,7 @@ export default function App() {
         onStay={() => setLeaveTo(null)}
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {(
-        <aside style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
+        <aside data-gg-leiste="oben" style={{ width: "100%", maxWidth: 1020, position: "sticky", top: 12, zIndex: 7,
           background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
           backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
           border: "1px solid rgba(167,139,250,.5)", borderRadius: 20, padding: "10px 16px",
@@ -595,7 +635,7 @@ export default function App() {
         onStay={() => setLeaveTo(null)}
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
       {!immersive && (
-        <header style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
+        <header data-gg-leiste="oben" style={{ position: "sticky", top: 0, zIndex: 7, padding: "10px 10px 0" }}>
           {/* Die Ressourcen-PILLE der Vorlage: voll gerundet, violetter Glas-
               verlauf, duenne violette Kante. Fluchtlinie bleibt bei 10 px. */}
           <div style={{ background: "linear-gradient(90deg, rgba(58,36,110,.72) 0%, rgba(26,17,50,.78) 100%)",

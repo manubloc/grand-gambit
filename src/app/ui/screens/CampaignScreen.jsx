@@ -238,6 +238,23 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   // scale with it.
   const zf = Math.max(frameH / HM, frameW / WMAP) * 1.02;
   const frameX = Math.round((vp.w - frameW) / 2);
+  /* v0.83: wo genau beginnt der Kartenbereich im Schirm? Die Weltkarte ist
+     ein Vollbild-Overlay und rechnet in Schirmkoordinaten - die Kapitelkarte
+     dagegen in ihren eigenen. Damit beide EXAKT denselben Kasten belegen,
+     merken wir uns die Lage des Kartenbereichs. */
+  const [vpTop, setVpTop] = useState(0);
+  const [vpLeft, setVpLeft] = useState(0);
+  useEffect(() => {
+    const messen = () => {
+      const el = vpRef.current; if (!el) return;
+      const k = el.getBoundingClientRect();
+      setVpTop(Math.round(k.top)); setVpLeft(Math.round(k.left));
+    };
+    messen();
+    window.addEventListener("resize", messen);
+    const iv = setInterval(messen, 900);
+    return () => { window.removeEventListener("resize", messen); clearInterval(iv); };
+  }, []);
   const frameY = padTop; // pinned: same breath above as below
   const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);
   const camX = clamp((viewing ? 0 : nx(camNode) * zf - frameW * 0.46) + panOff.x, 0, camMaxX);
@@ -804,7 +821,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             // unten Platz fuer die Menueleiste.
             background: "rgba(4,6,10,.94)",
             overflowY: "hidden", // v0.71.14: die Welt scrollt NUR quer
-            padding: "calc(18px + env(safe-area-inset-top)) 12px calc(104px + env(safe-area-inset-bottom))" }}>
+            display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
             {/* v0.71.14: Ueberschrift und Untertitel der Weltkarte fort - die Ansicht spricht fuer sich. */}
             {/* DIE WELTKARTE NIMMT DEN GANZEN SCHIRM: die alte Bremse von 430px
                 stammt von der schmalen Hochkantkarte - die neue liegt quer und
@@ -812,7 +829,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 Breite und begrenzt sich nur an der Hoehe, damit sie nie unter
                 die Leiste rutscht. */}
             <div style={{ overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch",
-              height: frameH, // v0.72.1: EXAKT die Hoehe der Kapitelkarte (dieselbe frameH-Rechnung)
+              /* v0.83: DERSELBE KASTEN WIE DIE KAPITELKARTE - nicht nur
+                 dieselbe Hoehenformel, sondern auch dieselbe Breite und
+                 dieselbe Lage im Schirm. Zuvor lag die Welt in einem eigenen
+                 Vollbild-Polster (18/104), waehrend ihre Hoehe aus frameH kam,
+                 das fuer einen anderen Raum gerechnet ist - daher die
+                 wechselnde Skalierung und der Ausreisser ueber den oberen
+                 Rand. */
+              position: "absolute", left: vpLeft + frameX, top: vpTop + padTop,
+              width: frameW, height: frameH,
               borderRadius: 14, background: "rgba(9,11,16,.95)",
               border: "1px solid rgba(167,139,250,.62)",
               boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 12px rgba(124,58,237,.28)" }}>
@@ -908,13 +933,12 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               {worldSel && (() => {
                 const wt = themeForLeague(worldSel);
                 const lore = LEAGUE_LORE[worldSel];
-                const ay = WORLD_MAP.anchors[worldSel][1];
-                const below = ay < 30;                       // crown anchors: sheet drops BELOW instead
-                const top = below ? `${ay + 5}%` : undefined;
-                const bottom = below ? undefined : `${100 - ay + 4}%`;
                 return (
-                  <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%",
-                    transform: "translateX(-50%)", width: "min(92%, 340px)", top, bottom, zIndex: 6,
+                  /* v0.83: das Blatt haengt jetzt am SCHIRM, nicht am Bild -
+                     fest unten in der Mitte, wo es immer zu sehen ist. */
+                  <div onClick={(e) => e.stopPropagation()} style={{ position: "fixed", left: "50%",
+                    transform: "translateX(-50%)", width: "min(92vw, 340px)",
+                    bottom: "calc(122px + env(safe-area-inset-bottom))", zIndex: 12,
                     borderRadius: 14, border: "1px solid rgba(233,210,150,.4)", background: "rgba(12,15,22,.92)",
                     padding: "12px 13px" }}>
                     <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
