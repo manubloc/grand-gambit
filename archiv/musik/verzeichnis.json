@@ -1,0 +1,152 @@
+[
+ {
+  "datei": "menue-a.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü A · Der erste Soundtrack",
+  "bemerkung": "das allererste Stueck des Hauses"
+ },
+ {
+  "datei": "menue-b.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü B · Laute und Blockflöte",
+  "bemerkung": "v0.80, warm und einladend"
+ },
+ {
+  "datei": "menue-c.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü C · Tiefes Solocello",
+  "bemerkung": "v0.81"
+ },
+ {
+  "datei": "menue-d.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü D · Höfisch, Gambe und Harfe",
+  "bemerkung": "v0.81"
+ },
+ {
+  "datei": "menue-e.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü E · Fröhlich, Laute und Flöte",
+  "bemerkung": "v0.81"
+ },
+ {
+  "datei": "menue-f.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü F · Geschwister der Karte (d-Moll)",
+  "bemerkung": "v0.83, mystisch"
+ },
+ {
+  "datei": "menue-g.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü G · Nur gezupfte Bässe I",
+  "bemerkung": "v0.85"
+ },
+ {
+  "datei": "menue-h.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü H · Nur gezupfte Bässe II",
+  "bemerkung": "v0.85"
+ },
+ {
+  "datei": "menue-i.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü I · Nur gezupfte Bässe III",
+  "bemerkung": "v0.85"
+ },
+ {
+  "datei": "menue-j.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü J · Halle in Ruhe",
+  "bemerkung": "v0.88, derzeit im Spiel"
+ },
+ {
+  "datei": "menue-k.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü K · Halle, wärmer",
+  "bemerkung": "v0.88"
+ },
+ {
+  "datei": "menue-l.mp3",
+  "gruppe": "Menü",
+  "titel": "Menü L · Halle bei Nacht",
+  "bemerkung": "v0.88, langsamer"
+ },
+ {
+  "datei": "karte-a.mp3",
+  "gruppe": "Weltkarte",
+  "titel": "Karte A · Pastoral mit Fiedel",
+  "bemerkung": "v0.80"
+ },
+ {
+  "datei": "karte-b.mp3",
+  "gruppe": "Weltkarte",
+  "titel": "Karte B · Geschwister des Menüs",
+  "bemerkung": "v0.83"
+ },
+ {
+  "datei": "karte-c.mp3",
+  "gruppe": "Weltkarte",
+  "titel": "Karte C · Nylonsaiten, sonnig",
+  "bemerkung": "v0.85"
+ },
+ {
+  "datei": "kapitel-1.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel I · Kronland (G-Dur)",
+  "bemerkung": "v0.88, derzeit im Spiel"
+ },
+ {
+  "datei": "kapitel-2.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel II · Kornmark (D-Dur)",
+  "bemerkung": "v0.88"
+ },
+ {
+  "datei": "kapitel-3.mp3",
+  "gruppe": "Kapitel",
+  "titel": "Kapitel III · Eichwald (e-Moll)",
+  "bemerkung": "v0.88"
+ },
+ {
+  "datei": "gefecht-a.mp3",
+  "gruppe": "Gefecht",
+  "titel": "Gefecht A · Ruhig, mit Trommelherz",
+  "bemerkung": "v0.80"
+ },
+ {
+  "datei": "gefecht-b.mp3",
+  "gruppe": "Gefecht",
+  "titel": "Gefecht B · Spannung, Kriegstrommeln",
+  "bemerkung": "v0.80, war zu viel"
+ },
+ {
+  "datei": "gefecht-c.mp3",
+  "gruppe": "Gefecht",
+  "titel": "Gefecht C · Nur schneller, gezupft",
+  "bemerkung": "v0.88, derzeit im Spiel"
+ },
+ {
+  "datei": "meister-a.mp3",
+  "gruppe": "Meister",
+  "titel": "Meister A · Glocke, Chor, Kriegstrommel",
+  "bemerkung": "v0.80"
+ },
+ {
+  "datei": "meister-b.mp3",
+  "gruppe": "Meister",
+  "titel": "Meister B · Zähne nur am Anfang",
+  "bemerkung": "v0.88, derzeit im Spiel"
+ },
+ {
+  "datei": "halle.mp3",
+  "gruppe": "Weitere",
+  "titel": "Die Halle · Warten auf einen Gegner",
+  "bemerkung": "v0.88"
+ },
+ {
+  "datei": "schnell.mp3",
+  "gruppe": "Weitere",
+  "titel": "Schnelles Spiel",
+  "bemerkung": "v0.88"
+ }
+]

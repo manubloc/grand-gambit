@@ -29,3 +29,18 @@ for (const rel of dateien) {
 await writeFile("dist/schaukammer.json",
   JSON.stringify(dateien.map((r) => `/schau/${r}`), null, 0));
 console.log(`schaukammer: ${dateien.length} Bilder nach ${ZIEL}`);
+
+// Dasselbe fuer das MUSIKARCHIV: alle je erzeugten Stuecke liegen unter
+// archiv/musik und werden neben das Spiel gelegt, nicht hineingebunden -
+// 26 MB im Buendel waeren unvertretbar. Die Klangwerkstatt holt sie zur
+// Laufzeit.
+const MQ = "archiv/musik", MZ = "dist/klangarchiv";
+await rm(MZ, { recursive: true, force: true });
+await mkdir(MZ, { recursive: true });
+let anzahl = 0;
+for (const e of await readdir(MQ, { withFileTypes: true })) {
+  if (!e.isFile()) continue;
+  await copyFile(join(MQ, e.name), join(MZ, e.name));
+  if (e.name.endsWith(".mp3")) anzahl++;
+}
+console.log(`klangarchiv: ${anzahl} Stuecke nach ${MZ}`);

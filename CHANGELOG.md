@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 0.89.0
+
+DAS MUSIKARCHIV: JEDE FASSUNG, DIE JE ENTSTAND, IST WIEDER HOERBAR
+
+- Die Klangwerkstatt (?klangwerkstatt) zeigt jetzt ALLE 25 Stuecke aus
+  allen Runden, nach Gruppen sortiert und sprechend benannt: Menue A bis L,
+  Weltkarte A bis C, Kapitel I bis III, Gefecht A bis C, Meister A und B,
+  dazu Halle und Schnelles Spiel. Jedes mit seiner Herkunft (welche
+  Fassung, welche Besetzung), und markiert, welches gerade im Spiel laeuft.
+  Grund: der Besitzer suchte eine fruehere, "mystischere" Menuefassung, die
+  im Spiel nicht mehr erreichbar war - jetzt liegen sie alle nebeneinander
+  zum Vergleich.
+- Das Archiv wird NICHT eingebunden: 26 MB im Buendel waeren unvertretbar.
+  Wie schon bei der Schaukammer legt der Bau die Stuecke neben das Spiel
+  (dist/klangarchiv) und die Werkstatt holt Liste und Klang zur Laufzeit.
+  Buendel unveraendert bei 1,75 MB. Fuers Archiv genuegt Mono bei 112 kbit -
+  es geht ums Vergleichen der Stimmung, nicht ums Stereobild.
+- Die Stuecke liegen als Quelle unter archiv/musik mit verzeichnis.json;
+  neue Fassungen dort abzulegen genuegt, der Bau nimmt sie mit.
+
 ## 0.88.0
 
 ELF NEUE STUECKE IN EINER HANDSCHRIFT, DIE SCHAUKAMMER, KORRIGIERTE PROMPTS:
