@@ -104,20 +104,81 @@ freigestellt auf Transparenz.
 A single small carved wooden rowboat, hand-carved folk-art toy style, painted in soft matte colours: warm honey and walnut wood tones (#a06020, #804000) for the hull planks, muted forest green (#204000, #406020) for the painted trim and the inner boards. Seen from slightly above and straight from the front, the bow pointing toward the viewer, so the open hull forms a wide shallow cradle. The MIDDLE OF THE BOAT IS COMPLETELY EMPTY - no figure, no oars crossing the centre, no mast, no sail - leaving a clear open seat where a small carved figure can later be placed. The gunwales rise on the left and right like low arms. Visible chisel facets and soft rounded edges, gentle hand-painted texture, tiny nicks in the wood, one pair of oars resting flat along the outer sides. Soft warm light from the UPPER LEFT, deep soft shadow to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred, no scene, no water, no base, no text. Painted illustration, not a photo, not 3D render, matte finish.
 ```
 
-## Die Mauer (Ausruestung, noch nicht gebaut)
+## Ausruestung, die das Brett veraendert
+
+Diese Bilder sind KACHELN: jede fuellt genau EIN Brettfeld. Sie werden wie
+die Figuren gesetzt - Kiste 640x800, freigestellt, der Gegenstand sitzt an
+der UNTERKANTE (die Figuren stehen mit `center bottom`). Was aufrecht steht
+(Mauer, Zaun), wird von vorn mit leichtem Blick von oben gezeigt; was flach
+liegt (Falle, Graben), von steilerem Winkel herab.
+
+Jedes Stueck braucht mehrere ZUSTAENDE, weil das Spiel sie unterscheidet:
+heil, angeschlagen (ein Treffer sitzt), zertruemmert (das Feld ist wieder
+frei). Die Falle hat statt dessen verdeckt und ausgeloest - verdeckt sieht
+nur, wer sie gelegt hat.
+
+### Mauer · heil
 
 ```
-A short section of carved wooden fortification wall in hand-carved folk-art toy style, sized to sit on a single chess square: stacked stone blocks painted in cool grey-brown (#6b6258, #4a453e) with a warm wood frame at the base (#a06020), crenellated top edge, visible chisel facets and soft rounded corners, small honest imperfections in the paint. Seen straight from the front, slightly above. Soft warm light from the UPPER LEFT, soft shadow lower right. Isolated on a transparent background, centred, no ground, no base plate, no text. Painted illustration, matte, not photographic, not 3D.
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. A short section of fortification wall sized to fill one chess square: three courses of stacked stone blocks in cool grey with warm brown undertones (#6b6258, #4a453e, #8a7f70), a crenellated top edge with three merlons, mortar lines carved as grooves, a low warm wood beam (#a06020) framing the base. Solid, heavy, intact. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
 ```
 
-## Die Falle (Ausruestung, noch nicht gebaut)
+### Mauer · angeschlagen
 
 ```
-A hidden pit trap seen from directly above, sized to fill a single chess square: a shallow rectangular pit covered with thin crossed branches and scattered dry leaves, carved folk-art toy style, muted forest green and brown tones (#204000, #406020, #804000), a hint of darkness showing between the branches. Flat top-down view, no perspective distortion. Soft warm light from the UPPER LEFT. Isolated on a transparent background, centred, no ground texture, no text. Painted illustration, matte, not photographic, not 3D.
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. The SAME short fortification wall, now damaged: one merlon broken off, a deep crack running down the left face, two stones loosened and sitting askew, a scatter of small rubble at the foot. Still standing and clearly solid, but wounded. Same cool grey stone with warm brown undertones (#6b6258, #4a453e, #8a7f70) and warm wood base beam (#a06020). Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
 ```
 
-## Der Zaun (Ausruestung, noch nicht gebaut)
+### Mauer · Trümmer
 
 ```
-A short carved wooden palisade fence in hand-carved folk-art toy style, sized to sit on a single chess square: five sharpened stakes of warm honey wood (#a06020, #804000) bound with two horizontal rails and dark rope, slightly uneven heights, visible chisel facets and soft rounded edges. Seen straight from the front, slightly above. Soft warm light from the UPPER LEFT, soft shadow lower right. Isolated on a transparent background, centred, no ground, no base, no text. Painted illustration, matte, not photographic, not 3D.
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. The remains of a broken stone wall: a low heap of tumbled grey blocks (#6b6258, #4a453e) with broken edges, dust and small chips scattered around, one splintered wood beam (#a06020) lying across the pile. Nothing standing taller than a hand's width. Ruined, cleared, passable. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Zaun · heil
+
+```
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. A short palisade fence sized to fill one chess square: six sharpened stakes of warm honey wood (#a06020, #804000) of slightly uneven height, bound with two horizontal rails and dark twisted rope, wood grain carved as fine grooves, muted forest green moss (#204000) at the very base. Sturdy and intact. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Zaun · angeschlagen
+
+```
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. The SAME palisade fence, now damaged: two stakes snapped off at mid height with splintered tops, one rail hanging loose from its rope binding, the whole fence leaning slightly to the right. Same warm honey wood (#a06020, #804000) and muted green moss (#204000). Still standing but clearly about to fail. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Zaun · Trümmer
+
+```
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. The remains of a broken palisade: three snapped wooden stakes (#a06020, #804000) lying crossed on the ground with splintered ends, a length of dark rope coiled loose, wood chips scattered. Nothing upright. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Falle · verdeckt (nur der Besitzer sieht sie)
+
+```
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. A concealed pit trap covering one chess square: a shallow rectangular pit spanned by thin crossed branches and scattered dry leaves in muted brown and forest green (#804000, #204000, #406020), just a hint of darkness showing between the twigs. Deliberately subtle and easy to overlook — it must read as ordinary ground at a glance. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Falle · ausgelöst
+
+```
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. A sprung pit trap covering one chess square: the covering branches snapped inward and hanging into the hole, a dark open pit beneath with sharpened wooden stakes at the bottom, torn leaves and loose earth flung around the rim. Warm brown earth tones (#804000, #6b4a20) and deep shadow inside the pit. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Graben · heil
+
+```
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. A narrow defensive ditch cutting straight across one chess square: dug earth with steep sides in warm brown (#804000, #6b4a20), a small heap of excavated soil along the near edge, a few tufts of muted green grass (#204000) on the rims, dark shadow in the trench. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Graben · überbrückt
+
+```
+Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. The SAME narrow ditch, now crossed by a makeshift plank bridge: two rough boards of warm honey wood (#a06020) laid over the trench and lashed with dark rope, the dug earth (#804000, #6b4a20) and green grass tufts (#204000) unchanged. Passable. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Das Boot (der Gambit setzt sich hinein)
+
+```
+A single small carved wooden rowboat, hand-carved folk-art toy style, painted in soft matte colours: warm honey and walnut wood tones (#a06020, #804000) for the hull planks, muted forest green (#204000, #406020) for the painted trim and the inner boards. Seen from slightly above and straight from the front, the bow pointing toward the viewer, so the open hull forms a wide shallow cradle. The MIDDLE OF THE BOAT IS COMPLETELY EMPTY - no figure, no oars crossing the centre, no mast, no sail - leaving a clear open seat where a small carved figure can later be placed. The gunwales rise on the left and right like low arms. Visible chisel facets and soft rounded edges, gentle hand-painted texture, tiny nicks in the wood, one pair of oars resting flat along the outer sides. Soft warm light from the UPPER LEFT, deep soft shadow to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred, no scene, no water, no base, no text. Painted illustration, not a photo, not 3D render, matte finish.
 ```
