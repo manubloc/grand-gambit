@@ -1,5 +1,38 @@
 # Changelog - Grand Gambit
 
+## 0.87.0
+
+DIE KAMPAGNENFIGUREN SIND ZURUECK - MEIN FEHLER AUS v0.86:
+
+- In v0.86 habe ich "reines Schach" an den REGELN erkannt und daran ALLES
+  aufgehaengt, auch die Figurenoptik. Die fruehen Kampagnenstationen laufen
+  aber nach Schachregeln - und so standen im Feldzug ploetzlich gewoehnliche
+  Turnierfiguren statt der geschnitzten. Jetzt sind es ZWEI Begriffe:
+  klassikOptik (nur echte klassische Betriebsart, NIE die Kampagne) fuer das
+  Aussehen, schlichteRegeln (state.rules === "chess") fuer Leisten und
+  Brettmitte. Sondenbeleg: 32 Bildfiguren auf dem Kampagnenbrett, 0 Vektor.
+- KLASSISCHE FIGUREN NORMIERT: der helle Turm hatte 574 px Sockelbreite
+  (kleinste im Satz: 389) und sass 32,5 px links aus der Mitte - genau was
+  der Besitzer sah. Jetzt gibt eine gestaffelte Vorgabe den Sockel vor
+  (Bauer 0,84 bis Koenig 1,0 von 430 px), alle exakt mittig und auf einer
+  Fusslinie. Sockelstreuung von 185 px auf 69 px, Mittenabweichung von
+  33,5 px auf 8 px.
+- HELLIGKEITEN ANGEGLICHEN: bei Schwarz waren Laeufer (56) und Dame (61)
+  deutlich dunkler als Koenig (81) und Turm (85). Der Besitzer bevorzugt
+  das hellere Anthrazit - alle liegen jetzt bei 79-80. Bei Creme desgleichen
+  auf 173-175, damit der Koenig nicht mehr heraussticht. Streuung von 28,6
+  auf 0,8 (dunkel) und von 21,5 auf 2,0 (hell).
+- KOPFZEILE WIEDER OBEN: in v0.86 hatte ich den ganzen Zweig zentriert, um
+  das Brett mittig zu bekommen - dabei wanderte die Kopfzeile mit nach
+  unten. Jetzt steht sie bei 10 px, und nur der Raum DARUNTER wird
+  aufgeteilt. Ein erster Versuch mit zwei Abstandhaltern nahm dem Brett den
+  Platz (es schrumpfte auf ein Viertel, von der Sonde gesehen); ein Rahmen
+  loest es richtig - Zellen wieder 47 px.
+- AUFSTELLUNG: die Figuren in den Kacheln waren kaum zu sehen. Die Deckel
+  stammten aus der Zeit, als Glyphe UND Beschriftung in eine 35-px-Zelle
+  mussten - die Beschriftung ist laengst fort. Deutlich angehoben
+  (7vw auf 10vw, 9vw auf 12,5vw, 18vw auf 22vw).
+
 ## 0.86.0
 
 REINES SCHACH IST REINES SCHACH - UND DIE FIGUREN STEHEN AUF EINER LINIE:

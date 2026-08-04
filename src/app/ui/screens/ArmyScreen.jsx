@@ -830,7 +830,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
               ? <img src={isHero ? gImg : pawnImg} alt="" draggable={false}
                   style={{ height: "clamp(20px, 8vw, 66px)", objectFit: "contain", objectPosition: "bottom", pointerEvents: "none",
                     filter: isHero ? "drop-shadow(0 1px 3px rgba(201,164,92,.5))" : "none" }} />
-              : <SlotGlyph kind="P" size={"clamp(18px, 7vw, 60px)"} art={"painted"} />}
+              : <SlotGlyph kind="P" size={"clamp(26px, 10vw, 84px)"} art={"painted"} />}
             {isHero && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 8, fontWeight: 800,
               color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>★</span>}
           </button>;
@@ -860,7 +860,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
               : isBossEntry(id)
               ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
                   style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
-              : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(21px, 9vw, 74px)"} art={"painted"} />}
+              : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(30px, 12.5vw, 100px)"} art={"painted"} />}
           </button>;
         })}
       </div>
@@ -878,7 +878,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
           {dImg
             ? <img src={dImg} alt="" draggable={false} style={{ width: "94%", height: "94%", objectFit: "contain",
                 objectPosition: "center", filter: "drop-shadow(0 2px 6px rgba(0,0,0,.55))", pointerEvents: "none" }} />
-            : <SlotGlyph kind="D" size="clamp(48px, 18vw, 150px)" art={"painted"} />}
+            : <SlotGlyph kind="D" size="clamp(60px, 22vw, 180px)" art={"painted"} />}
           <span style={{ position: "absolute", bottom: 3, right: 4, fontSize: 10, fontWeight: 800,
             color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>2×2</span>
         </div>;

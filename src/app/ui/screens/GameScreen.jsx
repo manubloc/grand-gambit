@@ -735,7 +735,20 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
      leisten, die es dort gar nicht gibt. Jetzt entscheidet die REGEL der
      laufenden Partie - und die kennt erst der Zustand, darum steht diese
      Zeile hier und nicht oben bei den Betriebsarten. */
-  const klassikOptik = klassikBasis || state.rules === "chess";
+  /* v0.87 - EIGENER FEHLER AUS v0.86, sofort behoben: dort habe ich "reines
+     Schach" an den REGELN erkannt und daran ALLES aufgehaengt - auch die
+     Figurenoptik. Die fruehen Kampagnenstationen laufen aber nach
+     Schachregeln, und so standen im Feldzug ploetzlich gewoehnliche
+     Turnierfiguren statt der geschnitzten. Das war Unsinn: im Feldzug
+     gehoeren IMMER die geschnitzten Figuren aufs Brett.
+     Darum jetzt ZWEI getrennte Begriffe:
+       klassikOptik - wie sieht das Brett aus? Nur die echte klassische
+                      Betriebsart (Schnellspiel "Klassisch", Tagesraetsel,
+                      klassisches Online-Duell). NIE die Kampagne.
+       schlichteRegeln - gelten Talente und Ausruestung? Daran haengen die
+                      Leisten und die Brettmitte, nicht das Aussehen. */
+  const schlichteRegeln = state.rules === "chess";
+  const klassikOptik = klassikBasis && !campaign;
   /* v0.86 (Besitzer): "bei klassischem Schach ist die Leiste unnoetig". Der
      Modus allein reicht als Bedingung aber nicht - auch im Modus SCHACH hat
      oft keine Figur Faehigkeiten (etwa bevor der Gambit erwacht), und dann
@@ -744,13 +757,13 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
      Schild oder eine Stufe ueber 1, erscheint die Leiste - sonst gehoert
      der Platz dem Brett. */
   const leisteNoetig = useMemo(() => {
-    if (klassikOptik) return false;
+    if (schlichteRegeln) return false;   // ohne Talente keine Talentleiste
     for (const p of state.board) {
       if (!p || p.color !== (hotseat ? state.turn : myColor)) continue;
       if ((p.abilities && p.abilities.length) || p.shield || (p.level || 1) > 1 || p.hero) return true;
     }
     return false;
-  }, [state.board, klassikOptik, hotseat, state.turn, myColor]);
+  }, [state.board, schlichteRegeln, hotseat, state.turn, myColor]);
 
   // DIE FELDER DES BESITZERS (v0.66): Kampagne traegt den Streifen ihres
   // Kapitels; der Endboss des letzten Kapitels bekommt die Blitz-Kachel auf
@@ -1151,7 +1164,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             die nichts zu sagen hat, nimmt nur Platz und Aufmerksamkeit. Das
             Brett bekommt den ganzen Blick. */}
         {leisteNoetig && <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />}
-        {!klassikOptik && ruestungsZeile}
+        {!schlichteRegeln && ruestungsZeile}
       </aside>
       {dailyDoneEl}
       {bannerEl}{raus}
@@ -1164,16 +1177,28 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       /* v0.86: im reinen Schach fallen die Leisten weg - dann bliebe unten
          ein grosses Loch und das Brett klebte oben. Also rueckt es in die
          MITTE des freien Raums, wie der Besitzer es wollte. */
-      justifyContent: klassikOptik ? "center" : "flex-start" }}>
+      justifyContent: "flex-start" }}>
+      {/* v0.87 (Besitzer): die Kopfzeile - Zurueck, Gegner, Aufgeben - gehoert
+          an die OBERE KANTE, nicht in die Mitte. In v0.86 hatte ich den
+          GANZEN Zweig zentriert, um das Brett mittig zu bekommen; dabei
+          wanderte die Kopfzeile mit nach unten. Jetzt bleibt sie oben, und
+          nur der Raum DARUNTER wird mittig aufgeteilt. */}
       <div ref={topChromeRef} style={{ flex: "0 0 auto" }}>{headerBar}{enemyStrip}</div>
-      {boardBlock}
+      {/* Zwei blosse Abstandhalter mit flex:1 haben dem Brett den Platz
+          weggenommen - es schrumpfte auf ein Viertel (von der Sonde
+          gesehen). Stattdessen traegt ein RAHMEN den freien Raum und
+          zentriert das Brett darin; der Brettblock selbst behaelt seine
+          eigene Groessenrechnung. */}
+      {schlichteRegeln
+        ? <div style={{ flex: "1 1 auto", minHeight: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>{boardBlock}</div>
+        : boardBlock}
       <div ref={botChromeRef} style={{ flex: "0 0 auto" }}>{yourStrip}</div>
       {/* v0.86 (Besitzer): IM KLASSISCHEN SCHACH SCHWEIGT DIE LEISTE. Dort
             haben die Figuren keine Talente und keine Sonderzuege - eine Leiste,
             die nichts zu sagen hat, nimmt nur Platz und Aufmerksamkeit. Das
             Brett bekommt den ganzen Blick. */}
         {leisteNoetig && <KampfLeiste state={state} inspect={inspect} en={en} myColor={hotseat ? state.turn : WHITE} banner={!!banner} stil={profile.pieceStyle} />}
-      {!klassikOptik && ruestungsZeile}
+      {!schlichteRegeln && ruestungsZeile}
       {dailyDoneEl}
       {bannerEl}{raus}
     </div>
