@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 0.94.0
+
+DIE RETTUNG WAR UNVOLLSTAENDIG - JETZT 93 STATT 54
+
+- MEIN FEHLER IN v0.93: die fal.ai-Historie liefert SEITENWEISE, 50 je
+  Seite. Ich hatte genau 50 erhalten und das fuer alles gehalten - eine
+  verdaechtig runde Zahl, der ich haette nachgehen muessen. Die Antwort
+  traegt die Felder page und size; mit allen Seiten sind es 235 Auftraege
+  statt 50 und 94 Bildadressen statt 54.
+- Gerettet: 93 Bilder (eines nicht mehr abrufbar), 140 MB - 78 in
+  1024x1024, 12 in 1024x1536, zwei in 2048x2048. Darunter jetzt auch die
+  violetten Bosse, die goldenen Figuren, gemalte Portraits und
+  Damen-Entwuerfe, die in der ersten Runde fehlten.
+- ABER: ein Bildvergleich gegen die live verwendeten Figuren zeigt, dass
+  nur BAUER und GAMBIT wiedergefunden sind (Abstand 0,075 bzw. 0,071).
+  Springer, Laeufer, Turm, Dame und Koenig des farbigen geschnitzten
+  Satzes liegen NICHT bei fal.ai - sie wurden ueber einen anderen Dienst
+  erzeugt.
+
 ## 0.93.0
 
 54 ORIGINALE AUS DER FAL.AI-HISTORIE GERETTET
