@@ -2,12 +2,19 @@ import { other, WHITE, BLACK, BASE_HP, BASE_ATK, HP_REMIS_HALBZUEGE } from "../d
 import { cloneBoard, findKing } from "../domain/board.js";
 import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
+import { schlageSperre, loeseFalleAus } from "../rules/sperren.js";
 import { familyOf, familyCount, crownWallSoak } from "../rules/families.js";
 
 export function cloneState(state) {
   return {
     board: cloneBoard(state.board),
     w: state.w, h: state.h, holes: state.holes, // board geometry is immutable per match → shared by ref
+    /* v0.90: Sperren und Fallen VERAENDERN sich im Lauf der Partie (eine
+       Mauer broeckelt, eine Falle schnappt zu) - anders als die Brettform.
+       Sie muessen darum mitkopiert werden; ohne diese Zeile verschwand eine
+       Mauer schon beim ersten Schlag, statt zu broeckeln. */
+    ...(state.sperren ? { sperren: state.sperren } : {}),
+    ...(state.fallen ? { fallen: state.fallen } : {}),
     rules: state.rules,
     turn: state.turn,
     captured: { w: [...state.captured.w], b: [...state.captured.b] },
@@ -46,6 +53,21 @@ export function applyMove(state, move, opts) {
   const b = ns.board;
   const piece = b[move.from];
   if (!piece) return state;
+
+  /* ── v0.90: DER SCHLAG GEGEN EINE SPERRE ────────────────────────────────
+     Kein Zug im eigentlichen Sinn: die Figur bleibt, wo sie steht, und der
+     Zug ist fort. Genau das ist der Preis, den der Besitzer wollte - nicht
+     Material, sondern TEMPO. Die Sperre verliert einen Punkt und faellt beim
+     letzten. */
+  if (move.schlag) {
+    const { sperren, gefallen } = schlageSperre(ns.sperren || {}, move.to);
+    ns.sperren = sperren;
+    ns.turn = piece.color === WHITE ? BLACK : WHITE;
+    ns.lastMove = { ...move, schlag: true, gefallen };
+    ns.ply = (ns.ply || 0) + 1;
+    if (record) ns.history = [...(ns.history || []), { ...move, schlag: true }];
+    return ns;
+  }
   // blows aimed at a dragon's WING strike the dragon himself; when the beast
   // falls, all four of his squares clear at once
   let target = b[move.to];

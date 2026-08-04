@@ -106,16 +106,30 @@ A single small carved wooden rowboat, hand-carved folk-art toy style, painted in
 
 ## Ausruestung, die das Brett veraendert
 
+**Stand v0.90: die Mechanik steht** (20 Pruefungen). Diese Werte gelten und
+bestimmen, wie viele Bilder es je Stueck braucht:
+
+| Sperre | Haelt | Gold | Stadien |
+|---|---|---|---|
+| Zaun | 1 Schlag | 40 | heil · Truemmer |
+| Mauer | 2 Schlaege | 110 | heil · angeschlagen · Truemmer |
+| Bollwerk | 3 Schlaege | 240 | heil · angeschlagen · Truemmer |
+
+| Falle | Wirkung | Gold | Stadien |
+|---|---|---|---|
+| Spitzgrube | 2 Schaden | 90 | verdeckt · ausgeloest |
+| Baerenfalle | Figur setzt 1 Zug aus | 130 | verdeckt · zugeschnappt |
+
+Ein Schlag gegen eine Sperre kostet den ZUG, nicht die Figur: sie bleibt
+stehen, die Sperre broeckelt. Springer kommen darueber hinweg, Gleiter
+halten davor an. Eine Falle sieht nur, wer sie gelegt hat - bis sie
+zuschnappt.
+
 Diese Bilder sind KACHELN: jede fuellt genau EIN Brettfeld. Sie werden wie
 die Figuren gesetzt - Kiste 640x800, freigestellt, der Gegenstand sitzt an
-der UNTERKANTE (die Figuren stehen mit `center bottom`). Was aufrecht steht
-(Mauer, Zaun), wird von vorn mit leichtem Blick von oben gezeigt; was flach
-liegt (Falle, Graben), von steilerem Winkel herab.
-
-Jedes Stueck braucht mehrere ZUSTAENDE, weil das Spiel sie unterscheidet:
-heil, angeschlagen (ein Treffer sitzt), zertruemmert (das Feld ist wieder
-frei). Die Falle hat statt dessen verdeckt und ausgeloest - verdeckt sieht
-nur, wer sie gelegt hat.
+der UNTERKANTE. Was aufrecht steht (Mauer, Zaun, Bollwerk), wird von vorn
+mit leichtem Blick von oben gezeigt; was flach liegt (Falle, Graben), von
+steilerem Winkel herab.
 
 ### Mauer · heil
 
@@ -175,6 +189,30 @@ Seen from a steep angle looking down, lying flat on the square, no upright parts
 
 ```
 Seen from a steep angle looking down, lying flat on the square, no upright parts taller than a chess pawn's base. The SAME narrow ditch, now crossed by a makeshift plank bridge: two rough boards of warm honey wood (#a06020) laid over the trench and lashed with dark rope, the dug earth (#804000, #6b4a20) and green grass tufts (#204000) unchanged. Passable. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Bollwerk · heil
+
+```
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. A massive fortified bulwark sized to fill one chess square, clearly heavier than a plain wall: four courses of large squared stone blocks in cool grey with warm brown undertones (#6b6258, #4a453e, #8a7f70), a crenellated top with four merlons, an arrow slit in the centre, iron-banded warm wood beams (#a06020) bracing the base. Solid, imposing, intact. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Bollwerk · angeschlagen
+
+```
+Seen straight from the front at a slight downward angle, standing upright like a chess piece. The SAME massive bulwark, now battered: two merlons shattered, a wide crack splitting the upper courses, one large block pushed out of line, the arrow slit chipped, rubble gathered at the foot. Still standing and clearly formidable. Same cool grey stone with warm brown undertones (#6b6258, #4a453e, #8a7f70) and iron-banded wood beams (#a06020). Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Bärenfalle · verdeckt
+
+```
+Seen from a steep angle looking down, lying flat on the square. A concealed iron bear trap covering one chess square: dark iron jaws with blunt teeth held open in a ring, the mechanism mostly buried under scattered dry leaves and loose earth in muted brown and forest green (#804000, #204000, #406020), only a hint of dark metal showing through. Deliberately subtle - it must read as ordinary ground at a glance. Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
+```
+
+### Bärenfalle · zugeschnappt
+
+```
+Seen from a steep angle looking down, lying flat on the square. The SAME iron bear trap, now sprung: the dark iron jaws snapped shut in a tight closed ring, a short chain trailing to one side, leaves and earth flung outward around it, the ground scuffed where something struggled. Muted brown and forest green surroundings (#804000, #204000, #406020). Hand-carved painted folk-art style matching a carved wooden chess set. Visible chisel facets, soft rounded edges, matte hand-painted surface, small honest imperfections. Soft warm light from the UPPER LEFT, soft shadow falling to the lower right, no cast shadow on the ground. Fully isolated on a transparent background, centred horizontally, the object resting on the BOTTOM edge of the frame. No scene, no ground plane, no base plate, no text, no border. Painted illustration, matte, not photographic, not a 3D render.
 ```
 
 ### Das Boot (der Gambit setzt sich hinein)

@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 0.90.0
+
+MAUERN, ZAEUNE UND FALLEN - DIE MECHANIK STEHT (20 neue Pruefungen):
+
+- EIN SCHLAG GEGEN EINE SPERRE KOSTET DEN ZUG, NICHT DIE FIGUR. Wer
+  angreift, bleibt stehen; die Sperre verliert einen Punkt. Genau der
+  Nachteil, den der Besitzer wollte: nicht Material, sondern Tempo.
+- DREI SORTEN, gestaffelt nach Preis und Haerte: Zaun (1 Schlag, 40 Gold),
+  Mauer (2 Schlaege, 110), Bollwerk (3 Schlaege, 240). Jede bricht sichtbar
+  in Stadien - heil, angeschlagen, Truemmer.
+- WER SPRINGT, KOMMT DARUEBER: der Springer setzt hinweg und landet nur
+  nicht darauf; gleitende Figuren halten davor an wie an jeder Wand; der
+  Bauer schlaegt geradeaus dagegen.
+- ZWEI FALLEN: die Spitzgrube macht 2 Schaden, die Baerenfalle macht KEINEN
+  Schaden, sondern laesst die Figur einen Zug aussetzen. Beide sieht nur,
+  wer sie gelegt hat - danach liegen sie offen und schnappen nicht erneut.
+- Beim Bauen gefunden und behoben: cloneState kopierte die Sperren nicht
+  mit (Brettform ist unveraenderlich, Sperren sind es nicht) - eine Mauer
+  verschwand darum schon beim ersten Schlag, statt zu broeckeln.
+- Ohne Sperren im Zustand aendert sich am Spiel nichts - eigens geprueft.
+- BILD-PROMPTS an die Mechanik angepasst: Tabelle mit Haerte, Preis und
+  Stadien je Stueck, dazu vier neue Prompts (Bollwerk heil/angeschlagen,
+  Baerenfalle verdeckt/zugeschnappt). Kopierseite auf 28 Karten.
+
+NOCH NICHT GEBAUT: Kauf im Lager, Platzieren auf dem Brett, Darstellung.
+Die Regeln stehen, die Oberflaeche fehlt.
+
 ## 0.89.0
 
 DAS MUSIKARCHIV: JEDE FASSUNG, DIE JE ENTSTAND, IST WIEDER HOERBAR

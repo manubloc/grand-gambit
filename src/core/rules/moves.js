@@ -14,8 +14,10 @@ export function hasAbility(piece, id) {
 // ── Board-shape context ──────────────────────────────────────────────────────
 // D carries the dimensions + hole mask for the current match. A hole behaves
 // like a wall: nothing lands on it and sliders are blocked by it.
+import { versperrt } from "./sperren.js";
+
 const NO_HOLES = new Set();
-const dimsOf = (state) => ({ w: state.w ?? FILES, h: state.h ?? RANKS, holes: state.holes ?? NO_HOLES });
+const dimsOf = (state) => ({ w: state.w ?? FILES, h: state.h ?? RANKS, holes: state.holes ?? NO_HOLES, sperren: state });
 const ix = (f, r, D) => r * D.w + f;
 const onBoard = (f, r, D) => f >= 0 && f < D.w && r >= 0 && r < D.h && !D.holes.has(r * D.w + f);
 
@@ -26,6 +28,11 @@ function push(moves, from, to, piece, capture, captureKind, extra) {
 // Add a single non-sliding target (knight/king style). Skips own pieces + holes.
 function step(moves, from, f, r, piece, board, D, extra) {
   if (!onBoard(f, r, D)) return;
+  const i0 = ix(f, r, D);
+  if (D.sperren && versperrt(D.sperren, i0)) {
+    push(moves, from, i0, piece, false, null, { ...(extra || {}), schlag: true });
+    return;
+  }
   const t = board[ix(f, r, D)];
   if (t && t.color === piece.color) return;
   push(moves, from, ix(f, r, D), piece, !!t, t ? t.kind : null, extra || {});
@@ -36,9 +43,17 @@ function slide(moves, from, f0, r0, dirs, piece, board, D) {
   for (const [df, dr] of dirs) {
     let f = f0 + df, r = r0 + dr;
     while (onBoard(f, r, D)) {
-      const t = board[ix(f, r, D)];
+      const i = ix(f, r, D);
+      /* v0.90: EINE SPERRE HAELT DEN GLEITER AUF - wie jede Wand. Aber sie
+         ist zerstoerbar: der Zug DORTHIN bleibt erlaubt und wird zum SCHLAG
+         gegen die Sperre (die Figur ruehrt sich nicht, der Zug ist fort). */
+      if (D.sperren && versperrt(D.sperren, i)) {
+        push(moves, from, i, piece, false, null, { schlag: true });
+        break;
+      }
+      const t = board[i];
       if (t && t.color === piece.color) break;
-      push(moves, from, ix(f, r, D), piece, !!t, t ? t.kind : null, {});
+      push(moves, from, i, piece, !!t, t ? t.kind : null, {});
       if (t) break;
       f += df; r += dr;
     }
@@ -53,7 +68,9 @@ function pawnMoves(moves, from, f, r, piece, board, D, state) {
   const isPromo = (rr) => rr === promoR || (early && rr === promoR - dir);
 
   const fwd = r + dir;
-  if (onBoard(f, fwd, D) && !board[ix(f, fwd, D)]) {
+  if (onBoard(f, fwd, D) && D.sperren && versperrt(D.sperren, ix(f, fwd, D))) {
+    push(moves, from, ix(f, fwd, D), piece, false, null, { schlag: true });   // Bauern schlagen die Mauer geradeaus
+  } else if (onBoard(f, fwd, D) && !board[ix(f, fwd, D)]) {
     push(moves, from, ix(f, fwd, D), piece, false, null, isPromo(fwd) ? { promotion: KIND.QUEEN } : {});
     const r2 = r + 2 * dir;
     if (r === startR && onBoard(f, r2, D) && !board[ix(f, r2, D)])
