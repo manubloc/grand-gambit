@@ -9,21 +9,12 @@ import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
 import { FeedbackPanel, rubrikWort } from "./FeedbackPanel.jsx";
 import { ZeitBalken } from "../ZeitBalken.jsx";
 import { setHouseDesign } from "../livery.js";
-import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
-
-const inApp = () =>
-  (typeof matchMedia !== "undefined" && matchMedia("(display-mode: standalone)").matches) ||
-  (typeof navigator !== "undefined" && navigator.standalone === true);
 
 export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onLogout }) {
   const en = profile.lang === "en";
   const [devPct, setDevPct] = useState(0); // workbench: journey progress slider
   const [devLg, setDevLg] = useState(profile.campaign?.league || 1); // workbench: league pick — applied together with the dial via SETZEN
   const [pin, setPin] = useState("");
-  // manual install entry — the banner is missable, this one always waits here
-  const [canPrompt, setCanPrompt] = useState(() => !!getDeferredInstall());
-  const [showIosHint, setShowIosHint] = useState(false);
-  useEffect(() => onInstallReady(() => setCanPrompt(true)), []);
   // the version check: what the server is serving RIGHT NOW, next to what this
   // device is running. cache:"no-store" skips the http cache, and version.json
   // sits outside the sw precache glob — the answer is always the deployed
@@ -138,27 +129,10 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         {t("profile.campDiffElo_" + (profile.campDifficulty || "normal"))}</div>
       <div style={{ fontSize: 11.5, color: T.faint, margin: "3px 2px 0", lineHeight: 1.45 }}>{t("profile.campDiffHint")}</div>
       <div style={{ fontSize: 11.5, color: T.faint, marginTop: 5, lineHeight: 1.45 }}>{t("profile.artHint")}</div>
-      {!inApp() && (() => {
-        // Safari on iPhone/iPad has NO install prompt at all — the ONLY road is
-        // Share → "Add to Home Screen". So on iOS we show the walking
-        // directions right away instead of a button that cannot do anything.
-        const isIos = typeof navigator !== "undefined" && (/iPad|iPhone|iPod/.test(navigator.userAgent)
-          || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
-        return <>
-        <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.install")}</div>
-        {isIos && !canPrompt ? (
-          <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.6, padding: "10px 12px",
-            background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10 }}>{t("profile.installIos")}</div>
-        ) : <>
-          <Button style={{ width: "100%" }} onClick={async () => {
-            if (canPrompt) { await promptInstall(); setCanPrompt(false); }
-            else setShowIosHint(true);
-          }}>{t("profile.installBtn")}</Button>
-          {showIosHint && !canPrompt && (
-            <div style={{ fontSize: 12, color: T.dim, lineHeight: 1.55, marginTop: 8 }}>{t("profile.installHint")}</div>
-          )}
-        </>}
-      </>; })()}
+      {/* v1.0.7 (Besitzer): auch der stille Install-Weg ist fort - die App
+          kommt kuenftig allein aus dem Play Store ("ich will erstmal alle
+          nur ueber Google bekommen"). Web bleibt voll spielbar, wirbt aber
+          nicht mehr fuer die Installation. */}
     </Panel>
 
     <Panel>
