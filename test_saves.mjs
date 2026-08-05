@@ -1,6 +1,6 @@
 // Accounts + save slots: the front door and the career shelf.
 import { ensureAccounts, register, login, loginGuest, findAccount, hashPass, normEmail, validEmail, mkAccount,
-  changePassword, adminHasDefaultPass, ADMIN_EMAIL, ADMIN_DEFAULT_PASS, currentAccount, clearSession } from "./src/meta/accounts.js";
+  changePassword, adminHasDefaultPass, ADMIN_EMAIL, ADMIN_DEFAULT_PASS, currentAccount, clearSession, deleteAccount } from "./src/meta/accounts.js";
 import { createSave, listSaves, loadSave, writeSave, deleteSave, renameSave,
   progressPct, withProgressPct, leagueOrder, migrateLegacyInto, fmtPlaytime } from "./src/meta/saves.js";
 import { defaultProfile } from "./src/meta/profile.js";
@@ -174,6 +174,28 @@ ok("full build counts ten league crowns", fullB.stats.leaguesWon === 10);
   let wort2 = null;
   try { await login("niemand@example.com", "geheim123"); } catch (e) { wort2 = e.message; }
   ok("eine unbekannte, aber gueltige Adresse meldet 'kein Konto'", wort2 === "not-found");
+}
+
+// ── v1.0.5: DAS KONTO FAELLT GANZ ODER GAR NICHT ───────────────────────────
+{
+  await clearSession();
+  const acc = await register("weg@example.com", "geheim123");
+  await createSave(acc.id, "Stand A");
+  await createSave(acc.id, "Stand B");
+  ok("zwei Staende liegen vor der Loeschung vor", (await listSaves(acc.id)).length === 2);
+  let wort = null;
+  try { await deleteAccount(acc.id, "FALSCH"); } catch (e) { wort = e.message; }
+  ok("mit falschem Passwort bleibt alles stehen", wort === "wrong-pass" && (await listSaves(acc.id)).length === 2);
+  const r = await deleteAccount(acc.id, "geheim123");
+  ok("mit richtigem Passwort meldet die Loeschung ok", r.ok === true);
+  ok("die Staende des Kontos sind fort", (await listSaves(acc.id)).length === 0);
+  const list = await ensureAccounts();
+  ok("das Konto selbst ist aus der Liste", !list.find((a) => a.id === acc.id));
+  ok("die Sitzung ist beendet", (await currentAccount()) === null);
+  let admin = null;
+  const adm = findAccount(list, ADMIN_EMAIL);
+  try { await deleteAccount(adm.id, ADMIN_DEFAULT_PASS); } catch (e) { admin = e.message; }
+  ok("das eingebaute admin-Konto ist unloeschbar", admin === "admin-locked" && !!findAccount(await ensureAccounts(), ADMIN_EMAIL));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

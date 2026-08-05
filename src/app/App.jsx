@@ -16,6 +16,7 @@ import { CoinIc, SkillIc, CrestIc, GoldHeartIc, MapPinIc, LockIc } from "./ui/ic
 import { JewelIc } from "./ui/board/PieceGlyph.jsx";
 import { T, GOLD_CTA } from "./ui/theme.js";
 import { useShineDelay, GoldShineButton } from "./ui/Gilded.jsx";
+import { rollTag } from "./ui/namen.js";
 import { Wordmark } from "./ui/Brand.jsx";
 import { LoginScreen } from "./ui/screens/LoginScreen.jsx";
 import { SavesScreen } from "./ui/screens/SavesScreen.jsx";
@@ -435,8 +436,12 @@ export default function App() {
   setLivery((account?.isAdmin && profile.design) || houseDesign || APP_DESIGN);
   const showPrivacy = !profile.notices?.privacy;
   const showIntro = !showPrivacy && !profile.notices?.intro; // what the game IS — once, at the very start
+  /* v1.0.5: Bestandsstaende ohne Namen (seit der E-Mail-Trennung gibt es
+     die) bekommen den Herold-Ruf nachgereicht - einmal, mit vorbefuelltem
+     Vorschlag. Neue Spieler setzen den Namen schon im GameIntro. */
+  const showName = !showPrivacy && !showIntro && !(profile.name || "").trim();
   // onboarding lessons appear between battles, never over a running match
-  const teach = (!showPrivacy && !showIntro && !inMatchNow) ? pendingTeach(profile) : null;
+  const teach = (!showPrivacy && !showIntro && !showName && !inMatchNow) ? pendingTeach(profile) : null;
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)}
     onBack={() => { setLocked(false); setSlot(null); setReady(false); }} />;
@@ -562,7 +567,7 @@ export default function App() {
         // (profile.gesehen). "Alle ueberspringen" bringt alle zum Schweigen.
         const ml = MENUE_LEHREN[profile?.lang === "en" ? "en" : "de"];
         const eintrag = ml && ml[tab];
-        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !inMatch && !(profile?.gesehen || {})[tab];
+        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !showName && !inMatch && !(profile?.gesehen || {})[tab];
         if (!zeigen) return null;
         const merken = (alle) => dispatch({ type: "REPLACE", profile: { ...profile,
           gesehen: alle ? Object.fromEntries(Object.keys(ml).map((k) => [k, true]))
@@ -590,6 +595,7 @@ export default function App() {
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
@@ -641,7 +647,7 @@ export default function App() {
         // (profile.gesehen). "Alle ueberspringen" bringt alle zum Schweigen.
         const ml = MENUE_LEHREN[profile?.lang === "en" ? "en" : "de"];
         const eintrag = ml && ml[tab];
-        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !inMatch && !(profile?.gesehen || {})[tab];
+        const zeigen = eintrag && ready && !showIntro && !showPrivacy && !showName && !inMatch && !(profile?.gesehen || {})[tab];
         if (!zeigen) return null;
         const merken = (alle) => dispatch({ type: "REPLACE", profile: { ...profile,
           gesehen: alle ? Object.fromEntries(Object.keys(ml).map((k) => [k, true]))
@@ -669,6 +675,7 @@ export default function App() {
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
       {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
@@ -995,6 +1002,13 @@ function Lock({ t, profile, onUnlock, onBack }) {
 export function GameIntro({ t, dispatch, onStart }) {
   const [style, setStyle] = useState("svg");        // crisp shapes read best for a newcomer
   const [diff, setDiff] = useState("easy");
+  /* v1.0.5 (Besitzer): "wenn ich mich angemeldet habe, muss ich mir doch
+     einen Namen geben - das koennte beim ersten Popup mit drin sein." Genau
+     hier ist das erste Popup mit Entscheidungen. Das Feld kommt VORBEFUELLT
+     vom Herold (rollTag), der Wuerfel bleibt daneben - ein Tipp reicht, wer
+     will, schreibt seinen eigenen. Der Hinweis sagt ehrlich, wofuer der
+     Name zaehlt: vor allem fuer Online-Duelle und Ranglisten. */
+  const [name, setName] = useState(() => rollTag(false));
   const pick = (on) => ({ flex: 1, padding: "9px 6px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
     fontWeight: 800, fontSize: 12.5, letterSpacing: ".02em",
     background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent",
@@ -1031,7 +1045,19 @@ export function GameIntro({ t, dispatch, onStart }) {
             the profile screen, where a new player never looks. Both stay
             changeable there — the note says so, so nobody feels locked in. */}
         <div style={{ marginTop: 16, textAlign: "left" }}>
-          <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold }}>{t("setup.style").toUpperCase()}</div>
+          <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold }}>{t("setup.name").toUpperCase()}</div>
+          <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>
+            <input value={name} onChange={(e) => setName(e.target.value.slice(0, 24))}
+              placeholder={t("profile.namePh")} autoComplete="off"
+              style={{ flex: 1, minWidth: 0, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
+                color: T.text, padding: "9px 12px", fontSize: 14.5, fontFamily: "inherit", outline: "none" }} />
+            <button onClick={() => setName(rollTag(false))} title={t("online.tagRoll")}
+              style={{ flex: "0 0 auto", width: 42, borderRadius: 10, border: `1px solid ${T.line}`,
+                background: T.bg2, color: T.gold, fontSize: 18, cursor: "pointer" }}>⚄</button>
+          </div>
+          <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.nameHint")}</div>
+
+          <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginTop: 14 }}>{t("setup.style").toUpperCase()}</div>
           <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>
             {[["svg", t("profile.styleSvg")], ["painted", t("profile.stylePainted")]].map(([v, label]) => (
               <button key={v} onClick={() => setStyle(v)} style={pick(style === v)}>{label}</button>
@@ -1049,6 +1075,8 @@ export function GameIntro({ t, dispatch, onStart }) {
           <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, marginTop: 12 }}>{t("setup.lead")}</div>
         </div>
         <button onClick={() => {
+            const n = name.trim();
+            if (n) dispatch({ type: "SET_NAME", name: n });
             dispatch({ type: "SET_PIECE_STYLE", style });
             dispatch({ type: "SET_DIFFICULTY", difficulty: diff });
             dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart();
@@ -1057,6 +1085,41 @@ export function GameIntro({ t, dispatch, onStart }) {
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
             cursor: "pointer", letterSpacing: ".04em" }}>{t("setup.go")}</button>
+      </div>
+    </div>
+  );
+}
+
+// ── DER NAMENSRUF (v1.0.5) ──────────────────────────────────────────────────
+// Fuer Spielstaende, die noch keinen Namen tragen: ein kleines Blatt, ein
+// vorbefuellter Vorschlag, der Wuerfel daneben. Kein Wegklicken ohne Namen -
+// aber der eine Tipp auf "Uebernehmen" genuegt, niemand muss dichten.
+export function NamensRuf({ t, dispatch }) {
+  const [name, setName] = useState(() => rollTag(false));
+  const nimm = () => { const n = name.trim(); if (n) dispatch({ type: "SET_NAME", name: n }); };
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 18 }}>
+      <div style={{ width: "100%", maxWidth: 380, background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+        border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
+        padding: "20px 18px 16px" }}>
+        <div className="gg-serif" style={{ fontSize: 19, color: T.goldBright, letterSpacing: ".04em" }}>{t("setup.nameTitle")}</div>
+        <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.6, margin: "8px 0 12px" }}>{t("setup.nameHint")}</div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <input value={name} onChange={(e) => setName(e.target.value.slice(0, 24))}
+            placeholder={t("profile.namePh")} autoComplete="off"
+            onKeyDown={(e) => e.key === "Enter" && nimm()}
+            style={{ flex: 1, minWidth: 0, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
+              color: T.text, padding: "10px 12px", fontSize: 15, fontFamily: "inherit", outline: "none" }} />
+          <button onClick={() => setName(rollTag(false))} title={t("online.tagRoll")}
+            style={{ flex: "0 0 auto", width: 44, borderRadius: 10, border: `1px solid ${T.line}`,
+              background: T.bg2, color: T.gold, fontSize: 19, cursor: "pointer" }}>⚄</button>
+        </div>
+        <button onClick={nimm} disabled={!name.trim()}
+          style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid rgba(255,240,200,.5)",
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", color: "#17110a",
+            fontFamily: "inherit", fontWeight: 800, fontSize: 14.5, cursor: "pointer",
+            opacity: name.trim() ? 1 : 0.55 }}>{t("setup.nameGo")}</button>
       </div>
     </div>
   );

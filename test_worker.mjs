@@ -584,5 +584,36 @@ const hmac2 = async (key, data) => { const k = await subtle.importKey("raw", key
   ok("a finished game asks for no alarm", hall.nextAlarmAt() === null);
 }
 
+// ── v1.0.5: DAS VERGESSEN ───────────────────────────────────────────────────
+// "Es muss die Moeglichkeit geben, ein Konto auch loeschen zu koennen."
+// forget(id) muss ALLES Persistente raeumen - und die Freunde der anderen.
+{
+  const { hall } = mkHall();
+  hall.handle(null, { t: "hello", id: "w1", secret: "s1", name: "Weg", score: 0 });
+  hall.handle(null, { t: "hello", id: "w2", secret: "s2", name: "Bleibt", score: 0 });
+  // Freundschaft stiften: w2 fragt w1, w1 antwortet mit Annahme
+  hall.handle("w2", { t: "friendRequest", code: "w1" });
+  hall.handle("w1", { t: "friendRespond", id: "w2", accept: true });
+  ok("vor dem Vergessen sind beide Freunde",
+    (hall.player("w1").friends || []).includes("w2") && (hall.player("w2").friends || []).includes("w1"));
+  // w1 legt eine Cloud-Sicherung und eine Push-Adresse an
+  hall.store.vaultPush("w1", { ts: 111, league: 3, gold: 50, data: "{}" }, 5);
+  hall.store.pushPut("w1", { endpoint: "https://push/x", keys: {} });
+  ok("Tresor und Push liegen vor dem Vergessen vor",
+    hall.store.vaultList("w1").length === 1 && hall.store.pushList("w1").length === 1);
+
+  hall.forget("w1");
+  ok("der Spieler selbst ist fort", hall.player("w1") === undefined);
+  ok("seine Cloud-Staende sind fort", hall.store.vaultList("w1").length === 0);
+  ok("seine Push-Adressen sind fort", hall.store.pushList("w1").length === 0);
+  ok("er steht in keiner fremden Freundesliste mehr", !(hall.player("w2").friends || []).includes("w1"));
+  ok("der andere Spieler bleibt unberuehrt", hall.player("w2").name === "Bleibt");
+  // Eine offene ANFRAGE muss ebenso fallen
+  hall.handle(null, { t: "hello", id: "w3", secret: "s3", name: "Fragt", score: 0 });
+  hall.handle("w3", { t: "friendRequest", code: "w2" });
+  hall.forget("w3");
+  ok("auch offene Anfragen verschwinden mit", !(hall.player("w2").pending || []).includes("w3"));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

@@ -81,6 +81,33 @@ export class HallCore {
   savePlayer(p) { this.store.putPlayer(p); }
   isOnline(id) { return this.online.has(id); }
 
+  /* ── DAS VERGESSEN (v1.0.5) ──────────────────────────────────────────────
+     Loescht einen Spieler restlos aus der Halle: seine Zeile, seine
+     Tresor-Staende, seine Push-Adressen - und seinen Namen aus den
+     Freundes- und Anfragelisten ALLER anderen, damit dort kein "?" ohne
+     Traeger zurueckbleibt. Laufende Verbindungen und Partien werden wie
+     bei einem Weggang geschlossen. Aufgerufen vom /vergiss-Endpunkt, der
+     id UND secret prueft - hier wird nicht mehr gefragt. */
+  forget(id) {
+    if (!id) return;
+    this.close(id);
+    for (const anderer of this.store.playerIds()) {
+      if (anderer === id) continue;
+      const q = this.player(anderer);
+      if (!q) continue;
+      const inFriends = (q.friends || []).includes(id);
+      const inPending = (q.pending || []).includes(id);
+      if (!inFriends && !inPending) continue;
+      q.friends = (q.friends || []).filter((x) => x !== id);
+      q.pending = (q.pending || []).filter((x) => x !== id);
+      this.savePlayer(q);
+      this.pushFriends(anderer);
+    }
+    this.store.pushClear(id);
+    this.store.vaultClear(id);
+    this.store.deletePlayer(id);
+  }
+
   // ── presence ───────────────────────────────────────────────────────────────
   connect(id) { this.online.set(id, true); }
   close(id) {
@@ -577,6 +604,8 @@ export function memoryStore() {
     getPlayer: (id) => players.get(id) ? JSON.parse(JSON.stringify(players.get(id))) : undefined,
     putPlayer: (p) => players.set(p.id, JSON.parse(JSON.stringify(p))),
     playerIds: () => [...players.keys()],
+    deletePlayer: (id) => players.delete(id),          // v1.0.5: das Vergessen
+    vaultClear: (owner) => vault.delete(owner),
     dumpPlayers: () => Object.fromEntries(players),
     kvGet: (k) => kv.get(k) ?? null,
     kvSet: (k, v) => kv.set(k, v),

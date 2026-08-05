@@ -28,7 +28,7 @@ export default {
       return env.HALL.get(id).fetch(request);
     }
     // health + the error-report endpoints all live in the one Hall
-    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design" || url.pathname === "/spielerbuch") {
+    if (url.pathname === "/health" || url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design" || url.pathname === "/spielerbuch" || url.pathname === "/vergiss") {
       const id = env.HALL.idFromName("hall");
       return env.HALL.get(id).fetch(request);
     }
@@ -94,6 +94,9 @@ export class Hall extends DurableObject {
       pushList: (owner) => [...sql.exec("SELECT doc FROM push WHERE owner = ?", owner)].map((r) => JSON.parse(r.doc)),
       pushDelete: (owner, endpoint) => { sql.exec("DELETE FROM push WHERE owner = ? AND endpoint = ?", owner, endpoint); },
       pushClear: (owner) => { sql.exec("DELETE FROM push WHERE owner = ?", owner); },
+      /* v1.0.5, KONTO-LOESCHUNG: die zwei fehlenden Griffe. */
+      deletePlayer: (id) => { sql.exec("DELETE FROM players WHERE id = ?", id); },
+      vaultClear: (owner) => { sql.exec("DELETE FROM vault WHERE owner = ?", owner); },
     };
     this.store = store;
     // nudges queue here; kick() drains them AFTER the handler returns, so the
@@ -186,7 +189,7 @@ export class Hall extends DurableObject {
       "access-control-allow-methods": "GET, POST, OPTIONS",
       "access-control-allow-headers": "content-type",
     };
-    if (request.method === "OPTIONS" && (url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design")) {
+    if (request.method === "OPTIONS" && (url.pathname === "/report" || url.pathname === "/reports" || url.pathname === "/design" || url.pathname === "/vergiss")) {
       return new Response(null, { status: 204, headers: cors });
     }
     // ── THE HOUSE DESIGN: which livery every player gets. Reading is open
@@ -204,6 +207,24 @@ export class Hall extends DurableObject {
       const design = b.design === "carved" ? "carved" : "classic";
       this.sql.exec("INSERT INTO kv (k, v) VALUES ('design', ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v", design);
       return new Response(JSON.stringify({ ok: true, design }), { headers: { "content-type": "application/json", ...cors } });
+    }
+    /* ── DAS VERGESSEN (v1.0.5, Besitzer: "es muss die Moeglichkeit geben,
+       ein Konto auch loeschen zu koennen"). Wer loeschen will, weist sich
+       mit id UND secret aus - demselben Paar, mit dem er sich in der Halle
+       anmeldet. Ein HTTP-Weg statt WebSocket, damit das Loeschen auch fuer
+       Staende funktioniert, die gerade nicht verbunden sind. Entfernt wird
+       ALLES Persistente: der Spieler, seine Tresor-Staende, seine
+       Push-Adressen - und sein Name aus den Freundeslisten der anderen. */
+    if (url.pathname === "/vergiss" && request.method === "POST") {
+      let b = {}; try { b = await request.json(); } catch {}
+      const id = String(b.id || ""), secret = String(b.secret || "");
+      const p = id ? this.core.store.getPlayer(id) : undefined;
+      if (!p || !secret || p.secret !== secret) {
+        return new Response(JSON.stringify({ error: "unauthorized" }),
+          { status: 401, headers: { "content-type": "application/json", ...cors } });
+      }
+      try { this.core.forget(id); } catch {}
+      return new Response(JSON.stringify({ ok: true }), { headers: { "content-type": "application/json", ...cors } });
     }
     if (url.pathname === "/report" && request.method === "POST") {
       let b = {}; try { b = await request.json(); } catch {}

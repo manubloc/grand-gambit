@@ -24,7 +24,7 @@ export {
 export { retinueScore, scoreBand } from "./rating.js";
 export { applySnapshot, readSnapshot, listRestorePoints, takeRestorePoint, BK_RECENT, BK_DAILY_DAYS, BK_MIN_GAP_MS } from "./backups.js";
 export {
-  ensureAccounts, register, login, loginGuest, upsertCloudAccount, changePassword,
+  ensureAccounts, register, login, loginGuest, upsertCloudAccount, changePassword, deleteAccount,
   adminHasDefaultPass, currentAccount, setSession, clearSession, findAccount,
   normEmail, validEmail, hashPass, mkAccount, ADMIN_EMAIL, ADMIN_DEFAULT_PASS,
 } from "./accounts.js";

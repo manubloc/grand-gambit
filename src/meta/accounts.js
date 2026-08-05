@@ -130,6 +130,58 @@ export async function upsertCloudAccount({ email, name, provider, isAdmin }) {
   return acc;
 }
 
+
+/* ── DAS KONTO LOESCHEN (v1.0.5, Besitzer: "es muss natuerlich die
+   Moeglichkeit geben, ein Konto auch loeschen zu koennen"). Drei Schichten,
+   in dieser Reihenfolge:
+     1. HALLE: jeder Spielstand traegt seine eigene Online-Kennung
+        (profile.online.id/secret). Fuer jede wird /vergiss gerufen - der
+        Worker prueft das secret und loescht Spieler, Tresor, Push-Adressen
+        und den Namen aus fremden Freundeslisten. Best effort: ist die Halle
+        nicht erreichbar, wird das ehrlich zurueckgemeldet statt geschwiegen.
+     2. GERAET: alle Spielstaende des Kontos samt Verzeichnis.
+     3. KONTO: der Eintrag selbst und die Sitzung.
+   Das eingebaute admin-Konto ist ausgenommen - wer es loescht, sperrt sich
+   aus den Werkbaenken aus. Ein lokales Konto verlangt sein Passwort. */
+export async function deleteAccount(accountId, pass) {
+  const list = await ensureAccounts();
+  const acc = list.find((a) => a.id === accountId);
+  if (!acc) throw new Error("not-found");
+  if (acc.email === ADMIN_EMAIL) throw new Error("admin-locked");
+  if (acc.passHash != null && (await hashPass(pass || "", acc.salt)) !== acc.passHash) throw new Error("wrong-pass");
+
+  // 1. Die Halle vergisst jede Online-Kennung dieses Kontos.
+  let halle = { versucht: 0, geloescht: 0 };
+  try {
+    const { HALL_HTTP } = await import("../app/config.js");
+    const r = await storage.get(`saves:${acc.id}`, false);
+    const staende = JSON.parse(r?.value || "[]");
+    for (const st of staende) {
+      try {
+        const sv = await storage.get(`save:${acc.id}:${st.id}`, false);
+        const prof = JSON.parse(sv?.value || "null");
+        const o = prof?.online;
+        if (o?.id && o?.secret && HALL_HTTP) {
+          halle.versucht++;
+          const res = await fetch(HALL_HTTP + "/vergiss", {
+            method: "POST", headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id: o.id, secret: o.secret }),
+          });
+          if (res.ok) halle.geloescht++;
+        }
+      } catch { /* dieser Stand blockiert die anderen nicht */ }
+    }
+    // 2. Die Spielstaende und ihr Verzeichnis.
+    for (const st of staende) await storage.delete(`save:${acc.id}:${st.id}`, false);
+    await storage.delete(`saves:${acc.id}`, false);
+  } catch { /* ohne Staende gibt es nichts zu raeumen */ }
+
+  // 3. Das Konto und die Sitzung.
+  await writeList(list.filter((a) => a.id !== acc.id));
+  await clearSession();
+  return { ok: true, halle };
+}
+
 export async function changePassword(accountId, oldPass, newPass) {
   if (!newPass || newPass.length < 6) throw new Error("weak-pass");
   const list = await ensureAccounts();

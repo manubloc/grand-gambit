@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { hashPin } from "../../../platform/index.js";
-import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken } from "../../../meta/index.js";
+import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { useEffect } from "react";
 import { T } from "../theme.js";
@@ -327,6 +327,14 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           </div>}
     </Panel>
 
+    {/* v1.0.5: DIE LETZTE TUER. Loeschen ist endgueltig - darum eingeklappt,
+        mit Klartext, was faellt, und beim lokalen Konto mit Passwort. Das
+        eingebaute admin-Konto ist ausgenommen. */}
+    {account && account.email !== "admin" && <Panel>
+      <PanelTitle>{t("profile.delTitle")}</PanelTitle>
+      <KontoLoeschen t={t} account={account} onLogout={onLogout} />
+    </Panel>}
+
     <div style={{ textAlign: "center", fontSize: 11.5, color: T.faint, padding: "4px 0 10px" }}>
       Grand Gambit v{typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev"}
       {srvVer && (srvVer === (typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "dev")
@@ -513,4 +521,47 @@ function RestorePoints({ t, dispatch }) {
       ))}
     </div>
   );
+}
+
+function KontoLoeschen({ t, account, onLogout }) {
+  const [offen, setOffen] = useState(false);
+  const [pass, setPass] = useState("");
+  const [stand, setStand] = useState(null); // null | "laeuft" | fehlerwort
+  const brauchtPass = account?.provider === "local";
+  const los = async () => {
+    setStand("laeuft");
+    try {
+      const r = await deleteAccount(account.id, pass);
+      // Ehrlich sagen, was mit der Halle wurde - dann raus.
+      const rest = r.halle.versucht - r.halle.geloescht;
+      if (rest > 0) alert(t("profile.delHalleRest", { n: rest }));
+      onLogout && onLogout();
+    } catch (e) {
+      setStand(e?.message === "wrong-pass" ? t("profile.delWrongPass") : t("profile.delFail"));
+    }
+  };
+  if (!offen) return <>
+    <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 10 }}>{t("profile.delHint")}</div>
+    <Button kind="ghost" onClick={() => setOffen(true)}
+      style={{ borderColor: "#7a3a38", color: "#e0a0a8" }}>{t("profile.delOpen")}</Button>
+  </>;
+  return <div>
+    <div style={{ fontSize: 12.5, color: T.text, lineHeight: 1.6, marginBottom: 10 }}>{t("profile.delWhat")}</div>
+    {brauchtPass && <input type="password" value={pass} onChange={(e) => setPass(e.target.value)}
+      placeholder={t("profile.delPass")} autoComplete="current-password"
+      style={{ width: "100%", boxSizing: "border-box", background: T.bg2, border: `1px solid ${T.line}`,
+        borderRadius: 10, color: T.text, padding: "10px 12px", fontSize: 14, outline: "none", marginBottom: 10 }} />}
+    {typeof stand === "string" && stand !== "laeuft" &&
+      <div style={{ fontSize: 12, color: "#e0a0a8", marginBottom: 8 }}>{stand}</div>}
+    <div style={{ display: "flex", gap: 8 }}>
+      <Button kind="ghost" onClick={() => { setOffen(false); setPass(""); setStand(null); }} style={{ flex: 1 }}>{t("profile.delBack")}</Button>
+      <button onClick={los} disabled={stand === "laeuft" || (brauchtPass && !pass)}
+        style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid #a4463f",
+          background: "linear-gradient(165deg, #6e2a26, #4a1c1a)", color: "#f2c9c4",
+          fontFamily: "inherit", fontWeight: 800, fontSize: 13, cursor: "pointer",
+          opacity: stand === "laeuft" || (brauchtPass && !pass) ? 0.55 : 1 }}>
+        {stand === "laeuft" ? t("profile.delLaeuft") : t("profile.delGo")}
+      </button>
+    </div>
+  </div>;
 }
