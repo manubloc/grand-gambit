@@ -122,7 +122,7 @@ export const VOICES = {
     afterEn: "I book you as profit, Wanderer. For the first time in years, my ledger balances.",
   },
   engineer: {
-    heraldDe: "Der Ingenieur baute die Tore zwischen den Ligen — und weiß als Einziger, wohin sie sich wirklich öffnen.",
+    heraldDe: "Der Ingenieur baute die Tore zwischen den Kapiteln — und weiß als Einziger, wohin sie sich wirklich öffnen.",
     heraldEn: "The Engineer built the gates between the chapters — and alone knows where they truly open.",
     afterDe: "Die Tore öffnen sich für dich, Wanderer. Frag nicht, womit ich sie geölt habe.",
     afterEn: "The gates will open for you, Wanderer. Do not ask what I oiled them with.",
