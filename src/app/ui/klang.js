@@ -262,3 +262,7 @@ export function klangUeberall() {
     setTimeout(() => { if (zaehler === vorher) klang("menue"); }, 0);
   }, true);
 }
+
+/* v1.0.12 (Vorlader): alle Aufnahme-URLs - der Erstlade-Schirm holt sie vor,
+   klangVorwaermen entschluesselt sie danach wie gehabt. */
+export function klangAlleQuellen() { return [...new Set(Object.values(QUELLEN).flat())]; }

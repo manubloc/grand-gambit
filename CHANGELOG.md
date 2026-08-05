@@ -1,5 +1,15 @@
 # Changelog - Grand Gambit
 
+## 1.0.12
+
+- DER VORLADER: der Boot-Riss bleibt als vollstaendiger Erstlade-Schirm
+  stehen, bis ALLES im Haus ist - jedes Gemaelde, jede Schnitzerei, jede
+  Klassik-Figur, alle Klaenge, Karten, Boeden und UI-Bilder (rund 400
+  Quellen). Goldener Fortschrittsbalken und Zaehler am Riss; Sicherungen
+  (10 s je Datei, 25 s gesamt) sorgen dafuer, dass ein kaputter Pfad das
+  Spiel nie aufhaelt. Danach ruckelt der erste Gang durch Hofstaat,
+  Karte und Brett nicht mehr, weil nichts mehr nachgeladen werden muss.
+
 ## 1.0.11
 
 - VERGESSENSTRANK: Faehigkeiten zuruecksetzen kostet keinen Gold-Obolus

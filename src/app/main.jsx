@@ -225,8 +225,10 @@ class Boundary extends Component {
   }
 }
 
+import Vorlader from "./ui/Vorlader.jsx";   /* v1.0.12: Erstlade-Schirm */
 createRoot(document.getElementById("root")).render(
   <StrictMode><Boundary>
     <App />
+    <Vorlader />
   </Boundary></StrictMode>
 );

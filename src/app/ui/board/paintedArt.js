@@ -267,3 +267,12 @@ export function paintedFitFor(piece) {
 
 /** The enemy fields the same paintings, turned to cold steel by filter. */
 export const ENEMY_FILTER = "saturate(0.6) brightness(1.02) contrast(1.04)"; // v0.39.6: die Figuren waren zu dunkel zum Erkennen - Helligkeit zurueck ueber 1, die Zugehoerigkeit traegt allein die violette KONTUR
+
+/* v1.0.12 (Besitzer, VORLADER): jede Galerie-Quelle als flache Liste, damit
+   der Erstlade-Schirm ALLE Gemaelde vorab in den HTTP-Speicher holt. */
+export function alleGemaeldeQuellen() {
+  const karten = [PAINTED, CLASSIC_PAINTED, KLASSIK_HELL, KLASSIK_DUNKEL];
+  const out = new Set();
+  for (const k of karten) for (const v of Object.values(k)) if (typeof v === "string") out.add(v);
+  return [...out];
+}

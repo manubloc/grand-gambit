@@ -54,6 +54,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        /* v1.0.12 (Vorlader): das Hauptbuendel traegt jetzt auch die kleinen
+           UI-Bilder inline und liegt ueber den 2 MiB Workbox-Standard - der
+           Service Worker soll es trotzdem vorhalten, genau darum geht es. */
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         // WEBP is deliberately NOT precached: during a deploy an asset can be
         // referenced by the fresh JS bundle a moment before its own file has
         // finished uploading — the host then answers with the SPA fallback
