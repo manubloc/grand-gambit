@@ -766,18 +766,60 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   // zusaetzlich, die Wappen-Grafik entfaellt auf diesen Karten.
   const Card = ({ title, sub, extra, body, cta, onGo, art, style, children, artTop = false, ruhig = false, bild = null }) => {
     const shineDelay = useShineDelay();
+    /* v1.0.4, ZWEI BESITZERFUNDE AN EINER STELLE:
+       (1) "bei manchen dieser Bilder noch eine Kante auf der linken Seite" -
+           das Motiv lag als BACKGROUND-Ebene unter einem Schleier, der ueber
+           die KACHELBREITE lief und erst bei 94 % durchsichtig wurde. Die
+           Bildkante selbst sitzt aber schon bei ~78 % (das Motiv ist nur
+           AR x Kachelhoehe breit, hier ~205 px). Dort war der Schleier noch
+           ~14 % deckend - also stiess das helle Bild als harte senkrechte
+           Naht auf reines Schwarz. Ein Schleier ueber der Kachel kann eine
+           Bildkante nicht weichzeichnen, die woanders liegt. Das Motiv ist
+           jetzt ein ECHTES Bildelement mit eigener Maske: es verliert nach
+           links seine Deckkraft und geht damit ins Schwarz der Kachel ueber,
+           wo immer seine Kante steht.
+       (2) "der gelbe Balken geht viel zu weit, er ueberdeckt sogar das Bild" -
+           der Balken lief in der Textspalte mit 92 px rechtem Polster, das
+           Motiv ist aber gut doppelt so breit. Statt zu raten wird das Bild
+           GEMESSEN und der Balken haelt genau davor an. */
+    const bildRef = useRef(null);
+    const [bildBreite, setBildBreite] = useState(0);
+    useEffect(() => {
+      if (!bild) return undefined;
+      const el = bildRef.current;
+      if (!el || typeof ResizeObserver === "undefined") return undefined;
+      const messen = () => setBildBreite(Math.round(el.getBoundingClientRect().width));
+      messen();
+      const ro = new ResizeObserver(messen);
+      ro.observe(el);
+      if (el.parentElement) ro.observe(el.parentElement);
+      return () => ro.disconnect();
+    }, [bild]);
+    // Bis die erste Messung da ist, gilt der gemessene Normalfall (~205 px);
+    // 55 % deckelt schmale Schirme, damit der Balken nie zum Strich wird.
+    const bildFrei = `min(${(bildBreite || 205) + 12}px, 55%)`;
     return (
     <div style={{ position: "relative", background: bild
-        // VOLLE HOEHE RECHTS (v0.57) auf ECHTEM SCHWARZ (Besitzer, v0.59):
-        // die Story-Bilder sind selbst nachtschwarz - Grund #000 laesst sie
-        // fugenlos einsinken. Der Schleier laeuft bis 94 % (alt: 72 %), denn
-        // die linke BILDKANTE liegt je nach Seitenverhaeltnis erst bei
-        // ~75-85 % der Kachelbreite - vorher endete der Verlauf davor und
-        // die Naht stand sichtbar im Raum (Besitzer-Fund).
-        ? `linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,.24) 76%, rgba(0,0,0,0) 94%), url(${bild}) right center / auto 100% no-repeat, #000`
+        ? "#000"
         : `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
       border: `1px solid ${T.line}`, borderRadius: T.radius, boxShadow: T.shadow,
-      position: "relative", overflow: "hidden", ...style }}>
+      position: "relative", overflow: "hidden",
+      // Das gemessene Mass reicht als Variable nach unten durch - der
+      // Fortschrittsbalken wird ausserhalb dieser Huelle gebaut und kaeme
+      // sonst nicht an die Zahl heran.
+      "--gg-bildfrei": bildFrei, ...style }}>
+      {bild && <>
+        <img ref={bildRef} src={bild} alt="" aria-hidden draggable={false}
+          style={{ position: "absolute", top: 0, right: 0, height: "100%", width: "auto", maxWidth: "none",
+            objectFit: "cover", pointerEvents: "none",
+            // Die Maske sitzt am BILD, nicht an der Kachel: links verlaeuft
+            // es ins Nichts und damit ins Schwarz darunter - egal, wo seine
+            // Kante gerade steht.
+            WebkitMaskImage: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 22%, rgba(0,0,0,.85) 52%, #000 78%)",
+            maskImage: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 22%, rgba(0,0,0,.85) 52%, #000 78%)" }} />
+        {/* Ein leiser Schleier bleibt - er sichert die Schrift, nicht die Kante. */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+          background: "linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.34) 46%, rgba(0,0,0,0) 74%)" }} /></>}
       {/* GEMESSEN (v0.46): auf der Karte "Schnelles Spiel" ragte das Wappen
           oben 6 px und unten 2 px aus dem Kopf heraus - seit der CTA-Pille
           dort zwei eigene Griffe abgeloest haben, ist der Kopf kuerzer als
@@ -829,7 +871,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
               rechtem Polster in Bildbreite, das Motiv bleibt frei. */}
           <span className="gg-serif" style={{ color: T.gold, letterSpacing: ".04em" }}>{t("hub.station", { a: done, b: total })}</span><br />
           <span style={{ display: "inline-block", paddingRight: "min(30%, 130px)" }}>{t("hub.nextStop")}: <b>{cur?.place}</b></span>
-          <div style={{ marginTop: 8 }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
+          <div style={{ marginTop: 8, paddingRight: "var(--gg-bildfrei, 217px)" }}><Bar pct={Math.max(done / Math.max(1, total), 0.02)} height={5} color={T.gold} /></div></>}
         bild={karteKampagne} art={null} style={{ gridColumn: "1 / -1" }} />
       <Card ruhig title={t("hub.quick")} sub={t("hub.quickSub")} onGo={onQuick} cta={null}
         bild={karteSchnell} art={null}>

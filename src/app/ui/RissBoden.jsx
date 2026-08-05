@@ -26,18 +26,39 @@ import riss09 from "./assets/riss/riss-09.webp";
 import riss10 from "./assets/riss/riss-10.webp";
 const STUFEN = [riss01, riss02, riss03, riss04, riss05, riss06, riss07, riss08, riss09, riss10];
 
-/** Welche Stufe steht dem Spieler zu? Zwei Quellen, je zur Haelfte:
- *  der HOFWERT (wie viele Figuren stehen im Hofstaat) und die KAMPAGNE
- *  (wie viel des Weges ist geraeumt). Beide 0..1, gemittelt, auf 1..10
- *  abgebildet - so waechst der Riss auch, wenn nur eine Seite vorankommt. */
+/** Welche Stufe steht dem Spieler zu?
+ *
+ *  v1.0.4, ZWEI BESITZERFUNDE:
+ *
+ *  (a) "wenn ich per Werkbank alles freischalte, zeigst du mir wenn ueberhaupt
+ *      die 4. oder 5. Stufe." Zu Recht: seit v0.66 zaehlte AUSSCHLIESSLICH das
+ *      Kapitel. Wer den Hof fuellt, Stationen raeumt oder den Weg-Regler der
+ *      Werkbank aufdreht, ohne das Kapitel zu wechseln, blieb auf seiner
+ *      Stufe stehen. Jetzt zaehlt die STAERKSTE der drei Quellen - Kapitel,
+ *      geraeumter Weg, Hofstaat -, also jeder Weg nach vorn.
+ *
+ *  (b) "bitte passe an, dass der Riss einfach frueher entsteht." Nachgesehen
+ *      liegt der erste sichtbare Funke bei Bild 2-4, ein wirklicher Riss erst
+ *      ab Bild 5 - linear abgebildet passierte bis zur Haelfte des Spiels
+ *      also fast nichts. Eine Wurzelkurve (Exponent 0,55) zieht den Anfang
+ *      nach vorn: Kapitel 2 zeigt schon Stufe 4, Kapitel 3 die Stufe 5 mit
+ *      dem ersten echten Riss, und die letzten Stufen bleiben trotzdem dem
+ *      Ende vorbehalten.
+ */
 export function rissStufe(profile) {
-  // KAPITELGETRIEBEN (Besitzer, v0.66): "abhaengig, in welchem Kapitel ich
-  // bin". Die alte Mischung aus Hofwert und Weganteil blieb selbst im
-  // letzten Kapitel bei Stufe 3 haengen (Werkbank-Befund) - jetzt zaehlt
-  // schlicht das Kapitel: 1 -> Bild 1 ... 10+ -> Bild 10.
   if (!profile) return 1;
-  const lg = profile.campaign?.league || 1;
-  return Math.max(1, Math.min(STUFEN.length, lg));
+  const c = profile.campaign || {};
+  const lg = Math.max(1, c.league || 1);
+  // Der Weg im LAUFENDEN Kapitel (campaign.cleared wird beim Kapitelwechsel
+  // geleert, s. advanceLeague) - so entsteht eine durchgehende Zahl statt
+  // einer Treppe, die beim Kapitelende auf 1 springt und dort haengt.
+  const laenge = campaignLength(profile);
+  const imKapitel = laenge > 0 ? Math.min(1, clearedCount(profile) / laenge) : 0;
+  const kapitelWeg = (lg - 1 + imKapitel) / 9;      // Kapitel 10 = voll
+  const hof = (c.unlocked || []).length / 27;        // der ganze Hofstaat
+  const roh = Math.max(0, Math.min(1, Math.max(kapitelWeg, hof)));
+  const stufe = 1 + Math.round((STUFEN.length - 1) * Math.pow(roh, 0.55));
+  return Math.max(1, Math.min(STUFEN.length, stufe));
 }
 
 export function RissBoden({ profile, staerke = 1 }) {

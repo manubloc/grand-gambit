@@ -38,7 +38,12 @@ export function findAccount(list, email) {
 export async function mkAccount({ email, pass, name, provider = "local", isAdmin = false }) {
   const salt = rid(12);
   return {
-    id: rid(8), email: normEmail(email), name: name || normEmail(email).split("@")[0],
+    /* v1.0.4 (Besitzer): DIE E-MAIL IST NICHT DER NAME IM SPIEL - "im
+       Gegenteil sogar, die E-Mail darf nie zum Vorschein kommen." Bisher
+       wurde der Kontoname aus dem Teil vor dem @ gebildet und stand dann
+       auf dem Spielstandsschirm und im Profil. Das Feld bleibt jetzt LEER;
+       den Namen im Spiel vergibt der Spieler selbst (Profil bzw. Halle). */
+    id: rid(8), email: normEmail(email), name: name || null,
     salt, passHash: pass != null ? await hashPass(pass, salt) : null,
     provider, isAdmin: !!isAdmin, createdAt: Date.now(),
   };
@@ -74,8 +79,15 @@ export async function register(email, pass, name) {
 }
 
 export async function login(email, pass) {
+  /* Nur noch mit E-Mail (Besitzer, v1.0.4). Bisher pruefte allein das
+     Anlegen die Form - beim Anmelden ging jede Zeichenkette durch und
+     scheiterte erst an der Suche, mit der irrefuehrenden Meldung "kein
+     Konto mit dieser E-Mail". Jetzt sagt die Form, was sie ist. Die eine
+     Ausnahme bleibt die eingebaute Hintertuer "admin". */
+  const e = normEmail(email);
+  if (!validEmail(e)) throw new Error("invalid-email");
   const list = await ensureAccounts();
-  const acc = findAccount(list, email);
+  const acc = findAccount(list, e);
   if (!acc || acc.passHash == null) throw new Error("not-found");
   const h = await hashPass(pass || "", acc.salt);
   if (h !== acc.passHash) throw new Error("wrong-pass");

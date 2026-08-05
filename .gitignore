@@ -23,3 +23,9 @@ server/backups/
 # Bildgenerator-Ausgaben (nie committen)
 design/out/
 __pycache__/
+
+# Sonden-Buendel (werden bei jedem Lauf neu erzeugt)
+.rh.mjs
+.pk.mjs
+.rs.mjs
+.riss.mjs

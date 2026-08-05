@@ -66,7 +66,10 @@ export function FeedbackPanel({ t, en, account }) {
   const senden = async () => {
     if (!text.trim() && !bilder.length) { setStand("leer"); return; }
     setStand("sendet");
-    const konto = account?.email || account?.name || account?.id || null;
+    /* v1.0.4: NIE die E-Mail. Der Bericht traegt die Kontokennung - damit
+       laesst sich im Spielerbuch nachschlagen, wer geschrieben hat, ohne
+       die Adresse durch die Halle zu schicken. */
+    const konto = account?.id ? "Konto " + account.id : null;
     const r = await fileReport({ note: text.trim(), rubrik, bilder, account: konto });
     setStand(r.where);                         // "hall" oder "local" - ehrlich benannt
     if (r.where === "hall") { setText(""); setBilder([]); }

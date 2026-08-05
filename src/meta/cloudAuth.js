@@ -28,7 +28,10 @@ const isAdminMail = (email) => (ADMIN_EMAILS || []).map((e) => e.toLowerCase()).
 async function mirror(user, provider) {
   return upsertCloudAccount({
     email: user.email,
-    name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0],
+    /* v1.0.4: KEIN Rueckfall auf den Teil vor dem @ - lieber gar kein Name
+       als die E-Mail als Name. Wer ueber Google kommt, bringt meist einen
+       echten Anzeigenamen mit; sonst vergibt ihn der Spieler im Spiel. */
+    name: user.user_metadata?.full_name || user.user_metadata?.name || null,
     provider, isAdmin: isAdminMail(user.email),
   });
 }

@@ -61,10 +61,14 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div className="gg-serif" style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".3em",
         ...goldText, filter: "drop-shadow(0 1px 1px rgba(0,0,0,.5))" }}>{t("profile.title")}</div>
       <GoldRule margin="8px 18%" />
+      {/* v1.0.4: HIER STEHT NUR DER NAME IM SPIEL. Darunter stand bisher der
+          Kontoname - und der wurde aus der E-Mail gebildet, stand also
+          faktisch die E-Mail-Adresse auf dem Schirm. Die Anmeldung ist eine
+          Tuer, kein Name; wer als Admin angemeldet ist, sieht das am Rang,
+          nicht an seiner Adresse. */}
       <div className="gg-serif" style={{ fontSize: 22, letterSpacing: ".04em", color: T.goldBright }}>
-        {profile.name || account?.name || "—"}</div>
-      {account?.name && <div style={{ fontSize: 12, color: T.dim, marginTop: 3 }}>
-        {account.name}{account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" ? " · Admin" : ""}</div>}
+        {profile.name || t("profile.namePh")}</div>
+      {account?.isAdmin && <div style={{ fontSize: 12, color: T.gold, marginTop: 3, letterSpacing: ".08em" }}>Admin</div>}
       {/* v0.82 (Besitzer): SPIELSTAND WECHSELN und ABMELDEN gehoeren nach OBEN,
           zum Namen - dorthin, wo jeder sie erwartet. Vorher standen sie weit
           unten hinter Schwierigkeit und Figurenstil; man musste scrollen, um

@@ -44,7 +44,7 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
 
   const card = { background: T.panel, border: `1px solid ${T.line}`, borderRadius: 16, padding: "13px 14px", boxShadow: T.shadow };
   return (
-    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", background: T.savesBg, padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflowY: "auto", overscrollBehavior: "none", background: T.savesBg, padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <button onClick={() => setLang(lang === "de" ? "en" : "de")} style={{ position: "absolute", top: "calc(12px + env(safe-area-inset-top))", right: "calc(14px + env(safe-area-inset-right))",
         background: "none", border: `1px solid ${T.line}`, color: T.dim, borderRadius: 999, padding: "5px 12px",
         fontFamily: "inherit", fontSize: 12, cursor: "pointer" }}>{lang === "de" ? "EN" : "DE"}</button>
@@ -60,8 +60,12 @@ export function SavesScreen({ account, onOpen, onLogout, initialLang = "de", __t
         WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
         filter: "drop-shadow(0 2px 12px rgba(0,0,0,.9))" }}>GRAND GAMBIT</div>
       <div className="gg-serif" style={{ color: T.dim, fontSize: 13.5, letterSpacing: ".05em", margin: "2px 0 2px" }}>
-        {s.hello}, <b style={{ color: T.goldBright, fontWeight: 700 }}>{account.name}</b>
-        {account.isAdmin && String(account.name).trim().toLowerCase() !== "admin" && <span style={{ color: T.gold }}> · Admin</span>}
+        {/* v1.0.4: OHNE KONTONAMEN. Er kam aus der E-Mail und stand damit
+            gross auf dem ersten Schirm nach der Anmeldung - genau das soll
+            nie passieren. Der Name im Spiel haengt am Spielstand, nicht am
+            Konto, und steht auf den Karten darunter. */}
+        {s.hello}
+        {account.isAdmin && <span style={{ color: T.gold }}> · Admin</span>}
         <button onClick={onLogout} className="gg-serif" style={{ background: "none", border: "none", color: T.faint,
           textDecoration: "underline", fontSize: 12.5, letterSpacing: ".05em", cursor: "pointer", marginLeft: 8 }}>{s.logout}</button>
       </div>

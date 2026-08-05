@@ -18,6 +18,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { AchievementsScreen } from "./src/app/ui/screens/AchievementsScreen.jsx";
 import { GameScreen } from "./src/app/ui/screens/GameScreen.jsx";
 import { LeaveMatchAsk, GameIntro } from "./src/app/App.jsx";
+import { rissStufe } from "./src/app/ui/RissBoden.jsx";
 import { TutorialScreen } from "./src/app/ui/screens/TutorialScreen.jsx";
 import { buildStageMatch, withProgressPct } from "./src/meta/index.js";
 import { CAMPAIGN, TIME_MODES, timeModeById, clockFor } from "./src/content/index.js";
@@ -700,6 +701,41 @@ ok("every master has a drawing", bosses.length === BOSSES.length);
 
   ok("the queen herself keeps the same stand", (PIECE_ART.Q || "").includes(SKIRT));
 }
+
+
+// ── DER RISSBODEN: WANN REISST ER AUF? ─────────────────────────────────────
+// Diese Pruefungen gehoeren HIERHER und nicht in test_saves.mjs: RissBoden.jsx
+// importiert zehn .webp-Dateien. Node laedt die nicht von sich aus - die
+// Suite starb beim Import, und weil die Kette mit && verbunden ist, fielen
+// die fuenf folgenden Suiten stumm mit aus (875 -> 656 Assertions, ohne eine
+// einzige Fehlermeldung). Hier buendelt esbuild mit --loader:.webp=dataurl,
+// also laeuft der Import.
+// ── v1.0.4: DER RISS ENTSTEHT FRUEH UND WAECHST AUS JEDER QUELLE ───────────
+{
+  const n = (k) => Array.from({ length: k }, (_, i) => "n" + i);
+  const st = (c) => rissStufe({ campaign: c });
+  ok("frisches Spiel zeigt den ungebrochenen Boden", st({ league: 1, cleared: [], unlocked: [] }) === 1);
+  ok("die ersten Stationen lassen den Riss schon aufblitzen",
+    st({ league: 1, cleared: n(3), unlocked: [] }) >= 2);
+  ok("ein echter Riss steht spaetestens ab Kapitel III",
+    st({ league: 3, cleared: [], unlocked: [] }) >= 5);
+  ok("die Stufe waechst ueber die Kapitel nie rueckwaerts", (() => {
+    let vorher = 0;
+    for (const lg of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+      for (const k of [0, 25, 50]) {
+        const s2 = st({ league: lg, cleared: n(k), unlocked: [] });
+        if (s2 < vorher) return false;
+        vorher = s2;
+      }
+    return true;
+  })());
+  ok("der volle Hofstaat allein reisst den Boden ganz auf",
+    st({ league: 1, cleared: [], unlocked: n(27) }) === 10);
+  ok("das letzte Kapitel erreicht die letzte Stufe",
+    st({ league: 10, cleared: n(50), unlocked: [] }) === 10);
+  ok("ohne Profil bleibt es bei Stufe 1", rissStufe(null) === 1);
+}
+
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

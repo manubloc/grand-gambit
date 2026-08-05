@@ -1,5 +1,5 @@
 // Accounts + save slots: the front door and the career shelf.
-import { ensureAccounts, register, login, loginGuest, findAccount, hashPass, normEmail, validEmail,
+import { ensureAccounts, register, login, loginGuest, findAccount, hashPass, normEmail, validEmail, mkAccount,
   changePassword, adminHasDefaultPass, ADMIN_EMAIL, ADMIN_DEFAULT_PASS, currentAccount, clearSession } from "./src/meta/accounts.js";
 import { createSave, listSaves, loadSave, writeSave, deleteSave, renameSave,
   progressPct, withProgressPct, leagueOrder, migrateLegacyInto, fmtPlaytime } from "./src/meta/saves.js";
@@ -154,6 +154,27 @@ const fullOwned = new Set([...ownedLeagueBosses(fullB), ...(fullB.campaign.bribe
 ok("full build fields every monster except the last two masters", BOSSES.every((b) => fullOwned.has(b.id) || b.id === "b23" || b.id === "b25"));  // v0.38.1: Erzfeindin und Grossmeister stehen jenseits von Kapitel X
 ok("full build fills the chest", Object.values(ITEMS).every((it) => (fullB.items[it.id] || 0) > 0));
 ok("full build counts ten league crowns", fullB.stats.leaguesWon === 10);
+
+// ── v1.0.4: DIE E-MAIL BLEIBT DIE E-MAIL ───────────────────────────────────
+// Der Besitzer: "man sollte sich nur noch mit E-Mail einloggen duerfen, und
+// die E-Mail darf nie zum Vorschein kommen." Zwei Zusagen, zwei Pruefungen.
+{
+  const acc = await mkAccount({ email: "Manuel.Frey@Example.COM", pass: "geheim123" });
+  ok("das Konto leitet KEINEN Spielnamen aus der E-Mail ab",
+    acc.name == null && !String(acc.name || "").includes("manuel"));
+  ok("die E-Mail wird normalisiert gespeichert", acc.email === "manuel.frey@example.com");
+  const ohnePass = await mkAccount({ email: "b@c.de", pass: null, name: "Herold" });
+  ok("ein mitgegebener Name bleibt unangetastet", ohnePass.name === "Herold");
+}
+{
+  // Anmelden ohne @ muss an der FORM scheitern, nicht erst an der Suche.
+  let wort = null;
+  try { await login("manuel", "geheim123"); } catch (e) { wort = e.message; }
+  ok("Anmelden ohne E-Mail-Form wird als solches abgewiesen", wort === "invalid-email");
+  let wort2 = null;
+  try { await login("niemand@example.com", "geheim123"); } catch (e) { wort2 = e.message; }
+  ok("eine unbekannte, aber gueltige Adresse meldet 'kein Konto'", wort2 === "not-found");
+}
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 if (fail) process.exit(1);

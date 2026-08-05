@@ -75,8 +75,16 @@ export function LoginScreen({ onSignedIn, initialLang = "de" }) {
     return mode === "signup" ? register(email, pass) : login(email, pass);
   });
 
+  /* v1.0.4 (Besitzer: "auf dem Desktop kann ich beim Anmelden nicht
+     scrollen"). Die Ursache lag nicht hier, sondern eine Etage hoeher:
+     ab 1440 px traegt #root ein zoom von 1,15 (ab 1760 px 1,3). Ein Kind
+     mit height:100dvh ist dann VISUELL 115 % des Fensters hoch - und weil
+     html/body/#root alle auf height:100% stehen, gibt es darueber keinen
+     Rollbereich, der das auffangen koennte. Der Rest des Hauses rechnet
+     laengst mit calc(100dvh / var(--vhz)); Anmeldung und Spielstaende
+     hatten diese Teilung nie bekommen. */
   return (
-    <div style={{ height: "100dvh", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
+    <div style={{ height: "calc(100dvh / var(--vhz, 1))", overflowY: "auto", overscrollBehavior: "none", display: "flex", flexDirection: "column", alignItems: "center",
       padding: "16px 18px", background: T.loginBg }}>
       {/* Der Sprachknopf lag UNTER dem Titelbild und schluckte jeden Tipp -
           gemessen fing ein IMG die Klicks ab. Er sitzt jetzt fest am Schirm
