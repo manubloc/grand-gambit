@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.0
+
+ALLE ZEICHEN AUS EINER QUELLE - UND MITTIG
+
+- Das freigestellte Riss-Emblem ist jetzt die eine Quelle fuer Favicon, App-
+  Zeichen und Startbild. Zuvor stammten sie aus verschiedenen Vorlagen, eine
+  davon mit schwarzem Grund.
+- GEMESSEN UND BEHOBEN: das Emblem selbst sass 6 px waagerecht und 12 px
+  senkrecht ausser der Mitte - dieser Versatz pflanzte sich in jedes
+  abgeleitete Zeichen fort. Jetzt wird der Inhalt zuerst freigestellt, dann
+  mittig gesetzt, dann erst skaliert. Restversatz ueberall unter einem
+  Pixel (vorher 6/12).
+- Sechs Groessen neu gerechnet: 512, 192, 180 (Apple), maskable 512 mit 20 %
+  Sicherheitsrand, 32 und 16 - dazu favicon.ico mit vier Aufloesungen.
+  Durchsichtig, wo es durchsichtig sein soll; Flaeche nur dort, wo das
+  Betriebssystem sie verlangt (Apple und maskable).
+
 ## 0.99.0
 
 LAUTSTAERKE EINSTELLBAR, ZURUECK-GESTE VERLAESST DIE APP NICHT MEHR
