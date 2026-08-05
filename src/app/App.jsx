@@ -335,6 +335,41 @@ export default function App() {
      noch null ist - ohne den Fragezeichen-Zugriff stuerzt die App beim Start
      ab (von der Sonde gefangen, nicht live). */
   useEffect(() => { setSchlicht(profile?.pieceStyle === "svg"); }, [profile?.pieceStyle]);
+
+  /* ── DIE ZURUECK-GESTE (v0.99, Besitzerfrage: "geht das?") ────────────────
+     Ja. Am Telefon wischt man von der Kante nach innen, um zurueckzugehen -
+     bisher verliess das die App, weil unsere Ansichten keinen Verlauf haben:
+     alles ist EINE Seite. Der Kniff: bei jedem Wechsel in eine tiefere
+     Ansicht legen wir einen Eintrag in den Verlauf des Browsers. Die Geste
+     nimmt dann diesen Eintrag zurueck, und wir fuehren dieselbe Bewegung im
+     Spiel aus, statt die Seite zu verlassen.
+     Bewusst KEIN vollstaendiger Verlauf: nur eine Ebene tief, damit die
+     Geste nie mehr wegnimmt, als der Spieler erwartet. Wer schon ganz oben
+     steht (Spielen-Reiter, keine Partie), darf die App verlassen - alles
+     andere waere ein Kaefig. */
+  const tiefe = (!!match || !!pvp || !!quick || !!dailyGame) ? 3
+    : view !== "hub" ? 2
+    : tab !== "play" ? 1 : 0;
+  const tiefeRef = useRef(0);
+  useEffect(() => {
+    if (tiefe > tiefeRef.current) {
+      try { history.pushState({ ggTiefe: tiefe }, ""); } catch {}
+    }
+    tiefeRef.current = tiefe;
+  }, [tiefe]);
+  useEffect(() => {
+    const zurueck = () => {
+      // von innen nach aussen: erst die Partie, dann die Ansicht, dann der Reiter
+      if (match || pvp || quick || dailyGame) {
+        setMatch(null); setPvp(null); setQuick(null); setDailyGame(null);
+      } else if (view !== "hub") setView("hub");
+      else if (tab !== "play") setTab("play");
+      else { history.back(); return; }   // ganz oben: die App darf gehen
+      try { history.pushState({ ggTiefe: 0 }, ""); } catch {}
+    };
+    window.addEventListener("popstate", zurueck);
+    return () => window.removeEventListener("popstate", zurueck);
+  }, [match, pvp, quick, dailyGame, view, tab]);
   useEffect(() => {
     const r = document.documentElement;
     const messen = () => {
@@ -514,8 +549,8 @@ export default function App() {
       padding: immersive ? "14px 16px 14px" : "16px 18px 0", rowGap: immersive ? 10 : 22 }}>
       {/* v0.80: der breite Zweig hatte NIE Musik oder Effekt-Regie - die
           Zwei-Zweige-Falle. Jetzt spielt der Schreibtisch dasselbe Haus. */}
-      <Soundtrack an={profile.sound !== false} />
-      <KlangRegie an={profile.sfx !== false} />
+      <Soundtrack an={profile.sound !== false} laut={profile.musikLaut ?? 1} />
+      <KlangRegie an={profile.sfx !== false} laut={profile.klangLaut ?? 1} />
       {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
       {/* DER RISSBODEN liegt unten fixiert hinter jedem Menue und waechst mit
           Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
@@ -659,8 +694,8 @@ export default function App() {
           ? { display: "flex", flexDirection: "column", justifyContent: "flex-start" } : {}),
         ...(immersive ? { display: "flex", flexDirection: "column" } : {}) }}>{screen}</main>
       {/* die Melodie des Hauses - abschaltbar unter Profil */}
-      <Soundtrack an={profile.sound !== false} />
-      <KlangRegie an={profile.sfx !== false} />
+      <Soundtrack an={profile.sound !== false} laut={profile.musikLaut ?? 1} />
+      <KlangRegie an={profile.sfx !== false} laut={profile.klangLaut ?? 1} />
       {!immersive && <InstallBanner en={profile.lang === "en"} />}
       {(!immersive || mapView) && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
@@ -1044,10 +1079,10 @@ function TeachPopup({ which, t, dispatch }) {
 // ── DIE KLANGREGIE ──────────────────────────────────────────────────────────
 // Meldet den Profilschalter an die Klangschicht und waermt die Puffer vor,
 // damit der erste Zug nicht auf das Entschluesseln wartet.
-function KlangRegie({ an }) {
+function KlangRegie({ an, laut = 1 }) {
   useEffect(() => {
-    klangEinstellen({ ein: an, lautstaerke: 0.6 });
+    klangEinstellen({ ein: an, lautstaerke: 0.6 * Math.max(0, Math.min(1, laut)) });
     if (an) klangVorwaermen();
-  }, [an]);
+  }, [an, laut]);
   return null;
 }

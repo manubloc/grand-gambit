@@ -23,7 +23,9 @@ import spurMeister from "./assets/audio/musik-meister.mp3";
 
 const SPUREN = { menue: spurMenue, karte: spurKarte, kampf: spurKampf,
   kampfSpannung: spurSpannung, meister: spurMeister };
-const LAUT = 0.34;          // Zielpegel: unter dem Spiel, nie darueber
+/* v0.99: der Zielpegel ist einstellbar. 0,34 bleibt die Voreinstellung -
+   Musik soll unter dem Spiel liegen, nie darueber. */
+const LAUT_VOR = 0.34;
 /* v0.81 (Besitzer): "viel sanfter" - die Kreuzblende dauert jetzt SECHS
    Sekunden statt 1,8, und sie laeuft NACHEINANDER statt gleichzeitig: erst
    sinkt das alte Stueck ueber 3,4 s ins Nichts, dann steigt das neue ueber
@@ -44,7 +46,8 @@ const BLENDE_EIN_MS = 7000; // das neue steigt
 const VERZUG_MS = 2000;     // ... und beginnt erst, wenn das alte schon leiser ist
 const SCHRITT_MS = 50;
 
-export function Soundtrack({ an = true }) {
+export function Soundtrack({ an = true, laut = 1 }) {
+  const LAUT = LAUT_VOR * Math.max(0, Math.min(1, laut));
   const spieler = useRef([null, null]);   // zwei <audio>, es blendet immer der eine in den anderen
   const aktiv = useRef(0);                // Index des gerade tragenden Spielers
   const timer = useRef([null, null]);
@@ -137,6 +140,12 @@ export function Soundtrack({ an = true }) {
       document.removeEventListener("visibilitychange", sicht);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Wird der Regler bewegt, zieht der laufende Spieler sofort nach. */
+  useEffect(() => {
+    const a = spieler.current[aktiv.current];
+    if (a && !a.paused) a.volume = LAUT;
+  }, [LAUT]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Der Schalter im Profil
   useEffect(() => {

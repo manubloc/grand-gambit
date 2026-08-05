@@ -79,6 +79,23 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
       <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
         style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
+      {/* v0.99 (Besitzerwunsch): LAUTSTAERKE EINSTELLBAR - bisher gab es nur
+          an und aus. Zwei getrennte Regler, weil Musik und Spielklaenge
+          verschieden empfunden werden: viele wollen die Musik leise im
+          Hintergrund, die Zuege aber deutlich hoeren. */}
+      {[["musikLaut", "profile.musicVolume", "Musik", profile.sound !== false],
+        ["klangLaut", "profile.sfxVolume", "Klänge", profile.sfx !== false]].map(([schl, sch, wort, an]) => (
+        <div key={schl} style={{ opacity: an ? 1 : 0.42, margin: "12px 0 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: T.faint, marginBottom: 4 }}>
+            <span>{wort}</span><span>{Math.round((profile[schl] ?? 1) * 100)} %</span>
+          </div>
+          <input type="range" min="0" max="100" step="5" disabled={!an}
+            value={Math.round((profile[schl] ?? 1) * 100)}
+            onChange={(e) => dispatch({ type: "REPLACE",
+              profile: { ...profile, [schl]: Number(e.target.value) / 100 } })}
+            style={{ width: "100%", accentColor: T.gold }} />
+        </div>
+      ))}
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceStyle")}</div>
       <Segmented value={profile.pieceStyle === "svg" ? "svg" : "painted"}
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}

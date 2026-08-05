@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 0.99.0
+
+LAUTSTAERKE EINSTELLBAR, ZURUECK-GESTE VERLAESST DIE APP NICHT MEHR
+
+- ZWEI REGLER im Profil, getrennt fuer Musik und Klaenge - viele wollen die
+  Musik leise im Hintergrund, die Zuege aber deutlich hoeren. Der laufende
+  Spieler zieht sofort nach, ohne Neustart. Bisher gab es nur an und aus.
+- DIE ZURUECK-GESTE (Besitzerfrage "geht das?"): ja. Unsere Ansichten haben
+  keinen Verlauf - alles ist EINE Seite, darum verliess die Wischgeste die
+  App. Jetzt legt jeder Wechsel in eine tiefere Ansicht einen Eintrag in den
+  Verlauf; die Geste nimmt ihn zurueck und wir fuehren dieselbe Bewegung im
+  Spiel aus: erst die Partie verlassen, dann die Ansicht, dann der Reiter.
+  Wer schon ganz oben steht, darf die App verlassen - alles andere waere
+  ein Kaefig.
+
 ## 0.98.0
 
 DIE KAPITEL BEKOMMEN IHREN EINSTIEG
