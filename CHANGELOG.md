@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 0.98.0
+
+DIE KAPITEL BEKOMMEN IHREN EINSTIEG
+
+- Zwoelf Landschaften des Besitzers eingebaut: wer ein Kapitel zum ERSTEN
+  Mal betritt, sieht sein Land vollflaechig, mit Namen und Vorgeschichte;
+  ein Druck fuehrt auf die Karte. Danach nie wieder - gemerkt in
+  profile.gesehen.kapitelIntro, damit der Einstieg ein Ereignis bleibt und
+  keine Huerde wird.
+- KEN BURNS: das Bild wandert 24 s lang langsam und wird eine Spur groesser.
+  Bei "Bewegung reduzieren" steht es still.
+- DIE MUSIK KOMMT MIT: das Kapitelthema beginnt zugleich und blendet ueber
+  neun Sekunden herauf; beim Weiterdruecken laeuft es nahtlos weiter.
+- Die ersten 700 ms nimmt der Schirm keinen Druck an, damit ein Versehen
+  den Einstieg nicht ueberspringt.
+- BILDER NICHT EINGEBUNDEN: 3,9 MB Spielfassungen waeren mehr als das ganze
+  Buendel (1,75 MB). Sie liegen unter public/kapitel und werden geholt, wenn
+  sie gebraucht werden. Originale (1672x941, 31 MB) in archiv/bilder/kapitel.
+- ES FEHLT KAPITEL VIII (Aschgrund, der rote Canyon) - dort greift der
+  Einstieg noch nicht, das Spiel geht wie bisher direkt auf die Karte.
+  Von Sonnenschlund liegen zwei Fassungen vor, eine als Reserve.
+
 ## 0.96.0
 
 DIE SCHAUKAMMER LAEDT KLEIN UND LAESST AUSSORTIEREN

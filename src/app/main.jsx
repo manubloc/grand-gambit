@@ -112,6 +112,13 @@ style.textContent = GLOBAL_CSS + `
   /* v0.82: solange ein Blatt (Popup) offen ist, weicht das Installations-
      Banner - sonst liegt es ueber dem Blattkopf. */
   html[data-gg-popup="1"] .gg-install-banner { display: none !important; }
+  /* v0.98: die langsame Fahrt ueber das Kapitelbild - kaum merklich, aber
+     genug, damit das Bild lebt statt zu stehen. */
+  @keyframes ggKenBurns {
+    from { transform: scale(1.06) translate3d(-1.2%, 1%, 0); }
+    to   { transform: scale(1.16) translate3d(1.2%, -1.4%, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) { @keyframes ggKenBurns { from,to { transform: scale(1.06); } } }
   @keyframes ggRissStern {
     0%   { opacity: 0; transform: scale(.22) rotate(-14deg); }
     7%   { opacity: 1; transform: scale(1.22) rotate(0deg); }

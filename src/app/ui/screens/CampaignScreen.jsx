@@ -9,6 +9,7 @@ import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen 
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle } from "../../../content/index.js";
+import { KapitelIntro, kapitelBildDa } from "../KapitelIntro.jsx";
 import { nodeStatus, nodeInLeague, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import bootUrl from "../assets/wanderer-boot.webp";
@@ -91,6 +92,22 @@ const labelTint = (league) => LABEL_TINT[((Math.max(1, league) - 1) % 12) + 1] |
 export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTree }) {
   const en = profile.lang === "en";
   const league = profile.campaign?.league || 1;
+  /* v0.98: DER EINSTIEG. Betritt man ein Kapitel zum ERSTEN Mal, geht sein
+     Land vollflaechig auf, mit einem Wort dazu; ein Druck fuehrt auf die
+     Karte. Danach nie wieder - gemerkt wird das im Profil, damit der
+     Einstieg ein Ereignis bleibt und keine Huerde wird. */
+  const gesehen = profile?.gesehen?.kapitelIntro || [];
+  const [intro, setIntro] = useState(
+    () => (kapitelBildDa(league) && !gesehen.includes(league) ? league : null));
+  useEffect(() => {
+    if (kapitelBildDa(league) && !(profile?.gesehen?.kapitelIntro || []).includes(league)) setIntro(league);
+  }, [league]); // eslint-disable-line react-hooks/exhaustive-deps
+  const introFertig = () => {
+    const alt = profile?.gesehen || {};
+    dispatch({ type: "REPLACE", profile: { ...profile,
+      gesehen: { ...alt, kapitelIntro: [...(alt.kapitelIntro || []), league] } } });
+    setIntro(null);
+  };
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league
   const [viewLeague, setViewLeague] = useState(league);
@@ -312,6 +329,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
     ? { top: frameY + LEISTE, maxHeight: Math.max(180, tokenScreenY - 82 - 24 - LEISTE), overflowY: "auto" }
     : { bottom: dockPad + 14, maxHeight: Math.max(180, frameH - tokenScreenY - 24 - dockPad - 16), overflowY: "auto" };
   const showPanel = panelOpen && !viewing && !!node && !token.moving && !seaLock;
+
+  /* Der Einstieg liegt vor dem ganzen Schirm - erst das Land, dann die Karte. */
+  if (intro) {
+    const wt = themeForLeague(intro);
+    const lore = LEAGUE_LORE[intro];
+    return <KapitelIntro liga={intro} titel={en ? wt.nameEn : wt.nameDe}
+      text={lore ? (en ? lore.en : lore.de) : null} onWeiter={introFertig} />;
+  }
 
   return (
     <div style={{ position: "relative", overflow: "hidden", flex: "1 1 auto", minHeight: 0, height: "100%" }}>
