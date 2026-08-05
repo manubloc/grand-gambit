@@ -147,6 +147,7 @@ export function SchaukammerScreen() {
               })}
             </div>
             <div className="gg-serif" style={{ fontSize: 11.5, color: T.dim, fontStyle: "italic", marginTop: 9, lineHeight: 1.5 }}>
+              {bestand.hinweis ? bestand.hinweis + " " : ""}
               {bestand.offen.map((o) => `${o.was} (${o.anzahl}) — ${o.wo}`).join(" · ")}
             </div>
           </div>

@@ -1,5 +1,5 @@
 {
- "stand": "2026-08-04",
+ "stand": "2026-08-05",
  "orte": [
   {
    "ort": "src/app/ui/assets/",
@@ -24,14 +24,14 @@
   {
    "gruppe": "Geschnitzte Figuren",
    "gesamt": 57,
-   "original": 24,
-   "fehlt": 33
+   "original": 12,
+   "fehlt": 45
   },
   {
    "gruppe": "Gemalte Figuren",
    "gesamt": 71,
-   "original": 21,
-   "fehlt": 50
+   "original": 3,
+   "fehlt": 68
   },
   {
    "gruppe": "Turnierfiguren",
@@ -42,42 +42,45 @@
   {
    "gruppe": "Ausrüstung",
    "gesamt": 27,
-   "original": 2,
-   "fehlt": 25
+   "original": 0,
+   "fehlt": 27
   },
   {
    "gruppe": "Auszeichnungen",
    "gesamt": 28,
-   "original": 8,
-   "fehlt": 20
+   "original": 0,
+   "fehlt": 28
   },
   {
    "gruppe": "Bodentexturen",
    "gesamt": 16,
-   "original": 1,
-   "fehlt": 15
+   "original": 0,
+   "fehlt": 16
+  },
+  {
+   "gruppe": "Kulisse und Wappen",
+   "gesamt": 69,
+   "original": 27,
+   "fehlt": 42
   }
  ],
  "offen": [
   {
-   "was": "Turnierfiguren (klassisches Set)",
-   "anzahl": 6,
-   "wo": "Besitzer hat sie noch — reicht sie nach"
-  },
-  {
    "was": "Farbiger geschnitzter Satz: Springer, Läufer, Turm, Dame, König",
    "anzahl": 5,
-   "wo": "aimlapi oder ChatGPT"
+   "wo": "vermutlich verloren — nur über aimlapi/ChatGPT erzeugt, keine Historie"
+  },
+  {
+   "was": "Turnierfiguren (klassisches Set)",
+   "anzahl": 6,
+   "wo": "Besitzer hat sie noch"
   },
   {
    "was": "Gemalte Portraits",
    "anzahl": 50,
-   "wo": "älteste Bilder — ChatGPT-Verlauf, ältere Chats"
-  },
-  {
-   "was": "Ausrüstung, Auszeichnungen, Bodentexturen",
-   "anzahl": 60,
-   "wo": "Herkunft unklar"
+   "wo": "älteste Bilder, Herkunft unklar"
   }
- ]
+ ],
+ "anzahlOriginale": 122,
+ "hinweis": "Näherung: die Zuordnung erfolgt per Bildvergleich. Je nach Schwelle schwanken die Zahlen deutlich — sie zeigen die Größenordnung, nicht die exakte Deckung."
 }

@@ -1,0 +1,20 @@
+GRAND GAMBIT — die Originale aus dem Gespräch (26.–28. Juli 2026)
+
+VERWENDET IM SPIEL
+  Zeichen-Gambit-vor-dem-Riss.png   das Logo: Menü, App-Symbol, Favicon, Ladeschirm
+  Hintergrund-gerissenes-Brett.png  der Grund hinter allen Menüs (bg-hall)
+  Weltkarte-16-9.png                die neue Weltkarte, 1672x941
+  weltkarten-anker.json             die zwölf Weltanker aus dem Ankerwerkzeug
+  Soundtrack.mp3                    die Melodie, endlos im Kreis
+
+VORLAGEN UND ENTWÜRFE
+  Rahmen-Vorlage.png                der goldene Zierrahmen (nachgezeichnet als SVG)
+  Intro-Riss-a.png / -b.png         frühere Eingangsbilder
+  Wortmarke-Ausschnitt.png          Bildschirmausschnitt der Wortmarke
+
+RISSBODEN-SERIE (12 Bilder, 1536x1024)
+  Rissboden-1000037687 … -1000037707
+  Die Bodenbilder für die Kapitelkarten.
+
+Nicht enthalten: kleine Bildschirmausschnitte aus dem Gesprächsverlauf
+(unter 300 KB), die keine Vorlagen waren.
