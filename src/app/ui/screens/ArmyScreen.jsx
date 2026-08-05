@@ -1035,9 +1035,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
             <div className="gg-serif" style={{ fontSize: 12, color: neuDa.length ? "#f2dca0" : "#b9a98a", fontStyle: "italic",
               lineHeight: 1.45, marginTop: 3 }}>„{spruch}"</div>
           </div>
-          {neuDa.length > 0 && <span className="gg-serif" style={{ flex: "0 0 auto", alignSelf: "flex-start",
-            fontSize: 10.5, fontWeight: 800, letterSpacing: ".1em", color: "#17110a", background: T.gold,
-            borderRadius: 999, padding: "3px 9px", boxShadow: "0 0 10px rgba(240,206,122,.5)" }}>{en ? "NEW" : "NEU"}</span>}
+          {/* v1.0.8: die NEU-Pille ist fort (Besitzer) - der Laden soll ruhig wirken */}
         </div>;
       })()}
       <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".14em", color: T.goldBright, textTransform: "uppercase", marginBottom: 8,

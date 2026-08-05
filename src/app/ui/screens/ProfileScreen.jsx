@@ -74,8 +74,11 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
     </GildedFrame>
     <Panel>
       <div style={{ fontSize: 12, color: T.faint, marginBottom: 6 }}>{t("profile.name")}</div>
-      <input value={profile.name} placeholder={t("profile.namePh")} onChange={(e) => dispatch({ type: "SET_NAME", name: e.target.value })}
-        style={{ width: "100%", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10, color: T.text, padding: "11px 12px", fontSize: 16, outline: "none" }} />
+      {/* v1.0.8 (Besitzer): der Name ist FEST. Er ist einzigartig und soll
+          spaeter als Anmeldename dienen - ein aenderbarer Anker traegt nicht. */}
+      <div style={{ padding: "11px 12px", background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
+        color: T.text, fontSize: 15, fontWeight: 800 }}>{profile.name || t("profile.namePh")}</div>
+      <div style={{ fontSize: 11, color: T.faint, marginTop: 4, lineHeight: 1.4 }}>{t("profile.nameFixedHint")}</div>
       {/* v0.99 (Besitzerwunsch): LAUTSTAERKE EINSTELLBAR - bisher gab es nur
           an und aus. Zwei getrennte Regler, weil Musik und Spielklaenge
           verschieden empfunden werden: viele wollen die Musik leise im
@@ -84,7 +87,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           Schalter mehr. Ganz nach links heisst aus; das ist dieselbe
           Handlung an derselben Stelle statt zweier Bedienelemente, die
           dasselbe meinen. */}
-      {[["musikLaut", "sound", "Musik"], ["klangLaut", "sfx", "Klänge"]].map(([schl, schalter, wort]) => {
+      {[["musikLaut", "sound", "Musik"], ["klangLaut", "sfx", "Soundeffekte"]].map(([schl, schalter, wort]) => {
         const wert = profile[schl] ?? 1;
         return (
         <div key={schl} style={{ margin: "12px 0 0" }}>
@@ -104,21 +107,8 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}
         options={[{ value: "painted", label: t("profile.stylePainted") }, { value: "svg", label: t("profile.styleSvg") }]} />
       <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>{t("profile.pieceStyleHint")}</div>
-      {/* DIE MELODIE DES HAUSES: laeuft in der Schleife, sobald man das Spiel
-          einmal beruehrt hat (kein Browser spielt ungefragt) - und schweigt,
-          sobald man hier abschaltet oder das Fenster verlaesst. */}
-      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{en ? "Music" : "Musik"}</div>
-      {/* Der Schalter der Vorlage: An = violette Bahn, cremefarbener Knauf. */}
-      <Toggle on={profile.sound !== false} label={profile.sound !== false ? (en ? "on" : "an") : (en ? "off" : "aus")}
-        onChange={(an) => dispatch({ type: "SET_SOUND", on: an })} />
-      {/* v0.75 (Besitzer): DIE KLAENGE haben einen EIGENEN Schalter - wer die
-          Musik mag, aber kein Klacken will (oder umgekehrt), bekommt beides. */}
-      <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{en ? "Sound effects" : "Klänge"}</div>
-      <Toggle on={profile.sfx !== false} label={profile.sfx !== false ? (en ? "on" : "an") : (en ? "off" : "aus")}
-        onChange={(an) => dispatch({ type: "REPLACE", profile: { ...profile, sfx: an } })} />
-      <div style={{ fontSize: 11.5, color: T.faint, margin: "5px 2px 0", lineHeight: 1.45 }}>
-        {en ? "Wood on stone: selecting, moving, striking."
-            : "Holz auf Stein: Anwählen, Setzen, Schlagen."}</div>
+      {/* v1.0.8 (Besitzer): NUR die Regler. Die alten An/Aus-Schalter
+          darunter sagten dasselbe zweimal - sie sind fort. */}
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.lang")}</div>
       <Segmented value={profile.lang} onChange={(v) => dispatch({ type: "SET_LANG", lang: v })}
         options={[{ value: "de", label: "Deutsch" }, { value: "en", label: "English" }]} />
@@ -289,6 +279,14 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <ErrorReports t={t} />
     </Panel>}
 
+    {/* v1.0.8 (Besitzer): "Passwort setzen" hiess bisher die Geraete-Sperre -
+        das klang nach dem Anmelde-Passwort. Jetzt gibt es BEIDES, klar
+        getrennt: hier das echte Konto-Passwort, darunter die Sperre. */}
+    {account?.provider === "local" && account?.email !== "admin" && <Panel>
+      <PanelTitle>{t("profile.pwTitle")}</PanelTitle>
+      <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.pwHint")}</div>
+      <PasswortAendern t={t} account={account} />
+    </Panel>}
     <Panel>
       <PanelTitle>{t("profile.pinTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px" }}>{t("profile.pinHint")}</div>
@@ -517,7 +515,7 @@ function KontoLoeschen({ t, account, onLogout }) {
   if (!offen) return <>
     <div style={{ fontSize: 12.5, color: T.dim, lineHeight: 1.55, marginBottom: 10 }}>{t("profile.delHint")}</div>
     <Button kind="ghost" onClick={() => setOffen(true)}
-      style={{ borderColor: "#7a3a38", color: "#e0a0a8" }}>{t("profile.delOpen")}</Button>
+      style={{ borderColor: "rgba(168,130,255,.45)", color: "#b9a4e8" }}>{t("profile.delOpen")}</Button>
   </>;
   return <div>
     <div style={{ fontSize: 12.5, color: T.text, lineHeight: 1.6, marginBottom: 10 }}>{t("profile.delWhat")}</div>
@@ -530,12 +528,37 @@ function KontoLoeschen({ t, account, onLogout }) {
     <div style={{ display: "flex", gap: 8 }}>
       <Button kind="ghost" onClick={() => { setOffen(false); setPass(""); setStand(null); }} style={{ flex: 1 }}>{t("profile.delBack")}</Button>
       <button onClick={los} disabled={stand === "laeuft" || (brauchtPass && !pass)}
-        style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid #a4463f",
-          background: "linear-gradient(165deg, #6e2a26, #4a1c1a)", color: "#f2c9c4",
+        style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid rgba(168,130,255,.5)",
+          background: "linear-gradient(165deg, #3a2a62, #241a3e)", color: "#cbb6ff",
           fontFamily: "inherit", fontWeight: 800, fontSize: 13, cursor: "pointer",
           opacity: stand === "laeuft" || (brauchtPass && !pass) ? 0.55 : 1 }}>
         {stand === "laeuft" ? t("profile.delLaeuft") : t("profile.delGo")}
       </button>
     </div>
+  </div>;
+}
+
+function PasswortAendern({ t, account }) {
+  const [alt, setAlt] = useState("");
+  const [neu, setNeu] = useState("");
+  const [wort, setWort] = useState(null);
+  const los = async () => {
+    setWort(null);
+    try {
+      const { changePassword } = await import("../../../meta/accounts.js");
+      await changePassword(account.id, alt, neu);
+      setWort("ok"); setAlt(""); setNeu("");
+    } catch (e) { setWort(e?.message === "wrong-pass" ? "falsch" : "fehler"); }
+  };
+  const feld = { width: "100%", boxSizing: "border-box", background: T.bg2, border: `1px solid ${T.line}`,
+    borderRadius: 10, color: T.text, padding: "10px 12px", fontSize: 14, outline: "none", marginBottom: 8 };
+  return <div>
+    <input type="password" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder={t("profile.pwOld")} autoComplete="current-password" style={feld} />
+    <input type="password" value={neu} onChange={(e) => setNeu(e.target.value)} placeholder={t("profile.pwNew")} autoComplete="new-password" style={feld} />
+    {wort === "ok" && <div style={{ fontSize: 12, color: "#9fdcae", marginBottom: 8 }}>{t("profile.pwOk")}</div>}
+    {wort === "falsch" && <div style={{ fontSize: 12, color: "#e0a0a8", marginBottom: 8 }}>{t("profile.pwWrong")}</div>}
+    {wort === "fehler" && <div style={{ fontSize: 12, color: "#e0a0a8", marginBottom: 8 }}>{t("profile.delFail")}</div>}
+    <Button onClick={los} disabled={!alt || neu.length < 6} style={{ width: "100%" }}>{t("profile.pwGo")}</Button>
+    <div style={{ fontSize: 11.5, color: T.faint, marginTop: 8, lineHeight: 1.45 }}>{t("profile.pwReset")}</div>
   </div>;
 }

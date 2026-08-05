@@ -715,7 +715,7 @@ export default function App() {
           <div style={{ maxWidth: 540, margin: "0 auto", pointerEvents: "auto",
             background: "linear-gradient(180deg, rgba(60,38,110,.62) 0%, rgba(30,18,58,.66) 100%)",
             backdropFilter: `blur(${T.glassBlur})`, WebkitBackdropFilter: `blur(${T.glassBlur})`,
-            border: "1px solid rgba(167,139,250,.42)", borderRadius: 22,
+            border: "1.5px solid rgba(178,150,255,.62)", borderRadius: 22,
             boxShadow: "0 12px 32px rgba(0,0,0,.55), 0 0 18px rgba(124,58,237,.22)",
             display: "grid", gridTemplateColumns: `repeat(${TABS.length}, 1fr)`, padding: "6px 8px" }}>
             {railItems}
@@ -1005,7 +1005,7 @@ function Lock({ t, profile, onUnlock, onBack }) {
 // ── first-run game intro (once): what Grand Gambit IS and what makes it
 // special — a parchment card in the world's own voice. ───────────────────────
 export function GameIntro({ t, dispatch, onStart }) {
-  const [style, setStyle] = useState("svg");        // crisp shapes read best for a newcomer
+  const [style, setStyle] = useState("painted");    // v1.0.8 (Besitzer): die detailreichen Figuren sind der Standard
   const [diff, setDiff] = useState("easy");
   /* v1.0.5 (Besitzer): "wenn ich mich angemeldet habe, muss ich mir doch
      einen Namen geben - das koennte beim ersten Popup mit drin sein." Genau
@@ -1029,11 +1029,11 @@ export function GameIntro({ t, dispatch, onStart }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
       background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
-      <div style={{ width: "100%", maxWidth: 420, background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
-        border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
+      <div style={{ width: "100%", maxWidth: 420, background: `radial-gradient(125% 135% at 50% -10%, #241a3e 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
+        border: "1.5px solid rgba(168,130,255,.55)", borderRadius: 16, boxShadow: "0 18px 50px rgba(60,30,120,.55)",
         padding: "22px 20px 18px", textAlign: "center",
         maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
-        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em", color: T.goldBright }}>{t("intro.title")}</div>
+        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em", color: "#cbb6ff" }}>{t("intro.title")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 0" }}>
           <span style={{ flex: 1, height: 1, background: `${T.gold}44` }} />
           <span style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)" }} />
@@ -1061,6 +1061,7 @@ export function GameIntro({ t, dispatch, onStart }) {
                 background: T.bg2, color: T.gold, fontSize: 18, cursor: "pointer" }}>⚄</button>
           </div>
           <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.nameHint")}</div>
+          {!name.trim() && <div style={{ fontSize: 11.5, color: "#e0a0a8", fontWeight: 800, marginTop: 4 }}>{t("setup.nameNeed")}</div>}
 
           <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginTop: 14 }}>{t("setup.style").toUpperCase()}</div>
           <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>

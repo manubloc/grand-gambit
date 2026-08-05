@@ -117,9 +117,9 @@ style.textContent = GLOBAL_CSS + `
   /* v1.0.2: die Regler tragen die Hausfarbe - violette Bahn, violette Kugel. */
   .gg-regler { -webkit-appearance: none; appearance: none; height: 26px; background: transparent; }
   .gg-regler::-webkit-slider-runnable-track { height: 6px; border-radius: 99px;
-    background: linear-gradient(90deg, #7c3aed, #a78bfa); border: 1px solid rgba(167,139,250,.55); }
+    background: linear-gradient(90deg, #7c3aed, #a78bfa); }
   .gg-regler::-moz-range-track { height: 6px; border-radius: 99px;
-    background: linear-gradient(90deg, #7c3aed, #a78bfa); border: 1px solid rgba(167,139,250,.55); }
+    background: linear-gradient(90deg, #7c3aed, #a78bfa); }
   .gg-regler::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px;
     border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e9defd, #a78bfa 60%, #6d28d9);
     border: 1.5px solid #c4b5fd; box-shadow: 0 0 8px rgba(139,92,246,.7); cursor: pointer; }
