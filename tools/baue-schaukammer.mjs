@@ -30,6 +30,21 @@ await writeFile("dist/schaukammer.json",
   JSON.stringify(dateien.map((r) => `/schau/${r}`), null, 0));
 console.log(`schaukammer: ${dateien.length} Bilder nach ${ZIEL}`);
 
+/* VORSCHAUBILDER (v0.96, Besitzerwunsch): die Kammer lud bisher jedes Bild
+   in voller Groesse, nur um es als 116-px-Kachel zu zeigen - das dauerte und
+   verbrauchte unnoetig Bandbreite. Jetzt legt der Bau neben jedes Bild eine
+   VORSCHAU mit 200 px Kantenlaenge; die Kammer zeigt die, und erst beim
+   Antippen kommt das Grosse. */
+const { execFile } = await import("node:child_process");
+const { promisify } = await import("node:util");
+const lauf = promisify(execFile);
+const VZIEL = "dist/schau-klein";
+await rm(VZIEL, { recursive: true, force: true });
+await mkdir(VZIEL, { recursive: true });
+try {
+  await lauf("python3", ["tools/baue-vorschau.py", ZIEL, VZIEL]);
+} catch (e) { console.log("vorschau: uebersprungen -", String(e).slice(0, 80)); }
+
 // Dasselbe fuer das MUSIKARCHIV: alle je erzeugten Stuecke liegen unter
 // archiv/musik und werden neben das Spiel gelegt, nicht hineingebunden -
 // 26 MB im Buendel waeren unvertretbar. Die Klangwerkstatt holt sie zur

@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 0.96.0
+
+DIE SCHAUKAMMER LAEDT KLEIN UND LAESST AUSSORTIEREN
+
+- VORSCHAUBILDER: die Kammer lud jedes Bild in voller Groesse, nur um es als
+  116-px-Kachel zu zeigen - bei 382 Bildern und teils 2,5 MB je Stueck.
+  Jetzt legt der Bau daneben eine Vorschau mit 200 px Kantenlaenge; das
+  Original kommt erst beim Antippen. Gemessen: 43 MB werden zu 3,4 MB, ein
+  Zwoelftel. Faellt eine Vorschau aus, springt das Original ein.
+- AUSSORTIEREN: jede Kachel hat jetzt "Archiv" und "Loeschen". Die Kammer
+  loescht NICHT selbst - eine Anzeigeseite im Browser sollte kein
+  Schreibrecht am Bestand haben. Stattdessen fuehrt sie eine Merkliste, die
+  sich als Datei ausgeben laesst; ausgefuehrt wird sie beim naechsten Bau.
+  So bleibt jede Loeschung nachvollziehbar und umkehrbar, bis sie geschieht.
+- Das hochgeladene ZIP enthielt nichts Neues - byte-identisch die 54 Bilder
+  der ersten Rettung, alle bereits im Archiv (das inzwischen 93 fasst).
+
 ## 0.95.0
 
 DIE BESTANDSAUFNAHME STEHT IN DER SCHAUKAMMER

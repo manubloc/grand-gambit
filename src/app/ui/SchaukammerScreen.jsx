@@ -58,7 +58,8 @@ export function SchaukammerScreen() {
     fetch(VERZEICHNIS).then((r) => r.json()).then((liste) => {
       if (!lebt) return;
       setAlle(liste.map((p) => ({ pfad: p, datei: p.split("/").pop(),
-        titel: titelVon(p), gruppe: gruppeVon(p), quelle: p })));
+        titel: titelVon(p), gruppe: gruppeVon(p), quelle: p,
+        vorschau: p.replace(/^\/schau\//, "/schau-klein/").replace(/\.(png|jpg|jpeg)$/i, ".webp") })));
     }).catch(() => {});
     return () => { lebt = false; };
   }, []);
@@ -87,6 +88,25 @@ export function SchaukammerScreen() {
       (!s || e.titel.toLowerCase().includes(s) || e.datei.toLowerCase().includes(s)));
   }, [ALLE, zeigeGruppe, suche]);
 
+  /* v0.96 (Besitzerwunsch): AUSSORTIEREN. Die Kammer laeuft im Browser und
+     darf nicht selbst im Bestand loeschen - das waere ein Schreibrecht, das
+     eine Anzeigeseite nicht haben sollte. Stattdessen fuehrt sie eine
+     MERKLISTE: was hier als "archivieren" oder "loeschen" markiert wird,
+     sammelt sich und laesst sich als Liste ausgeben. Der naechste Bau (oder
+     ich) fuehrt sie aus. So bleibt jede Loeschung nachvollziehbar und
+     umkehrbar, bis sie wirklich geschieht. */
+  const [merk, setMerk] = useState({});
+  const markiere = (datei, art) =>
+    setMerk((m) => ({ ...m, [datei]: m[datei] === art ? undefined : art }));
+  const merkListe = () => {
+    const z = Object.entries(merk).filter(([, a]) => a);
+    if (!z.length) return;
+    const text = z.map(([d, a]) => `${a}\t${d}`).join("\n");
+    const blob = new Blob(["art\tdatei\n" + text], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "aussortiert.txt";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
   const laden = (e) => {
     const a = document.createElement("a");
     a.href = e.quelle; a.download = e.datei;
@@ -148,6 +168,22 @@ export function SchaukammerScreen() {
           })}
         </div>
 
+        {Object.values(merk).filter(Boolean).length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
+            background: "rgba(194,96,106,.12)", border: "1px solid rgba(194,96,106,.4)",
+            borderRadius: 11, padding: "9px 12px", marginBottom: 12 }}>
+            <span style={{ fontSize: 12.5, flex: "1 1 auto" }}>
+              {Object.values(merk).filter((a) => a === "archivieren").length} zum Archivieren ·{" "}
+              {Object.values(merk).filter((a) => a === "loeschen").length} zum Löschen vorgemerkt
+            </span>
+            <button onClick={merkListe} style={{ cursor: "pointer", fontFamily: "inherit", fontSize: 11.5,
+              fontWeight: 700, color: "#241a08", background: "linear-gradient(180deg,#f0d68f,#d3ae5c)",
+              border: "none", borderRadius: 8, padding: "6px 12px" }}>Liste laden</button>
+            <button onClick={() => setMerk({})} style={{ cursor: "pointer", fontFamily: "inherit", fontSize: 11.5,
+              color: T.dim, background: "none", border: `1px solid ${T.line}`, borderRadius: 8, padding: "6px 12px" }}>
+              zurücksetzen</button>
+          </div>
+        )}
         <input value={suche} onChange={(e) => setSuche(e.target.value)} placeholder="suchen …"
           style={{ width: "100%", maxWidth: 320, fontFamily: "inherit", fontSize: 13.5, color: "#e8e2cf",
             background: "rgba(8,6,16,.6)", border: "1px solid rgba(167,139,250,.3)", borderRadius: 10,
@@ -162,7 +198,12 @@ export function SchaukammerScreen() {
                 style={{ display: "block", width: "100%", height: 116, cursor: "zoom-in", padding: 0,
                   background: "repeating-conic-gradient(rgba(255,255,255,.045) 0% 25%, transparent 0% 50%) 0 0/16px 16px",
                   border: "none", borderRadius: 8 }}>
-                <img src={e.quelle} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                {/* v0.96: die KACHEL zeigt die Vorschau (200 px, ein Zwoelftel
+                    der Last), das Original kommt erst beim Antippen. Faellt
+                    die Vorschau aus, springt das Original ein. */}
+                <img src={e.vorschau} alt="" loading="lazy" decoding="async"
+                  onError={(ev) => { if (ev.target.src !== e.quelle) ev.target.src = e.quelle; }}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </button>
               <div style={{ fontSize: 11.5, fontWeight: 700, marginTop: 7, wordBreak: "break-word" }}>{e.titel}</div>
               <div className="gg-serif" style={{ fontSize: 10.5, color: T.faint, fontStyle: "italic",
@@ -171,6 +212,15 @@ export function SchaukammerScreen() {
                 style={{ marginTop: 7, width: "100%", cursor: "pointer", fontFamily: "inherit", fontSize: 11.5,
                   fontWeight: 700, color: "#241a08", background: "linear-gradient(180deg,#f0d68f,#d3ae5c)",
                   border: "none", borderRadius: 8, padding: "6px 8px" }}>Original laden</button>
+              <div style={{ display: "flex", gap: 5, marginTop: 5 }}>
+                {[["archivieren", "Archiv", "#6f8fbf"], ["loeschen", "Löschen", "#c2606a"]].map(([art, wort, farbe]) => (
+                  <button key={art} onClick={() => markiere(e.datei, art)}
+                    style={{ flex: 1, cursor: "pointer", fontFamily: "inherit", fontSize: 10.5, fontWeight: 700,
+                      color: merk[e.datei] === art ? "#150f22" : farbe,
+                      background: merk[e.datei] === art ? farbe : "transparent",
+                      border: `1px solid ${farbe}`, borderRadius: 7, padding: "4px 6px" }}>{wort}</button>
+                ))}
+              </div>
             </div>
           ))}
         </div>
