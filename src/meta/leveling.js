@@ -152,16 +152,20 @@ export function unlockAbility(profile, charId, abilityId) {
   stats.abilitiesUnlocked = (stats.abilitiesUnlocked || 0) + 1;
   return { ...profile, sp: profile.sp - abilityCost(rung.level), stats, pieces: { ...pieces, abilities } };
 }
-/** Gold service: forget a piece's abilities and get the spent XP back. */
+/** Vergessen kostet einen VERGESSENSTRANK (Händler, steigender Preis) —
+ *  nicht mehr die alte 15-Gold-Gebühr. Der Trank wird verbraucht, jede
+ *  ausgegebene ✦ kehrt zurück. RESPEC_GOLD bleibt exportiert (historisch). */
 export const RESPEC_GOLD = 15;
 export function respecPiece(profile, charId) {
   const list = chosenAbilities(profile, charId);
-  if (!list.length || (profile.gold || 0) < RESPEC_GOLD) return profile;
+  const trank = profile?.items?.vergessenstrank || 0;
+  if (!list.length || trank < 1) return profile;
   const ch = CHARACTERS[charId];
   const refund = list.reduce((a, id) => a + abilityCost(ch.ladder.find((e) => e.ability === id)?.level || 1), 0);
   const abilities = { ...((profile.pieces || {}).abilities || {}) };
   delete abilities[charId];
-  return { ...profile, gold: profile.gold - RESPEC_GOLD, sp: (profile.sp || 0) + refund,
+  return { ...profile, items: { ...(profile.items || {}), vergessenstrank: trank - 1 },
+    sp: (profile.sp || 0) + refund,
     pieces: { ...(profile.pieces || {}), abilities } };
 }
 

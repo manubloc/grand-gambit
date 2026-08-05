@@ -8,7 +8,7 @@ export { CAMPAIGN, nodeById, BRANCHES, campaignTag, CHAPTERS, chapterForRow, cha
 export { MAPS, mapById, validateMap, inMap, isHole, holeSet, mapIdx, playableCount } from "./maps.js";
 export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } from "./bosses.js";
 
-export { ITEMS, ITEM_LIST, hasItem, buyItem } from "./items.js";
+export { ITEMS, ITEM_LIST, hasItem, buyItem, itemPrice } from "./items.js";
 export { VOICES, voiceFor } from "./voices.js";
 
 export { TIME_MODES, timeModeById, timeModeKey, clockFor } from "./timeModes.js";

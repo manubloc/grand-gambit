@@ -85,11 +85,13 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
   const r = radien(eigen);
   ok("the glow hugs the contour: radii grow outward", r.length >= 3 && r[0] < r[1] && r[1] < r[2]);
   const staerke = (h, farbe) => [...h.matchAll(new RegExp(farbe.replace(/,/g, ",\\s*") + ",\\s*([\\d.]+)\\)", "g"))].map((m) => +m[1]);
-  const meine = staerke(eigen, "240,214,138"), seine = staerke(feind, "150,105,255");
+  /* v1.0.11 (Besitzer): der Riss traegt jetzt das HELLERE Violett 184,146,255
+     - beide Seiten leuchten auf Koenigs-Mass, die Relation bleibt. */
+  const meine = staerke(eigen, "240,214,138"), seine = staerke(feind, "184,146,255");
   const meineGew = staerke(gewaehlt, "240,214,138");
   ok("your pieces glow softer than the enemy's", Math.max(...meine) < Math.max(...seine));
   ok("a chosen piece flares up", Math.max(...meineGew) > Math.max(...meine));
-  ok("the enemy wears the rift, you wear gold", feind.includes("150,105,255") && eigen.includes("240,214,138"));
+  ok("the enemy wears the rift, you wear gold", feind.includes("184,146,255") && eigen.includes("240,214,138"));
 }
 
 // ── 3. ONE SIZE OF NUMERAL ──────────────────────────────────────────────────

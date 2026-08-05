@@ -277,5 +277,39 @@ import { CAMPAIGN as _cg } from "./src/content/index.js";
   ok("League I keeps its founding names", _pf(_cg.find((n) => n.id === "L01s00")) === "Alte Wacht");
 }
 
+// ── der Vergessenstrank: steigender Preis, Trank statt Goldgebühr ────────────
+import { respecPiece as _rp, abilityCost as _ac } from "./src/meta/index.js";
+import { buyItem as _bi, itemPrice as _ip } from "./src/content/index.js";
+{
+  const tr = ITEMS.vergessenstrank;
+  ok("the draught exists as an escalating consumable", !!tr && tr.kind === "consumable" && tr.steigend === true);
+  ok("first draught costs the base price", _ip({}, tr) === 15);
+  ok("each purchase doubles the price", _ip({ itemKaeufe: { vergessenstrank: 1 } }, tr) === 30
+    && _ip({ itemKaeufe: { vergessenstrank: 2 } }, tr) === 60
+    && _ip({ itemKaeufe: { vergessenstrank: 3 } }, tr) === 120);
+  ok("the ceiling holds at 480", _ip({ itemKaeufe: { vergessenstrank: 9 } }, tr) === 480);
+  let p = { gold: 200, items: {}, campaign: { league: 1, cleared: ["a","b","c"] } };
+  p = _bi(p, "vergessenstrank");
+  ok("buying charges the current price and counts the purchase",
+    p.gold === 185 && p.items.vergessenstrank === 1 && p.itemKaeufe.vergessenstrank === 1);
+  p = _bi(p, "vergessenstrank");
+  ok("the second bottle already costs double",
+    p.gold === 155 && p.items.vergessenstrank === 2 && p.itemKaeufe.vergessenstrank === 2);
+  ok("too little gold buys nothing", _bi({ gold: 10, items: {} }, "vergessenstrank").items?.vergessenstrank == null);
+  p = _bi(p, "vergessenstrank");
+  ok("the satchel holds three at most", p.items.vergessenstrank === 3 && _bi({ ...p, gold: 999 }, "vergessenstrank").items.vergessenstrank === 3);
+  // Respec: nur der Trank zaehlt, Gold hilft nicht mehr
+  const rung = CHARACTERS.knight.ladder.find((e) => e.ability);
+  const basis = { gold: 999, sp: 0, items: {}, itemKaeufe: { vergessenstrank: 2 },
+    pieces: { abilities: { knight: [rung.ability] }, levels: { knight: rung.level } } };
+  ok("without a draught, gold alone no longer forgets", _rp(basis, "knight") === basis);
+  const mit = { ...basis, items: { vergessenstrank: 1 } };
+  const nach = _rp(mit, "knight");
+  ok("one draught forgets the knight and refunds every star",
+    nach.items.vergessenstrank === 0 && nach.sp === _ac(rung.level)
+    && !(nach.pieces.abilities.knight) && nach.gold === 999);
+  ok("drinking does not make forgetting cheap again", nach.itemKaeufe.vergessenstrank === 2);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -8,7 +8,7 @@ import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen 
 // medallions are waypoints (small), and the node detail lives in a parchment
 // panel embedded in the map right where you arrive.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle } from "../../../content/index.js";
+import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle, itemPrice } from "../../../content/index.js";
 import { KapitelIntro, kapitelBildDa } from "../KapitelIntro.jsx";
 import { nodeStatus, nodeInLeague, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
@@ -1171,7 +1171,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             const pieceCh2 = g.piece ? CHARACTERS[g.piece] : null;
             const pieceOk = !g.piece || (profile.campaign?.unlocked || []).includes(g.piece);
             const itemOk = hasItem(profile, g.item);
-            const can = !itemOk && (profile.gold || 0) >= it.gold;
+            const can = !itemOk && (profile.gold || 0) >= itemPrice(profile, it);
             return <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, padding: "9px 11px",
               background: "#c9a45c22", border: "1.5px dashed #a9853f", borderRadius: 9 }}>
               <ItemIcon id={it.id} size={22} />
@@ -1185,7 +1185,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               {!itemOk && <Button variant={can ? "primary" : "subtle"} disabled={!can}
                 onClick={() => dispatch({ type: "BUY_ITEM", id: it.id })}
                 style={{ padding: "9px 14px", whiteSpace: "nowrap", ...(can ? {} : { background: "#dcd3ba", color: PP.ink }) }}>
-                <GoldCoin size={13} /> {it.gold} · {t("camp.buyHere")}
+                <GoldCoin size={13} /> {itemPrice(profile, it)} · {t("camp.buyHere")}
               </Button>}
             </div>;
           })() : (

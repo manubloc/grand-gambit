@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach } from "../../../meta/index.js";
-import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS } from "../../../content/index.js";
+import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS, itemPrice } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
@@ -473,15 +473,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
-        {/* the vector twin, riding the top-right corner of the plate: the same
-            shape the board draws, so painting and silhouette are learned as
-            one figure. Bare — no ring, no frame. */}
-        <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: bigArt ? 40 : 28, height: bigArt ? 40 : 28,
-          display: "grid", placeItems: "center", pointerEvents: "none",
-          filter: "drop-shadow(0 1px 2px rgba(0,0,0,.7))" }}>
-          <PieceArt kind={char.kind} hero={epic} size={bigArt ? 40 : 28} level={1}
-            fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />
-        </span>
+        {/* v1.0.11 (Besitzer): der Vektor-Zwilling im Eck ist fort — die
+            Platte gehört ganz dem Gemälde. Das Zeichen lehrt die Chronik. */}
       </div>
       {/* masthead + orbs + ledger */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
@@ -629,14 +622,17 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
             onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} />;
         })}
-        {chosen.length > 0 && (
-          <button onClick={() => dispatch({ type: "RESPEC", id: char.id })} disabled={(profile.gold || 0) < RESPEC_GOLD}
+        {chosen.length > 0 && (() => {
+          /* v1.0.11 (Besitzer): Vergessen kostet einen VERGESSENSTRANK aus
+             dem Lager (steigender Preis beim Händler), keine Goldgebühr mehr. */
+          const trank = profile.items?.vergessenstrank || 0;
+          return <button onClick={() => trank > 0 && dispatch({ type: "RESPEC", id: char.id })} disabled={trank < 1}
             style={{ justifySelf: "start", background: "none", border: "none", fontFamily: "inherit",
-              cursor: "pointer", fontSize: 11.5, color: (profile.gold || 0) >= RESPEC_GOLD ? T.dim : T.faint,
-              padding: "2px 2px 0", textDecoration: "underline", textAlign: "left" }}>
-            ↺ {t("army.respec", { g: RESPEC_GOLD })}
-          </button>
-        )}
+              cursor: trank > 0 ? "pointer" : "default", fontSize: 11.5, color: trank > 0 ? T.dim : T.faint,
+              padding: "2px 2px 0", textDecoration: trank > 0 ? "underline" : "none", textAlign: "left" }}>
+            ↺ {trank > 0 ? t("army.respec", { n: trank }) : t("army.respecNeed")}
+          </button>;
+        })()}
       </div>;
     })()}
   </Panel>;
@@ -1026,7 +1022,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
       {/* DER STAND DES HÄNDLERS: er steht bei seiner Ware und sagt ein Wort -
           und ein anderes, sobald etwas NEU in seinem Bündel liegt. */}
       {(() => {
-        const neuDa = ITEM_LIST.filter((it) => itemRevealed(profile, it) && !(it.kind === "key" ? profile.items?.[it.id] : (profile.items?.[it.id] || 0)) && (profile.gold || 0) >= it.gold);
+        const neuDa = ITEM_LIST.filter((it) => itemRevealed(profile, it) && !(it.kind === "key" ? profile.items?.[it.id] : (profile.items?.[it.id] || 0)) && (profile.gold || 0) >= itemPrice(profile, it));
         const spruch = neuDa.length
           ? (en ? `New in my bundle — ${neuDa.length === 1 ? "one piece" : neuDa.length + " pieces"} you can afford today.`
                 : `Neu im Bündel — ${neuDa.length === 1 ? "ein Stück" : neuDa.length + " Stücke"}, die du heute zahlen kannst.`)
@@ -1093,7 +1089,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
         {ITEM_LIST.filter((it) => itemRevealed(profile, it)).map((it) => {
           const owned = it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0);
           const full = it.kind === "key" ? owned : owned >= (it.max || 99);
-          const can = !full && (profile.gold || 0) >= it.gold;
+          const can = !full && (profile.gold || 0) >= itemPrice(profile, it);
           return <div key={it.id} onClick={() => setGearInfo(it.id)}
             style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
             <span style={{ width: 24, display: "grid", placeItems: "center" }}><ItemIcon id={it.id} size={22} /></span>
@@ -1109,7 +1105,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
               style={{ fontFamily: "inherit", fontWeight: 900, fontSize: 12.5, borderRadius: 999, padding: "8px 13px",
                 border: `1.5px solid ${can ? T.gold : T.line}`, background: can ? T.gold : T.panel,
                 color: can ? "#17110a" : T.faint, cursor: can ? "pointer" : "default", whiteSpace: "nowrap" }}>
-              {full ? (it.kind === "key" ? "✓" : t("army.full")) : <><GoldCoin size={13} /> {it.gold}</>}
+              {full ? (it.kind === "key" ? "✓" : t("army.full")) : <><GoldCoin size={13} /> {itemPrice(profile, it)}</>}
             </button>
           </div>;
         })}
@@ -1136,7 +1132,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
         const left = Math.max(0, cap - bought);
         const owned = it ? (it.kind === "key" ? !!profile.items?.[it.id] : (profile.items?.[it.id] || 0)) : 0;
         const full = it ? (it.kind === "key" ? owned : owned >= (it.max || 99)) : left === 0;
-        const price = it ? it.gold : SP_SHARD_GOLD;
+        const price = it ? itemPrice(profile, it) : SP_SHARD_GOLD;
         const can = !full && (profile.gold || 0) >= price;
         return <div onClick={() => setGearInfo(null)} style={{ position: "fixed", inset: 0, zIndex: 56,
           background: "rgba(4,6,10,.74)", display: "block", overflow: "hidden",
@@ -1151,7 +1147,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
              Karte ihnen aus: die Freiraeume kommen als CSS-Variablen aus der
              Huelle. */
         }}>
-          <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100%, 380px)",
+          <div onClick={(e) => e.stopPropagation()} className="gg-thinbar" style={{ width: "min(100vw - 20px, 380px)",
             position: "absolute", left: "50%", transform: "translateX(-50%)",
             top: "calc(14px + var(--gg-popfrei-oben, 0px))",
             maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))", overflowY: "auto", borderRadius: 20, padding: "18px 18px 16px",
@@ -1324,34 +1320,31 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
   const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null, kind = null, hero = false, lvl = 1 }) => (
-    <div onClick={onOpen} style={{ position: "relative",
+    /* v1.0.11 (Besitzer): die Kachel KLINGT beim Tippen. Der Klangfaenger
+       hoert nur auf button/[role=button] — diese div blieb stumm. */
+    <div onClick={onOpen ? () => { klang("menue"); onOpen(); } : undefined} style={{ position: "relative",
       // der leichte Riss-Verlauf der Menueleisten, eine Stufe stiller
       background: "radial-gradient(130% 120% at 50% -12%, rgba(124,58,237,.20) 0%, rgba(34,22,60,.55) 46%, rgba(12,8,22,.7) 100%)",
       border: `1px solid ${glow ? T.gold : "rgba(124,58,237,.38)"}`,
       borderRadius: 11, padding: "10px 7px 9px", textAlign: "center", minWidth: 0, cursor: onOpen ? "pointer" : "default",
       boxShadow: glow ? "0 0 10px rgba(240,206,122,.22)" : "0 0 6px rgba(124,58,237,.12)" }}>
-      {/* THE CORNER SIGIL: the piece's own vector figure, bare — no ring, no
-          plate, just the silhouette, so the tile says at a glance WHICH figure
-          this is even before the painting has loaded. The house name no longer
-          sits up here; it belongs under the name, where it reads as a caption. */}
-      {sigil && <span aria-hidden style={{ position: "absolute", top: 5, right: 5, width: 28, height: 28,
-        display: "grid", placeItems: "center", opacity: dark ? 0.35 : dim ? 0.7 : 1, pointerEvents: "none" }}>{sigil}</span>}
-      {/* v0.83: im schlichten Stil steht hier die schlichte Figur - nicht das
-          Gemaelde und auch nicht die Notsilhouette. */}
-      {schlichtAn() && kind ? <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto",
+      {/* v1.0.11 (Besitzer): das ECK-SIGIL ist fort — die Kachel gehört ganz
+          der Figur. Das Vektorzeichen lebt weiter in der Chronik (beide
+          Gesichter) und als Sperr-Silhouette unten, wenn kein Gemälde da ist. */}
+      {schlichtAn() && kind ? <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto",
         opacity: dark ? 0.5 : dim ? 0.7 : 1, filter: dark ? "brightness(0.35)" : "none" }}>
-          <PieceArt kind={kind} size={72} level={lvl} hero={hero} />
+          <PieceArt kind={kind} size={"86%"} level={lvl} hero={hero} />
         </div>
-      : img ? <img src={img} alt="" decoding="async" style={{ width: 84, height: 84, objectFit: "contain", display: "block", margin: "0 auto",
+      : img ? <img src={img} alt="" decoding="async" style={{ width: "calc(100% - 6px)", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
-        : <div style={{ width: 84, height: 84, display: "grid", placeItems: "center", margin: "0 auto" }}>
+        : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
             {/* NEVER A QUESTION MARK WHERE A FIGURE BELONGS. If no painting is
                 at hand, the tile shows the piece's own shape as a black
                 silhouette — a shadow you can still recognise. The NAME may stay
                 "???" until you have met it; the shape does not have to. */}
             {sigil
-              ? <span style={{ display: "grid", placeItems: "center", width: 58, height: 58,
+              ? <span className="gg-fit-svg" style={{ display: "grid", placeItems: "center", width: "72%", height: "72%",
                   filter: "brightness(0) opacity(.62)" }}>{sigilBig || sigil}</span>
               : <span style={{ fontSize: 26, color: T.faint }}>◆</span>}
           </div>}
@@ -1505,7 +1498,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
         <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", transform: "translateX(-50%)",
           top: "calc(14px + var(--gg-popfrei-oben, 0px))",
           maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))",
-          display: "flex", flexDirection: "column", width: "min(100%, 420px)",
+          display: "flex", flexDirection: "column", width: "min(100vw - 20px, 420px)",
           borderRadius: 22, overflow: "hidden", boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 26px ${T.riftGlow}`,
           border: `1px solid ${T.riftLine}`,
           background: "radial-gradient(130% 110% at 50% -10%, rgba(124,58,237,.28) 0%, rgba(26,16,44,.97) 46%, rgba(8,5,14,.99) 100%)" }}>
@@ -1523,8 +1516,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                 <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>
                 <div className="gg-serif" style={{ fontSize: 11, letterSpacing: ".14em", color: T.riftBright, textTransform: "uppercase", marginTop: 2 }}>{fam}</div>
               </div>
-              <span style={{ paddingBottom: 4 }}><PieceArt kind="X" bossId={b.id} art={b.art} size={44} level={1}
-                fill="#5b2f3f" rim="#f0d7e0" rimW={1.6} detail="#c58fa6" accent={T.riftBright} /></span>
+              {/* v1.0.11 (Besitzer): das Vektor-Zeichen im Kopf ist fort. */}
             </div>
             {(en ? b.flavorEn : b.flavorDe) && <div className="gg-serif" style={{ marginTop: 8, fontSize: 12, lineHeight: 1.45,
               color: "#b9a9c5", fontStyle: "italic" }}>„{en ? b.flavorEn : b.flavorDe}"</div>}
@@ -1612,7 +1604,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
         <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: "50%", transform: "translateX(-50%)",
           top: "calc(14px + var(--gg-popfrei-oben, 0px))",
           maxHeight: "calc(100dvh / var(--vhz, 1) - 30px - var(--gg-popfrei-oben, 0px) - var(--gg-popfrei-unten, 0px))",
-          display: "flex", flexDirection: "column", width: "min(100%, 440px)",
+          display: "flex", flexDirection: "column", width: "min(100vw - 20px, 440px)",
           borderRadius: 22, overflow: "hidden",
           // dasselbe Gewand wie die Monsterkarte: Riss-Kontur, violetter
           // Schein, halbdurchsichtiger dunkler Grund

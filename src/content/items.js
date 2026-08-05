@@ -101,6 +101,15 @@ export const ITEMS = {
     loreEn: "Sends a friend ten gold pieces online — once per chapter. The friend must be on your list; the gold leaves your own purse and reaches them the next time they enter the halls.",
   },
 
+  vergessenstrank: {
+    id: "vergessenstrank", emoji: "⚗", kind: "consumable", gold: 15, goldMax: 480, steigend: true, max: 3, minCleared: 3,
+    nameDe: "Vergessenstrank", nameEn: "Draught of forgetting",
+    textDe: "Setzt im Hofstaat die Fähigkeiten einer Figur zurück — alle Skillpunkte kehren zurück.",
+    textEn: "Resets one court piece's abilities — every skill point returns.",
+    loreDe: "Ein Schluck, und die Figur vergisst jede erlernte Fähigkeit — die dafür ausgegebenen Skillpunkte kehren vollständig in deine Kasse zurück. Der Händler weiß, was Vergessen wert ist: Mit jedem gekauften Trank verdoppelt sich sein Preis. Angewendet wird er im Hofstaat, auf dem Blatt der Figur.",
+    loreEn: "One draught, and the piece forgets every learned ability — the skill points spent on them return to your purse in full. The merchant knows what forgetting is worth: each bought draught doubles his price. Applied in the court, on the piece's own sheet.",
+  },
+
   boat: {
     id: "boat", emoji: "🛶", kind: "key", gold: 2400, minLeague: 10, // a life's savings: the passage to the Endless Sea is EARNED
     nameDe: "Boot", nameEn: "Boat",
@@ -113,18 +122,31 @@ export const ITEMS = {
 export const ITEM_LIST = Object.values(ITEMS);
 export const hasItem = (profile, id) =>
   ITEMS[id]?.kind === "key" ? !!profile?.items?.[id] : (profile?.items?.[id] || 0) > 0;
+/** Der Preis eines Stücks JETZT: bei steigenden Waren (steigend: true)
+ *  verdoppelt jeder bisherige Kauf den Grundpreis, bis goldMax ihn deckelt.
+ *  Der Zähler lebt in profile.itemKaeufe und sinkt nie — auch Verbrauchen
+ *  macht Vergessen nicht wieder billig. */
+export function itemPrice(profile, it) {
+  if (!it) return 0;
+  if (!it.steigend) return it.gold;
+  const n = profile?.itemKaeufe?.[it.id] || 0;
+  return Math.min(it.goldMax || Infinity, it.gold * 2 ** n);
+}
 export function buyItem(profile, id) {
   const it = ITEMS[id];
   if (!it) return profile;
+  const preis = itemPrice(profile, it);
   const items = { ...(profile.items || {}) };
   if (it.kind === "key") {
     if (items[id]) return profile;
-    if ((profile.gold || 0) < it.gold) return profile;
+    if ((profile.gold || 0) < preis) return profile;
     items[id] = true;
   } else {
     const have = items[id] || 0;
-    if (have >= (it.max || 99) || (profile.gold || 0) < it.gold) return profile;
+    if (have >= (it.max || 99) || (profile.gold || 0) < preis) return profile;
     items[id] = have + 1;
   }
-  return { ...profile, gold: profile.gold - it.gold, items };
+  const naechste = { ...profile, gold: profile.gold - preis, items };
+  if (it.steigend) naechste.itemKaeufe = { ...(profile.itemKaeufe || {}), [id]: (profile.itemKaeufe?.[id] || 0) + 1 };
+  return naechste;
 }

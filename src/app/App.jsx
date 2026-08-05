@@ -123,7 +123,7 @@ function reducer(state, a) {
 export function LeaveMatchAsk({ t, resumable, onLeave, onStay }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: "16px 10px" }}>
       <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`, border: `1px solid ${T.line}`,
         borderRadius: 18, boxShadow: T.shadow, padding: "18px 18px 15px", maxWidth: 340, width: "100%" }}>
         <div className="gg-serif" style={{ fontSize: 18, color: T.goldBright, textAlign: "center" }}>{t("leave.title")}</div>
@@ -573,7 +573,7 @@ export default function App() {
                         : { ...(profile.gesehen || {}), [tab]: true } } });
         return (
           <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: "16px 10px" }}>
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
@@ -653,7 +653,7 @@ export default function App() {
                         : { ...(profile.gesehen || {}), [tab]: true } } });
         return (
           <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 16 }}>
+            background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: "16px 10px" }}>
             <div style={{ background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
               border: `1.5px solid ${T.gold}66`, borderRadius: 16, padding: "18px 18px 14px", maxWidth: 420, width: "100%",
               boxShadow: "0 14px 44px rgba(0,0,0,.6)" }}>
@@ -1028,7 +1028,7 @@ export function GameIntro({ t, dispatch, onStart }) {
   );
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
       <div style={{ width: "100%", maxWidth: 420, background: `radial-gradient(125% 135% at 50% -10%, #241a3e 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
         border: "1.5px solid rgba(168,130,255,.55)", borderRadius: 16, boxShadow: "0 18px 50px rgba(60,30,120,.55)",
         padding: "22px 20px 18px", textAlign: "center",
@@ -1111,7 +1111,7 @@ export function NamensRuf({ t, dispatch }) {
   const nimm = () => { const n = name.trim(); if (n) dispatch({ type: "SET_NAME", name: n }); };
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 18 }}>
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
       <div style={{ width: "100%", maxWidth: 380, background: `radial-gradient(125% 135% at 50% -10%, ${T.panel2} 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
         border: `1px solid ${T.gold}66`, borderRadius: 16, boxShadow: "0 18px 50px rgba(0,0,0,.6)",
         padding: "20px 18px 16px" }}>
@@ -1141,7 +1141,7 @@ export function NamensRuf({ t, dispatch }) {
 function PrivacyNotice({ t, dispatch }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: 18 }}>
+      background: "rgba(8,10,14,.78)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
       <div style={{ width: "100%", maxWidth: 400, background: T.panel, border: `1px solid ${T.gold}66`,
         borderRadius: T.radius, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "20px 18px 16px" }}>
         <div className="gg-serif" style={{ fontSize: 19, color: T.gold, letterSpacing: ".05em" }}>{t("privacy.title")}</div>
@@ -1175,7 +1175,7 @@ function TeachPopup({ which, t, dispatch }) {
   const [tk, bk] = map[which];
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 62, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: 18 }}>
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
       <div style={{ width: "100%", maxWidth: 400, background: T.panel, border: `1px solid ${T.gold}77`,
         borderRadius: T.radius, boxShadow: "0 18px 50px rgba(0,0,0,.6)", padding: "20px 18px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4 }}>

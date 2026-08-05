@@ -159,7 +159,15 @@ function wecke() {
     ctx = new AC();
     meister = ctx.createGain();
     meister.gain.value = staerke;
-    meister.connect(ctx.destination);
+    /* v1.0.11 (Besitzer, "Stoergeraeusche"): ein Kompressor vor dem Ausgang
+       faengt Summen-Spitzen ab, wenn mehrere Klaenge zusammenfallen - hartes
+       Clipping am Ziel ist die wahrscheinlichste Quelle des Knackens. */
+    try {
+      const presse = ctx.createDynamicsCompressor();
+      presse.threshold.value = -12; presse.knee.value = 24; presse.ratio.value = 6;
+      presse.attack.value = 0.002; presse.release.value = 0.12;
+      meister.connect(presse); presse.connect(ctx.destination);
+    } catch { meister.connect(ctx.destination); }
   } catch { ctx = null; }
   return ctx;
 }
@@ -217,7 +225,12 @@ export function klang(art) {
       q.buffer = b;
       q.playbackRate.value = 1 + (Math.random() * 0.08 - 0.04);   // +-4 % Tonhoehe
       const g = c.createGain();
-      g.gain.value = PEGEL[art] ?? 1;
+      /* 4 ms Anlauf statt hartem Einsatz: beginnt die Aufnahme nicht exakt
+         im Nulldurchgang, knackt ein sofortiger Start - die kurze Rampe
+         glaettet ihn, ohne hoerbar weich zu wirken. */
+      const pegel = PEGEL[art] ?? 1;
+      g.gain.setValueAtTime(0.0001, c.currentTime);
+      g.gain.linearRampToValueAtTime(pegel, c.currentTime + 0.004);
       q.connect(g); g.connect(meister);
       q.start();
     } catch {}

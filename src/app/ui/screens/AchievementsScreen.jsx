@@ -1,6 +1,7 @@
 // Achievements — a lean, modern trophy wall. Every entry gets a monochrome
 // in-house icon in a medallion: earned tiers glow gold, untouched ones sit
 // grayed and quiet. Progress is a single number and a thin bar — no clutter.
+import { klang } from "../klang.js";
 import { useState } from "react";
 import { SchatzIc, HaendlerIc } from "../RaumIcons.jsx";
 import { GearPanel } from "./ArmyScreen.jsx";
@@ -104,7 +105,7 @@ export function AchievementsScreen({ profile, dispatch, t, initialOpenId = null 
       // is there a purse waiting on this one? that plate gets the full treatment
       const ready = claimedTiers(profile, it.id) < it.done;
       return (
-        <Panel key={it.id} onClick={() => { setSheenAt((m) => ({ ...m, [it.id]: (m[it.id] || 0) + 1 })); setOpenId(isOpen ? null : it.id); }}
+        <Panel key={it.id} onClick={() => { klang("menue"); /* v1.0.11: Schatzkammer-Kachel klingt - der Klangfaenger hoert keine div-onClicks */ setSheenAt((m) => ({ ...m, [it.id]: (m[it.id] || 0) + 1 })); setOpenId(isOpen ? null : it.id); }}
           style={{ display: "flex", gap: 13, cursor: "pointer", position: "relative",
           // OPENED, THE EMBLEM TAKES THE STAGE: the plate turns into a column,
           // the medallion rises to the top at nearly twice its size, its ring

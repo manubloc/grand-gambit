@@ -1,5 +1,30 @@
 # Changelog - Grand Gambit
 
+## 1.0.11
+
+- VERGESSENSTRANK: Faehigkeiten zuruecksetzen kostet keinen Gold-Obolus
+  mehr, sondern einen Trank vom Haendler - 15 Gold, und mit jedem Kauf
+  verdoppelt sich sein Preis (Deckel 480), hoechstens drei im Vorrat.
+  Jede ausgegebene Skillpunkt-Sonne kehrt beim Trinken vollstaendig
+  zurueck.
+- HOFSTAAT ENTRUEMPELT: das kleine Vektor-Zeichen ist aus dem Eck der
+  Kacheln, dem Dossier und dem Popup-Kopf verschwunden - die Flaeche
+  gehoert ganz der Figur. Als Sperr-Silhouette fuer Unbekanntes lebt die
+  Form weiter, und die Chronik zeigt weiterhin beide Gesichter.
+- POPUPS FLUCHTEN MIT DEM MENUE: alle Ueberlagerungen ruecken auf
+  denselben 10-px-Seitenrand wie die Leisten darueber, statt mal breiter,
+  mal schmaler zu stehen.
+- LEUCHTEN AUF KOENIGS-MASS: jede Figur traegt jetzt den Schein, den
+  bisher nur der Koenig hatte - eigene deutlich goldener, der Gegner
+  heller und kraeftiger im Riss-Violett. Der Koenig behaelt sein Halo
+  obenauf.
+- KLICK KLINGT UEBERALL: Hofstaat-Kacheln und Schatzkammer-Kacheln
+  spielten keinen Tipp-Klang, weil der Klangfaenger nur Knoepfe hoert -
+  jetzt klingen sie selbst.
+- GEGEN DAS KNACKEN: jeder Klang beginnt mit einer 4-ms-Rampe statt
+  hartem Einsatz, und ein Kompressor vor dem Ausgang faengt Spitzen ab,
+  wenn mehrere Klaenge zusammenfallen.
+
 ## 1.0.10
 
 - WELTKARTE IM SELBEN RAHMEN: der Kasten der Weltkarte rundet jetzt mit

@@ -260,9 +260,15 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // glimmt langsam aus - Gegner im Riss-Violett, eigene im Gold. Nur DIESE
   // eine Figur, sonst wird der Schirm unruhig.
   const zuletzt = !!piece.justMoved;
+  /* v1.0.11 (Besitzer): ALLE Figuren leuchten auf KOENIGS-Mass — eigene
+     deutlich goldener, der Gegner heller und kraeftiger im Riss-Violett
+     (184,146,255 statt 150,105,255). Der Koenig behaelt sein ROYAL_HALO
+     obenauf und bleibt so die Spitze des Massstabs. */
   const SIDE_GLOW = white
-    ? kante(240, 214, 138, gewaehlt ? 0.9 : 0.34)      // eigene: leise, beim Zug hell
-    : kante(150, 105, 255, gewaehlt ? 1.0 : 0.62);     // Gegner: der Riss
+    ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
+      + " drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
+    : kante(184, 146, 255, gewaehlt ? 1.1 : 0.85)
+      + " drop-shadow(0 0 5px rgba(214,196,255,.55)) drop-shadow(0 0 12px rgba(168,130,255,.34))";
   const klassisch = artStyle === "classic";
   // v0.71.14: alle Figuren minimal aufgehellt und kontrastreicher; die
   // Gegenseite traegt DIESELBE Kunst, nur eine Spur dunkler - die Trennung
