@@ -1018,13 +1018,18 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
           ? (en ? `New in my bundle — ${neuDa.length === 1 ? "one piece" : neuDa.length + " pieces"} you can afford today.`
                 : `Neu im Bündel — ${neuDa.length === 1 ? "ein Stück" : neuDa.length + " Stücke"}, die du heute zahlen kannst.`)
           : (en ? "Look your fill. What I have, I have honestly." : "Sieh dich um. Was ich habe, habe ich ehrlich.");
-        return <div style={{ display: "flex", alignItems: "flex-end", gap: 12, marginBottom: 12 }}>
-          {/* v0.74.2 (Besitzer): sein neues Bildnis, FREIGESTELLT wie alle
-              anderen Figuren - nur ein ehrlicher Schlagschatten, kein Schimmer. */}
+        /* v1.0.1 (Besitzerwunsch): Corvo steht jetzt GROSS am Kopf des
+           Reiters, sein Name darunter - vorher stand er klein daneben und
+           ging neben dem Spruch unter. Er ist der Wirt dieses Raumes, also
+           soll man ihn auch sehen. */
+        return <div style={{ display: "flex", flexDirection: "column", alignItems: "center",
+          gap: 6, marginBottom: 14, textAlign: "center" }}>
+          {/* v0.74.2 (Besitzer): sein Bildnis, FREIGESTELLT wie alle anderen
+              Figuren - nur ein ehrlicher Schlagschatten, kein Schimmer. */}
           <img src={paintedById("haendler")} alt="" draggable={false}
-            style={{ width: 116, height: 130, objectFit: "contain", objectPosition: "bottom", flex: "0 0 auto",
-              filter: "drop-shadow(0 4px 8px rgba(0,0,0,.6))" }} />
-          <div style={{ flex: 1, minWidth: 0, paddingBottom: 6 }}>
+            style={{ width: "min(62vw, 230px)", height: "auto", maxHeight: "34dvh", objectFit: "contain",
+              filter: "drop-shadow(0 6px 14px rgba(0,0,0,.65))" }} />
+          <div style={{ width: "100%", minWidth: 0 }}>
             <div className="gg-quill" style={{ fontSize: 18, color: T.goldBright, textShadow: "0 0 10px rgba(240,206,122,.3)" }}>
               {en ? "Corvo the Pedlar" : "Corvo, der Krämer"}</div>
             <div className="gg-serif" style={{ fontSize: 12, color: neuDa.length ? "#f2dca0" : "#b9a98a", fontStyle: "italic",

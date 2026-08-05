@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.1
+
+DIE OFFENEN KLEINIGKEITEN
+
+- UNTERREITER (Händler/Schatzkammer, Hofstaat/Aufstellung): Zeichen und Wort
+  standen an der Oberkante statt in der Mitte - den Knoepfen fehlte schlicht
+  die senkrechte Ausrichtung. Jetzt mittig, mit fester Mindesthoehe.
+- CORVO STEHT GROSS am Kopf seines Reiters, der Name darunter. Vorher stand
+  er klein daneben und ging neben dem Spruch unter - er ist der Wirt dieses
+  Raumes, also soll man ihn sehen.
+- DAS ADMIN-PORTAL IST FORT: es war nur eine zweite Tuer zu denselben
+  Werkbaenken, die im Profil ohnehin stehen.
+
+WICHTIGER NEBENBEFUND: der Textfluss-Pruefer misst seit v0.92 NICHTS mehr -
+er laeuft ueber den Gastzugang, den wir damals entfernt haben, und meldet
+seither "0 Knoepfe" auf allen drei Viewports, ohne zu scheitern. Ein blindes
+Pruefwerkzeug ist gefaehrlicher als keines; es muss auf den Kontoweg
+umgestellt werden.
+
 ## 1.0.0
 
 ALLE ZEICHEN AUS EINER QUELLE - UND MITTIG

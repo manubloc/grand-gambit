@@ -192,7 +192,9 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <div className="gg-serif" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase",
         color: T.goldBright, marginBottom: 8 }}>Verwaltung</div>
       <div style={{ display: "grid", gap: 6 }}>
-        {[["?admin", "Admin-Portal", "Alle Werkbänke hinter einer Tür"],
+        {/* v1.0.1: das Admin-Portal ist fort - es war nur eine zweite Tuer zu
+            denselben Werkbaenken, die hier schon stehen. */}
+        {[
           ["?spielerbuch", "Das Spielerbuch", "Spieler, Fortschritt, Herkunft, Zahlen"],
           ["?werkstatt", "Die Figurenwerkstatt", "Figurenpaare malen und ausspielen"],
           ["?klangwerkstatt", "Die Klangwerkstatt", "Alle Klänge abhören, wie sie im Spiel klingen"],

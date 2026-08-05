@@ -108,6 +108,9 @@ export function Segmented({ options, value, onChange }) {
       const on = value === o.value;
       return <button key={o.value} disabled={o.disabled} aria-pressed={on} onClick={() => !o.disabled && onChange(o.value)} style={{ flex: 1,
         border: on ? `1px solid ${T.selLine}` : "1px solid transparent", borderRadius: 8, padding: "8px 4px",
+        /* v1.0.1: Zeichen und Wort stehen nebeneinander - ohne diese Zeile
+           haengt der Text an der Oberkante statt in der Mitte. */
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 38,
         minHeight: Math.max(36, T.touch - 8), fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
         // 320-px-Beweis (pruefe-textfluss): "Aufstellung" ist als EINZELWORT
         // breiter als ein Viertel der Schiene - Umbruch allein rettet nichts.
