@@ -9,13 +9,17 @@
 import { useState, useEffect } from "react";
 import { T } from "./theme.js";
 import { SERVER_URL } from "../config.js";
-
-const SCHLUESSEL = "gg_admin_token";
+import { getAdminToken, setAdminToken } from "../../meta/index.js";
+import { ZeitBalken } from "./ZeitBalken.jsx";
 
 export function SpielerbuchScreen() {
-  const [token, setToken] = useState(() => {
-    try { return localStorage.getItem(SCHLUESSEL) || ""; } catch { return ""; }
-  });
+  /* v1.0.3 (Besitzerwunsch): EIN Admin-Wort fuer alles. Spielerbuch und
+     Fehlerberichte teilen jetzt denselben Speicher (gg_admin_token, ueber
+     src/meta/reports.js) - wer es einmal eingibt, sieht beides. Ist eines
+     gespeichert und die Halle nimmt es an, klappt die Eingabe zu einer
+     Zeile zusammen. */
+  const [token, setToken] = useState(() => getAdminToken());
+  const [wortOffen, setWortOffen] = useState(() => !getAdminToken());
   const [buch, setBuch] = useState(null);
   const [fehler, setFehler] = useState(null);
   const [laedt, setLaedt] = useState(false);
@@ -30,9 +34,10 @@ export function SpielerbuchScreen() {
       if (!r.ok) throw new Error(`Die Halle antwortet mit ${r.status}.`);
       const d = await r.json();
       setBuch(d);
-      try { localStorage.setItem(SCHLUESSEL, t); } catch {}
+      setAdminToken(t); setWortOffen(false);
     } catch (e) {
       setFehler(e.message || "Die Halle schweigt — ist der Worker deployt?");
+      if (/Admin-Wort/.test(String(e.message))) setWortOffen(true);
       setBuch(null);
     } finally { setLaedt(false); }
   }
@@ -60,6 +65,14 @@ export function SpielerbuchScreen() {
         Wer spielt, wie weit ist er, woher kommt er. Die Halle fuehrt das Buch — diese Seite liest nur mit.
       </div>
 
+      {!wortOffen && token ? (
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14, fontSize: 12, color: T.dim }}>
+          <span style={{ color: "#7fd6a0" }}>✓</span> Admin-Wort gespeichert — es gilt hier und bei den Fehlerberichten.
+          <button onClick={() => setWortOffen(true)} style={{ background: "none", border: "none", color: T.goldBright,
+            cursor: "pointer", fontFamily: "inherit", fontSize: 12, padding: 0, textDecoration: "underline" }}>ändern</button>
+          {laedt && <span style={{ color: T.faint }}>Die Halle antwortet …</span>}
+        </div>
+      ) : (
       <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
         <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="Admin-Wort"
           style={{ flex: "1 1 200px", minWidth: 0, padding: "9px 12px", borderRadius: 10, fontFamily: "inherit",
@@ -70,6 +83,7 @@ export function SpielerbuchScreen() {
             background: `linear-gradient(165deg, ${T.sel}, #1a1030)` }}>
           {laedt ? "Die Halle antwortet …" : "Buch öffnen"}</button>
       </div>
+      )}
       {fehler && <div style={{ ...karte, borderColor: "#a4463f", color: "#e8b7b2", fontSize: 12.5, marginBottom: 12 }}>{fehler}</div>}
 
       {buch && (<>
@@ -83,6 +97,26 @@ export function SpielerbuchScreen() {
               <div style={{ fontSize: 10.5, color: T.dim, letterSpacing: ".04em", textTransform: "uppercase" }}>{n}</div>
             </div>
           ))}
+        </div>
+
+        {/* v1.0.3: DIE KURVEN. Beitritte je Woche (aus dem festgehaltenen
+            Beitrittsdatum; Konten von vor diesem Worker-Stand tragen keins
+            und werden ehrlich gesondert gezaehlt) und Aktivitaet je Tag
+            (wann Spieler zuletzt da waren - eine Naeherung, kein Verlauf). */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 8, marginBottom: 14 }}>
+          <div style={karte}>
+            <ZeitBalken titel="Beitritte je Woche (12 Wochen)" farbe="#7fd6a0" wochen tage={84}
+              zeiten={(buch.spieler || []).map((x) => x.beigetreten).filter(Boolean)}
+              leerText={(buch.spieler || []).some((x) => x.beigetreten)
+                ? "keine Beitritte im Zeitraum"
+                : "Der Worker liefert noch keine Beitrittsdaten — nach dem nächsten Worker-Deploy füllt sich diese Kurve."} />
+            {(() => { const ohne = (buch.spieler || []).filter((x) => !x.beigetreten).length;
+              return ohne ? <div style={{ fontSize: 10.5, color: T.faint, marginTop: 4 }}>{ohne} ältere Konten ohne Beitrittsdatum</div> : null; })()}
+          </div>
+          <div style={karte}>
+            <ZeitBalken titel="Zuletzt gesehen je Tag (30 Tage)" farbe="#a78bfa" tage={30}
+              zeiten={(buch.spieler || []).map((x) => x.zuletzt).filter(Boolean)} />
+          </div>
         </div>
 
         {Object.keys(buch.zahlen.laender || {}).length > 0 && (

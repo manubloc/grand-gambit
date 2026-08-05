@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { klang, klangEinstellen, klangVorwaermen } from "./ui/klang.js";
+import { klang, klangEinstellen, klangVorwaermen, klangUeberall } from "./ui/klang.js";
 import { musikBereich } from "./ui/musik.js";
 import { setSchlicht } from "./ui/board/paintedArt.js";
 import { loadProfile, saveProfile, defaultProfile, buildStageMatch, advanceCampaign, upgradePiece, buySpShard, clearedCount, campaignLength, currentNodeId , unlockAbility, respecPiece, claimAchievement, payToll, takeRestorePoint, serializeSave, isUnlocked } from "../meta/index.js";
@@ -1083,6 +1083,7 @@ function KlangRegie({ an, laut = 1 }) {
   useEffect(() => {
     klangEinstellen({ ein: an, lautstaerke: 0.6 * Math.max(0, Math.min(1, laut)) });
     if (an) klangVorwaermen();
+    klangUeberall();   /* v1.0.3: jeder Knopf ohne eigenen Klang tippt leise */
   }, [an, laut]);
   return null;
 }

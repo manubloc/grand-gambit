@@ -201,6 +201,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   const [vp, setVp] = useState({ w: 720, h: 560 });
   useEffect(() => {
     const el = vpRef.current;
+    /* v1.0.3, DER VERSATZ NACH DEM EINSTIEG - endlich an der Wurzel. Beim
+       ersten Mount gibt der Schirm das INTRO zurueck, vpRef ist leer, und
+       dieses return verliess den Effect, BEVOR Observer oder resize-Listener
+       hingen. Deps waren [] - er lief nie wieder. Die zwei kuenstlichen
+       resize-Events aus v1.0.2 verpufften an Listenern, die es nicht gab;
+       vp blieb beim Startwert 720x560. Am Telefon (390 breit) heisst das:
+       frameX = (720-366)/2 = 177 px nach RECHTS, frameH aus 560 statt ~850
+       = Karte klebt OBEN. Jetzt haengt der Effect an [intro]: schliesst der
+       Einstieg, laeuft er erneut - diesmal mit echtem Element. */
     if (!el) return;
     const measure = () => { const w = el.clientWidth, h = el.clientHeight; if (w > 0 && h > 0) setVp({ w, h }); };
     measure();
@@ -208,7 +217,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
     ro?.observe(el);
     window.addEventListener("resize", measure);
     return () => { ro?.disconnect(); window.removeEventListener("resize", measure); };
-  }, []);
+  }, [intro]);
   const cur = currentNodeId(profile);
   const node = nodeById(sel);
   const status = nodeStatus(profile, sel);
@@ -278,7 +287,8 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
     window.addEventListener("resize", messen);
     const iv = setInterval(messen, 900);
     return () => { window.removeEventListener("resize", messen); clearInterval(iv); };
-  }, []);
+  }, [intro]); /* v1.0.3: wie beim vp-Effect - nach dem Einstieg neu messen,
+                  statt auf das 900-ms-Intervall zu warten. */
   const frameY = padTop; // pinned: same breath above as below
   const camMaxX = Math.max(0, WMAP * zf - frameW), camMaxY = Math.max(0, HM * zf - frameH);
   const camX = clamp((viewing ? 0 : nx(camNode) * zf - frameW * 0.46) + panOff.x, 0, camMaxX);

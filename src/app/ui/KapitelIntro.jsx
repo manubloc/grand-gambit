@@ -29,8 +29,46 @@ export function kapitelBildDa(liga) { return !!BILD[liga]; }
 
 export function KapitelIntro({ liga, titel, text, onWeiter }) {
   const [da, setDa] = useState(false);
+  /* v1.0.3 (Besitzerwunsch): MEHR VOM LAND. Die Bilder sind 16:9 quer -
+     am Hochformat-Telefon zeigte object-fit:cover nur den Mittelstreifen,
+     rund die Haelfte blieb unsichtbar. Jetzt steht das Bild in voller
+     Hoehe und die Kamera FAEHRT quer darueber: von einem Rand zum anderen,
+     mit sanftem Zoom 1,0 -> 1,07 (die Quelle traegt 1920 px, am Telefon
+     bleibt reichlich Schaerfe-Reserve; ueber 1,1 wird nicht gegangen).
+     Die Fahrt wird je Schirm GEMESSEN, nicht geraten: onLoad rechnet den
+     Ueberstand aus Bild- und Schirmmass und legt Start/Ziel als
+     CSS-Variablen an; ungerade Kapitel fahren nach rechts, gerade nach
+     links, damit nicht jeder Einstieg gleich beginnt. */
+  const [fahrt, setFahrt] = useState(null);
+  const imgRef = useRef(null);
   const t0 = useRef(Date.now());
   const datei = BILD[liga];
+
+  /* Dreht das Telefon mitten im Einstieg, stimmt die gemessene Fahrt nicht
+     mehr - dann wird neu gemessen (die Fahrt beginnt von vorn, das ist der
+     kleinere Schaden gegenueber einer Luecke am Bildrand). */
+  useEffect(() => {
+    const neu = () => { if (imgRef.current && imgRef.current.naturalWidth) misst(imgRef.current); };
+    window.addEventListener("resize", neu);
+    return () => window.removeEventListener("resize", neu);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const misst = (img) => {
+    const nw = img.naturalWidth || 16, nh = img.naturalHeight || 9;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const bw = vh * (nw / nh);              // Bildbreite, wenn die Hoehe fuellt
+    if (bw > vw * 1.04) {
+      const ueber = bw - vw;
+      // 88 % des Ueberstands abfahren; der Rest ist Reserve fuer den Zoom,
+      // dessen Mitte-Skalierung je Seite (0,07 * bw) / 2 hinzugibt.
+      const weg = ueber * 0.88;
+      const [von, bis] = liga % 2 ? [0, -weg] : [-ueber, -ueber + weg];
+      setFahrt({ quer: true, von, bis });
+    } else {
+      setFahrt({ quer: false });            // Breitschirm: Bild deckt, alter Weg
+    }
+    setDa(true);
+  };
 
   useEffect(() => {
     try { musikBereich("karte"); } catch {}
@@ -52,10 +90,15 @@ export function KapitelIntro({ liga, titel, text, onWeiter }) {
       background: "#05040a", overflow: "hidden", display: "flex", flexDirection: "column",
       justifyContent: "flex-end" }}>
       {/* Das Land, vollflaechig und in langsamer Fahrt */}
-      <img src={`/kapitel/${datei}.webp`} alt="" onLoad={() => setDa(true)}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
-          opacity: da ? 1 : 0, transition: "opacity 1.2s ease",
-          animation: "ggKenBurns 24s ease-out both", willChange: "transform" }} />
+      <img ref={imgRef} src={`/kapitel/${datei}.webp`} alt="" onLoad={(e) => misst(e.target)}
+        style={fahrt && fahrt.quer
+          ? { position: "absolute", top: 0, left: 0, height: "100%", width: "auto", maxWidth: "none",
+              opacity: da ? 1 : 0, transition: "opacity 1.2s ease",
+              "--kbVon": fahrt.von + "px", "--kbBis": fahrt.bis + "px",
+              animation: "ggKenBurnsFahrt 26s ease-in-out both", willChange: "transform" }
+          : { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
+              opacity: da ? 1 : 0, transition: "opacity 1.2s ease",
+              animation: da ? "ggKenBurns 24s ease-out both" : "none", willChange: "transform" }} />
       {/* Der Fuss dunkelt ab, damit der Text ruhig steht */}
       <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
         background: "linear-gradient(180deg, rgba(5,4,10,.55) 0%, rgba(5,4,10,0) 26%, rgba(5,4,10,0) 46%, rgba(5,4,10,.88) 92%)" }} />

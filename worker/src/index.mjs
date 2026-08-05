@@ -53,6 +53,12 @@ export class Hall extends DurableObject {
       CREATE TABLE IF NOT EXISTS push (owner TEXT NOT NULL, endpoint TEXT NOT NULL,
         ts INTEGER NOT NULL, doc TEXT NOT NULL, PRIMARY KEY (owner, endpoint));
     `);
+    /* v1.0.3: Nutzer-Feedback traegt eine RUBRIK (Absturz, Balance, ...) und
+       bis zu zwei kleine BILDER (DataURLs, clientseitig verkleinert). Die
+       Tabelle existiert auf laufenden Hallen schon - also nachtraeglich
+       anbauen; scheitert das ALTER (Spalte schon da), ist alles gut. */
+    try { this.sql.exec("ALTER TABLE reports ADD COLUMN rubrik TEXT"); } catch {}
+    try { this.sql.exec("ALTER TABLE reports ADD COLUMN bilder TEXT"); } catch {}
     const sql = this.sql;
     const store = {
       getPlayer: (id) => {
@@ -203,11 +209,19 @@ export class Hall extends DurableObject {
       let b = {}; try { b = await request.json(); } catch {}
       const clip = (v, n) => (v == null ? null : String(v).slice(0, n));
       try {
+        /* Bilder: ein JSON-Array kleiner DataURLs. Der Client verkleinert auf
+           ~900 px Kante; die Klammer hier ist die zweite Bremse - zwei Bilder
+           zu je ~200 KB base64 passen, mehr wird abgeschnitten (dann fehlt
+           schlimmstenfalls das zweite Bild, nie der Bericht). */
+        const bilder = Array.isArray(b.bilder)
+          ? clip(JSON.stringify(b.bilder.slice(0, 2).map((x) => String(x).slice(0, 300000))), 480000)
+          : null;
         this.sql.exec(
-          "INSERT INTO reports (ts, version, ua, url, kind, message, stack, account, note, log) VALUES (?,?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO reports (ts, version, ua, url, kind, message, stack, account, note, log, rubrik, bilder) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
           Date.now(), clip(b.version, 40), clip(b.ua, 240), clip(b.url, 200), clip(b.kind, 20),
           clip(b.message, 400), clip(b.stack, 1600), clip(b.account, 120), clip(b.note, 1000),
-          clip(typeof b.log === "string" ? b.log : JSON.stringify(b.log || []), 4000));
+          clip(typeof b.log === "string" ? b.log : JSON.stringify(b.log || []), 4000),
+          clip(b.rubrik, 30), bilder);
         // keep the table bounded: newest 500 reports
         this.sql.exec("DELETE FROM reports WHERE id NOT IN (SELECT id FROM reports ORDER BY id DESC LIMIT 500)");
       } catch {}
@@ -220,6 +234,7 @@ export class Hall extends DurableObject {
       const limit = Math.min(200, Math.max(1, parseInt(url.searchParams.get("limit") || "100", 10) || 100));
       const rows = [...this.sql.exec("SELECT * FROM reports ORDER BY id DESC LIMIT ?", limit)].map((r) => ({
         ...r, log: (() => { try { return JSON.parse(r.log || "[]"); } catch { return []; } })(),
+        bilder: (() => { try { return JSON.parse(r.bilder || "null"); } catch { return null; } })(),
         created_at: new Date(r.ts).toISOString(),
       }));
       return new Response(JSON.stringify({ rows }), { headers: { "content-type": "application/json", ...cors } });
@@ -239,7 +254,8 @@ export class Hall extends DurableObject {
         return {
           id: p.id, name: p.name || "—", punkte: p.score || 0, wertung: p.rating ?? null,
           sprache: p.lang || "de", privat: p.privacy || "public",
-          zuletzt: p.seen || null, online: this.core.isOnline ? this.core.isOnline(p.id) : false,
+          zuletzt: p.seen || null, beigetreten: p.created || null,
+          online: this.core.isOnline ? this.core.isOnline(p.id) : false,
           kapitel: best?.league ?? null, gold: best?.gold ?? null, staende: truhe.length,
           freunde: (p.friends || []).length,
           siege: p.stats?.wins ?? null, partien: p.stats?.games ?? null,

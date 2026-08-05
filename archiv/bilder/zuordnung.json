@@ -1,0 +1,2494 @@
+{
+ "stand": "2026-08-05",
+ "verfahren": "Silhouette 30 % · Helligkeit 25 % · Kanten 45 %, auf Inhalt zugeschnitten, 64x64",
+ "schwellen": {
+  "sicher": 0.9,
+  "moeglich": 0.7
+ },
+ "vonHand": 12,
+ "gesamt": 382,
+ "sicher": 64,
+ "moeglich": 14,
+ "ohneOriginal": 304,
+ "treffer": {
+  "bg-hall.carved.webp": {
+   "original": "kulisse/Hintergrund-gerissenes-Brett.png",
+   "wert": 1.0,
+   "abstand": 0.324,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "bg-hall.webp": {
+   "original": "kulisse/Hintergrund-gerissenes-Brett.png",
+   "wert": 1.0,
+   "abstand": 0.324,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "board-frame.carved.webp": {
+   "original": "kulisse/Rahmen-Vorlage.png",
+   "wert": 0.952,
+   "abstand": 0.656,
+   "sicher": true,
+   "mass": [
+    1254,
+    1254
+   ],
+   "massSpiel": [
+    1240,
+    1239
+   ],
+   "hq": true,
+   "kante": 1254
+  },
+  "board-frame.webp": {
+   "original": "kulisse/Rahmen-Vorlage.png",
+   "wert": 1.0,
+   "abstand": 0.705,
+   "sicher": true,
+   "mass": [
+    1254,
+    1254
+   ],
+   "massSpiel": [
+    1240,
+    1239
+   ],
+   "hq": true,
+   "kante": 1254
+  },
+  "carved/carved-boss-b02-dark.webp": {
+   "original": "figuren/hetzer.png",
+   "wert": 0.962,
+   "abstand": 0.562,
+   "sicher": true,
+   "mass": [
+    640,
+    800
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 800
+  },
+  "carved/carved-boss-b02-light.webp": {
+   "original": "figuren/hetzer.png",
+   "wert": 0.98,
+   "abstand": 0.583,
+   "sicher": true,
+   "mass": [
+    640,
+    800
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 800
+  },
+  "carved/carved-gambit-dark.webp": {
+   "original": "figuren/002_2026-07-30T13-51-17.png",
+   "wert": 0.868,
+   "abstand": 0.035,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-light.webp": {
+   "original": "figuren/002_2026-07-30T13-51-17.png",
+   "wert": 0.859,
+   "abstand": 0.028,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t2-dark.webp": {
+   "original": "figuren/001_2026-07-30T13-52-19.png",
+   "wert": 0.818,
+   "abstand": 0.037,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t2-light.webp": {
+   "original": "figuren/001_2026-07-30T13-52-19.png",
+   "wert": 0.83,
+   "abstand": 0.045,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t3-dark.webp": {
+   "original": "figuren/000_2026-07-30T13-53-15.png",
+   "wert": 0.865,
+   "abstand": 0.053,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t3-light.webp": {
+   "original": "figuren/000_2026-07-30T13-53-15.png",
+   "wert": 0.857,
+   "abstand": 0.058,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t4-dark.webp": {
+   "original": "figuren/005_2026-07-30T13-02-56.png",
+   "wert": 0.861,
+   "abstand": 0.066,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t4-light.webp": {
+   "original": "figuren/005_2026-07-30T13-02-56.png",
+   "wert": 0.858,
+   "abstand": 0.055,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t5-dark.webp": {
+   "original": "figuren/004_2026-07-30T13-03-51.png",
+   "wert": 0.759,
+   "abstand": 0.032,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t5-light.webp": {
+   "original": "figuren/004_2026-07-30T13-03-51.png",
+   "wert": 0.769,
+   "abstand": 0.034,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t6-dark.webp": {
+   "original": "figuren/003_2026-07-30T13-04-53.png",
+   "wert": 0.827,
+   "abstand": 0.221,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-gambit-t6-light.webp": {
+   "original": "figuren/003_2026-07-30T13-04-53.png",
+   "wert": 0.808,
+   "abstand": 0.204,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-pawn-dark.webp": {
+   "original": "figuren/002_2026-07-30T13-51-17.png",
+   "wert": 0.857,
+   "abstand": 0.025,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "carved/carved-pawn-light.webp": {
+   "original": "figuren/002_2026-07-30T13-51-17.png",
+   "wert": 0.846,
+   "abstand": 0.016,
+   "sicher": false,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    640,
+    800
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "emblem-riss.webp": {
+   "original": "icons/shared image.webp",
+   "wert": 0.999,
+   "abstand": 0.043,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    640,
+    640
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "felder/feld-classic1.webp": {
+   "original": "felder/feldclassic.png",
+   "wert": 1.0,
+   "abstand": 0.016,
+   "sicher": true,
+   "mass": [
+    1659,
+    948
+   ],
+   "massSpiel": [
+    1280,
+    731
+   ],
+   "hq": true,
+   "kante": 1659
+  },
+  "felder/feld-classic2.webp": {
+   "original": "felder/feldclassic2.png",
+   "wert": 1.0,
+   "abstand": 0.011,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-classic3.webp": {
+   "original": "felder/feldclassic3.png",
+   "wert": 1.0,
+   "abstand": 0.01,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-finale.webp": {
+   "original": "felder/feld_kapitel12_finale.png",
+   "wert": 1.0,
+   "abstand": 0.534,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k01.webp": {
+   "original": "felder/feld_kapitel01.png",
+   "wert": 1.0,
+   "abstand": 0.034,
+   "sicher": true,
+   "mass": [
+    1774,
+    887
+   ],
+   "massSpiel": [
+    1280,
+    640
+   ],
+   "hq": true,
+   "kante": 1774
+  },
+  "felder/feld-k02.webp": {
+   "original": "felder/feld_kapitel02.png",
+   "wert": 1.0,
+   "abstand": 0.036,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k03.webp": {
+   "original": "felder/kapitel03.png",
+   "wert": 0.999,
+   "abstand": 0.116,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k04.webp": {
+   "original": "felder/feld_kapitel04.png",
+   "wert": 1.0,
+   "abstand": 0.063,
+   "sicher": true,
+   "mass": [
+    1717,
+    916
+   ],
+   "massSpiel": [
+    1280,
+    683
+   ],
+   "hq": true,
+   "kante": 1717
+  },
+  "felder/feld-k05.webp": {
+   "original": "felder/Kapitel05.png",
+   "wert": 1.0,
+   "abstand": 0.137,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k06.webp": {
+   "original": "felder/Kapitel06.png",
+   "wert": 1.0,
+   "abstand": 0.042,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k07.webp": {
+   "original": "felder/Kapitel07.png",
+   "wert": 1.0,
+   "abstand": 0.026,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k08.webp": {
+   "original": "felder/Kapitel08.png",
+   "wert": 1.0,
+   "abstand": 0.073,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k09.webp": {
+   "original": "felder/kapitel09.png",
+   "wert": 0.999,
+   "abstand": 0.158,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k10.webp": {
+   "original": "felder/kapitel10.png",
+   "wert": 1.0,
+   "abstand": 0.026,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k11.webp": {
+   "original": "felder/feld_kapitel11.png.png",
+   "wert": 1.0,
+   "abstand": 0.054,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "felder/feld-k12.webp": {
+   "original": "felder/feld_kapitel12.png",
+   "wert": 1.0,
+   "abstand": 0.229,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "intro-riss.webp": {
+   "original": "kulisse/Intro-Riss-b.png",
+   "wert": 1.0,
+   "abstand": 0.023,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "items/item-sternensplitter.webp": {
+   "original": "icons/sternensplitter.png",
+   "wert": 0.942,
+   "abstand": 0.437,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    232,
+    232
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "kap/kap-01.webp": {
+   "original": "kulisse/Rissboden-1000037687.png",
+   "wert": 1.0,
+   "abstand": 0.435,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-02.webp": {
+   "original": "kulisse/Rissboden-1000037688.png",
+   "wert": 1.0,
+   "abstand": 0.4,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-03.webp": {
+   "original": "kulisse/Rissboden-1000037689.png",
+   "wert": 1.0,
+   "abstand": 0.429,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-04.webp": {
+   "original": "kulisse/Rissboden-1000037690.png",
+   "wert": 1.0,
+   "abstand": 0.445,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-05.webp": {
+   "original": "kulisse/Rissboden-1000037691.png",
+   "wert": 1.0,
+   "abstand": 0.46,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-06.webp": {
+   "original": "kulisse/Rissboden-1000037692.png",
+   "wert": 1.0,
+   "abstand": 0.453,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-07.webp": {
+   "original": "kulisse/Rissboden-1000037693.png",
+   "wert": 1.0,
+   "abstand": 0.4,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-08.webp": {
+   "original": "kulisse/Rissboden-1000037694.png",
+   "wert": 1.0,
+   "abstand": 0.45,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-09.webp": {
+   "original": "kulisse/Rissboden-1000037696.png",
+   "wert": 1.0,
+   "abstand": 0.431,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-10.webp": {
+   "original": "kulisse/Rissboden-1000037698.png",
+   "wert": 1.0,
+   "abstand": 0.5,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-11.webp": {
+   "original": "kulisse/Rissboden-1000037700.png",
+   "wert": 1.0,
+   "abstand": 0.429,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "kap/kap-12.webp": {
+   "original": "kulisse/Rissboden-1000037707.png",
+   "wert": 1.0,
+   "abstand": 0.501,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1536,
+    1024
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "klassik/bishop-dunkel.webp": {
+   "original": "klassik/classicbishop.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1536,
+   "quelle": "hand"
+  },
+  "klassik/bishop-hell.webp": {
+   "original": "klassik/classicbishopcreme.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/king-dunkel.webp": {
+   "original": "klassik/classicking.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1536,
+   "quelle": "hand"
+  },
+  "klassik/king-hell.webp": {
+   "original": "klassik/classickingcreme.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/knight-dunkel.webp": {
+   "original": "klassik/classicSpringer.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/pawn-hell.webp": {
+   "original": "klassik/classicpawncreme.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/queen-dunkel.webp": {
+   "original": "klassik/classicDame.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/queen-hell.webp": {
+   "original": "klassik/classeicdame.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "painted/painted-boss-b23.webp": {
+   "original": "figuren/086_?.png",
+   "wert": 1.0,
+   "abstand": 0.243,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    1024,
+    1024
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "painted/painted-boss-b25.webp": {
+   "original": "figuren/085_?.png",
+   "wert": 1.0,
+   "abstand": 0.252,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    1024,
+    1024
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "painted/painted-haendler.webp": {
+   "original": "kulisse/7123e7a4-68c1-492f-a941-d0d6a4860d16.png",
+   "wert": 1.0,
+   "abstand": 0.552,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    1024,
+    1024
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "painted/painted-knight.webp": {
+   "original": "figuren/079_?.png",
+   "wert": 1.0,
+   "abstand": 0.582,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    1024,
+    1024
+   ],
+   "hq": true,
+   "kante": 1024
+  },
+  "riss/riss-01.webp": {
+   "original": "kulisse/file_00000000df4881f5aff6c8ac3e226be8.png",
+   "wert": 0.999,
+   "abstand": 0.012,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "riss/riss-02.webp": {
+   "original": "kulisse/file_00000000c4e881f5b88f231f2fb0ab00.png",
+   "wert": 0.999,
+   "abstand": 0.007,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "riss/riss-03.webp": {
+   "original": "kulisse/file_00000000ff7c81f5bb83efd310b2f462.png",
+   "wert": 0.999,
+   "abstand": 0.007,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "riss/riss-04.webp": {
+   "original": "kulisse/file_0000000007e881f5bae147a8415941b3.png",
+   "wert": 0.999,
+   "abstand": 0.041,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "riss/riss-05.webp": {
+   "original": "kulisse/file_00000000e60c822fa30244872550e30e.png",
+   "wert": 1.0,
+   "abstand": 0.069,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "riss/riss-06.webp": {
+   "original": "kulisse/file_000000008de4822fb4a6baaeb3ee3bb2.png",
+   "wert": 0.999,
+   "abstand": 0.071,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "riss/riss-07.webp": {
+   "original": "kulisse/file_00000000dc2481f58a97384526aa6e81.png",
+   "wert": 1.0,
+   "abstand": 0.072,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "riss/riss-08.webp": {
+   "original": "kulisse/file_0000000088ac822f806ed71b2181113a.png",
+   "wert": 1.0,
+   "abstand": 0.028,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "riss/riss-09.webp": {
+   "original": "kulisse/file_00000000b90081f5924f0c55d0614892.png",
+   "wert": 1.0,
+   "abstand": 0.241,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1280,
+    720
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "riss/riss-10.webp": {
+   "original": "kulisse/file_000000008cec81f5b98a4e0cc97e15bb.png",
+   "wert": 1.0,
+   "abstand": 0.06,
+   "sicher": true,
+   "mass": [
+    1536,
+    1024
+   ],
+   "massSpiel": [
+    1280,
+    853
+   ],
+   "hq": true,
+   "kante": 1536
+  },
+  "weltkarte.webp": {
+   "original": "kulisse/Weltkarte-16-9.png",
+   "wert": 1.0,
+   "abstand": 0.564,
+   "sicher": true,
+   "mass": [
+    1672,
+    941
+   ],
+   "massSpiel": [
+    1672,
+    941
+   ],
+   "hq": true,
+   "kante": 1672
+  },
+  "klassik/knight-hell.webp": {
+   "original": "klassik/classicspringercreme.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  },
+  "klassik/pawn-dunkel.webp": {
+   "original": "klassik/classicPawn.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1536,
+   "quelle": "hand"
+  },
+  "klassik/rook-dunkel.webp": {
+   "original": "klassik/classicturm.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1536
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1536,
+   "quelle": "hand"
+  },
+  "klassik/rook-hell.webp": {
+   "original": "klassik/classicrookcreme.png",
+   "wert": null,
+   "abstand": null,
+   "sicher": true,
+   "mass": [
+    1024,
+    1024
+   ],
+   "massSpiel": [
+    800,
+    800
+   ],
+   "hq": true,
+   "kante": 1024,
+   "quelle": "hand"
+  }
+ },
+ "ohne": [
+  {
+   "datei": "ach/ach-bosses.carved.webp",
+   "bester": 0.604
+  },
+  {
+   "datei": "ach/ach-bosses.webp",
+   "bester": 0.57
+  },
+  {
+   "datei": "ach/ach-captures.carved.webp",
+   "bester": 0.619
+  },
+  {
+   "datei": "ach/ach-captures.webp",
+   "bester": 0.578
+  },
+  {
+   "datei": "ach/ach-checkmates.carved.webp",
+   "bester": 0.603
+  },
+  {
+   "datei": "ach/ach-checkmates.webp",
+   "bester": 0.584
+  },
+  {
+   "datei": "ach/ach-fast.carved.webp",
+   "bester": 0.613
+  },
+  {
+   "datei": "ach/ach-fast.webp",
+   "bester": 0.561
+  },
+  {
+   "datei": "ach/ach-flawless.carved.webp",
+   "bester": 0.591
+  },
+  {
+   "datei": "ach/ach-flawless.webp",
+   "bester": 0.573
+  },
+  {
+   "datei": "ach/ach-games.carved.webp",
+   "bester": 0.605
+  },
+  {
+   "datei": "ach/ach-games.webp",
+   "bester": 0.605
+  },
+  {
+   "datei": "ach/ach-hpwins.carved.webp",
+   "bester": 0.625
+  },
+  {
+   "datei": "ach/ach-hpwins.webp",
+   "bester": 0.594
+  },
+  {
+   "datei": "ach/ach-promotions.carved.webp",
+   "bester": 0.634
+  },
+  {
+   "datei": "ach/ach-promotions.webp",
+   "bester": 0.569
+  },
+  {
+   "datei": "ach/ach-recruits.carved.webp",
+   "bester": 0.66
+  },
+  {
+   "datei": "ach/ach-recruits.webp",
+   "bester": 0.6
+  },
+  {
+   "datei": "ach/ach-stages.carved.webp",
+   "bester": 0.645
+  },
+  {
+   "datei": "ach/ach-stages.webp",
+   "bester": 0.61
+  },
+  {
+   "datei": "ach/ach-streak.carved.webp",
+   "bester": 0.612
+  },
+  {
+   "datei": "ach/ach-streak.webp",
+   "bester": 0.594
+  },
+  {
+   "datei": "ach/ach-upgrades.carved.webp",
+   "bester": 0.67
+  },
+  {
+   "datei": "ach/ach-upgrades.webp",
+   "bester": 0.571
+  },
+  {
+   "datei": "ach/ach-wins.carved.webp",
+   "bester": 0.565
+  },
+  {
+   "datei": "ach/ach-wins.webp",
+   "bester": 0.515
+  },
+  {
+   "datei": "ach/ach-xp.carved.webp",
+   "bester": 0.611
+  },
+  {
+   "datei": "ach/ach-xp.webp",
+   "bester": 0.535
+  },
+  {
+   "datei": "carved/carved-alchemist-dark.webp",
+   "bester": 0.368
+  },
+  {
+   "datei": "carved/carved-alchemist-light.webp",
+   "bester": 0.378
+  },
+  {
+   "datei": "carved/carved-amazon-dark.webp",
+   "bester": 0.424
+  },
+  {
+   "datei": "carved/carved-amazon-light.webp",
+   "bester": 0.422
+  },
+  {
+   "datei": "carved/carved-archbishop-dark.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "carved/carved-archbishop-light.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "carved/carved-assassin-dark.webp",
+   "bester": 0.541
+  },
+  {
+   "datei": "carved/carved-assassin-light.webp",
+   "bester": 0.523
+  },
+  {
+   "datei": "carved/carved-bard-dark.webp",
+   "bester": 0.443
+  },
+  {
+   "datei": "carved/carved-bard-light.webp",
+   "bester": 0.442
+  },
+  {
+   "datei": "carved/carved-bishop-dark.webp",
+   "bester": 0.615
+  },
+  {
+   "datei": "carved/carved-bishop-light.webp",
+   "bester": 0.614
+  },
+  {
+   "datei": "carved/carved-boss-b01-dark.webp",
+   "bester": 0.421
+  },
+  {
+   "datei": "carved/carved-boss-b01-light.webp",
+   "bester": 0.425
+  },
+  {
+   "datei": "carved/carved-boss-b03-dark.webp",
+   "bester": 0.482
+  },
+  {
+   "datei": "carved/carved-boss-b03-light.webp",
+   "bester": 0.464
+  },
+  {
+   "datei": "carved/carved-boss-b04-dark.webp",
+   "bester": 0.381
+  },
+  {
+   "datei": "carved/carved-boss-b04-light.webp",
+   "bester": 0.374
+  },
+  {
+   "datei": "carved/carved-boss-b05-dark.webp",
+   "bester": 0.456
+  },
+  {
+   "datei": "carved/carved-boss-b05-light.webp",
+   "bester": 0.453
+  },
+  {
+   "datei": "carved/carved-boss-b06-dark.webp",
+   "bester": 0.481
+  },
+  {
+   "datei": "carved/carved-boss-b06-light.webp",
+   "bester": 0.484
+  },
+  {
+   "datei": "carved/carved-boss-b07-dark.webp",
+   "bester": 0.515
+  },
+  {
+   "datei": "carved/carved-boss-b07-light.webp",
+   "bester": 0.519
+  },
+  {
+   "datei": "carved/carved-boss-b08-dark.webp",
+   "bester": 0.407
+  },
+  {
+   "datei": "carved/carved-boss-b08-light.webp",
+   "bester": 0.395
+  },
+  {
+   "datei": "carved/carved-boss-b09-dark.webp",
+   "bester": 0.401
+  },
+  {
+   "datei": "carved/carved-boss-b09-light.webp",
+   "bester": 0.401
+  },
+  {
+   "datei": "carved/carved-boss-b10-dark.webp",
+   "bester": 0.365
+  },
+  {
+   "datei": "carved/carved-boss-b10-light.webp",
+   "bester": 0.363
+  },
+  {
+   "datei": "carved/carved-boss-b11-dark.webp",
+   "bester": 0.482
+  },
+  {
+   "datei": "carved/carved-boss-b11-light.webp",
+   "bester": 0.476
+  },
+  {
+   "datei": "carved/carved-boss-b12-dark.webp",
+   "bester": 0.473
+  },
+  {
+   "datei": "carved/carved-boss-b12-light.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "carved/carved-boss-b13-dark.webp",
+   "bester": 0.398
+  },
+  {
+   "datei": "carved/carved-boss-b13-light.webp",
+   "bester": 0.393
+  },
+  {
+   "datei": "carved/carved-boss-b14-dark.webp",
+   "bester": 0.441
+  },
+  {
+   "datei": "carved/carved-boss-b14-light.webp",
+   "bester": 0.437
+  },
+  {
+   "datei": "carved/carved-boss-b15-dark.webp",
+   "bester": 0.447
+  },
+  {
+   "datei": "carved/carved-boss-b15-light.webp",
+   "bester": 0.435
+  },
+  {
+   "datei": "carved/carved-boss-b16-dark.webp",
+   "bester": 0.478
+  },
+  {
+   "datei": "carved/carved-boss-b16-light.webp",
+   "bester": 0.483
+  },
+  {
+   "datei": "carved/carved-boss-b17-dark.webp",
+   "bester": 0.436
+  },
+  {
+   "datei": "carved/carved-boss-b17-light.webp",
+   "bester": 0.426
+  },
+  {
+   "datei": "carved/carved-boss-b18-dark.webp",
+   "bester": 0.417
+  },
+  {
+   "datei": "carved/carved-boss-b18-light.webp",
+   "bester": 0.429
+  },
+  {
+   "datei": "carved/carved-boss-b19-dark.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "carved/carved-boss-b19-light.webp",
+   "bester": 0.401
+  },
+  {
+   "datei": "carved/carved-boss-b20-dark.webp",
+   "bester": 0.498
+  },
+  {
+   "datei": "carved/carved-boss-b20-light.webp",
+   "bester": 0.483
+  },
+  {
+   "datei": "carved/carved-boss-b21-dark.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "carved/carved-boss-b21-light.webp",
+   "bester": 0.451
+  },
+  {
+   "datei": "carved/carved-boss-b22-dark.webp",
+   "bester": 0.388
+  },
+  {
+   "datei": "carved/carved-boss-b22-light.webp",
+   "bester": 0.396
+  },
+  {
+   "datei": "carved/carved-boss-b23-dark.webp",
+   "bester": 0.461
+  },
+  {
+   "datei": "carved/carved-boss-b23-light.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "carved/carved-boss-b24-dark.webp",
+   "bester": 0.494
+  },
+  {
+   "datei": "carved/carved-boss-b24-light.webp",
+   "bester": 0.468
+  },
+  {
+   "datei": "carved/carved-boss-b25-dark.webp",
+   "bester": 0.452
+  },
+  {
+   "datei": "carved/carved-boss-b25-light.webp",
+   "bester": 0.44
+  },
+  {
+   "datei": "carved/carved-captain-dark.webp",
+   "bester": 0.492
+  },
+  {
+   "datei": "carved/carved-captain-light.webp",
+   "bester": 0.488
+  },
+  {
+   "datei": "carved/carved-chancellor-dark.webp",
+   "bester": 0.521
+  },
+  {
+   "datei": "carved/carved-chancellor-light.webp",
+   "bester": 0.522
+  },
+  {
+   "datei": "carved/carved-dragon-dark.webp",
+   "bester": 0.462
+  },
+  {
+   "datei": "carved/carved-dragon-light.webp",
+   "bester": 0.471
+  },
+  {
+   "datei": "carved/carved-engineer-dark.webp",
+   "bester": 0.439
+  },
+  {
+   "datei": "carved/carved-engineer-light.webp",
+   "bester": 0.434
+  },
+  {
+   "datei": "carved/carved-guardian-dark.webp",
+   "bester": 0.42
+  },
+  {
+   "datei": "carved/carved-guardian-light.webp",
+   "bester": 0.414
+  },
+  {
+   "datei": "carved/carved-hawk-dark.webp",
+   "bester": 0.426
+  },
+  {
+   "datei": "carved/carved-hawk-light.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "carved/carved-inquisitor-dark.webp",
+   "bester": 0.375
+  },
+  {
+   "datei": "carved/carved-inquisitor-light.webp",
+   "bester": 0.38
+  },
+  {
+   "datei": "carved/carved-king-dark.webp",
+   "bester": 0.492
+  },
+  {
+   "datei": "carved/carved-king-light.webp",
+   "bester": 0.494
+  },
+  {
+   "datei": "carved/carved-knight-dark.webp",
+   "bester": 0.478
+  },
+  {
+   "datei": "carved/carved-knight-light.webp",
+   "bester": 0.464
+  },
+  {
+   "datei": "carved/carved-mage-dark.webp",
+   "bester": 0.445
+  },
+  {
+   "datei": "carved/carved-mage-light.webp",
+   "bester": 0.441
+  },
+  {
+   "datei": "carved/carved-paladin-dark.webp",
+   "bester": 0.452
+  },
+  {
+   "datei": "carved/carved-paladin-light.webp",
+   "bester": 0.455
+  },
+  {
+   "datei": "carved/carved-pathfinder-dark.webp",
+   "bester": 0.509
+  },
+  {
+   "datei": "carved/carved-pathfinder-light.webp",
+   "bester": 0.507
+  },
+  {
+   "datei": "carved/carved-queen-dark.webp",
+   "bester": 0.56
+  },
+  {
+   "datei": "carved/carved-queen-light.webp",
+   "bester": 0.547
+  },
+  {
+   "datei": "carved/carved-rook-dark.webp",
+   "bester": 0.61
+  },
+  {
+   "datei": "carved/carved-rook-light.webp",
+   "bester": 0.627
+  },
+  {
+   "datei": "carved/carved-seeress-dark.webp",
+   "bester": 0.566
+  },
+  {
+   "datei": "carved/carved-seeress-light.webp",
+   "bester": 0.555
+  },
+  {
+   "datei": "carved/carved-sorceress-dark.webp",
+   "bester": 0.524
+  },
+  {
+   "datei": "carved/carved-sorceress-light.webp",
+   "bester": 0.51
+  },
+  {
+   "datei": "carved/carved-standard-dark.webp",
+   "bester": 0.335
+  },
+  {
+   "datei": "carved/carved-standard-light.webp",
+   "bester": 0.326
+  },
+  {
+   "datei": "carved/carved-strategist-dark.webp",
+   "bester": 0.493
+  },
+  {
+   "datei": "carved/carved-strategist-light.webp",
+   "bester": 0.493
+  },
+  {
+   "datei": "carved/carved-warlock-dark.webp",
+   "bester": 0.39
+  },
+  {
+   "datei": "carved/carved-warlock-light.webp",
+   "bester": 0.389
+  },
+  {
+   "datei": "crest-1.carved.webp",
+   "bester": 0.429
+  },
+  {
+   "datei": "crest-1.webp",
+   "bester": 0.505
+  },
+  {
+   "datei": "crest-2.carved.webp",
+   "bester": 0.401
+  },
+  {
+   "datei": "crest-2.webp",
+   "bester": 0.487
+  },
+  {
+   "datei": "crest-3.carved.webp",
+   "bester": 0.392
+  },
+  {
+   "datei": "crest-3.webp",
+   "bester": 0.418
+  },
+  {
+   "datei": "emblem.carved.webp",
+   "bester": 0.568
+  },
+  {
+   "datei": "emblem.webp",
+   "bester": 0.471
+  },
+  {
+   "datei": "ground-01.carved.webp",
+   "bester": 0.452
+  },
+  {
+   "datei": "ground-01.webp",
+   "bester": 0.357
+  },
+  {
+   "datei": "ground-02.carved.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "ground-02.webp",
+   "bester": 0.35
+  },
+  {
+   "datei": "ground-03.carved.webp",
+   "bester": 0.418
+  },
+  {
+   "datei": "ground-03.webp",
+   "bester": 0.355
+  },
+  {
+   "datei": "ground-04.carved.webp",
+   "bester": 0.502
+  },
+  {
+   "datei": "ground-04.webp",
+   "bester": 0.395
+  },
+  {
+   "datei": "ground-05.carved.webp",
+   "bester": 0.41
+  },
+  {
+   "datei": "ground-05.webp",
+   "bester": 0.337
+  },
+  {
+   "datei": "ground-06.carved.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "ground-06.webp",
+   "bester": 0.386
+  },
+  {
+   "datei": "ground-07.carved.webp",
+   "bester": 0.417
+  },
+  {
+   "datei": "ground-07.webp",
+   "bester": 0.363
+  },
+  {
+   "datei": "ground-08.carved.webp",
+   "bester": 0.452
+  },
+  {
+   "datei": "ground-08.webp",
+   "bester": 0.365
+  },
+  {
+   "datei": "ground-09.carved.webp",
+   "bester": 0.472
+  },
+  {
+   "datei": "ground-09.webp",
+   "bester": 0.378
+  },
+  {
+   "datei": "ground-10.carved.webp",
+   "bester": 0.531
+  },
+  {
+   "datei": "ground-10.webp",
+   "bester": 0.355
+  },
+  {
+   "datei": "ground-11.carved.webp",
+   "bester": 0.412
+  },
+  {
+   "datei": "ground-11.webp",
+   "bester": 0.412
+  },
+  {
+   "datei": "ground-12.carved.webp",
+   "bester": 0.415
+  },
+  {
+   "datei": "ground-12.webp",
+   "bester": 0.414
+  },
+  {
+   "datei": "items/item-anker.carved.webp",
+   "bester": 0.398
+  },
+  {
+   "datei": "items/item-anker.webp",
+   "bester": 0.358
+  },
+  {
+   "datei": "items/item-bergschluessel.carved.webp",
+   "bester": 0.383
+  },
+  {
+   "datei": "items/item-bergschluessel.webp",
+   "bester": 0.363
+  },
+  {
+   "datei": "items/item-boat.carved.webp",
+   "bester": 0.414
+  },
+  {
+   "datei": "items/item-boat.webp",
+   "bester": 0.416
+  },
+  {
+   "datei": "items/item-brieftaube.carved.webp",
+   "bester": 0.345
+  },
+  {
+   "datei": "items/item-brieftaube.webp",
+   "bester": 0.373
+  },
+  {
+   "datei": "items/item-donnerpulver.carved.webp",
+   "bester": 0.382
+  },
+  {
+   "datei": "items/item-donnerpulver.webp",
+   "bester": 0.394
+  },
+  {
+   "datei": "items/item-grapnel.carved.webp",
+   "bester": 0.318
+  },
+  {
+   "datei": "items/item-grapnel.webp",
+   "bester": 0.368
+  },
+  {
+   "datei": "items/item-hourglass.carved.webp",
+   "bester": 0.409
+  },
+  {
+   "datei": "items/item-hourglass.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "items/item-kamel.carved.webp",
+   "bester": 0.312
+  },
+  {
+   "datei": "items/item-kamel.webp",
+   "bester": 0.324
+  },
+  {
+   "datei": "items/item-kriegsaxt.carved.webp",
+   "bester": 0.32
+  },
+  {
+   "datei": "items/item-kriegsaxt.webp",
+   "bester": 0.278
+  },
+  {
+   "datei": "items/item-machete.carved.webp",
+   "bester": 0.289
+  },
+  {
+   "datei": "items/item-machete.webp",
+   "bester": 0.24
+  },
+  {
+   "datei": "items/item-potion.carved.webp",
+   "bester": 0.566
+  },
+  {
+   "datei": "items/item-potion.webp",
+   "bester": 0.436
+  },
+  {
+   "datei": "items/item-sternenkompass.carved.webp",
+   "bester": 0.573
+  },
+  {
+   "datei": "items/item-sternensplitter.carved.webp",
+   "bester": 0.42
+  },
+  {
+   "datei": "items/item-torch.carved.webp",
+   "bester": 0.413
+  },
+  {
+   "datei": "items/item-torch.webp",
+   "bester": 0.377
+  },
+  {
+   "datei": "karten/karte-akademie.webp",
+   "bester": 0.54
+  },
+  {
+   "datei": "karten/karte-kampagne.webp",
+   "bester": 0.578
+  },
+  {
+   "datei": "karten/karte-online.webp",
+   "bester": 0.586
+  },
+  {
+   "datei": "karten/karte-schnell.webp",
+   "bester": 0.492
+  },
+  {
+   "datei": "liga-canyon.jpg",
+   "bester": 0.417
+  },
+  {
+   "datei": "liga-herbst.jpg",
+   "bester": 0.45
+  },
+  {
+   "datei": "liga-hochgebirge.jpg",
+   "bester": 0.419
+  },
+  {
+   "datei": "liga-meer.jpg",
+   "bester": 0.509
+  },
+  {
+   "datei": "liga-oedland.jpg",
+   "bester": 0.417
+  },
+  {
+   "datei": "liga-sommer.jpg",
+   "bester": 0.44
+  },
+  {
+   "datei": "liga-steppe.jpg",
+   "bester": 0.469
+  },
+  {
+   "datei": "liga-winter.jpg",
+   "bester": 0.395
+  },
+  {
+   "datei": "liga-wueste.jpg",
+   "bester": 0.417
+  },
+  {
+   "datei": "liga1.jpg",
+   "bester": 0.407
+  },
+  {
+   "datei": "logo-menu.carved.webp",
+   "bester": 0.25
+  },
+  {
+   "datei": "logo-menu.webp",
+   "bester": 0.272
+  },
+  {
+   "datei": "logo.carved.webp",
+   "bester": 0.687
+  },
+  {
+   "datei": "logo.jpg",
+   "bester": 0.533
+  },
+  {
+   "datei": "logo.webp",
+   "bester": 0.555
+  },
+  {
+   "datei": "marble-btn.webp",
+   "bester": 0.371
+  },
+  {
+   "datei": "marble-d0.webp",
+   "bester": 0.387
+  },
+  {
+   "datei": "marble-d1.webp",
+   "bester": 0.367
+  },
+  {
+   "datei": "marble-d2.webp",
+   "bester": 0.486
+  },
+  {
+   "datei": "marble-d3.webp",
+   "bester": 0.371
+  },
+  {
+   "datei": "marble-d4.webp",
+   "bester": 0.414
+  },
+  {
+   "datei": "marble-d5.webp",
+   "bester": 0.458
+  },
+  {
+   "datei": "marble-g0.webp",
+   "bester": 0.373
+  },
+  {
+   "datei": "marble-g1.webp",
+   "bester": 0.39
+  },
+  {
+   "datei": "marble-g2.webp",
+   "bester": 0.485
+  },
+  {
+   "datei": "marble-g3.webp",
+   "bester": 0.375
+  },
+  {
+   "datei": "marble-g4.webp",
+   "bester": 0.405
+  },
+  {
+   "datei": "marble-g5.webp",
+   "bester": 0.452
+  },
+  {
+   "datei": "marble-l0.webp",
+   "bester": 0.39
+  },
+  {
+   "datei": "marble-l1.webp",
+   "bester": 0.396
+  },
+  {
+   "datei": "marble-l2.webp",
+   "bester": 0.399
+  },
+  {
+   "datei": "marble-l3.webp",
+   "bester": 0.421
+  },
+  {
+   "datei": "marble-l4.webp",
+   "bester": 0.405
+  },
+  {
+   "datei": "marble-l5.webp",
+   "bester": 0.429
+  },
+  {
+   "datei": "painted/classic-bishop.webp",
+   "bester": 0.625
+  },
+  {
+   "datei": "painted/classic-king.webp",
+   "bester": 0.531
+  },
+  {
+   "datei": "painted/classic-knight.webp",
+   "bester": 0.578
+  },
+  {
+   "datei": "painted/classic-pawn.webp",
+   "bester": 0.632
+  },
+  {
+   "datei": "painted/classic-queen.webp",
+   "bester": 0.553
+  },
+  {
+   "datei": "painted/classic-rook.webp",
+   "bester": 0.631
+  },
+  {
+   "datei": "painted/painted-alchemist.webp",
+   "bester": 0.51
+  },
+  {
+   "datei": "painted/painted-amazon.webp",
+   "bester": 0.536
+  },
+  {
+   "datei": "painted/painted-archbishop.webp",
+   "bester": 0.467
+  },
+  {
+   "datei": "painted/painted-assassin.webp",
+   "bester": 0.366
+  },
+  {
+   "datei": "painted/painted-bard.webp",
+   "bester": 0.423
+  },
+  {
+   "datei": "painted/painted-bishop.webp",
+   "bester": 0.516
+  },
+  {
+   "datei": "painted/painted-boss-archenemy.webp",
+   "bester": 0.487
+  },
+  {
+   "datei": "painted/painted-boss-b01.webp",
+   "bester": 0.512
+  },
+  {
+   "datei": "painted/painted-boss-b02.webp",
+   "bester": 0.565
+  },
+  {
+   "datei": "painted/painted-boss-b03.webp",
+   "bester": 0.487
+  },
+  {
+   "datei": "painted/painted-boss-b04.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "painted/painted-boss-b05.webp",
+   "bester": 0.426
+  },
+  {
+   "datei": "painted/painted-boss-b06.webp",
+   "bester": 0.428
+  },
+  {
+   "datei": "painted/painted-boss-b07.webp",
+   "bester": 0.426
+  },
+  {
+   "datei": "painted/painted-boss-b08.webp",
+   "bester": 0.365
+  },
+  {
+   "datei": "painted/painted-boss-b09.webp",
+   "bester": 0.411
+  },
+  {
+   "datei": "painted/painted-boss-b10.webp",
+   "bester": 0.397
+  },
+  {
+   "datei": "painted/painted-boss-b11.webp",
+   "bester": 0.499
+  },
+  {
+   "datei": "painted/painted-boss-b12.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "painted/painted-boss-b13.webp",
+   "bester": 0.468
+  },
+  {
+   "datei": "painted/painted-boss-b14.webp",
+   "bester": 0.466
+  },
+  {
+   "datei": "painted/painted-boss-b15.webp",
+   "bester": 0.395
+  },
+  {
+   "datei": "painted/painted-boss-b16.webp",
+   "bester": 0.412
+  },
+  {
+   "datei": "painted/painted-boss-b17.webp",
+   "bester": 0.419
+  },
+  {
+   "datei": "painted/painted-boss-b18.webp",
+   "bester": 0.36
+  },
+  {
+   "datei": "painted/painted-boss-b19.webp",
+   "bester": 0.375
+  },
+  {
+   "datei": "painted/painted-boss-b20.webp",
+   "bester": 0.495
+  },
+  {
+   "datei": "painted/painted-boss-b21.webp",
+   "bester": 0.439
+  },
+  {
+   "datei": "painted/painted-boss-b22.webp",
+   "bester": 0.459
+  },
+  {
+   "datei": "painted/painted-boss-b24.webp",
+   "bester": 0.423
+  },
+  {
+   "datei": "painted/painted-boss-beast.webp",
+   "bester": 0.391
+  },
+  {
+   "datei": "painted/painted-boss-golem.webp",
+   "bester": 0.439
+  },
+  {
+   "datei": "painted/painted-boss-leaguemaster.webp",
+   "bester": 0.516
+  },
+  {
+   "datei": "painted/painted-boss-serpent.webp",
+   "bester": 0.456
+  },
+  {
+   "datei": "painted/painted-boss-tyrant.webp",
+   "bester": 0.501
+  },
+  {
+   "datei": "painted/painted-boss-wraith.webp",
+   "bester": 0.482
+  },
+  {
+   "datei": "painted/painted-captain.webp",
+   "bester": 0.465
+  },
+  {
+   "datei": "painted/painted-chancellor.webp",
+   "bester": 0.491
+  },
+  {
+   "datei": "painted/painted-dragon.webp",
+   "bester": 0.481
+  },
+  {
+   "datei": "painted/painted-engineer.webp",
+   "bester": 0.513
+  },
+  {
+   "datei": "painted/painted-gambit-t2.webp",
+   "bester": 0.695
+  },
+  {
+   "datei": "painted/painted-gambit-t3.webp",
+   "bester": 0.681
+  },
+  {
+   "datei": "painted/painted-gambit-t4.webp",
+   "bester": 0.635
+  },
+  {
+   "datei": "painted/painted-gambit-t5.webp",
+   "bester": 0.621
+  },
+  {
+   "datei": "painted/painted-gambit-t6.webp",
+   "bester": 0.599
+  },
+  {
+   "datei": "painted/painted-gambit.webp",
+   "bester": 0.672
+  },
+  {
+   "datei": "painted/painted-guardian.webp",
+   "bester": 0.489
+  },
+  {
+   "datei": "painted/painted-hawk.webp",
+   "bester": 0.446
+  },
+  {
+   "datei": "painted/painted-inquisitor.webp",
+   "bester": 0.47
+  },
+  {
+   "datei": "painted/painted-king.webp",
+   "bester": 0.472
+  },
+  {
+   "datei": "painted/painted-mage.webp",
+   "bester": 0.492
+  },
+  {
+   "datei": "painted/painted-paladin.webp",
+   "bester": 0.503
+  },
+  {
+   "datei": "painted/painted-pathfinder.webp",
+   "bester": 0.456
+  },
+  {
+   "datei": "painted/painted-pawn.webp",
+   "bester": 0.661
+  },
+  {
+   "datei": "painted/painted-queen.webp",
+   "bester": 0.501
+  },
+  {
+   "datei": "painted/painted-rook.webp",
+   "bester": 0.497
+  },
+  {
+   "datei": "painted/painted-seeress.webp",
+   "bester": 0.528
+  },
+  {
+   "datei": "painted/painted-sorceress.webp",
+   "bester": 0.399
+  },
+  {
+   "datei": "painted/painted-standard.webp",
+   "bester": 0.412
+  },
+  {
+   "datei": "painted/painted-strategist.webp",
+   "bester": 0.472
+  },
+  {
+   "datei": "painted/painted-warlock.webp",
+   "bester": 0.469
+  },
+  {
+   "datei": "shield-league.carved.webp",
+   "bester": 0.502
+  },
+  {
+   "datei": "shield-league.webp",
+   "bester": 0.482
+  },
+  {
+   "datei": "stat/orb-gold-energy.webp",
+   "bester": 0.557
+  },
+  {
+   "datei": "stat/orb-gold-life.webp",
+   "bester": 0.565
+  },
+  {
+   "datei": "stat/orb-gold-power.webp",
+   "bester": 0.612
+  },
+  {
+   "datei": "stat/orb-steel-energy.webp",
+   "bester": 0.554
+  },
+  {
+   "datei": "stat/orb-steel-life.webp",
+   "bester": 0.565
+  },
+  {
+   "datei": "stat/orb-steel-power.webp",
+   "bester": 0.573
+  },
+  {
+   "datei": "stat/strip-gold.webp",
+   "bester": 0.373
+  },
+  {
+   "datei": "stat/strip-steel.webp",
+   "bester": 0.363
+  },
+  {
+   "datei": "tex-wear-1.webp",
+   "bester": 0.351
+  },
+  {
+   "datei": "tex-wear-2.webp",
+   "bester": 0.354
+  },
+  {
+   "datei": "tex-wear-3.webp",
+   "bester": 0.373
+  },
+  {
+   "datei": "tex-wear-4.webp",
+   "bester": 0.381
+  },
+  {
+   "datei": "wanderer-boot.webp",
+   "bester": 0.406
+  }
+ ],
+ "unlesbar": []
+}

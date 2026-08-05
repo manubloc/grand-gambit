@@ -316,6 +316,12 @@ export class HallCore {
         privacy: privacy === "friends" ? "friends" : "public",
         lang: msg.lang === "en" ? "en" : (ex?.lang || "de"),
         seen: this.now(), stats: cleanStats(msg.stats) || ex?.stats || null,
+        /* v1.0.3: WANN kam dieses Konto? Beim allerersten hello wird der
+           Zeitpunkt festgehalten und nie wieder angefasst - daraus zeichnet
+           das Spielerbuch die Beitrittskurve. Bestandskonten von vor diesem
+           Deploy tragen kein Datum; das Buch weist sie gesondert aus, statt
+           ihnen eines anzudichten. */
+        created: ex?.created ?? this.now(),
         // v0.73: grobe Herkunft fuers Spielerbuch (Land/Region/Stadt von
         // Cloudflare, IP nur als kurzer Fingerabdruck - nie im Klartext).
         land: msg.__herkunft?.land || ex?.land || null,

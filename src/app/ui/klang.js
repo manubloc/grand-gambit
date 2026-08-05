@@ -149,6 +149,7 @@ const puffer = new Map();    // url → AudioBuffer
 let an = true;
 let staerke = 0.6;
 let letzte = {};             // art → zuletzt gespielter Index (nie zweimal derselbe)
+let zaehler = 0;             // zaehlt jede klang()-Absicht (fuer den Klangfaenger)
 
 function wecke() {
   if (ctx) return ctx;
@@ -196,6 +197,7 @@ export function klangEinstellen({ ein, lautstaerke }) {
  * @param {string} art  eine der Arten aus QUELLEN
  */
 export function klang(art) {
+  zaehler++;   // auch ein stummer Versuch zaehlt als "diese Stelle klingt selbst"
   // leere Liste = dieser Klang ist (noch) nicht besetzt - stumm bleiben
   if (!an || !QUELLEN[art] || !QUELLEN[art].length) return;
   const c = wecke();
@@ -221,4 +223,29 @@ export function klang(art) {
     } catch {}
   };
   if (buf) spiele(buf); else hole(url).then(spiele);
+}
+
+/* ── DER KLANGFAENGER (v1.0.3, Besitzerwunsch) ──────────────────────────────
+   "Du darfst diesen Menue-Sound gerne ueberall verwenden, wo sonst nichts
+   waere." Statt jeden der verstreuten Knoepfe einzeln zu verdrahten, hoert
+   EIN Faenger in der Capture-Phase auf jeden Klick auf etwas Druckbares.
+   Er spielt den leisen Menuetipp - ABER NUR, wenn die Stelle nicht selbst
+   klingt: React-Handler laufen synchron nach der Capture-Phase, also wird
+   die Entscheidung um einen Tick verschoben und faellt aus, sobald in
+   diesem Klick bereits ein klang() lief (der Zaehler zaehlt auch stumme
+   Versuche mit, damit ein abgeschalteter Effektkanal nicht ploetzlich
+   doppelt tippt, wenn er wieder angeht). Bereiche mit eigener Klangwelt
+   koennen sich mit data-klang="aus" ganz ausnehmen. */
+export function klangUeberall() {
+  if (typeof document === "undefined" || klangUeberall._an) return;
+  klangUeberall._an = true;
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    const el = t.closest(
+      'button, [role="button"], a[href], select, summary, input[type="checkbox"], input[type="radio"]');
+    if (!el || el.closest('[data-klang="aus"]')) return;
+    const vorher = zaehler;
+    setTimeout(() => { if (zaehler === vorher) klang("menue"); }, 0);
+  }, true);
 }

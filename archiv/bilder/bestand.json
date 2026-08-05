@@ -20,50 +20,6 @@
    "imSpiel": false
   }
  ],
- "gruppen": [
-  {
-   "gruppe": "Geschnitzte Figuren",
-   "gesamt": 57,
-   "original": 12,
-   "fehlt": 45
-  },
-  {
-   "gruppe": "Gemalte Figuren",
-   "gesamt": 71,
-   "original": 3,
-   "fehlt": 68
-  },
-  {
-   "gruppe": "Turnierfiguren",
-   "gesamt": 6,
-   "original": 0,
-   "fehlt": 6
-  },
-  {
-   "gruppe": "Ausrüstung",
-   "gesamt": 27,
-   "original": 0,
-   "fehlt": 27
-  },
-  {
-   "gruppe": "Auszeichnungen",
-   "gesamt": 28,
-   "original": 0,
-   "fehlt": 28
-  },
-  {
-   "gruppe": "Bodentexturen",
-   "gesamt": 16,
-   "original": 0,
-   "fehlt": 16
-  },
-  {
-   "gruppe": "Kulisse und Wappen",
-   "gesamt": 69,
-   "original": 27,
-   "fehlt": 42
-  }
- ],
  "offen": [
   {
    "was": "Farbiger geschnitzter Satz: Springer, Läufer, Turm, Dame, König",
@@ -81,6 +37,5 @@
    "wo": "älteste Bilder, Herkunft unklar"
   }
  ],
- "anzahlOriginale": 122,
- "hinweis": "Näherung: die Zuordnung erfolgt per Bildvergleich. Je nach Schwelle schwanken die Zahlen deutlich — sie zeigen die Größenordnung, nicht die exakte Deckung."
+ "hinweis": "Die Zahl der Originale steht nicht mehr hier, sondern in zuordnung.json — sie wird mit tools/ordne-originale.py Datei fuer Datei gemessen statt geschaetzt. Die frueheren Gruppenzahlen (122 Originale) waren eine Naeherung nach Augenmass und lagen deutlich zu hoch."
 }

@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle, Toggle } from "../primitives.jsx";
 import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
+import { FeedbackPanel, rubrikWort } from "./FeedbackPanel.jsx";
+import { ZeitBalken } from "../ZeitBalken.jsx";
 import { setHouseDesign } from "../livery.js";
 import { getDeferredInstall, onInstallReady, promptInstall } from "../InstallBanner.jsx";
 
@@ -296,6 +298,13 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       <RestorePoints t={t} dispatch={dispatch} />
     </Panel>}
 
+    {/* v1.0.3: JEDER darf melden - Absturz, Balance, Wunsch, mit Bild.
+        Die Meldung faehrt denselben Weg wie die Absturzberichte und landet
+        beim Admin im selben Stapel. */}
+    <Panel>
+      <PanelTitle>{t("profile.fbTitle")}</PanelTitle>
+      <FeedbackPanel t={t} en={en} account={account} />
+    </Panel>
     {account?.isAdmin && <Panel>
       <PanelTitle tag="Admin">{t("profile.reportsTitle")}</PanelTitle>
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.reportsHint")}</div>
@@ -387,14 +396,29 @@ function ErrorReports({ t }) {
   };
   useEffect(() => { load(); }, []);
   const saveToken = () => { setAdminToken(tok.trim()); setSavedTok(tok.trim()); load(); };
+  /* v1.0.3 (Besitzerwunsch): das Admin-Wort EINMAL eingeben. Ist eines
+     gespeichert und die Halle nimmt es an, klappt das Feld zu einer Zeile
+     zusammen; erst ein 401 oder "aendern" holt es zurueck. Spielerbuch und
+     Berichte teilen denselben Speicherplatz (gg_admin_token). */
+  const [wortOffen, setWortOffen] = useState(() => !getAdminToken());
+  useEffect(() => { if (state.error === "unauthorized") setWortOffen(true); }, [state.error]);
   const fmt = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso; } };
   return <div>
     {/* the read token: paste the Worker's ADMIN_TOKEN once to see ALL devices */}
+    {!wortOffen && savedTok ? (
+      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10, fontSize: 12, color: T.dim }}>
+        <span style={{ color: "#7fd6a0" }}>✓</span> {t("profile.reportsSaved")}
+        <button onClick={() => setWortOffen(true)} style={{ background: "none", border: "none",
+          color: T.gold, cursor: "pointer", fontFamily: "inherit", fontSize: 12, padding: 0,
+          textDecoration: "underline" }}>{t("profile.reportsChange")}</button>
+      </div>
+    ) : (
     <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
       <input value={tok} onChange={(e) => setTok(e.target.value)} placeholder={t("profile.reportsToken")} type="password" autoComplete="off"
         style={{ flex: 1, background: T.bg2, border: `1px solid ${savedTok ? T.line : "#a9853f"}`, borderRadius: 10, color: T.text, padding: "10px 12px", fontSize: 14, outline: "none" }} />
-      <Button onClick={saveToken} disabled={tok.trim() === savedTok}>{t("profile.reportsTokenSave")}</Button>
+      <Button onClick={() => { saveToken(); setWortOffen(false); }} disabled={!tok.trim()}>{t("profile.reportsTokenSave")}</Button>
     </div>
+    )}
     <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
       <Button kind="ghost" onClick={load}>{t("profile.reportsRefresh")}</Button>
       <span style={{ fontSize: 11.5, color: state.error === "unauthorized" ? "#e0574f" : T.faint }}>
@@ -411,6 +435,12 @@ function ErrorReports({ t }) {
         <Button kind="ghost" onClick={() => { clearLocalReports(); load(); }}>{t("profile.reportsClear")}</Button>}
     </div>
     {state.rows.length > 0 && <div style={{ fontSize: 11, color: T.faint, marginTop: -4, marginBottom: 10 }}>{t("profile.reportsCopyAllHint")}</div>}
+    {/* v1.0.3: die Berichte als Kurve - wann haeuft sich etwas? */}
+    {state.rows.length > 1 && <div style={{ border: `1px solid ${T.line}`, borderRadius: 10,
+      background: T.bg2, padding: "9px 11px", marginBottom: 10 }}>
+      <ZeitBalken titel={t("profile.reportsChart")} farbe="#e0574f"
+        zeiten={state.rows.map((r) => Date.parse(r.created_at)).filter(Boolean)} tage={30} />
+    </div>}
     {state.loading ? null : state.rows.length === 0
       ? <div style={{ fontSize: 12.5, color: T.dim, padding: "6px 0" }}>{t("profile.reportsEmpty")}</div>
       : <div style={{ display: "grid", gap: 6, maxHeight: 340, overflowY: "auto" }}>
@@ -423,12 +453,23 @@ function ErrorReports({ t }) {
                 <span style={{ width: 7, height: 7, borderRadius: "50%", flex: "0 0 auto", alignSelf: "center",
                   background: isCrash ? "#e0574f" : "#c9a45c" }} />
                 <span style={{ fontSize: 12.5, fontWeight: 700, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.message || "(kein Text)"}</span>
+                {r.rubrik && <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: ".03em",
+                  color: "#241a08", background: "linear-gradient(180deg,#f0d68f,#d3ae5c)",
+                  borderRadius: 999, padding: "2px 7px", whiteSpace: "nowrap" }}>{rubrikWort(r.rubrik, false)}</span>}
+                {Array.isArray(r.bilder) && r.bilder.length > 0 && <span style={{ fontSize: 10.5, color: T.faint }}>🖼{r.bilder.length}</span>}
                 <span style={{ fontSize: 10.5, color: T.faint, whiteSpace: "nowrap" }}>v{r.version || "?"}</span>
               </button>
               {isOpen && <div style={{ padding: "9px 11px", fontSize: 11.5, color: T.dim, lineHeight: 1.5, background: T.bg }}>
                 <div>{fmt(r.created_at)}{r.account ? " · " + r.account : ""}</div>
                 <div style={{ color: T.faint, marginTop: 3, wordBreak: "break-word" }}>{r.ua}</div>
                 {r.note && <div style={{ marginTop: 6, color: T.text }}>{r.note}</div>}
+                {Array.isArray(r.bilder) && r.bilder.length > 0 && <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+                  {r.bilder.map((b, j) => typeof b === "string" && b.startsWith("data:image")
+                    ? <a key={j} href={b} target="_blank" rel="noreferrer">
+                        <img src={b} alt="" style={{ maxHeight: 110, maxWidth: "100%", borderRadius: 8, border: `1px solid ${T.line}`, display: "block" }} />
+                      </a>
+                    : null)}
+                </div>}
                 {r.stack && <pre style={{ marginTop: 6, whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 10.5, color: T.faint, fontFamily: "monospace" }}>{r.stack}</pre>}
                 {Array.isArray(r.log) && r.log.length > 0 && <div style={{ marginTop: 6, color: T.faint }}>
                   {r.log.slice(-6).map((l, j) => <div key={j} style={{ fontFamily: "monospace", fontSize: 10 }}>[{l.kind}] {l.msg}</div>)}

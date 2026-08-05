@@ -38,12 +38,29 @@ console.log(`schaukammer: ${dateien.length} Bilder nach ${ZIEL}`);
 const { execFile } = await import("node:child_process");
 const { promisify } = await import("node:util");
 const lauf = promisify(execFile);
+/* v1.0.3, NACHGEMESSEN UND ERNUECHTERND: diese Vorschauen sind seit v0.96
+   LIVE NIE ENTSTANDEN. Der Cloudflare-Bau hat kein PIL, das try/catch hat
+   den Fehlschlag stumm geschluckt ("uebersprungen"), und die Kammer fiel
+   ueber ihren onError-Zweig auf die vollen Bilder zurueck - 125 KB je
+   Kachel statt 7, rund 48 MB fuer einen Blick in die Kammer. Gepruefte
+   Belege: /schau-klein/… lieferte 200 mit 11787 Bytes text/html, also den
+   SPA-Rueckfall, waehrend /schau/… 125690 Bytes image/webp lieferte.
+   Also liegen die Vorschauen jetzt FERTIG im Repo unter public/ und werden
+   von Vite mitgenommen. Dieser Schritt rechnet sie nur noch NACH, wenn
+   Python da ist - und ueberschreibt das Fertige erst, wenn es geklappt hat.
+   Neue Bilder brauchen ein `npm run vorschau`. */
 const VZIEL = "dist/schau-klein";
-await rm(VZIEL, { recursive: true, force: true });
-await mkdir(VZIEL, { recursive: true });
 try {
-  await lauf("python3", ["tools/baue-vorschau.py", ZIEL, VZIEL]);
-} catch (e) { console.log("vorschau: uebersprungen -", String(e).slice(0, 80)); }
+  await rm(VZIEL + ".neu", { recursive: true, force: true });
+  await mkdir(VZIEL + ".neu", { recursive: true });
+  await lauf("python3", ["tools/baue-vorschau.py", ZIEL, VZIEL + ".neu"]);
+  await rm(VZIEL, { recursive: true, force: true });
+  await (await import("node:fs/promises")).rename(VZIEL + ".neu", VZIEL);
+} catch (e) {
+  await rm(VZIEL + ".neu", { recursive: true, force: true });
+  console.log("vorschau: nicht nachgerechnet (kein PIL?) - nehme die aus public/:",
+    String(e).slice(0, 60));
+}
 
 // Dasselbe fuer das MUSIKARCHIV: alle je erzeugten Stuecke liegen unter
 // archiv/musik und werden neben das Spiel gelegt, nicht hineingebunden -
@@ -70,8 +87,44 @@ async function kopiereBaum(von, nach) {
   await mkdir(nach, { recursive: true });
   for (const e of await readdir(von, { withFileTypes: true })) {
     if (e.isDirectory()) await kopiereBaum(join(von, e.name), join(nach, e.name));
-    else { await copyFile(join(von, e.name), join(nach, e.name)); if (!e.name.endsWith(".md")) bilder++; }
+    else {
+      await copyFile(join(von, e.name), join(nach, e.name));
+      // nur BILDER zaehlen - Beschreibungen und Zuordnungslisten liegen
+      // hier auch, und mitgezaehlt log der Vorschau-Zaehler sieben Stueck.
+      if (/\.(png|jpg|jpeg|webp)$/i.test(e.name)) bilder++;
+    }
   }
 }
 await kopiereBaum(BQ, BZ);
 console.log(`bildarchiv: ${bilder} Originale nach ${BZ}`);
+
+/* v1.0.3: die Kammer zeigt jetzt neben jeder Spielfassung ihr Original -
+   und die Originale sind 1024x1536 PNG, bis 2,5 MB das Stueck. Also
+   bekommen auch sie ihre 200-px-Vorschau; das volle Bild kommt erst, wenn
+   der Knopf "Original laden" gedrueckt wird. */
+const BVZ = "dist/bildarchiv-klein";
+try {
+  await rm(BVZ + ".neu", { recursive: true, force: true });
+  await mkdir(BVZ + ".neu", { recursive: true });
+  await lauf("python3", ["tools/baue-vorschau.py", BZ, BVZ + ".neu"]);
+  await rm(BVZ, { recursive: true, force: true });
+  await (await import("node:fs/promises")).rename(BVZ + ".neu", BVZ);
+} catch (e) {
+  await rm(BVZ + ".neu", { recursive: true, force: true });
+  console.log("bildarchiv-vorschau: nicht nachgerechnet - nehme die aus public/:",
+    String(e).slice(0, 60));
+}
+
+/* LAUTER ZAEHLER statt stiller Annahme: wenn neben dem Spiel weniger
+   Vorschauen liegen als Bilder, sagt der Bau es. Genau diese Meldung hat
+   acht Versionen lang gefehlt. */
+async function zaehle(ordner) {
+  let n = 0;
+  for (const e of await readdir(ordner, { withFileTypes: true, recursive: true }))
+    if (e.isFile()) n++;
+  return n;
+}
+const vs = await zaehle(VZIEL).catch(() => 0);
+const vb = await zaehle(BVZ).catch(() => 0);
+console.log(`vorschauen: ${vs}/${dateien.length} Spielfassungen, ${vb}/${bilder} Originale`);
+if (vs < dateien.length) console.log(`  ! ${dateien.length - vs} Vorschauen FEHLEN - "npm run vorschau" laufen lassen`);

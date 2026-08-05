@@ -21,7 +21,7 @@ export function recentErrors() { return readLS(ERRLOG, "[]"); }
 export function getAdminToken() { try { return localStorage.getItem(TOKKEY) || ""; } catch { return ""; } }
 export function setAdminToken(tok) { try { tok ? localStorage.setItem(TOKKEY, tok) : localStorage.removeItem(TOKKEY); } catch {} }
 
-function buildRow({ note = "", err = null, account = null } = {}) {
+function buildRow({ note = "", err = null, account = null, rubrik = null, bilder = null } = {}) {
   return {
     version: (typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "?"),
     ua: (typeof navigator !== "undefined" ? navigator.userAgent : "").slice(0, 240),
@@ -31,6 +31,11 @@ function buildRow({ note = "", err = null, account = null } = {}) {
     stack: String(err?.stack || "").slice(0, 1600),
     account: account ? String(account).slice(0, 120) : null,
     note: String(note || "").slice(0, 1000),
+    /* v1.0.3: Nutzer-Feedback traegt eine Rubrik und bis zu zwei kleine,
+       clientseitig verkleinerte Bilder (DataURLs). Ein alter Worker liest
+       die Felder schlicht nicht mit - der Bericht kommt trotzdem an. */
+    rubrik: rubrik ? String(rubrik).slice(0, 30) : null,
+    bilder: Array.isArray(bilder) && bilder.length ? bilder.slice(0, 2) : null,
     log: recentErrors().slice(-25),
     created_at: new Date().toISOString(),
   };
@@ -40,7 +45,10 @@ function buildRow({ note = "", err = null, account = null } = {}) {
  *  mirrored locally. Never throws. Returns { ok, where }. */
 export async function fileReport(opts = {}) {
   const row = buildRow(opts);
-  const mine = readLS(LOCAL, "[]"); mine.push(row); writeLS(LOCAL, mine.slice(-50));
+  /* Der oertliche Spiegel bleibt schlank: Bilder wandern nur zur Halle,
+     sonst waere der localStorage nach fuenf Meldungen voll. */
+  const mine = readLS(LOCAL, "[]"); mine.push({ ...row, bilder: row.bilder ? row.bilder.length : null });
+  writeLS(LOCAL, mine.slice(-50));
   if (HALL_HTTP) {
     try {
       const res = await fetch(HALL_HTTP + "/report", {

@@ -1,0 +1,17 @@
+{
+ "_liesmich": "VON HAND GESETZTE ZUORDNUNGEN. Das Messverfahren in tools/ordne-originale.py raet bei Figuren derselben Familie - die zwoelf Turnierfiguren unterscheiden sich fuer Silhouette und Kanten kaum, und es ordnete den Laeufer der Dame zu. Wo der DATEINAME die Antwort eindeutig gibt, entscheidet er, nicht die Messung. Diese Eintraege gelten als sicher und tragen 'hand' als Quelle.",
+ "zuordnung": {
+  "klassik/bishop-dunkel.webp": "klassik/classicbishop.png",
+  "klassik/bishop-hell.webp": "klassik/classicbishopcreme.png",
+  "klassik/king-dunkel.webp": "klassik/classicking.png",
+  "klassik/king-hell.webp": "klassik/classickingcreme.png",
+  "klassik/knight-dunkel.webp": "klassik/classicSpringer.png",
+  "klassik/knight-hell.webp": "klassik/classicspringercreme.png",
+  "klassik/pawn-dunkel.webp": "klassik/classicPawn.png",
+  "klassik/pawn-hell.webp": "klassik/classicpawncreme.png",
+  "klassik/queen-dunkel.webp": "klassik/classicDame.png",
+  "klassik/queen-hell.webp": "klassik/classeicdame.png",
+  "klassik/rook-dunkel.webp": "klassik/classicturm.png",
+  "klassik/rook-hell.webp": "klassik/classicrookcreme.png"
+ }
+}

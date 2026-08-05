@@ -130,7 +130,17 @@ style.textContent = GLOBAL_CSS + `
     from { transform: scale(1.06) translate3d(-1.2%, 1%, 0); }
     to   { transform: scale(1.16) translate3d(1.2%, -1.4%, 0); }
   }
-  @media (prefers-reduced-motion: reduce) { @keyframes ggKenBurns { from,to { transform: scale(1.06); } } }
+  /* v1.0.3: die QUERFAHRT des Kapitel-Einstiegs. Start und Ziel kommen als
+     gemessene Pixel aus dem Intro (CSS-Variablen), der Zoom bleibt bei
+     1,07 - genug Leben, keine Unschaerfe. */
+  @keyframes ggKenBurnsFahrt {
+    from { transform: translate3d(var(--kbVon, 0px), 0.6%, 0) scale(1.0); }
+    to   { transform: translate3d(var(--kbBis, 0px), -0.6%, 0) scale(1.07); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes ggKenBurns { from,to { transform: scale(1.06); } }
+    @keyframes ggKenBurnsFahrt { from,to { transform: translate3d(calc((var(--kbVon,0px) + var(--kbBis,0px)) / 2), 0, 0) scale(1.03); } }
+  }
   @keyframes ggRissStern {
     0%   { opacity: 0; transform: scale(.22) rotate(-14deg); }
     7%   { opacity: 1; transform: scale(1.22) rotate(0deg); }

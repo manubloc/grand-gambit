@@ -1,7 +1,7 @@
 {
   "name": "gambit",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "GAMBIT — chess that levels up. Characters gain special moves and shields; new pieces unlock over time. Deterministic, UI-free core (command/event sim with replay) for cross-platform reuse.",
   "scripts": {
@@ -22,7 +22,9 @@
     "deploy:site": "node scripts/deploy-pages.mjs",
     "ui": "esbuild test_ui.jsx --bundle --platform=node --jsx=automatic --outfile=.uitest.mjs --format=esm --external:react --external:react-dom --loader:.jpg=dataurl --loader:.png=dataurl --loader:.webp=dataurl --loader:.mp3=dataurl --loader:.webm=dataurl --loader:.css=empty && node .uitest.mjs",
     "ui:knoepfe": "node tools/messe-knoepfe.mjs --pruefen",
-    "schaukammer": "node tools/baue-schaukammer.mjs"
+    "schaukammer": "node tools/baue-schaukammer.mjs",
+    "vorschau": "node -e \"process.exit(0)\" && python3 tools/baue-vorschau.py src/app/ui/assets public/schau-klein && python3 tools/baue-vorschau.py archiv/bilder public/bildarchiv-klein && python3 tools/ordne-originale.py",
+    "pruefe:karte": "npx esbuild tools/pruefe-karteneinstieg.mjs --bundle --platform=node --jsx=automatic --outfile=.pk.mjs --format=esm --external:react --external:react-dom --external:jsdom --loader:.jpg=dataurl --loader:.png=dataurl --loader:.webp=dataurl --loader:.mp3=dataurl --loader:.webm=dataurl --loader:.css=empty --log-level=warning && node .pk.mjs"
   },
   "dependencies": {
     "@fontsource/im-fell-english": "^5.2.6",

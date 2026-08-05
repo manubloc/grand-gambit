@@ -16,7 +16,12 @@ for f in glob.glob(os.path.join(quelle, "**", "*"), recursive=True):
     if not os.path.isfile(f): continue
     if not f.lower().endswith((".webp", ".png", ".jpg", ".jpeg")): continue
     rel = os.path.relpath(f, quelle)
-    aus = os.path.join(ziel, os.path.splitext(rel)[0] + ".webp")
+    # v1.0.3: die Endung wurde frueher ABGESCHNITTEN - logo.jpg und logo.webp
+    # ergaben beide "logo.webp", eines ueberschrieb das andere, und eine
+    # Kachel zeigte still das falsche Bild. Jetzt bleibt die Endung stehen
+    # und .webp kommt dahinter; nur was schon .webp heisst, behaelt seinen
+    # Namen.
+    aus = os.path.join(ziel, rel if rel.lower().endswith(".webp") else rel + ".webp")
     os.makedirs(os.path.dirname(aus), exist_ok=True)
     try:
         im = Image.open(f)
