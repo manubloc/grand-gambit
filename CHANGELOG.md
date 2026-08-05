@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.10
+
+- WELTKARTE IM SELBEN RAHMEN: der Kasten der Weltkarte rundet jetzt mit
+  derselben Formel wie die Kapitelkarte (Math.min(22, frameW/12)) statt
+  mit einem harten 14er aus der Vollbild-Zeit.
+- ZURUECK UND UEBERSICHT IN LILA: der Atlas-Knopf ueber der Kapitelkarte
+  und der Zurueck-Knopf oben auf der Weltkarte tragen die Hub-Kontur
+  (178,150,255) samt leisem Riss-Glow. Die goldenen Kapitel-Pfeile
+  bleiben golden: Gold reist, Lila blickt.
+- SCHLICHTER STIL AUCH IN DER AUFSTELLUNG: Gambit, Bauern, Meister und
+  Drache griffen dort immer in die Gemaelde-Galerie, egal was im Profil
+  stand. Jetzt fragt jede Kachel den Schlicht-Schalter und zeichnet
+  schlicht, wenn schlicht gewaehlt ist.
+- DECKEL GEGEN UEBERSTAND: die Figurenbilder der Aufstellung massen sich
+  in vw am Schirm statt an der Zelle und ragten auf breiten Karten aus
+  den Kacheln. max 100% in beiden Achsen beisst nur im Notfall.
+
 ## 1.0.2
 
 - KARTE SASS NACH DEM EINSTIEG VERSETZT: solange der Einstieg oben liegt,

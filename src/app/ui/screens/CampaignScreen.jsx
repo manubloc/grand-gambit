@@ -797,7 +797,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
         <button onClick={() => setWorld(true)} title={t("camp.zoomOut")}
           style={{ pointerEvents: "auto", cursor: "pointer", width: 40, height: 40, borderRadius: "50%",
             display: "grid", placeItems: "center", background: "rgba(8, 11, 20, .48)",
-            border: "1px solid rgba(233, 210, 150, .42)", boxShadow: "0 2px 10px rgba(0,0,0,.35)",
+            /* v1.0.10 (Besitzer): der Uebersichts-Button traegt LILA - dieselbe
+               Kontur wie der Hub (178,150,255) samt leisem Riss-Glow. Die
+               Kapitel-Pfeile daneben bleiben golden: Gold reist, Lila blickt. */
+            border: "1px solid rgba(178,150,255,.62)",
+            boxShadow: "0 2px 10px rgba(0,0,0,.35), 0 0 10px rgba(124,58,237,.30)",
             backdropFilter: "blur(10px) saturate(1.1)", WebkitBackdropFilter: "blur(10px) saturate(1.1)" }}>
           <MapPinIc size={21} />
         </button>
@@ -880,7 +884,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                  Rand. */
               position: "absolute", left: vpLeft + frameX, top: vpTop + padTop,
               width: frameW, height: frameH,
-              borderRadius: 14, background: "rgba(9,11,16,.95)",
+              /* v1.0.10 (Besitzer): DERSELBE RADIUS wie die Kapitelkarte (Z.402),
+                 nicht mehr der harte 14er aus der Vollbild-Zeit. */
+              borderRadius: Math.min(22, frameW / 12), background: "rgba(9,11,16,.95)",
               border: "1px solid rgba(167,139,250,.62)",
               boxShadow: "0 10px 34px rgba(0,0,0,.5), 0 0 12px rgba(124,58,237,.28)" }}>
             <div data-world-frame onClick={(e) => e.stopPropagation()} style={{ position: "relative",
@@ -891,8 +897,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               <button onClick={() => { setWorldSel(null); setWorld(false); }} title={t("camp.zoomIn")}
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 8, cursor: "pointer",
                   width: 38, height: 38, borderRadius: "50%", display: "grid", placeItems: "center",
-                  background: "rgba(8, 11, 20, .55)", border: "1px solid rgba(233, 210, 150, .42)",
-                  boxShadow: "0 2px 10px rgba(0,0,0,.4)",
+                  /* v1.0.10 (Besitzer): Zurueck auf der Weltkarte in LILA,
+                     passend zum Rahmen der Karte selbst. */
+                  background: "rgba(8, 11, 20, .55)", border: "1px solid rgba(178,150,255,.62)",
+                  boxShadow: "0 2px 10px rgba(0,0,0,.4), 0 0 10px rgba(124,58,237,.30)",
                   backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
                 <BackIc size={20} />
               </button>

@@ -29,12 +29,12 @@ const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
 /** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
  *  so no bottom-anchoring, no hp padding, no badge chrome. */
-function TileArt({ kind, size, hero = false, level = 1 }) {
+function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
   /* v0.83: im schlichten Stil zeichnet ueberall dieselbe Hand - auch hier,
      nicht nur auf dem Brett. Sonst sitzt man vor einem Zwitter aus schlichtem
      Brett und gemaltem Hofstaat. */
-  if (schlichtAn()) return <PieceArt kind={kind} size={size ?? "100%"} level={level} hero={hero} />;
-  const src = paintedForPiece({ kind, color: "w", hero, level });
+  if (schlichtAn()) return <PieceArt kind={kind} size={size ?? "100%"} level={level} hero={hero} bossId={bossId} />;
+  const src = paintedForPiece({ kind, color: "w", hero, level, bossId });
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
         objectPosition: "center center", filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
@@ -642,14 +642,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   </Panel>;
 }
 
-const SlotGlyph = ({ kind, size = 29, art = "painted" }) => (
+const SlotGlyph = ({ kind, size = 29, art = "painted", hero = false, level = 1, bossId = null }) => (
   // DER DECKEL DER HUELLE: die Groesse mass sich per 9vw am VIEWPORT, nicht an
   // der Zelle - bei 320 px standen Glyphe+Beschriftung 39 px in einer 35-px-
   // Zelle (gemessen, pruefe-textfluss: +0x4px an acht Knoepfen). maxHeight
   // beisst nur, wenn es eng wird; die Glyphe darin passt sich ein (gg-fit-svg).
   <span className="gg-fit-svg" style={{ width: typeof size === "number" ? size : size, height: typeof size === "number" ? size : size,
     maxWidth: "100%", maxHeight: "100%" }}>
-    <TileArt kind={kind} size={typeof size === "number" ? size : undefined} />
+    <TileArt kind={kind} size={typeof size === "number" ? size : undefined} hero={hero} level={level} bossId={bossId} />
   </span>
 );
 
@@ -808,8 +808,14 @@ function FormationEditor({ profile, dispatch, t, en }) {
       // the block swallows the two pawns standing in front of the dragon's 2x2
       const dragonPawns = dragonAt === 0 ? [0, 1] : dragonAt === draft.length - 1 ? [draft.length - 2, draft.length - 1] : [];
       const gLvl = characterLevel(profile, "gambit") || 1;
-      const gImg = paintedById("gambit-t" + gambitTier(gLvl)) || paintedById("gambit");
-      const pawnImg = paintedById("pawn");
+      /* v1.0.10 (Besitzer): der SCHLICHTE Stil gilt auch hier. Bisher zeigte
+         die Aufstellung den Gambit (und die Bauern) IMMER gemalt, weil sie
+         direkt in die Galerie griff, ohne den Schalter zu fragen - der eine
+         Zwitter, den v0.83 ueberall sonst abgeschafft hat. Ohne Gemaelde
+         faellt jede Kachel auf SlotGlyph zurueck, das schlicht zeichnet. */
+      const schlicht = schlichtAn();
+      const gImg = schlicht ? null : (paintedById("gambit-t" + gambitTier(gLvl)) || paintedById("gambit"));
+      const pawnImg = schlicht ? null : paintedById("pawn");
       return <div style={{ position: "relative" }}>
       {/* ── THE PAWN RANK (front): ordinary pawns, save the Grand Gambit on his
           chosen file. Tap it to move him. Squares the dragon covers go dark. ── */}
@@ -828,9 +834,13 @@ function FormationEditor({ profile, dispatch, t, en }) {
               ? <span style={{ fontSize: "clamp(10px, 3.6vw, 16px)", opacity: 0.5, color: "#b9a6e6" }}>🜁</span>
               : (isHero ? gImg : pawnImg)
               ? <img src={isHero ? gImg : pawnImg} alt="" draggable={false}
-                  style={{ height: "clamp(20px, 8vw, 66px)", objectFit: "contain", objectPosition: "bottom", pointerEvents: "none",
+                  /* v1.0.10: DECKEL DER HUELLE - die 8vw massen sich am
+                     Schirm, nicht an der Zelle; auf breiten Karten ragte die
+                     Figur ueber den Kachelrand. max 100% beisst nur im Notfall. */
+                  style={{ height: "clamp(20px, 8vw, 66px)", maxWidth: "100%", maxHeight: "100%",
+                    objectFit: "contain", objectPosition: "bottom", pointerEvents: "none",
                     filter: isHero ? "drop-shadow(0 1px 3px rgba(201,164,92,.5))" : "none" }} />
-              : <SlotGlyph kind="P" size={"clamp(26px, 10vw, 84px)"} art={"painted"} />}
+              : <SlotGlyph kind="P" size={"clamp(26px, 10vw, 84px)"} hero={isHero} level={gLvl} />}
             {isHero && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 8, fontWeight: 800,
               color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>★</span>}
           </button>;
@@ -858,8 +868,11 @@ function FormationEditor({ profile, dispatch, t, en }) {
               : isDragon
               ? null /* drawn by the overlay */
               : isBossEntry(id)
-              ? <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                  style={{ height: "clamp(24px, 9.6vw, 78px)", objectFit: "contain", pointerEvents: "none" }} />
+              ? (schlicht
+                ? <SlotGlyph kind="X" bossId={bossEntryId(id)} size={"clamp(26px, 10vw, 84px)"} />
+                : <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
+                    style={{ height: "clamp(24px, 9.6vw, 78px)", maxWidth: "100%", maxHeight: "100%",
+                      objectFit: "contain", pointerEvents: "none" }} />)
               : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(30px, 12.5vw, 100px)"} art={"painted"} />}
           </button>;
         })}
@@ -867,7 +880,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
       {/* ── THE DRAGON: one big sprite centred over its 2x2 block (the anchor +
           wing in the back rank, and the two pawn squares above them) ── */}
       {dragonAt >= 0 && (() => {
-        const dImg = paintedById("dragon");
+        const dImg = schlichtAn() ? null : paintedById("dragon");
         // columns the block spans (anchor + neighbour, inward)
         const c0 = dragonAt === 0 ? 0 : draft.length - 2;
         // left edge in %, block is 2 columns wide of `map.w`
