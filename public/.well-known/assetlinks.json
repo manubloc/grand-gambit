@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "win.grandgambit.app",
+    "sha256_cert_fingerprints": [
+      "ERSETZE-MICH:SIEHE-design/PLAYSTORE.md:PLAY-CONSOLE:APP-SIGNATUR:SHA-256"
+    ]
+  }
+}]

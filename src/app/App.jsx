@@ -41,7 +41,6 @@ import karteSchnell from "./ui/assets/karten/karte-schnell.webp";
 import karteOnline from "./ui/assets/karten/karte-online.webp";
 import karteAkademie from "./ui/assets/karten/karte-akademie.webp";
 import { AkademieScreen } from "./ui/screens/AkademieScreen.jsx";
-import { InstallBanner } from "./ui/InstallBanner.jsx";
 
 // DIE GEMALTEN WAPPEN DER DREI WEGE. Kein Vektor-Siegel - der Besitzer will
 // die gemalten Bilder, und zwar in der Fassung der jeweiligen Livree: crestArt
@@ -703,7 +702,13 @@ export default function App() {
       {/* die Melodie des Hauses - abschaltbar unter Profil */}
       <Soundtrack an={profile.sound !== false} laut={profile.musikLaut ?? 1} />
       <KlangRegie an={profile.sfx !== false} laut={profile.klangLaut ?? 1} />
-      {!immersive && <InstallBanner en={profile.lang === "en"} />}
+      {/* v1.0.6 (Besitzer, auf dem Weg in den Play Store): das automatische
+          Installations-Banner ist FORT. Wer die App will, holt sie aus dem
+          Store; Web-Spieler finden den stillen Weg weiter unter Profil ->
+          "Als App" (der sich in der installierten App selbst versteckt). Ein
+          aufpoppender "Installieren"-Knopf wirkt neben einem Store-Eintrag
+          unfertig - und genau dieses Banner war es, das der Besitzer weg
+          haben wollte. */}
       {(!immersive || mapView) && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9,
           padding: "0 10px calc(10px + env(safe-area-inset-bottom))", pointerEvents: "none" }}>
@@ -1074,9 +1079,15 @@ export function GameIntro({ t, dispatch, onStart }) {
           <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.diffHint")}</div>
           <div style={{ fontSize: 11.5, color: T.dim, lineHeight: 1.45, marginTop: 12 }}>{t("setup.lead")}</div>
         </div>
-        <button onClick={() => {
+        <button disabled={!name.trim()} onClick={() => {
+            /* v1.0.6: DER NAME IST PFLICHT. Vorher liess der Knopf auch ein
+               geleertes Feld durch - dann fing zwar der NamensRuf den Spieler
+               gleich danach ab, aber zwei Blaetter fuer eine Frage sind eins
+               zu viel. Das Feld kommt vorbefuellt, der Wuerfel liegt daneben:
+               niemand muss dichten, aber leer geht es nicht hinein. */
             const n = name.trim();
-            if (n) dispatch({ type: "SET_NAME", name: n });
+            if (!n) return;
+            dispatch({ type: "SET_NAME", name: n });
             dispatch({ type: "SET_PIECE_STYLE", style });
             dispatch({ type: "SET_DIFFICULTY", difficulty: diff });
             dispatch({ type: "SET_NOTICE", key: "intro" }); onStart && onStart();
@@ -1084,7 +1095,7 @@ export function GameIntro({ t, dispatch, onStart }) {
           style={{ marginTop: 15, width: "100%", padding: "12px 14px", borderRadius: 10,
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
-            cursor: "pointer", letterSpacing: ".04em" }}>{t("setup.go")}</button>
+            cursor: "pointer", letterSpacing: ".04em", opacity: name.trim() ? 1 : 0.55 }}>{t("setup.go")}</button>
       </div>
     </div>
   );
