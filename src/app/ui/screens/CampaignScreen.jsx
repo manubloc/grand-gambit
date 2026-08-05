@@ -107,6 +107,13 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
     dispatch({ type: "REPLACE", profile: { ...profile,
       gesehen: { ...alt, kapitelIntro: [...(alt.kapitelIntro || []), league] } } });
     setIntro(null);
+    /* Der Schirm hat waehrend des Einstiegs nichts messen koennen - erst
+       jetzt gibt es einen Kartenbereich. Zwei Anlaeufe, weil der erste noch
+       im selben Bild liegt und der Browser die Masse dann erst rechnet. */
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event("resize"));
+      setTimeout(() => window.dispatchEvent(new Event("resize")), 120);
+    });
   };
   // league selector: look back at worlds already mastered — view-only; the
   // journey itself (status, wanderer, panel) always lives in the CURRENT league

@@ -83,19 +83,25 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           an und aus. Zwei getrennte Regler, weil Musik und Spielklaenge
           verschieden empfunden werden: viele wollen die Musik leise im
           Hintergrund, die Zuege aber deutlich hoeren. */}
-      {[["musikLaut", "profile.musicVolume", "Musik", profile.sound !== false],
-        ["klangLaut", "profile.sfxVolume", "Klänge", profile.sfx !== false]].map(([schl, sch, wort, an]) => (
-        <div key={schl} style={{ opacity: an ? 1 : 0.42, margin: "12px 0 0" }}>
+      {/* v1.0.2 (Besitzer): EIN Regler je Klangart - kein zusaetzlicher
+          Schalter mehr. Ganz nach links heisst aus; das ist dieselbe
+          Handlung an derselben Stelle statt zweier Bedienelemente, die
+          dasselbe meinen. */}
+      {[["musikLaut", "sound", "Musik"], ["klangLaut", "sfx", "Klänge"]].map(([schl, schalter, wort]) => {
+        const wert = profile[schl] ?? 1;
+        return (
+        <div key={schl} style={{ margin: "12px 0 0" }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: T.faint, marginBottom: 4 }}>
-            <span>{wort}</span><span>{Math.round((profile[schl] ?? 1) * 100)} %</span>
+            <span>{wort}</span>
+            <span style={{ color: wert <= 0 ? T.faint : T.dim }}>{wert <= 0 ? "aus" : Math.round(wert * 100) + " %"}</span>
           </div>
-          <input type="range" min="0" max="100" step="5" disabled={!an}
-            value={Math.round((profile[schl] ?? 1) * 100)}
-            onChange={(e) => dispatch({ type: "REPLACE",
-              profile: { ...profile, [schl]: Number(e.target.value) / 100 } })}
-            style={{ width: "100%", accentColor: T.gold }} />
-        </div>
-      ))}
+          <input type="range" min="0" max="100" step="5"
+            value={Math.round(wert * 100)}
+            onChange={(e) => { const v = Number(e.target.value) / 100;
+              dispatch({ type: "REPLACE", profile: { ...profile, [schl]: v, [schalter]: v > 0 } }); }}
+            className="gg-regler" style={{ width: "100%" }} />
+        </div>);
+      })}
       <div style={{ fontSize: 12, color: T.faint, margin: "14px 0 6px" }}>{t("profile.pieceStyle")}</div>
       <Segmented value={profile.pieceStyle === "svg" ? "svg" : "painted"}
         onChange={(v) => dispatch({ type: "REPLACE", profile: { ...profile, pieceStyle: v } })}

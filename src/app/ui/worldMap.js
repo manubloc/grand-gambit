@@ -35,15 +35,15 @@ export const LEAGUE_LORE = {
   // zurückkehrte. Vesna, die Namen aufschrieb, die niemand mehr sprechen darf.
   // Alle anderen sind Nebenwirkungen derselben Wunde.
   1: {
-    de: "Auf den Heimfeldern des Kronlands gewann König Osric einen Krieg, den er nicht gewinnen konnte: Er öffnete den Riss und bot ihm Diener statt Soldaten. Der Riss stellte eine einzige Bedingung — er nimmt zuerst den Namen, dann den Menschen. Seither heißt das Opfer der Krone nur noch: der Gambit. In jener Nacht begann eine junge Seherin ein verbotenes Verzeichnis — jeden Namen, den niemand mehr aussprechen darf.",
+    de: "Hier begann alles. König Osric stand vor einer Schlacht, die er nicht gewinnen konnte — und öffnete den Riss. Der Riss gab ihm Diener. Dafür nahm er jedem zuerst den Namen. Seither heißt das Opfer der Krone nur noch: der Gambit.",
     en: "On the home fields of the Kronland King Osric won a war he could not win: he opened the rift and offered it servants instead of soldiers. The rift set a single condition — it takes the name first, then the man. Ever since, the Crown's sacrifice bears one title only: the Gambit. That night a young seeress began a forbidden register — every name no one may speak again.",
   },
   2: {
-    de: "Im Weizen hält der Richter Gericht, im Namen eines Hofes, den es nicht mehr gibt. Doch seit einem Sommer liegen Freisprüche in seinen Akten, gezeichnet mit einem Namen, den keine Akte kennt: Asra. Der Richter hat das Blatt verbrannt. Die Asche, sagt man, buchstabiert ihn noch.",
+    de: "Das Korn steht hoch und niemand erntet es. Die Höfe sind leer, die Wege ausgefahren. Wer hier durchzieht, wird beobachtet — von etwas, das früher Bauern waren.",
     en: "In the wheat the Judge holds court, in the name of a court that no longer exists. Yet since one summer his files hold acquittals, signed with a name no file contains: Asra. The Judge burned the page. The ash, they say, still spells it.",
   },
   3: {
-    de: "Zwei Leiber, ein Schwur: Der Doppelritter leistete ihn dem letzten Gambit — Treue bis ans Tor, und keinen Schritt weiter hinab. Einer der beiden erinnert sich an ihre Stimme, keiner an den Namen. So bewacht der Schwur ein Tor und weiß nicht mehr, für wen. Im Bernsteinlaub, heißt es, wenden sich Eide wie Blätter.",
+    de: "Der Eichwald ist älter als das Königreich. Zwischen den Wurzeln liegt Nebel, der nicht weichen will. Man sagt, die Bäume hätten gesehen, was in jener Nacht geschah, und schwiegen seither.",
     en: "Two bodies, one vow: the Twin Knight swore it to the last Gambit — loyalty to the gate, and not one step further down. One of them remembers her voice, neither recalls the name. So the vow guards a gate and no longer knows for whom. In the amber leaves, they say, oaths turn like foliage.",
   },
   4: {

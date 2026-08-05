@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 1.0.2
+
+- KARTE SASS NACH DEM EINSTIEG VERSETZT: solange der Einstieg oben liegt,
+  gibt der Kampagnenschirm ihn STATT der Karte zurueck - die Messpunkte
+  (Kartenbereich, Kamera, Rahmenhoehe) sind darum noch leer. Fiel der
+  Einstieg weg, rendert die Karte mit diesen alten Werten und sass zu hoch,
+  bis zur naechsten Messung. Jetzt wird nach dem Einstieg zweimal neu
+  vermessen (naechstes Bild und 120 ms danach, weil der Browser die Masse
+  erst dann kennt).
+- EIN REGLER STATT SCHALTER UND REGLER: Lautstaerke und Ein/Aus sassen an
+  verschiedenen Stellen und meinten dasselbe. Jetzt genuegt ein Regler je
+  Klangart - ganz nach links heisst "aus", und der Schalter wird
+  mitgefuehrt.
+- Die Regler tragen die Hausfarbe: violette Bahn, violette Kugel mit
+  Schimmer statt des goldenen Systemreglers.
+- KAPITELTEXTE I-III EINFACHER: kurze Saetze, klare Worte, kein Verschachteln
+  ueber drei Zeilen.
+
 ## 1.0.1
 
 DIE OFFENEN KLEINIGKEITEN

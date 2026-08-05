@@ -114,6 +114,18 @@ style.textContent = GLOBAL_CSS + `
   html[data-gg-popup="1"] .gg-install-banner { display: none !important; }
   /* v0.98: die langsame Fahrt ueber das Kapitelbild - kaum merklich, aber
      genug, damit das Bild lebt statt zu stehen. */
+  /* v1.0.2: die Regler tragen die Hausfarbe - violette Bahn, violette Kugel. */
+  .gg-regler { -webkit-appearance: none; appearance: none; height: 26px; background: transparent; }
+  .gg-regler::-webkit-slider-runnable-track { height: 6px; border-radius: 99px;
+    background: linear-gradient(90deg, #7c3aed, #a78bfa); border: 1px solid rgba(167,139,250,.55); }
+  .gg-regler::-moz-range-track { height: 6px; border-radius: 99px;
+    background: linear-gradient(90deg, #7c3aed, #a78bfa); border: 1px solid rgba(167,139,250,.55); }
+  .gg-regler::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e9defd, #a78bfa 60%, #6d28d9);
+    border: 1.5px solid #c4b5fd; box-shadow: 0 0 8px rgba(139,92,246,.7); cursor: pointer; }
+  .gg-regler::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #e9defd, #a78bfa 60%, #6d28d9);
+    border: 1.5px solid #c4b5fd; box-shadow: 0 0 8px rgba(139,92,246,.7); cursor: pointer; }
   @keyframes ggKenBurns {
     from { transform: scale(1.06) translate3d(-1.2%, 1%, 0); }
     to   { transform: scale(1.16) translate3d(1.2%, -1.4%, 0); }
