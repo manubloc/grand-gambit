@@ -393,9 +393,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // the "drifts too far, then snaps into place" glitch. One source of truth now.
   const bigScreen = typeof innerWidth !== "undefined" && innerWidth >= 640;
   const pieceLift = artStyle === "svg" ? "-2%" : bigScreen ? "-10%" : "-13%";
+  /* v1.0.9 (Besitzer): "alle Figuren bitte wieder groesser" - der
+     Brett-Umbau hatte sie optisch schrumpfen lassen. +9 % auf beide Stile
+     und beide Klassen; gilt fuers Gefecht UND das klassische Schach, denn
+     beide zeichnen durch dieses Blatt. */
   const pieceFont = (kind) => artStyle === "svg"
-    ? (kind === "P" ? "0.84em" : "1.0em")
-    : (kind === "P" ? "0.98em" : "1.16em");   // the court stands a touch larger now
+    ? (kind === "P" ? "0.92em" : "1.09em")
+    : (kind === "P" ? "1.07em" : "1.26em");
   const PIECE_ORIGIN = "50% 72%";
 
   const cells = [];

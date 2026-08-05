@@ -472,7 +472,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
-          : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 94 : 68} /></div>}
+          : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
         {/* the vector twin, riding the top-right corner of the plate: the same
             shape the board draws, so painting and silhouette are learned as
             one figure. Bare — no ring, no frame. */}
@@ -642,7 +642,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   </Panel>;
 }
 
-const SlotGlyph = ({ kind, size = 26, art = "painted" }) => (
+const SlotGlyph = ({ kind, size = 29, art = "painted" }) => (
   // DER DECKEL DER HUELLE: die Groesse mass sich per 9vw am VIEWPORT, nicht an
   // der Zelle - bei 320 px standen Glyphe+Beschriftung 39 px in einer 35-px-
   // Zelle (gemessen, pruefe-textfluss: +0x4px an acht Knoepfen). maxHeight
