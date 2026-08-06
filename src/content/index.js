@@ -9,6 +9,7 @@ export { MAPS, mapById, validateMap, inMap, isHole, holeSet, mapIdx, playableCou
 export { BOSSES, bossById, LEAGUE_BOSSES, leagueBossId, bossName, bossSpec } from "./bosses.js";
 
 export { ITEMS, ITEM_LIST, hasItem, buyItem, itemPrice } from "./items.js";
+export { PLACE_EN, placeEn } from "./placeNamesEn.js";
 export { VOICES, voiceFor } from "./voices.js";
 
 export { TIME_MODES, timeModeById, timeModeKey, clockFor } from "./timeModes.js";

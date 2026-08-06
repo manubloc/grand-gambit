@@ -703,7 +703,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                       color: th.sea ? "#fbf6e8" : "#231d10",
                       lineHeight: 0.94, textShadow: th.sea
                         ? "0 1px 2px rgba(6,20,34,.95), 0 0 4px rgba(6,20,34,.85), 0 0 1px rgba(6,20,34,1)"
-                        : `0 0 7px rgba(${labelTint(viewLeague)},.95), 0 0 3px rgba(${labelTint(viewLeague)},.9), 0 1px 1px rgba(${labelTint(viewLeague)},.55)` }}>{placeFor(n, viewLeague)}</span>
+                        : `0 0 7px rgba(${labelTint(viewLeague)},.95), 0 0 3px rgba(${labelTint(viewLeague)},.9), 0 1px 1px rgba(${labelTint(viewLeague)},.55)` }}>{placeFor(n, viewLeague, en)}</span>
                   </span>
                 </div>
               </div>
@@ -1027,7 +1027,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
           // Titels wird gekappt statt zusaetzlich gepolstert.
           padding: "9px 13px 13px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span className="gg-serif" style={{ fontSize: 15.5, fontWeight: 700 }}>{placeFor(node, viewLeague)}</span>
+            <span className="gg-serif" style={{ fontSize: 15.5, fontWeight: 700 }}>{placeFor(node, viewLeague, en)}</span>
             <span style={{ fontSize: 11, color: PP.dim }}>{en ? mapById(effectiveMap(node, viewLeague)).nameEn : mapById(effectiveMap(node, viewLeague)).nameDe}</span>
             <div style={{ flex: 1 }} />
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
@@ -1058,7 +1058,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               {BRANCHES[br][en ? "nameEn" : "nameDe"]}</div> : null;
           })()}
           <div style={{ display: "flex", alignItems: "flex-start", gap: 7 }}>
-            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.0, marginTop: -1 }}>{node ? placeFor(node, league) : ""}</div>
+            <div className="gg-quill" style={{ fontSize: 20, color: PP.ink, flex: 1, minWidth: 0, lineHeight: 1.0, marginTop: -1 }}>{node ? placeFor(node, league, en) : ""}</div>
             <button onClick={() => setPanelOpen(false)} aria-label="Close" style={{ background: "none", border: "none",
               color: PP.dim, fontSize: 15, cursor: "pointer", padding: "0 0 0 6px", fontFamily: "inherit", lineHeight: 1, flex: "0 0 auto" }}>✕</button>
           </div>

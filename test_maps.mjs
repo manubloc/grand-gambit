@@ -65,5 +65,27 @@ ok("validateMap rejects a bad width", validateMap({ w: 8, h: 8, holes: [], back:
   ok("a played station reveals its figure", faced(withFaced(["L07s41"]), "L07s41") === true);
 }
 
+
+// ── DIE ORTSNAMEN AUF ENGLISCH (v1.0.15, Besitzer) ──────────────────────────
+import { PLACE_EN, placeEn } from "./src/content/placeNamesEn.js";
+import { placeFor as _pfEn } from "./src/meta/index.js";
+{
+  const orte = [...new Set(CAMPAIGN.map((n) => n.place).filter(Boolean))];
+  const ohne = orte.filter((o) => !PLACE_EN[o]);
+  ok("every station carries an english name", ohne.length === 0);
+  if (ohne.length) console.log("   ohne Englisch:", ohne.slice(0, 8).join(", "));
+  const en = orte.map((o) => PLACE_EN[o]);
+  ok("no english name repeats", new Set(en).size === en.length);
+  // Kein Name darf versehentlich deutsch geblieben sein
+  const deutsch = en.filter((x) => /[\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc]/.test(x)
+    || /\b(der|die|das|und|im|bei|wo)\b/.test(x));
+  ok("no german left in the english names", deutsch.length === 0);
+  if (deutsch.length) console.log("   noch deutsch:", deutsch.slice(0, 8).join(", "));
+  const wacht = CAMPAIGN.find((n) => n.place === "Alte Wacht");
+  ok("placeFor speaks both tongues",
+    _pfEn(wacht) === "Alte Wacht" && _pfEn(wacht, 1, true) === "Old Watch");
+  ok("an unknown name survives instead of vanishing", placeEn("Nirgendwo") === "Nirgendwo");
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 1.0.15
+
+- DIE STATIONEN SPRECHEN ENGLISCH: alle 529 Ortsnamen der zwoelf Kapitel
+  haben jetzt einen englischen Namen - bisher stand im englischen Spiel
+  mitten im Satz "Wo die Sense ruht". Uebersetzt ist nach KLANG, nicht
+  Wort fuer Wort: ein Ortsname muss auf einer Karte stehen koennen.
+  "Zehntwacht" wird "Tithe Watch", nicht "Tenth Guard"; die
+  "Windfluechter" werden "The Windshaped". Eigennamen der Chronik -
+  Osric, Asra, Vesna - bleiben stehen.
+- Gebaut als KARTE (deutscher Name -> englischer), nicht als zweite
+  Namensliste: die Namen stehen fest im Kampagnen-Generat, eine parallele
+  Liste muesste Zeile fuer Zeile in Deckung bleiben und wuerde beim
+  ersten Verrutschen Stationen vertauschen, ohne dass es auffaellt.
+- Fuenf Proben halten es fest: jede Station hat einen englischen Namen,
+  keiner doppelt sich, keiner ist versehentlich deutsch geblieben,
+  placeFor spricht beide Sprachen, und ein unbekannter Name bleibt
+  stehen statt zu verschwinden.
+
 ## 1.0.14
 
 - DER RUCKLER BEIM ZIEHEN IST FORT. Der Flug zeichnet eine zweite Figur

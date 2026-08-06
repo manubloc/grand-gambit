@@ -4,6 +4,7 @@
 // node always is). Clearing a piece-boss node unlocks that piece — the only way
 // to gain new pieces. XP is a spendable currency for upgrades (leveling.js).
 import { PLACE_NAMES } from "../content/placeNames.js";
+import { placeEn } from "../content/placeNamesEn.js";
 import { CAMPAIGN, nodeById, difficultyById, mapById, bossById, bossSpec, CHARACTERS, leagueBossId } from "../content/index.js";
 import { buildArmyFromFormation, resolveCharacter, spForXpJump, isUnlocked } from "./leveling.js";
 import { hasItem } from "../content/items.js";
@@ -146,8 +147,12 @@ export function nodeBossSpec(node, league = 1) {
  *  each set hand-written from that biome's lore (see content/placeNames.js). */
 /** Seit den zwoelf Graphen traegt jede Station ihren festen eigenen Namen -
  *  Weltdurchlaeufe benennen nichts mehr um. */
-export function placeFor(node) {
-  return node?.place || "";
+export function placeFor(node, _lg, en = false) {
+  /* v1.0.15 (Besitzer): DIE STATIONEN SPRECHEN ENGLISCH. Der zweite
+     Parameter ist historisch (Liga) und wird nicht mehr gebraucht - er
+     bleibt in der Signatur, damit die bestehenden Aufrufe stimmen. */
+  const de = node?.place || "";
+  return en ? placeEn(de) : de;
 }
 
 export function effectiveNodeBoss(node, lg) {
