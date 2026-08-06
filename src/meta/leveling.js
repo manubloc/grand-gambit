@@ -396,11 +396,19 @@ const SEERS = ["seeress", "hawk"];
 export function hasForesight(profile, map, rules = null) {
   if (!profile || !map || rules === "chess") return false; // pure chess has no seers
   const owned = unlockedCharacterIds(profile);
-  const saved = profile?.loadout?.formations?.[map.id];
+  const saved = profile?.loadout?.formations?.[formationKey(map.id, rules)] || profile?.loadout?.formations?.[map.id];
   const ok = saved && formationLegalOn(saved, owned, map, ownedLeagueBosses(profile));
   const formation = ok ? saved : map.defaultFormation;
   return SEERS.some((id) => owned.includes(id) && formation.includes(id));
 }
+
+/** v1.0.20 (Besitzer): ZWEI PLAENE JE BRETT. Eine Aufstellung fuer das reine
+ *  Schach und eine fuer das HP-Gefecht sind wirklich zwei verschiedene Plaene:
+ *  im Schach zaehlt die Gangart, im Gefecht zaehlen Lebenspunkte, Reichweite
+ *  und Faehigkeiten. Wer beides in denselben Speicher zwingt, baut nach jedem
+ *  Wechsel neu. Der Schluessel bleibt fuer HP der blanke Kartenname - so
+ *  finden alle alten Spielstaende ihre Aufstellung unveraendert wieder. */
+export const formationKey = (mapId, rules) => rules === "chess" ? `${mapId}#chess` : mapId;
 
 export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   // Combat strength follows the RULESET, not the board: pure CHESS means
@@ -417,7 +425,9 @@ export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   // that is legal here. This keeps your arrangement from silently vanishing.
   const forms = profile?.loadout?.formations || {};
   const legalHere = (f) => f && formationLegalOn(f, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
-  let saved = forms[map.id];
+  /* Erst der Plan fuer DIESES Regelwerk; fehlt er, gilt der des anderen -
+     eine vorhandene Aufstellung ist immer besser als die Werkseinstellung. */
+  let saved = forms[formationKey(map.id, rules)] || forms[map.id];
   if (!legalHere(saved)) {
     saved = null;
     for (const [mid, f] of Object.entries(forms)) {

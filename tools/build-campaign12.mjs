@@ -67,7 +67,15 @@ const MAPS = ["classic", "skirmish", "courtyard", "gauntlet", "arena"];
 // Lebenstrank (der Laden zeigt ihn vorher nicht, siehe meta/campaign.js).
 // Nebenaeste folgen ihrem Ankerpunkt am Hauptast - ein Abstecher aus der
 // Schachhaelfte bleibt Schach.
-const HP_AB_ANTEIL = 0.5;
+/* v1.0.20 (Besitzer): DAS ERWACHEN RUECKT NACH KAPITEL II.
+   Bisher fiel der erste Schaden schon auf halber Strecke durch Kapitel I -
+   also mitten in der Stunde, in der man ueberhaupt erst begreift, dass die
+   Figuren anders ziehen als im Schach. Zwei neue Sachen auf einmal sind eine
+   zu viel. Kapitel I ist jetzt REINES SCHACH: neue Figuren, neue Gangarten,
+   sonst nichts. Der Riss beisst erst auf halbem Weg durch Kapitel II - und
+   trifft dann auf jemanden, der das Brett schon liest. */
+const HP_AB_LIGA = 2;          // in diesem Kapitel faellt der erste Schaden
+const HP_AB_ANTEIL = 0.5;      // und zwar ab der Haelfte seines Hauptasts
 
 // Liga I hat keinen Block in placeNames - ihre Orte leben in der alten
 // 51-Knoten-Kampagne. Liga XII ist neu und bekommt hier ihren Meerespool.
@@ -161,11 +169,19 @@ SLOTS.forEach(([key, name, roman], si) => {
   const namen = namenFuer(roman, pk.length, liga, haupt);
   const H = haupt.length;
   const schwer = Math.max(0, Math.round((30 - H) / 8));   // kurzer Hauptast = schwerer
-  const hpAb = liga === 1 ? Math.round(H * HP_AB_ANTEIL) : 0;  // Hauptast-Rang, ab dem HP gilt
+  let hpAb = liga === HP_AB_LIGA ? Math.round(H * HP_AB_ANTEIL) : 0;  // Hauptast-Rang, ab dem HP gilt
 
   const figuren = (HAUPTFIGUR[liga] || []).map(([f, a]) => [haupt[Math.min(H - 1, Math.round(a * (H - 1)))], f]);
   const figAt = Object.fromEntries(figuren);
   const mitteAt = haupt[Math.round(0.3 * (H - 1))];
+  /* v1.0.20: DAS ERWACHEN BRAUCHT EINE FREIE STATION. Faellt der berechnete
+     Rang auf eine, die schon eine Figur oder den Mitte-Boss traegt, gewinnt
+     dort der andere Boss und das Erwachen verschwindet spurlos - genau das
+     passierte beim ersten Anlauf. Also weicht es nach hinten aus, bis eine
+     Station frei ist. */
+  if (hpAb) {
+    while (hpAb < H - 2 && (figAt[haupt[hpAb]] || haupt[hpAb] === mitteAt)) hpAb++;
+  }
   const nebenPool = NEBENFIGUR[liga] ? [NEBENFIGUR[liga]] : [];
   // Die Nebenfigur sitzt GENAU EINMAL: am tiefsten Punkt des laengsten Asts.
   const astNachLen = Object.entries(astLen).sort((a, b) => b[1] - a[1]);
@@ -215,7 +231,9 @@ SLOTS.forEach(([key, name, roman], si) => {
       map: MAPS[(rang ?? i) % MAPS.length],
       chapter: phase + 1,
       haupt: imHaupt || undefined,
-      rules: liga === 1 && ankerRang < hpAb ? "chess" : "hp",
+      /* Schach gilt in allen Kapiteln VOR dem Erwachen, und im Kapitel des
+         Erwachens bis zu dessen Station. */
+      rules: (liga < HP_AB_LIGA || (liga === HP_AB_LIGA && ankerRang < hpAb)) ? "chess" : "hp",
       difficulty: imHaupt
         ? (rang < H * 0.3 ? "easy" : rang < H * 0.7 ? "normal" : "hard")
         : (len >= 4 ? "hard" : "normal"),
@@ -239,14 +257,14 @@ SLOTS.forEach(([key, name, roman], si) => {
       } else if (figAt[i]) {
         n.boss = { piece: figAt[i], wins: liga >= 7 ? 2 : 1 };
         n.tier = Math.min(4, 1 + Math.floor(liga / 4) + schwer);
-      } else if (i === mitteAt && liga > 1) {
-        n.boss = { pure: MITTE[si][0], rotation: MITTE[si] };
-        n.tier = Math.min(4, 1 + Math.floor(liga / 5) + schwer);
-      } else if (liga === 1 && rang === hpAb) {   // das Erwachen: hier faellt der erste Schaden
+      } else if (liga === HP_AB_LIGA && rang === hpAb) {   // DAS ERWACHEN hat Vorrang
         n.boss = { pure: "b01", rotation: ["b01", "b03", "b02"] };
         n.tier = 1;
         n.storyDe = `${ort}: die alte Magie erwacht - Figuren bluten, Figuren halten stand.`;
         n.storyEn = `${ort}: the old magic wakes - pieces bleed, pieces endure.`;
+      } else if (i === mitteAt && liga > 1) {
+        n.boss = { pure: MITTE[si][0], rotation: MITTE[si] };
+        n.tier = Math.min(4, 1 + Math.floor(liga / 5) + schwer);
       }
     } else {
       const b = AST_DE.length;

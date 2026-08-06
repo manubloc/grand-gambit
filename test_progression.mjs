@@ -109,11 +109,18 @@ ok("upgrades raise the retinue score", retinueScore({ ...dp2(), pieces: { levels
 // ── stage clock (v0.4): time pressure begins in league 5, only on SOME nodes ─
 import { stageTimer, buildStageMatch as bsm2 } from "./src/meta/index.js";
 import { nodeById as nb2, CAMPAIGN as CAMPX } from "./src/content/index.js";
-// v0.77: Kapitel I ist bis zur Mitte reines Schach - die erste Monsterstation
-// (das ERWACHEN) sitzt nicht mehr an fester Stelle. Darum wird sie gesucht,
-// statt eine Kennung einzutippen, die beim naechsten Umbau wieder wandert.
-const ERWACHEN = CAMPX.find((n) => n.league === 1 && n.haupt && n.rules === "hp" && n.boss?.pure && !n.final).id;
+// v1.0.20: DAS ERWACHEN IST NACH KAPITEL II GEWANDERT (Besitzer: Kapitel I
+// soll reines Schach bleiben). Deshalb wird es weder an Kennung noch an
+// Kapitel festgemacht, sondern an dem, was es AUSMACHT: die erste
+// Hauptast-Station der ganzen Reise, auf der Schaden faellt.
+/* Das Erwachen wird an seiner ERZAEHLUNG erkannt, nicht an Kapitel oder
+   Kennung: es ist die eine Station, auf der die alte Magie erwacht. */
+const ERWACHEN = CAMPX.find((st) => /erwacht|magic wakes/.test(st.storyDe || "")).id;
 const SCHACHSTATION = CAMPX.find((n) => n.league === 1 && n.haupt && n.rules === "chess" && !n.boss).id;
+ok("chapter I is pure chess from end to end",
+  CAMPX.filter((n) => n.league === 1).every((n) => n.rules === "chess"));
+ok("and the rift bites in chapter II, not before",
+  CAMPX.find((n) => n.rules === "hp").league === 2);
 ok("no clock before league 5", stageTimer(nb2("L01s44"), 4) === null && stageTimer(nb2(ERWACHEN), 1) === null);
 ok("plain stages never get a clock", stageTimer(nb2("L01s00"), 7) === null);
 const tMon = stageTimer(nb2(ERWACHEN), 5);
@@ -253,9 +260,15 @@ ok("nine leagues of income cover the boat (" + income9 + " vs " + boat3.gold + "
   // alte Magie erwacht ist, gibt es Lebenspunkte zu heilen.
   ok("potion still veiled after the first win", !itemRevealed({ campaign: { league: 1, cleared: ["L01s00"] } }, ITEMS.potion));
   {
-    const schachwege = CAMPX.filter((n) => n.league === 1 && n.haupt && n.rules === "chess").map((n) => n.id);
+    /* v1.0.20: Der Trank haengt an needsHp - und Kapitel I hat keine
+       Lebenspunkte mehr. Das ist kein Fehler, sondern der Sinn der Sache:
+       WO NICHTS BLUTET, BRAUCHT NIEMAND EINEN TRANK. Er zeigt sich, sobald
+       das Erwachen geschafft ist. */
+    const ganzKapitelEins = CAMPX.filter((n) => n.league === 1).map((n) => n.id);
+    ok("no potion while chapter I is pure chess",
+      !itemRevealed({ campaign: { league: 1, cleared: ganzKapitelEins } }, ITEMS.potion));
     ok("potion revealed once the old magic wakes",
-      itemRevealed({ campaign: { league: 1, cleared: schachwege } }, ITEMS.potion));
+      itemRevealed({ campaign: { league: 2, cleared: [...ganzKapitelEins, ERWACHEN] } }, ITEMS.potion));
   }
   ok("machete veiled at the start", !itemRevealed(fresh, ITEMS.machete));
   const mid = { campaign: { league: 1, cleared: ["L01s00","L01s01","L01s03","L01s22","L01s23"] } };

@@ -89,7 +89,7 @@ const DE = {
   "game.resignStay": "Weiterspielen",
   "hub.station": "Station {a} von {b}", "hub.nextStop": "Nächster Halt", "hub.soon": "Bald verfügbar",
   "camp.reward": "Bonus", "camp.league": "Das Kapitel", "camp.boss": "Meister", "camp.rival": "Gegner", "camp.newPiece": "Neue Figur", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
-  "army.formation": "Aufstellung", "army.mapPick": "Karte wählen", "army.classicHint": "Das klassische 8×8-Feld — hier darfst du deine Reihe genauso ordnen wie auf jeder Karte. (Im Schnellspiel bleibt Klassik immer die traditionelle Aufstellung.)", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
+  "army.formation": "Aufstellung", "army.planChess": "Schach", "army.planHp": "Gefecht", "army.planHint": "Zwei Pläne, einer je Regelwerk: im Schach zählt die Gangart, im Gefecht zählen Lebenspunkte und Fähigkeiten. Was du hier änderst, gilt nur für den gewählten Plan.", "army.mapPick": "Karte wählen", "army.classicHint": "Das klassische 8×8-Feld — hier darfst du deine Reihe genauso ordnen wie auf jeder Karte. (Im Schnellspiel bleibt Klassik immer die traditionelle Aufstellung.)", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
 };
 const EN = {
@@ -196,7 +196,7 @@ const EN = {
   "game.resignStay": "Keep playing",
   "hub.station": "Stage {a} of {b}", "hub.nextStop": "Next stop", "hub.soon": "Coming soon",
   "camp.reward": "Bonus", "camp.league": "The Chapter", "camp.boss": "Boss", "camp.rival": "Opponent", "camp.newPiece": "New piece", "camp.unknown": "Movement unknown", "camp.back": "Back to campaign", "game.stageCleared": "Stage cleared!",
-  "army.formation": "Formation", "army.mapPick": "Choose a map", "army.classicHint": "The classic 8×8 field — arrange your rank here just like any board. (Quick-play classic always keeps the traditional setup.)", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
+  "army.formation": "Formation", "army.planChess": "Chess", "army.planHp": "Battle", "army.planHint": "Two plans, one per ruleset: chess rewards the stride, battle rewards life points and abilities. What you change here applies only to the chosen plan.", "army.mapPick": "Choose a map", "army.classicHint": "The classic 8×8 field — arrange your rank here just like any board. (Quick-play classic always keeps the traditional setup.)", "army.formationHint": "Arrange your back rank. Tap a square and pick a piece.",
   "army.standard": "Standard", "army.flex": "Flex", "army.invalid": "Formation incomplete",
 };
 

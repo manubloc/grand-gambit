@@ -310,11 +310,23 @@ ok("fresh profile: only classic, no HP", mapUnlocked(fresh, "classic") && !mapUn
 // Schachhaelfte hinter sich hat, sieht Lebenspunkte. Zwei Siegen reicht nicht
 // mehr; der Weg wird darum wirklich gegangen.
 {
-  const schachweg = CAMPAIGN.filter((n) => n.league === 1 && n.haupt && n.rules === "chess");
-  const halb = schachweg.slice(0, 2).reduce((p, n) => advanceCampaign(p, n.id), fresh);
-  ok("hp stays shut through the chess half", !hpUnlocked(halb));
-  const ganz = schachweg.reduce((p, n) => advanceCampaign(p, n.id), fresh);
-  ok("hp opens once the awakening is reachable", hpUnlocked(ganz));
+  /* v1.0.20 (Besitzer): Kapitel I ist GANZ reines Schach, das Erwachen sitzt
+     auf halbem Weg durch Kapitel II. Also bleibt HP durch das ganze erste
+     Kapitel zu - und oeffnet erst, wenn der Weg in Kapitel II bis zur
+     blutenden Station reicht. */
+  const kapEins = CAMPAIGN.filter((n) => n.league === 1 && n.haupt);
+  const halb = kapEins.slice(0, 2).reduce((p, n) => advanceCampaign(p, n.id), fresh);
+  ok("hp stays shut early in chapter I", !hpUnlocked(halb));
+  const nachKapEins = kapEins.reduce((p, n) => advanceCampaign(p, n.id), fresh);
+  ok("hp stays shut through ALL of chapter I", !hpUnlocked(nachKapEins));
+  /* Der Weg nach Kapitel II fuehrt ueber den Meister; statt ihn hier zu
+     schlagen, wird der Stand gesetzt - geprueft wird die HP-Schwelle, nicht
+     die Wegfindung. */
+  const k2chess = CAMPAIGN.filter((n) => n.league === 2 && n.haupt && n.rules === "chess").map((n) => n.id);
+  const bisErwachen = { ...nachKapEins, campaign: { ...nachKapEins.campaign, league: 2,
+    cleared: [...(nachKapEins.campaign.cleared || []), ...k2chess],
+    unlocked: [...(nachKapEins.campaign.unlocked || []), ...k2chess] } };
+  ok("hp opens once the awakening is reachable", hpUnlocked(bisErwachen));
 }
 ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish") && mapUnlocked(prof, "courtyard") && !mapUnlocked(prof, "arena"));
 
@@ -346,6 +358,34 @@ ok("fork maps open with the fork, arena stays shut", mapUnlocked(prof, "skirmish
   ok("league victory grants its boss", owned.includes("b12"));
   ok("a bribed monster fights for you too", owned.includes("b10"));
   ok("no double entries in the ranks", new Set(owned).size === owned.length);
+}
+
+
+// ── ZWEI PLAENE JE BRETT (v1.0.20, Besitzer) ────────────────────────────────
+import { formationKey as _fk, buildArmyForMap as _bafm } from "./src/meta/index.js";
+import { MAPS as _MAPS } from "./src/content/index.js";
+{
+  ok("the hp plan keeps the bare map key", _fk("classic", "hp") === "classic" && _fk("classic", null) === "classic");
+  ok("and chess gets its own", _fk("classic", "chess") === "classic#chess");
+  const karte = _MAPS.find((m) => m.id === "classic");
+  const basis = dp2();
+  const schachPlan = [...karte.defaultFormation];
+  // zwei Plaene, die sich unterscheiden: im Schach-Plan wandert der Turm nach innen
+  const i = schachPlan.findIndex((x) => x === "rook");
+  const j = schachPlan.findIndex((x, k) => k > i && x && x !== "rook" && x !== "king" && x !== "queen");
+  if (i >= 0 && j >= 0) { const t = schachPlan[i]; schachPlan[i] = schachPlan[j]; schachPlan[j] = t; }
+  const prof = { ...basis, loadout: { ...basis.loadout, formations: {
+    classic: [...karte.defaultFormation],
+    "classic#chess": schachPlan,
+  } } };
+  const heerSchach = _bafm(prof, karte, null, "chess");
+  const heerHp = _bafm(prof, karte, null, "hp");
+  const reihe = (h) => h.back.map((sp) => sp && sp.kind).join("");
+  ok("each ruleset builds from its OWN plan", reihe(heerSchach) !== reihe(heerHp));
+  // und ein fehlender Plan faellt auf den vorhandenen zurueck statt auf Werk
+  const nurHp = { ...basis, loadout: { ...basis.loadout, formations: { classic: schachPlan } } };
+  ok("a missing plan falls back to the other, not to the factory",
+    reihe(_bafm(nurHp, karte, null, "chess")) === reihe(_bafm(nurHp, karte, null, "hp")));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

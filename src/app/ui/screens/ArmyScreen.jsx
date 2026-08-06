@@ -9,7 +9,7 @@ import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, 
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
-  formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, ownedLeagueBosses, isBossEntry, bossEntryId, crownSlots,
+  formationKey, formationLegalOn, formationCounts, buildArmyFromFormation, buildAiArmyForMap, hpUnlocked, ownedLeagueBosses, isBossEntry, bossEntryId, crownSlots,
   chosenAbilities, abilityCost, canUnlockAbility, dupeCount, RESPEC_GOLD, heroColFor, mapUnlocked,
   itemRevealed, bossWinsFor, effectiveNodeBoss, nodeStatus, hpWach } from "../../../meta/index.js";
 import { CAMPAIGN } from "../../../content/index.js";
@@ -665,9 +665,14 @@ function FormationEditor({ profile, dispatch, t, en }) {
   // king off his square — and since that square can no longer be edited, the
   // player could never make it legal again. Anything unlawful falls back to
   // the map's own default, which always seats the crown correctly.
-  const loadFormation = (id) => {
+  /* v1.0.20 (Besitzer): ZWEI PLAENE JE BRETT - einer fuers reine Schach, einer
+     fuers HP-Gefecht. Wer zwischen beiden wechselt, baut sonst jedes Mal neu.
+     Solange Kapitel I reines Schach ist, sieht man hier nur den Schach-Plan;
+     die Schiene erscheint erst, wenn das erste Gefecht geschlagen ist. */
+  const [regel, setRegel] = useState("chess");
+  const loadFormation = (id, rl = regel) => {
     const m = mapById(id);
-    const f = profile.loadout.formations?.[id];
+    const f = profile.loadout.formations?.[formationKey(id, rl)] ?? profile.loadout.formations?.[id];
     return f && formationLegalOn(f, unlockedIds, m, ownedLeagueBosses(profile)) ? f : m.defaultFormation;
   };
   const saved = loadFormation(mapId);
@@ -675,7 +680,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
   const [draft, setDraft] = useState(saved);
   const [pick, setPick] = useState(null);
   // Load the selected map's saved formation when the map changes.
-  useEffect(() => { setDraft(loadFormation(mapId)); setPick(null); }, [mapId]); // eslint-disable-line
+  useEffect(() => { setDraft(loadFormation(mapId)); setPick(null); }, [mapId, regel]); // eslint-disable-line
 
   const legal = formationLegalOn(draft, unlockedIds, map, ownedLeagueBosses(profile));
   const changed = JSON.stringify(draft) !== JSON.stringify(saved);
@@ -751,6 +756,16 @@ function FormationEditor({ profile, dispatch, t, en }) {
   return <>
   <Panel>
     <PanelTitle>{t("army.formation")}</PanelTitle>   {/* v1.0.14: der 2er-Zwang faellt, der Grundabstand traegt */}
+    {/* v1.0.20 (Besitzer): ZWEI PLAENE, ABER ERST WENN ES SIE BRAUCHT.
+        Solange die alte Magie schlaeft, gibt es nur Schach - eine Schiene mit
+        einer sinnlosen zweiten Wahl waere blosser Laerm. Sie erscheint an dem
+        Tag, an dem die erste Figur blutet. */}
+    {hpUnlocked(profile) && <>
+      <Segmented value={regel} onChange={setRegel}
+        options={[{ value: "chess", label: t("army.planChess") }, { value: "hp", label: t("army.planHp") }]} />
+      <div style={{ fontSize: 11.5, color: T.faint, margin: "6px 2px 10px", lineHeight: 1.45 }}>
+        {t("army.planHint")}</div>
+    </>}
     {/* v0.52: Aufstellungs-Erklaertext raus - Herald und Akademie tragen das Wissen. */}
     {/* A RESTING FIGHT KEEPS ITS RANKS. Verified: resuming decodes the board
         from its snapshot, so nothing you do here can reach into a match that
@@ -985,7 +1000,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
     </div>
 
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-      <Button variant="primary" disabled={!legal || !changed} onClick={() => dispatch({ type: "SET_FORMATION", mapId, formation: draft })}>{t("common.save")}</Button>
+      <Button variant="primary" disabled={!legal || !changed} onClick={() => dispatch({ type: "SET_FORMATION", mapId, rules: regel, formation: draft })}>{t("common.save")}</Button>
       <Button variant="subtle" onClick={() => setDraft(map.defaultFormation)}>{t("army.standard")}</Button>
     </div>
     {!legal && <div style={{ fontSize: 12, color: T.danger, marginTop: 8 }}>{t("army.invalid")}</div>}

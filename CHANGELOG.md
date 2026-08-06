@@ -1,5 +1,33 @@
 # Changelog - Grand Gambit
 
+## 1.0.20
+
+- KAPITEL I IST JETZT REINES SCHACH, von der ersten bis zur letzten
+  Station. Bisher fiel der erste Schaden schon auf halber Strecke - also
+  mitten in der Stunde, in der man ueberhaupt erst begreift, dass die
+  Figuren anders ziehen als gewohnt. Zwei neue Sachen auf einmal sind
+  eine zu viel. Kapitel I schenkt jetzt neue Figuren und neue Gangarten,
+  sonst nichts; der Riss beisst erst auf halbem Weg durch Kapitel II
+  (Station "Schwelrain") - und trifft dann auf jemanden, der das Brett
+  schon liest.
+- WO NICHTS BLUTET, BRAUCHT NIEMAND EINEN TRANK: der Lebenstrank bleibt
+  darum durch ganz Kapitel I verborgen. Das ist keine Nebenwirkung,
+  sondern der Sinn der Sache.
+- ZWEI AUFSTELLUNGEN JE BRETT, eine fuer das Schach und eine fuer das
+  Gefecht. Das sind wirklich zwei Plaene: im Schach zaehlt die Gangart,
+  im Gefecht zaehlen Lebenspunkte, Reichweite und Faehigkeiten. Wer
+  beides in denselben Speicher zwingt, baut nach jedem Wechsel neu. Der
+  HP-Plan behaelt den bisherigen Schluessel - alle vorhandenen
+  Spielstaende finden ihre Aufstellung unveraendert wieder -, und fehlt
+  ein Plan, gilt der andere statt der Werkseinstellung.
+- Die Schiene dafuer erscheint erst, wenn die alte Magie erwacht ist:
+  solange es nur Schach gibt, waere eine zweite Wahl blosser Laerm.
+- Beim Umbau kam heraus, dass das Erwachen spurlos verschwinden konnte,
+  wenn auf seiner Station schon ein Figuren-Boss sass. Es weicht jetzt
+  nach hinten aus, bis eine Station frei ist - und vier Tests, die es an
+  Kapitel I festgenagelt hatten, erkennen es nun an seiner Erzaehlung
+  statt an Kapitel oder Kennung.
+
 ## 1.0.19
 
 - KAPITEL VIII HAT SEIN GEMAELDE. Es war das einzige der zwoelf ohne Bild;

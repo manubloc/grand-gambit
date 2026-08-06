@@ -74,7 +74,12 @@ function loneBoss(boss) {
   const bossStages = CAMPAIGN.filter((st) => st.boss);
   // v0.77: Die ERWACHENS-Station wandert mit der Schachhaelfte von Kapitel I -
   // darum wird sie gesucht statt eingetippt.
-  const ERWACHEN = CAMPAIGN.find((st) => st.league === 1 && st.haupt && st.boss?.rotation && !st.final).id;
+  /* v1.0.20: das Erwachen sitzt seit Kapitel-I-ohne-HP in Kapitel II. Gesucht
+   wird deshalb, was es AUSMACHT - die erste Hauptast-Station mit wechselndem
+   Monster - statt einer Kapitelnummer, die wieder wandern kann. */
+/* Das Erwachen wird an seiner ERZAEHLUNG erkannt, nicht an Kapitel oder
+   Kennung: es ist die eine Station, auf der die alte Magie erwacht. */
+const ERWACHEN = CAMPAIGN.find((st) => /erwacht|magic wakes/.test(st.storyDe || "")).id;
   ok("the twelve chapters field 44 boss stages", bossStages.length === 44);
   ok("20 of them are recruitable piece bosses, one per key figure", bossStages.filter((st) => st.boss.piece).length === 20
     && new Set(bossStages.filter((st) => st.boss.piece).map((st) => st.boss.piece)).size === 20);
