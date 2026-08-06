@@ -1,5 +1,15 @@
 # Changelog - Grand Gambit
 
+## 1.0.21
+
+- DIE SCHIENE SPRICHT KANON: der zweite Plan heisst "HP-Gefecht" (englisch
+  "HP Battle") - derselbe Begriff, den die Stationskarten seit jeher
+  tragen (mode.hp). Ein Ding, ein Name; das blosse "Gefecht" ist fort.
+- UND SIE GILT NACHWEISLICH AUCH IN DER HALLE: der Heeresbau reicht das
+  Regelwerk durch (buildArmy erhaelt rules aus pvp.rules), also liest ein
+  Klassisch-Duell den Schach-Plan und ein HP-Duell den HP-Plan - ohne
+  weiteres Zutun. Der Hinweistext sagt das jetzt dazu.
+
 ## 1.0.20
 
 - KAPITEL I IST JETZT REINES SCHACH, von der ersten bis zur letzten
