@@ -119,6 +119,51 @@ const stehtNoch = async () => page.evaluate(() =>
 
 const messe = (wo) => page.evaluate((ort) => {
   const raus = [];
+
+  /* v1.0.28 (Besitzer): DIE POPUPS WERDEN MITGEMESSEN. Bisher sah das
+     Werkzeug nur Knoepfe - die Blaetter mit ihren Fliesstexten, die auf dem
+     Telefon am ehesten brechen, blieben unbesehen. Geprueft wird dreierlei:
+     (a) laeuft Text ueber seinen Kasten hinaus (abgeschnitten statt
+         umgebrochen)?
+     (b) muss man im Blatt SCROLLEN, um alles zu lesen? Der Besitzer will,
+         dass der Inhalt hineinpasst, statt scrollbar zu sein.
+     (c) steht ein Blatt ueber den Schirmrand hinaus?
+     Ein Blatt erkennen wir am selben Merkmal wie die Ebenen-Regel oben:
+     fest positioniert mit zIndex >= 20. */
+  const blaetter = [...document.querySelectorAll("div")].filter((d) => {
+    const o = getComputedStyle(d);
+    if (o.position !== "fixed" || (parseInt(o.zIndex, 10) || 0) < 20) return false;
+    const r = d.getBoundingClientRect();
+    return r.width > 120 && r.height > 80;   // echte Blaetter, keine Marker
+  });
+  for (const blatt of blaetter) {
+    const br = blatt.getBoundingClientRect();
+    if (br.bottom > innerHeight + 2 || br.top < -2)
+      raus.push({ ort, text: "BLATT RAGT HINAUS: " + (blatt.innerText || "").replace(/\s+/g, " ").slice(0, 28),
+        wOver: 0, hOver: Math.round(Math.max(br.bottom - innerHeight, -br.top)) });
+    /* Scrollen im Blatt: nur melden, wenn es WIRKLICH scrollt (der Kasten
+       traegt overflow auto/scroll UND hat mehr Inhalt als Platz). */
+    for (const k of [blatt, ...blatt.querySelectorAll("div")]) {
+      const o = getComputedStyle(k);
+      if (!/auto|scroll/.test(o.overflowY)) continue;
+      const ueber = k.scrollHeight - k.clientHeight;
+      if (ueber > 8 && k.clientHeight > 60)
+        raus.push({ ort, text: "BLATT MUSS SCROLLEN: " + (k.innerText || "").replace(/\s+/g, " ").slice(0, 26),
+          wOver: 0, hOver: ueber });
+    }
+    // Fliesstext, der aus seinem Kasten laeuft
+    for (const e of blatt.querySelectorAll("p,span,div,h1,h2,h3")) {
+      if (e.children.length) continue;               // nur Blaetter des Baums
+      const t = (e.textContent || "").trim();
+      if (t.length < 4) continue;
+      const wOver = e.scrollWidth - e.clientWidth, hOver = e.scrollHeight - e.clientHeight;
+      const o = getComputedStyle(e);
+      if (o.overflow === "visible") continue;        // laeuft ueber, wird aber gezeigt
+      if (wOver > 1 || hOver > 1)
+        raus.push({ ort, text: "TEXT VERSCHLUCKT: " + t.slice(0, 30), wOver, hOver });
+    }
+  }
+
   for (const b of document.querySelectorAll("button")) {   /* v1.0.18: kein <main> mehr */
     const r = b.getBoundingClientRect();
     if (r.width < 8 || r.height < 8) continue;
@@ -232,6 +277,49 @@ for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) 
   if (!await stehtNoch()) ausgestiegen = ausgestiegen || ("hofstaat-" + reiter);
   funde.push(...await messe("hofstaat-" + reiter));
 }
+/* v1.0.28 (Besitzer): DIE BLAETTER SELBST AUFSCHLAGEN. Ein Blatt, das nie
+   geoeffnet wird, kann auch nicht brechen - bisher mass das Werkzeug nur,
+   was ohnehin auf dem Schirm stand. Jetzt wird eine Figurenkachel im
+   Hofstaat angetippt und die Kampagnenkarte samt Stations-Blatt geoeffnet;
+   genau dort sitzen die langen Fliesstexte. */
+{
+  // (a) Figuren-Blatt im Hofstaat
+  await page.evaluate((r) => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, "Hofstaat");
+  await page.waitForTimeout(700);
+  const auf = await page.evaluate(() => {
+    const k = [...document.querySelectorAll("div[role=button], button")]
+      .filter((e) => { const r = e.getBoundingClientRect(); return r.width > 60 && r.height > 60; });
+    if (!k.length) return false;
+    k[Math.min(2, k.length - 1)].click(); return true;
+  });
+  if (auf) {
+    await page.waitForTimeout(950);
+    if (await stehtNoch()) funde.push(...await messe("blatt-figur"));
+    await abraeumen();
+    await page.keyboard.press("Escape").catch(() => {});
+    await page.waitForTimeout(500);
+  }
+}
+{
+  // (b) Stations-Blatt auf der Kampagnenkarte
+  await dock("spielen");
+  await page.waitForTimeout(900);
+  const karte = await jsKlick("Kampagne|Weiterspielen|Campaign|Zur Karte");
+  await page.waitForTimeout(1400);
+  const station = await page.evaluate(() => {
+    const p = [...document.querySelectorAll("[data-station], circle, button")]
+      .filter((e) => { const r = e.getBoundingClientRect(); return r.width > 14 && r.width < 90 && r.height > 14 && r.height < 90; });
+    if (!p.length) return false;
+    p[0].dispatchEvent(new MouseEvent("click", { bubbles: true })); return true;
+  });
+  if (karte && station) {
+    await page.waitForTimeout(1100);
+    if (await stehtNoch()) funde.push(...await messe("blatt-station"));
+    await page.keyboard.press("Escape").catch(() => {});
+    await page.waitForTimeout(500);
+  }
+}
+
 // Profil (Segmente: Figurenstil, Sprache, Schwierigkeit)
 await dock("profil");
 if (!await stehtNoch()) ausgestiegen = ausgestiegen || "profil";

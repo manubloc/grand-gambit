@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.28
+
+- DIE POPUPS WERDEN MITGEMESSEN. Das Textfluss-Werkzeug sah bisher nur
+  Knoepfe - ausgerechnet die Blaetter mit ihren Fliesstexten, die auf dem
+  Telefon am ehesten brechen, blieben unbesehen. Jetzt prueft es an jedem
+  Blatt dreierlei: laeuft Text aus seinem Kasten, MUSS man scrollen, und
+  ragt das Blatt ueber den Schirmrand hinaus.
+- UND ES FAND SOFORT ETWAS: Das Willkommensblatt musste auf 320 px
+  Breite 51 Pixel weit gescrollt werden. Genau das wollte der Besitzer
+  nicht - der Inhalt soll hineinpassen, statt scrollbar zu sein.
+- BEHOBEN, indem der schon vorhandene Eng-Modus (unter 360 px) wirklich
+  eng wurde: Zierleiste, Punkteabstaende, Innenpolster und Zeilenhoehen
+  eine Spur knapper. Kein Text wurde gestrichen und nichts Bedienbares
+  kleiner - es war reine Luft.
+- Zwei Laeufe hintereinander bestaetigen: 320, 412 und 1280 px alle
+  sauber, null Funde.
+
 ## 1.0.27
 
 - DIE KAPITELGEMAELDE SIND ENDLICH ZU SEHEN. Der Besitzer meldete, dass

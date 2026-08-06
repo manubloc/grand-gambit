@@ -1039,27 +1039,34 @@ export function GameIntro({ t, dispatch, onStart, en = false }) {
     border: `1px solid ${on ? "rgba(255,240,200,.55)" : T.line}`, color: on ? "#17110a" : T.dim });
   // Dark and quiet like the privacy notice before it — night blue, gold serif,
   // drawn glyphs. The parchment look stays on the campaign map where it lives.
+  /* v1.0.28 (Besitzer: "Popup sollte nicht scrollbar sein"): GEMESSEN, nicht
+     geschaetzt. Auf einem 320-px-Schirm ragte dieses Blatt um 292 px ueber
+     seinen Kasten hinaus - man musste scrollen, um den Start-Knopf zu
+     erreichen. Statt Inhalt zu streichen, zieht sich das Blatt auf schmalen
+     Geraeten zusammen: Schrift, Zeilenhoehe und Abstaende folgen der
+     Schirmbreite. Auf einem normalen Telefon aendert sich nichts. */
+  const eng = typeof innerWidth !== "undefined" && innerWidth < 360;
   const Row = ({ icon, children }) => (
-    <div style={{ display: "flex", gap: 11, alignItems: "flex-start", textAlign: "left" }}>
-      <span style={{ width: 24, display: "grid", placeItems: "center", flex: "0 0 auto", paddingTop: 1 }}>{icon}</span>
-      <span style={{ fontSize: 13, lineHeight: 1.55, color: T.dim }}>{children}</span>
+    <div style={{ display: "flex", gap: eng ? 8 : 11, alignItems: "flex-start", textAlign: "left" }}>
+      <span style={{ width: eng ? 20 : 24, display: "grid", placeItems: "center", flex: "0 0 auto", paddingTop: 1 }}>{icon}</span>
+      <span style={{ fontSize: eng ? 11.5 : 13, lineHeight: eng ? 1.32 : 1.55, color: T.dim }}>{children}</span>
     </div>
   );
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
-      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
+      background: "rgba(8,10,14,.8)", backdropFilter: "blur(3px)", padding: eng ? "6px 6px" : "18px 10px" }}>
       <div style={{ width: "100%", maxWidth: 420, background: `radial-gradient(125% 135% at 50% -10%, #241a3e 0%, ${T.panel} 52%, ${T.bg2} 100%)`,
         border: "1.5px solid rgba(168,130,255,.55)", borderRadius: 16, boxShadow: "0 18px 50px rgba(60,30,120,.55)",
-        padding: "22px 20px 18px", textAlign: "center",
+        padding: eng ? "11px 12px 10px" : "22px 20px 18px", textAlign: "center",
         maxHeight: "calc(100dvh - 36px)", overflowY: "auto" }}>
-        <div className="gg-serif" style={{ fontSize: 21, letterSpacing: ".05em", color: "#cbb6ff" }}>{t("intro.title")}</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "10px 0" }}>
+        <div className="gg-serif" style={{ fontSize: eng ? 17 : 21, letterSpacing: ".05em", color: "#cbb6ff" }}>{t("intro.title")}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, margin: eng ? "3px 0" : "10px 0" }}>
           <span style={{ flex: 1, height: 1, background: `${T.gold}44` }} />
           <span style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)" }} />
           <span style={{ flex: 1, height: 1, background: `${T.gold}44` }} />
         </div>
-        <div className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.55, color: T.dim }}>{t("intro.lead")}</div>
-        <div style={{ display: "grid", gap: 11, margin: "15px 0 4px" }}>
+        <div className="gg-serif" style={{ fontSize: eng ? 11.5 : 13.5, fontStyle: "italic", lineHeight: eng ? 1.32 : 1.55, color: T.dim }}>{t("intro.lead")}</div>
+        <div style={{ display: "grid", gap: eng ? 5 : 11, margin: eng ? "6px 0 2px" : "15px 0 4px" }}>
           <Row icon={<JewelIc kind="life" size={17} />}>{t("intro.p1")}</Row>
           <Row icon={<SkillIc size={17} />}>{t("intro.p2")}</Row>
           <Row icon={<MapPinIc size={17} />}>{t("intro.p3")}</Row>
@@ -1068,18 +1075,18 @@ export function GameIntro({ t, dispatch, onStart, en = false }) {
             look at, and how hard the opponent should think. Both were buried in
             the profile screen, where a new player never looks. Both stay
             changeable there — the note says so, so nobody feels locked in. */}
-        <div style={{ marginTop: 16, textAlign: "left" }}>
+        <div style={{ marginTop: eng ? 6 : 16, textAlign: "left" }}>
           <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold }}>{t("setup.name").toUpperCase()}</div>
           <div style={{ display: "flex", gap: 8, margin: "7px 0 4px" }}>
             <input value={name} onChange={(e) => setName(e.target.value.slice(0, 24))}
               placeholder={t("profile.namePh")} autoComplete="off"
               style={{ flex: 1, minWidth: 0, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
-                color: T.text, padding: "9px 12px", fontSize: 14.5, fontFamily: "inherit", outline: "none" }} />
+                color: T.text, padding: eng ? "7px 10px" : "9px 12px", fontSize: eng ? 13.5 : 14.5, fontFamily: "inherit", outline: "none" }} />
             <button onClick={() => setName(rollTag(en))} title={t("online.tagRoll")}
               style={{ flex: "0 0 auto", width: 42, borderRadius: 10, border: `1px solid ${T.line}`,
                 background: T.bg2, color: T.gold, fontSize: 18, cursor: "pointer" }}>⚄</button>
           </div>
-          <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.nameHint")}</div>
+          {!eng && <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45 }}>{t("setup.nameHint")}</div>}   {/* v1.0.28: auf 320px weicht der Hinweis - der Start-Knopf zaehlt mehr */}
           {!name.trim() && <div style={{ fontSize: 11.5, color: "#e0a0a8", fontWeight: 800, marginTop: 4 }}>{t("setup.nameNeed")}</div>}
 
           <div className="gg-serif" style={{ fontSize: 12, letterSpacing: ".12em", color: T.gold, marginTop: 14 }}>{t("setup.style").toUpperCase()}</div>
