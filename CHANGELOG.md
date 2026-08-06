@@ -22,6 +22,15 @@
   Partie starten" - das Willkommensblatt lag ueber dem Hub, und das ist
   keine Panne, sondern der Sinn eines Blattes. Gemessen wird jetzt nur
   innerhalb einer Ebene.
+- UND ES WACKELT NICHT MEHR: der erste ehrliche Lauf meldete 7 Funde, der
+  naechste 0. Ursache: der Aufraeumer klickte, wenn er keinen bekannten
+  Bestaetigungstext fand, einfach den LETZTEN Knopf eines Blattes - und
+  traf so gelegentlich "Abmelden". Der Rest des Laufs mass dann den
+  Anmeldeschirm. Jetzt gilt eine Sperrliste (Abmelden, Loeschen,
+  Zuruecksetzen, Aufgeben), unbekannte Blaetter bleiben lieber stehen,
+  die Lebendprobe laeuft VOR JEDER Messung, und faellt die App doch
+  heraus, werden alle folgenden Funde als Phantome verworfen statt
+  gemeldet. Der Einstieg bekommt drei Anlaeufe statt fester Wartezeiten.
 - Als "npm run pruefe:fluss" verankert, damit es nicht wieder still
   einschlaeft.
 - Der Herold bekommt die Sprache jetzt aus dem Profil statt aus einer

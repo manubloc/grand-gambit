@@ -79,11 +79,23 @@ await page.waitForTimeout(600);
 }
 /* Nach dem Anlegen startet die App NEU - der Vorlader laeuft ein zweites Mal. */
 await warteVorlader();
-for (const t of ["Los geht's", "Weiter", "Verstanden", "\u00dcbernehmen", "Uebernehmen"]) { await jsKlick(t); await page.waitForTimeout(500); }
-await jsKlick("Neuer Spielstand|New save");
-await page.waitForTimeout(900);
-for (const t of ["Los geht's", "Weiter", "\u00dcbernehmen", "Verstanden", "Weiterspielen|Continue"]) { await jsKlick(t); await page.waitForTimeout(600); }
-await page.waitForTimeout(1100);
+/* v1.0.18: DER EINSTIEG BEKOMMT DREI ANLAEUFE. Ein Durchgang genuegte nicht
+   zuverlaessig: je nach Ladezeit stand mal das Willkommensblatt, mal die
+   Spielstandliste, mal schon der Hub - und ein einzelner fester Ablauf traf
+   nicht immer. Statt die Zeiten hochzudrehen (was jeden Lauf verlangsamt)
+   wird geprueft und wiederholt, bis die Fussleiste steht. */
+const einstieg = async () => {
+  for (const t of ["Los geht's", "Weiter", "Verstanden", "\u00dcbernehmen", "Uebernehmen"]) { await jsKlick(t); await page.waitForTimeout(450); }
+  await jsKlick("Neuer Spielstand|New save");
+  await page.waitForTimeout(900);
+  for (const t of ["Los geht's", "Weiter", "\u00dcbernehmen", "Verstanden", "Weiterspielen|Continue"]) { await jsKlick(t); await page.waitForTimeout(550); }
+  await page.waitForTimeout(900);
+  return page.evaluate(() => /SPIELEN|PLAY/i.test(document.body.innerText) && document.querySelectorAll("button").length > 3);
+};
+for (let versuch = 1; versuch <= 3; versuch++) {
+  if (await einstieg()) break;
+  if (versuch < 3) { await warteVorlader(); await page.waitForTimeout(600); }
+}
 /* DIE LEBENDPROBE: steht die App wirklich? Fruehere Laeufe massen am
    Anmeldeschirm weiter und meldeten null Funde. Ohne die Fussleiste
    (SPIELEN/FIGUREN/LAGER/PROFIL) ist der Lauf WERTLOS und sagt das laut. */
@@ -96,6 +108,14 @@ if (!drin) {
   console.log(`  !! ${vw}px: die App steht NICHT - der Einstieg hat nicht getragen.`);
   gesamtFunde++;
 }
+
+/* v1.0.18: DIE LEBENDPROBE GILT VOR JEDER MESSUNG, nicht nur am Anfang.
+   Faellt die App zwischendrin heraus (Abmeldung, Absturz), sind alle
+   folgenden Funde Phantome - dann wird der Lauf laut ungueltig statt
+   Zahlen zu liefern, die niemand nachpruefen kann. */
+let ausgestiegen = false;
+const stehtNoch = async () => page.evaluate(() =>
+  /SPIELEN|PLAY|FIGUREN|PIECES/i.test(document.body.innerText) && document.querySelectorAll("button").length > 3);
 
 const messe = (wo) => page.evaluate((ort) => {
   const raus = [];
@@ -170,6 +190,7 @@ let funde = [];
 // Schnelles Spiel (Konfiguration)
 await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === "Anpassen"); b?.click(); });
 await page.waitForTimeout(1100);
+if (!await stehtNoch()) { ausgestiegen = "schnelles-spiel"; }
 funde.push(...await messe("schnelles-spiel"));
 await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").includes("Zur\u00fcck")); b?.click(); });
 await page.waitForTimeout(800);
@@ -184,8 +205,19 @@ const abraeumen = async () => { for (let i = 0; i < 6; i++) {
     const sch = [...document.querySelectorAll("div")].find((d) => { const cs = getComputedStyle(d);
       return cs.position === "fixed" && cs.zIndex === "60" && d.getBoundingClientRect().width > 300; });
     if (!sch) return false;
-    const kn = [...sch.querySelectorAll("button")].filter((b) => b.getBoundingClientRect().height > 30);
-    (kn.find((b) => /Los geht|Weiter|Verstanden|Got it|Start/.test(b.innerText)) || kn[kn.length - 1])?.click();
+    /* v1.0.18: KEIN BLINDER GRIFF MEHR. Fand der Aufraeumer keinen bekannten
+       Bestaetigungstext, klickte er einfach den LETZTEN Knopf des Blattes -
+       und traf damit gelegentlich "Abmelden". Der Lauf mass danach den
+       Anmeldeschirm und meldete Funde, die es gar nicht gibt: einmal 7,
+       beim naechsten Mal 0. Ein Werkzeug, das wackelt, ist so wertlos wie
+       ein blindes. Jetzt gilt eine Sperrliste, und ohne Treffer wird das
+       Blatt lieber stehen gelassen als aufs Geratewohl geklickt. */
+    const TABU = /Abmelden|Sign out|L\u00f6schen|Delete|Zur\u00fccksetzen|Reset|Konto|Account|Verlassen|Aufgeben/i;
+    const kn = [...sch.querySelectorAll("button")]
+      .filter((b) => b.getBoundingClientRect().height > 30 && !TABU.test(b.innerText || ""));
+    const ziel = kn.find((b) => /Los geht|Weiter|Verstanden|Got it|Start|\u00dcbernehmen/.test(b.innerText));
+    if (!ziel) return false;
+    ziel.click();
     return true; });
   if (!g) break; await page.waitForTimeout(650); } };
 const dock = async (name) => { await page.evaluate((n) => {
@@ -195,22 +227,27 @@ const dock = async (name) => { await page.evaluate((n) => {
 await abraeumen();
 await dock("hofstaat");
 for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) {
-  await page.evaluate((r) => { const b = [.../* v1.0.18: die App traegt kein <main> mehr - der alte Selektor fand NIE
-     einen Knopf, also mass das Werkzeug jedesmal null. */
-  document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);
+  await page.evaluate((r) => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);
   await page.waitForTimeout(700);
+  if (!await stehtNoch()) ausgestiegen = ausgestiegen || ("hofstaat-" + reiter);
   funde.push(...await messe("hofstaat-" + reiter));
 }
 // Profil (Segmente: Figurenstil, Sprache, Schwierigkeit)
 await dock("profil");
+if (!await stehtNoch()) ausgestiegen = ausgestiegen || "profil";
 funde.push(...await messe("profil"));
 
 // Kachel-Namen im Hofstaat duerfen per Bauart mit Ellipse enden (nowrap +
 // title) - alles andere nicht. Wir werten NUR echte Ueberlaeufe:
 funde = funde.filter((f) => !(f.text.startsWith("ELLIPSIS") && f.ort.startsWith("hofstaat-Hofstaat")));
-const anzahl = await page.evaluate(() => /* v1.0.18: die App traegt kein <main> mehr - der alte Selektor fand NIE
+let anzahl = await page.evaluate(() => /* v1.0.18: die App traegt kein <main> mehr - der alte Selektor fand NIE
      einen Knopf, also mass das Werkzeug jedesmal null. */
   document.querySelectorAll("button").length);
+if (ausgestiegen) {
+  console.log(`  !! ${vw}px: die App ist bei "${ausgestiegen}" herausgefallen - alle folgenden Funde sind Phantome.`);
+  funde = [];              // nichts davon ist verwertbar
+  gesamtFunde++; anzahl = 0;   // und der Lauf gilt als gescheitert
+}
 gemessen += anzahl; gesamtFunde += funde.length;
 for (const f of funde) console.log(`  VERSCHLUCKT [${vw}px · ${f.ort}] "${f.text}" +${f.wOver}x${f.hOver}px`);
 console.log(`  Viewport ${vw}x${vh}: ${anzahl} Knoepfe zuletzt sichtbar, ${funde.length} Funde`);
