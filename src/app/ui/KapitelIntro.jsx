@@ -22,6 +22,12 @@ import { klang } from "./klang.js";
 const BILD = {
   1: "01-kronland", 2: "02-kornmark", 3: "03-eichwald", 4: "04-krummholz",
   5: "05-grauwacht", 6: "06-wolkenjoch", 7: "07-sattelweite",
+  /* v1.0.19: Kapitel VIII war das einzige ohne Bild - der Einstieg fiel dort
+     stumm auf die Karte durch. Der Aschgrund ist KEIN graues Aschefeld,
+     sondern eine rote Felsschlucht (deshalb heisst das Kartenbild
+     "liga-canyon"); wer hier "Asche" liest und grau malt, malt am Ort
+     vorbei. */
+  8: "08-aschgrund",
   9: "09-wunde", 10: "10-sonnenschlund", 11: "11-kueste", 12: "12-meer",
 };
 

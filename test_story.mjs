@@ -265,5 +265,22 @@ const { hauptast: haSt } = await import("./test_helpers12.mjs");
   ok("the untouched flank of the running board is still the old piece", before[0] === "R");
 }
 
+
+// ── JEDES KAPITEL HAT SEIN GEMAELDE (v1.0.19, Besitzer) ────────────────────
+// Kapitel VIII fehlte monatelang, ohne dass es jemandem auffiel: der Einstieg
+// faellt bei fehlendem Bild einfach stumm auf die Karte durch. Ein fehlendes
+// Bild soll ab jetzt LAUT sein.
+import { readdirSync as _lies } from "node:fs";
+{
+  const dateien = _lies("public/kapitel");
+  const fehlend = [];
+  for (let n = 1; n <= 12; n++) {
+    const pre = String(n).padStart(2, "0") + "-";
+    if (!dateien.some((f) => f.startsWith(pre) && f.endsWith(".webp"))) fehlend.push(n);
+  }
+  ok("every one of the twelve chapters owns a painting", fehlend.length === 0);
+  if (fehlend.length) console.log("   ohne Bild:", fehlend.join(", "));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

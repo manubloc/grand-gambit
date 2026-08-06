@@ -108,13 +108,21 @@ Foreground: tall dry steppe grass and a leaning tournament lance driven
 into the ground, both bottom corners. Vast, golden, and very empty.
 ```
 
-### VIII — Aschgrund · `08-aschgrund` *(fehlt auch als Kapitelbild)*
+### VIII — Aschgrund · `08-aschgrund`
+
+**Berichtigt (Besitzer, 6.8.):** Der Aschgrund ist **kein graues Aschefeld**,
+sondern eine **rote Felsschlucht** — rostrote Wände, Ockerboden, warmes
+Abendlicht. Der Name taeuscht; das Kartenbild heisst nicht ohne Grund
+`liga-canyon`. Meine erste Fassung sagte "ash-grey rock" und haette am Ort
+vorbeigemalt. Das Kapitelgemaelde liegt inzwischen vor und ist die Referenz.
+
 ```
-A deep canyon of cracked, ash-grey rock where the rift once drank: dead
-boughs, fissured earth, thin sulphurous haze in the gorge. Sheer walls
-frame both sides; the gorge floor between them lies open and dim. A faint
-violet glow bleeds from the deepest cracks. Foreground: charred branches
-and shards of split stone. First hint of rift-violet against the gold.
+A vast red rock canyon at golden hour: rust-red and ochre cliff walls
+falling away in tiers, weathered spires standing in the gorge, a dry river
+bed threading the floor far below. Warm sandstone light, deep umber
+shadows. The middle of the canvas is the open gorge, hazy and calm.
+Foreground: a broad ledge of cracked red stone reaching in from both bottom
+corners, a few dry shrubs. Ochre, rust and gold — no grey, no ash.
 ```
 
 ### IX — Die Wunde · `09-wunde`

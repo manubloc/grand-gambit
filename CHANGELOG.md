@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 1.0.19
+
+- KAPITEL VIII HAT SEIN GEMAELDE. Es war das einzige der zwoelf ohne Bild;
+  der Einstieg fiel dort stumm auf die Karte durch, ohne Fehler, ohne
+  Hinweis. Manuels Gemaelde liegt jetzt als 08-aschgrund.webp.
+- UND DER ASCHGRUND IST ROT. Der Name taeuscht: Es ist keine graue
+  Aschewueste, sondern eine ROTE FELSSCHLUCHT - rostrote Waende,
+  Ockerboden, warmes Abendlicht. Das Kartenbild heisst nicht ohne Grund
+  "liga-canyon". Mein Prompt-Katalog sagte "ash-grey rock" und haette am
+  Ort vorbeigemalt; die Stelle ist berichtigt und traegt jetzt das
+  Gemaelde als Referenz.
+- EINE PROBE ZAEHLT AB JETZT NACH, dass jedes der zwoelf Kapitel sein
+  Bild besitzt. Ein fehlendes Gemaelde faellt kuenftig sofort auf, statt
+  monatelang unbemerkt zu bleiben.
+
 ## 1.0.18
 
 - DAS TEXTFLUSS-WERKZEUG SIEHT WIEDER. Es war seit v0.92 blind und meldete
