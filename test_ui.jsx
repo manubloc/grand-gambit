@@ -749,5 +749,22 @@ import { loreText } from "./src/app/ui/worldMap.js";
   ok("the english chronicle bows too", loreText(1, true, "Ada").includes(", Ada "));
 }
 
+
+// ── DIE KNOPFREGEL (v1.0.16, Besitzer) ──────────────────────────────────────
+// "Buttons muessen nicht zweizeilig sein, und der Text darf nie verschwinden."
+import { Button as _Btn, Segmented as _Seg } from "./src/app/ui/primitives.jsx";
+{
+  const h = html(<_Btn>Abgeschlossen</_Btn>);
+  ok("a button never shrinks below its longest word", h.includes("min-content"));
+  ok("a button wraps instead of clipping", /overflow-wrap:\s*break-word/.test(h) && !/text-overflow/.test(h));
+  ok("the side padding survives", /padding:\s*12px 16px/.test(h) && /box-sizing:\s*border-box/.test(h));
+  // Ein sehr langes Wort (englische Beschriftungen sind oft laenger)
+  const lang = html(<_Btn>Unvergleichlichkeitsbeschriftung</_Btn>);
+  ok("even an absurd label keeps hyphenation", /hyphens/.test(lang));
+  const seg = html(<_Seg options={[{ value: "a", label: "Aufstellung" }, { value: "b", label: "Figuren" }]} value="a" onChange={() => {}} />);
+  const hoehen = [...seg.matchAll(/min-height:\s*(\d+)px/g)].map((m) => +m[1]);
+  ok("a switch declares exactly one minimum height per option", hoehen.length === 2);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

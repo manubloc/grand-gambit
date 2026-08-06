@@ -1,5 +1,31 @@
 # Changelog - Grand Gambit
 
+## 1.0.16
+
+- DER ABGESCHNITTENE KNOPF ("Abgeschlosse"): Knopf und Hinweistext lagen
+  im selben REIHEN-Flex und teilten sich die Breite - der Knopf wurde zu
+  schmal fuer sein eigenes Wort. Sie stehen jetzt untereinander, der
+  Knopf nimmt die volle Breite.
+- GLOBALE KNOPFREGEL, einmal statt an hundert Stellen: kein Knopf ist je
+  schmaler als sein laengstes Wort samt Polster (min-content), Text
+  bricht mit Silbentrennung statt zu verschwinden, und das seitliche
+  Polster bleibt in jedem Fall stehen. Wichtig fuer Uebersetzungen -
+  deutsche und englische Beschriftungen sind selten gleich lang. Fuenf
+  Proben halten die Regel fest.
+- SCHALTER NIE DREIZEILIG: die Schiene hatte zwei widersprechende
+  Mindesthoehen; jetzt eine, und die Schrift schrumpft eine Spur, statt
+  eine dritte Zeile aufzumachen.
+- EINMAL ABGESCHLOSSEN REICHT: der Haken traegt den Zustand (groesser und
+  deutlicher), der Knopf sagt, was man TUN kann - "Nochmal spielen".
+- WAS EINE WIEDERHOLUNG WERT IST, steht jetzt da: Gold und Erfahrung sind
+  eingesammelt, eine Station zahlt nicht zweimal - Ruhmestaten fuer die
+  Schatzkammer zaehlen dagegen weiter (ein Schachmatt, ein Sonderzug, ein
+  Kunststueck, das bisher nicht gelang).
+- DIE FIGUR IM POPUP WAECHST: Bild und Text standen unten buendig, also
+  blieb ueber dem Namen Luft. Jetzt spannt sich die Karte, der Text
+  beginnt oben, die Figur nimmt die frei gewordene Hoehe - und ihre
+  Spaltenbreite bleibt gleich, damit der Fliesstext nicht schmaler wird.
+
 ## 1.0.15
 
 - DIE STATIONEN SPRECHEN ENGLISCH: alle 529 Ortsnamen der zwoelf Kapitel

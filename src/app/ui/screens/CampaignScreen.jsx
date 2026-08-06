@@ -1081,7 +1081,14 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             // room for the name and the two value orbs (60px) stays reserved
             const bossArtS = Math.round(Math.max(104, Math.min(132, (panelW - 50) * 0.40))); // v0.71.14: schmal - der Text braucht Platz
             return (
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 13, marginTop: 10, padding: "10px 12px",
+            /* v1.0.16 (Besitzer): "warum ist ueber dem Hetzer so viel Platz und
+               warum geht die Figur nicht bis nach oben?" - weil Bild und Text
+               UNTEN buendig standen (flex-end): die kuerzere Textspalte sass am
+               Boden, also blieb neben ihr oben Luft. Jetzt spannt sich die
+               Karte (stretch), der Text beginnt OBEN, und die Figur waechst in
+               die frei gewordene Hoehe. Ihre SPALTENBREITE bleibt unveraendert
+               - der Fliesstext darf nicht schmaler werden. */
+            <div style={{ display: "flex", alignItems: "stretch", gap: 13, marginTop: 10, padding: "10px 12px",
               background: PP.bg2, borderRadius: 9, border: `1px solid ${PP.line}` }}>
               {/* THE PORTRAIT FILLS ITS HEIGHT: the box used to be 84x108 —
                   taller than wide — so a square painting was WIDTH-limited by
@@ -1090,8 +1097,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   the widest figure (a sprawling monster) spans 0.918 of that
                   height, so a SQUARE frame holds every one of them without
                   clipping. Sized off the panel so it breathes on phones too. */}
-            <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <div style={{ width: bossArtS, height: bossArtS, flex: "0 0 auto", overflow: "hidden" }}>
+            <div style={{ flex: "0 0 auto", width: bossArtS, display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "flex-end", gap: 4 }}>
+              {/* v1.0.16: die Bildbox nimmt die RESTHOEHE der Karte (mindestens
+                  ihr altes Quadrat), die Figur steht darin auf dem Sockel. */}
+              <div style={{ width: bossArtS, minHeight: bossArtS, flex: "1 1 auto", overflow: "hidden" }}>
                 {(() => {
                   // v0.71.12 (Besitzer): der gewaehlte BRETTSTIL gilt GLOBAL -
                   // steht das Profil auf Leuchtend, traegt auch das Popup-
@@ -1119,7 +1129,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     <StatOrbBadge kind="power" v={boss.atk} size={28} num={0.52} /><StatOrbBadge kind="life" v={boss.hp} size={28} num={0.52} /></span>
               </div>
             </div>
-              <div style={{ minWidth: 0, paddingBottom: 3 }}>
+              <div style={{ minWidth: 0, flex: "1 1 auto", paddingBottom: 3 }}>
                 <div className="gg-serif" style={{ fontSize: 17, letterSpacing: ".03em", color: PP.ink }}>{boss.name[en ? "en" : "de"]}</div>
                 <div className="gg-serif" style={{ fontSize: 12.5, color: "#8a6f4d", marginTop: 5, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
                   
@@ -1143,8 +1153,15 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               ? (known ? t("camp.stFriendly", { name: nm })
                        : t("camp.stFled", { n: bossWinsFor(profile, unlockCh.id), name: nm }))
               : t("camp.stDone");
-            return <div className="gg-serif" style={{ marginTop: 9, fontSize: 12, fontStyle: "italic", lineHeight: 1.4,
-              color: golden ? PP.green : PP.dim }}>{golden ? "✦ " : "✓ "}{txt}</div>;
+            /* v1.0.16 (Besitzer): "der Button mit Abgeschlossen und der Text
+               auch noch mit Abgeschlossen - einmal reicht." Der HAKEN traegt
+               den Zustand, gross und deutlich; der Knopf darunter sagt, was
+               man TUN kann ("Nochmal spielen"). */
+            return <div style={{ display: "flex", alignItems: "flex-start", gap: 7, marginTop: 10 }}>
+              <span aria-hidden style={{ fontSize: 19, lineHeight: 1.1, color: golden ? PP.green : "#7d8a5a" }}>{golden ? "✦" : "✓"}</span>
+              <span className="gg-serif" style={{ fontSize: 13.5, fontStyle: "italic", lineHeight: 1.4,
+                color: golden ? PP.green : PP.dim }}>{txt}</span>
+            </div>;
           })()}
           {status === "gated" ? (() => {
             const g = gateOf(node);
@@ -1190,7 +1207,11 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               </Button>}
             </div>;
           })() : (
-            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+            /* v1.0.16: die Zeile war ein REIHEN-Flex - Knopf (flex 1) und
+               Hinweistext teilten sich die Breite, der Knopf wurde zu schmal
+               und schnitt seine Schrift ab ("Abgeschlosse"). Jetzt stehen sie
+               UNTEREINANDER: der Knopf bekommt die volle Breite. */
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10 }}>
               <Button variant={status === "available" || friendly ? "primary" : "subtle"} disabled={status === "locked" || closed}
                 onClick={() => onStart(sel)} style={{ flex: 1, position: "relative", overflow: "hidden",
                   // Steht an der Station ein Wesen des Risses, traegt der Knopf
@@ -1206,7 +1227,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 {status === "available" && <span aria-hidden style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "42%",
                   background: "linear-gradient(90deg, transparent, rgba(255,244,210,.28), transparent)",
                   animation: "ggShine 12s ease-in-out 1.8s infinite", pointerEvents: "none" }} />}
-                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.done")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
+                <BladesIc color={T.limeInk} size={14} /> {profile.pausedMatch?.nodeId === sel && status !== "locked" ? t("camp.resume") : status === "cleared" ? (friendly ? t("camp.friendly") : t("camp.replayAgain")) : status === "locked" ? t("camp.locked") : (sel === token.at ? t("camp.startChallenge") : t("camp.play"))}
               </Button>
               {/* KLARHEIT AUF DER KARTE (Besitzer, v0.45): geraeumte Stationen
                   sagen, was eine Wiederholung wert ist - Freundschaftskampf

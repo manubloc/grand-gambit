@@ -5,8 +5,25 @@ export function Button({ variant = "primary", disabled, style, children, ...p })
   // DS1: Beruehrziel mindestens T.touch hoch; disabled ist EIN Zustand fuer
   // alle - gedimmt (T.disOpacity), ohne Glow, ohne Zeiger. Uebergaenge laufen
   // auf der Hausuhr (T.mo), nicht auf verstreuten Literalen.
+  /* v1.0.16 (Besitzer, GLOBALE KNOPFREGEL): "Buttons muessen nicht zweizeilig
+     sein, und der Text darf nie verschwinden - lieber in der Breite wachsen."
+     Drei Regeln, hier EINMAL gesetzt statt an hundert Aufrufstellen:
+       1. minWidth: "min-content" - der Knopf ist NIE schmaler als sein
+          laengstes Wort samt Polster. Genau das fehlte: im Karten-Popup
+          teilte er sich die Zeile mit einem Text, wurde zu schmal und schnitt
+          seine Schrift ab ("Abgeschlosse").
+       2. Umbruch statt Abschneiden - bricht das Wort doch, dann mit
+          Silbentrennung, und die Zeilenhoehe traegt zwei Zeilen sauber.
+       3. Das Polster links und rechts (16 px) bleibt in jedem Fall stehen;
+          es ist Teil der min-content-Breite, kann also nicht aufgezehrt
+          werden. Wichtig fuer Uebersetzungen: englische und deutsche
+          Beschriftungen sind selten gleich lang. */
   const base = { border: "none", borderRadius: T.radiusSm, padding: "12px 16px", minHeight: T.touch,
     fontSize: 15, fontWeight: 700, fontFamily: "inherit", cursor: disabled ? "default" : "pointer",
+    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+    minWidth: "min-content", maxWidth: "100%", boxSizing: "border-box",
+    whiteSpace: "normal", lineHeight: 1.25, overflowWrap: "break-word",
+    hyphens: "auto", WebkitHyphens: "auto", textAlign: "center",
     opacity: disabled ? T.disOpacity : 1, transition: `filter ${T.mo.fast} ${T.mo.ease}`, WebkitTapHighlightColor: "transparent" };
   const variants = {
     // clean gold for the CTA, quiet dark for the rest — the marble wash is gone
@@ -115,8 +132,13 @@ export function Segmented({ options, value, onChange }) {
         border: on ? `1px solid ${T.selLine}` : "1px solid transparent", borderRadius: 8, padding: "8px 4px",
         /* v1.0.1: Zeichen und Wort stehen nebeneinander - ohne diese Zeile
            haengt der Text an der Oberkante statt in der Mitte. */
-        display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 38,
-        minHeight: Math.max(36, T.touch - 8), fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
+        /* v1.0.16: EINE minHeight (die doppelte Angabe war ein Versehen) und
+           ein Deckel von ZWEI Zeilen - drei Zeilen in einer Schiene sind nie
+           richtig. Passt es dann noch nicht, schrumpft die Schrift eine Spur,
+           statt eine dritte Zeile aufzumachen. */
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+        minHeight: Math.max(36, T.touch - 8), fontSize: "clamp(11px, 3.1vw, 12.5px)",
+        fontWeight: 700, fontFamily: "inherit", minWidth: 0,
         // 320-px-Beweis (pruefe-textfluss): "Aufstellung" ist als EINZELWORT
         // breiter als ein Viertel der Schiene - Umbruch allein rettet nichts.
         // Silbentrennung (lang="de" steht am Dokument) + schmalere Polster.
