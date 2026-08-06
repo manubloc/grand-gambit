@@ -593,8 +593,8 @@ export default function App() {
         );
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
-      {showName && !inMatch && <NamensRuf t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} en={en} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} en={en} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
@@ -673,8 +673,8 @@ export default function App() {
         );
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
-      {showName && !inMatch && <NamensRuf t={t} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} en={en} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} en={en} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
@@ -1004,7 +1004,7 @@ function Lock({ t, profile, onUnlock, onBack }) {
 
 // ── first-run game intro (once): what Grand Gambit IS and what makes it
 // special — a parchment card in the world's own voice. ───────────────────────
-export function GameIntro({ t, dispatch, onStart }) {
+export function GameIntro({ t, dispatch, onStart, en = false }) {
   const [style, setStyle] = useState("painted");    // v1.0.8 (Besitzer): die detailreichen Figuren sind der Standard
   const [diff, setDiff] = useState("easy");
   /* v1.0.5 (Besitzer): "wenn ich mich angemeldet habe, muss ich mir doch
@@ -1013,7 +1013,11 @@ export function GameIntro({ t, dispatch, onStart }) {
      vom Herold (rollTag), der Wuerfel bleibt daneben - ein Tipp reicht, wer
      will, schreibt seinen eigenen. Der Hinweis sagt ehrlich, wofuer der
      Name zaehlt: vor allem fuer Online-Duelle und Ranglisten. */
-  const [name, setName] = useState(() => rollTag(false));
+  /* v1.0.17 (Besitzer): der Herold wuerfelt in der SPRACHE DES SPIELERS.
+     Bisher stand die Sprache hier fest auf Deutsch - im englischen Spiel
+     schlug er "Eiserner Turm" vor. Die Namenslisten sind laengst
+     zweisprachig, nur gefragt wurde nie danach. */
+  const [name, setName] = useState(() => rollTag(en));
   const pick = (on) => ({ flex: 1, padding: "9px 6px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
     fontWeight: 800, fontSize: 12.5, letterSpacing: ".02em",
     background: on ? "linear-gradient(165deg, #e0b76c, #b78d43)" : "transparent",
@@ -1056,7 +1060,7 @@ export function GameIntro({ t, dispatch, onStart }) {
               placeholder={t("profile.namePh")} autoComplete="off"
               style={{ flex: 1, minWidth: 0, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
                 color: T.text, padding: "9px 12px", fontSize: 14.5, fontFamily: "inherit", outline: "none" }} />
-            <button onClick={() => setName(rollTag(false))} title={t("online.tagRoll")}
+            <button onClick={() => setName(rollTag(en))} title={t("online.tagRoll")}
               style={{ flex: "0 0 auto", width: 42, borderRadius: 10, border: `1px solid ${T.line}`,
                 background: T.bg2, color: T.gold, fontSize: 18, cursor: "pointer" }}>⚄</button>
           </div>
@@ -1106,8 +1110,12 @@ export function GameIntro({ t, dispatch, onStart }) {
 // Fuer Spielstaende, die noch keinen Namen tragen: ein kleines Blatt, ein
 // vorbefuellter Vorschlag, der Wuerfel daneben. Kein Wegklicken ohne Namen -
 // aber der eine Tipp auf "Uebernehmen" genuegt, niemand muss dichten.
-export function NamensRuf({ t, dispatch }) {
-  const [name, setName] = useState(() => rollTag(false));
+export function NamensRuf({ t, dispatch, en = false }) {
+  /* v1.0.17 (Besitzer): der Herold wuerfelt in der SPRACHE DES SPIELERS.
+     Bisher stand die Sprache hier fest auf Deutsch - im englischen Spiel
+     schlug er "Eiserner Turm" vor. Die Namenslisten sind laengst
+     zweisprachig, nur gefragt wurde nie danach. */
+  const [name, setName] = useState(() => rollTag(en));
   const nimm = () => { const n = name.trim(); if (n) dispatch({ type: "SET_NAME", name: n }); };
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "grid", placeItems: "center",
@@ -1123,7 +1131,7 @@ export function NamensRuf({ t, dispatch }) {
             onKeyDown={(e) => e.key === "Enter" && nimm()}
             style={{ flex: 1, minWidth: 0, background: T.bg2, border: `1px solid ${T.line}`, borderRadius: 10,
               color: T.text, padding: "10px 12px", fontSize: 15, fontFamily: "inherit", outline: "none" }} />
-          <button onClick={() => setName(rollTag(false))} title={t("online.tagRoll")}
+          <button onClick={() => setName(rollTag(en))} title={t("online.tagRoll")}
             style={{ flex: "0 0 auto", width: 44, borderRadius: 10, border: `1px solid ${T.line}`,
               background: T.bg2, color: T.gold, fontSize: 19, cursor: "pointer" }}>⚄</button>
         </div>

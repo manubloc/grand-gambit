@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 1.0.17
+
+- ELF SCHLUESSEL FEHLTEN IM ENGLISCHEN: die ganze Passwort-Karte und zwei
+  Weltkarten-Knoepfe fielen stumm auf Deutsch zurueck - im englischen
+  Spiel stand also "Passwort aendern". Ergaenzt, und eine Probe zaehlt ab
+  jetzt beide Bloecke gegeneinander, damit es nicht wieder auseinander
+  laeuft.
+- DER HEROLD WUERFELT IN DEINER SPRACHE: der Namensvorschlag stand fest
+  auf Deutsch ("Eiserner Turm" im englischen Spiel), obwohl die
+  Namenslisten laengst zweisprachig sind - gefragt wurde nur nie danach.
+- DER ADMIN WAR AUSGESPERRT: die Karte "Passwort aendern" schloss
+  ausgerechnet das Admin-Konto aus, das mit einem mitgelieferten
+  Standardwort ausgeliefert wird. Es konnte sein Passwort also gar nicht
+  aendern - deshalb stand der Punkt so lange offen. Jetzt darf es das,
+  und solange das Standardwort steht, warnt die Karte deutlich.
+- DAS TEXTFLUSS-WERKZEUG LUEGT NICHT MEHR: es klickte "Als Gast spielen",
+  einen Weg, den es seit v0.92 nicht mehr gibt - blieb am Anmeldeschirm
+  stehen und meldete trotzdem "sauber". Es legt sich jetzt selbst ein
+  Konto an, wartet den Vorlader ab und PRUEFT, ob die App wirklich steht;
+  tut sie es nicht, sagt es "NICHT GEMESSEN" statt gruen zu leuchten.
+  Der Einstieg traegt noch nicht ganz - aber ein blindes Werkzeug, das
+  gruen leuchtet, ist schlimmer als eins, das ehrlich rot bleibt.
+
 ## 1.0.16
 
 - DER ABGESCHNITTENE KNOPF ("Abgeschlosse"): Knopf und Hinweistext lagen

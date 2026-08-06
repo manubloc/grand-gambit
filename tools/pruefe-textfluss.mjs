@@ -31,11 +31,49 @@ const klick = async (text) => {
   if (await l.count()) { await l.click({ timeout: 4000, force: true }).catch(() => {}); await page.waitForTimeout(850); return true; }
   return false;
 };
-await klick("Als Gast spielen");
-for (const t of ["Los geht's", "Weiter", "Verstanden"]) await klick(t);
+/* v1.0.17: DER EINSTIEG WURDE REPARIERT. Das Werkzeug klickte "Als Gast
+   spielen" - diesen Weg gibt es seit v0.92 nicht mehr, also blieb es am
+   Anmeldeschirm stehen und mass dort ein paar Knoepfe statt der ganzen App.
+   Es meldete trotzdem "sauber": ein blindes Werkzeug, das gruen leuchtet,
+   ist schlimmer als gar keins. Jetzt legt es sich selbst ein Konto an. */
+/* Erst muss der VORLADER fort sein (v1.0.12): er liegt mit zIndex 200 ueber
+   allem, bis jedes Bild und jeder Klang geholt ist. Wer vorher klickt, klickt
+   gegen den Ladeschirm - genau daran scheiterte der erste Reparaturversuch. */
+await page.waitForFunction(() => !/Riss \u00f6ffnet sich|Riss ist offen|rift is opening|rift is open/i.test(document.body.innerText),
+  null, { timeout: 90000 }).catch(() => console.log("  !! der Vorlader ging nicht fort"));
+await page.waitForTimeout(900);
+const konto = `fluss${Date.now()}@example.com`;
+await klick("Noch kein Konto");
+{
+  const felder = page.locator("input");
+  const n = await felder.count();
+  if (n >= 2) {
+    await felder.nth(0).fill(konto).catch(() => {});
+    await felder.nth(1).fill("fluss-probe-2026").catch(() => {});
+    await page.waitForTimeout(250);
+    /* NICHT per Text klicken: "Konto erstellen" steht auch auf dem
+       Umschalt-Link darunter, und getByText erwischte den. Der ECHTE Knopf
+       ist der abschickende - er traegt den Text und ist ein <button>. */
+    const knopf = page.locator("button", { hasText: /Konto erstellen|Create account/i }).first();
+    await knopf.click({ timeout: 8000, force: true }).catch(async () => {
+      await felder.nth(1).press("Enter").catch(() => {});
+    });
+    await page.waitForTimeout(1600);
+  }
+}
+for (const t of ["Los geht's", "Weiter", "Verstanden", "Uebernehmen", "Übernehmen"]) await klick(t);
 await klick("Neuer Spielstand");
-for (const t of ["Los geht's", "Weiter"]) await klick(t);
+for (const t of ["Los geht's", "Weiter", "Übernehmen", "Verstanden"]) await klick(t);
 await page.waitForTimeout(1100);
+/* DIE LEBENDPROBE: steht die App wirklich? Fruehere Laeufe massen am
+   Anmeldeschirm weiter und meldeten null Funde. Ohne die Fussleiste
+   (SPIELEN/FIGUREN/LAGER/PROFIL) ist der Lauf WERTLOS und sagt das laut. */
+const drin = await page.evaluate(() =>
+  /SPIELEN|PLAY/i.test(document.body.innerText) && document.querySelectorAll("main button").length > 3);
+if (!drin) {
+  console.log(`  !! ${vw}px: die App steht NICHT - der Einstieg hat nicht getragen.`);
+  gesamtFunde++;
+}
 
 const messe = (wo) => page.evaluate((ort) => {
   const raus = [];

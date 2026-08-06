@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { hashPin } from "../../../platform/index.js";
-import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount } from "../../../meta/index.js";
+import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount , adminHasDefaultPass } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
-import { useEffect } from "react";
 import { T } from "../theme.js";
 import { Panel, Button, Segmented, Stat, PanelTitle, Toggle } from "../primitives.jsx";
 import { GildedFrame, goldText, GoldRule } from "../Gilded.jsx";
@@ -15,6 +14,16 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
   const [devPct, setDevPct] = useState(0); // workbench: journey progress slider
   const [devLg, setDevLg] = useState(profile.campaign?.league || 1); // workbench: league pick — applied together with the dial via SETZEN
   const [pin, setPin] = useState("");
+  /* v1.0.17: steht beim Admin noch das mitgelieferte Standardwort? Die Antwort
+     kommt asynchron (der Vergleich hasht), also wird sie einmal geholt und
+     faellt auf "nein" zurueck - eine falsche Warnung waere schlimmer als
+     keine. */
+  const [defaultPass, setDefaultPass] = useState(false);
+  useEffect(() => {
+    let lebt = true;
+    adminHasDefaultPass().then((ja) => { if (lebt) setDefaultPass(!!ja && account?.email === "admin"); }).catch(() => {});
+    return () => { lebt = false; };
+  }, [account?.email]);
   // the version check: what the server is serving RIGHT NOW, next to what this
   // device is running. cache:"no-store" skips the http cache, and version.json
   // sits outside the sw precache glob — the answer is always the deployed
@@ -282,10 +291,18 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
     {/* v1.0.8 (Besitzer): "Passwort setzen" hiess bisher die Geraete-Sperre -
         das klang nach dem Anmelde-Passwort. Jetzt gibt es BEIDES, klar
         getrennt: hier das echte Konto-Passwort, darunter die Sperre. */}
-    {account?.provider === "local" && account?.email !== "admin" && <Panel>
+    {/* v1.0.17 (Besitzer, Backlog "Admin-Defaultpasswort"): DER ADMIN WAR HIER
+        AUSGESPERRT (email !== "admin") - er konnte sein mitgeliefertes
+        Standardwort also gar nicht aendern, weshalb der Punkt seit Monaten
+        offen stand. Jetzt darf jedes lokale Konto sein Passwort aendern, und
+        solange das Standardwort steht, sagt es die Karte deutlich. */}
+    {account?.provider === "local" && <Panel>
       <PanelTitle>{t("profile.pwTitle")}</PanelTitle>
+      {defaultPass && <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "#f0c98a", margin: "2px 0 10px",
+        padding: "9px 11px", borderRadius: 9, background: "rgba(216,164,65,.13)", border: "1px solid rgba(216,164,65,.45)" }}>
+        {t("profile.pwDefaultWarn")}</div>}
       <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 10px" }}>{t("profile.pwHint")}</div>
-      <PasswortAendern t={t} account={account} />
+      <PasswortAendern t={t} account={account} onDone={() => setDefaultPass(false)} />
     </Panel>}
     <Panel>
       <PanelTitle>{t("profile.pinTitle")}</PanelTitle>
@@ -538,7 +555,7 @@ function KontoLoeschen({ t, account, onLogout }) {
   </div>;
 }
 
-function PasswortAendern({ t, account }) {
+function PasswortAendern({ t, account, onDone }) {
   const [alt, setAlt] = useState("");
   const [neu, setNeu] = useState("");
   const [wort, setWort] = useState(null);
@@ -547,7 +564,7 @@ function PasswortAendern({ t, account }) {
     try {
       const { changePassword } = await import("../../../meta/accounts.js");
       await changePassword(account.id, alt, neu);
-      setWort("ok"); setAlt(""); setNeu("");
+      setWort("ok"); setAlt(""); setNeu(""); onDone && onDone();
     } catch (e) { setWort(e?.message === "wrong-pass" ? "falsch" : "fehler"); }
   };
   const feld = { width: "100%", boxSizing: "border-box", background: T.bg2, border: `1px solid ${T.line}`,

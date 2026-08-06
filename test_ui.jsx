@@ -766,5 +766,25 @@ import { Button as _Btn, Segmented as _Seg } from "./src/app/ui/primitives.jsx";
   ok("a switch declares exactly one minimum height per option", hoehen.length === 2);
 }
 
+
+// ── BEIDE SPRACHEN TRAGEN DIESELBEN SCHLUESSEL (v1.0.17, Besitzer) ──────────
+// Elf Schluessel fehlten im englischen Block - die ganze Passwort-Karte und
+// zwei Weltkarten-Knoepfe. Sie fielen STUMM auf Deutsch zurueck, also stand
+// im englischen Spiel "Passwort aendern". Genau das faellt niemandem auf,
+// solange es niemand zaehlt.
+import { readFileSync as _lies } from "node:fs";
+{
+  const roh = _lies("src/app/i18n/strings.js", "utf8");
+  const schnitt = roh.indexOf("const EN = {");
+  const schluessel = (x) => new Set([...x.matchAll(/"([a-zA-Z]+\.[a-zA-Z0-9]+)":/g)].map((m) => m[1]));
+  const de = schluessel(roh.slice(0, schnitt)), en = schluessel(roh.slice(schnitt));
+  const fehltEn = [...de].filter((k) => !en.has(k));
+  const fehltDe = [...en].filter((k) => !de.has(k));
+  ok("every german key has an english twin", fehltEn.length === 0);
+  if (fehltEn.length) console.log("   ohne Englisch:", fehltEn.slice(0, 12).join(", "));
+  ok("and no english key stands alone", fehltDe.length === 0);
+  if (fehltDe.length) console.log("   ohne Deutsch:", fehltDe.slice(0, 12).join(", "));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
