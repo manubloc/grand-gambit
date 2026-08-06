@@ -36,9 +36,17 @@ export function BrettHintergrund({ liga = 1, staerke = 1 }) {
   }, [liga]);
 
   return (
+    /* v1.0.25: EIGENE GRAFIKSCHICHT. Ohne diese Zeilen liegt das Gemaelde in
+       derselben Ebene wie das Brett - und jede Figur, die zieht, zwingt den
+       Browser, den ganzen Hintergrund neu zu zeichnen. translateZ(0) hebt ihn
+       auf eine eigene Schicht, die einmal gezeichnet und danach nur noch
+       darunter gehalten wird; contain sagt zusaetzlich, dass nichts darin
+       nach aussen wirkt. Das Bild bewegt sich nie - genau der Fall, fuer den
+       diese Schicht gedacht ist. */
     <div aria-hidden style={{
       position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none",
       background: "#05060a", overflow: "hidden",
+      transform: "translateZ(0)", willChange: "opacity", contain: "strict",
     }}>
       <img
         src={quelle}

@@ -556,7 +556,14 @@ export default function App() {
           Zwei-Zweige-Falle. Jetzt spielt der Schreibtisch dasselbe Haus. */}
       <Soundtrack an={profile.sound !== false} laut={profile.musikLaut ?? 1} />
       <KlangRegie an={profile.sfx !== false} laut={profile.klangLaut ?? 1} />
-      {!immersive && <MysticBackground league={profile?.campaign?.league || 1} />}
+      {/* v1.0.25 (Besitzer: "das Spiel ruckelt"): DIE UNSICHTBARE EBENE.
+          Hier fehlte das inMatch-Gate, das der zweite Zweig laengst hat - im
+          Kampf lief die Halle WEITER, obwohl das Kapitelgemaelde sie
+          vollstaendig verdeckt. Der Browser rechnete also jeden Frame ein
+          168 % breites Bild MIT CSS-MASKE mit, das niemand sieht; Masken sind
+          auf Telefon-Grafikkernen teuer, und beim Ziehen kommt die Animation
+          obendrauf. Genau da war das Stocken. */}
+      {!immersive && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {/* DER RISSBODEN liegt unten fixiert hinter jedem Menue und waechst mit
           Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
           bleibt er fort - dort gehoert der Blick dem Brett bzw. der Karte. */}

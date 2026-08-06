@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.25
+
+- DAS RUCKELN BEIM SPIELEN: DIE UNSICHTBARE EBENE. Im Kampf lief die
+  Halle (MysticBackground) WEITER, obwohl das Kapitelgemaelde sie seit
+  v1.0.24 vollstaendig verdeckt - dem einen Rueckgabezweig der App fehlte
+  das inMatch-Gate, das der andere laengst hatte. Der Browser rechnete
+  also in jedem Bild ein 168 % breites Bild MIT CSS-MASKE mit, das
+  niemand sieht. Masken sind auf Telefon-Grafikkernen teuer, und beim
+  Ziehen kommt die Zug-Animation obendrauf: genau da sass das Stocken.
+- DER HINTERGRUND BEKOMMT SEINE EIGENE GRAFIKSCHICHT: ohne sie liegt das
+  Gemaelde in derselben Ebene wie das Brett, und jede ziehende Figur
+  zwingt den Browser, den ganzen Hintergrund neu zu zeichnen.
+  translateZ(0) hebt ihn auf eine Schicht, die einmal gezeichnet und
+  danach nur noch gehalten wird - das Bild bewegt sich ja nie.
+- VIER PROBEN halten es fest: die Halle traegt ihre teure Maske, das
+  Kapitelgemaelde traegt KEINE, es sitzt auf eigener Schicht, und JEDE
+  Aufrufstelle der Halle haengt am inMatch-Schalter. Damit kann der
+  Fehler nicht in einem dritten Zweig zurueckkehren.
+
 ## 1.0.24
 
 - DAS LAND HINTER DEM BRETT: zwoelf Oelgemaelde des Besitzers, eines je

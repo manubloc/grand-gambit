@@ -786,5 +786,26 @@ import { readFileSync as _lies } from "node:fs";
   if (fehltDe.length) console.log("   ohne Deutsch:", fehltDe.slice(0, 12).join(", "));
 }
 
+
+// ── KEINE UNSICHTBARE EBENE IM KAMPF (v1.0.25, Besitzer: "es ruckelt") ──────
+// Die Halle (MysticBackground) rendert ein 168 % breites Bild MIT CSS-Maske.
+// Im Kampf verdeckt das Kapitelgemaelde sie vollstaendig - der Browser rechnete
+// sie trotzdem jeden Frame mit. Diese Probe haelt fest, dass die beiden
+// Ebenen einander nie ueberlagern.
+import { MysticBackground as _MB } from "./src/app/ui/MysticBackground.jsx";
+import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
+{
+  const halle = html(<_MB league={2} />);
+  const grund = html(<_BH liga={2} />);
+  ok("the hall carries an expensive css mask", /mask-image/.test(halle));
+  ok("the board backdrop carries NO mask", !/mask-image/.test(grund));
+  ok("and it sits on its own paint layer", /translateZ\(0\)/.test(grund) && /contain:\s*strict/.test(grund));
+  // Der Quelltext der App: beide Ebenen haengen am inMatch-Schalter
+  const roh = _lies("src/app/App.jsx", "utf8");
+  const halleStellen = [...roh.matchAll(/<MysticBackground/g)].length;
+  const mitGate = [...roh.matchAll(/!inMatch && <MysticBackground/g)].length;
+  ok("every hall render is gated on inMatch", halleStellen > 0 && halleStellen === mitGate);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
