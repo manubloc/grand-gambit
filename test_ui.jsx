@@ -739,5 +739,15 @@ ok("every master has a drawing", bosses.length === BOSSES.length);
 }
 
 
+
+// ── DER NAME IN DER CHRONIK (v1.0.13, Besitzer-Punkt 6) ──────────────────
+import { loreText } from "./src/app/ui/worldMap.js";
+{
+  const t = loreText(9, false, "Manu");
+  ok("the chronicle takes the hero's name", t.includes("Manu") && !t.includes("{held}"));
+  ok("without a name the chronicle says: Namenloser", loreText(12, false, "").includes("Corvin — und Namenloser"));
+  ok("the english chronicle bows too", loreText(1, true, "Ada").includes(", Ada "));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

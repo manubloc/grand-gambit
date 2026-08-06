@@ -25,7 +25,7 @@ import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
 import { StatOrbBadge } from "../board/PieceGlyph.jsx";
 import { MAP_BITMAPS12 as MAP_BITMAPS } from "../mapBitmaps12.gen.js";
-import { WORLD_MAP, LEAGUE_LORE } from "../worldMap.js";
+import { WORLD_MAP, loreText } from "../worldMap.js";
 import { useMedia } from "../../App.jsx";
 import { voiceFor } from "../../../content/index.js";
 import { placeFor } from "../../../meta/index.js";
@@ -351,9 +351,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
   /* Der Einstieg liegt vor dem ganzen Schirm - erst das Land, dann die Karte. */
   if (intro) {
     const wt = themeForLeague(intro);
-    const lore = LEAGUE_LORE[intro];
+    const lore = loreText(intro, en, profile?.name);   /* v1.0.13: die Chronik spricht den Helden an */
     return <KapitelIntro liga={intro} titel={en ? wt.nameEn : wt.nameDe}
-      text={lore ? (en ? lore.en : lore.de) : null} onWeiter={introFertig} />;
+      text={lore} onWeiter={introFertig} />;
   }
 
   return (
@@ -983,7 +983,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   anchor, in the veiled dark where there is always room */}
               {worldSel && (() => {
                 const wt = themeForLeague(worldSel);
-                const lore = LEAGUE_LORE[worldSel];
+                const lore = loreText(worldSel, profile.lang === "en", profile?.name);
                 return (
                   /* v0.83: das Blatt haengt jetzt am SCHIRM, nicht am Bild -
                      fest unten in der Mitte, wo es immer zu sehen ist. */
@@ -995,7 +995,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     <div className="gg-serif" style={{ color: "#e9d296", fontSize: 15, letterSpacing: ".1em" }}>
                       {ROMAN[worldSel - 1]} · {wt.nameDe}</div>
                     <div className="gg-serif" style={{ color: "rgba(240,233,216,.85)", fontSize: 12.5, fontStyle: "italic",
-                      lineHeight: 1.6, marginTop: 6 }}>{lore ? (profile.lang === "en" ? lore.en : lore.de) : ""}</div>
+                      lineHeight: 1.6, marginTop: 6 }}>{lore || ""}</div>
                     <div style={{ display: "flex", gap: 8, marginTop: 11 }}>
                       <GoldShineButton style={{ flex: 1, padding: "9px 12px", fontSize: 13, borderRadius: 10 }}
                         onClick={() => { setViewLeague(worldSel); setPanOff({ x: 0, y: 0 }); setWorldSel(null); setWorld(false); }}>
