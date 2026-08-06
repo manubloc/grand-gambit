@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 1.0.29
+
+- DIE POPUP-MESSUNG SIEHT WIRKLICH ETWAS. Die Blattpruefung aus v1.0.28
+  meldete "sauber" - und hatte in Wahrheit NULL Blaetter vor sich. Genau
+  der Fehler, an dem das Werkzeug schon einmal blind war, nur eine Etage
+  hoeher. Nachgezaehlt statt geglaubt: an jedem Blatt-Ort wird jetzt
+  mitgeschrieben, wie viele Blaetter ueberhaupt dastanden.
+- URSACHE: DER HEROLD STAND DAVOR. Beim ersten Betreten eines Menues legt
+  sich das Willkommensblatt (zIndex 60) ueber alles; der Kachel-Klick lief
+  dagegen und oeffnete nie ein Figuren-Blatt. Jetzt wird der Herold zuerst
+  GEMESSEN - er ist selbst voller Fliesstext und genau die Sorte, die auf
+  schmalen Schirmen bricht - und danach weggeraeumt.
+- EINE LEERE MESSUNG IST KEIN ERFOLG: findet ein Blatt-Ort nichts, sagt
+  der Lauf das ausdruecklich ("bei X stand kein Blatt"), statt die Stelle
+  stillschweigend als sauber zu zaehlen. Diese Diagnose faerbt den Lauf
+  nicht rot, verschweigt ihn aber auch nicht.
+- Gemessen wird je Blatt dreierlei: Text, der aus seinem Kasten laeuft;
+  Blaetter, die zum Scrollen zwingen; Blaetter, die ueber den Schirmrand
+  ragen. Aktueller Stand auf allen drei Viewports: keine Funde.
+
 ## 1.0.28
 
 - DIE POPUPS WERDEN MITGEMESSEN. Das Textfluss-Werkzeug sah bisher nur

@@ -130,12 +130,20 @@ const messe = (wo) => page.evaluate((ort) => {
      (c) steht ein Blatt ueber den Schirmrand hinaus?
      Ein Blatt erkennen wir am selben Merkmal wie die Ebenen-Regel oben:
      fest positioniert mit zIndex >= 20. */
+  /* v1.0.29: EIN WERKZEUG, DAS NICHTS SIEHT, FINDET AUCH NICHTS. Genau daran
+     war die Knopfmessung blind gewesen; die Blattmessung soll denselben
+     Fehler nicht wiederholen. Darum meldet jeder Ort, WIE VIELE Blaetter er
+     ueberhaupt vor sich hatte. */
   const blaetter = [...document.querySelectorAll("div")].filter((d) => {
     const o = getComputedStyle(d);
     if (o.position !== "fixed" || (parseInt(o.zIndex, 10) || 0) < 20) return false;
     const r = d.getBoundingClientRect();
     return r.width > 120 && r.height > 80;   // echte Blaetter, keine Marker
   });
+  /* Die Zaehlung ist DIAGNOSE, kein Fund: sie meldet sich nur, wenn ein
+     Blatt-Ort angesteuert wurde und dort NICHTS stand - dann lief die
+     Messung ins Leere und ihr "sauber" waere wertlos. */
+  if (/^blatt-/.test(ort) && blaetter.length === 0) raus.push({ ort, text: "__LEER__", wOver: 0, hOver: 0, diagnose: true });
   for (const blatt of blaetter) {
     const br = blatt.getBoundingClientRect();
     if (br.bottom > innerHeight + 2 || br.top < -2)
@@ -283,9 +291,27 @@ for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) 
    Hofstaat angetippt und die Kampagnenkarte samt Stations-Blatt geoeffnet;
    genau dort sitzen die langen Fliesstexte. */
 {
+  /* v1.0.29: ERST DER HEROLD, DANN DIE KACHEL. Beim ERSTEN Betreten eines
+     Menues legt sich das Willkommensblatt (zIndex 60) ueber alles - der
+     Kachel-Klick lief bisher dagegen, und die Messung fand null Blaetter.
+     Das Herold-Blatt ist aber selbst voller Fliesstext und genau die Sorte,
+     die auf schmalen Schirmen bricht: es wird also GEMESSEN, bevor es
+     weggeraeumt wird. */
+  await dock("figuren");
+  await page.waitForTimeout(1100);
+  const herold = await page.evaluate(() => [...document.querySelectorAll("div")].some((d) => {
+    const o = getComputedStyle(d);
+    return o.position === "fixed" && (parseInt(o.zIndex, 10) || 0) >= 20 && d.getBoundingClientRect().height > 200;
+  }));
+  if (herold) {
+    if (await stehtNoch()) funde.push(...await messe("blatt-herold"));
+    await abraeumen();
+    await page.keyboard.press("Escape").catch(() => {});
+    await page.waitForTimeout(600);
+  }
   // (a) Figuren-Blatt im Hofstaat
   await page.evaluate((r) => { const b = [...document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, "Hofstaat");
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(900);
   const auf = await page.evaluate(() => {
     const k = [...document.querySelectorAll("div[role=button], button")]
       .filter((e) => { const r = e.getBoundingClientRect(); return r.width > 60 && r.height > 60; });
@@ -336,6 +362,9 @@ if (ausgestiegen) {
   funde = [];              // nichts davon ist verwertbar
   gesamtFunde++; anzahl = 0;   // und der Lauf gilt als gescheitert
 }
+const leere = funde.filter((f) => f.diagnose);
+funde = funde.filter((f) => !f.diagnose);
+for (const l of leere) console.log(`  (i) ${vw}px: bei "${l.ort}" stand kein Blatt - dieser Ort wurde nicht gemessen.`);
 gemessen += anzahl; gesamtFunde += funde.length;
 for (const f of funde) console.log(`  VERSCHLUCKT [${vw}px · ${f.ort}] "${f.text}" +${f.wOver}x${f.hOver}px`);
 console.log(`  Viewport ${vw}x${vh}: ${anzahl} Knoepfe zuletzt sichtbar, ${funde.length} Funde`);
