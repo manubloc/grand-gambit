@@ -833,5 +833,28 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("a flying piece is not told to pop", /animation:\s*none/.test(ruhig) && !/animation:\s*none/.test(normal));
 }
 
+
+// ── DIE BRUCHKANTE BLEIBT FLACH (v1.0.31, Besitzer) ────────────────────────
+// "Gerne kann das Schachbrett auch Risse bekommen" - ja, aber nicht auf
+// Kosten der Randfiguren. Der erste Anlauf sprang 3 % tief und knabberte die
+// Tuerme an. Diese Probe haelt beide Grenzen fest.
+{
+  const roh = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  const svg = roh.slice(roh.indexOf('<svg aria-hidden viewBox="0 0 100 100"'));
+  const block = svg.slice(0, svg.indexOf("</svg>"));
+  ok("the fracture exists at all", /path fill="#05070c"/.test(block));
+  /* Gemessen wird die TIEFE, nicht jede Zahl: ein Zackenpunkt "x,y" sitzt am
+     Rand, wenn MINDESTENS EINE seiner Koordinaten dicht an 0 oder 100 liegt.
+     Der erste Anlauf dieser Probe pruefte stumpf alle Zahlen und schlug bei
+     den X-Positionen der Zacken an - die duerfen ueber das ganze Brett
+     laufen, das ist ihr Sinn. */
+  const paare = [...block.matchAll(/L\s*(\d+\.?\d*),(\d+\.?\d*)/g)].map((m) => [+m[1], +m[2]]);
+  const amRand = (v) => v <= 1.6 || v >= 98.4;
+  const tief = paare.filter(([x, y]) => !amRand(x) && !amRand(y));
+  ok("no tooth bites deeper than 1.6 % into the board", paare.length > 20 && tief.length === 0);
+  if (tief.length) console.log("   zu tief:", tief.slice(0, 6).map((p) => p.join(",")).join(" | "));
+  ok("the fracture lies BELOW the pieces", /zIndex:\s*2\b/.test(block));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

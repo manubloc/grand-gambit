@@ -655,8 +655,45 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             ineinander laufen statt uebereinander zu liegen. */}
         <div aria-hidden style={{ position: "absolute", inset: -1, pointerEvents: "none", zIndex: 3,
           borderRadius: 12,
-          background: "linear-gradient(180deg, rgba(5,7,12,.5) 0%, rgba(5,7,12,0) 5.5%, rgba(5,7,12,0) 94.5%, rgba(5,7,12,.5) 100%),"
-            + " linear-gradient(90deg, rgba(5,7,12,.5) 0%, rgba(5,7,12,0) 4%, rgba(5,7,12,0) 96%, rgba(5,7,12,.5) 100%)" }} />
+          background: "linear-gradient(180deg, rgba(5,7,12,.62) 0%, rgba(5,7,12,0) 9%, rgba(5,7,12,0) 91%, rgba(5,7,12,.62) 100%),"
+            + " linear-gradient(90deg, rgba(5,7,12,.62) 0%, rgba(5,7,12,0) 7%, rgba(5,7,12,0) 93%, rgba(5,7,12,.62) 100%)" }} />
+        {/* v1.0.31 (Besitzer: "gerne kann das Schachbrett auch an der einen
+            oder anderen Stelle Risse bekommen"): DIE BRUCHKANTE. Statt eines
+            sauber geschnittenen Rechtecks endet das Brett jetzt gesprungen -
+            der Rand bricht in unregelmaessigen Zacken in die Landschaft
+            hinein. Thematisch gehoert das hierher: durch diese Welt zieht
+            ein Riss, da bleibt kein Stein heil.
+            Bauart: EIN svg ueber dem Brett, das nur die aeussersten Prozente
+            in der Farbe der Nacht ausfuellt. preserveAspectRatio="none" zieht
+            es auf jede Brettgroesse; die Zacken sind FEST gewaehlt, nicht
+            gewuerfelt - ein Brett, das bei jedem Bild anders bricht, waere
+            unruhig. Die Spielflaeche bleibt unberuehrt, pointerEvents aus.
+            ZWEI MASSE, AM BILD KORRIGIERT: Der erste Anlauf sprang 3 % tief
+            und schnitt damit die Randtuerme an - bei acht Feldern ist das
+            fast ein Viertel Feldbreite. Jetzt reichen die Zacken hoechstens
+            1,4 %, und sie liegen UNTER den Figuren (zIndex 2 statt 4), damit
+            kein Kopf angeknabbert wird. */}
+        <svg aria-hidden viewBox="0 0 100 100" preserveAspectRatio="none"
+          style={{ position: "absolute", inset: -1, width: "calc(100% + 2px)", height: "calc(100% + 2px)",
+            pointerEvents: "none", zIndex: 2, overflow: "visible" }}>
+          <path fill="#05070c" d="
+            M0,0 H100 V0.9 L98.3,1.1 L93.1,0.5 L88.6,1.3 L84.2,0.6 L79.4,1.4 L74.1,0.6
+            L69.6,1.2 L64.2,0.5 L58.8,1.3 L53.2,0.6 L47.6,1.2 L42.1,0.5 L36.4,1.3
+            L31.2,0.6 L25.8,1.2 L20.3,0.5 L15.1,1.2 L9.8,0.6 L2.1,1.3 L0,0.5 Z" />
+          <path fill="#05070c" d="
+            M0,100 H100 V99.1 L98.1,98.9 L91.4,99.5 L86.2,98.7 L81.6,99.4 L76.2,98.8
+            L70.8,99.5 L65.4,98.7 L59.9,99.4 L54.4,98.8 L48.8,99.5 L43.1,98.7
+            L37.6,99.4 L32.0,98.8 L26.5,99.5 L21.1,98.7 L15.6,99.4 L10.2,98.8
+            L2.2,99.5 L0,98.8 Z" />
+          <path fill="#05070c" d="
+            M0,0 V100 H1.1 L1.2,97.8 L0.6,90.4 L1.3,85.1 L0.6,79.8 L1.4,74.3
+            L0.5,68.9 L1.2,63.4 L0.6,58.0 L1.3,52.4 L0.5,46.9 L1.2,41.3
+            L0.6,35.8 L1.3,30.2 L0.6,24.7 L1.2,19.1 L0.5,13.6 L1.2,8.0 L0.5,1.1 L0,0 Z" />
+          <path fill="#05070c" d="
+            M100,0 V100 H98.8 L98.8,94.8 L99.5,89.6 L98.7,84.2 L99.4,78.9 L98.7,73.4
+            L99.4,67.8 L98.8,62.3 L99.5,56.8 L98.7,51.2 L99.4,45.7 L98.7,40.1
+            L99.5,34.6 L98.8,29.0 L99.4,23.5 L98.7,17.9 L99.4,12.4 L98.8,6.8 L99.5,0.6 L100,0 Z" />
+        </svg>
         {/* THE GILDED FRAME: an ornate rail laid around every board so the
             field reads as a mounted plate, not a flat grid. Measured on the
             art: the rail's inner edge sits 2.5% in from the image border, so

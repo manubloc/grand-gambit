@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.31
+
+- DAS BRETT BRICHT INS LAND. Der Besitzer wollte, dass Brett und Gemaelde
+  staerker zusammenwachsen, und schlug Risse vor - das passt hierher wie
+  nichts sonst: durch diese Welt zieht ein Riss, da bleibt kein Stein
+  heil. Der Rand endet jetzt gesprungen statt sauber geschnitten, in
+  unregelmaessigen Zacken, die in die Landschaft auslaufen.
+- Bauart: EIN svg ueber der Spielflaeche, das nur die aeussersten Prozente
+  in der Farbe der Nacht fuellt. Die Zacken sind FEST gewaehlt, nicht
+  gewuerfelt - ein Brett, das bei jedem Bild anders bricht, waere unruhig.
+- ZWEI MASSE AM BILD KORRIGIERT: Der erste Anlauf sprang 3 % tief und
+  schnitt damit die Randtuerme an - bei acht Feldern ist das fast ein
+  Viertel Feldbreite. Jetzt hoechstens 1,4 %, und die Bruchkante liegt
+  UNTER den Figuren, damit kein Kopf angeknabbert wird.
+- Der Kantenverlauf greift weiter (7-9 % statt 4-5,5 %), sodass die harte
+  Aussenkante auch dort ausfranst, wo kein Zacken sitzt.
+- Drei Proben halten es fest: die Bruchkante existiert, kein Zackenpunkt
+  reicht tiefer als 1,6 % ins Brett, und sie liegt unter den Figuren.
+
 ## 1.0.30
 
 - BRETT UND GEMAELDE WACHSEN ZUSAMMEN (Besitzerwunsch). Drei Wege wurden
