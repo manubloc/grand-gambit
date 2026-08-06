@@ -280,6 +280,17 @@ import { readdirSync as _lies } from "node:fs";
   }
   ok("every one of the twelve chapters owns a painting", fehlend.length === 0);
   if (fehlend.length) console.log("   ohne Bild:", fehlend.join(", "));
+  /* v1.0.24: dasselbe fuer die Brett-Hintergruende. Fehlt einer, faellt das
+     Brett auf schwarzen Grund zurueck - lautlos, wie Kapitel VIII es
+     monatelang tat. */
+  const brett = _lies("public/brett");
+  const ohneGrund = [];
+  for (let n = 1; n <= 12; n++) {
+    const pre = String(n).padStart(2, "0") + "-";
+    if (!brett.some((f) => f.startsWith(pre) && f.endsWith(".webp"))) ohneGrund.push(n);
+  }
+  ok("and every chapter owns a board backdrop", ohneGrund.length === 0);
+  if (ohneGrund.length) console.log("   ohne Hintergrund:", ohneGrund.join(", "));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

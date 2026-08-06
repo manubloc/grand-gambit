@@ -1,5 +1,23 @@
 # Changelog - Grand Gambit
 
+## 1.0.24
+
+- DAS LAND HINTER DEM BRETT: zwoelf Oelgemaelde des Besitzers, eines je
+  Kapitel, liegen jetzt im Kampf hinter dem Schachbrett. Im Kampf tritt
+  der Rissboden ab und das Kapitelbild nimmt seinen Platz; oben und unten
+  laeuft es in Schwarz aus, damit Kopfzeile und Zugleiste ruhig bleiben.
+  Die Kampagne zeigt das Kapitel der Station, Schnellspiel, Halle und
+  Tagesraetsel den eigenen Kapitelstand.
+- GEMESSEN STATT GEMUSTERT: alle zwoelf tragen exakt 1024x1536 und wurden
+  gegen die zwei Kennzahlen des Katalogs geprueft. Ergebnis: die
+  Mittelzone ist ueberall ruhig genug, und die untere Helligkeitsgrenze
+  von 0.22 war MEIN Denkfehler - fuer einen Hintergrund ist dunkler
+  besser, nicht schlechter. Das Endlose Meer steht bei 0.13 und ist genau
+  richtig. Der Katalog ist entsprechend berichtigt.
+- Als WebP q80 abgelegt: zusammen 1,2 MB fuer zwoelf Bilder, und zwar in
+  public/ statt im Buendel - sichtbar ist immer nur eines.
+- Eine Probe zaehlt nach, dass jedes Kapitel seinen Hintergrund besitzt.
+
 ## 1.0.23
 
 - "FAEHIGKEITEN IN KAPITEL I BEWEGUNGSBASIERT"? HINFAELLIG - und zwar

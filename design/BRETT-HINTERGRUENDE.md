@@ -268,8 +268,11 @@ almost monochrome.
    Worten) — so erbt der Brett-Hintergrund die Farbwelt seines Kapitels.
 3. Format **1024×1536**, danach ×2 hochrechnen.
 4. **Nachmessen statt ansehen**, zwei Kennzahlen je Bild:
-   - Mittlere Helligkeit **zwischen 0.22 und 0.40** (dasselbe Maß wie in der
-     Tabelle oben). Liegt sie darüber, kämpfen die Figuren.
+   - Mittlere Helligkeit **höchstens 0.40** (dasselbe Maß wie in der Tabelle
+     oben). Liegt sie darüber, kämpfen die Figuren gegen das Bild.
+     **Berichtigt nach dem ersten Satz (v1.0.24):** Eine UNTERgrenze war ein
+     Denkfehler — für einen Hintergrund ist dunkler besser, nicht schlechter.
+     Das Endlose Meer steht bei 0.13 und ist genau richtig.
    - Helligkeits-Standardabweichung der Mittelzone (20–78 % Höhe) **deutlich
      unter** der des Gesamtbildes. Sonst ist die Mitte nicht ruhig.
    Reißt eine Kennzahl, wird der Lauf wiederholt — nicht durchgewinkt.

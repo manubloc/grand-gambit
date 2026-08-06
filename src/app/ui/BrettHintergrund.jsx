@@ -1,0 +1,67 @@
+// ── DER BRETT-HINTERGRUND ───────────────────────────────────────────────────
+// Wunsch des Besitzers (v1.0.24): hinter dem Schachbrett liegt das Land, in
+// dem gerade gekaempft wird - zwoelf Oelgemaelde, eines je Kapitel, von ihm
+// selbst erzeugt nach dem Katalog in design/BRETT-HINTERGRUENDE.md.
+//
+// Bauart wie beim RissBoden, nur andersherum gedacht: das Bild deckt den
+// GANZEN Schirm (der Blick geht ins Land hinein, nicht auf einen Boden), und
+// oben wie unten laeuft es in Schwarz aus, damit Kopfzeile, Knoepfe und
+// Zugleiste ruhig bleiben. Das Brett steht mittig davor - genau dort ist die
+// Bildmitte absichtlich leer gemalt.
+//
+// WARUM ALS DATEI UND NICHT IM BUENDEL: zwoelf Bilder zu je ~100 KB waeren
+// 1,2 MB Buendel-Zuwachs fuer etwas, das immer nur EINMAL sichtbar ist. Sie
+// liegen darum wie die Kapitelgemaelde in public/ und werden vom Browser
+// geholt, wenn das Kapitel dran ist.
+import { useMemo, useState } from "react";
+
+// Die Zuordnung Kapitel -> Datei, gleiche Tabelle wie in KapitelIntro.jsx.
+const DATEI = {
+  1: "01-kronland", 2: "02-kornmark", 3: "03-eichwald", 4: "04-krummholz",
+  5: "05-grauwacht", 6: "06-wolkenjoch", 7: "07-sattelweite", 8: "08-aschgrund",
+  9: "09-wunde", 10: "10-sonnenschlund", 11: "11-kueste", 12: "12-meer",
+};
+
+/** Das Land hinter dem Brett.
+ *
+ *  @param liga    Kapitelnummer 1-12. Alles ausserhalb faellt auf Kronland.
+ *  @param staerke 0..1 - wie deutlich das Bild stehen darf. Der Besitzer kann
+ *                 es spaeter zurueckdrehen, ohne dass hier etwas umgebaut wird.
+ */
+export function BrettHintergrund({ liga = 1, staerke = 1 }) {
+  const [geladen, setGeladen] = useState(false);
+  const quelle = useMemo(() => {
+    const n = Math.min(12, Math.max(1, Math.round(liga || 1)));
+    return `/brett/${DATEI[n] || DATEI[1]}.webp`;
+  }, [liga]);
+
+  return (
+    <div aria-hidden style={{
+      position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none",
+      background: "#05060a", overflow: "hidden",
+    }}>
+      <img
+        src={quelle}
+        alt=""
+        decoding="async"
+        onLoad={() => setGeladen(true)}
+        style={{
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          objectFit: "cover", objectPosition: "center",
+          /* Erst wenn das Bild wirklich da ist, blendet es auf - ein halb
+             geladenes Gemaelde, das ruckartig erscheint, waere schlimmer als
+             eine Sekunde Schwarz. */
+          opacity: geladen ? staerke : 0,
+          transition: "opacity .6s ease",
+        }}
+      />
+      {/* Oben und unten in Schwarz auslaufen: dort sitzen Kopfzeile und
+          Zugleiste, und Schrift auf Gemaelde liest sich schlecht. */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(180deg, rgba(5,6,10,.92) 0%, rgba(5,6,10,.35) 14%,"
+          + " rgba(5,6,10,0) 30%, rgba(5,6,10,0) 68%, rgba(5,6,10,.45) 86%, rgba(5,6,10,.95) 100%)",
+      }} />
+    </div>
+  );
+}

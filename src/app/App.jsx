@@ -31,6 +31,7 @@ import { ArmyScreen } from "./ui/screens/ArmyScreen.jsx";
 import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
+import { BrettHintergrund } from "./ui/BrettHintergrund.jsx";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
 import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
@@ -560,6 +561,12 @@ export default function App() {
           Hofwert und Kampagne (RissBoden.jsx). Im Kampf und in der Kartenwelt
           bleibt er fort - dort gehoert der Blick dem Brett bzw. der Karte. */}
       {!immersive && !inMatch && !(tab === "play" && view === "camp") && <RissBoden profile={profile} />}
+      {/* v1.0.24 (Besitzer): DAS LAND HINTER DEM BRETT. Im Kampf tritt der
+          Rissboden ab und das Kapitelgemaelde nimmt seinen Platz - zwoelf
+          Oelbilder, deren Mitte absichtlich leer gemalt ist, damit das Brett
+          darauf lesbar steht. Kampagne: das Kapitel der Station. Schnelles
+          Spiel, Halle und Tagesraetsel: der eigene Kapitelstand. */}
+      {inMatch && <BrettHintergrund liga={match?.league || profile?.campaign?.league || 1} />}
       {(() => {
         // ── ERSTBESUCH-HERALD (v0.51): beim ersten Betreten eines Menues
         // stellt sich der Raum EINMAL vor - danach schweigt er fuer immer
@@ -640,6 +647,7 @@ export default function App() {
       ...(immersive ? { maxWidth: "none" } : {}) }}>
       {(!immersive || mapView) && !inMatch && <MysticBackground league={profile?.campaign?.league || 1} />}
       {!immersive && !inMatch && <RissBoden profile={profile} />}
+      {inMatch && <BrettHintergrund liga={match?.league || profile?.campaign?.league || 1} />}   {/* v1.0.24: auch im zweiten Zweig */}
       {(() => {
         // ── ERSTBESUCH-HERALD (v0.51): beim ersten Betreten eines Menues
         // stellt sich der Raum EINMAL vor - danach schweigt er fuer immer
