@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { mitHeld } from "../namen.js";   /* v1.0.13: {held} in Erzaehltexten */
 import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
 import { musikBereich } from "../musik.js";
 import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE, VALUE } from "../../../core/index.js";
@@ -1008,7 +1009,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
-        {intro && !banner && <StoryIntro node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => { setIntro(false); if (foresight) setScout(true); }} timer={timer} />}
+        {intro && !banner && <StoryIntro profile={profile} node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => { setIntro(false); if (foresight) setScout(true); }} timer={timer} />}
         {brief && hpMode && !intro && !banner && <HpBriefing t={t}
           onBegin={() => setBrief(false)}
           onNever={() => { setBrief(false); dispatch({ type: "SET_NOTICE", key: "hpBrief" }); }} />}
@@ -1338,7 +1339,7 @@ function HpBriefing({ t, onBegin, onNever }) {
   );
 }
 
-function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
+function StoryIntro({ node, boss, t, en, onBegin, timer = null, profile = null }) {
   const ch = chapterForRow(node.row || 0);
   const roman = ["I", "II", "III", "IV"][ch.n - 1];
   return (
@@ -1363,7 +1364,7 @@ function StoryIntro({ node, boss, t, en, onBegin, timer = null }) {
         </div>}
         {boss && voiceFor(boss) && <div className="gg-serif" style={{ marginTop: 7, fontSize: 12.5, fontStyle: "italic",
           lineHeight: 1.55, color: "#5c5140" }}>
-          {voiceFor(boss)[en ? "heraldEn" : "heraldDe"]}
+          {mitHeld(voiceFor(boss)[en ? "heraldEn" : "heraldDe"], profile)}
         </div>}
         {timer && <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: "#8a6f4d" }}>
           <HourglassIc size={13} color="#8a6f4d" /> {timer.type === "total"
@@ -1424,7 +1425,7 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
           <div className="gg-serif" style={{ margin: "2px 0 10px", padding: "10px 12px", borderRadius: 12,
             border: "1px solid rgba(233,210,150,.3)", background: "rgba(10,13,20,.55)",
             fontStyle: "italic", fontSize: 12.5, lineHeight: 1.55, color: "rgba(240,233,216,.9)" }}>
-            „{voiceFor(boss)[en ? "afterEn" : "afterDe"]}"
+            „{mitHeld(voiceFor(boss)[en ? "afterEn" : "afterDe"], profile)}"
             <div style={{ fontStyle: "normal", fontSize: 10.5, letterSpacing: ".14em", color: "#c9a45c", marginTop: 5 }}>
               — {boss.name[en ? "en" : "de"].toUpperCase()}</div>
           </div>

@@ -1,5 +1,14 @@
 # Changelog - Grand Gambit
 
+## 1.0.13
+
+- DER HELDNAME IN DEN KAMPAGNENTEXTEN: Wo die Figuren nach dem Sieg bisher
+  den namenlosen "Wanderer" ansprachen, sprechen sie jetzt DICH an - alle
+  78 Anreden in den Stimmen der Champions und Meister tragen den Namen aus
+  dem Profil. Jede Erzaehlstelle (Herolde auf Karte und Brett, Stations-
+  geschichten) versteht ab jetzt den Platzhalter {held}; ohne Namen bleibt
+  der alte Ehrentitel.
+
 ## 1.0.12
 
 - DER VORLADER: der Boot-Riss bleibt als vollstaendiger Erstlade-Schirm

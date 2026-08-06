@@ -311,5 +311,16 @@ import { buyItem as _bi, itemPrice as _ip } from "./src/content/index.js";
   ok("drinking does not make forgetting cheap again", nach.itemKaeufe.vergessenstrank === 2);
 }
 
+// ── der Heldname in den Kampagnentexten (v1.0.13) ────────────────────────
+import { VOICES as _vx } from "./src/content/voices.js";
+import { mitHeld as _mh, heldName as _hn } from "./src/app/ui/namen.js";
+{
+  const anreden = Object.values(_vx).filter((v) => (v.afterDe || "").includes("{held}"));
+  ok("the figures address the hero by placeholder", anreden.length >= 20);
+  ok("no direct vocative 'Wanderer' address remains", !JSON.stringify(_vx).includes(", Wanderer"));
+  ok("the name steps into the text", _mh("Gut gemacht, {held}.", { name: "Manuel" }) === "Gut gemacht, Manuel.");
+  ok("without a name the old honorific stays", _hn({}) === "Wanderer" && _mh("He, {held}!", null) === "He, Wanderer!");
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

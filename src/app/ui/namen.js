@@ -44,3 +44,14 @@ export const rollTag = (en) => {
   const tag = (r(TAG_FIRST) + " " + r(TAG_EPI[L])).slice(0, 20) + " " + (11 + Math.floor(Math.random() * 88));
   rolledTags.add(tag); return tag;
 };
+
+/* v1.0.13 (Besitzer, Punkt 6): DER HELDNAME IN DEN KAMPAGNENTEXTEN.
+   Jede Erzaehlstelle darf {held} schreiben - beim Zeigen tritt der Name aus
+   dem Profil an diese Stelle. Ohne Namen bleibt der alte Ehrentitel. */
+export function heldName(profile) {
+  const n = (profile?.name || "").trim();
+  return n || "Wanderer";
+}
+export function mitHeld(text, profile) {
+  return typeof text === "string" ? text.split("{held}").join(heldName(profile)) : text;
+}

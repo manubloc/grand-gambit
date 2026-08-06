@@ -10,6 +10,7 @@ import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CAMPAIGN, nodeById, BRANCHES, campaignTag, mapById, CHARACTERS, CHAPTERS, chapterTitle, itemPrice } from "../../../content/index.js";
 import { KapitelIntro, kapitelBildDa } from "../KapitelIntro.jsx";
+import { mitHeld } from "../namen.js";   /* v1.0.13: {held} in Erzaehltexten */
 import { nodeStatus, nodeInLeague, currentNodeId, nodeBossSpec, leagueRewardMult, advanceLeague, seaAccessible, gateOf, tollCost, effectiveMap, winsNeeded, bossWinsFor, characterLevel, gambitTier } from "../../../meta/index.js";
 import { ITEMS, hasItem } from "../../../content/index.js";
 import bootUrl from "../assets/wanderer-boot.webp";
@@ -1065,7 +1066,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
             // names its figure — so it stays veiled until you have PLAYED here
             const tell = !node?.boss || status === "cleared" || facedSet.has(sel);
             if (tell && node?.storyDe) return <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
-              {en ? node.storyEn : node.storyDe}</div>;
+              {mitHeld(en ? node.storyEn : node.storyDe, profile)}</div>;
             if (node?.boss) return <div className="gg-serif" style={{ fontSize: 12.5, color: PP.dim, marginTop: 4, fontStyle: "italic", lineHeight: 1.45 }}>
               {t("camp.veiled")}</div>;
             return null; })()}
@@ -1129,7 +1130,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   {t("camp.turncoat", { name: unlockCh[en ? "nameEn" : "nameDe"] })}</div>}
                 {(() => { const v = voiceFor(boss);   // the saga speaks on the map too
                   return v ? <div className="gg-serif" style={{ fontSize: 11.5, color: "#6b5c44", fontStyle: "italic", marginTop: 5, lineHeight: 1.5 }}>
-                    {v[en ? "heraldEn" : "heraldDe"]}</div> : null; })()}
+                    {mitHeld(v[en ? "heraldEn" : "heraldDe"], profile)}</div> : null; })()}
               </div>
             </div>
             );
