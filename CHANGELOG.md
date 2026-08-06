@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 1.0.18
+
+- DAS TEXTFLUSS-WERKZEUG SIEHT WIEDER. Es war seit v0.92 blind und meldete
+  trotzdem "sauber" - der schlimmste Zustand, den ein Pruefwerkzeug haben
+  kann. Vier Ursachen lagen uebereinander, alle jetzt behoben:
+  (1) Es klickte "Als Gast spielen", einen Weg, den es nicht mehr gibt -
+  jetzt legt es sich selbst ein Konto an.
+  (2) Es klickte gegen den Vorlader, der mit zIndex 200 ueber allem liegt -
+  jetzt wartet es auf sein Erscheinen UND sein Verschwinden, und zwar
+  zweimal, weil die App nach dem Anlegen des Kontos neu startet.
+  (3) Maus-Klicks kamen an den Knoepfen nicht an; ein JS-Klick auf dem
+  Element traegt zuverlaessig.
+  (4) Der Kern: es suchte "main button" - die App traegt aber kein <main>
+  mehr. Der Selektor fand NIE einen Knopf, also war jede Messung leer und
+  jede Meldung gruen.
+- EINE LEBENDPROBE haelt das fuer immer fest: steht die App nicht wirklich
+  (Fussleiste da, mehr als drei Knoepfe), sagt der Lauf "NICHT GEMESSEN"
+  statt gruen zu leuchten.
+- EIN OVERLAY DARF DECKEN: der erste ehrliche Lauf meldete "Simpel x
+  Partie starten" - das Willkommensblatt lag ueber dem Hub, und das ist
+  keine Panne, sondern der Sinn eines Blattes. Gemessen wird jetzt nur
+  innerhalb einer Ebene.
+- Als "npm run pruefe:fluss" verankert, damit es nicht wieder still
+  einschlaeft.
+- Der Herold bekommt die Sprache jetzt aus dem Profil statt aus einer
+  Variablen, die an dieser Stelle noch gar nicht steht.
+
 ## 1.0.17
 
 - ELF SCHLUESSEL FEHLTEN IM ENGLISCHEN: die ganze Passwort-Karte und zwei

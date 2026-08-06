@@ -593,8 +593,8 @@ export default function App() {
         );
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} en={en} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
-      {showName && !inMatch && <NamensRuf t={t} en={en} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} en={profile.lang === "en"} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} en={profile.lang === "en"} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
@@ -673,8 +673,8 @@ export default function App() {
         );
       })()}
       {showPrivacy && <PrivacyNotice t={t} dispatch={dispatch} />}
-      {showIntro && <GameIntro t={t} en={en} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
-      {showName && !inMatch && <NamensRuf t={t} en={en} dispatch={dispatch} />}
+      {showIntro && <GameIntro t={t} en={profile.lang === "en"} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
+      {showName && !inMatch && <NamensRuf t={t} en={profile.lang === "en"} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}

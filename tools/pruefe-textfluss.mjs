@@ -39,37 +39,59 @@ const klick = async (text) => {
 /* Erst muss der VORLADER fort sein (v1.0.12): er liegt mit zIndex 200 ueber
    allem, bis jedes Bild und jeder Klang geholt ist. Wer vorher klickt, klickt
    gegen den Ladeschirm - genau daran scheiterte der erste Reparaturversuch. */
-await page.waitForFunction(() => !/Riss \u00f6ffnet sich|Riss ist offen|rift is opening|rift is open/i.test(document.body.innerText),
-  null, { timeout: 90000 }).catch(() => console.log("  !! der Vorlader ging nicht fort"));
-await page.waitForTimeout(900);
+/* ZWEI FALLEN, an denen die Reparaturversuche scheiterten:
+   (a) Die Wartebedingung griff, BEVOR React den Vorlader gezeichnet hatte -
+       "kein Ladetext da" war beim ersten Poll trivial wahr. Also lief das
+       Werkzeug sofort weiter und klickte gegen einen Ladeschirm, der erst
+       danach erschien. Deshalb wird auf sein ERSCHEINEN und dann auf sein
+       Verschwinden gewartet.
+   (b) Maus-Klicks kamen an den Knoepfen nicht an - auch mit force. Der
+       JS-Klick auf dem Element selbst traegt zuverlaessig. */
+const LADETEXT = /Riss \u00f6ffnet sich|Riss ist offen|rift is opening|rift is open/i;
+const warteVorlader = async () => {
+  await page.waitForFunction((q) => new RegExp(q.s, q.f).test(document.body.innerText),
+    { s: LADETEXT.source, f: LADETEXT.flags }, { timeout: 12000 }).catch(() => {});
+  await page.waitForFunction((q) => !new RegExp(q.s, q.f).test(document.body.innerText),
+    { s: LADETEXT.source, f: LADETEXT.flags }, { timeout: 120000 })
+    .catch(() => console.log("  !! der Vorlader ging nicht fort"));
+  await page.waitForTimeout(800);
+};
+const jsKlick = async (muster) => page.evaluate((q) => {
+  const re = new RegExp(q, "i");
+  const b = [...document.querySelectorAll("button")].find((x) => x.offsetParent && re.test(x.innerText || ""));
+  if (b) { b.click(); return true; }
+  return false;
+}, muster);
+
+await warteVorlader();
 const konto = `fluss${Date.now()}@example.com`;
-await klick("Noch kein Konto");
+await jsKlick("Noch kein Konto|No account yet");
+await page.waitForTimeout(600);
 {
   const felder = page.locator("input");
-  const n = await felder.count();
-  if (n >= 2) {
+  if (await felder.count() >= 2) {
     await felder.nth(0).fill(konto).catch(() => {});
     await felder.nth(1).fill("fluss-probe-2026").catch(() => {});
     await page.waitForTimeout(250);
-    /* NICHT per Text klicken: "Konto erstellen" steht auch auf dem
-       Umschalt-Link darunter, und getByText erwischte den. Der ECHTE Knopf
-       ist der abschickende - er traegt den Text und ist ein <button>. */
-    const knopf = page.locator("button", { hasText: /Konto erstellen|Create account/i }).first();
-    await knopf.click({ timeout: 8000, force: true }).catch(async () => {
-      await felder.nth(1).press("Enter").catch(() => {});
-    });
-    await page.waitForTimeout(1600);
+    await jsKlick("^Konto erstellen$|^Create account$");
+    await page.waitForTimeout(1500);
   }
 }
-for (const t of ["Los geht's", "Weiter", "Verstanden", "Uebernehmen", "Übernehmen"]) await klick(t);
-await klick("Neuer Spielstand");
-for (const t of ["Los geht's", "Weiter", "Übernehmen", "Verstanden"]) await klick(t);
+/* Nach dem Anlegen startet die App NEU - der Vorlader laeuft ein zweites Mal. */
+await warteVorlader();
+for (const t of ["Los geht's", "Weiter", "Verstanden", "\u00dcbernehmen", "Uebernehmen"]) { await jsKlick(t); await page.waitForTimeout(500); }
+await jsKlick("Neuer Spielstand|New save");
+await page.waitForTimeout(900);
+for (const t of ["Los geht's", "Weiter", "\u00dcbernehmen", "Verstanden", "Weiterspielen|Continue"]) { await jsKlick(t); await page.waitForTimeout(600); }
 await page.waitForTimeout(1100);
 /* DIE LEBENDPROBE: steht die App wirklich? Fruehere Laeufe massen am
    Anmeldeschirm weiter und meldeten null Funde. Ohne die Fussleiste
    (SPIELEN/FIGUREN/LAGER/PROFIL) ist der Lauf WERTLOS und sagt das laut. */
+/* v1.0.18: die App traegt kein <main> mehr - der alte Selektor "main button"
+   fand NIE einen Knopf, also mass das Werkzeug jedesmal null und meldete das
+   als "sauber". Jetzt zaehlen alle Knoepfe des Dokuments. */
 const drin = await page.evaluate(() =>
-  /SPIELEN|PLAY/i.test(document.body.innerText) && document.querySelectorAll("main button").length > 3);
+  /SPIELEN|PLAY/i.test(document.body.innerText) && document.querySelectorAll("button").length > 3);
 if (!drin) {
   console.log(`  !! ${vw}px: die App steht NICHT - der Einstieg hat nicht getragen.`);
   gesamtFunde++;
@@ -77,7 +99,7 @@ if (!drin) {
 
 const messe = (wo) => page.evaluate((ort) => {
   const raus = [];
-  for (const b of document.querySelectorAll("main button")) {
+  for (const b of document.querySelectorAll("button")) {   /* v1.0.18: kein <main> mehr */
     const r = b.getBoundingClientRect();
     if (r.width < 8 || r.height < 8) continue;
     const wOver = b.scrollWidth - b.clientWidth, hOver = b.scrollHeight - b.clientHeight;
@@ -115,12 +137,26 @@ const messe = (wo) => page.evaluate((ort) => {
     }
     return { ...r, width: r.right - r.left, height: r.bottom - r.top };
   };
-  const kn = [...document.querySelectorAll("main button, nav button, aside button")]
-    .map((b) => ({ b, r: sichtbar(b), dock: !!b.closest("nav, aside") }))
+  /* v1.0.18: EIN OVERLAY DARF DECKEN - dafuer ist es da. Der erste ehrliche
+     Lauf meldete "Simpel x Partie starten": das Willkommensblatt lag noch
+     ueber dem Hub, und das ist keine Panne, sondern der Sinn eines Blattes.
+     Gemessen wird deshalb nur INNERHALB einer Ebene: alles, was in einem
+     fest positionierten Kasten sitzt, gehoert zur Overlay-Ebene, der Rest
+     zur Seite. Ebenen gegeneinander sagen nichts aus. */
+  const ebene = (el) => {
+    for (let a = el; a && a !== document.body; a = a.parentElement) {
+      const o = getComputedStyle(a);
+      if (o.position === "fixed" && (parseInt(o.zIndex, 10) || 0) >= 20) return "overlay";
+    }
+    return "seite";
+  };
+  const kn = [...document.querySelectorAll("button")]
+    .map((b) => ({ b, r: sichtbar(b), dock: !!b.closest("nav, aside"), eb: ebene(b) }))
     .filter((x) => x.r && x.r.width > 8 && x.r.height > 8 && x.r.bottom > 0 && x.r.top < innerHeight && x.b.offsetParent !== null);
   for (let i = 0; i < kn.length; i++) for (let j = i + 1; j < kn.length; j++) {
     const A = kn[i], B = kn[j];
     if (A.dock && B.dock) continue;
+    if (A.eb !== B.eb) continue;   // v1.0.18: Ebene gegen Ebene sagt nichts
     if (A.b.contains(B.b) || B.b.contains(A.b)) continue;
     const w = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
     const h = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
@@ -159,7 +195,9 @@ const dock = async (name) => { await page.evaluate((n) => {
 await abraeumen();
 await dock("hofstaat");
 for (const reiter of ["Hofstaat", "Aufstellung", "Ausr\u00fcstung", "Chronik"]) {
-  await page.evaluate((r) => { const b = [...document.querySelectorAll("main button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);
+  await page.evaluate((r) => { const b = [.../* v1.0.18: die App traegt kein <main> mehr - der alte Selektor fand NIE
+     einen Knopf, also mass das Werkzeug jedesmal null. */
+  document.querySelectorAll("button")].find((x) => (x.innerText || "").trim() === r); b?.click(); }, reiter);
   await page.waitForTimeout(700);
   funde.push(...await messe("hofstaat-" + reiter));
 }
@@ -170,7 +208,9 @@ funde.push(...await messe("profil"));
 // Kachel-Namen im Hofstaat duerfen per Bauart mit Ellipse enden (nowrap +
 // title) - alles andere nicht. Wir werten NUR echte Ueberlaeufe:
 funde = funde.filter((f) => !(f.text.startsWith("ELLIPSIS") && f.ort.startsWith("hofstaat-Hofstaat")));
-const anzahl = await page.evaluate(() => document.querySelectorAll("main button").length);
+const anzahl = await page.evaluate(() => /* v1.0.18: die App traegt kein <main> mehr - der alte Selektor fand NIE
+     einen Knopf, also mass das Werkzeug jedesmal null. */
+  document.querySelectorAll("button").length);
 gemessen += anzahl; gesamtFunde += funde.length;
 for (const f of funde) console.log(`  VERSCHLUCKT [${vw}px · ${f.ort}] "${f.text}" +${f.wOver}x${f.hOver}px`);
 console.log(`  Viewport ${vw}x${vh}: ${anzahl} Knoepfe zuletzt sichtbar, ${funde.length} Funde`);
