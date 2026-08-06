@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.27
+
+- DIE KAPITELGEMAELDE SIND ENDLICH ZU SEHEN. Der Besitzer meldete, dass
+  hinter dem Brett immer noch nichts steht - zu Recht. Das Bild lag im
+  DOM, in voller Groesse, mit Deckkraft 1, die Datei wurde vom Server
+  geholt: alles sah richtig aus. Auf dem Schirm kam trotzdem NICHTS an,
+  gemessen 0.004 Helligkeit statt der 0.22 des Gemaeldes.
+- URSACHE: zIndex -1. Der Seitenkoerper traegt background:#000, und ein
+  Kind mit NEGATIVEM zIndex wird hinter den Hintergrund seines
+  Stapel-Vorfahren gemalt - also hinter dieses Schwarz. Deshalb war das
+  Bild unsichtbar, obwohl jede einzelne Pruefung gruen war: Ich hatte in
+  v1.0.24 die Datei live verifiziert und daraus geschlossen, das Bild sei
+  zu sehen. Das war ein Fehlschluss - eine ausgelieferte Datei ist noch
+  kein gemaltes Bild.
+- Jetzt zIndex 0: das Gemaelde steht ueber dem Seitenschwarz, der Inhalt
+  liegt weiterhin darueber. Nachgemessen im echten Kampf: 0.415 statt
+  0.004 in der oberen Zone.
+- Eine Probe verbietet den negativen zIndex fuer immer.
+
 ## 1.0.26
 
 - DER KLASSISCHE SATZ WAECHST WEITER: 1.02em liess immer noch Luft am

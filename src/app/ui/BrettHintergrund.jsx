@@ -44,9 +44,19 @@ export function BrettHintergrund({ liga = 1, staerke = 1 }) {
        nach aussen wirkt. Das Bild bewegt sich nie - genau der Fall, fuer den
        diese Schicht gedacht ist. */
     <div aria-hidden style={{
-      position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none",
+      /* v1.0.27 (Besitzer: "die Hintergruende sind immer noch nicht da"):
+         GEMESSEN, NICHT GERATEN. Das Bild lag im DOM, in voller Groesse und
+         mit Deckkraft 1 - und kam trotzdem NICHT auf den Schirm: gemessene
+         Helligkeit 0.004 statt der 0.22 des Gemaeldes. Ursache war
+         zIndex -1. Der Seitenkoerper traegt background:#000, und ein Kind
+         mit negativem zIndex wird HINTER den Hintergrund seines
+         Stapel-Vorfahren gemalt - also hinter dieses Schwarz. Man sah das
+         Bild nie, obwohl alles andere stimmte.
+         Jetzt zIndex 0: das Bild steht ueber dem Seitenschwarz, und der
+         Inhalt, der im DOM SPAETER kommt, liegt weiterhin darueber. */
+      position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
       background: "#05060a", overflow: "hidden",
-      transform: "translateZ(0)", willChange: "opacity", contain: "strict",
+      transform: "translateZ(0)", willChange: "opacity", contain: "layout paint",
     }}>
       <img
         src={quelle}

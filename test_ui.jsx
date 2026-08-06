@@ -799,7 +799,15 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   const grund = html(<_BH liga={2} />);
   ok("the hall carries an expensive css mask", /mask-image/.test(halle));
   ok("the board backdrop carries NO mask", !/mask-image/.test(grund));
-  ok("and it sits on its own paint layer", /translateZ\(0\)/.test(grund) && /contain:\s*strict/.test(grund));
+  ok("and it sits on its own paint layer", /translateZ\(0\)/.test(grund) && /contain:/.test(grund));
+  /* v1.0.27 (Besitzer: "die Hintergruende sind immer noch nicht da"): DER
+     TEUERSTE FEHLER DIESER REIHE. Das Bild lag im DOM, in voller Groesse,
+     mit Deckkraft 1 - und kam nie auf den Schirm: gemessen 0.004 Helligkeit
+     statt 0.22. Grund war zIndex -1; der Seitenkoerper traegt Schwarz, und
+     ein negativer zIndex malt HINTER den Hintergrund des Stapel-Vorfahren.
+     Ein negativer zIndex darf hier nie zurueckkehren. */
+  ok("the backdrop is NOT hidden behind the page background",
+    !/z-index:\s*-/.test(grund) && /z-index:\s*0/.test(grund));
   // Der Quelltext der App: beide Ebenen haengen am inMatch-Schalter
   const roh = _lies("src/app/App.jsx", "utf8");
   const halleStellen = [...roh.matchAll(/<MysticBackground/g)].length;
