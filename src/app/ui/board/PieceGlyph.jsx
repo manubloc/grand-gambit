@@ -179,7 +179,12 @@ export function StatTriad({ piece, focus, shrink = 1 }) {
   return <StatDuo piece={piece} focus={focus} shrink={shrink} />;
 }
 
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }, fliegt = false) {
+/* v1.0.26 (BEIM MESSEN GEFUNDEN): "fliegt" stand als ZWEITER Funktions-
+   parameter statt im Eigenschaften-Objekt. React reicht dort nichts hinein,
+   also war die Fahne IMMER false - die Reparatur des Flug-Ruckelns aus
+   v1.0.14 lief seither ins Leere, und die fliegende Figur poppte weiter.
+   Jetzt steht sie, wo sie hingehoert. */
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false, fliegt = false }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -289,7 +294,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
        Orben und keine Sterne, also darf er die Zelle fuellen. Der Bauer
        bekommt eine Extra-Stufe, weil seine Figur von Haus aus die
        niedrigste Silhouette hat. */
-    : klassisch ? (paintPiece.kind === "P" ? "1.1em" : "1.02em")
+    /* v1.0.26 (Besitzer, zweite Runde): NOCH GROESSER. 1.02em liess dem
+       klassischen Satz immer noch Luft am Feldrand, und der Bauer blieb
+       verloren - seine Figur hat die niedrigste Silhouette des ganzen
+       Spiels. Der Satz traegt weder Orben noch Sterne, er darf sein Feld
+       wirklich ausfuellen; der Bauer bekommt weiterhin eine Extrastufe. */
+    : klassisch ? (paintPiece.kind === "P" ? "1.26em" : "1.14em")
     : hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em";
 
   // Resolve the painting up-front (if any) so we can level its base width. The

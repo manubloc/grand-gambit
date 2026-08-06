@@ -270,7 +270,7 @@ const { hauptast: haSt } = await import("./test_helpers12.mjs");
 // Kapitel VIII fehlte monatelang, ohne dass es jemandem auffiel: der Einstieg
 // faellt bei fehlendem Bild einfach stumm auf die Karte durch. Ein fehlendes
 // Bild soll ab jetzt LAUT sein.
-import { readdirSync as _lies } from "node:fs";
+import { readdirSync as _lies, readdirSync as _liesOrdner, readFileSync as _liesDatei } from "node:fs";
 {
   const dateien = _lies("public/kapitel");
   const fehlend = [];
@@ -291,6 +291,23 @@ import { readdirSync as _lies } from "node:fs";
   }
   ok("and every chapter owns a board backdrop", ohneGrund.length === 0);
   if (ohneGrund.length) console.log("   ohne Hintergrund:", ohneGrund.join(", "));
+}
+
+
+// ── DAS APP-SYMBOL BLEIBT UNTER SICH (v1.0.26, Besitzer) ───────────────────
+// "Das Logo wenn dann nur als App-Symbol. Fuer Favicon und im Menue oben
+// passt das schon." Genau das haelt diese Probe fest.
+{
+  const html = _liesDatei("index.html", "utf8");
+  const faviconZeilen = html.split("\n").filter((z) => /rel="icon"/.test(z));
+  ok("no app icon leaks into the browser tab",
+    faviconZeilen.every((z) => !/icons\/icon-(192|512)/.test(z)));
+  ok("the tab keeps its own favicons",
+    faviconZeilen.some((z) => /favicon\.svg/.test(z)) && faviconZeilen.some((z) => /favicon-32/.test(z)));
+  // Die vier App-Symbole muessen existieren
+  const dateien = _liesOrdner("public/icons");
+  for (const n of ["icon-192.png", "icon-512.png", "maskable-512.png", "apple-touch-icon.png"])
+    ok(`app icon present: ${n}`, dateien.includes(n));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

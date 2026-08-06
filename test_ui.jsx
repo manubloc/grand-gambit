@@ -807,5 +807,23 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("every hall render is gated on inMatch", halleStellen > 0 && halleStellen === mitGate);
 }
 
+
+// ── DER KLASSISCHE SATZ FUELLT SEIN FELD (v1.0.26, Besitzer) ────────────────
+{
+  const glyph = (kind) => html(<PieceGlyph piece={{ kind, color: "w", hp: 0, maxHp: 0, level: 1, abilities: [] }} artStyle="classic" />);
+  /* Der AEUSSERE Rahmen misst immer 1em - gemeint ist die Figur darin, also
+     der groesste width-Wert im Markup. */
+  const groesse = (h) => Math.max(0, ...[...h.matchAll(/width:\s*([0-9.]+)em/g)].map((m) => +m[1]));
+  const bauer = groesse(glyph("P")), turm = groesse(glyph("R"));
+  ok("the classic pawn fills its square", bauer >= 1.2);
+  ok("and stands taller than the rest", bauer > turm);
+  ok("the rest grew too", turm >= 1.1);
+  /* v1.0.26: die Flug-Fahne muss ANKOMMEN. Stand sie als zweiter
+     Funktionsparameter, war sie immer false und das Pop blieb. */
+  const ruhig = html(<PieceGlyph piece={{ kind: "R", color: "w", hp: 0, maxHp: 0, level: 1, abilities: [] }} artStyle="classic" fliegt />);
+  const normal = html(<PieceGlyph piece={{ kind: "R", color: "w", hp: 0, maxHp: 0, level: 1, abilities: [] }} artStyle="classic" />);
+  ok("a flying piece is not told to pop", /animation:\s*none/.test(ruhig) && !/animation:\s*none/.test(normal));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

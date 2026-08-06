@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 1.0.26
+
+- DER KLASSISCHE SATZ WAECHST WEITER: 1.02em liess immer noch Luft am
+  Feldrand. Jetzt 1.14em, und der Bauer 1.26em - seine Figur hat die
+  niedrigste Silhouette des Spiels und blieb sonst verloren stehen.
+- DAS NEUE LOGO IST DAS APP-SYMBOL. Es kam als volles Quadrat OHNE
+  Rundung und ohne Transparenz - fuer Google Play genau richtig (Play
+  rundet selbst und lehnt Transparenz ab). Fuer die App liegt es jetzt
+  zweifach: icon-192/512 mit weicher Rundung (22,5 % Radius, vierfach
+  ueberabgetastet), weil diese Symbole mancherorts UNMASKIERT erscheinen -
+  und maskable-512 sowie apple-touch-icon als volles Quadrat, weil
+  Android und iOS selbst maskieren und sonst zweimal gerundet wuerde.
+- FAVICON UND MENUE BLEIBEN, WIE SIE WAREN (Besitzerwunsch). Dafuer war
+  ein Eingriff noetig: index.html fuehrte icon-192 AUCH als Favicon - das
+  neue Logo waere in jeden Browsertab gewandert. Der Tab behaelt jetzt
+  favicon.svg, favicon-32 und favicon.ico; eine Probe haelt fest, dass
+  kein App-Symbol wieder dorthin rutscht.
+- BEIM MESSEN GEFUNDEN: "fliegt" stand als ZWEITER Funktionsparameter von
+  PieceGlyph statt im Eigenschaften-Objekt. React reicht dort nichts
+  hinein, die Fahne war also IMMER false - die Reparatur des
+  Flug-Ruckelns aus v1.0.14 lief seither ins Leere, und die fliegende
+  Figur poppte weiter. Jetzt kommt sie an, mit eigener Probe.
+
 ## 1.0.25
 
 - DAS RUCKELN BEIM SPIELEN: DIE UNSICHTBARE EBENE. Im Kampf lief die
