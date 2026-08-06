@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.32
+
+- DER ABGEWEHRTE SCHLAG SIEHT JETZT AUS WIE EINER. Wer im HP-Gefecht
+  zuschlaegt und das Ziel nicht faellt, lief bisher symmetrisch hin und
+  zurueck - weich, gleichmaessig, ohne Widerstand. Das sah aus wie ein
+  Zug, der es sich anders ueberlegt hat, nicht wie ein Schlag, der
+  abprallt.
+- Die Bewegung hat jetzt drei Teile, die man einzeln spuert: ein
+  SCHNELLER Vorstoss, der AUFPRALL (die Figur staucht sich an ihrem
+  Ziel), und das ZURUECKSCHLEUDERN ueber den eigenen Stand hinaus -
+  danach pendelt sie in zwei kleiner werdenden Schwingungen aus.
+- DER FUNKE AM AUFPRALL: bisher blieb ein abgewehrter Schlag stumm. Jetzt
+  sitzt am Beruehrungspunkt zwischen beiden Feldern ein kurzer heller
+  Ring, genau fuer die Dauer des Aufpralls - er liegt zwischen den
+  Figuren, nicht darueber, und faengt keine Klicks.
+- Zusammen mit dem Wackeln des Getroffenen aus v1.0.14 ist der Angriff
+  damit von beiden Seiten sichtbar: der Angreifer prallt ab, der
+  Verteidiger schwankt und faellt nicht.
+
 ## 1.0.31
 
 - DAS BRETT BRICHT INS LAND. Der Besitzer wollte, dass Brett und Gemaelde

@@ -387,12 +387,26 @@ export const GLOBAL_CSS = `
     0%   { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
     46%  { transform: translateY(-110%) scale(1.18); filter: drop-shadow(0 16px 12px rgba(0,0,0,.42)); }
     100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } }
-  /* a blocked strike: the attacker lunges toward the foe (--bx/--by point at the
-     target) and springs back to where it stood — ends neutral. */
+  /* v1.0.32 (Besitzer: "wenn man nicht beim ersten Mal schlaegt, sollte man
+     anders zurueckfliegen"): DER ABGEWEHRTE SCHLAG. Bisher lief die Figur
+     symmetrisch hin und zurueck - weich, gleichmaessig, ohne Widerstand. Das
+     sah aus wie ein Zug, der es sich anders ueberlegt hat, nicht wie ein
+     Schlag, der abprallt.
+     Jetzt hat die Bewegung drei Teile, die man einzeln spuert:
+       1. ein SCHNELLER Vorstoss (bis 24 %),
+       2. der AUFPRALL - die Figur staucht sich an ihrem Ziel (28 %),
+       3. das ZURUECKSCHLEUDERN ueber den eigenen Stand hinaus (52 %),
+          danach pendelt sie in zwei kleiner werdenden Schwingungen aus.
+     Das Stauchen laeuft quer zur Stossrichtung, deshalb reicht ein
+     gemeinsames scale - der Koerper gibt nach, der Fuss bleibt. */
   @keyframes ggBounce {
-    0%   { transform: translate(0,0); }
-    38%  { transform: translate(var(--bx, 0), var(--by, 0)); }
-    100% { transform: translate(0,0); } }
+    0%   { transform: translate(0,0) scale(1); }
+    24%  { transform: translate(var(--bx, 0), var(--by, 0)) scale(1.05); animation-timing-function: cubic-bezier(.9,0,1,.6); }
+    28%  { transform: translate(calc(var(--bx, 0) * .94), calc(var(--by, 0) * .94)) scale(1.14, .88); }
+    52%  { transform: translate(calc(var(--bx, 0) * -.34), calc(var(--by, 0) * -.34)) scale(.96, 1.05); }
+    72%  { transform: translate(calc(var(--bx, 0) * .12), calc(var(--by, 0) * .12)) scale(1.01, .99); }
+    88%  { transform: translate(calc(var(--bx, 0) * -.04), calc(var(--by, 0) * -.04)) scale(1); }
+    100% { transform: translate(0,0) scale(1); } }
   @keyframes herePulse { 0%,100% { box-shadow: 0 0 0 3px #c9a45c66, 0 0 0 7px #c9a45c22; } 50% { box-shadow: 0 0 0 5px #c9a45c88, 0 0 0 11px #c9a45c1c; } }
   .gg-quill { font-family: ${T.quill}; font-style: italic; font-weight: 500; }
   /* Der Glanz lief bisher mit ease-in-out — und bremste damit AB, WÄHREND das

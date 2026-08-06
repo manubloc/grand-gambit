@@ -856,5 +856,23 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("the fracture lies BELOW the pieces", /zIndex:\s*2\b/.test(block));
 }
 
+
+// ── DER ABGEWEHRTE SCHLAG (v1.0.32, Besitzer) ──────────────────────────────
+// "Wenn man nicht beim ersten Mal schlaegt, sollte man anders zurueckfliegen,
+// und der Angriff sichtbar werden." Die alte Kurve lief symmetrisch hin und
+// zurueck - weich, ohne Widerstand. Jetzt: Vorstoss, Aufprall, Rueckschleudern.
+{
+  const thema = _lies("src/app/ui/theme.js", "utf8");
+  const kurve = thema.slice(thema.indexOf("@keyframes ggBounce"));
+  const block = kurve.slice(0, kurve.indexOf("}\n") + 400).split("@keyframes")[1] || "";
+  ok("the bounce has more than a there-and-back", (block.match(/%\s*\{/g) || []).length >= 5);
+  ok("it squashes on impact", /scale\(1\.14,\s*\.88\)/.test(block));
+  ok("and is thrown BACK past its own square", /-\.34/.test(block));
+  // Der Funke am Beruehrungspunkt
+  const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  ok("a spark marks where the strike landed",
+    /anim\.bounced && \(\(\) =>/.test(brett) && /ggAufprall .34s/.test(brett));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

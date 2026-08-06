@@ -792,6 +792,22 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           man sah also nichts. Der Getroffene wackelt jetzt SELBST (unten in
           der Zelle); hier bleibt nur noch der rote Aufschlag-Ring, damit man
           sieht, WO der Schlag sass, ohne dass die Figur faellt. */}
+      {/* v1.0.32 (Besitzer: "der Angriff soll sichtbar werden"): DER FUNKE AM
+          AUFPRALL. Bisher blieb ein abgewehrter Schlag stumm - die Figur
+          stiess vor, kam zurueck, und nichts sagte, dass da etwas AUFGESCHLAGEN
+          ist. Jetzt sitzt am Beruehrungspunkt ein kurzer heller Ring, genau
+          fuer die Dauer des Aufpralls. Er liegt zwischen den Figuren, nicht
+          darueber, und faengt keine Klicks. */}
+      {anim && anim.bounced && (() => {
+        const a = disp(anim.from), b = disp(anim.to);
+        const x = a.x + (b.x - a.x) * 0.46, y = a.y + (b.y - a.y) * 0.46;
+        return <div key={`fnk${anim.id}`} aria-hidden style={{ position: "absolute",
+          left: `${x}%`, top: `${y}%`, width: `${100 / W * 0.5}%`, height: `${100 / H * 0.5}%`,
+          transform: "translate(-50%,-50%)", pointerEvents: "none", zIndex: 5,
+          borderRadius: "50%", border: "2px solid rgba(255,226,168,.85)",
+          boxShadow: "0 0 14px rgba(255,206,120,.7), inset 0 0 8px rgba(255,226,168,.5)",
+          animation: "ggAufprall .34s ease-out .1s both" }} />;   /* both: bis zum Einsatz unsichtbar, danach ausgeblendet */
+      })()}
       {lastMove && lastMove.damaged && !lastMove.lethal && !anim?.bounced && (() => {
         const s = disp(lastMove.to);
         return <div key={`shk${lastMove.id || lastMove.to}`} aria-hidden style={{ position: "absolute",
