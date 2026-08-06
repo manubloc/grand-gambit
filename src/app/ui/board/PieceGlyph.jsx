@@ -179,7 +179,7 @@ export function StatTriad({ piece, focus, shrink = 1 }) {
   return <StatDuo piece={piece} focus={focus} shrink={shrink} />;
 }
 
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }) {
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false }, fliegt = false) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -284,7 +284,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     + (royal ? " " + ROYAL_HALO : "");
   // v0.71.1: klassische Figuren einen Hauch kleiner (Besitzer: "noch etwas zu gross")
   const pieceSize = isBoss ? "1.14em" /* v0.71.12: Bosse stehen groesser - der Waechter war kaum zu erkennen */
-    : klassisch ? "0.9em" : hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em";
+    /* v1.0.14 (Besitzer): KLASSIK WAECHST. 0.9em liess besonders den Bauern
+       verloren auf seinem Feld stehen; der klassische Satz traegt keine
+       Orben und keine Sterne, also darf er die Zelle fuellen. Der Bauer
+       bekommt eine Extra-Stufe, weil seine Figur von Haus aus die
+       niedrigste Silhouette hat. */
+    : klassisch ? (paintPiece.kind === "P" ? "1.1em" : "1.02em")
+    : hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em";
 
   // Resolve the painting up-front (if any) so we can level its base width. The
   // enemy's gallery is turned to steel; the risen Gambit wears his tier portrait.
@@ -309,7 +315,17 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: big ? "center" : "flex-end",
       paddingBottom: big ? 0 : "0.015em",
-      animation: zuletzt ? `${white ? "ggGoldBlitz" : "ggRissBlitz"} 2.6s ease-out both, pop .18s ease` : "pop .18s ease",
+      /* v1.0.14 (Besitzer, "die Figur ruckelt, als waeren es zwei Objekte"):
+         GENAU DAS WAR ES. Der Flug zeichnet eine ZWEITE Figur ueber dem
+         Brett, die Zelle blendet ihre eigene aus - und beide spielten beim
+         Erscheinen "pop" (Sprung von 60 % auf 100 %). Man sah also beim
+         Abflug einen Stauch-Ruck und beim Ankommen noch einen. Jetzt gilt:
+         pop nur, wenn eine Figur wirklich NEU auf dem Brett erscheint
+         (Verwandlung, Aufbau). Wer gerade geflogen ist, LANDET stattdessen -
+         ein kurzes, gerichtetes Setzen aufs Feld statt eines Sprungs. */
+      animation: fliegt ? "none"
+        : zuletzt ? `${white ? "ggGoldBlitz" : "ggRissBlitz"} 2.6s ease-out both, ggLandung .26s cubic-bezier(.2,1.5,.4,1) both`
+        : "pop .18s ease",
       boxSizing: "border-box" }}>
 
       {/* the head may rise above the square: the art gets MORE than the tile.

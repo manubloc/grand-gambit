@@ -524,7 +524,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // champion stands in the QUEEN'S square, the effect read as "only
             // the queen is in focus, everything else is out of focus". The
             // stranger still announces himself with the pulsing ring below.
-            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}><PieceGlyph piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))",
+            /* v1.0.14: WER EINEN SCHLAG UEBERSTEHT, WACKELT. Nicht die Zelle,
+               die FIGUR - und sie faellt nicht, sie fasst sich wieder. */
+            ...(lastMove && lastMove.damaged && !lastMove.lethal && lastMove.to === i && !ruhig
+              ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+          {/* v1.0.14 (Besitzer): DER SPRINGER LANDET HOERBAR SICHTBAR - ein
+              heller Ring faehrt aus dem Feld, auf dem er aufsetzt. Nur fuer
+              den Sprung, sonst wird jedes Ziehen zum Ereignis. */}
+          {!ruhig && lastMove && lastMove.to === i && piece && piece.kind === "N" && (
+            <span key={`ldg${lastMove.id || lastMove.to}`} aria-hidden style={{ position: "absolute",
+              left: "50%", top: "72%", width: "58%", height: "24%", borderRadius: "50%",
+              border: "1.5px solid rgba(240,214,138,.6)", pointerEvents: "none", zIndex: 5,
+              animation: "ggAufprall .42s ease-out forwards" }} />
+          )}
           {/* the value orbs live on the SQUARE, not on the piece: one fixed
               em-basis for every figure, so every strip is the same size and
               sits flush with the square's bottom edge — pawn, rook or queen */}
@@ -702,12 +715,20 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           </svg>
         );
       })()}
-      {/* the target that SURVIVES a hit shakes where it stands */}
+      {/* v1.0.14 (Besitzer): DER TREFFER WIRD SICHTBAR. Hier schuettelte
+          bisher ein LEERES Feld ueber der Zelle - eine Animation ohne Koerper,
+          man sah also nichts. Der Getroffene wackelt jetzt SELBST (unten in
+          der Zelle); hier bleibt nur noch der rote Aufschlag-Ring, damit man
+          sieht, WO der Schlag sass, ohne dass die Figur faellt. */}
       {lastMove && lastMove.damaged && !lastMove.lethal && !anim?.bounced && (() => {
         const s = disp(lastMove.to);
-        return <div key={`shk${lastMove.id || lastMove.to}`} style={{ position: "absolute", left: `${s.l}%`, top: `${s.t}%`,
-          width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 6,
-          animation: "ggShake .5s ease-in-out", transformOrigin: "center" }} />;
+        return <div key={`shk${lastMove.id || lastMove.to}`} aria-hidden style={{ position: "absolute",
+          left: `${s.l}%`, top: `${s.t}%`, width: `${100 / W}%`, height: `${100 / H}%`,
+          pointerEvents: "none", zIndex: 6, display: "grid", placeItems: "center" }}>
+          <span style={{ width: "62%", height: "62%", borderRadius: "50%",
+            border: "2px solid rgba(216,72,72,.75)", boxShadow: "0 0 10px rgba(216,72,72,.5)",
+            animation: "ggAufprall .5s ease-out forwards" }} />
+        </div>;
       })()}
 
       {anim && (() => {
@@ -771,7 +792,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                   transform: `translateY(${pieceLift})`, transformOrigin: PIECE_ORIGIN,
                   fontSize: pieceFont(anim.piece.kind),
                   filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>
-                  <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} />
+                  <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} fliegt />
                 </div>
               </div>
             </div>}

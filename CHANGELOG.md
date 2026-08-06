@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 1.0.14
+
+- DER RUCKLER BEIM ZIEHEN IST FORT. Der Flug zeichnet eine zweite Figur
+  ueber dem Brett, die Zelle blendet ihre eigene aus - und BEIDE spielten
+  beim Erscheinen "pop" (Sprung von 60 auf 100 Prozent). Daher der
+  Eindruck zweier Objekte: ein Stauch-Ruck beim Abflug, noch einer beim
+  Ankommen. Jetzt poppt nur noch, was wirklich neu aufs Brett kommt.
+- DAS SETZEN AUFS FELD: wer geflogen ist, LANDET - ein kurzes Stauchen
+  und Zurueckfedern mit stehendem Fuss, die Bewegung einer Holzfigur.
+- DER SPRINGER LANDET SICHTBAR: ein heller Ring faehrt aus dem Feld, auf
+  dem er aufsetzt. Nur beim Sprung, damit nicht jedes Ziehen zum
+  Ereignis wird.
+- DER TREFFER WIRD SICHTBAR: bisher schuettelte ein LEERES Feld ueber der
+  Zelle - eine Animation ohne Koerper, man sah nichts. Jetzt wackelt die
+  getroffene Figur SELBST und faellt dabei nicht, dazu ein roter
+  Aufschlag-Ring, der zeigt, wo der Schlag sass.
+- KLASSIK WAECHST: die klassischen Figuren fuellen ihre Zelle (1.02em),
+  der Bauer bekommt eine Extra-Stufe (1.1em) - er stand am verlorensten.
+- HOFSTAAT GROESSER: Kachelbilder nehmen die voll Breite (104 %,
+  schlichte Glyphen 98 %), das Popup-Bild waechst von 128x152 auf
+  148x178 und nimmt die Luft oben.
+- AUFSTELLUNG MITTIG UND GROESSER: die Figuren hingen an der Unterkante
+  (objectPosition bottom) - jetzt zentriert und eine Stufe hoeher, der
+  Grand Gambit als Held noch groesser.
+- LUFT UNTER DEM TITEL: PanelTitle traegt 9 px Grundabstand, Titel und
+  Infokasten kleben nicht mehr aneinander.
+
 ## 1.0.13
 
 - DER HELDNAME IN DEN KAMPAGNENTEXTEN: Wo die Figuren nach dem Sieg bisher

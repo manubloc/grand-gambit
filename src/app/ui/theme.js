@@ -242,6 +242,20 @@ export const GLOBAL_CSS = `
       animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  /* v1.0.14: DAS SETZEN AUFS FELD. Kein Erscheinen, sondern ein Ankommen:
+     die Figur staucht beim Aufsetzen kurz in die Breite und federt zurueck -
+     dieselbe Bewegung, die eine Holzfigur auf dem Brett macht. Der Fuss
+     bleibt stehen (transform-origin unten), nur der Koerper gibt nach. */
+  @keyframes ggLandung {
+    0%   { transform: translateY(-7%) scale(1.03, .97); }
+    45%  { transform: translateY(0)   scale(1.07, .93); }
+    100% { transform: translateY(0)   scale(1, 1); }
+  }
+  /* Der Aufprall des Springers: ein Staubring, der aus dem Feld faehrt. */
+  @keyframes ggAufprall {
+    from { transform: translate(-50%,-50%) scale(.35); opacity: .55; }
+    to   { transform: translate(-50%,-50%) scale(1.5); opacity: 0; }
+  }
   @keyframes ggGlow { 0%,100% { box-shadow: 0 0 5px rgba(201,164,92,.22); } 50% { box-shadow: 0 0 14px rgba(201,164,92,.5); } }
   /* THE TREASURY'S MEDALLION, once its plate is opened: the ring of light
      turns around the emblem, and sparks fly off TANGENTIALLY from the brightest

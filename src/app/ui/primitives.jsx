@@ -47,7 +47,12 @@ export function Panel({ style, children, ...p }) {
 export function PanelTitle({ children, tag, style }) {
   // Auf schmalen Schirmen darf die Zeile NIE breiter als ihr Panel werden:
   // der Titel schrumpft mit Auslassungspunkten, das Abzeichen bleibt stehen.
-  return <div style={{ display: "flex", alignItems: "center", gap: 7, minWidth: 0, maxWidth: "100%", ...style }}>
+  /* v1.0.14 (Besitzer): LUFT UNTER DEM TITEL. Ueberschrift und der Kasten
+     darunter klebten aneinander; 9 px Grundabstand trennen sie, ohne dass
+     jede Aufrufstelle einzeln nachgebessert werden muss. Wer es enger
+     braucht, ueberschreibt marginBottom weiterhin per style. */
+  return <div style={{ display: "flex", alignItems: "center", gap: 7, minWidth: 0, maxWidth: "100%",
+    marginBottom: 9, ...style }}>
     <span aria-hidden style={{ width: 5, height: 5, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
     <span className="gg-serif" style={{ fontSize: 15.5, letterSpacing: ".07em", color: T.goldBright,
       minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{children}</span>

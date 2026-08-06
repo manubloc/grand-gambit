@@ -750,7 +750,7 @@ function FormationEditor({ profile, dispatch, t, en }) {
 
   return <>
   <Panel>
-    <PanelTitle style={{ marginBottom: 2 }}>{t("army.formation")}</PanelTitle>
+    <PanelTitle>{t("army.formation")}</PanelTitle>   {/* v1.0.14: der 2er-Zwang faellt, der Grundabstand traegt */}
     {/* v0.52: Aufstellungs-Erklaertext raus - Herald und Akademie tragen das Wissen. */}
     {/* A RESTING FIGHT KEEPS ITS RANKS. Verified: resuming decodes the board
         from its snapshot, so nothing you do here can reach into a match that
@@ -833,10 +833,16 @@ function FormationEditor({ profile, dispatch, t, en }) {
                   /* v1.0.10: DECKEL DER HUELLE - die 8vw massen sich am
                      Schirm, nicht an der Zelle; auf breiten Karten ragte die
                      Figur ueber den Kachelrand. max 100% beisst nur im Notfall. */
-                  style={{ height: "clamp(20px, 8vw, 66px)", maxWidth: "100%", maxHeight: "100%",
-                    objectFit: "contain", objectPosition: "bottom", pointerEvents: "none",
+                  /* v1.0.14 (Besitzer): MITTIG UND GROESSER. Die Bilder hingen an
+                     der Unterkante (objectPosition bottom) und massen sich in
+                     vw am Schirm - beides zusammen liess sie klein und nach
+                     unten gerutscht wirken. Jetzt zentriert und eine Stufe
+                     hoeher; der Grand Gambit steht als Held noch groesser. */
+                  style={{ height: isHero ? "clamp(26px, 10.5vw, 86px)" : "clamp(24px, 9.4vw, 76px)",
+                    maxWidth: "100%", maxHeight: "100%",
+                    objectFit: "contain", objectPosition: "center", pointerEvents: "none",
                     filter: isHero ? "drop-shadow(0 1px 3px rgba(201,164,92,.5))" : "none" }} />
-              : <SlotGlyph kind="P" size={"clamp(26px, 10vw, 84px)"} hero={isHero} level={gLvl} />}
+              : <SlotGlyph kind="P" size={isHero ? "clamp(30px, 12vw, 98px)" : "clamp(28px, 11vw, 90px)"} hero={isHero} level={gLvl} />}
             {isHero && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 8, fontWeight: 800,
               color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>★</span>}
           </button>;
@@ -867,9 +873,9 @@ function FormationEditor({ profile, dispatch, t, en }) {
               ? (schlicht
                 ? <SlotGlyph kind="X" bossId={bossEntryId(id)} size={"clamp(26px, 10vw, 84px)"} />
                 : <img src={paintedById("boss-" + bossEntryId(id)) || undefined} alt="" draggable={false}
-                    style={{ height: "clamp(24px, 9.6vw, 78px)", maxWidth: "100%", maxHeight: "100%",
-                      objectFit: "contain", pointerEvents: "none" }} />)
-              : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(30px, 12.5vw, 100px)"} art={"painted"} />}
+                    style={{ height: "clamp(28px, 11vw, 90px)", maxWidth: "100%", maxHeight: "100%",
+                      objectFit: "contain", objectPosition: "center", pointerEvents: "none" }} />)
+              : <SlotGlyph kind={CHARACTERS[id].kind} size={"clamp(32px, 13.5vw, 108px)"} art={"painted"} />}
           </button>;
         })}
       </div>
@@ -1333,9 +1339,9 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           Gesichter) und als Sperr-Silhouette unten, wenn kein Gemälde da ist. */}
       {schlichtAn() && kind ? <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto",
         opacity: dark ? 0.5 : dim ? 0.7 : 1, filter: dark ? "brightness(0.35)" : "none" }}>
-          <PieceArt kind={kind} size={"86%"} level={lvl} hero={hero} />
+          <PieceArt kind={kind} size={"98%"} level={lvl} hero={hero} />
         </div>
-      : img ? <img src={img} alt="" decoding="async" style={{ width: "calc(100% - 6px)", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto",
+      : img ? <img src={img} alt="" decoding="async" style={{ width: "104%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -4px",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
@@ -1510,7 +1516,8 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
               {img && <img src={img} alt="" onClick={(e) => { e.stopPropagation(); onZoom && onZoom({ boss: true, bid: b.id, art: b.art, nameDe: b.nameDe, nameEn: b.nameEn, flavorDe: b.flavorDe, flavorEn: b.flavorEn }); }}
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
-                style={{ width: 128, height: 152, objectFit: "contain", objectPosition: "bottom", cursor: "zoom-in",
+                /* v1.0.14 (Besitzer): im Popup war oben Luft - das Bild nimmt sie. */
+                style={{ width: 148, height: 178, objectFit: "contain", objectPosition: "bottom", cursor: "zoom-in",
                 filter: `drop-shadow(0 0 10px ${T.riftGlow})` }} />}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>
