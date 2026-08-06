@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.23
+
+- "FAEHIGKEITEN IN KAPITEL I BEWEGUNGSBASIERT"? HINFAELLIG - und zwar
+  dreifach verriegelt statt nur zufaellig: (1) der Heeresbau leert im
+  Schach jede Faehigkeitsliste (v1.0.20), (2) der Zugvollzug liest
+  Faehigkeiten ueberhaupt nur im HP-Regelwerk, (3) NEU: auch die
+  Zugerzeugung bietet den Fernschuss im Schach nicht mehr an - selbst
+  einer absichtlich verseuchten Figur nicht. Der Backlog-Punkt ist
+  gestrichen; die Sorge dahinter (Matt aus der Ferne) wird zur
+  Leitplanken-Vorschrift fuer das spaetere Kapitel "Gangarten im Schach".
+- DIE SORGE WAR KEIN GESPENST: ein Alt-Test bezeugte woertlich "das
+  Talent bietet im Schach einen Schuss an" - und das Ziel FIEL, drei
+  Felder weit, ohne dass eine Deckung half. Genau dieser einst gebaute
+  Bestand ist jetzt umgedreht: der Test verlangt heute das Gegenteil,
+  und die Wirkung des Schusses lebt in einem HP-Zwilling weiter (halbe
+  Wucht aus der Ferne, Schuetze bleibt stehen, Schlag zaehlt).
+
 ## 1.0.22
 
 - DAS GESETZ DES KLASSISCHEN: "Klassisch spielt man einfach immer nur das

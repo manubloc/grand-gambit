@@ -277,7 +277,15 @@ export function pieceMoves(state, sqIndex) {
   }
 
   // ── ranged attack: hit the first enemy in line of sight (you stay put) ──
-  if (hasAbility(piece, "ranged_volley") || hasAbility(piece, "ranged_shot")) {
+  /* v1.0.23 (Besitzer, ZWEITER RIEGEL): der Schuss ist eine HP-Kunst und darf
+     im Schach nicht einmal ANGEBOTEN werden. Der erste Riegel sitzt im
+     Heeresbau (Schach traegt leere Faehigkeitslisten) - aber sollte je eine
+     Figur durch einen fremden Fehler doch mit ranged_shot in eine Schach-
+     partie geraten, boete dieser Block ihr einen Schlag aus der Ferne an:
+     Matt, ohne dass eine Deckung hilft. Genau die Sorge des Besitzers.
+     Darum haengt der Schuss jetzt zusaetzlich am Regelwerk selbst - wie das
+     En-passant oben, nur andersherum. */
+  if (!(state && state.rules === "chess") && (hasAbility(piece, "ranged_volley") || hasAbility(piece, "ranged_shot"))) {
     const consume = hasAbility(piece, "ranged_volley") ? null : "ranged_shot";
     /* v0.79 (Besitzer): Reichweite 2-3 Felder statt 2-4. Der Fernangriff soll
        sich von einer weit ziehenden Figur unterscheiden - kurz, wertig,

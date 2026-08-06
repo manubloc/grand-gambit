@@ -66,5 +66,25 @@ const sst = sideBoard();
 const pmoves = legalMovesFrom(sst, idx(4, 4));
 ok("sidestep ability yields a sideways move", pmoves.some((m) => m.special === "side"));
 
+
+// ── DER ZWEITE RIEGEL (v1.0.23, Besitzer) ───────────────────────────────────
+// Faehigkeiten in Kapitel I? Hinfaellig - dreifach verriegelt: der Heeresbau
+// leert im Schach jede Liste, der Zugvollzug liest sie nur im HP, und seit
+// heute bietet auch die ZUGERZEUGUNG den Fernschuss im Schach nicht mehr an.
+// Diese Probe verseucht eine Figur absichtlich und prueft den dritten Riegel.
+import { createInitialState as _cis } from "./src/core/index.js";
+import { pieceMoves as _pm } from "./src/core/rules/moves.js";
+{
+  const mach = (rules) => {
+    const st = _cis(undefined, undefined, undefined, rules);
+    st.board = new Array(64).fill(null);
+    st.board[27] = { kind: "B", color: "w", hp: 3, atk: 1, abilities: ["ranged_shot"], used: {} };
+    st.board[45] = { kind: "P", color: "b", hp: 3, atk: 1, abilities: [], used: {} };
+    return _pm(st, 27).filter((m) => m.special === "shot").length;
+  };
+  ok("a tainted piece is offered NO shot in chess", mach("chess") === 0);
+  ok("the same piece shoots in the hp battle", mach("hp") === 1);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -266,7 +266,12 @@ import { bossSpec, bossById } from "./src/content/index.js";
   ok("a move that draws no blood does not reset it", reduce(vor, moveCommand(ruhig)).state.ohneSchaden === 101);
 }
 
-// ── Fernschuss traegt den Schuetzen NICHT ans Ziel - auch im Schach ──────────
+// ── DER FERNSCHUSS IST EINE HP-KUNST (v1.0.23, Besitzer) ─────────────────────
+// Dieser Block bezeugte bis heute das GEGENTEIL: "das Talent bietet im Schach
+// einen Schuss an", und das Ziel FIEL - drei Felder weit, ohne dass eine
+// Deckung half. Genau die Sorge des Besitzers (Matt aus der Ferne) war also
+// einmal gebauter Bestand. Seit v1.0.20 leert der Heeresbau die Listen im
+// Schach; der zweite Riegel sperrt den Schuss nun auch in der Zugerzeugung.
 {
   const brett = new Array(64).fill(null);
   const schuetze = W("B"); schuetze.abilities = ["ranged_shot"];
@@ -276,8 +281,20 @@ import { bossSpec, bossById } from "./src/content/index.js";
   brett[idx(7, 0, 8)] = W("K");
   const st = { board: brett, w: 8, h: 8, holes: new Set(), rules: "chess", turn: "w",
     captured: { w: [], b: [] }, history: [], lastMove: null, moveCount: 0, log: [], seed: 1 };
+  ok("im Schach wird KEIN Schuss angeboten - selbst einer verseuchten Figur nicht",
+    !legalMoves(st).some((m) => m.special === "shot"));
+}
+// Die Wirkung des Schusses lebt im HP-Gefecht weiter - derselbe Aufbau dort:
+{
+  const brett = new Array(64).fill(null);
+  const schuetze = W("B", { hp: 5, maxHp: 5, atk: 6 }); schuetze.abilities = ["ranged_shot"];
+  brett[idx(0, 0, 8)] = schuetze;
+  brett[idx(0, 3, 8)] = B("R", { hp: 3, maxHp: 3, atk: 1 });   // halbe Wucht aus der Ferne: ceil(6/2)=3 - toedlich
+  brett[idx(7, 7, 8)] = B("K", { hp: 10, maxHp: 10, atk: 3 });
+  brett[idx(7, 0, 8)] = W("K", { hp: 10, maxHp: 10, atk: 3 });
+  const st = hpState(brett);
   const schuss = legalMoves(st).find((m) => m.special === "shot" && m.to === idx(0, 3, 8));
-  ok("das Talent bietet im Schach einen Schuss an", !!schuss);
+  ok("im HP-Gefecht steht derselbe Schuss bereit", !!schuss);
   const nach = reduce(st, moveCommand(schuss)).state;
   ok("das Ziel faellt", nach.board[idx(0, 3, 8)] === null);
   ok("der Schuetze bleibt stehen", nach.board[idx(0, 0, 8)] && nach.board[idx(0, 0, 8)].kind === "B");
