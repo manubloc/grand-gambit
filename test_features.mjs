@@ -388,5 +388,29 @@ import { MAPS as _MAPS } from "./src/content/index.js";
     reihe(_bafm(nurHp, karte, null, "chess")) === reihe(_bafm(nurHp, karte, null, "hp")));
 }
 
+
+// ── DAS GESETZ DES KLASSISCHEN (v1.0.22, Besitzer) ──────────────────────────
+// "Klassisch spielt man einfach immer nur das Schach ohne jegliche Extras."
+// Vorher las auch das klassische Schnellspiel die gespeicherte Aufstellung -
+// ein Drache im Schach-Plan waere mitgezogen. Jetzt erzwingt standard=true
+// die Werksaufstellung, egal was gespeichert ist.
+{
+  const karte = _MAPS.find((m) => m.id === "classic");
+  /* Ein LEGALER, aber abweichender Plan: Springer und Laeufer tauschen die
+     Plaetze - alle Pflichtzahlen bleiben, nur die Reihe aendert sich. (Ein
+     Drache waere hier ohnehin illegal - er braucht Fluegel-Slots und Besitz -
+     und ein illegaler Plan faellt IMMER aufs Werk zurueck; das prueft der
+     No-Dead-Ends-Test an anderer Stelle.) */
+  const plan = [...karte.defaultFormation];
+  const iN = plan.indexOf("knight"), iB = plan.indexOf("bishop");
+  [plan[iN], plan[iB]] = [plan[iB], plan[iN]];
+  const prof = { ...dp2(), loadout: { ...dp2().loadout, formations: { "classic#chess": plan, classic: plan } } };
+  const reihe = (h) => h.back.map((sp) => sp && sp.kind).join("");
+  const werk = reihe(_bafm(dp2(), karte, null, "chess", true));
+  ok("classic ignores every saved plan", reihe(_bafm(prof, karte, null, "chess", true)) === werk);
+  ok("classic fields only the standard kinds", /^[RNBQK]+$/.test(werk));
+  ok("campaign chess still honours the plan", reihe(_bafm(prof, karte, null, "chess", false)) !== werk);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

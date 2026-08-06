@@ -410,7 +410,13 @@ export function hasForesight(profile, map, rules = null) {
  *  finden alle alten Spielstaende ihre Aufstellung unveraendert wieder. */
 export const formationKey = (mapId, rules) => rules === "chess" ? `${mapId}#chess` : mapId;
 
-export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
+/** v1.0.22 (Besitzer, GESETZ DES KLASSISCHEN): "Klassisch" - im Schnellen
+ *  Spiel wie in der Klassisch-Halle - ist IMMER das alte Standard-Schach:
+ *  die Werksaufstellung der Karte, Stufe 1, keine Faehigkeiten, keine
+ *  gespeicherten Plaene. standard=true erzwingt genau das. Der Schach-PLAN
+ *  aus der Aufstellung gehoert allein den Schach-Stationen der KAMPAGNE,
+ *  wo neue Figuren mit neuen Gangarten ausdruecklich erwuenscht sind. */
+export function buildArmyForMap(profile, map, excludeId = null, rules = null, standard = false) {
   // Combat strength follows the RULESET, not the board: pure CHESS means
   // level-1 vanilla pieces (authentic), but an HP battle — even on the 8x8
   // classic field — brings your leveled pieces, their abilities and dupes.
@@ -427,7 +433,7 @@ export function buildArmyForMap(profile, map, excludeId = null, rules = null) {
   const legalHere = (f) => f && formationLegalOn(f, unlockedCharacterIds(profile), map, ownedLeagueBosses(profile));
   /* Erst der Plan fuer DIESES Regelwerk; fehlt er, gilt der des anderen -
      eine vorhandene Aufstellung ist immer besser als die Werkseinstellung. */
-  let saved = forms[formationKey(map.id, rules)] || forms[map.id];
+  let saved = standard ? null : (forms[formationKey(map.id, rules)] || forms[map.id]);
   if (!legalHere(saved)) {
     saved = null;
     for (const [mid, f] of Object.entries(forms)) {
@@ -492,7 +498,7 @@ export function buildAiArmyForMap(difficultyId, map, seed = 0) {
 
 /** Player army. Defaults to the 10×10 Arena (used by the campaign); the app
  *  passes the active map for quick play. */
-export const buildArmy = (profile, map = ARENA(), excludeId = null, rules = null) => buildArmyForMap(profile, map, excludeId, rules);
+export const buildArmy = (profile, map = ARENA(), excludeId = null, rules = null, standard = false) => buildArmyForMap(profile, map, excludeId, rules, standard);
 
 export const buildAiArmy = (difficultyId) => {
   const d = difficultyById(difficultyId);

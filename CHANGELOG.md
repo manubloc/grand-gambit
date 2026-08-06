@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.22
+
+- DAS GESETZ DES KLASSISCHEN: "Klassisch spielt man einfach immer nur das
+  Schach ohne jegliche Extras" (Besitzer). Genau das war NICHT garantiert:
+  auch das klassische Schnellspiel und die Klassisch-Halle lasen die
+  gespeicherte Aufstellung - ein legal abweichender Plan waere mitgezogen,
+  und die neue Plan-Schiene haette das erst richtig eingeladen. Jetzt
+  erzwingt Klassisch auf BEIDEN Seiten die Werksaufstellung der Karte:
+  Standardfiguren, Stufe 1, keine Plaene, keine Faehigkeiten, kein Seher.
+- KLARE ZUSTAENDIGKEIT, im Hinweistext nachlesbar: der Schach-Plan gehoert
+  den Schach-Stationen der KAMPAGNE (dort sind neue Figuren mit neuen
+  Gangarten ausdruecklich erwuenscht), der HP-Plan jedem HP-Gefecht -
+  auch in der Halle. Klassisch bleibt von beiden unberuehrt.
+- Drei Proben halten das Gesetz fest: Klassisch ignoriert jeden
+  gespeicherten Plan, feldet nur die Standardarten, und die Kampagne
+  ehrt den Plan weiterhin.
+
 ## 1.0.21
 
 - DIE SCHIENE SPRICHT KANON: der zweite Plan heisst "HP-Gefecht" (englisch

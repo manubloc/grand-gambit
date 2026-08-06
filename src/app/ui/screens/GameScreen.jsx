@@ -146,7 +146,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   const map = daily ? mapById(daily.map) : pvp ? mapById(pvp.mapId) : campaign ? mapById(match.map) : mapById(classic ? "classic" : mapId);
   const rules = daily ? (daily.rules || "hp") : pvp ? (pvp.rules || "hp") : campaign ? match.rules : classic ? "chess" : mode;
   const depth = campaign ? match.depth : classic ? eloDepth(quick?.elo) : difficultyById(difficulty).depth;
-  const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null, rules), [profile, map]); // eslint-disable-line
+  const playerArmy = useMemo(() => buildArmy(profile, map, campaign ? match.excludeId : null, rules, classic), [profile, map]); // eslint-disable-line
   const freshSeed = () => (Date.now() ^ ((Math.random() * 0x7fffffff) | 0)) >>> 0;
 
   // ── pause & resume (v0.19): a campaign match interrupted mid-fight waits in
@@ -177,7 +177,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       const ai = buildArmyFromFormation(() => 1, map.defaultFormation);
       return createGame(side(), ai, { map, rules, seed });
     }
-    let ai = campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, seed);
+    /* v1.0.22: auch der GEGNER im Klassischen ist der blanke Standardsatz. */
+    let ai = campaign ? match.aiArmy : classic ? buildArmyFromFormation(() => 1, map.defaultFormation) : buildAiArmyForMap(difficulty, map, seed);
     // THE GRANDMASTER REDEPLOYS: every attempt at the Keep meets a freshly
     // shuffled back rank — losing means facing a NEW array, and only the
     // Seeress's gaze reveals it before the first horn.
@@ -388,8 +389,8 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       setState(createGame(side(), side(), { map: m, rules: rl, seed }));
       return;
     }
-    const ai = campaign ? match.aiArmy : buildAiArmyForMap(diff, m, seed);
-    setState(createGame(buildArmy(profile, m, campaign ? match.excludeId : null, rl), ai, { map: m, rules: rl, seed }));
+    const ai = campaign ? match.aiArmy : classic ? buildArmyFromFormation(() => 1, m.defaultFormation) : buildAiArmyForMap(diff, m, seed);
+    setState(createGame(buildArmy(profile, m, campaign ? match.excludeId : null, rl, classic), ai, { map: m, rules: rl, seed }));
   }
   function newGame() { reset(difficulty); }
 
@@ -414,7 +415,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         gained: { gold: 0, sp: 0, xp: 0, levelBefore: 0, levelAfter: 0, newAchievements: [] } });
       return;
     }
-    const foe = pvp ? pvp.oppArmy : campaign ? match.aiArmy : buildAiArmyForMap(difficulty, map, state.seed);
+    const foe = pvp ? pvp.oppArmy : campaign ? match.aiArmy : classic ? buildArmyFromFormation(() => 1, map.defaultFormation) : buildAiArmyForMap(difficulty, map, state.seed);
     const summary = summarizeMatch(playerArmy, foe, state.seed, state.log, result, myColor, { map, rules });
     summary.hpRules = rules === "hp";
     summary.potionsUsed = potionsUsedRef.current;
