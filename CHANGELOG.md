@@ -1,5 +1,28 @@
 # Changelog - Grand Gambit
 
+## 1.0.33
+
+- SOLANGE NICHTS BLUTET, SPRICHT NIEMAND VON LEBENSPUNKTEN. Kapitel I ist
+  seit v1.0.20 reines Schach - in den Menues standen aber weiterhin
+  Angriffsstaerke und Lebenspunkte auf jeder Figurenkarte: zwei Zahlen,
+  die nichts tun und nur Fragen aufwerfen. Sie erscheinen jetzt an dem
+  Tag, an dem die alte Magie erwacht. Was bleibt, ist alles, was auch im
+  Schach zaehlt - Stufe, Gangart, Herkunft, Erzaehlung.
+- DIE AKADEMIE LEHRT NUR, WAS ES SCHON GIBT: der Lehrblock "Der HP-Modus"
+  erklaerte Lebenspunkte und Schaden auch dann, wenn das Spiel noch reines
+  Schach ist. Er beantwortete eine Frage, die sich in Kapitel I niemand
+  stellen kann, und nahm dem Erwachen seine Ueberraschung. Er tritt erst
+  danach hinzu; Ziel, Gangarten, Rochade und Matt bleiben von Anfang an
+  lesbar.
+- NACHGEMESSEN STATT VERMUTET: alle 34 Faehigkeiten durchgezaehlt - jede
+  einzelne, die von Schaden, Lebenspunkten, Heilung oder Treffern
+  spricht, traegt bereits die Marke hpOnly und ist vor dem Erwachen
+  weder waehlbar noch sichtbar. Hier war nichts zu reparieren, und das
+  ist auch ein Ergebnis.
+- Vier Proben sichern es: frisches Profil hat nichts geweckt, die
+  HP-Lehre existiert, jede Kampfkunst traegt hpOnly, und keine davon
+  laesst sich vor dem Erwachen freischalten.
+
 ## 1.0.32
 
 - DER ABGEWEHRTE SCHLAG SIEHT JETZT AUS WIE EINER. Wer im HP-Gefecht

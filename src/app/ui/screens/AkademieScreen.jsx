@@ -11,6 +11,7 @@ import { useState } from "react";
 import { T } from "../theme.js";
 import { Segmented } from "../primitives.jsx";
 import { GoldRule } from "../Gilded.jsx";
+import { hpUnlocked } from "../../../meta/index.js";
 import { LEHREN } from "../../../content/lehren.js";
 import { ChroniclePanel } from "./ArmyScreen.jsx";
 import { TutorialScreen } from "./TutorialScreen.jsx";
@@ -33,7 +34,17 @@ function Lehrtafel({ eintrag }) {
 export function AkademieScreen({ profile, t, en = false, account = null, onDone }) {
   const [tab, setTab] = useState("chron");
   const L = LEHREN[en ? "en" : "de"];
-  const liste = tab === "spielweise" ? [...L.regeln, ...L.spielweise] : null;
+  /* v1.0.33 (Besitzer): DIE AKADEMIE LEHRT NUR, WAS ES SCHON GIBT. Der
+     Lehrblock "Der HP-Modus" erklaerte Lebenspunkte und Schaden auch dann,
+     wenn das Spiel noch reines Schach ist - er beantwortete eine Frage, die
+     sich der Spieler in Kapitel I gar nicht stellen kann, und nahm dem
+     Erwachen seine Ueberraschung. Er tritt an dem Tag hinzu, an dem die
+     alte Magie erwacht. Alles andere (Ziel, Gangarten, Rochade, Matt)
+     bleibt von Anfang an lesbar. */
+  const blutet = hpUnlocked(profile);
+  const liste = tab === "spielweise"
+    ? [...L.regeln, ...L.spielweise].filter((e) => blutet || e.id !== "hp")
+    : null;
   return (
     <div style={{ display: "grid", gap: 12, paddingTop: 8 }}>
       <Segmented value={tab} onChange={setTab} options={[

@@ -412,5 +412,33 @@ import { MAPS as _MAPS } from "./src/content/index.js";
   ok("campaign chess still honours the plan", reihe(_bafm(prof, karte, null, "chess", false)) !== werk);
 }
 
+
+// ── SOLANGE NICHTS BLUTET, SPRICHT NIEMAND VON LEBENSPUNKTEN (v1.0.33) ─────
+// Besitzer-Vision: Kapitel I ist reines Schach - dann sollen Lebenspunkte
+// auch in den MENUES nicht auftauchen, sonst stehen dort Zahlen und Lehren
+// zu etwas, das es noch gar nicht gibt.
+import { LEHREN as _LEHREN } from "./src/content/lehren.js";
+import { canUnlockAbility } from "./src/meta/index.js";
+import { ABILITIES as _AB } from "./src/content/index.js";
+{
+  const frisch2 = dp2();
+  ok("a fresh profile has not woken the magic", !hpUnlocked(frisch2));
+  // (a) die Akademie
+  const hpLehre = _LEHREN.de.regeln.concat(_LEHREN.de.spielweise).find((e) => e.id === "hp");
+  ok("the academy owns an hp lesson at all", !!hpLehre);
+  // (b) die Faehigkeiten: jede, die von Kampfwerten spricht, traegt hpOnly
+  const kampf = Object.values(_AB).filter((a) =>
+    /Schaden|Lebenspunkt|Heilt|Treffer/.test(a.descDe || ""));
+  ok("every combat ability is flagged hpOnly", kampf.length > 0 && kampf.every((a) => a.hpOnly));
+  // (c) und keine davon ist vor dem Erwachen waehlbar
+  /* Die echte Sperre sitzt in canUnlockAbility - eine Kampfkunst laesst sich
+     vor dem Erwachen gar nicht erst freischalten. Geprueft an einer Figur,
+     die hoch genug steht, damit nur die hpOnly-Regel den Ausschlag gibt. */
+  const reich = { ...frisch2, sternenstaub: 99,
+    chars: { mage: { level: 9, abilities: [] } } };
+  const waehlbar = kampf.filter((a) => canUnlockAbility(reich, "mage", a.id));
+  ok("none of them can be unlocked before the awakening", waehlbar.length === 0);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

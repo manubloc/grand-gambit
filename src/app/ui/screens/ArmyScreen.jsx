@@ -510,10 +510,17 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         )}
         {/* THE ORBS — the same spheres the piece wears in battle, stacked as a
             ledger: one value per line, its name beside it */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, margin: "10px 0 2px" }}>
+        {/* v1.0.33 (Besitzer): SOLANGE NICHTS BLUTET, SPRICHT NIEMAND VON
+            LEBENSPUNKTEN. In Kapitel I ist das Spiel reines Schach - dort
+            waeren Angriffsstaerke und Lebenspunkte auf der Figurenkarte
+            zwei Zahlen, die nichts tun und nur Fragen aufwerfen. Sie
+            erscheinen an dem Tag, an dem die alte Magie erwacht. Was
+            BLEIBT, ist alles, was auch im Schach zaehlt: Stufe, Gangart,
+            Herkunft, Erzaehlung. */}
+        {hpUnlocked(profile) && <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, margin: "10px 0 2px" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="power" v={atk} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Attack" : "Angriffsstärke"}</span></span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><SheetOrb kind="life" v={maxHp} /><span style={{ fontSize: 10.5, color: "#9a8f6f", letterSpacing: ".04em" }}>{en ? "Life" : "Lebenspunkte"}</span></span>
-        </div>
+        </div>}
         {/* the ledger lines */}
         <div style={{ marginTop: 6 }}>
           <SheetRow label={t("army.lvl")}>{level}{maxed && <span style={{ color: "#9a8f6f", fontWeight: 600, fontSize: 11 }}> · {en ? "max" : "max."}</span>}</SheetRow>
