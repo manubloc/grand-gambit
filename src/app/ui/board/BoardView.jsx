@@ -471,6 +471,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             if (ground) return null;
             return <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
               background: `linear-gradient(${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}, ${hexA(dark ? sqD0 : sqL0, dark ? 0.8 : 0.78, friendly ? 0.26 : 0.12)}), url(${slab(i, dark)}) center / cover`,
+              /* v1.0.30: Die Felder bleiben VOLL DECKEND. Ein Versuch mit 0.92
+                 liess den Grundverlauf durch die Platten schlagen - statt
+                 eines Hauchs Landschaft kam ein flaues Rautenmuster heraus.
+                 Am Bild gemessen: deutlich schlechter, also zurueckgenommen. */
               opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />;
           })()}
           {!ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
@@ -615,13 +619,44 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
         display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
+        /* v1.0.30 (Besitzer: "Hintergrund und Schachfeld muessen mehr
+           zusammenwachsen"): DAS BRETT WAECHST INS BILD - aber nur so weit,
+           wie es SPIELBAR bleibt. Drei Wege wurden am Bild ausprobiert und
+           gemessen; zwei sind wieder geflogen:
+           - Maske ueber dem Brett: schnitt die Eckfelder an, die Platten
+             verloren ihre Tiefe. VERWORFEN.
+           - Felder auf 0.92 Deckkraft: der Grund schlug durch, aus Stein
+             wurde ein flaues Rautenmuster. VERWORFEN.
+           Geblieben ist, was traegt: ein weiter, sehr weicher Schein nach
+           aussen, der das Brett in die Landschaft bettet, und ein
+           Kantenverlauf DARUEBER, der die harte Aussenkante ausfransen
+           laesst - beides ohne die Spielflaeche selbst anzutasten. */
         background: "#05070c",
         // Besitzer-Felder bringen ihren eigenen Rand mit (v0.71): keine Fugen,
         // keine Haarlinie obendrauf - nur der Goldrahmen bleibt.
-        border: feld ? "none" : `1px solid ${T.line}`, boxShadow: T.shadow, userSelect: "none", touchAction: "manipulation" }}>
+        border: feld ? "none" : `1px solid ${T.line}`,
+        /* Der Schein nach aussen: ein tiefer, sehr weicher Schatten in der
+           Farbe der Nacht - das Brett steht damit IM Bild statt darauf. Dazu
+           innen ein Hauch, der die Kante bricht. */
+        boxShadow: "0 0 44px 26px rgba(5,7,12,.62), 0 18px 60px rgba(0,0,0,.55), inset 0 0 22px rgba(5,7,12,.5)",
+        /* KEINE Maske auf dem Brett: der erste Versuch legte einen weichen
+           Radialverlauf darueber - und schnitt damit die ECKFELDER an,
+           waehrend die Steinplatten ihre Tiefe verloren. Am Bild gemessen
+           war es schlechter als vorher. Das Einwachsen leistet allein der
+           Schein nach aussen; die Spielflaeche bleibt unangetastet. */
+        userSelect: "none", touchAction: "manipulation" }}>
         {ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: `url(${ground})`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         {cells}
+        {/* v1.0.30: DIE KANTE FRANST AUS. Ein Verlauf in der Farbe der Nacht
+            liegt nur auf den aeussersten Prozenten des Bretts - innen ist er
+            vollstaendig durchsichtig, die Spielflaeche bleibt unberuehrt.
+            Er nimmt der Aussenkante die Schaerfe, sodass Brett und Gemaelde
+            ineinander laufen statt uebereinander zu liegen. */}
+        <div aria-hidden style={{ position: "absolute", inset: -1, pointerEvents: "none", zIndex: 3,
+          borderRadius: 12,
+          background: "linear-gradient(180deg, rgba(5,7,12,.5) 0%, rgba(5,7,12,0) 5.5%, rgba(5,7,12,0) 94.5%, rgba(5,7,12,.5) 100%),"
+            + " linear-gradient(90deg, rgba(5,7,12,.5) 0%, rgba(5,7,12,0) 4%, rgba(5,7,12,0) 96%, rgba(5,7,12,.5) 100%)" }} />
         {/* THE GILDED FRAME: an ornate rail laid around every board so the
             field reads as a mounted plate, not a flat grid. Measured on the
             art: the rail's inner edge sits 2.5% in from the image border, so

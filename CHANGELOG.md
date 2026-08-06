@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 1.0.30
+
+- BRETT UND GEMAELDE WACHSEN ZUSAMMEN (Besitzerwunsch). Drei Wege wurden
+  am laufenden Bild ausprobiert und gemessen, zwei sind wieder geflogen:
+  - Eine weiche Maske UEBER dem Brett schnitt die Eckfelder an und nahm
+    den Steinplatten ihre Tiefe. Verworfen.
+  - Felder auf 0.92 Deckkraft liessen den Grund durchschlagen: aus Stein
+    wurde ein flaues Rautenmuster. Verworfen.
+  Geblieben ist, was traegt: ein weiter, sehr weicher Schein nach aussen,
+  der das Brett in die Landschaft bettet statt es davorzustellen - und
+  ein Kantenverlauf DARUEBER, der nur die aeussersten Prozente beruehrt
+  und der harten Aussenkante die Schaerfe nimmt. Die Spielflaeche selbst
+  bleibt unangetastet: ein Brett, dessen Felder man raten muss, waere
+  unspielbar.
+- BEIM PRUEFEN GELERNT: der erste Screenshot des Kantenverlaufs sah
+  schlechter aus - die Steintexturen waren schlicht noch nicht geladen.
+  Nachgemessen mit laengerer Wartezeit steht die Struktur bei 0.35 und
+  die Platten sind vollstaendig da. Ein Bild zu frueh aufgenommen ist
+  kein Befund.
+
 ## 1.0.29
 
 - DIE POPUP-MESSUNG SIEHT WIRKLICH ETWAS. Die Blattpruefung aus v1.0.28
