@@ -392,14 +392,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
   // size smaller, so on landing the piece visibly jumped up and grew — that was
   // the "drifts too far, then snaps into place" glitch. One source of truth now.
   const bigScreen = typeof innerWidth !== "undefined" && innerWidth >= 640;
-  const pieceLift = artStyle === "svg" ? "-2%" : bigScreen ? "-10%" : "-13%";
+  /* v1.0.35 (Besitzer): "alle sitzen sehr weit unten am Rand - minimal
+     vertikal eher in die Mitte". Nachgemessen im laufenden Brett: die Figur
+     steht mit dem Fuss auf der Feldkante und waechst nach OBEN aus dem Feld
+     heraus (der Turm um 75 % der Feldhoehe) - das ist gewollt, denn eine
+     Figur STEHT auf ihrem Feld. Sie hing dabei aber zu tief; vier Prozent
+     mehr Hub ruecken sie zur Mitte, ohne dass der Fuss den Bezug zum Feld
+     verliert. */
+  const pieceLift = artStyle === "svg" ? "-4%" : bigScreen ? "-14%" : "-17%";
   /* v1.0.9 (Besitzer): "alle Figuren bitte wieder groesser" - der
      Brett-Umbau hatte sie optisch schrumpfen lassen. +9 % auf beide Stile
      und beide Klassen; gilt fuers Gefecht UND das klassische Schach, denn
      beide zeichnen durch dieses Blatt. */
+  /* v1.0.35: "alle Figuren koennten noch etwas groesser sein" - rund 9 %
+     drauf, auf beide Stile und beide Klassen. */
   const pieceFont = (kind) => artStyle === "svg"
-    ? (kind === "P" ? "0.92em" : "1.09em")
-    : (kind === "P" ? "1.07em" : "1.26em");
+    ? (kind === "P" ? "1.00em" : "1.19em")
+    : (kind === "P" ? "1.17em" : "1.37em");
   const PIECE_ORIGIN = "50% 72%";
 
   const cells = [];

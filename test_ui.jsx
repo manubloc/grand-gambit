@@ -872,5 +872,20 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
     /anim\.bounced && \(\(\) =>/.test(brett) && /ggAufprall .34s/.test(brett));
 }
 
+
+// ── SITZ UND GROESSE AUF DEM BRETT (v1.0.35, Besitzer) ─────────────────────
+// "Alle Figuren koennten noch etwas groesser sein, und sie sitzen sehr weit
+// unten am Rand." Im laufenden Brett nachgemessen: der Bauer fuellt jetzt
+// 133 % der Feldhoehe (vorher 122), der Turm 187 % - eine Figur STEHT auf
+// ihrem Feld und waechst nach oben heraus, das ist gewollt. Der Hub hebt sie
+// dabei zur Feldmitte, statt sie auf der Kante kleben zu lassen.
+{
+  const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  const hub = brett.match(/pieceLift = artStyle === "svg" \? "(-?[\d.]+)%" : bigScreen \? "(-?[\d.]+)%" : "(-?[\d.]+)%"/);
+  ok("the pieces are lifted off the bottom edge", !!hub && Math.abs(+hub[3]) >= 15);
+  const font = brett.match(/kind === "P" \? "([\d.]+)em" : "([\d.]+)em"\);/);
+  ok("and every piece grew", !!font && +font[1] >= 1.15 && +font[2] >= 1.35);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

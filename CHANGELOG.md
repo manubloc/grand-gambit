@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.35
+
+- FIGUREN GROESSER UND HOEHER - nachgemessen, nicht geschaetzt. Im
+  laufenden Brett gemessen: der Bauer fuellte 122 % der Feldhoehe, jetzt
+  133 %; der Turm 172 %, jetzt 187 %. Dass eine Figur ueber ihr Feld
+  hinauswaechst, ist richtig - sie STEHT darauf, sie liegt nicht darin.
+- SIE HINGEN ABER ZU TIEF. Der Besitzer sah sie "sehr weit unten am
+  Rand"; die Messung gab ihm recht - die Figurenmitte sass nur 23 % ueber
+  der Feldmitte. Vier Prozent mehr Hub ruecken sie naeher zur Mitte
+  (jetzt 28 %), ohne dass der Fuss den Bezug zum Feld verliert.
+- DIE KACHELN IM HOFSTAAT ebenso: das Bild fuellt 118 % statt 104 % der
+  Kachelbreite - vorher blieb an den Seiten Luft, die die Kachel groesser
+  wirken liess als ihr Bild.
+- NACHGEPRUEFT UND VERWORFEN: Zuerst lag der Verdacht auf Leerraum in den
+  Figurendateien. Gemessen: alle sechs klassischen Figuren fuellen ihre
+  Datei zu 99 % - daran lag es nicht. Die Ursache sass allein im Hub.
+
 ## 1.0.34
 
 - DIE KANTE AUF DEN FIGURENKOEPFEN - GEFUNDEN UND BEHOBEN. Der Besitzer

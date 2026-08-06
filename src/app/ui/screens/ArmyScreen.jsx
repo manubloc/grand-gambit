@@ -1361,9 +1361,13 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
           Gesichter) und als Sperr-Silhouette unten, wenn kein Gemälde da ist. */}
       {schlichtAn() && kind ? <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto",
         opacity: dark ? 0.5 : dim ? 0.7 : 1, filter: dark ? "brightness(0.35)" : "none" }}>
-          <PieceArt kind={kind} size={"98%"} level={lvl} hero={hero} />
+          <PieceArt kind={kind} size={"112%"} level={lvl} hero={hero} />   {/* v1.0.35: Kachelfigur groesser */}
         </div>
-      : img ? <img src={img} alt="" decoding="async" style={{ width: "104%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -4px",
+      : img ? <img src={img} alt="" decoding="async" /* v1.0.35 (Besitzer): "unter Figuren in den Kacheln koennten sie auch
+             noch etwas groesser sein." 104 % liessen an den Seiten Luft, die
+             die Kachel groesser wirken liess als ihr Bild. Jetzt 118 % mit
+             etwas mehr Ueberhang nach unten. */
+        style={{ width: "118%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -7px",
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
