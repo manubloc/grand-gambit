@@ -431,13 +431,37 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
       const coordCol = ground ? (dark ? "rgba(255,247,222,.92)" : "rgba(24,17,7,.88)") : (dark ? sqL : sqD);
       const fileLbl = showCoords && rr === H - 1 ? "abcdefghij"[f] : null;
       const rankLbl = showCoords && ff === 0 ? String(r + 1) : null;
+      /* v1.0.34 (Besitzer: "das Schachbrett zum Rand hin transparenter, mit
+         Verlauf"): DIE RANDWEICHE SITZT IM FELD, NICHT UEBER IHM. Jedes Feld
+         am Brettrand bekommt eine eigene Maske, die genau nach AUSSEN
+         ausblendet - oben die oberste Reihe nach oben, links die linke Spalte
+         nach links, an den Ecken beides. Weil die Maske am FELD haengt und
+         nicht an einer Schicht darueber, bleiben die Figuren unberuehrt: ihre
+         Koepfe ragen weiterhin ueber die Kante, ohne in einen Schleier zu
+         laufen. Innen (ab 42 %) ist das Feld voll deckend, die Spielflaeche
+         bleibt also lesbar. */
+      const randMaske = (() => {
+        const teile = [];
+        if (rr === 0) teile.push("linear-gradient(180deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
+        if (rr === H - 1) teile.push("linear-gradient(0deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
+        if (f === 0) teile.push("linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
+        if (f === W - 1) teile.push("linear-gradient(270deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
+        return teile.length ? teile.join(", ") : null;
+      })();
       cells.push(
         <div key={i} data-zelle={i} onClick={() => tap(i)} style={{ position: "relative",
           // the flat colour + a soft diagonal light stand INSTANTLY — no loading
           // state at all; the marble whisper fades in per square once every slab
           // is preloaded, so nothing ever pops
-          background: `${dark ? sqD : sqL}`,
+          /* Der Feldgrund liegt seit v1.0.34 in EIGENER Schicht (gleich
+             darunter), damit die Randmaske ihn allein trifft - haenge sie an
+             die Zelle, blendet sie die FIGUR gleich mit aus. */
+          background: randMaske ? "transparent" : `${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
+          {randMaske && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            background: `${dark ? sqD : sqL}`,
+            WebkitMaskImage: randMaske, maskImage: randMaske,
+            WebkitMaskComposite: "source-in", maskComposite: "intersect" }} />}
           {(feld || !ground) && (() => {
             // DIE FELDER DES BESITZERS (v0.66) SIEGEN AUCH UEBER DEM BODEN:
             // seine Kacheln SIND die Felder - der gemalte Grund weicht. liegt ein Kapitel-Streifen an,
@@ -475,7 +499,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                  liess den Grundverlauf durch die Platten schlagen - statt
                  eines Hauchs Landschaft kam ein flaues Rautenmuster heraus.
                  Am Bild gemessen: deutlich schlechter, also zurueckgenommen. */
-              opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity .6s ease" }} />;
+              /* v1.0.34 (Besitzer: "die Animation am Anfang kann deutlich
+                 langsamer sein, dass man auch noch ein bisschen den
+                 Hintergrund sieht - und dann kommt das Schachbrett ganz
+                 langsam"): 0,6 s waren zu hastig; das Brett stand da, ehe das
+                 Auge das Land gesehen hatte, und der Aufbau aller 64 Felder
+                 in derselben halben Sekunde war zugleich die Stelle, an der
+                 es stockte. Jetzt 1,8 s mit einer halben Sekunde Vorlauf -
+                 langsamer heisst hier auch RUHIGER, weil sich die Last ueber
+                 mehr Bilder verteilt. */
+              opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity 1.8s ease .5s" }} />;
           })()}
           {!ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />}
@@ -653,47 +686,19 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             vollstaendig durchsichtig, die Spielflaeche bleibt unberuehrt.
             Er nimmt der Aussenkante die Schaerfe, sodass Brett und Gemaelde
             ineinander laufen statt uebereinander zu liegen. */}
-        <div aria-hidden style={{ position: "absolute", inset: -1, pointerEvents: "none", zIndex: 3,
-          borderRadius: 12,
-          background: "linear-gradient(180deg, rgba(5,7,12,.62) 0%, rgba(5,7,12,0) 9%, rgba(5,7,12,0) 91%, rgba(5,7,12,.62) 100%),"
-            + " linear-gradient(90deg, rgba(5,7,12,.62) 0%, rgba(5,7,12,0) 7%, rgba(5,7,12,0) 93%, rgba(5,7,12,.62) 100%)" }} />
-        {/* v1.0.31 (Besitzer: "gerne kann das Schachbrett auch an der einen
-            oder anderen Stelle Risse bekommen"): DIE BRUCHKANTE. Statt eines
-            sauber geschnittenen Rechtecks endet das Brett jetzt gesprungen -
-            der Rand bricht in unregelmaessigen Zacken in die Landschaft
-            hinein. Thematisch gehoert das hierher: durch diese Welt zieht
-            ein Riss, da bleibt kein Stein heil.
-            Bauart: EIN svg ueber dem Brett, das nur die aeussersten Prozente
-            in der Farbe der Nacht ausfuellt. preserveAspectRatio="none" zieht
-            es auf jede Brettgroesse; die Zacken sind FEST gewaehlt, nicht
-            gewuerfelt - ein Brett, das bei jedem Bild anders bricht, waere
-            unruhig. Die Spielflaeche bleibt unberuehrt, pointerEvents aus.
-            ZWEI MASSE, AM BILD KORRIGIERT: Der erste Anlauf sprang 3 % tief
-            und schnitt damit die Randtuerme an - bei acht Feldern ist das
-            fast ein Viertel Feldbreite. Jetzt reichen die Zacken hoechstens
-            1,4 %, und sie liegen UNTER den Figuren (zIndex 2 statt 4), damit
-            kein Kopf angeknabbert wird. */}
-        <svg aria-hidden viewBox="0 0 100 100" preserveAspectRatio="none"
-          style={{ position: "absolute", inset: -1, width: "calc(100% + 2px)", height: "calc(100% + 2px)",
-            pointerEvents: "none", zIndex: 2, overflow: "visible" }}>
-          <path fill="#05070c" d="
-            M0,0 H100 V0.9 L98.3,1.1 L93.1,0.5 L88.6,1.3 L84.2,0.6 L79.4,1.4 L74.1,0.6
-            L69.6,1.2 L64.2,0.5 L58.8,1.3 L53.2,0.6 L47.6,1.2 L42.1,0.5 L36.4,1.3
-            L31.2,0.6 L25.8,1.2 L20.3,0.5 L15.1,1.2 L9.8,0.6 L2.1,1.3 L0,0.5 Z" />
-          <path fill="#05070c" d="
-            M0,100 H100 V99.1 L98.1,98.9 L91.4,99.5 L86.2,98.7 L81.6,99.4 L76.2,98.8
-            L70.8,99.5 L65.4,98.7 L59.9,99.4 L54.4,98.8 L48.8,99.5 L43.1,98.7
-            L37.6,99.4 L32.0,98.8 L26.5,99.5 L21.1,98.7 L15.6,99.4 L10.2,98.8
-            L2.2,99.5 L0,98.8 Z" />
-          <path fill="#05070c" d="
-            M0,0 V100 H1.1 L1.2,97.8 L0.6,90.4 L1.3,85.1 L0.6,79.8 L1.4,74.3
-            L0.5,68.9 L1.2,63.4 L0.6,58.0 L1.3,52.4 L0.5,46.9 L1.2,41.3
-            L0.6,35.8 L1.3,30.2 L0.6,24.7 L1.2,19.1 L0.5,13.6 L1.2,8.0 L0.5,1.1 L0,0 Z" />
-          <path fill="#05070c" d="
-            M100,0 V100 H98.8 L98.8,94.8 L99.5,89.6 L98.7,84.2 L99.4,78.9 L98.7,73.4
-            L99.4,67.8 L98.8,62.3 L99.5,56.8 L98.7,51.2 L99.4,45.7 L98.7,40.1
-            L99.5,34.6 L98.8,29.0 L99.4,23.5 L98.7,17.9 L99.4,12.4 L98.8,6.8 L99.5,0.6 L100,0 Z" />
-        </svg>
+        {/* v1.0.34 (Besitzer: "am Kopf der Figuren sieht man die Kante des
+            Brettes"): GENAU SO WAR ES, und der Grund lag in den Ebenen. Die
+            Zellen tragen zIndex rr+3, die oberste Reihe also 3 - derselbe
+            Wert wie dieser Verlauf, der im DOM SPAETER kommt und damit
+            gewinnt. Die Koepfe der hinteren Reihe ragen ueber die Brettkante
+            hinaus (so ist es gewollt) und liefen deshalb genau in diesen
+            Schleier. Er ist ersatzlos fort: die Randweiche macht jetzt jedes
+            Randfeld SELBST, hinter seiner Figur. */}
+        {/* v1.0.34 (Besitzer): "Das Zickzack ist doof am Rand. Geht gar
+            nicht." - fort damit. Die gesprungene Kante aus v1.0.31 ist
+            restlos entfernt; an ihre Stelle tritt echte Transparenz an den
+            Randfeldern (siehe unten bei den Zellen) und ein weicher
+            Schatten nach aussen. */}
         {/* THE GILDED FRAME: an ornate rail laid around every board so the
             field reads as a mounted plate, not a flat grid. Measured on the
             art: the rail's inner edge sits 2.5% in from the image border, so

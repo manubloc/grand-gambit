@@ -823,9 +823,13 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
      der groesste width-Wert im Markup. */
   const groesse = (h) => Math.max(0, ...[...h.matchAll(/width:\s*([0-9.]+)em/g)].map((m) => +m[1]));
   const bauer = groesse(glyph("P")), turm = groesse(glyph("R"));
-  ok("the classic pawn fills its square", bauer >= 1.2);
+  ok("the classic pawn fills its square", bauer >= 1.4);
   ok("and stands taller than the rest", bauer > turm);
-  ok("the rest grew too", turm >= 1.1);
+  /* v1.0.34: der Bauer steht jetzt HOEHER als die uebrigen Figuren - das war
+     der ausdrueckliche Wunsch ("Bauern viel groesser, alle anderen minimal
+     kleiner"), also misst die Probe genau dieses Verhaeltnis. */
+  ok("the rest stepped back a little", turm >= 1.0 && turm < bauer);
+  ok("and the pawn now towers over them", bauer - turm >= 0.3);
   /* v1.0.26: die Flug-Fahne muss ANKOMMEN. Stand sie als zweiter
      Funktionsparameter, war sie immer false und das Pop blieb. */
   const ruhig = html(<PieceGlyph piece={{ kind: "R", color: "w", hp: 0, maxHp: 0, level: 1, abilities: [] }} artStyle="classic" fliegt />);
@@ -834,27 +838,21 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
 }
 
 
-// ── DIE BRUCHKANTE BLEIBT FLACH (v1.0.31, Besitzer) ────────────────────────
-// "Gerne kann das Schachbrett auch Risse bekommen" - ja, aber nicht auf
-// Kosten der Randfiguren. Der erste Anlauf sprang 3 % tief und knabberte die
-// Tuerme an. Diese Probe haelt beide Grenzen fest.
+// ── DIE RANDWEICHE (v1.0.34, Besitzer) ─────────────────────────────────────
+// "Das Zickzack ist doof am Rand, geht gar nicht - dann eher mit Transparenz
+// und Schatten." Die gesprungene Kante ist fort. Wichtiger noch: der alte
+// Kantenverlauf lag UEBER den Koepfen der hinteren Reihe (gleicher zIndex,
+// spaeter im DOM) - genau die Kante, die der Besitzer auf den Figuren sah.
 {
-  const roh = _lies("src/app/ui/board/BoardView.jsx", "utf8");
-  const svg = roh.slice(roh.indexOf('<svg aria-hidden viewBox="0 0 100 100"'));
-  const block = svg.slice(0, svg.indexOf("</svg>"));
-  ok("the fracture exists at all", /path fill="#05070c"/.test(block));
-  /* Gemessen wird die TIEFE, nicht jede Zahl: ein Zackenpunkt "x,y" sitzt am
-     Rand, wenn MINDESTENS EINE seiner Koordinaten dicht an 0 oder 100 liegt.
-     Der erste Anlauf dieser Probe pruefte stumpf alle Zahlen und schlug bei
-     den X-Positionen der Zacken an - die duerfen ueber das ganze Brett
-     laufen, das ist ihr Sinn. */
-  const paare = [...block.matchAll(/L\s*(\d+\.?\d*),(\d+\.?\d*)/g)].map((m) => [+m[1], +m[2]]);
-  const amRand = (v) => v <= 1.6 || v >= 98.4;
-  const tief = paare.filter(([x, y]) => !amRand(x) && !amRand(y));
-  ok("no tooth bites deeper than 1.6 % into the board", paare.length > 20 && tief.length === 0);
-  if (tief.length) console.log("   zu tief:", tief.slice(0, 6).map((p) => p.join(",")).join(" | "));
-  ok("the fracture lies BELOW the pieces", /zIndex:\s*2\b/.test(block));
+  const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  ok("the zigzag fracture is gone", !/viewBox="0 0 100 100"[\s\S]{0,400}path fill="#05070c"/.test(brett));
+  ok("the edge veil that cut the heads is gone",
+    !/zIndex:\s*3,[\s\S]{0,200}linear-gradient\(180deg, rgba\(5,7,12/.test(brett));
+  ok("every rim square masks itself outward", /const randMaske = \(\(\) =>/.test(brett));
+  ok("and the mask sits on the FIELD, not on the cell",
+    /randMaske && <div aria-hidden[\s\S]{0,160}maskImage: randMaske/.test(brett));
 }
+
 
 
 // ── DER ABGEWEHRTE SCHLAG (v1.0.32, Besitzer) ──────────────────────────────

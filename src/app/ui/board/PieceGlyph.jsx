@@ -299,7 +299,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
        verloren - seine Figur hat die niedrigste Silhouette des ganzen
        Spiels. Der Satz traegt weder Orben noch Sterne, er darf sein Feld
        wirklich ausfuellen; der Bauer bekommt weiterhin eine Extrastufe. */
-    : klassisch ? (paintPiece.kind === "P" ? "1.26em" : "1.14em")
+    /* v1.0.34 (Besitzer, dritte Runde): "Bauern noch VIEL groesser, alle
+       anderen minimal kleiner." Der Bauer traegt die niedrigste Silhouette
+       des Satzes und verlor gegen die hohen Figuren jedes Mal; jetzt steht
+       er hoeher als sie. Die uebrigen gehen eine Spur zurueck, damit die
+       Reihe nicht gedraengt wirkt. */
+    : klassisch ? (paintPiece.kind === "P" ? "1.46em" : "1.08em")
     : hpMode && piece.maxHp > 0 ? "0.99em" : "1.0em";
 
   // Resolve the painting up-front (if any) so we can level its base width. The

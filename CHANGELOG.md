@@ -1,5 +1,30 @@
 # Changelog - Grand Gambit
 
+## 1.0.34
+
+- DIE KANTE AUF DEN FIGURENKOEPFEN - GEFUNDEN UND BEHOBEN. Der Besitzer
+  sah am Kopf der hinteren Figuren die Brettkante liegen; der Grund lag in
+  den Ebenen. Die Zellen tragen zIndex rr+3, die oberste Reihe also 3 -
+  denselben Wert wie der Kantenverlauf, der im DOM SPAETER kommt und damit
+  gewinnt. Die Koepfe der hinteren Reihe ragen ueber die Brettkante hinaus
+  (so ist es gewollt) und liefen genau in diesen Schleier.
+- DAS ZICKZACK IST FORT ("geht gar nicht"). An seine Stelle tritt echte
+  Transparenz: JEDES Feld am Brettrand blendet SELBST nach aussen aus -
+  oben die oberste Reihe nach oben, links die linke Spalte nach links, an
+  den Ecken beides. Weil die Maske am FELD haengt und nicht an einer
+  Schicht darueber, bleiben die Figuren unberuehrt.
+- Erster Anlauf dabei war falsch: die Maske sass an der ZELLE und haette
+  die Figur gleich mit ausgeblendet. Der Feldgrund liegt jetzt in eigener
+  Schicht darunter - nur er wird maskiert.
+- DER EINZUG WIRD LANGSAM: 0,6 s waren zu hastig, das Brett stand da, ehe
+  das Auge das Land gesehen hatte - und der Aufbau aller 64 Felder in
+  derselben halben Sekunde war zugleich die Stelle, an der es stockte.
+  Jetzt 1,8 s mit einer halben Sekunde Vorlauf; langsamer heisst hier auch
+  RUHIGER, weil sich die Last ueber mehr Bilder verteilt.
+- KLASSIK, DRITTE RUNDE: der Bauer steht jetzt HOEHER als die uebrigen
+  Figuren (1,46em gegen 1,08em) - er traegt die niedrigste Silhouette des
+  Satzes und verlor sonst jedes Mal.
+
 ## 1.0.33
 
 - SOLANGE NICHTS BLUTET, SPRICHT NIEMAND VON LEBENSPUNKTEN. Kapitel I ist
