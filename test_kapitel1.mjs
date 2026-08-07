@@ -15,7 +15,10 @@
 // ist der alte Fehler entstanden.
 import { ABILITIES, faehigkeitZustand, faehigkeitSichtbar, SPERRGRUND } from "./src/content/index.js";
 import { defaultProfile, gambitStufe, gambitWach, GAMBIT_ERWACHT_AB,
-  GAMBIT_ERWACHT_AUF_STUFE, characterLevel } from "./src/meta/index.js";
+  GAMBIT_ERWACHT_AUF_STUFE, characterLevel, resolveCharacter,
+  FREIGABEN, darfHeldSetzen, darfReiheStellen, erklaertWas, merkeErklaert,
+  ersteFigurDa } from "./src/meta/index.js";
+import { CHARACTERS } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
 const ok = (was, bed) => {
@@ -101,6 +104,46 @@ weit.campaign = { ...(weit.campaign || {}), cleared: erwacht.campaign.cleared };
 weit.pieces = { ...(weit.pieces || {}), levels: { ...(weit.pieces?.levels || {}), gambit: 7 } };
 ok("ein weiter gestiegener Held faellt NICHT auf die Startstufe zurueck",
   gambitStufe(weit) === 7 && characterLevel(weit, "gambit") === 7);
+
+console.log("\n── DIE ERSTE FAEHIGKEIT ──");
+// Der Besitzer will, dass man den Bruch SIEHT, nicht nur am Bild: der
+// Erwachte schlaegt geradeaus, was kein Bauer darf. Also muss die Sprosse,
+// auf die das Erwachen hebt, eine FAEHIGKEIT tragen - kein Schild.
+const sprosse2 = CHARACTERS.gambit.ladder.find((r) => r.level === GAMBIT_ERWACHT_AUF_STUFE);
+ok("die Sprosse des Erwachens traegt eine Faehigkeit, kein Schild",
+  !!sprosse2 && !!sprosse2.ability);
+ok("und zwar den Vorwaertsschlag - das eine, was ein Bauer nie darf",
+  sprosse2.ability === "pawn_forward_capture");
+const beimErwachen = resolveCharacter(CHARACTERS.gambit, GAMBIT_ERWACHT_AUF_STUFE, null);
+ok("der Erwachte traegt sie auch wirklich im Heer",
+  (beimErwachen.abilities || []).includes("pawn_forward_capture"));
+
+console.log("\n── DIE FREISCHALT-ORDNUNG ──");
+const zu = defaultProfile();
+zu.campaign = { ...(zu.campaign || {}), cleared: [] };
+ok("in Kapitel I ist die Heldenspalte zu", !darfHeldSetzen(zu));
+ok("in Kapitel I ist die hintere Reihe zu", !darfReiheStellen(zu));
+ok("und noch ist keine Figur beigetreten", !ersteFigurDa(zu));
+
+ok("mit dem Erwachen geht die Heldenspalte auf", darfHeldSetzen(erwacht));
+ok("die hintere Reihe bleibt trotzdem zu", !darfReiheStellen(erwacht));
+
+// DIE REIHE HAENGT AN DER ERSTEN FREMDEN FIGUR, nicht am Erwachen. Die
+// sieben Grundfiguren zaehlen nicht - sie stehen von Anfang an da.
+const mitFigur = { ...erwacht,
+  campaign: { ...erwacht.campaign, unlocked: ["archbishop"] } };
+ok("die erste gewonnene Figur oeffnet die hintere Reihe",
+  ersteFigurDa(mitFigur) ? darfReiheStellen(mitFigur) : false);
+
+// JEDE FREIGABE ERKLAERT SICH EINMAL - und dann nie wieder.
+const offen = erklaertWas(erwacht);
+ok("beim Erwachen wartet genau eine Erklaerung", offen.length === 1 && offen[0].id === "held");
+ok("jede Freigabe bringt Titel und Text in beiden Sprachen mit",
+  FREIGABEN.every((f) => f.titelDe && f.titelEn && f.textDe && f.textEn));
+const gemerkt = merkeErklaert(erwacht, "held");
+ok("nach dem Erklaeren schweigt sie", !erklaertWas(gemerkt).some((f) => f.id === "held"));
+ok("das Merken laesst den alten Spielstand unberuehrt",
+  !(erwacht.gesehen && erwacht.gesehen.held));
 
 console.log("\nRESULT: " + pass + " passed, " + fail + " failed");
 if (fail) process.exit(1);

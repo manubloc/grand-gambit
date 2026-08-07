@@ -1,0 +1,102 @@
+// ── DIE FREISCHALT-ORDNUNG (v1.0.43, Besitzerentscheid) ─────────────────────
+// Das Spiel oeffnet sich in Schritten, nicht auf einmal. Der Besitzer hat die
+// Reihenfolge festgelegt:
+//
+//   1. Kapitel I ist reines Schach. Kein Held, keine Aufstellung, keine
+//      Lebenspunkte. Man spielt Schach und lernt das Brett.
+//   2. Der Grand Gambit erwacht relativ zuegig (drei geschaffte Stationen).
+//      In diesem Moment: Stufe 2, ein sichtbar anderer Auftritt, seine erste
+//      Faehigkeit - und er darf frei gesetzt werden. Nur ER, sonst nichts.
+//   3. Die hintere Reihe bleibt vorerst, wie sie ist. Sie frei zu stellen
+//      wird erst freigeschaltet, wenn die erste fremde Figur beitritt.
+//   4. Das Erwachen der Lebenspunkte (Schwelrain, Kapitel II) bringt HP,
+//      Angriff und die Talente, die daran haengen.
+//
+// WARUM HIER UND NICHT VERSTREUT: jede dieser Freigaben braucht drei Dinge -
+// eine Bedingung, einen Namen und einen Satz, der sie erklaert. Lagen die
+// verstreut, wuerde frueher oder spaeter eine Freigabe aufgehen, ohne dass
+// jemand dem Spieler sagt, was er jetzt darf. Genau das ist das Muster, das
+// dieses Haus schon mehrfach Zeit gekostet hat: etwas wirkt, aber niemand
+// sieht es.
+//
+// JEDE FREIGABE ERKLAERT SICH EINMAL. Der Merker steht im Spielstand unter
+// profile.gesehen; erklaertWas() liefert die Freigaben, die aufgegangen sind,
+// aber noch nichts gesagt haben.
+import { CHARACTER_LIST } from "../content/index.js";
+import { gambitWach, hpWach, unlockedCharacterIds } from "./leveling.js";
+
+/* Die sieben Grundfiguren stehen von Anfang an im Heer - sie "treten" nicht
+   "bei". Beitreten heisst: eine Figur, die man sich verdient hat. */
+const GRUNDFIGUREN = new Set(
+  CHARACTER_LIST.filter((c) => (c.unlock?.type || "start") === "start").map((c) => c.id));
+
+/** Ist schon eine fremde Figur beigetreten? */
+export function ersteFigurDa(profile) {
+  return unlockedCharacterIds(profile).some((id) => !GRUNDFIGUREN.has(id));
+}
+
+/* Die Ordnung selbst. Reihenfolge ist Absicht: so tauchen sie auch im
+   Spielerbuch und in der Erklaerung auf. */
+export const FREIGABEN = [
+  {
+    id: "held",
+    wenn: gambitWach,
+    titelDe: "Der Grand Gambit erwacht",
+    titelEn: "The Grand Gambit awakens",
+    textDe: "Einer deiner Bauern will ein anderer sein. Er trägt jetzt Kapuze, "
+      + "Stab und Klinge — und er schlägt geradeaus, was kein Bauer kann. "
+      + "Vor jeder Partie darfst du entscheiden, in welcher Spalte er antritt.",
+    textEn: "One of your pawns wants to be someone else. He now wears hood, "
+      + "staff and blade — and he strikes straight ahead, which no pawn can do. "
+      + "Before each match you may choose the file he stands in.",
+  },
+  {
+    id: "hinterereihe",
+    wenn: ersteFigurDa,
+    titelDe: "Die hintere Reihe öffnet sich",
+    titelEn: "The back rank opens",
+    textDe: "Eine Figur ist deinem Hof beigetreten. Damit darfst du die hintere "
+      + "Reihe frei aufstellen — jede Figur auf jede Position, für jedes Brett "
+      + "getrennt.",
+    textEn: "A figure has joined your court. You may now arrange the back rank "
+      + "freely — any figure in any position, saved per board.",
+  },
+  {
+    id: "leben",
+    wenn: hpWach,
+    titelDe: "Das Erwachen",
+    titelEn: "The Awakening",
+    textDe: "Figuren fallen nicht mehr auf den ersten Schlag. Sie tragen "
+      + "Lebenspunkte und Angriff — und Talente, die es ohne sie nicht geben "
+      + "konnte.",
+    textEn: "Figures no longer fall to the first blow. They carry hit points "
+      + "and attack — and talents that could not exist without them.",
+  },
+];
+
+/** Ist diese Freigabe offen? */
+export function freigegeben(profile, id) {
+  const f = FREIGABEN.find((x) => x.id === id);
+  return !!f && !!f.wenn(profile);
+}
+
+/** Darf der Held frei gesetzt werden? */
+export const darfHeldSetzen = (profile) => freigegeben(profile, "held");
+
+/** Darf die hintere Reihe frei aufgestellt werden? */
+export const darfReiheStellen = (profile) => freigegeben(profile, "hinterereihe");
+
+/** Welche Freigaben sind offen, haben sich aber noch nicht erklaert?
+ *  In der Reihenfolge der Ordnung - gehen zwei zugleich auf, kommt die
+ *  fruehere zuerst. */
+export function erklaertWas(profile) {
+  const gesehen = profile?.gesehen || {};
+  return FREIGABEN.filter((f) => f.wenn(profile) && !gesehen[f.id]);
+}
+
+/** Merkt, dass eine Freigabe erklaert wurde. Gibt ein NEUES Profil zurueck -
+ *  der Speicher haelt JSON-Strings, keine Objekte, also nie am Original
+ *  herumschreiben. */
+export function merkeErklaert(profile, id) {
+  return { ...profile, gesehen: { ...(profile?.gesehen || {}), [id]: true } };
+}

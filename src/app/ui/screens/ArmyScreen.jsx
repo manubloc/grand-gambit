@@ -4,7 +4,8 @@ import { AbilityIcon, abilityTint } from "../AbilityIcons.jsx";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
-import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach } from "../../../meta/index.js";
+import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach,
+  darfHeldSetzen, darfReiheStellen } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS, itemPrice } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
@@ -826,6 +827,8 @@ function FormationEditor({ profile, dispatch, t, en }) {
       // the block swallows the two pawns standing in front of the dragon's 2x2
       const dragonPawns = dragonAt === 0 ? [0, 1] : dragonAt === draft.length - 1 ? [draft.length - 2, draft.length - 1] : [];
       const gLvl = characterLevel(profile, "gambit") || 1;
+      const heldFrei = darfHeldSetzen(profile);
+      const reiheFrei = darfReiheStellen(profile);
       /* v1.0.10 (Besitzer): der SCHLICHTE Stil gilt auch hier. Bisher zeigte
          die Aufstellung den Gambit (und die Bauern) IMMER gemalt, weil sie
          direkt in die Galerie griff, ohne den Schalter zu fragen - der eine
@@ -841,8 +844,13 @@ function FormationEditor({ profile, dispatch, t, en }) {
         {Array.from({ length: map.w }).map((_, f) => {
           const isHero = f === heroCol;
           const eaten = dragonPawns.includes(f);
-          return <button key={f} disabled={eaten} onClick={() => { if (!eaten) dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f }); }}
-            title={isHero ? t("army.heroPos") : undefined}
+          /* v1.0.43: DIE SPALTE DES HELDEN GEHT ERST MIT DEM ERWACHEN AUF.
+             Vorher gibt es ihn nicht - eine Bauernreihe ist eine Bauernreihe,
+             und es waere sinnlos, eine Spalte fuer niemanden zu waehlen. */
+          const heldZu = !heldFrei;
+          return <button key={f} disabled={eaten || heldZu} onClick={() => { if (!eaten && !heldZu) dispatch({ type: "SET_HERO_COL", mapId: map.id, col: f }); }}
+            title={heldZu ? (en ? "The Grand Gambit has not awakened yet" : "Der Grand Gambit ist noch nicht erwacht")
+              : isHero ? t("army.heroPos") : undefined}
             style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: eaten ? "default" : "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
               background: eaten ? "rgba(120,90,190,.1)" : isHero ? `radial-gradient(circle at 42% 30%, ${T.gold}2e, ${T.bg2})` : T.bg2,
@@ -880,9 +888,17 @@ function FormationEditor({ profile, dispatch, t, en }) {
           // squares here stay empty of art (but keep their tap targets)
           const dragonSquare = isDragon || (isWing && dragonAt >= 0);
           const isKingSlot = i === crown.king;
-          return <button key={i} disabled={isKingSlot}
-            title={isKingSlot ? (en ? "The king holds this square" : "Der König hält diesen Platz") : undefined}
-            onClick={() => { if (isKingSlot) return; if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
+          /* v1.0.43: DIE HINTERE REIHE BLEIBT ZU, BIS DIE ERSTE FIGUR
+             BEITRITT. Solange nur die sieben Grundfiguren im Heer stehen,
+             gaebe es ohnehin nichts zu tauschen - die Reihe waere ein Regal
+             ohne zweites Buch. Mit der ersten gewonnenen Figur geht sie auf,
+             und die Freigabe erklaert sich einmal selbst. */
+          const reiheZu = !reiheFrei;
+          const zu = isKingSlot || reiheZu;
+          return <button key={i} disabled={zu}
+            title={reiheZu ? (en ? "Win your first figure to arrange the back rank" : "Gewinne deine erste Figur, um die hintere Reihe zu stellen")
+              : isKingSlot ? (en ? "The king holds this square" : "Der König hält diesen Platz") : undefined}
+            onClick={() => { if (zu) return; if (isWing) { setPick(dragonAt); scrollToPicker(); } else { setPick(open ? null : i); if (!open) scrollToPicker(); } }}
             style={{ width: "100%", aspectRatio: "5 / 6", minWidth: 0, borderRadius: 8, cursor: isKingSlot ? "default" : "pointer",
               display: "grid", placeItems: "center", fontFamily: "inherit", padding: 0, position: "relative",
               background: open || (isWing && pick === dragonAt) ? T.lime : isWing ? "rgba(120,90,190,.16)" : T.bg2,

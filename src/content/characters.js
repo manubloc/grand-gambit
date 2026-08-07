@@ -24,10 +24,18 @@ flavorDe: "Geboren, geopfert zu werden — entschlossen, es nicht zu bleiben.", 
     unlock: { type: "start" }, flank: false, epic: true, costValue: 380,
     // The pawn the whole tale is named after: raised to be offered — and to
     // walk further than anyone expects. Richer ladder than any common pawn.
+    /* v1.0.43 (Besitzerentscheid): DIE ZWEITE SPROSSE TRAEGT JETZT DEN
+       VORWAERTSSCHLAG. Der Held springt mit dem Erwachen auf Stufe 2 - und
+       genau in diesem Moment soll man sehen, dass er kein Bauer mehr ist:
+       nicht nur am Bild, sondern daran, was er KANN. Geradeaus schlagen ist
+       das eine, was ein Bauer nie darf; das ist der sichtbarste Bruch, den
+       eine Sprosse hergibt. Das Schild von Sprosse 2 rutscht dafuer auf 4,
+       wo vorher der Vorwaertsschlag stand - die Leiter behaelt also ihre
+       Summe, nur die Reihenfolge dreht sich. */
     ladder: [
-      { level: 2, shield: 1 },
+      { level: 2, ability: "pawn_forward_capture" },
       { level: 3, ability: "pawn_sidestep" },
-      { level: 4, ability: "pawn_forward_capture" },
+      { level: 4, shield: 1 },
       { level: 5, ability: "pawn_charge" },
       { level: 6, ability: "teleport" },
       { level: 7, shield: 1 },
