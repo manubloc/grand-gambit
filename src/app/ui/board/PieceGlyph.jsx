@@ -331,9 +331,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      einem Brett meist genau eine, nie mehr als zwei. Sichtbar ist der
      Unterschied dort, wo das Auge ohnehin hinsieht. */
   const hervorgehoben = gewaehlt || zuletzt || focus;
+  /* v1.0.48 (Besitzerbefund): ZU HELL. v1.0.41 hat die Filterkette gekuerzt
+     und dabei die STAERKE des Saums verloren. Vorher war er zustandsabhaengig
+     gedimmt - eine ruhende eigene Figur trug 0.55, eine gegnerische 0.85; ich
+     hatte beide auf 0.85/0.95 gesetzt. Das machte die eigene Seite deutlich
+     lauter und drehte zugleich das Verhaeltnis um, in dem Gold und Violett
+     zueinander standen. Beide Werte sind jetzt wieder die alten; die
+     Sparsamkeit (ein Durchgang statt vier) bleibt. */
   const SAUM_RUHIG = white
-    ? "drop-shadow(0 0 1.5px rgba(240,214,138,.85))"
-    : "drop-shadow(0 0 1.5px rgba(184,146,255,.95))";
+    ? "drop-shadow(0 0 1.5px rgba(240,214,138,.55))"
+    : "drop-shadow(0 0 1.5px rgba(184,146,255,.85))";
   const glow = klassisch
     ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
     : hervorgehoben

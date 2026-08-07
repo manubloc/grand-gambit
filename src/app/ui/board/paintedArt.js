@@ -326,7 +326,7 @@ const PAINTED_FIT = {
   "knight": { h: 1.0498, y: -0.1427, x: -0.0171 },
   "bishop": { h: 1.0616, y: -0.1396, x: -0.0021 },
   "queen": { h: 1.1329, y: -0.1377, x: 0.0037 },
-  "rook": { h: 1.0826, y: -0.1336, x: -0.003 },
+  "rook": { h: 1.0485, y: -0.1262, x: -0.003 },
   "king": { h: 1.126, y: -0.1359, x: -0.0017 },
   "chancellor": { h: 1.0393, y: -0.1456, x: 0.0 },
   "archbishop": { h: 1.0509, y: -0.1293, x: 0.008 },
@@ -361,11 +361,22 @@ const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001, x: -0.0 }, "b01": { h: 1.1
 // same queen-tall stature.
 const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: -0.0054 }, "amazon": { h: 1.121, y: 0.003, x: 0.016 }, "archbishop": { h: 1.119, y: 0.003, x: 0.008 }, "assassin": { h: 1.108, y: 0.002, x: 0.0061 }, "bard": { h: 1.135, y: 0.001, x: 0.0104 }, "bishop": { h: 1.131, y: 0.002, x: -0.0021 }, "captain": { h: 1.117, y: 0.002, x: 0.0058 }, "chancellor": { h: 1.107, y: 0.001, x: 0.0 }, "engineer": { h: 1.127, y: 0.003, x: 0.0052 }, "gambit": { h: 1.116, y: 0.001, x: -0.0057 }, "guardian": { h: 1.145, y: 0.003, x: 0.0126 }, "hawk": { h: 1.176, y: 0.006, x: -0.0056 }, "inquisitor": { h: 1.129, y: 0.002, x: -0.0067 }, "king": { h: 1.126, y: 0.002, x: -0.0017 }, "knight": { h: 1.118, y: 0.001, x: -0.0171 }, "mage": { h: 1.114, y: 0.002, x: -0.0006 }, "paladin": { h: 1.125, y: 0.002, x: 0.0005 }, "pathfinder": { h: 1.14, y: 0.004, x: 0.0194 }, "pawn": { h: 1.12, y: 0.001, x: -0.0052 }, "queen": { h: 1.133, y: 0.002, x: 0.0037 }, "rook": { h: 1.153, y: 0.003, x: -0.003 }, "seeress": { h: 1.124, y: 0.003, x: 0.0137 }, "sorceress": { h: 1.118, y: 0.002, x: 0.0071 }, "standard": { h: 1.112, y: 0.003, x: -0.0206 }, "strategist": { h: 1.12, y: 0.002, x: 0.0032 }, "warlock": { h: 1.11, y: 0.001, x: 0.0003 } };
 
-// The hero grows with his rank: tier 1 stands pawn-small, tier 6 queen-tall —
-// a straight climb between the two (pawn 0.898 → queen 1.133).
-const GAMBIT_TIER_Y = [-0.0583, -0.069, -0.0938, -0.112, -0.1306, -0.1469];
+/* ── DER HELD IST KEIN BAUER MEHR (v1.0.48, Besitzerbefund) ────────────────
+   Die alte Staffel begann bei 0.894 - MINIMAL KLEINER als ein Bauer (0.898).
+   Das war stimmig, solange der Held erst spaet auftrat und Rang II ihm
+   ohnehin sofort ein anderes Bild gab. Seit v1.0.45 traegt der Erwachte
+   Rang I, und damit stand er kleiner als die Bauern, die er anfuehrt - der
+   Besitzer hat es auf dem Geraet gesehen.
+
+   Die Staffel beginnt jetzt ueber dem Turm (1.049) und steigt bis knapp an
+   die Dame (1.133). Wer erwacht, ueberragt seine Reihe vom ersten Atemzug
+   an; der Anstieg zwischen den Raengen bleibt spuerbar, wird aber flacher -
+   die Groesse hat ihre Arbeit schon getan, das Bild macht den Rest.
+   y waechst mit: der Fussversatz haelt den Sockel auf der Standlinie,
+   sonst schwebte die Figur mit jeder Stufe hoeher ueber ihrem Feld. */
+const GAMBIT_TIER_Y = [-0.1268, -0.1310, -0.1348, -0.1386, -0.1420, -0.1452];
 const GAMBIT_TIER_X = [-0.0057, -0.003, -0.0021, 0.0022, -0.0021, -0.002];
-const GAMBIT_TIER_H = [0.894, 0.944, 0.981, 1.027, 1.057, 1.096];
+const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
 
 export function paintedFitFor(piece) {
   if (!piece || piece.big) return { h: 1, y: 0, x: 0 };

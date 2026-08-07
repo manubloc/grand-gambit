@@ -69,6 +69,17 @@ async function readList() {
 }
 async function writeList(list) { try { await storage.set(KEY, JSON.stringify(list), false); } catch {} }
 
+/* ── DIE ALTEN, VERBRANNTEN WORTE (v1.0.48) ────────────────────────────────
+   Beide sind laengst oeffentlich - "gambit-admin" stand bis v1.0.38 als
+   Klartext im Programm, das Paar darunter seit v1.0.39 in der Historie.
+   Sie stehen hier NICHT als Geheimnis, sondern als Erkennungsmerkmal: nur
+   wer noch eines davon traegt, wird umgestellt. */
+const VERBRANNT_KLARTEXT = "gambit-admin";
+const VERBRANNT_PAARE = [
+  { salt: "ef7b15bc3be6c31d516d6675",
+    hash: "b8f147ece9132b5ba07b5105420a2e27cba628f9a1d5b679ddb9515b6091ee28" },
+];
+
 /** Ensure the account list exists; seed the built-in admin exactly once. */
 export async function ensureAccounts() {
   let list = await readList();
@@ -76,6 +87,35 @@ export async function ensureAccounts() {
     list = [{ ...(await mkAccount({ email: ADMIN_EMAIL, pass: null, name: "Admin", isAdmin: true })),
       salt: ADMIN_SALT, passHash: ADMIN_HASH }];   /* v1.0.40: fertiger Pruefwert statt Klartext */
     await writeList(list);
+    return list;
+  }
+  /* ── NACHZUEGLER UMSTELLEN (v1.0.48) ───────────────────────────────────
+     HIER LAG DER FEHLER VON v1.0.47. Das neue Admin-Wort wurde nur in den
+     QUELLTEXT gesetzt - aber dieser Zweig laeuft ausschliesslich beim
+     allerersten Start, wenn noch gar keine Kontenliste existiert. Auf jedem
+     Geraet, das schon einmal gespielt hat, liegt die Liste im Speicher, und
+     dort stand weiterhin das ALTE Wort. Der Besitzer kam nicht mehr hinein,
+     und schlimmer: die Luecke, die der Wechsel schliessen sollte, war auf
+     genau den Geraeten offen geblieben, auf denen sie zaehlt.
+
+     Lehre: ein Geheimnis im Quelltext zu tauschen aendert nichts an dem,
+     was bereits AUSGELIEFERT und GESPEICHERT ist. Es braucht immer einen
+     Weg fuer die Bestandsdaten.
+
+     Wer sein Wort selbst geaendert hat, wird NICHT angefasst - erkennbar
+     daran, dass sein Pruefwert zu keinem der verbrannten passt. */
+  const adm = findAccount(list, ADMIN_EMAIL);
+  if (adm && adm.salt && adm.passHash) {
+    let verbrannt = VERBRANNT_PAARE.some((v) => adm.salt === v.salt && adm.passHash === v.hash);
+    if (!verbrannt) {
+      try { verbrannt = adm.passHash === await hashPass(VERBRANNT_KLARTEXT, adm.salt); } catch {}
+    }
+    if (verbrannt) {
+      adm.salt = ADMIN_SALT;
+      adm.passHash = ADMIN_HASH;
+      adm.mustChangePass = false;
+      await writeList(list);
+    }
   }
   return list;
 }

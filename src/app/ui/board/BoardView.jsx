@@ -462,15 +462,17 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
          Ein FARBVERLAUF leistet hier dasselbe und kostet fast nichts: der
          Feldton laeuft nach aussen in die Nacht, statt dass eine Maske ihn
          wegschneidet. Sichtbar ist der Unterschied nicht - messbar schon. */
-      const randVerlauf = (() => {
-        const teile = [];
-        const nacht = "rgba(5,7,12,1)";
-        if (rr === 0) teile.push(`linear-gradient(180deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
-        if (rr === H - 1) teile.push(`linear-gradient(0deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
-        if (f === 0) teile.push(`linear-gradient(90deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
-        if (f === W - 1) teile.push(`linear-gradient(270deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
-        return gespart("randweich") || !teile.length ? null : teile.join(", ");
-      })();
+      /* v1.0.48 (Besitzerbefund): DIE RANDWEICHE IST FORT. Sie lief auf den
+         28 Randfeldern nach aussen in die Nacht - und weil sie AM FELD hing,
+         endete sie an der Brettkante. Genau dort entstand die sichtbare
+         Stufe: innerhalb des Bretts abgedunkelt, direkt daneben der volle,
+         hellere Hintergrund. Ein Verlauf, der nur bis zur Kante reicht, macht
+         die Kante sichtbarer statt weicher.
+         Ersetzt durch einen Schatten NACH AUSSEN am ganzen Brett (siehe
+         brettSchatten weiter unten): das Brett liegt jetzt sichtbar ueber dem
+         Hintergrund, statt in ihn hineinzulaufen. Ein Schatten am Rahmen
+         statt 28 Verlaeufe an Feldern ist ausserdem billiger. */
+      const randVerlauf = null;
       /* v1.0.46: was auf DIESEM Feld an Sperre steht. Aus dem Zustand gelesen,
          nicht gehalten - so kann sie nicht veralten. */
       const sperreHier = state?.sperren ? state.sperren[i] : null;
@@ -697,9 +699,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     return { x: ((c + 0.5) / W) * 100, y: ((row + 0.5) / H) * 100, l: (c / W) * 100, t: (row / H) * 100 };
   };
 
+  /* ── DAS BRETT SCHWEBT (v1.0.48, Besitzerwunsch) ─────────────────────────
+     Statt der alten Randweiche, die nur die 28 Randfelder abdunkelte und an
+     der Brettkante hart abriss, liegt jetzt ein Schatten NACH AUSSEN unter
+     dem ganzen Brett. Drei gestaffelte Lagen: ein enger, dunkler Kern
+     direkt an der Kante, ein mittlerer fuer die Tiefe, ein weiter, weicher
+     als Umgebungsschatten. So sitzt das Brett sichtbar UEBER dem
+     Hintergrund, statt in ihn hineinzulaufen - und die Kante, die dem
+     Besitzer aufgefallen ist, verschwindet, weil nichts mehr innerhalb des
+     Bretts abgedunkelt wird.
+     Im Sparmodus faellt er weg: drei Schattenlagen sind billiger als 28
+     Verlaeufe, aber nicht umsonst. */
+  const brettSchatten = gespart("schatten") ? "none"
+    : "0 2px 6px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.5), 0 22px 60px rgba(0,0,0,.38)";
   const board = (
     <div style={{ position: "relative", width: bw ?? `min(100%, ${maxPx}px)`, maxWidth: "100%",
-      margin: fitBox ? 0 : "0 auto", fontSize: glyph }}>
+      margin: fitBox ? 0 : "0 auto", fontSize: glyph,
+      borderRadius: 12, boxShadow: brettSchatten }}>
       <div style={{ ...(cell
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),

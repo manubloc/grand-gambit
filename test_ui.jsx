@@ -920,11 +920,23 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("the zigzag fracture is gone", !/viewBox="0 0 100 100"[\s\S]{0,400}path fill="#05070c"/.test(brett));
   ok("the edge veil that cut the heads is gone",
     !/zIndex:\s*3,[\s\S]{0,200}linear-gradient\(180deg, rgba\(5,7,12/.test(brett));
-  /* v1.0.37: Die Randweiche ist geblieben, ihre BAUART hat gewechselt - von
-     28 CSS-Masken auf einen Farbverlauf. Sichtbar dasselbe, fuer die
-     Grafikeinheit ein Bruchteil der Arbeit. Die Probe verlangt darum
-     ausdruecklich, dass am Brett KEINE Masken mehr haengen. */
-  ok("every rim square still fades outward", /const randVerlauf = \(\(\) =>/.test(brett));
+  /* v1.0.48 (Besitzerbefund): DIE RANDWEICHE IST FORT. Sie dunkelte die 28
+     Randfelder nach aussen ab - und weil sie AM FELD hing, riss sie an der
+     Brettkante hart ab. Genau dort entstand die Stufe, die der Besitzer
+     gesehen hat: innen abgedunkelt, direkt daneben der volle Hintergrund.
+     Ein Verlauf, der nur bis zur Kante reicht, macht die Kante sichtbarer
+     statt weicher.
+     An ihrer Stelle liegt ein Schatten NACH AUSSEN unter dem ganzen Brett,
+     drei gestaffelte Lagen - das Brett sitzt sichtbar UEBER dem Hintergrund.
+     Die Probe haelt beides fest: dass die Weiche wirklich weg ist und dass
+     der Schatten wirklich da ist. */
+  ok("die Randweiche ist fort", /const randVerlauf = null;/.test(brett));
+  ok("und mit ihr die 28 Feldverlaeufe", !/rr === 0\) teile\.push/.test(brett));
+  ok("das Brett wirft stattdessen einen Schatten nach aussen",
+    /const brettSchatten =/.test(brett) && /boxShadow: brettSchatten/.test(brett));
+  ok("der Schatten ist gestaffelt, nicht eine harte Kante",
+    (brett.match(/const brettSchatten =[\s\S]{0,220}/)?.[0].match(/rgba\(0,0,0/g) || []).length >= 3);
+  ok("im Sparmodus faellt er weg", /gespart\("schatten"\) \? "none"/.test(brett));
   ok("and it costs no css mask any more", !/maskImage: randMaske|WebkitMaskComposite/.test(brett));
   ok("the selected piece gets its own paint layer",
     /willChange: \(!ruhig && \(isSel \|\| isSpy\)\) \? "transform" : "auto"/.test(brett));
@@ -974,7 +986,12 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
 import { setSparmodus, SPAR_POSTEN, sparsam } from "./src/app/ui/sparmodus.js";
 import { BrettHintergrund as _BHG } from "./src/app/ui/BrettHintergrund.jsx";
 {
-  ok("all four items exist", SPAR_POSTEN.length === 4);
+  /* v1.0.48: DREI Posten statt vier. "randweich" ist mit der Randweiche
+     selbst gefallen - sie dunkelte die 28 Randfelder ab und riss an der
+     Brettkante hart ab, wo der Besitzer eine Stufe sah. Der Schatten, der
+     sie ersetzt, haengt am Posten "schatten". */
+  ok("three items exist", SPAR_POSTEN.length === 3);
+  ok("und randweich ist nicht mehr darunter", !SPAR_POSTEN.includes("randweich"));
   setSparmodus({});
   ok("nothing is saved by default", !sparsam());
   const voll = html(<_BHG liga={2} />);
@@ -987,7 +1004,7 @@ import { BrettHintergrund as _BHG } from "./src/app/ui/BrettHintergrund.jsx";
   ok("switching back restores it", /<img/.test(html(<_BHG liga={2} />)));
   // Die drei Brett-Posten haengen im BoardView am selben Helfer
   const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
-  for (const posten of ["schatten", "randweich", "uebergang"])
+  for (const posten of ["schatten", "uebergang"])
     ok(`the board honours "${posten}"`, new RegExp(`gespart\\("${posten}"\\)`).test(brett));
 }
 

@@ -30,7 +30,7 @@
  * weil er die Einstellungen nie geoeffnet hat.
  */
 
-const AUS = { gemaelde: false, schatten: false, randweich: false, uebergang: false };
+const AUS = { gemaelde: false, schatten: false, uebergang: false };
 
 let SPAR = { ...AUS };
 
@@ -53,4 +53,9 @@ export const sparsam = () => Object.values(SPAR).some(Boolean);
 
 /** Die Posten in der Reihenfolge, in der sie im Profil stehen sollen -
  *  die teuersten zuerst, damit der erste Versuch der beste ist. */
-export const SPAR_POSTEN = ["gemaelde", "uebergang", "schatten", "randweich"];
+/* v1.0.48: "randweich" ist fort - die Randweiche selbst ist es auch.
+   Sie dunkelte die 28 Randfelder ab und riss an der Brettkante hart ab;
+   genau dort sah der Besitzer eine Stufe. An ihrer Stelle liegt ein
+   Schatten nach aussen unter dem ganzen Brett, der am Posten "schatten"
+   haengt. */
+export const SPAR_POSTEN = ["gemaelde", "uebergang", "schatten"];

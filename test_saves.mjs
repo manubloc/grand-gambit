@@ -18,6 +18,47 @@ ok("first boot seeds exactly the built-in admin", seeded.length === 1 && seeded[
    Pruefwert. Diese Proben brauchen es aber, um sich anzumelden. Sie setzen
    deshalb ein EIGENES Testwort auf das Konto und pruefen daran dieselben
    Regeln; das echte Wort bleibt draussen, wo es hingehoert. */
+/* ── BESTANDSGERAETE WERDEN UMGESTELLT (v1.0.48) ───────────────────────────
+   v1.0.47 tauschte das Admin-Wort NUR im Quelltext. ensureAccounts() legt das
+   Konto aber ausschliesslich beim allerersten Start an - auf jedem Geraet,
+   das schon gespielt hatte, blieb das alte Wort im Speicher stehen. Der
+   Besitzer kam nicht mehr hinein, und die Luecke blieb genau dort offen, wo
+   sie zaehlt. Diese Probe haelt fest, dass Bestandsdaten mitwandern. */
+{
+  const { storage: st } = await import("./src/platform/index.js");
+  const ALT_SALT = "ef7b15bc3be6c31d516d6675";
+  const ALT_HASH = "b8f147ece9132b5ba07b5105420a2e27cba628f9a1d5b679ddb9515b6091ee28";
+
+  // FALL 1: ein Geraet aus der v1.0.39/40-Zeit
+  await st.set("accounts:v1", JSON.stringify([{ id: "a1", email: ADMIN_EMAIL, name: "Admin",
+    isAdmin: true, salt: ALT_SALT, passHash: ALT_HASH }]), false);
+  let nach = await ensureAccounts();
+  let a = nach.find((x) => x.email === ADMIN_EMAIL);
+  ok("ein Bestandskonto mit dem verbrannten Paar wird umgestellt",
+    a.salt === ADMIN_SALT && a.passHash === ADMIN_HASH);
+
+  // FALL 2: ein noch aelteres Geraet - eigenes Salz, aber das Klartextwort
+  const altSalz = "irgendeinaltessalz01";
+  await st.set("accounts:v1", JSON.stringify([{ id: "a2", email: ADMIN_EMAIL, name: "Admin",
+    isAdmin: true, salt: altSalz, passHash: await hashPass("gambit-admin", altSalz) }]), false);
+  nach = await ensureAccounts();
+  a = nach.find((x) => x.email === ADMIN_EMAIL);
+  ok("auch das alte Klartextwort mit eigenem Salz wird erkannt und ersetzt",
+    a.salt === ADMIN_SALT && a.passHash === ADMIN_HASH);
+
+  // FALL 3: wer sein Wort SELBST geaendert hat, bleibt unangetastet.
+  const eigen = "meineigenessalz99";
+  const eigenHash = await hashPass("mein-eigenes-wort", eigen);
+  await st.set("accounts:v1", JSON.stringify([{ id: "a3", email: ADMIN_EMAIL, name: "Admin",
+    isAdmin: true, salt: eigen, passHash: eigenHash }]), false);
+  nach = await ensureAccounts();
+  a = nach.find((x) => x.email === ADMIN_EMAIL);
+  ok("ein selbst gesetztes Wort wird NICHT ueberschrieben",
+    a.salt === eigen && a.passHash === eigenHash);
+
+  await st.delete("accounts:v1", false);
+}
+
 const TESTWORT = "probe-wort-2026";
 {
   const liste = await ensureAccounts();
