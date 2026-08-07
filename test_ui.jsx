@@ -133,6 +133,25 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
    und prueft zusaetzlich, dass die verbrauchte Kugel STEHEN BLEIBT statt zu
    verschwinden: verschwaende sie, wuesste der Spieler nicht, ob die Figur je
    eine Karte hatte. */
+/* ── ZWEI VOELKER AM BRETT (v1.0.45) ──────────────────────────────────────
+   Der Besitzer will Freund und Feind am BILD unterscheiden, nicht am
+   Farbfilter: eigene Bauern gruen, gegnerische blau, und der Held hebt sich
+   von beiden ab. Das steht HIER und nicht in test_kapitel1.mjs, weil
+   paintedArt.js Bilddateien einfuehrt - reines node kennt .webp nicht
+   (ERR_UNKNOWN_FILE_EXTENSION), esbuild schon. */
+{
+  const bauer = (color) => paintedForPiece({ kind: "P", color });
+  const held = (color) => paintedForPiece({ kind: "P", color, hero: true, level: 2 });
+  ok("eigener und gegnerischer Bauer tragen VERSCHIEDENE Bilder",
+    !!bauer("w") && !!bauer("b") && bauer("w") !== bauer("b"));
+  ok("der Held ist von seinen eigenen Bauern zu unterscheiden",
+    !!held("w") && held("w") !== bauer("w"));
+  // DER GAMBIT IST AUCH EIN BAUER (kind "P"). Liefe die Bauernweiche vor
+  // seinem Zweig, staende der Held als schlichter Bauer da.
+  ok("...und faellt nicht durch die Bauernweiche",
+    held("w") !== bauer("w") && held("b") !== bauer("b"));
+}
+
 const star = (m) => m.includes("#7c3aed");
 const erloschen = (m) => m.includes("#2f2a3d");
 {

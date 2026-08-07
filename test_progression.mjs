@@ -96,8 +96,17 @@ ok("vor dem Erwachen fuehrt KEIN Held die Armee",
   buildArmyForMap({ pieces: { levels: { gambit: 15 } }, campaign: { cleared: ["L01s01", "L01s02"] } }, mapById("arena")).hero === undefined);
 ok("nach drei Stationen steht er wieder in Reih und Glied", !!buildArmyForMap(wach, mapById("arena")).hero);
 ok("the hero spec carries his tier onto the board", buildArmyForMap(wach, mapById("arena")).hero.spec.tier === 2);
-ok("der Erwachte traegt im Bild mindestens Stufe II",
-  buildArmyForMap({ pieces: { levels: { gambit: 1 } }, campaign: { cleared: ["a", "b", "c"] } }, mapById("arena")).hero.spec.tier === 2);
+/* v1.0.45 (Besitzerentscheid): DAS ERZWUNGENE STUFE-II-BILD IST FORT. Es
+   zeigte ab dem ersten Atemzug den schwarz-goldenen Prunkritter - eine
+   andere Bildwelt als die geschnitzten Holzfiguren, was auffiel, sobald die
+   Stilweiche gefallen war (v1.0.41). Der Rang folgt jetzt wieder ehrlich der
+   Stufe: der Erwachte (Stufe 2) traegt Rang I, den frueheren Gambit.
+   Der Bruch bleibt trotzdem sichtbar - gruener Bauer neben goldenem Ritter. */
+const frischErwacht = buildArmyForMap(
+  { pieces: { levels: { gambit: 1 } }, campaign: { cleared: ["a", "b", "c"] } }, mapById("arena"));
+ok("der Erwachte steht auf Stufe 2", frischErwacht.hero.spec.level === 2);
+ok("und traegt den frueheren Gambit, nicht den Prunkritter", frischErwacht.hero.spec.tier === 1);
+ok("der Prunkritter kommt erst mit Rang II", buildArmyForMap(wach, mapById("arena")).hero.spec.tier === 2);
 
 // ── retinue score: monotonic with progress ──────────────────────────────────
 import { retinueScore, defaultProfile as dp2, advanceCampaign as adv2 } from "./src/meta/index.js";

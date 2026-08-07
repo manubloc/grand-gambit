@@ -400,7 +400,20 @@ function heroSpec(profile, chess = false) {
   const ch = CHARACTERS.gambit;
   const level = gambitStufe(profile);
   const { abilities, shield } = resolveCharacter(ch, level, chess ? null : chosenAbilities(profile, "gambit"));
-  return { kind: ch.kind, level, abilities, shield, tier: Math.max(2, gambitTier(level)), ...(ch.big ? { big: true } : {}) };
+  /* v1.0.45 (Besitzerentscheid): DAS ERZWUNGENE STUFE-II-BILD IST FORT.
+     Math.max(2, ...) hiess: der Held trug ab dem ersten Atemzug das Bild von
+     Rang II - den schwarz-goldenen Prunkritter. Der stammt aus einer anderen
+     Bildwelt als die geschnitzten Holzfiguren und stach heraus wie ein
+     Fremdkoerper, sobald die Stilweiche gefallen war (v1.0.41).
+
+     Jetzt folgt der Rang wieder ehrlich der Stufe: Stufe 2 liegt in Rang I,
+     also traegt der Erwachte den frueheren Gambit - den gelben Holzritter,
+     der zu seinen gruenen Bauern gehoert und sich trotzdem sofort von ihnen
+     abhebt. Der Prunkritter kommt ab Stufe 11, wo er hingehoert.
+
+     Sichtbar bleibt der Bruch trotzdem: gruener Bauer neben goldenem Ritter
+     ist deutlicher als jedes Farbfilterchen. */
+  return { kind: ch.kind, level, abilities, shield, tier: gambitTier(level), ...(ch.big ? { big: true } : {}) };
 }
 
 /** Foresight: if the army that will take the field carries a SEER — the

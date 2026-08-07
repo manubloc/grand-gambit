@@ -262,6 +262,24 @@ export function paintedForPiece(piece, fuersBrett = false) {
   return fuersBrett ? kleinFuerBrett(roh) : roh;
 }
 
+/* ── ZWEI VOELKER AM BRETT (v1.0.45, Besitzerentscheid) ────────────────────
+   Bis jetzt trugen beide Seiten DASSELBE Bild; unterschieden hat sie nur ein
+   Farbfilter und der Saum. Der Besitzer will echte Voelker, und zwar an der
+   Figur, die achtmal dasteht und darum den Ton angibt: dem BAUERN.
+
+     eigene Seite   der gruene Holzbauer (carved-pawn-light)
+     Gegner         der blaue Speertraeger (painted-pawn)
+
+   Beide sind geschnitzt, beide aus demselben Haus - sie schlagen sich nicht,
+   sie stehen nur klar auf zwei Seiten. Kein Filter noetig, um Freund von
+   Feind zu trennen: man SIEHT es.
+
+   Alles andere (Offiziere, Hofstaat, Bosse) bleibt einfarbig wie bisher -
+   der Besitzer hat ausdruecklich nur die Bauern genannt, und ein halb
+   umgefaerbtes Heer waere schlimmer als ein einheitliches. */
+import { CARVED_LIGHT } from "./carvedArt.js";
+const EIGENER_BAUER = CARVED_LIGHT.pawn || null;
+
 function paintedRoh(piece) {
   if (!piece) return null;
   if (piece.bossId) {
@@ -281,6 +299,10 @@ function paintedRoh(piece) {
     return (gt > 1 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
   }
   const id = KIND2ID[piece.kind];
+  /* Der eigene Bauer traegt Gruen. Erst HIER geprueft, nicht oben: der
+     Gambit ist ebenfalls kind "P" und muss vorher durch seinen eigenen
+     Zweig gelaufen sein, sonst stuende der Held als schlichter Bauer da. */
+  if (id === "pawn" && piece.color === "w" && EIGENER_BAUER) return EIGENER_BAUER;
   return id ? PAINTED[id] || null : null;
 }
 

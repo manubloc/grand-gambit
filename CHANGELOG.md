@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 1.0.45
+- ZWEI VOELKER AM BRETT: eigene Bauern gruen (carved-pawn-light),
+  gegnerische blau (painted-pawn). Freund und Feind unterscheiden sich jetzt
+  am BILD, nicht nur am Farbfilter.
+- Das erzwungene Stufe-II-Bild des Helden ist fort. Math.max(2, ...) zeigte
+  ab dem ersten Atemzug den schwarz-goldenen Prunkritter - eine andere
+  Bildwelt als die Holzfiguren, was auffiel, sobald die Stilweiche gefallen
+  war. Der Rang folgt wieder der Stufe: Erwachter = Rang I = frueherer
+  Gambit, Prunkritter ab Stufe 11.
+- Mauer in drei Zustaenden eingelegt (heil, angeschlagen, Schutt), 192 px
+  fuers Brett und 576 px fuers Blatt.
+
 ## 1.0.44
 - Freigabe-Fenster: sagt, wenn sich etwas geoeffnet hat (Held, hintere Reihe,
   Lebenspunkte). Titel und Text liegen bei der Freigabe selbst, nicht in
