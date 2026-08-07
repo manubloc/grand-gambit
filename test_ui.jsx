@@ -8,6 +8,8 @@
 import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
+import { SperrGlyph } from "./src/app/ui/board/SperrGlyph.jsx";
+import { stadium } from "./src/core/rules/sperren.js";
 import { ABILITIES, BOSSES } from "./src/content/index.js";
 import { ACHIEVEMENTS } from "./src/meta/achievements.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
@@ -150,6 +152,30 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
   // seinem Zweig, staende der Held als schlichter Bauer da.
   ok("...und faellt nicht durch die Bauernweiche",
     held("w") !== bauer("w") && held("b") !== bauer("b"));
+}
+
+/* ── DIE SPERREN WERDEN AUCH GEZEICHNET (v1.0.46) ─────────────────────────
+   Die Regeln dazu gibt es seit v0.90 - gezeichnet wurde nie etwas. Genau die
+   Sorte Luecke, die keine Probe meldet, weil die Mechanik-Probe (test_sperren)
+   gruen leuchtet und die Oberflaeche nie gefragt wird. Diese hier fragt die
+   Oberflaeche. */
+{
+  const zeig = (art, hp) => html(<SperrGlyph art={art} zustand={stadium({ art, hp })} ruhig />);
+  const heil = zeig("mauer", 2), riss = zeig("mauer", 1), schutt = zeig("mauer", 0);
+  ok("eine heile Mauer wird ueberhaupt gezeichnet", heil.includes("<img"));
+  ok("die drei Zustaende tragen DREI VERSCHIEDENE Bilder",
+    heil !== riss && riss !== schutt && heil !== schutt);
+  // Die Truemmer liegen flach: deutlich niedriger als die aufrechte Mauer.
+  const hoehe = (m) => { const t = m.match(/height:\s*([\d.]+)%/); return t ? +t[1] : null; };
+  ok("die Truemmer liegen flach, die Mauer steht aufrecht",
+    hoehe(schutt) !== null && hoehe(heil) !== null && hoehe(schutt) < hoehe(heil) * 0.6);
+  // Truemmer gehoeren UNTER die Figur, sonst verdecken sie das Brett.
+  ok("die Truemmer liegen unter der Figur (zIndex 0)", /z-?index:\s*0/i.test(schutt));
+  // EINE Art ohne Bilder darf nichts zeichnen statt etwas Falsches.
+  ok("eine Art ohne Bilder zeichnet gar nichts", zeig("zaun", 1) === "");
+  // SPARSAM: ein Schatten, nicht neun - dieselbe Lehre wie v1.0.41.
+  ok("die Sperre traegt hoechstens einen Unschaerfe-Durchgang",
+    (heil.match(/drop-shadow/g) || []).length <= 1);
 }
 
 const star = (m) => m.includes("#7c3aed");

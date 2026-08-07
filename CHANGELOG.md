@@ -1,5 +1,16 @@
 # Changelog - Grand Gambit
 
+## 1.0.46
+- DIE SPERREN WERDEN GEZEICHNET. Die Regeln dazu gibt es seit v0.90 -
+  sperren.js hing allein an transitions.js und kam in der Oberflaeche nie
+  vor. Mauer jetzt in drei Zustaenden am Brett (heil, angeschlagen,
+  Truemmer), aus stadium().
+- Truemmer verblassen: zwei Sekunden voll sichtbar, dann ueber anderthalb
+  Sekunden auf ein Fuenftel. Sie liegen unter der Figur (zIndex 0) und
+  bleiben als Narbe stehen, statt ganz zu verschwinden.
+- Zaun und Bollwerk stehen ausdruecklich als null im Bilderverzeichnis -
+  eine Art ohne Bilder zeichnet nichts statt etwas Falsches.
+
 ## 1.0.45
 - ZWEI VOELKER AM BRETT: eigene Bauern gruen (carved-pawn-light),
   gegnerische blau (painted-pawn). Freund und Feind unterscheiden sich jetzt

@@ -6,6 +6,8 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { gespart } from "../sparmodus.js";
+import { SperrGlyph } from "./SperrGlyph.jsx";
+import { stadium } from "../../../core/rules/sperren.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { BrettRahmen, lageAusBrett } from "./BrettRahmen.jsx";
 import { PieceArt } from "./PieceArt.jsx";
@@ -469,6 +471,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         if (f === W - 1) teile.push(`linear-gradient(270deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
         return gespart("randweich") || !teile.length ? null : teile.join(", ");
       })();
+      /* v1.0.46: was auf DIESEM Feld an Sperre steht. Aus dem Zustand gelesen,
+         nicht gehalten - so kann sie nicht veralten. */
+      const sperreHier = state?.sperren ? state.sperren[i] : null;
       cells.push(
         <div key={i} data-zelle={i} onClick={() => tap(i)} style={{ position: "relative",
           // the flat colour + a soft diagonal light stand INSTANTLY — no loading
@@ -606,6 +611,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                die FIGUR - und sie faellt nicht, sie fasst sich wieder. */
             ...(lastMove && lastMove.damaged && !lastMove.lethal && lastMove.to === i && !ruhig
               ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph aufsBrett piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+          {/* v1.0.46: DIE SPERRE AUF DIESEM FELD. Die Regeln dazu gibt es seit
+              v0.90, gezeichnet wurde sie nie - sperren.js hing allein an
+              transitions.js. stadium() liefert genau die drei Worte, zu denen
+              es Bilder gibt. Steht hier VOR der Figur, damit Truemmer unter
+              ihr liegen; eine heile Mauer und eine Figur teilen sich ohnehin
+              nie ein Feld, weil die Mauer den Zug aufhaelt. */}
+          {sperreHier && <SperrGlyph art={sperreHier.art} zustand={stadium(sperreHier)} ruhig={ruhig} />}
           {/* v1.0.14 (Besitzer): DER SPRINGER LANDET HOERBAR SICHTBAR - ein
               heller Ring faehrt aus dem Feld, auf dem er aufsetzt. Nur fuer
               den Sprung, sonst wird jedes Ziehen zum Ereignis. */}
