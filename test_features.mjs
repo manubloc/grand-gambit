@@ -442,18 +442,19 @@ import { ABILITIES as _AB } from "./src/content/index.js";
 
 
 // ── DAS NEUE HAUSWORT UND DIE VERSCHLOSSENEN WERKZEUGE (v1.0.39) ───────────
-import { ADMIN_DEFAULT_PASS as _ADM } from "./src/meta/index.js";
+import { ADMIN_SALT as _ASALT, ADMIN_HASH as _AHASH } from "./src/meta/index.js";
 import { createHash as _hash } from "node:crypto";
 import { readFileSync as _liesD } from "node:fs";
 {
-  ok("the shipped admin word is no longer the old one", _ADM !== "gambit-admin");
-  ok("and it is not trivially short", _ADM.length >= 8);
-  /* Die Werkzeugtuer darf das Wort NICHT im Klartext tragen - nur seinen
-     Pruefwert. Ein Klartext im Programm waere beim ersten Hinsehen lesbar. */
+  /* v1.0.40: KEIN PASSWORT IM PROGRAMM. In v1.0.39 stand das Admin-Wort im
+     Klartext in accounts.js - in einem Verzeichnis, das auf GitHub liegt.
+     Das war falsch, der Besitzer hat widersprochen. Diese Proben halten
+     fest, dass es nicht zurueckkommt. */
+  ok("the admin account carries salt and check value", /^[0-9a-f]{16,}$/.test(_ASALT) && /^[0-9a-f]{64}$/.test(_AHASH));
+  const konten = _liesD("src/meta/accounts.js", "utf8");
+  ok("accounts.js holds no plain password", !/ADMIN_DEFAULT_PASS\s*=\s*"[^"]/.test(konten));
   const schloss = _liesD("src/app/ui/torschloss.js", "utf8");
-  ok("the tool door carries no plain password", !schloss.includes(_ADM));
-  const erwartet = _hash("sha256").update("gg-werkzeug:" + _ADM).digest("hex");
-  ok("but it does carry the right check value", schloss.includes(erwartet));
+  ok("the tool door holds only a check value", /^[0-9a-f]{64}$/m.test((schloss.match(/PRUEFWERT = "([0-9a-f]+)"/) || [])[1] || ""));
   // Und die Werkzeuge fragen wirklich danach
   const app = _liesD("src/app/App.jsx", "utf8");
   ok("every tool asks at the door",

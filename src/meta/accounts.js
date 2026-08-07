@@ -16,12 +16,16 @@ import { storage } from "../platform/index.js";
 const KEY = "accounts:v1";
 const SKEY = "session:v1";
 export const ADMIN_EMAIL = "admin";
-/* v1.0.39 (Besitzer): neues Admin-Wort. Es steht hier im Klartext, weil das
-   Admin-Konto beim ERSTEN Start damit angelegt wird - der Rechner muss es
-   also kennen. Wer es aendert (Profil -> Passwort aendern), macht diesen
-   Wert wertlos, und genau dazu raet die Karte dort. Fuer die Werkzeugtuer
-   liegt daneben nur ein Pruefwert, kein Klartext (siehe torschloss.js). */
-export const ADMIN_DEFAULT_PASS = "LouNao12!";
+/* ── KEIN PASSWORT IM PROGRAMM (v1.0.40) ──────────────────────────────────
+   In v1.0.39 stand das Admin-Wort hier im KLARTEXT. Das war falsch: dieses
+   Verzeichnis liegt auf GitHub, und ein Wort, das dort steht, ist kein
+   Geheimnis mehr - ganz gleich, wie gut es sonst gewaehlt ist. Der Besitzer
+   hat zu Recht widersprochen.
+   Jetzt liegen hier nur SALZ und PRUEFWERT. Aus ihnen laesst sich das Wort
+   nicht zurueckrechnen; das Admin-Konto wird damit angelegt, ohne dass der
+   Klartext das Programm je beruehrt. */
+export const ADMIN_SALT = "ef7b15bc3be6c31d516d6675";
+export const ADMIN_HASH = "b8f147ece9132b5ba07b5105420a2e27cba628f9a1d5b679ddb9515b6091ee28";
 
 const rid = (n) => Array.from({ length: n }, () => "abcdefghjkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 31)]).join("");
 
@@ -65,7 +69,8 @@ async function writeList(list) { try { await storage.set(KEY, JSON.stringify(lis
 export async function ensureAccounts() {
   let list = await readList();
   if (!list) {
-    list = [await mkAccount({ email: ADMIN_EMAIL, pass: ADMIN_DEFAULT_PASS, name: "Admin", isAdmin: true })];
+    list = [{ ...(await mkAccount({ email: ADMIN_EMAIL, pass: null, name: "Admin", isAdmin: true })),
+      salt: ADMIN_SALT, passHash: ADMIN_HASH }];   /* v1.0.40: fertiger Pruefwert statt Klartext */
     await writeList(list);
   }
   return list;
@@ -204,7 +209,10 @@ export async function adminHasDefaultPass() {
   const list = await ensureAccounts();
   const adm = findAccount(list, ADMIN_EMAIL);
   if (!adm) return false;
-  return (await hashPass(ADMIN_DEFAULT_PASS, adm.salt)) === adm.passHash;
+  /* Warnt, solange das MITGELIEFERTE Wort noch gilt - erkennbar daran, dass
+     Salz und Pruefwert unveraendert sind. Sobald jemand sein Wort aendert,
+     wechselt beides und die Warnung verstummt. */
+  return adm.salt === ADMIN_SALT && adm.passHash === ADMIN_HASH;
 }
 
 // ── session ──────────────────────────────────────────────────────────────────

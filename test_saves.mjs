@@ -1,6 +1,6 @@
 // Accounts + save slots: the front door and the career shelf.
 import { ensureAccounts, register, login, loginGuest, findAccount, hashPass, normEmail, validEmail, mkAccount,
-  changePassword, adminHasDefaultPass, ADMIN_EMAIL, ADMIN_DEFAULT_PASS, currentAccount, clearSession, deleteAccount } from "./src/meta/accounts.js";
+  changePassword, adminHasDefaultPass, ADMIN_EMAIL, ADMIN_SALT, ADMIN_HASH, currentAccount, clearSession, deleteAccount } from "./src/meta/accounts.js";
 import { createSave, listSaves, loadSave, writeSave, deleteSave, renameSave,
   progressPct, withProgressPct, leagueOrder, migrateLegacyInto, fmtPlaytime } from "./src/meta/saves.js";
 import { defaultProfile } from "./src/meta/profile.js";
@@ -14,12 +14,26 @@ const ok = (name, cond) => { if (cond) { pass++; console.log("  ok  -", name); }
 // ── accounts ─────────────────────────────────────────────────────────────────
 const seeded = await ensureAccounts();
 ok("first boot seeds exactly the built-in admin", seeded.length === 1 && seeded[0].email === ADMIN_EMAIL && seeded[0].isAdmin);
-const adm = await login(ADMIN_EMAIL, ADMIN_DEFAULT_PASS);
-ok("admin signs in with the shipped default password", adm.isAdmin === true);
-ok("the default-password warning fires", (await adminHasDefaultPass()) === true);
-await changePassword(adm.id, ADMIN_DEFAULT_PASS, "neues-passwort");
-ok("after changing it the warning stops", (await adminHasDefaultPass()) === false);
-ok("and the old password no longer works", await login(ADMIN_EMAIL, ADMIN_DEFAULT_PASS).then(() => false, (e) => e.message === "wrong-pass"));
+/* v1.0.40: Das Admin-Wort steht NICHT mehr im Programm - nur Salz und
+   Pruefwert. Diese Proben brauchen es aber, um sich anzumelden. Sie setzen
+   deshalb ein EIGENES Testwort auf das Konto und pruefen daran dieselben
+   Regeln; das echte Wort bleibt draussen, wo es hingehoert. */
+const TESTWORT = "probe-wort-2026";
+{
+  const liste = await ensureAccounts();
+  const a = liste.find((x) => x.email === ADMIN_EMAIL);
+  ok("the shipped admin carries a check value, not a password", !!a.passHash && a.salt === ADMIN_SALT && a.passHash === ADMIN_HASH);
+  ok("the default-password warning fires while it is untouched", (await adminHasDefaultPass()) === true);
+  // Testwort setzen, indem Salz und Pruefwert direkt ersetzt werden
+  a.salt = "probe-salz"; a.passHash = await hashPass(TESTWORT, "probe-salz");
+  await storage.set("accounts:v1", JSON.stringify(liste), false);   /* wie writeList: JSON-Text, nicht Objekt */
+}
+const adm = await login(ADMIN_EMAIL, TESTWORT);
+ok("admin signs in", adm.isAdmin === true);
+ok("and once the word is his own, the warning stops", (await adminHasDefaultPass()) === false);
+await changePassword(adm.id, TESTWORT, "neues-passwort");
+ok("changing it again works", await login(ADMIN_EMAIL, "neues-passwort").then((x) => !!x, () => false));
+ok("and the old password no longer works", await login(ADMIN_EMAIL, TESTWORT).then(() => false, (e) => e.message === "wrong-pass"));
 
 ok("emails are normalized", normEmail("  Ana@Mail.DE ") === "ana@mail.de");
 ok("email validation accepts real addresses and the admin alias", validEmail("a@b.de") && validEmail(ADMIN_EMAIL) && !validEmail("nope"));
@@ -194,7 +208,7 @@ ok("full build counts ten league crowns", fullB.stats.leaguesWon === 10);
   ok("die Sitzung ist beendet", (await currentAccount()) === null);
   let admin = null;
   const adm = findAccount(list, ADMIN_EMAIL);
-  try { await deleteAccount(adm.id, ADMIN_DEFAULT_PASS); } catch (e) { admin = e.message; }
+  try { await deleteAccount(adm.id, "neues-passwort"); } catch (e) { admin = e.message; }   /* v1.0.40: das Wort steht nicht mehr im Programm */
   ok("das eingebaute admin-Konto ist unloeschbar", admin === "admin-locked" && !!findAccount(await ensureAccounts(), ADMIN_EMAIL));
 }
 

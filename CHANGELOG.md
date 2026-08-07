@@ -1,5 +1,25 @@
 # Changelog - Grand Gambit
 
+## 1.0.40
+
+- KEIN PASSWORT MEHR IM PROGRAMM. In v1.0.39 hatte ich das Admin-Wort im
+  KLARTEXT nach accounts.js geschrieben - in ein Verzeichnis, das auf
+  GitHub liegt. Das war falsch, und der Besitzer hat zu Recht
+  widersprochen: ein Wort, das dort steht, ist kein Geheimnis mehr, ganz
+  gleich wie gut es gewaehlt ist. Ich haette es gar nicht erst tun
+  duerfen.
+- Jetzt liegen dort nur SALZ und PRUEFWERT. Aus ihnen laesst sich das Wort
+  nicht zurueckrechnen; das Admin-Konto wird damit angelegt, ohne dass der
+  Klartext das Programm je beruehrt. Die Werkzeugtuer trug von Anfang an
+  nur einen Pruefwert.
+- Die Proben legen sich fuer ihre Zwecke ein EIGENES Testwort auf das
+  Konto, statt das echte zu brauchen - drei Proben halten ausserdem fest,
+  dass kein Klartext zurueckkehrt.
+- ACHTUNG, VOM BESITZER ZU ERLEDIGEN: der Klartext steht weiterhin in der
+  VERGANGENHEIT des Verzeichnisses (Commit d5497cf, bereits
+  veroeffentlicht). Ihn dort zu entfernen erfordert ein Umschreiben der
+  Historie; einfacher und sicherer ist es, ein anderes Wort zu waehlen.
+
 ## 1.0.39
 
 - DIE FIGUREN IN HOHER QUALITAET SIND DA: 52 Originale in 1024x1024

@@ -26,7 +26,7 @@ export { applySnapshot, readSnapshot, listRestorePoints, takeRestorePoint, BK_RE
 export {
   ensureAccounts, register, login, loginGuest, upsertCloudAccount, changePassword, deleteAccount,
   adminHasDefaultPass, currentAccount, setSession, clearSession, findAccount,
-  normEmail, validEmail, hashPass, mkAccount, ADMIN_EMAIL, ADMIN_DEFAULT_PASS,
+  normEmail, validEmail, hashPass, mkAccount, ADMIN_EMAIL, ADMIN_SALT, ADMIN_HASH,
 } from "./accounts.js";
 export {
   listSaves, createSave, loadSave, writeSave, deleteSave, renameSave,
