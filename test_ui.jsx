@@ -848,9 +848,16 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("the zigzag fracture is gone", !/viewBox="0 0 100 100"[\s\S]{0,400}path fill="#05070c"/.test(brett));
   ok("the edge veil that cut the heads is gone",
     !/zIndex:\s*3,[\s\S]{0,200}linear-gradient\(180deg, rgba\(5,7,12/.test(brett));
-  ok("every rim square masks itself outward", /const randMaske = \(\(\) =>/.test(brett));
-  ok("and the mask sits on the FIELD, not on the cell",
-    /randMaske && <div aria-hidden[\s\S]{0,160}maskImage: randMaske/.test(brett));
+  /* v1.0.37: Die Randweiche ist geblieben, ihre BAUART hat gewechselt - von
+     28 CSS-Masken auf einen Farbverlauf. Sichtbar dasselbe, fuer die
+     Grafikeinheit ein Bruchteil der Arbeit. Die Probe verlangt darum
+     ausdruecklich, dass am Brett KEINE Masken mehr haengen. */
+  ok("every rim square still fades outward", /const randVerlauf = \(\(\) =>/.test(brett));
+  ok("and it costs no css mask any more", !/maskImage: randMaske|WebkitMaskComposite/.test(brett));
+  ok("the selected piece gets its own paint layer",
+    /willChange: \(!ruhig && \(isSel \|\| isSpy\)\) \? "transform" : "auto"/.test(brett));
+  ok("the board fades in once, not 64 times",
+    /opacity: artReady \? 1 : 0,\s*\n\s*transition: "opacity 1\.6s/.test(brett));
 }
 
 

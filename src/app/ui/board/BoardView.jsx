@@ -449,12 +449,23 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
          Koepfe ragen weiterhin ueber die Kante, ohne in einen Schleier zu
          laufen. Innen (ab 42 %) ist das Feld voll deckend, die Spielflaeche
          bleibt also lesbar. */
-      const randMaske = (() => {
+      /* v1.0.37 (Besitzer: "beim Anklicken einer Figur ruckelt es jetzt
+         immer"): DIE MASKEN WAREN ES. In v1.0.34 bekam jedes der 28
+         Randfelder eine eigene CSS-Maske, an den Ecken sogar zwei
+         uebereinander. Genau davor hatte ich in v1.0.25 selbst gewarnt -
+         Masken sind auf Telefon-Grafikkernen teuer, weil der Browser fuer
+         jede eine eigene Ebene aufbaut und bei jedem Neuzeichnen neu
+         zusammensetzt. Bei jeder Auswahl geschieht das 28-mal.
+         Ein FARBVERLAUF leistet hier dasselbe und kostet fast nichts: der
+         Feldton laeuft nach aussen in die Nacht, statt dass eine Maske ihn
+         wegschneidet. Sichtbar ist der Unterschied nicht - messbar schon. */
+      const randVerlauf = (() => {
         const teile = [];
-        if (rr === 0) teile.push("linear-gradient(180deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
-        if (rr === H - 1) teile.push("linear-gradient(0deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
-        if (f === 0) teile.push("linear-gradient(90deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
-        if (f === W - 1) teile.push("linear-gradient(270deg, transparent 0%, rgba(0,0,0,.35) 16%, #000 44%)");
+        const nacht = "rgba(5,7,12,1)";
+        if (rr === 0) teile.push(`linear-gradient(180deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
+        if (rr === H - 1) teile.push(`linear-gradient(0deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
+        if (f === 0) teile.push(`linear-gradient(90deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
+        if (f === W - 1) teile.push(`linear-gradient(270deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
         return teile.length ? teile.join(", ") : null;
       })();
       cells.push(
@@ -465,12 +476,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           /* Der Feldgrund liegt seit v1.0.34 in EIGENER Schicht (gleich
              darunter), damit die Randmaske ihn allein trifft - haenge sie an
              die Zelle, blendet sie die FIGUR gleich mit aus. */
-          background: randMaske ? "transparent" : `${dark ? sqD : sqL}`,
+          background: `${dark ? sqD : sqL}`,
           display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default" }}>
-          {randMaske && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
-            background: `${dark ? sqD : sqL}`,
-            WebkitMaskImage: randMaske, maskImage: randMaske,
-            WebkitMaskComposite: "source-in", maskComposite: "intersect" }} />}
+          {randVerlauf && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+            zIndex: 1, background: randVerlauf }} />}
           {(feld || !ground) && (() => {
             // DIE FELDER DES BESITZERS (v0.66) SIEGEN AUCH UEBER DEM BODEN:
             // seine Kacheln SIND die Felder - der gemalte Grund weicht. liegt ein Kapitel-Streifen an,
@@ -517,7 +526,12 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                  es stockte. Jetzt 1,8 s mit einer halben Sekunde Vorlauf -
                  langsamer heisst hier auch RUHIGER, weil sich die Last ueber
                  mehr Bilder verteilt. */
-              opacity: artReady ? (friendly ? 0.4 : 1) : 0, transition: "opacity 1.8s ease .5s" }} />;
+              /* v1.0.37: die 1,8-s-Blende sass auf JEDEM der 64 Felder - also
+                 64 gleichzeitig laufende Uebergaenge, die der Browser einzeln
+                 verwaltet. Genau das war das Ruckeln beim Partiestart. Der
+                 Uebergang wandert an den Brett-Rahmen (EINE Blende fuer alles,
+                 weiter unten); hier bleibt nur noch der Endzustand. */
+              opacity: artReady ? (friendly ? 0.4 : 1) : 0 }} />;
           })()}
           {!ground && !feld && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
             boxShadow: "inset 2px 2px 0 rgba(255,246,220,.12), inset 6px 6px 7px -5px rgba(255,250,230,.28), inset -2px -2px 0 rgba(0,0,0,.32)" }} />}
@@ -571,6 +585,17 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             // the queen is in focus, everything else is out of focus". The
             // stranger still announces himself with the pulsing ring below.
             filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))",
+            /* v1.0.37 (Besitzer: "beim Anklicken einer Figur ruckelt es jetzt
+               immer"): DER SCHATTEN IST DER TEURE TEIL. Jede Figur traegt
+               einen drop-shadow - ein echter Filter, den die Grafikeinheit
+               rechnen muss. Solange nichts sich bewegt, kostet das einmal;
+               waehrend die Auswahl auf 1,58 waechst, muesste er in JEDEM Bild
+               neu berechnet werden. willChange sagt dem Browser vorher
+               Bescheid, sodass er die Figur samt Schatten EINMAL auf eine
+               eigene Ebene legt und danach nur noch verschiebt und skaliert.
+               Bewusst NUR fuer die ausgewaehlte Figur: 32 Dauerebenen waeren
+               auf schwachen Geraeten teurer als das Problem. */
+            willChange: (!ruhig && (isSel || isSpy)) ? "transform" : "auto",
             /* v1.0.14: WER EINEN SCHLAG UEBERSTEHT, WACKELT. Nicht die Zelle,
                die FIGUR - und sie faellt nicht, sie fasst sich wieder. */
             ...(lastMove && lastMove.damaged && !lastMove.lethal && lastMove.to === i && !ruhig
@@ -661,6 +686,14 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
           ? { width: bw, height: bh, gridTemplateColumns: `repeat(${W}, ${cell}px)`, gridTemplateRows: `repeat(${H}, ${cell}px)` }
           : { aspectRatio: `${W} / ${H}`, gridTemplateColumns: `repeat(${W}, 1fr)`, gridTemplateRows: `repeat(${H}, 1fr)` }),
         display: "grid", gap: GAP, borderRadius: 12, overflow: "visible", position: "relative", // the back rank's heads rise ABOVE the field
+        /* v1.0.37: DIE EINE BLENDE. Sie ersetzt die 64 Einzeluebergaenge, die
+           beim Partiestart gleichzeitig liefen - der Browser haelt hier eine
+           Ebene und schiebt sie auf die Grafikkarte, statt Feld fuer Feld zu
+           rechnen. willChange sagt ihm das vorher, damit er die Ebene schon
+           bereitlegt und nicht erst beim ersten Bild aufbaut. */
+        opacity: artReady ? 1 : 0,
+        transition: "opacity 1.6s ease .45s",
+        willChange: artReady ? "auto" : "opacity",
         /* v1.0.30 (Besitzer: "Hintergrund und Schachfeld muessen mehr
            zusammenwachsen"): DAS BRETT WAECHST INS BILD - aber nur so weit,
            wie es SPIELBAR bleibt. Drei Wege wurden am Bild ausprobiert und
@@ -703,6 +736,10 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             hinaus (so ist es gewollt) und liefen deshalb genau in diesen
             Schleier. Er ist ersatzlos fort: die Randweiche macht jetzt jedes
             Randfeld SELBST, hinter seiner Figur. */}
+        {/* v1.0.37: HIER blendet das Brett auf - einmal, fuer alle 64 Felder
+            zusammen. Eine einzige Ebene, die der Browser auf die Grafikkarte
+            legen kann, statt 64 Uebergaengen, die er Feld fuer Feld
+            durchrechnet. */}
         {/* v1.0.34 (Besitzer): "Das Zickzack ist doof am Rand. Geht gar
             nicht." - fort damit. Die gesprungene Kante aus v1.0.31 ist
             restlos entfernt; an ihre Stelle tritt echte Transparenz an den

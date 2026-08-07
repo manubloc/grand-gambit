@@ -1,5 +1,30 @@
 # Changelog - Grand Gambit
 
+## 1.0.37
+
+- DAS RUCKELN BEIM ANTIPPEN WAR MEINE EIGENE ARBEIT. In v1.0.34 bekam
+  jedes der 28 Randfelder eine CSS-Maske, an den Ecken sogar zwei
+  uebereinander - genau davor hatte ich in v1.0.25 selbst gewarnt: Masken
+  sind auf Telefon-Grafikkernen teuer, weil der Browser fuer jede eine
+  eigene Ebene aufbaut und bei jedem Neuzeichnen neu zusammensetzt. Bei
+  jeder Auswahl geschah das 28-mal. Ein FARBVERLAUF leistet dasselbe und
+  kostet fast nichts - sichtbar ist der Unterschied nicht, messbar schon.
+- DIE 64 EINZELBLENDEN SIND EINE GEWORDEN. Die 1,8-s-Blende beim
+  Partiestart sass auf JEDEM Feld - 64 gleichzeitig laufende Uebergaenge,
+  die der Browser einzeln verwaltet. Sie sitzt jetzt am Brett-Rahmen: eine
+  Ebene, die auf die Grafikkarte wandert, statt 64 Rechnungen.
+- DIE AUSGEWAEHLTE FIGUR BEKOMMT IHRE EIGENE EBENE. Jede Figur traegt
+  einen drop-shadow - einen echten Filter. Waehrend die Auswahl auf 1,58
+  waechst, muesste er in jedem Bild neu berechnet werden; willChange legt
+  Figur samt Schatten einmal auf eine Ebene und verschiebt sie danach nur
+  noch. Bewusst NUR fuer die ausgewaehlte Figur - 32 Dauerebenen waeren
+  auf schwachen Geraeten teurer als das Problem.
+- EHRLICH ZUR MESSGRENZE: Ein CPU-Profil waehrend des Antippens zeigt zu
+  99,7 % Leerlauf - gerechnet wird also fast nichts, das Ruckeln sitzt im
+  ZEICHNEN. Das laesst sich in dieser Umgebung nicht messen (kein echter
+  Grafikkern), nur an seinen bekannten Ursachen angehen. Ob es auf dem
+  Geraet reicht, muss der Besitzer sagen.
+
 ## 1.0.36
 
 - LEISTUNG GEMESSEN, EIN GROSSER HEBEL GEFUNDEN: Die Inline-Grenze des
