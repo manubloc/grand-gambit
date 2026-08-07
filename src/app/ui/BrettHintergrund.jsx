@@ -14,6 +14,7 @@
 // liegen darum wie die Kapitelgemaelde in public/ und werden vom Browser
 // geholt, wenn das Kapitel dran ist.
 import { useMemo, useState } from "react";
+import { gespart } from "./sparmodus.js";
 
 // Die Zuordnung Kapitel -> Datei, gleiche Tabelle wie in KapitelIntro.jsx.
 const DATEI = {
@@ -29,6 +30,10 @@ const DATEI = {
  *                 es spaeter zurueckdrehen, ohne dass hier etwas umgebaut wird.
  */
 export function BrettHintergrund({ liga = 1, staerke = 1 }) {
+  /* v1.0.37: im Sparmodus bleibt der Grund schwarz - das Bild ist der
+     teuerste Einzelposten des Kampfschirms. */
+  if (gespart("gemaelde")) return <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0,
+    pointerEvents: "none", background: "#05060a" }} />;
   const [geladen, setGeladen] = useState(false);
   const quelle = useMemo(() => {
     const n = Math.min(12, Math.max(1, Math.round(liga || 1)));

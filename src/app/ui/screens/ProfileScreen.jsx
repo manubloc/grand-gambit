@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { hashPin } from "../../../platform/index.js";
+import { SPAR_POSTEN, sparsam } from "../sparmodus.js";
 import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount , adminHasDefaultPass } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { T } from "../theme.js";
@@ -296,6 +297,33 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         Standardwort also gar nicht aendern, weshalb der Punkt seit Monaten
         offen stand. Jetzt darf jedes lokale Konto sein Passwort aendern, und
         solange das Standardwort steht, sagt es die Karte deutlich. */}
+    {/* ── DER SPARMODUS (v1.0.37) ─────────────────────────────────────────
+        Vier Zeichenposten, einzeln abschaltbar. Sie stehen hier, weil das
+        Ruckeln auf dem GERAET des Besitzers auftritt und nicht auf meinem
+        Messplatz - wer umlegt, sieht in Sekunden, welcher Posten es ist.
+        Die teuersten zuerst, damit der erste Versuch der beste ist. */}
+    <Panel>
+      <PanelTitle>{t("profile.sparTitle")}</PanelTitle>
+      <div style={{ fontSize: 12, color: T.dim, margin: "2px 0 12px", lineHeight: 1.5 }}>{t("profile.sparHint")}</div>
+      <div style={{ display: "grid", gap: 10 }}>
+        {SPAR_POSTEN.map((posten) => {
+          const an = !profile.spar?.[posten];   // AN heisst: der Posten wird gezeichnet
+          return <label key={posten} style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+            <input type="checkbox" checked={an} style={{ marginTop: 3, width: 18, height: 18, flex: "0 0 auto", accentColor: T.gold }}
+              onChange={() => dispatch({ type: "SET_SPAR", posten, an: an })} />
+            <span style={{ minWidth: 0 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: T.ink }}>{t(`profile.spar.${posten}`)}</span>
+              <span style={{ display: "block", fontSize: 11.5, color: T.faint, lineHeight: 1.45, marginTop: 1 }}>
+                {t(`profile.spar.${posten}Hint`)}</span>
+            </span>
+          </label>;
+        })}
+      </div>
+      {sparsam() && <div style={{ fontSize: 11.5, color: "#f0c98a", marginTop: 12, padding: "8px 10px", borderRadius: 8,
+        background: "rgba(216,164,65,.12)", border: "1px solid rgba(216,164,65,.4)", lineHeight: 1.45 }}>
+        {t("profile.sparAktiv")}</div>}
+    </Panel>
+
     {account?.provider === "local" && <Panel>
       <PanelTitle>{t("profile.pwTitle")}</PanelTitle>
       {defaultPass && <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "#f0c98a", margin: "2px 0 10px",

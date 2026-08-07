@@ -5,6 +5,7 @@ import { klang } from "../klang.js";
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
+import { gespart } from "../sparmodus.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { BrettRahmen, lageAusBrett } from "./BrettRahmen.jsx";
 import { PieceArt } from "./PieceArt.jsx";
@@ -466,7 +467,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
         if (rr === H - 1) teile.push(`linear-gradient(0deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
         if (f === 0) teile.push(`linear-gradient(90deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
         if (f === W - 1) teile.push(`linear-gradient(270deg, ${nacht} 0%, rgba(5,7,12,.55) 18%, rgba(5,7,12,0) 46%)`);
-        return teile.length ? teile.join(", ") : null;
+        return gespart("randweich") || !teile.length ? null : teile.join(", ");
       })();
       cells.push(
         <div key={i} data-zelle={i} onClick={() => tap(i)} style={{ position: "relative",
@@ -578,13 +579,18 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             fontSize: pieceFont(piece.kind),
             // a single combined transition: the settle (scale/lift) is quick, the
             // arriving piece fades in gently so it never "pops" after the glide
-            transition: "transform .16s ease, opacity .18s ease, filter .45s ease",
+            /* v1.0.37: DER ERSTE VERDAECHTIGE FUERS KLICK-RUCKELN. Dieser
+               Uebergang haengt an ALLEN 64 Zellen und laeuft genau dann, wenn
+               man eine Figur antippt - Auswahl heisst Groesse und Hub aendern.
+               Im Sparmodus schaltet er ab: die Auswahl sitzt dann sofort
+               statt zu gleiten. */
+            transition: gespart("uebergang") ? "none" : "transform .16s ease, opacity .18s ease, filter .45s ease",
             // EVERY FIGURE STANDS SHARP. The opening used to soften the whole
             // board for two seconds to spotlight an unknown foe — but since a
             // champion stands in the QUEEN'S square, the effect read as "only
             // the queen is in focus, everything else is out of focus". The
             // stranger still announces himself with the pulsing ring below.
-            filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))",
+            filter: gespart("schatten") ? "none" : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))",
             /* v1.0.37 (Besitzer: "beim Anklicken einer Figur ruckelt es jetzt
                immer"): DER SCHATTEN IST DER TEURE TEIL. Jede Figur traegt
                einen drop-shadow - ein echter Filter, den die Grafikeinheit
@@ -930,7 +936,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                 <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center",
                   transform: `translateY(${pieceLift})`, transformOrigin: PIECE_ORIGIN,
                   fontSize: pieceFont(anim.piece.kind),
-                  filter: "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>
+                  filter: gespart("schatten") ? "none" : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>
                   <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} fliegt />
                 </div>
               </div>

@@ -894,5 +894,30 @@ import { BrettHintergrund as _BH } from "./src/app/ui/BrettHintergrund.jsx";
   ok("and every piece grew", !!font && +font[1] >= 1.15 && +font[2] >= 1.35);
 }
 
+
+// ── DER SPARMODUS WIRKT WIRKLICH (v1.0.37, Besitzer) ───────────────────────
+// Ein Schalter, der nur im Profil steht und nichts bewegt, waere schlimmer
+// als keiner: der Besitzer wuerde damit messen und ein falsches Ergebnis
+// bekommen. Diese Probe legt jeden Posten um und sieht im Markup nach.
+import { setSparmodus, SPAR_POSTEN, sparsam } from "./src/app/ui/sparmodus.js";
+import { BrettHintergrund as _BHG } from "./src/app/ui/BrettHintergrund.jsx";
+{
+  ok("all four items exist", SPAR_POSTEN.length === 4);
+  setSparmodus({});
+  ok("nothing is saved by default", !sparsam());
+  const voll = html(<_BHG liga={2} />);
+  ok("the painting is drawn by default", /<img/.test(voll));
+  setSparmodus({ gemaelde: true });
+  const spar = html(<_BHG liga={2} />);
+  ok("and it is GONE when switched off", !/<img/.test(spar));
+  ok("the switch reports itself as active", sparsam());
+  setSparmodus({});   // fuer alle folgenden Proben zuruecksetzen
+  ok("switching back restores it", /<img/.test(html(<_BHG liga={2} />)));
+  // Die drei Brett-Posten haengen im BoardView am selben Helfer
+  const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  for (const posten of ["schatten", "randweich", "uebergang"])
+    ok(`the board honours "${posten}"`, new RegExp(`gespart\\("${posten}"\\)`).test(brett));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

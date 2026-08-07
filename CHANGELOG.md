@@ -2,6 +2,28 @@
 
 ## 1.0.37
 
+- DER SPARMODUS: vier Zeichenposten, im Profil EINZELN abschaltbar -
+  Landschaft hinter dem Brett, weiche Auswahl, Schatten unter den Figuren,
+  weicher Brettrand. Die teuersten stehen oben, damit der erste Versuch
+  der beste ist.
+- WARUM ES IHN GIBT, statt dass ich einfach repariere: Ich habe das
+  Ruckeln gemessen - mit vierfach gedrosselter Rechenleistung, mit Profil,
+  mit A/B-Versuchen - und dabei zwei eigene Verdaechtige WIDERLEGT. Weder
+  die Randmasken (1116 ms gegen 1133 ms) noch die Schlagschatten der
+  Figuren (1116 gegen 1050) machten einen Unterschied. Das Profil zeigte:
+  nur 30 ms entfallen auf ausgefuehrtes Programm, die Zeit geht ins
+  ZEICHNEN - die Wahl der Technik ist also nicht der Flaschenhals.
+- ENTSCHEIDEND ABER: Mein Messplatz ist ein Browser OHNE Grafikkern, der
+  in Software zeichnet. Er ist kein Telefon, und seine Zahlen taugen nicht
+  als Mass fuer eines. Weiterzuraten waere billig gewesen; ab jetzt misst
+  das Geraet, auf dem es klemmt.
+- Voreinstellung ist ALLES AN - niemand bekommt ein aermeres Spiel, weil
+  er die Einstellungen nie geoeffnet hat. Neun Proben halten fest, dass
+  jeder Schalter wirklich etwas bewegt: ein Schalter, der nur dasteht,
+  waere schlimmer als keiner, weil er ein falsches Messergebnis liefert.
+
+## 1.0.37
+
 - DAS RUCKELN BEIM ANTIPPEN WAR MEINE EIGENE ARBEIT. In v1.0.34 bekam
   jedes der 28 Randfelder eine CSS-Maske, an den Ecken sogar zwei
   uebereinander - genau davor hatte ich in v1.0.25 selbst gewarnt: Masken

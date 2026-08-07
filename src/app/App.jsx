@@ -32,6 +32,7 @@ import { CampaignScreen } from "./ui/screens/CampaignScreen.jsx";
 import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { BrettHintergrund } from "./ui/BrettHintergrund.jsx";
+import { setSparmodus } from "./ui/sparmodus.js";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
 import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
@@ -93,6 +94,7 @@ function reducer(state, a) {
     case "SET_CAMP_DIFFICULTY": return { ...state, campDifficulty: a.difficulty };
     case "SET_CLASSIC_ELO": return { ...state, classicElo: a.elo };
     case "SET_HERO_COL": return { ...state, loadout: { ...state.loadout, heroCols: { ...(state.loadout.heroCols || {}), [a.mapId]: a.col } } };
+    case "SET_SPAR": return { ...state, spar: { ...(state.spar || {}), [a.posten]: !!a.an } };   /* v1.0.37 */
     case "SET_FORMATION": return { ...state, loadout: { ...state.loadout, formations: { ...(state.loadout.formations || {}), [formationKey(a.mapId, a.rules)]: a.formation } } };   /* v1.0.20: je Regelwerk ein Plan */
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);
     case "RECORD_STAGE": return recordStage(state, a);
@@ -763,6 +765,9 @@ const G = "#c9a45c", GH = "#e8c97e", NV = "#0e1424";
 
 
 export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = null, hallenStand = false, onQuickStart = null }) {
+  /* v1.0.37: der Sparmodus steht VOR dem Zeichnen - sonst liefe ein Bild
+     lang die teure Fassung. */
+  setSparmodus(profile.spar);
   const en = profile.lang === "en";
   const hubWide = useMedia("(min-width: 900px)");
   const cur = nodeById(currentNodeId(profile));

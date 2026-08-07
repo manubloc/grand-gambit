@@ -15,6 +15,7 @@ export function defaultProfile() {
     pieces: { levels: {} },              // purchased per-piece levels (default 1)
     loadout: { formations: {} },         // per-map formations, keyed by map id
     notices: {},                          // seen one-time notices (privacy, online consent)
+    spar: {},                             // v1.0.37: abgeschaltete Zeichenposten (Sparmodus)
     gold: 0,
     sp: 0,
     claims: {},
@@ -63,6 +64,7 @@ function migrate(p) {
     stats: { ...d.stats, ...(p.stats || {}) },
     loadout: { formations, heroCols: { ...((p.loadout || {}).heroCols || {}) } },
     notices: { ...(p.notices || {}) },
+    spar: { ...(p.spar || {}) },
     campaign: {
       league: (p.campaign && p.campaign.league) || 1,
       dupes: { ...((p.campaign && p.campaign.dupes) || {}) },
