@@ -16,8 +16,8 @@
 import { ABILITIES, faehigkeitZustand, faehigkeitSichtbar, SPERRGRUND } from "./src/content/index.js";
 import { defaultProfile, gambitStufe, gambitWach, GAMBIT_ERWACHT_AB,
   GAMBIT_ERWACHT_AUF_STUFE, characterLevel, resolveCharacter,
-  FREIGABEN, darfHeldSetzen, darfReiheStellen, erklaertWas, merkeErklaert,
-  ersteFigurDa } from "./src/meta/index.js";
+  FREIGABEN, darfHeldSetzen, darfReiheStellen, erklaertWas, naechsteErklaerung,
+  merkeErklaert, merkschluessel, ersteFigurDa } from "./src/meta/index.js";
 import { CHARACTERS } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
@@ -143,7 +143,24 @@ ok("jede Freigabe bringt Titel und Text in beiden Sprachen mit",
 const gemerkt = merkeErklaert(erwacht, "held");
 ok("nach dem Erklaeren schweigt sie", !erklaertWas(gemerkt).some((f) => f.id === "held"));
 ok("das Merken laesst den alten Spielstand unberuehrt",
-  !(erwacht.gesehen && erwacht.gesehen.held));
+  !(erwacht.notices && erwacht.notices[merkschluessel("held")]));
+
+// DERSELBE TOPF WIE DIE LEHRSTUNDEN. Ein zweiter Merker daneben waere eine
+// zweite Wahrheit - und faellt erst auf, wenn ein alter Spielstand auftaucht.
+ok("der Merker liegt in profile.notices, wo auch die Lehrstunden liegen",
+  !!gemerkt.notices && !!gemerkt.notices[merkschluessel("held")]);
+ok("und traegt sein eigenes Praefix, damit nichts kollidiert",
+  merkschluessel("held").startsWith("frei:"));
+
+// GEHEN ZWEI ZUGLEICH AUF, KOMMT DIE FRUEHERE ZUERST - sonst stuenden zwei
+// Fenster uebereinander oder eines ginge stumm verloren.
+const zweiZugleich = { ...mitFigur };
+const reihenfolge = erklaertWas(zweiZugleich).map((f) => f.id);
+ok("mehrere offene Freigaben kommen in der Ordnung der Liste",
+  reihenfolge.length >= 2 && reihenfolge[0] === "held");
+ok("naechsteErklaerung liefert genau die erste davon",
+  naechsteErklaerung(zweiZugleich).id === reihenfolge[0]);
+ok("ist nichts offen, meldet sie null", naechsteErklaerung(zu) === null);
 
 console.log("\nRESULT: " + pass + " passed, " + fail + " failed");
 if (fail) process.exit(1);

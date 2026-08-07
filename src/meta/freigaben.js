@@ -86,17 +86,28 @@ export const darfHeldSetzen = (profile) => freigegeben(profile, "held");
 /** Darf die hintere Reihe frei aufgestellt werden? */
 export const darfReiheStellen = (profile) => freigegeben(profile, "hinterereihe");
 
+/* DERSELBE MERKER WIE DIE LEHRSTUNDEN. Das Spiel hat mit profile.notices und
+   SET_NOTICE laengst einen Topf fuer "das wurde einmal gesagt". Ein zweiter
+   daneben waere eine zweite Wahrheit - und die eine Sorte Fehler, die man
+   erst merkt, wenn ein Spielstand aus der alten Zeit auftaucht. Also
+   dieselbe Schublade, nur mit eigenem Praefix. */
+export const merkschluessel = (id) => "frei:" + id;
+
 /** Welche Freigaben sind offen, haben sich aber noch nicht erklaert?
  *  In der Reihenfolge der Ordnung - gehen zwei zugleich auf, kommt die
  *  fruehere zuerst. */
 export function erklaertWas(profile) {
-  const gesehen = profile?.gesehen || {};
-  return FREIGABEN.filter((f) => f.wenn(profile) && !gesehen[f.id]);
+  const n = profile?.notices || {};
+  return FREIGABEN.filter((f) => f.wenn(profile) && !n[merkschluessel(f.id)]);
 }
+
+/** Die naechste, die etwas zu sagen hat - oder null. */
+export const naechsteErklaerung = (profile) => erklaertWas(profile)[0] || null;
 
 /** Merkt, dass eine Freigabe erklaert wurde. Gibt ein NEUES Profil zurueck -
  *  der Speicher haelt JSON-Strings, keine Objekte, also nie am Original
  *  herumschreiben. */
 export function merkeErklaert(profile, id) {
-  return { ...profile, gesehen: { ...(profile?.gesehen || {}), [id]: true } };
+  return { ...profile,
+    notices: { ...(profile?.notices || {}), [merkschluessel(id)]: true } };
 }

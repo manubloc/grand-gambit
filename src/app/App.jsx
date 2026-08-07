@@ -8,6 +8,7 @@ import { verifyPin } from "../platform/index.js";
 import { makeT } from "./i18n/strings.js";
 import { SERVER_URL } from "./config.js";
 import { claimableCount, retinueScore, upgradeBoss } from "../meta/index.js";
+import { naechsteErklaerung, merkschluessel } from "../meta/index.js";
 import { setLivery, fetchHouseDesign, crestArt, emblemArt, logoMenuArt } from "./ui/livery.js";
 import { Soundtrack } from "./ui/Soundtrack.jsx";
 import { AchievementsScreen } from "./ui/screens/AchievementsScreen.jsx";
@@ -456,6 +457,11 @@ export default function App() {
   const showName = !showPrivacy && !showIntro && !(profile.name || "").trim();
   // onboarding lessons appear between battles, never over a running match
   const teach = (!showPrivacy && !showIntro && !showName && !inMatchNow) ? pendingTeach(profile) : null;
+  /* v1.0.44: die naechste Freigabe, die sich noch nicht erklaert hat. Nach
+     den Lehrstunden, damit nie zwei Fenster uebereinander stehen - und nie
+     mitten in einer Partie. */
+  const freigabe = (!showPrivacy && !showIntro && !showName && !inMatchNow && !teach)
+    ? naechsteErklaerung(profile) : null;
   const t = makeT(profile.lang);
   if (locked) return <Lock t={t} profile={profile} onUnlock={() => setLocked(false)}
     onBack={() => { setLocked(false); setSlot(null); setReady(false); }} />;
@@ -624,6 +630,7 @@ export default function App() {
       {showIntro && <GameIntro t={t} en={profile.lang === "en"} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {showName && !inMatch && <NamensRuf t={t} en={profile.lang === "en"} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
+      {freigabe && <FreigabeFenster freigabe={freigabe} en={profile.lang === "en"} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
@@ -705,6 +712,7 @@ export default function App() {
       {showIntro && <GameIntro t={t} en={profile.lang === "en"} dispatch={dispatch} onStart={() => { setTab("play"); setView("hub"); }} />}
       {showName && !inMatch && <NamensRuf t={t} en={profile.lang === "en"} dispatch={dispatch} />}
       {teach && <TeachPopup which={teach} t={t} dispatch={dispatch} />}
+      {freigabe && <FreigabeFenster freigabe={freigabe} en={profile.lang === "en"} dispatch={dispatch} />}
       {leaveTo && <LeaveMatchAsk t={t} resumable={!!match && !pvp}
         onStay={() => setLeaveTo(null)}
         onLeave={() => { setPvp(null); setMatch(null); setQuick(null); setDailyGame(null); setTab(leaveTo); setView("hub"); setLeaveTo(null); }} />}
@@ -1235,6 +1243,48 @@ function TeachPopup({ which, t, dispatch }) {
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
             color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit", cursor: "pointer", letterSpacing: ".04em" }}>
           {t("teach.ok")}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── DAS FREIGABE-FENSTER (v1.0.44) ─────────────────────────────────────────
+   Die Lehrstunden oben erklaeren, wie man etwas tut. Dieses Fenster sagt,
+   dass etwas AUFGEGANGEN ist - der Held erwacht, die hintere Reihe oeffnet
+   sich, die Lebenspunkte kommen. Titel und Text stehen nicht hier, sondern
+   bei der Freigabe selbst (meta/freigaben.js), damit Bedingung und
+   Erklaerung nicht auseinanderlaufen koennen: eine neue Freigabe OHNE Text
+   ist so gar nicht erst schreibbar.
+
+   Es teilt sich den Merker mit den Lehrstunden (profile.notices, SET_NOTICE),
+   nur mit dem Praefix "frei:". Ein zweiter Topf waere eine zweite Wahrheit.
+
+   Vorrang: erst Datenschutz, Auftakt und Namensruf, dann die Lehrstunden,
+   dann das hier - und nie waehrend einer Partie. Wer gerade zieht, will
+   kein Fenster. */
+function FreigabeFenster({ freigabe, en, dispatch }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 63, display: "grid", placeItems: "center",
+      background: "rgba(8,10,14,.82)", backdropFilter: "blur(3px)", padding: "18px 10px" }}>
+      <div style={{ width: "100%", maxWidth: 400, background: T.panel,
+        border: `1px solid ${T.gold}88`, borderRadius: T.radius,
+        boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 34px ${T.gold}22`, padding: "20px 18px 16px" }}>
+        <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".18em",
+          color: "#a78bfa", textTransform: "uppercase", marginBottom: 7 }}>
+          {en ? "Something has opened" : "Etwas hat sich geöffnet"}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4 }}>
+          <span style={{ width: 8, height: 8, background: T.gold, transform: "rotate(45deg)", flex: "0 0 auto" }} />
+          <div className="gg-serif" style={{ fontSize: 18.5, color: T.gold, letterSpacing: ".04em" }}>
+            {en ? freigabe.titelEn : freigabe.titelDe}</div>
+        </div>
+        <div style={{ fontSize: 13.5, color: T.dim, lineHeight: 1.6, margin: "8px 0 14px" }}>
+          {en ? freigabe.textEn : freigabe.textDe}</div>
+        <button onClick={() => dispatch({ type: "SET_NOTICE", key: merkschluessel(freigabe.id) })}
+          style={{ width: "100%", padding: "12px 14px", borderRadius: 10,
+            background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+            color: "#17110a", fontWeight: 800, fontSize: 14.5, fontFamily: "inherit",
+            cursor: "pointer", letterSpacing: ".04em" }}>
+          {en ? "Understood" : "Verstanden"}</button>
       </div>
     </div>
   );

@@ -44,4 +44,4 @@ export { BOSS_MAX_LEVEL, bossLevelOf, bossUpgradeCost, bossSpecLeveled, upgradeB
 /* v1.0.43: die Freischalt-Ordnung - was wann aufgeht und welcher Satz es
    erklaert. Siehe freigaben.js. */
 export { FREIGABEN, freigegeben, darfHeldSetzen, darfReiheStellen,
-  erklaertWas, merkeErklaert, ersteFigurDa } from "./freigaben.js";
+  erklaertWas, naechsteErklaerung, merkeErklaert, merkschluessel, ersteFigurDa } from "./freigaben.js";

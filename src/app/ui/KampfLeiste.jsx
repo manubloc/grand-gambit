@@ -11,7 +11,7 @@
 // im Hofstaat; eines Tages vielleicht im Spiel selbst).
 import { useState, useEffect } from "react";
 import { legalMovesFrom } from "../../core/index.js";
-import { ABILITIES, CHARACTERS } from "../../content/index.js";
+import { ABILITIES, CHARACTERS, faehigkeitZustand } from "../../content/index.js";
 import { paintedForPiece } from "./board/paintedArt.js";
 import { StatOrbBadge } from "./board/PieceGlyph.jsx";
 import { T } from "./theme.js";
@@ -72,6 +72,11 @@ function Karte({ icon, label, unter, dry, gruen, active, lock, onTap }) {
 
 export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false, stil = "painted" }) {
   const [offen, setOffen] = useState(null);
+  /* v1.0.44: Ob die gesperrten Kuenste wach sind, entscheidet hier die
+     PARTIE, nicht der Spielstand: unter Schachregeln ruhen sie immer - auch
+     im Schnellspiel-Klassik, wo ein laengst erwachter Spielstand sonst
+     Karten anbieten wuerde, die das Regelwerk verbietet. */
+  const wach = state?.rules !== "chess";
   // DAS LETZTE TALENT (Besitzer, v0.71): wie der letzte Zug bleibt sichtbar,
   // ob und welches Talent zuletzt verbraucht wurde - von DIR oder vom Gegner.
   const [letztes, setLetztes] = useState(null);
@@ -86,7 +91,13 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false,
   useEffect(() => { setOffen(null); }, [inspect && inspect.i, state]);
   if (banner) return null;
 
-  const abIds = pc ? (pc.abilities || []).filter((id) => ABILITIES[id] && ABILITIES[id].live) : [];
+  /* v1.0.44: DIE LEISTE BIETET NUR AN, WAS AUCH GEHT. Vorher zeigte sie
+     jede lebende Faehigkeit als Karte - auch die beiden Reichweiten-Kuenste,
+     die im Zug dreifach verriegelt sind. Der Spieler tippte also auf eine
+     Karte, die nichts tun konnte. Jetzt entscheidet derselbe Zustand wie in
+     Akademie und Chronik. */
+  const abIds = pc ? (pc.abilities || []).filter((id) =>
+    ABILITIES[id] && ABILITIES[id].live && faehigkeitZustand(id, wach) === "wirkt") : [];
   const dry = pc ? Object.keys(pc.used || {}).length > 0 : false;
   let sonder = [];
   if (pc && eigen) {
@@ -103,7 +114,8 @@ export function KampfLeiste({ state, inspect, en, myColor = "w", banner = false,
   // traegt seinen eigenen Baum im Hofstaat und bleibt hier ohne Schloss.
   const naechste = (pc && eigen && !pc.hero && ch?.ladder)
     ? ch.ladder
-        .filter((e) => e.ability && ABILITIES[e.ability]?.live && !abIds.includes(e.ability))
+        .filter((e) => e.ability && ABILITIES[e.ability]?.live && !abIds.includes(e.ability)
+          && faehigkeitZustand(e.ability, wach) !== "verborgen")
         .sort((a, b) => a.level - b.level)[0] || null
     : null;
 

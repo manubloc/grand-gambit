@@ -6,7 +6,7 @@ import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach,
   darfHeldSetzen, darfReiheStellen } from "../../../meta/index.js";
-import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS, itemPrice } from "../../../content/index.js";
+import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, SPERRGRUND, faehigkeitZustand, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS, itemPrice } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
   characterLevel, resolveCharacter, isUnlocked, upgradeCost, canUpgrade, maxLevelFor, gambitTier, clearedCount,
@@ -83,7 +83,7 @@ function SheetRow({ label, children }) {
 // one talent as an ACCORDION row: the header always shows the icon, name,
 // TYPE badge (movement/attack/passive…) and cost; tapping it unfolds the full
 // description (and move diagram, when the talent changes how the piece strides).
-function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, open, onToggle, onBuy, schlaeft }) {
+function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, open, onToggle, onBuy, sperre }) {
   const typeName = en ? tg.nameEn : tg.nameDe;
   return <div style={{ borderRadius: 11, overflow: "hidden",
     border: `1px solid ${owned ? tg.color + "77" : can ? "#e3c07acc" : reach ? "#6f5a30" : "#3a4360"}`,
@@ -121,11 +121,15 @@ function AbilityAccordion({ ab, tg, price, cost, owned, reach, can, kind, en, op
           background: "linear-gradient(168deg, #2c4f9e 0%, #1b3068 55%, #142450 100%)", color: "#f6e9a4",
           border: "1px solid #e3c07a", boxShadow: "0 0 10px rgba(64,110,220,.35)" }}>
         {en ? "Learn" : "Erlernen"} · {price} <SkillStar size={11} /></button>}
-      {/* v0.77: Was nur an Lebenspunkten wirkt, ist vor dem Erwachen nicht
-          kaeuflich - sonst verbrennt man Sternenstaub fuer nichts. */}
-      {reach && !owned && schlaeft && <div className="gg-serif" style={{ marginTop: 9, fontSize: 11.5, color: "#9a92cf",
-        fontStyle: "italic", display: "inline-flex", alignItems: "center", gap: 6 }}>
-        <LockIc size={11} /> {en ? "Sleeps until the old magic wakes" : "Schläft, bis die alte Magie erwacht"}</div>}
+      {/* v1.0.44: DIE SPERRE SAGT, WARUM SIE DA IST. Vorher gab es einen
+          einzigen Satz fuer alles Gesperrte ("Schlaeft, bis die alte Magie
+          erwacht") - der stimmte fuer HP-Talente und log bei allem anderen.
+          Jetzt kommt der Grund aus SPERRGRUND, also aus derselben Quelle wie
+          die Sperre selbst; ein neuer Sperrgrund kann gar nicht mehr
+          erfunden werden, ohne dass hier ein Satz dazu steht. */}
+      {reach && !owned && sperre && <div className="gg-serif" style={{ marginTop: 9, fontSize: 11.5, color: "#9a92cf",
+        fontStyle: "italic", display: "inline-flex", alignItems: "flex-start", gap: 6, lineHeight: 1.45 }}>
+        <LockIc size={11} /> <span>{en ? SPERRGRUND[sperre].en : SPERRGRUND[sperre].de}</span></div>}
       {!reach && <div style={{ marginTop: 8, fontSize: 11.5, color: "#8a856f", display: "inline-flex", alignItems: "center", gap: 6 }}>
         <LockIc size={11} /> {en ? "Unlocks at level" : "Ab Stufe"} {price != null ? "" : ""}<b style={{ color: "#b9b295" }}>{ab._lvl}</b></div>}
     </div>}
@@ -352,11 +356,21 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
             <div className="gg-serif" style={{ fontSize: 10.5, letterSpacing: ".12em", color: "#c9b26a", marginBottom: 4 }}>{t("chron.abilities").toUpperCase()}</div>
             <div style={{ display: "grid", gap: 6 }}>
               {rungs.map((rg) => { const ab = ABILITIES[rg.ability]; const mv = ABILITY_MOVE[rg.ability];
-                return <div key={rg.ability} style={{ fontSize: 12, lineHeight: 1.5, color: "#c9c3aa" }}>
+                /* v1.0.44: dieselben drei Stufen wie in der Akademie. Die
+                   Chronik ist ein NACHSCHLAGEWERK - was es noch nicht gibt,
+                   gehoert nicht hinein; was gesperrt ist, schon, aber mit
+                   seinem Grund. */
+                const zst = faehigkeitZustand(rg.ability, hpWach(profile));
+                if (zst === "verborgen") return null;
+                return <div key={rg.ability} style={{ fontSize: 12, lineHeight: 1.5, color: "#c9c3aa",
+                  opacity: zst === "wirkt" ? 1 : 0.62 }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#f6e4a8", fontWeight: 800 }}>
                     <AbilityIcon id={ab.id} size={22} /> {ab[en ? "nameEn" : "nameDe"]}</span>
                   <span className="gg-serif" style={{ color: "#a9a28a", fontSize: 11 }}> · {en ? "from level" : "ab Stufe"} {rg.level}</span>
                   {" — "}{ab[en ? "descEn" : "descDe"]}
+                  {zst !== "wirkt" && <div className="gg-serif" style={{ marginTop: 4, fontSize: 11, color: "#9a92cf",
+                    fontStyle: "italic", display: "inline-flex", alignItems: "flex-start", gap: 5, lineHeight: 1.45 }}>
+                    <LockIc size={10} /> <span>{en ? SPERRGRUND[zst].en : SPERRGRUND[zst].de}</span></div>}
                   {mv && <div style={{ marginTop: 5, marginBottom: 3 }}>
                     <MoveDiagram kind={ch.kind} moveSpec={ch.moveSpec} extra={mv} />
                     <div style={{ fontSize: 9.5, color: "#7fb98f", marginTop: 3, fontStyle: "italic" }}>{en ? MOVE_LEGEND_ABILITY.en : MOVE_LEGEND_ABILITY.de}</div>
@@ -621,12 +635,20 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           );
           const ab = ABILITIES[rg.id];
           if (!ab) return null;
+          /* v1.0.44: WAS ES NOCH NICHT GIBT, STEHT AUCH NICHT DA. Vor dem
+             Erwachen fielen die HP-Talente durch dieselbe Anzeige wie alles
+             andere und trugen nur einen Hinweis - man sah also eine Leiter
+             voller Dinge, die es in Kapitel I gar nicht gibt. Verborgene
+             Sprossen fallen jetzt ganz weg; verriegelte bleiben stehen und
+             sagen, warum. */
+          const zustand = faehigkeitZustand(rg.id, hpWach(profile));
+          if (zustand === "verborgen") return null;
           const tg = TAGS[ab.tag] || { color: T.gold, nameDe: "Talent", nameEn: "Talent" };
           const price = abilityCost(rg.level);
           const cost = 0; // energy is gone — talents are once-per-game now
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
           return <AbilityAccordion key={rg.id} ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
-            owned={owned} reach={reach} can={can} kind={char.kind} en={en} schlaeft={!!ab.hpOnly && !hpWach(profile)}
+            owned={owned} reach={reach} can={can} kind={char.kind} en={en} sperre={zustand === "wirkt" ? null : zustand}
             open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
             onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} />;
         })}
