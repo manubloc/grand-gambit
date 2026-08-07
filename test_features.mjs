@@ -440,5 +440,35 @@ import { ABILITIES as _AB } from "./src/content/index.js";
   ok("none of them can be unlocked before the awakening", waehlbar.length === 0);
 }
 
+
+// ── DAS NEUE HAUSWORT UND DIE VERSCHLOSSENEN WERKZEUGE (v1.0.39) ───────────
+import { ADMIN_DEFAULT_PASS as _ADM } from "./src/meta/index.js";
+import { createHash as _hash } from "node:crypto";
+import { readFileSync as _liesD } from "node:fs";
+{
+  ok("the shipped admin word is no longer the old one", _ADM !== "gambit-admin");
+  ok("and it is not trivially short", _ADM.length >= 8);
+  /* Die Werkzeugtuer darf das Wort NICHT im Klartext tragen - nur seinen
+     Pruefwert. Ein Klartext im Programm waere beim ersten Hinsehen lesbar. */
+  const schloss = _liesD("src/app/ui/torschloss.js", "utf8");
+  ok("the tool door carries no plain password", !schloss.includes(_ADM));
+  const erwartet = _hash("sha256").update("gg-werkzeug:" + _ADM).digest("hex");
+  ok("but it does carry the right check value", schloss.includes(erwartet));
+  // Und die Werkzeuge fragen wirklich danach
+  const app = _liesD("src/app/App.jsx", "utf8");
+  ok("every tool asks at the door",
+    (app.match(/<WerkzeugTuer was=/g) || []).length >= 3);
+}
+
+// ── AUSSORTIERTES VERSCHWINDET AUS DER SCHAUKAMMER (v1.0.39) ───────────────
+{
+  const kammer = _liesD("src/app/ui/SchaukammerScreen.jsx", "utf8");
+  ok("a tended list exists", /const GEPFLEGT = useMemo\(\(\) => ALLE\.filter\(\(e\) => !merk\[e\.rel\]\)/.test(kammer));
+  ok("the overview draws from it", /return GEPFLEGT\.filter\(\(e\) => e\.gruppe/.test(kammer));
+  ok("the counter at the top does too", /GEPFLEGT\.filter\(\(e\) => e\.stand === "sicher"\)/.test(kammer));
+  ok("and so does the group table", /const e = GEPFLEGT\.filter\(\(x\) => x\.gruppe === g\)/.test(kammer));
+  ok("it says how many were set aside", /beiseitegelegt/.test(kammer));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

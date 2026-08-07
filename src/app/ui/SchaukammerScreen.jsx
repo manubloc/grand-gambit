@@ -131,26 +131,37 @@ export function SchaukammerScreen() {
   const [spalten, setSpalten] = useState(4);
   const [gross, setGross] = useState(null);
 
+  /* v1.0.39 (Besitzerwunsch): WAS AUSSORTIERT IST, IST WEG. Bisher blieb ein
+     als "archivieren" oder "loeschen" markiertes Bild in der Uebersicht
+     stehen und zaehlte oben weiter mit - man raeumte auf und sah davon
+     nichts. Jetzt verschwindet es aus der Liste UND aus jeder Zaehlung; die
+     Leiste oben zeigt stattdessen, wie viele beiseitegelegt wurden. Die
+     Merkliste selbst bleibt unangetastet, der Griff ist also umkehrbar. */
+  const [merk, setMerk] = useState({});
+  const aussortiert = (rel) => !!merk[rel];
+  const GEPFLEGT = useMemo(() => ALLE.filter((e) => !merk[e.rel]), [ALLE, merk]);
+  const beiseite = ALLE.length - GEPFLEGT.length;
+
   /* Die Bestandstafel rechnete frueher aus bestand.json - einer Datei mit von
      Hand gepflegten Zahlen, die der Messung widersprachen (sie sagte 122
      Originale, gemessen sind es 22 sichere und 14 mögliche). Zwei Quellen für
      dieselbe Zahl sind eine Quelle zuviel: die Tafel zählt jetzt selbst. */
   const tafel = useMemo(() => gruppen.map((g) => {
-    const e = ALLE.filter((x) => x.gruppe === g);
+    const e = GEPFLEGT.filter((x) => x.gruppe === g);   /* v1.0.39: ohne die Aussortierten */
     return {
       gruppe: g, gesamt: e.length,
       sicher: e.filter((x) => x.stand === "sicher").length,
       moeglich: e.filter((x) => x.stand === "moeglich").length,
       ohne: e.filter((x) => x.stand === "ohne").length,
     };
-  }), [ALLE, gruppen]);
+  }), [GEPFLEGT, gruppen]);
 
   const sichtbar = useMemo(() => {
     const s = suche.trim().toLowerCase();
-    return ALLE.filter((e) => e.gruppe === zeigeGruppe &&
+    return GEPFLEGT.filter((e) => e.gruppe === zeigeGruppe &&
       (filter === "alle" || e.stand === filter) &&
       (!s || e.titel.toLowerCase().includes(s) || e.datei.toLowerCase().includes(s)));
-  }, [ALLE, zeigeGruppe, suche, filter]);
+  }, [GEPFLEGT, zeigeGruppe, suche, filter]);
 
   /* v0.96 (Besitzerwunsch): AUSSORTIEREN. Die Kammer laeuft im Browser und
      darf nicht selbst im Bestand loeschen - das waere ein Schreibrecht, das
@@ -162,7 +173,6 @@ export function SchaukammerScreen() {
      v1.0.3: die Liste hing am DATEINAMEN - zwei Bilder gleichen Namens in
      verschiedenen Ordnern (etwa carved/ und painted/) haetten einander
      mitgerissen. Jetzt haengt sie am vollen Pfad. */
-  const [merk, setMerk] = useState({});
   /* v1.0.3 (Besitzerwunsch "damit ich schneller aufräumen kann"): MEHRFACH-
      AUSWAHL. Ein Griff je Bild war bei 382 Bildern der Flaschenhals. */
   const [wahl, setWahl] = useState([]);
@@ -222,13 +232,15 @@ export function SchaukammerScreen() {
             <div className="gg-serif" style={{ fontSize: 12.5, letterSpacing: ".12em", textTransform: "uppercase",
               color: T.goldBright, marginBottom: 2 }}>Bestand · wo liegt ein HQ-Original?</div>
             <div style={{ fontSize: 12.5, marginBottom: 9 }}>
-              <b style={{ color: ZUSTAND.sicher.farbe }}>{ALLE.filter((e) => e.stand === "sicher").length}</b>
-              {" von "}{ALLE.length}{" Bildern haben eines. "}
+              <b style={{ color: ZUSTAND.sicher.farbe }}>{GEPFLEGT.filter((e) => e.stand === "sicher").length}</b>
+              {" von "}{GEPFLEGT.length}{" Bildern haben eines. "}
               <span style={{ color: ZUSTAND.moeglich.farbe }}>
-                {ALLE.filter((e) => e.stand === "moeglich").length} unsicher</span>
+                {GEPFLEGT.filter((e) => e.stand === "moeglich").length} unsicher</span>
               {", "}
               <span style={{ color: ZUSTAND.ohne.farbe }}>
-                {ALLE.filter((e) => e.stand === "ohne").length} ohne</span>.
+                {GEPFLEGT.filter((e) => e.stand === "ohne").length} ohne</span>.
+              {beiseite > 0 && <span style={{ color: "#6f8fbf" }}>{" "}
+                {beiseite} beiseitegelegt (nicht gezählt).</span>}
             </div>
             <div style={{ display: "grid", gap: 5 }}>
               {tafel.map((g) => (

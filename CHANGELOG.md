@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 1.0.39
+
+- DIE FIGUREN IN HOHER QUALITAET SIND DA: 52 Originale in 1024x1024
+  (94 MB) liegen im Archiv unter archiv/bilder/figuren-hq. Alle 52 Namen
+  passten auf Anhieb zum Bestand - kein Zuordnen noetig.
+- AUS IHNEN NEU GESCHNITTEN: jede Spielfassung stammt jetzt direkt aus dem
+  1024er Original statt aus einer bereits verkleinerten Datei - ein
+  Neuabtasten weniger, also schaerfer. 576 px fuer Hofstaat, Popup und
+  Zoom, 192 px fuers Brett.
+- NEUES HAUSWORT fuer das Admin-Konto (Besitzerwunsch).
+- DIE WERKZEUGE SIND VERSCHLOSSEN: Schaukammer, Klangwerkstatt und
+  Spielerbuch hingen allein an einem Adressanhaengsel - wer "?werkstatt"
+  kannte, war drin. Jetzt fragt eine Tuer nach dem Wort des Hauses; einmal
+  geoeffnet, bleibt sie es fuer diese Sitzung. Im Programm liegt dafuer nur
+  ein Pruefwert (SHA-256), kein Klartext - eine Probe haelt das fest.
+- WAS AUSSORTIERT IST, IST WEG (Besitzerwunsch): ein als "archivieren"
+  oder "loeschen" markiertes Bild blieb bisher in der Uebersicht stehen und
+  zaehlte oben weiter mit - man raeumte auf und sah davon nichts. Jetzt
+  verschwindet es aus der Liste, aus der Zaehlleiste UND aus der
+  Gruppentafel; stattdessen steht dort, wie viele beiseitegelegt wurden.
+  Die Merkliste bleibt unangetastet, der Griff ist also umkehrbar.
+
 ## 1.0.38
 
 - DAS RUCKELN - DER BESITZER HAT ES GEFUNDEN, NICHT ICH. Seine

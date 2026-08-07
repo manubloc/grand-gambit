@@ -16,7 +16,12 @@ import { storage } from "../platform/index.js";
 const KEY = "accounts:v1";
 const SKEY = "session:v1";
 export const ADMIN_EMAIL = "admin";
-export const ADMIN_DEFAULT_PASS = "gambit-admin";
+/* v1.0.39 (Besitzer): neues Admin-Wort. Es steht hier im Klartext, weil das
+   Admin-Konto beim ERSTEN Start damit angelegt wird - der Rechner muss es
+   also kennen. Wer es aendert (Profil -> Passwort aendern), macht diesen
+   Wert wertlos, und genau dazu raet die Karte dort. Fuer die Werkzeugtuer
+   liegt daneben nur ein Pruefwert, kein Klartext (siehe torschloss.js). */
+export const ADMIN_DEFAULT_PASS = "LouNao12!";
 
 const rid = (n) => Array.from({ length: n }, () => "abcdefghjkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 31)]).join("");
 

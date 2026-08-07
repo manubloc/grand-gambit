@@ -35,6 +35,8 @@ import { BrettHintergrund } from "./ui/BrettHintergrund.jsx";
 import { setSparmodus } from "./ui/sparmodus.js";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
+import { WerkzeugTuer } from "./ui/WerkzeugTuer.jsx";
+import { torOffen } from "./ui/torschloss.js";
 import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
 import { SpielerbuchScreen } from "./ui/SpielerbuchScreen.jsx";
 import { AdminPortal } from "./ui/AdminPortal.jsx";
@@ -156,6 +158,11 @@ const TABS = [
 
 export default function App() {
   const galerie = typeof location !== "undefined" && new URLSearchParams(location.search).has("galerie");
+  /* v1.0.39 (Besitzer): DIE WERKZEUGE SIND VERSCHLOSSEN. Schaukammer,
+     Klangwerkstatt und Spielerbuch hingen allein an einem Adressanhaengsel -
+     wer "?werkstatt" kannte, war drin. Jetzt fragt eine Tuer nach dem Wort
+     des Hauses; einmal geoeffnet, bleibt sie es fuer diese Sitzung. */
+  const [torAuf, setTorAuf] = useState(() => torOffen());
   const werkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("werkstatt");
   const klangwerkstatt = typeof location !== "undefined" && new URLSearchParams(location.search).has("klangwerkstatt");
   const adminPortal = typeof location !== "undefined" && new URLSearchParams(location.search).has("admin");
@@ -415,13 +422,18 @@ export default function App() {
      zum Verstellen mehr, sondern der volle Blick auf alles Bildmaterial des
      Hauses, mit Titel, Dateiname und Ladeknopf. Der alte Weg ?werkstatt
      bleibt bestehen. */
-  if (werkstatt) return <SchaukammerScreen />;
+  if (werkstatt) return torAuf
+    ? <SchaukammerScreen />
+    : <WerkzeugTuer was="Schaukammer" onOffen={() => setTorAuf(true)} />;
   // DIE KLANGWERKSTATT (Besitzer, v0.79): alle Klaenge zum Abhoeren, ueber die
   // echte klang()-Schicht - nur ueber ?klangwerkstatt erreichbar.
-  if (klangwerkstatt) return <KlangWerkstattScreen />;
+  if (klangwerkstatt) return torAuf
+    ? <KlangWerkstattScreen />
+    : <WerkzeugTuer was="Klangwerkstatt" onOffen={() => setTorAuf(true)} />;
   // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
   // DAS SPIELERBUCH (Besitzer, v0.73): Liste, Fortschritt, Herkunft.
-  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch")) return <SpielerbuchScreen />;
+  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch"))
+    return torAuf ? <SpielerbuchScreen /> : <WerkzeugTuer was="Spielerbuch" onOffen={() => setTorAuf(true)} />;
   if (adminPortal) return <AdminPortal />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;
