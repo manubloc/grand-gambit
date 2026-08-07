@@ -16,7 +16,19 @@ export default defineConfig({
     __GG_VERSION__: JSON.stringify(GG_VERSION),
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
-  build: { assetsInlineLimit: (file, content) => file.endsWith(".webp") ? false : content.length < 400 * 1024 },
+  /* v1.0.36 (Leistungsmessung): DIE INLINE-GRENZE LAG BEI 400 KB. Alles
+     darunter wanderte als base64 ins JS-Buendel - gemessen 1,71 MB in 58
+     Dateien, also 61 % des Buendels, darunter drei JPEGs von zusammen 1 MB.
+     Das kostet doppelt: base64 traegt ein Drittel Ballast, UND der Browser
+     muss die ganze Fracht parsen, ehe die erste Zeile Programm laeuft; die
+     Bilder liegen dann im JS statt im Bildspeicher und lassen sich nicht
+     einzeln zwischenspeichern.
+     Jetzt 4 KB, die uebliche Grenze: winzige Symbole bleiben eingebettet
+     (ein eigener Abruf kostete mehr, als er spart), alles andere wird eine
+     Datei, die parallel und cachebar geladen wird. Der Einzeldatei-Bau
+     (build:single) ist davon unberuehrt - der packt mit esbuild und eigenen
+     dataurl-Ladern, nicht ueber diese Regel. */
+  build: { assetsInlineLimit: (file, content) => file.endsWith(".webp") ? false : content.length < 4 * 1024 },
   base: "./",
   plugins: [
     react(),

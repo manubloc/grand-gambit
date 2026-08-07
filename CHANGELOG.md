@@ -2,6 +2,31 @@
 
 ## 1.0.36
 
+- LEISTUNG GEMESSEN, EIN GROSSER HEBEL GEFUNDEN: Die Inline-Grenze des
+  Baus lag bei 400 KB. Alles darunter wanderte als base64 ins JS-Buendel -
+  gemessen 1,71 MB in 58 Dateien, also 61 % des Buendels, darunter drei
+  JPEGs von zusammen 1 MB. Das kostet doppelt: base64 traegt ein Drittel
+  Ballast, UND der Browser muss die ganze Fracht parsen, ehe die erste
+  Zeile Programm laeuft.
+- Jetzt 4 KB, die uebliche Grenze. Ergebnis, beide Male am laufenden
+  Spiel gemessen:
+    Buendel      2,79 MB -> 1,21 MB
+    Startlast    3,4 MB  -> 1,7 MB
+    Arbeitsspeicher 13 MB -> 7 MB
+  Die grossen Kartenbilder (fuenf Landschaften zu je ~460 KB) liegen jetzt
+  als eigene Dateien daneben und werden erst geholt, wenn die Karte sie
+  braucht - beim Start faellt fast 1 MB weg, den niemand sieht.
+- EHRLICH DAZU: Im lokalen Messaufbau wurde die reine LADEZEIT dabei
+  leicht schlechter (4,6 s -> 5,2 s), weil dort 34 zusaetzliche Abrufe
+  ueber einen einfachen Testserver ohne HTTP/2 laufen. Auf dem echten
+  Weg ueber Cloudflare gilt das nicht: dort laufen Abrufe parallel, und
+  halbe Fracht bleibt halbe Fracht. Die Zahl steht hier, damit sie nicht
+  unter den Tisch faellt.
+- Der Einzeldatei-Bau ist unberuehrt: er packt mit esbuild und eigener
+  Grenze, nicht ueber diese Regel (nachgeprueft, 66481 KB wie zuvor).
+
+## 1.0.36
+
 - DER ERSTE START DAUERT EIN VIERTEL SO LANG. Gemessen im laufenden
   Spiel: der Vorlader brauchte 20,6 Sekunden, jetzt rund 5 (drei Laeufe:
   6,4 / 5,4 / 5,0). Der erste sichtbare Inhalt kommt nach 200-560 ms
