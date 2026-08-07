@@ -7,7 +7,6 @@
 // sofort, der Schirm schliesst sich dort also praktisch augenblicklich.
 import { useEffect, useState } from "react";
 import { alleGemaeldeQuellen } from "./board/paintedArt.js";
-import { CARVED_LIGHT, CARVED_DARK, CARVED_BOSS_LIGHT, CARVED_BOSS_DARK } from "./board/carvedArt.js";
 import { klangAlleQuellen } from "./klang.js";
 import a0 from "./assets/bg-hall.carved.webp";
 import a1 from "./assets/bg-hall.webp";
@@ -199,8 +198,9 @@ const WEITERE = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14
 function alleQuellen() {
   const out = new Set();
   for (const u of alleGemaeldeQuellen()) out.add(u);
-  for (const k of [CARVED_LIGHT, CARVED_DARK, CARVED_BOSS_LIGHT, CARVED_BOSS_DARK])
-    for (const v of Object.values(k)) if (typeof v === "string") out.add(v);
+  /* v1.0.41: Der ZWEITSATZ wird nicht mehr vorgeladen. Er stand mit 114
+     Dateien in der Startlast, obwohl das Spiel ihn seit dem Besitzerentscheid
+     gar nicht mehr zeigt. */
   for (const u of klangAlleQuellen()) out.add(u);
   for (const u of WEITERE) if (typeof u === "string") out.add(u);
   return [...out];

@@ -78,12 +78,29 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 // gestapelte Schatten mit 0 Versatz und WACHSENDEM Radius; die eigenen leiser
 // als die Gegner, und beim Auswaehlen glimmt die Figur auf.
 {
-  const radien = (h) => [...h.matchAll(/drop-shadow\(0 0 (\d+)px/g)].map((m) => +m[1]);
+  /* v1.0.41: Das Muster zaehlte nur GANZZAHLIGE Radien - der 2.5px-Ring aus
+     kante() fiel seit jeher durch, die Probe war also schon vorher blinder
+     als sie aussah. Jetzt zaehlt sie auch Nachkommastellen. */
+  const radien = (h) => [...h.matchAll(/drop-shadow\(0 0 (\d+(?:\.\d+)?)px/g)].map((m) => +m[1]);
   const eigen = html(<PieceGlyph piece={piece({ color: "w" })} />);
   const feind = html(<PieceGlyph piece={piece({ color: "b" })} />);
   const gewaehlt = html(<PieceGlyph piece={{ ...piece({ color: "w" }), selected: true }} />);
-  const r = radien(eigen);
-  ok("the glow hugs the contour: radii grow outward", r.length >= 3 && r[0] < r[1] && r[1] < r[2]);
+  /* v1.0.41: Die gestapelten Radien gelten jetzt nur noch fuer die
+     HERVORGEHOBENE Figur. Eine ruhende traegt zwei Durchgaenge statt neun -
+     das war die gemessene Ursache des Ruckelns (Faktor 75 im A/B,
+     tools/messe-ruckeln2.mjs). Die Probe prueft beides: am Ausgewaehlten,
+     dass der Saum weiter nach aussen abklingt, und am Ruhenden, dass er
+     UEBERHAUPT noch eine Kante traegt - sonst waere die Sparsamkeit auf
+     Kosten der Erkennbarkeit gegangen. */
+  const rGew = radien(gewaehlt);
+  ok("the glow hugs the contour: radii grow outward (selected)",
+    rGew.length >= 3 && rGew[0] < rGew[1] && rGew[1] < rGew[2]);
+  const rRuhig = radien(eigen);
+  ok("a resting piece still wears its edge", rRuhig.length >= 1);
+  ok("but it is CHEAP: at most two blur passes when resting",
+    (eigen.match(/drop-shadow/g) || []).length <= 2);
+  ok("friend and foe stay tellable apart at rest",
+    eigen.includes("240,214,138") && feind.includes("184,146,255"));
   const staerke = (h, farbe) => [...h.matchAll(new RegExp(farbe.replace(/,/g, ",\\s*") + ",\\s*([\\d.]+)\\)", "g"))].map((m) => +m[1]);
   /* v1.0.11 (Besitzer): der Riss traegt jetzt das HELLERE Violett 184,146,255
      - beide Seiten leuchten auf Koenigs-Mass, die Relation bleibt. */

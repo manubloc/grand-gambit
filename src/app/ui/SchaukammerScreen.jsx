@@ -38,9 +38,19 @@ const ZUORDNUNG = "/bildarchiv/zuordnung.json";
    zur Laufzeit holt (v0.90). Der Reiter stand da, er zaehlte nur nie etwas.
    Jetzt wird der ORDNER geprueft, nicht der ganze Pfad; die vier bisher
    namenlosen (kap, riss, stat, karten) heissen jetzt, was sie sind. */
+/* v1.0.41, BESITZERBEFUND: der Reiter "Gemalte Figuren" zeigte GESCHNITZTE.
+   Der Grund ist Geschichte, kein Fehler in der Zuordnung: der Ordner
+   "painted" trug einst wirklich einen gemalten Satz. Als der geschnitzte
+   Satz ihn ersetzte, wurden die DATEIEN im Ordner getauscht, nicht der
+   Ordnername - und der Reiter liest den Ordnernamen (gruppeVon). Seit
+   v1.0.39 werden diese Dateien sogar aus archiv/bilder/figuren-hq
+   geschnitten, also aus geschnitzten Originalen.
+   Umbenennen des Ordners waere richtig, faesst aber paintedArt.js,
+   Vorlader, theme.js und 447 Vorschaupfade an. Bis dahin sagt wenigstens
+   das SCHILD die Wahrheit. Gemalt ist hier nichts mehr. */
 const GRUPPEN = [
-  ["Geschnitzte Figuren", "carved"],
-  ["Gemalte Figuren", "painted"],
+  ["Geschnitzte Figuren · Hauptsatz", "painted"],
+  ["Geschnitzte Figuren · Zweitsatz hell/dunkel", "carved"],
   ["Turnierfiguren", "klassik"],
   ["Ausrüstung", "items"],
   ["Bodentexturen", "felder"],

@@ -3,7 +3,6 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { carvedForPiece, carvedFitFor } from "./carvedArt.js";
 import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -283,13 +282,43 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // leisten Goldschein (eigene) und Riss-Violett (Gegner).
   const tonung = white ? "brightness(1.10) contrast(1.10) saturate(1.04)"
                        : "brightness(0.94) contrast(1.12) saturate(0.98)";
+  /* ── v1.0.41: HIER LAG DAS RUCKELN. GEMESSEN, NICHT VERMUTET. ────────────
+     Der klassische Satz bekam genau EINEN drop-shadow, jede andere Figur bis
+     zu NEUN - Basisschatten, vierteiliger SIDE_GLOW, ROYAL_HALO, HERO_SHEEN,
+     AURA. Jeder drop-shadow ist ein eigener Unschaerfe-Durchgang mit eigenem
+     Zwischenpuffer, und beim Antippen laeuft scale(1.58), also muss die ganze
+     Kette neu gerechnet werden - fuer alle 32 Figuren zugleich.
+
+     A/B am Brett-Pruefstand (tools/messe-ruckeln2.mjs, 100 Bilder je Lauf,
+     390x844, ohne Grafikbeschleunigung):
+         wie es war                Median 1667 ms
+         Schattenkette aus         Median   22 ms   →  75x
+         nur EIN Schatten          Median   42 ms   →  40x
+     Genau der Unterschied, den der Besitzer die ganze Zeit gesehen hat.
+
+     Das war NICHT die Bildgroesse: v1.0.38 senkte sie von 576 auf 192 px und
+     das Ruckeln blieb - der Aufwand haengt nicht am Bild, sondern an den
+     Durchgaengen darueber.
+
+     Die Regel jetzt: eine RUHENDE Figur traegt zwei Durchgaenge (ihr Schatten
+     und ihr Seitensaum, damit Freund und Feind unterscheidbar bleiben). Die
+     volle Pracht - Aura, Heldenglanz, Koenigshalo, breiter Saum - bekommt nur
+     die Figur, die gerade AUSGEWAEHLT ist oder eben gezogen hat. Das ist auf
+     einem Brett meist genau eine, nie mehr als zwei. Sichtbar ist der
+     Unterschied dort, wo das Auge ohnehin hinsieht. */
+  const hervorgehoben = gewaehlt || zuletzt || focus;
+  const SAUM_RUHIG = white
+    ? "drop-shadow(0 0 1.5px rgba(240,214,138,.85))"
+    : "drop-shadow(0 0 1.5px rgba(184,146,255,.95))";
   const glow = klassisch
     ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
-    : tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65))"
-    + " " + SIDE_GLOW
-    + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
-    + (piece.hero ? " " + HERO_SHEEN : "")
-    + (royal ? " " + ROYAL_HALO : "");
+    : hervorgehoben
+    ? tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65))"
+      + " " + SIDE_GLOW
+      + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
+      + (piece.hero ? " " + HERO_SHEEN : "")
+      + (royal ? " " + ROYAL_HALO : "")
+    : tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65)) " + SAUM_RUHIG;
   // v0.71.1: klassische Figuren einen Hauch kleiner (Besitzer: "noch etwas zu gross")
   const pieceSize = isBoss ? "1.14em" /* v0.71.12: Bosse stehen groesser - der Waechter war kaum zu erkennen */
     /* v1.0.14 (Besitzer): KLASSIK WAECHST. 0.9em liess besonders den Bauern
@@ -316,18 +345,34 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // for (court, bosses, the risen Gambit) drops through to the gallery, so the
   // style switch never leaves a square empty.
   // v0.71.14 (Besitzer): der Leuchtstil ist fort - UEBERALL dieselben Figuren.
-  const carving = artStyle === "carved" ? carvedForPiece(paintPiece) : null;
-  const painting = carving
-    ? carving
+  /* ── v1.0.41 (Besitzerentscheid): EIN SATZ, KEINE WEICHE ────────────────
+     Das Spiel trug zwei geschnitzte Saetze nebeneinander: den HAUPTSATZ (im
+     Ordner "painted" - der Name ist historisch, die Bilder darin sind seit
+     v1.0.39 aus archiv/bilder/figuren-hq geschnitten und damit geschnitzt)
+     und einen aelteren ZWEITSATZ mit hell/dunkel-Paaren (Ordner "carved").
+     Der Besitzer arbeitet ab jetzt nur noch mit dem Hauptsatz, also faellt
+     die Weiche.
+
+     Das ist nicht nur Aufraeumen, es kostete auch Leistung: der Zweitsatz
+     hat KEINE 192-px-Kleinfassungen (carved/klein existiert nicht), also
+     lieferte kleinFuerBrett() dort das grosse 461x576-Bild aufs 50-px-Feld
+     zurueck - genau die neunfache Neuabtastung, die v1.0.38 eigentlich
+     beseitigen sollte. Gemessen im Pruefstand: 461x576 auf 77x90 gezeigt.
+
+     Der klassische Satz (Turnierfiguren) BLEIBT - er ist kein Stilwechsel,
+     sondern gehoert zum klassischen Schach. Und artStyle="svg" bleibt
+     ebenfalls: das sind die GEZEICHNETEN Silhouetten (PieceArt), die
+     Prueflauf und Notfall-Darstellung tragen. Beim ersten Anlauf hatte ich
+     sie mit abgeschnitten - test_ui.jsx hat es gefangen. */
+  const painting = artStyle === "svg"
+    ? null
     : artStyle === "classic"
     ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece, aufsBrett))
-    : (artStyle === "painted" || artStyle === "carved")
-    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece, aufsBrett))
-    : null;
+    : ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece, aufsBrett));
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out. The carvings were already
   // cropped and levelled at build time, so they need no per-file fit.
-  const fit = (painting && !big) ? (carving ? carvedFitFor(paintPiece) : paintedFitFor(paintPiece)) : { h: 1, y: 0 };
+  const fit = (painting && !big) ? paintedFitFor(paintPiece) : { h: 1, y: 0 };
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
@@ -370,8 +415,6 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                 // der klassische Satz bringt seine beiden Farben schon mit -
                 // kein Umfaerben, nur ein Hauch Licht fuer die Grossen
                 ? (isKing ? "brightness(1.08)" : isQueen ? "brightness(1.04)" : "none")
-                : carving
-                ? (isKing ? "brightness(1.12)" : isQueen ? "brightness(1.06)" : "none")
                 : white
                 ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"
                   : isQueen ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"

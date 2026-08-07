@@ -1,4 +1,3 @@
-import { carvedForPiece, carvedById } from "./carvedArt.js";
 // The gallery: painted piece artworks (user-generated, gold & navy). Explicit
 // imports — esbuild-friendly — and a resolver from a live board piece to its
 // painting. Pieces without a painting yet fall back to the drawn SVG silently,
@@ -222,7 +221,10 @@ export const PAINTED = {
 // sets this once from the profile; every lookup below then answers in the
 // chosen style, and falls back to the painting whenever no carving exists.
 let STIL = "painted";
-export function setPieceStyle(stil) { STIL = stil === "carved" ? "carved" : "painted"; }
+/* v1.0.41: DIE STILWEICHE IST FORT. Es gibt nur noch EINEN geschnitzten
+   Satz; setPieceStyle bleibt als Nulloperation stehen, damit livery.js und
+   die Spielstaende nicht anfassen muss, wer sie noch aufruft. */
+export function setPieceStyle() { STIL = "painted"; }
 export function pieceStyle() { return STIL; }
 
 /* ── DER SCHLICHTE STIL, DURCHGEZOGEN (v0.83, Besitzerentscheid) ───────────
@@ -262,10 +264,6 @@ export function paintedForPiece(piece, fuersBrett = false) {
 
 function paintedRoh(piece) {
   if (!piece) return null;
-  if (STIL === "carved") {
-    const geschnitzt = carvedForPiece(piece);
-    if (geschnitzt) return geschnitzt;
-  }
   if (piece.bossId) {
     if (piece.bossId.startsWith("pb_")) return PAINTED[piece.bossId.slice(3)] || null;
     // dedicated portrait first (painted-boss-<id>.webp), then the two named
@@ -287,8 +285,7 @@ function paintedRoh(piece) {
 }
 
 /** Painting by character id — for the court's character cards. */
-export const paintedById = (id) =>
-  (STIL === "carved" ? carvedById(id) : null) || PAINTED[id] || null;
+export const paintedById = (id) => PAINTED[id] || null;
 
 // ── Base-width normalisation ────────────────────────────────────────────────
 // Every painting is 1024x1024, but each figure fills a different share of it,

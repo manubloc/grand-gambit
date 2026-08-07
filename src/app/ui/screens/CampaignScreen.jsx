@@ -19,7 +19,6 @@ import { Button, Chip } from "../primitives.jsx";
 import { GoldShineButton } from "../Gilded.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedForPiece, PAINTED, ENEMY_FILTER } from "../board/paintedArt.js";
-import { carvedById, carvedForPiece } from "../board/carvedArt.js";
 import { livery } from "../livery.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { ElementIcon, GoldCoin, SkullIc, BladesIc, LockIc, HeartIc, MapPinIc, BackIc, WaveIc, AnchorIc, BoatIc, CheckIc, BoxIc } from "../icons.jsx";
@@ -758,13 +757,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 transform: ((th.sea && hasItem(profile, "boat") ? "translateY(-9%)" : "")
                   + (token.moving ? ` rotate(${-7 * stride.dir}deg)` : "")) || "none", transition: "transform .3s ease" }}>
                 {(() => {
-                  // Der Karten-Gambit traegt die LIVREE des Bretts: in der
-                  // Schnitzerei laeuft die geschnitzte Figur, im Gemaelde die
-                  // gemalte - jeweils in seiner aktuellen Stufe.
+                  // v1.0.41: Es gibt nur noch EINEN Satz - die Livree-Weiche
+                  // ist fort. Der Karten-Gambit zeigt seine aktuelle Stufe.
                   const gt = gambitTier(characterLevel(profile, "gambit") || 1);
-                  const src = livery() === "carved"
-                    ? (carvedById(gt >= 2 ? "gambit-t" + gt : "gambit") || carvedById("gambit"))
-                    : ((gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit);
+                  const src = (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit;
                   return bm && src
                     ? <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%",
                         objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />
