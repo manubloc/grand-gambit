@@ -8,9 +8,13 @@
 //     Supabase Auth takes over e-mail + Google sign-in; local mode remains the
 //     fallback and the guest path. See cloudAuth.js.
 //
-// The built-in admin: email "admin", initial password "gambit-admin".
-// Change it after first sign-in (Profile → account). Admin unlocks the
-// progress controls on the save screen.
+// The built-in admin: email "admin". The initial password was rotated in
+// v1.0.47 after the previous one leaked into the (public) commit history
+// of v1.0.39 — see the note below. The new password exists ONLY as
+// SALT + HASH here; it was generated with crypto.randomBytes and was never
+// written to any file, commit, or chat log. Only the owner has it.
+// Change it again after first sign-in (Profile → account) if you'd rather
+// pick your own. Admin unlocks the progress controls on the save screen.
 import { storage } from "../platform/index.js";
 
 const KEY = "accounts:v1";
@@ -24,8 +28,8 @@ export const ADMIN_EMAIL = "admin";
    Jetzt liegen hier nur SALZ und PRUEFWERT. Aus ihnen laesst sich das Wort
    nicht zurueckrechnen; das Admin-Konto wird damit angelegt, ohne dass der
    Klartext das Programm je beruehrt. */
-export const ADMIN_SALT = "ef7b15bc3be6c31d516d6675";
-export const ADMIN_HASH = "b8f147ece9132b5ba07b5105420a2e27cba628f9a1d5b679ddb9515b6091ee28";
+export const ADMIN_SALT = "5fa05adb9883ad2177fdf8b6d3c7cb1a";
+export const ADMIN_HASH = "2b1c8a3a8c5c89405bdc05dfa6ce98fe98e53c8a1f940cb890037a35d188c852";
 
 const rid = (n) => Array.from({ length: n }, () => "abcdefghjkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 31)]).join("");
 

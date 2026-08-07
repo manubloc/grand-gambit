@@ -1,5 +1,15 @@
 # Changelog - Grand Gambit
 
+## 1.0.47
+- Admin-Passwort gewechselt. Das vorherige stand seit v1.0.39 im Klartext in
+  der (oeffentlichen) Commit-Historie; der Klartext des neuen hat das
+  Programm, dieses Repo und den Chat nie beruehrt - nur Salz und
+  SHA-256-Pruefwert liegen im Code, kein Rueckschluss auf das Wort moeglich.
+  Das Salz ist jetzt reiner Hex-Text (0-9a-f), wie test_features.mjs es
+  ohnehin schon verlangte - im ersten Anlauf hatte ich versehentlich das
+  breitere Alphabet aus rid() verwendet und die eigene Probe damit rot
+  laufen lassen.
+
 ## 1.0.46
 - DIE SPERREN WERDEN GEZEICHNET. Die Regeln dazu gibt es seit v0.90 -
   sperren.js hing allein an transitions.js und kam in der Oberflaeche nie
