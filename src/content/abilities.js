@@ -4,6 +4,24 @@
 //   tag   groups abilities (drives colour + the small visual mark on a piece)
 //   live  whether the mechanic is already wired up (false = shown as "bald")
 //   once  one-shot per match (otherwise passive/repeatable)
+//
+// ── DREI SICHTBARKEITSSTUFEN, NICHT ZWEI (v1.0.42, Besitzerbefund) ─────────
+// hpOnly war ein Schalter fuer zwei Zustaende, aber es gibt drei. Ausgezaehlt
+// in Kapitel I (reines Schach): 20 von 26 Faehigkeiten waren aktiv - darunter
+// Scharfschuss und Dauerfeuer, die im Zug DREIFACH verriegelt sind. Der
+// Spieler sah also Faehigkeiten auf den Karten, die er nicht benutzen konnte.
+//
+//   sperre: (nichts)   WIRKT SOFORT - die Gangarten. Sie brauchen keine
+//                      Lebenspunkte, sie aendern nur, wie eine Figur zieht.
+//   sperre: "riegel"   SICHTBAR, ABER VERRIEGELT - die Karte zeigt sie mit
+//                      Schloss und Grund. Der Spieler weiss, dass es sie gibt.
+//   sperre: "verborgen" EXISTIERT NOCH NICHT - taucht nirgends auf, bis das
+//                      Erwachen sie bringt. Das ist das alte hpOnly.
+//
+// hpOnly BLEIBT und bedeutet weiter "wirkt nur an Lebenspunkten" - das ist
+// eine REGEL, keine Sichtbarkeit. Die sechs hpOnly-Talente sind zugleich
+// verborgen; das steht jetzt ausdruecklich da, statt sich aus hpOnly zu
+// ergeben.
 export const TAGS = {
   move:    { nameDe: "Bewegung",   nameEn: "Movement", color: "#3d9bff" },
   ranged:  { nameDe: "Fernkampf",  nameEn: "Ranged",   color: "#ffb454" },
@@ -39,20 +57,47 @@ export const ABILITIES = {
   king_dash:            { id: "king_dash",            icon: "»", tag: "move", once: true,  live: true,  nameDe: "Königsflucht", nameEn: "King dash",      descDe: "Darf 1× zwei Felder gerade ziehen.",                  descEn: "Move two squares straight once." },
 
   // ── ranged (live) ──
-  ranged_shot:          { id: "ranged_shot",          icon: "➶", tag: "ranged", once: true,  live: true, nameDe: "Scharfschuss", nameEn: "Snipe",        descDe: "Trifft 1× eine Figur in Sichtlinie aus der Ferne — du bleibst stehen.", descEn: "Hit a piece in line of sight from afar once — you stay put." },
-  ranged_volley:        { id: "ranged_volley",        icon: "⁂", tag: "ranged", once: false, live: true, nameDe: "Dauerfeuer",   nameEn: "Volley",        descDe: "Darf jederzeit aus der Ferne in Sichtlinie schießen, ohne zu ziehen.", descEn: "May fire from afar in line of sight anytime, without moving." },
+  ranged_shot:          { id: "ranged_shot",          icon: "➶", tag: "ranged", sperre: "riegel", once: true,  live: true, nameDe: "Scharfschuss", nameEn: "Snipe",        descDe: "Trifft 1× eine Figur in Sichtlinie aus der Ferne — du bleibst stehen.", descEn: "Hit a piece in line of sight from afar once — you stay put." },
+  ranged_volley:        { id: "ranged_volley",        icon: "⁂", tag: "ranged", sperre: "riegel", once: false, live: true, nameDe: "Dauerfeuer",   nameEn: "Volley",        descDe: "Darf jederzeit aus der Ferne in Sichtlinie schießen, ohne zu ziehen.", descEn: "May fire from afar in line of sight anytime, without moving." },
 
   // ── blink (live) ──
   gambit_masquerade:    { id: "gambit_masquerade",    icon: "🎭", tag: "trick", once: false, live: true, nameDe: "Maskerade",    nameEn: "Masquerade",    descDe: "Der Grand Gambit trägt kein Wappen mehr — für den Gegner ist er von jedem Bauern ununterscheidbar.", descEn: "The Grand Gambit sheds his crest — to the enemy he is indistinguishable from any pawn." },
   teleport:             { id: "teleport",             icon: "✸", tag: "blink", once: true,  live: true, nameDe: "Blinzeln",     nameEn: "Blink",         descDe: "Teleportiert 1× auf ein freies Feld in der Nähe.",     descEn: "Teleport to a nearby empty square once." },
 
   // ── sustain (live) ──
-  lifesteal:            { id: "lifesteal",            icon: "❦", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Lebensraub",  nameEn: "Lifesteal",     descDe: "Heilt sich beim Schaden zufügen um die Hälfte des Schadens.", descEn: "Heals for half the damage it deals." },
-  regen:                { id: "regen",                icon: "✚", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Regeneration", nameEn: "Regen",        descDe: "Heilt 1 HP, wann immer sie zieht.",                   descEn: "Heals 1 HP whenever it moves." },
-  bulwark:              { id: "bulwark",              icon: "⛨", tag: "sustain", hpOnly: true, once: false, live: true, nameDe: "Bollwerk",     nameEn: "Bulwark",       descDe: "Erleidet 1 Schaden weniger pro Treffer.",             descEn: "Takes 1 less damage per hit." },
+  lifesteal:            { id: "lifesteal",            icon: "❦", tag: "sustain", hpOnly: true, sperre: "verborgen", once: false, live: true, nameDe: "Lebensraub",  nameEn: "Lifesteal",     descDe: "Heilt sich beim Schaden zufügen um die Hälfte des Schadens.", descEn: "Heals for half the damage it deals." },
+  regen:                { id: "regen",                icon: "✚", tag: "sustain", hpOnly: true, sperre: "verborgen", once: false, live: true, nameDe: "Regeneration", nameEn: "Regen",        descDe: "Heilt 1 HP, wann immer sie zieht.",                   descEn: "Heals 1 HP whenever it moves." },
+  bulwark:              { id: "bulwark",              icon: "⛨", tag: "sustain", hpOnly: true, sperre: "verborgen", once: false, live: true, nameDe: "Bollwerk",     nameEn: "Bulwark",       descDe: "Erleidet 1 Schaden weniger pro Treffer.",             descEn: "Takes 1 less damage per hit." },
 
   // ── upcoming (shown in the tree, mechanic rolling out) ──
-  blast:                { id: "blast",                icon: "✺", tag: "aoe", hpOnly: true, once: true,  live: true, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "1× pro Partie: Der erste Nahkampfschlag trifft auch alle Gegner rings um das Ziel — mit halbem Schaden.",   descEn: "Once per battle: your first melee strike also hits every enemy around the target — at half damage." },
-  chain:                { id: "chain",                icon: "↯", tag: "aoe", hpOnly: true, once: true,  live: false, nameDe: "Kettenblitz",  nameEn: "Chain",          descDe: "Schaden springt auf einen weiteren nahen Gegner über.", descEn: "Damage arcs to another nearby enemy." },
-  pull:                 { id: "pull",                 icon: "⇲", tag: "control", hpOnly: true, once: true, live: false, nameDe: "Enterhaken",  nameEn: "Hook",           descDe: "Zieht einen Gegner in Sichtlinie zu dir heran.",      descEn: "Pulls an enemy in line toward you." },
+  blast:                { id: "blast",                icon: "✺", tag: "aoe", hpOnly: true, sperre: "verborgen", once: true,  live: true, nameDe: "Schockwelle",  nameEn: "Blast",          descDe: "1× pro Partie: Der erste Nahkampfschlag trifft auch alle Gegner rings um das Ziel — mit halbem Schaden.",   descEn: "Once per battle: your first melee strike also hits every enemy around the target — at half damage." },
+  chain:                { id: "chain",                icon: "↯", tag: "aoe", hpOnly: true, sperre: "verborgen", once: true,  live: false, nameDe: "Kettenblitz",  nameEn: "Chain",          descDe: "Schaden springt auf einen weiteren nahen Gegner über.", descEn: "Damage arcs to another nearby enemy." },
+  pull:                 { id: "pull",                 icon: "⇲", tag: "control", hpOnly: true, sperre: "verborgen", once: true, live: false, nameDe: "Enterhaken",  nameEn: "Hook",           descDe: "Zieht einen Gegner in Sichtlinie zu dir heran.",      descEn: "Pulls an enemy in line toward you." },
 };
+
+/* WARUM eine Faehigkeit verriegelt ist - der Spieler soll es lesen koennen,
+   nicht raten. Steht hier bei den Daten, damit Karte, Akademie und Blatt
+   denselben Satz zeigen. */
+export const SPERRGRUND = {
+  riegel: {
+    de: "Im reinen Schach nicht erlaubt — Reichweiten-Künste ruhen, bis der Riss sie weckt.",
+    en: "Not allowed in pure chess — ranged arts rest until the Rift wakes them.",
+  },
+  verborgen: {
+    de: "Braucht Lebenspunkte — kommt mit dem Erwachen.",
+    en: "Needs hit points — arrives with the Awakening.",
+  },
+};
+
+/** Der Zustand EINER Faehigkeit fuer den aktuellen Spielstand:
+ *  "wirkt" | "riegel" | "verborgen".
+ *  wach = ist das Erwachen durch? (meta/leveling: hpWach) */
+export function faehigkeitZustand(id, wach) {
+  const a = ABILITIES[id];
+  if (!a) return "verborgen";
+  if (!a.sperre) return "wirkt";
+  return wach ? "wirkt" : a.sperre;
+}
+
+/** Darf sie auf einer Karte ueberhaupt auftauchen? */
+export const faehigkeitSichtbar = (id, wach) => faehigkeitZustand(id, wach) !== "verborgen";

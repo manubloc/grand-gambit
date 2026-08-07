@@ -127,7 +127,14 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 // ── 4. THE SPELL STAR IS AN HONEST PROMISE ──────────────────────────────────
 // One spell per game: the star must mean "you may still act", nothing else.
 // the star is a painting now — its data-URL fingerprint is the promise
-const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
+/* v1.0.42: Der goldene Stern ist fort - die VIOLETTE KUGEL sagt jetzt
+   dasselbe in der Sprache der beiden anderen Kugeln. Die Probe sucht darum
+   den Farbverlauf der ungespielten Karte (#7c3aed) statt des Sternbildes,
+   und prueft zusaetzlich, dass die verbrauchte Kugel STEHEN BLEIBT statt zu
+   verschwinden: verschwaende sie, wuesste der Spieler nicht, ob die Figur je
+   eine Karte hatte. */
+const star = (m) => m.includes("#7c3aed");
+const erloschen = (m) => m.includes("#2f2a3d");
 {
   const live = Object.keys(ABILITIES).find((id) => ABILITIES[id].live);
   const passive = Object.keys(ABILITIES).find((id) => !ABILITIES[id].live);
@@ -135,8 +142,11 @@ const star = (m) => m.includes(IC_SPELLSTAR.slice(40, 104));
 
   ok("a piece with an unspent castable talent shows the star",
     star(html(<StatTriad piece={piece({ abilities: [live] })} />)));
-  ok("after the one cast the star is gone",
-    !star(html(<StatTriad piece={piece({ abilities: [live], used: { [live]: true } })} />)));
+  {
+    const nachher = html(<StatTriad piece={piece({ abilities: [live], used: { [live]: true } })} />);
+    ok("after the one cast the orb goes out", !star(nachher));
+    ok("but it stays on the board, merely spent", erloschen(nachher));
+  }
   ok("a piece with no talents shows no star",
     !star(html(<StatTriad piece={piece()} />)));
   ok("purely passive gifts promise no act",

@@ -3,7 +3,6 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { IC_SPELLSTAR } from "../assets/icons/iconAssets.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -80,26 +79,22 @@ const ORB_TRUE_CENTER = { x: -0.004, y: -0.018 };
 
 const NUM_FONT = "'Spectral', Georgia, serif";
 
-// THE SPELL STAR — the painted gold spark hovering in the seam between the
-// two orbs: it burns while the piece still holds its single cast, and goes out
-// the moment any talent fires (one spell per game — the star IS the ledger).
-// Inline data URL like the orbs, so no cache window can ever starve the board.
-function SpellStar({ size }) {
-  return <img src={IC_SPELLSTAR} alt="" aria-hidden draggable={false}
-    style={{ width: size, height: size, display: "block", objectFit: "contain",
-      transform: "scale(1.14)", transformOrigin: "center",
-      filter: "drop-shadow(0 0 4px rgba(246,222,150,.95)) drop-shadow(0 0 9px rgba(240,214,138,.5)) drop-shadow(0 1px 1px rgba(0,0,0,.6))" }} />;
-}
-
+/* v1.0.42: SpellStar ist fort - die violette Kugel sagt dasselbe in der
+   Sprache der beiden anderen. */
 // TWO JEWELS UNDER EVERY FIGHTER: blue attack left, red life right — the same
 // diameter and the same engraved numerals the old strip carried, for both
 // sides alike (the figure itself tells friend from foe).
 function StatDuo({ piece, focus, shrink = 1 }) {
   const d = 0.405 * (focus ? 1.4 : 1) * shrink;  // orb diameter in em — a size up, numerals with it
   const gap = d * 0.045;                         // a hair apart — nearly kissing
-  // the star promises an ACT: only castable (live) talents count — a piece
-  // with purely passive gifts has nothing left to "use", so no star for it
-  const spell = (piece.abilities || []).some((id) => ABILITIES[id]?.live) && Object.keys(piece.used || {}).length === 0;
+  /* v1.0.42: DIE KARTE, DIE JEDE FIGUR EINMAL SPIELEN DARF.
+     Nur wirkende (live) Talente zaehlen - wer nur passive Gaben traegt, hat
+     nichts zu "benutzen" und bekommt darum keine Kugel. Neu ist der zweite
+     Zustand: hat die Figur ihre Karte schon gespielt, bleibt die Kugel
+     stehen und ERLISCHT, statt einfach zu verschwinden. Verschwinden hiesse:
+     der Spieler weiss nicht, ob sie je eine hatte. */
+  const kannWirken = (piece.abilities || []).some((id) => ABILITIES[id]?.live);
+  const verbraucht = Object.keys(piece.used || {}).length > 0;
   // EINE KUGEL FUER ALLE (v0.38.6): dieselbe gegossene Siegelkugel wie im
   // Hofstaat - Goldrand, Glanzlicht, Zahl geometrisch mittig. Vorher trug das
   // Brett noch die alte Bildkugel mit optischer Versatz-Korrektur, weshalb die
@@ -111,8 +106,8 @@ function StatDuo({ piece, focus, shrink = 1 }) {
     display: "inline-flex", gap: gap + "em", pointerEvents: "none" }}>
     {orb("power", piece.atk)}
     {orb("life", piece.hp)}
-    {spell && <span style={{ position: "absolute", left: "50%", top: 0, transform: "translate(-50%, -58%)" }}>
-      <SpellStar size={d * 0.72 + "em"} />
+    {kannWirken && <span style={{ width: d + "em", height: d + "em", display: "grid", placeItems: "center" }}>
+      <StatOrbBadge kind={verbraucht ? "spent" : "spell"} v="" size={`${d}em`} num={0.58} />
     </span>}
   </span>;
 }
@@ -140,12 +135,41 @@ export function StatOrbBadge({ kind, v, size = 26, num = 0.58 }) {
   // DUNKLER GEGOSSEN (v0.38.4): die satten Toene sprangen im Kampf zu sehr
   // an - eine Stufe tiefer, damit die Kugeln zum Brett gehoeren statt es zu
   // uebertoenen. Der Goldrand haelt sie trotzdem klar abgesetzt.
+  /* ── DIE DRITTE KUGEL (v1.0.42, Besitzerwunsch): DIE FAEHIGKEIT ──────────
+     Jede Figur darf EINE Faehigkeit je Partie einsetzen. Bisher sagte das
+     nur ein kleiner goldener Stern zwischen den beiden Kugeln - zu leise
+     und in einer anderen Sprache als der Rest.
+
+     Jetzt traegt sie dieselbe gegossene Siegelkugel wie Angriff und Leben,
+     nur in Violett: Goldrand wie ueberall, Fuellung von hellem Flieder ueber
+     sattes Purpur nach Nachtviolett. Violett ist die Farbe des Risses - und
+     der Riss entstand, weil die Figuren zu tun begannen, was Figuren nicht
+     tun. Die eine Karte, die jede Figur spielen darf, gehoert also genau in
+     diese Farbe.
+
+     VERBRAUCHT heisst: die Fuellung erlischt zu kaltem Grauviolett, der
+     Goldrand bleibt matt stehen. Man sieht auf einen Blick, wer seine Karte
+     noch hat - dieselbe Form, nur ohne Licht.
+
+     GEMALT WAERE FALSCH GEWESEN: die beiden anderen Kugeln sind kein Bild,
+     sondern dieses SVG. Ein gemaltes Drittel daneben haette anderes Licht,
+     andere Kanten und eine andere Aufloesung gehabt und sofort als Fremd-
+     koerper gewirkt. "Genau gleich wie Angriff und Leben" heisst: dasselbe
+     Verfahren. */
   const [c0, c1, c2] = kind === "life"
     ? ["#e0616f", "#a81a2a", "#3d0810"]
+    : kind === "spell"
+    ? ["#c4b5fd", "#7c3aed", "#2a1052"]
+    : kind === "spent"
+    ? ["#4a4358", "#2f2a3d", "#16121f"]
     : ["#6aa8d8", "#1f5e9e", "#08203c"];
   const rid = "sob-" + kind + "-" + String(size).replace(/[^a-z0-9]/gi, "");
   const schein = kind === "life"
     ? "drop-shadow(0 0 3px rgba(230,57,74,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
+    : kind === "spell"
+    ? "drop-shadow(0 0 3px rgba(139,92,246,.75)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"
+    : kind === "spent"
+    ? "drop-shadow(0 1px 1.5px rgba(0,0,0,.55))"   // verbraucht glimmt nicht
     : "drop-shadow(0 0 3px rgba(74,163,232,.7)) drop-shadow(0 1px 1.5px rgba(0,0,0,.55))";
   return <span style={{ position: "relative", width: size, height: size, display: "grid", placeItems: "center",
     flex: "0 0 auto", filter: schein }}>

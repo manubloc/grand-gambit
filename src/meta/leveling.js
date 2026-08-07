@@ -375,15 +375,31 @@ export const heroColFor = (profile, map) => {
   const c = saved == null ? mid : saved;
   return Math.max(0, Math.min(map.w - 1, c));
 };
+/* ── DIE STUFE DES ERWACHTEN (v1.0.42, Besitzerentscheid) ──────────────────
+   Bis v1.0.41 hob das Erwachen NUR DAS BILD: tier sprang auf 2 (Kapuze, Stab,
+   Klinge), die Stufe blieb bei 1. Zwei Kommentare an dieser Stelle
+   widersprachen sich darum jahrelang - der eine versprach "hebt sich eine
+   Stufe", der andere begruendete, warum eben nicht.
+
+   Der Besitzer will den Bruch ECHT: wer erwacht, ist kein Bauer mehr, und man
+   soll das auf dem Feld sehen, ohne dass irgendwo eine Farbe verschoben wird.
+   Also traegt der Held ab dem ersten Atemzug wirklich Stufe II - mit dem
+   Schild, das die Leiter auf dieser Sprosse vorsieht. Das gilt AUCH im reinen
+   Schach: gerade dort (Kapitel I) soll er sich abheben, und ein Schild ist im
+   Schach ein sichtbares, regelkonformes Zeichen.
+
+   Die erste FAEHIGKEIT sitzt auf Sprosse 3 (pawn_sidestep) - der naechste
+   sichtbare Schritt nach dem Erwachen. */
+export const GAMBIT_ERWACHT_AUF_STUFE = 2;
+export function gambitStufe(profile) {
+  const roh = Math.max(1, characterLevel(profile, "gambit") || 1);
+  return gambitWach(profile) ? Math.max(GAMBIT_ERWACHT_AUF_STUFE, roh) : roh;
+}
+
 function heroSpec(profile, chess = false) {
   const ch = CHARACTERS.gambit;
-  const level = chess ? 1 : Math.max(1, characterLevel(profile, "gambit") || 1);
+  const level = gambitStufe(profile);
   const { abilities, shield } = resolveCharacter(ch, level, chess ? null : chosenAbilities(profile, "gambit"));
-  /* Der Auftritt ist ein Bruch, kein Uebergang: wer erwacht, sieht anders aus.
-     Darum traegt der Held ab dem ersten Atemzug MINDESTENS Stufe II (Kapuze,
-     Stab, Klinge) - nur im Bild, nicht in der Kraft: Stufe, Faehigkeiten und
-     Schilde bleiben unberuehrt, sonst haette das Erwachen die Waage
-     verschoben. */
   return { kind: ch.kind, level, abilities, shield, tier: Math.max(2, gambitTier(level)), ...(ch.big ? { big: true } : {}) };
 }
 
