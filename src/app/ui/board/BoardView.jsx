@@ -79,7 +79,7 @@ function DeathFlyer({ death, disp, W, H, pov, artStyle }) {
       transform: `translateY(${death.lift || "-10%"})`, transformOrigin: "50% 72%",
       fontSize: death.font || "1.16em",
       filter: "drop-shadow(0 0.09em 0.13em rgba(0,0,0,.6))" }}>
-      <PieceGlyph piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
+      <PieceGlyph aufsBrett piece={death.piece} showLevel={false} pov={pov} artStyle={artStyle} />
     </div>
   </div>;
 }
@@ -605,7 +605,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             /* v1.0.14: WER EINEN SCHLAG UEBERSTEHT, WACKELT. Nicht die Zelle,
                die FIGUR - und sie faellt nicht, sie fasst sich wieder. */
             ...(lastMove && lastMove.damaged && !lastMove.lethal && lastMove.to === i && !ruhig
-              ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+              ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph aufsBrett piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
           {/* v1.0.14 (Besitzer): DER SPRINGER LANDET HOERBAR SICHTBAR - ein
               heller Ring faehrt aus dem Feld, auf dem er aufsetzt. Nur fuer
               den Sprung, sonst wird jedes Ziehen zum Ereignis. */}
@@ -937,7 +937,7 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                   transform: `translateY(${pieceLift})`, transformOrigin: PIECE_ORIGIN,
                   fontSize: pieceFont(anim.piece.kind),
                   filter: gespart("schatten") ? "none" : "drop-shadow(0 0.06em 0.09em rgba(0,0,0,.5))" }}>
-                  <PieceGlyph piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} fliegt />
+                  <PieceGlyph aufsBrett piece={anim.piece} showLevel={showLevel} pov={pov} artStyle={artStyle} fliegt />
                 </div>
               </div>
             </div>}

@@ -919,5 +919,27 @@ import { BrettHintergrund as _BHG } from "./src/app/ui/BrettHintergrund.jsx";
     ok(`the board honours "${posten}"`, new RegExp(`gespart\\("${posten}"\\)`).test(brett));
 }
 
+
+// ── DAS BRETT TRAEGT DIE KLEINEN (v1.0.38, BESITZERBEFUND) ─────────────────
+// Der Besitzer fand, woran ich vorbeigemessen hatte: klassisches Schach
+// laeuft fluessig, mit den GEMALTEN Figuren ruckelt es. Der Grund steckt in
+// den Bildern - 576x576 gegen 224x384, also viermal so viele Pixel, auf ein
+// 50-px-Feld heruntergerechnet. Beim Antippen waechst die Auswahl auf 1,58,
+// und alle 32 Figuren muessen neu abgetastet werden.
+import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* paintedForPiece steht oben schon */
+{
+  const gross = Object.keys(PAINTED).filter((k) => PAINTED_KLEIN[k]);
+  ok("every painted piece owns a small twin", gross.length >= 60);
+  ok("and the twins are NOT the same files",
+    gross.every((k) => PAINTED[k] !== PAINTED_KLEIN[k]));
+  const figur = { kind: "N", color: "w", hero: false, level: 1, abilities: [] };
+  ok("the board asks for the small one", paintedForPiece(figur, true) !== paintedForPiece(figur, false));
+  ok("everything else still gets the big one",
+    Object.values(PAINTED).includes(paintedForPiece(figur, false)));
+  // und im Markup: das Brett reicht die Fahne durch
+  const brett = _lies("src/app/ui/board/BoardView.jsx", "utf8");
+  ok("the board passes the flag on every piece", (brett.match(/<PieceGlyph aufsBrett/g) || []).length >= 3);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -326,5 +326,31 @@ import { readdirSync as _lies, readdirSync as _liesOrdner, readFileSync as _lies
   ok("and the page asks for the light one", /boot-riss\.webp/.test(html) && !/boot-riss\.png"/.test(html));
 }
 
+
+// ── KEINE FIGUR IST GROESSER ALS IHR PLATZ (v1.0.38, Besitzerbefund) ───────
+// Der Besitzer fand die Ursache des Ruckelns dort, wo ich sie nicht gesucht
+// hatte: mit den KLASSISCHEN Figuren lief alles fluessig, mit den gemalten
+// nicht. Der Grund lag in den Dateien - 1024x1024 gegen 224x384. Eine
+// dekodierte 1024er Figur belegt 4 MB Bildspeicher, zwoelf davon auf einem
+// Brett 48 MB; der klassische Satz kam mit 3,9 MB aus. Dargestellt wird eine
+// Figur mit hoechstens ~534 px (Popup bei dreifacher Pixeldichte).
+// Diese Probe verhindert, dass wieder jemand Riesen einlagert.
+{
+  const grenze = 640;
+  const zuGross = [];
+  for (const ordner of ["painted", "carved"]) {
+    const pfad = `src/app/ui/assets/${ordner}`;
+    for (const datei of _lies(pfad)) {
+      if (!datei.endsWith(".webp")) continue;
+      const roh = _liesDatei(`${pfad}/${datei}`);
+      // WebP-Kopf: VP8X/VP8 /VP8L - Breite und Hoehe stehen unterschiedlich,
+      // darum wird nur die Dateigroesse als grober Waechter genutzt.
+      if (roh.length > 260 * 1024) zuGross.push(`${datei} (${Math.round(roh.length / 1024)} KB)`);
+    }
+  }
+  ok("no piece image is oversized for its slot", zuGross.length === 0);
+  if (zuGross.length) console.log("   zu gross:", zuGross.slice(0, 6).join(", "));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

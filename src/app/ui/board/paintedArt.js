@@ -107,11 +107,98 @@ import kBishopD from "../assets/klassik/bishop-dunkel.webp";
 import kRookD from "../assets/klassik/rook-dunkel.webp";
 import kQueenD from "../assets/klassik/queen-dunkel.webp";
 import kKingD from "../assets/klassik/king-dunkel.webp";
+
+/* ── DIE KLEINEN FUERS BRETT (v1.0.38, Besitzerbefund) ─────────────────────
+   Der Besitzer hat den Unterschied gefunden, an dem ich vorbeigemessen
+   hatte: klassisches Schach laeuft fluessig, mit den GEMALTEN Figuren
+   ruckelt es. Nachgemessen - und der Befund ist eindeutig:
+
+     klassische Figur   224x384 px  =  0,086 Megapixel
+     gemalte Figur      576x576 px  =  0,332 Megapixel   (viermal so viel)
+
+   Auf einem 50-px-Feld heisst das eine Verkleinerung um Faktor NEUN. Solange
+   nichts passiert, haelt der Browser das Ergebnis fest; sobald sich der
+   Massstab aendert - und genau das tut er beim ANTIPPEN, wo die Auswahl auf
+   1,58 waechst - muss er alle 32 Figuren neu abtasten. Daher das Ruckeln
+   beim Klicken, und daher nur bei den gemalten.
+
+   Also traegt das Brett ab jetzt 192-px-Fassungen: bei dreifacher
+   Pixeldichte sind das 150 echte Pixel auf einem 50-px-Feld, also reichlich
+   Reserve - aber ein Neuntel der Flaeche. Die grossen Bilder bleiben, wo man
+   sie WIRKLICH gross sieht: Hofstaat, Popup, Zoom, Schaukammer. */
+import k_pPawn from "../assets/painted/klein/painted-pawn.webp";
+import k_pHaendler from "../assets/painted/klein/painted-haendler.webp";
+import k_pGambit from "../assets/painted/klein/painted-gambit.webp";
+import k_pGambitT2 from "../assets/painted/klein/painted-gambit-t2.webp";
+import k_pGambitT3 from "../assets/painted/klein/painted-gambit-t3.webp";
+import k_pGambitT4 from "../assets/painted/klein/painted-gambit-t4.webp";
+import k_pGambitT5 from "../assets/painted/klein/painted-gambit-t5.webp";
+import k_pGambitT6 from "../assets/painted/klein/painted-gambit-t6.webp";
+import k_pSeeress from "../assets/painted/klein/painted-seeress.webp";
+import k_pKnight from "../assets/painted/klein/painted-knight.webp";
+import k_pBishop from "../assets/painted/klein/painted-bishop.webp";
+import k_pQueen from "../assets/painted/klein/painted-queen.webp";
+import k_pArchbishop from "../assets/painted/klein/painted-archbishop.webp";
+import k_pHawk from "../assets/painted/klein/painted-hawk.webp";
+import k_pAmazon from "../assets/painted/klein/painted-amazon.webp";
+import k_pAssassin from "../assets/painted/klein/painted-assassin.webp";
+import k_pGuardian from "../assets/painted/klein/painted-guardian.webp";
+import k_pCaptain from "../assets/painted/klein/painted-captain.webp";
+import k_pSorceress from "../assets/painted/klein/painted-sorceress.webp";
+import k_pPathfinder from "../assets/painted/klein/painted-pathfinder.webp";
+import k_pRook from "../assets/painted/klein/painted-rook.webp";
+import k_pKing from "../assets/painted/klein/painted-king.webp";
+import k_pChancellor from "../assets/painted/klein/painted-chancellor.webp";
+import k_pDragon from "../assets/painted/klein/painted-dragon.webp";
+import k_pMage from "../assets/painted/klein/painted-mage.webp";
+import k_pAlchemist from "../assets/painted/klein/painted-alchemist.webp";
+import k_pWarlock from "../assets/painted/klein/painted-warlock.webp";
+import k_pPaladin from "../assets/painted/klein/painted-paladin.webp";
+import k_pInquisitor from "../assets/painted/klein/painted-inquisitor.webp";
+import k_pBard from "../assets/painted/klein/painted-bard.webp";
+import k_pEngineer from "../assets/painted/klein/painted-engineer.webp";
+import k_pStandard from "../assets/painted/klein/painted-standard.webp";
+import k_pStrategist from "../assets/painted/klein/painted-strategist.webp";
+import k_bGolem from "../assets/painted/klein/painted-boss-golem.webp";
+import k_bBeast from "../assets/painted/klein/painted-boss-beast.webp";
+import k_bSerpent from "../assets/painted/klein/painted-boss-serpent.webp";
+import k_bWraith from "../assets/painted/klein/painted-boss-wraith.webp";
+import k_bTyrant from "../assets/painted/klein/painted-boss-tyrant.webp";
+import k_bArchenemy from "../assets/painted/klein/painted-boss-archenemy.webp";
+import k_bLeaguemaster from "../assets/painted/klein/painted-boss-leaguemaster.webp";
+import k_pbb01 from "../assets/painted/klein/painted-boss-b01.webp";
+import k_pbb02 from "../assets/painted/klein/painted-boss-b02.webp";
+import k_pbb03 from "../assets/painted/klein/painted-boss-b03.webp";
+import k_pbb04 from "../assets/painted/klein/painted-boss-b04.webp";
+import k_pbb05 from "../assets/painted/klein/painted-boss-b05.webp";
+import k_pbb06 from "../assets/painted/klein/painted-boss-b06.webp";
+import k_pbb07 from "../assets/painted/klein/painted-boss-b07.webp";
+import k_pbb08 from "../assets/painted/klein/painted-boss-b08.webp";
+import k_pbb09 from "../assets/painted/klein/painted-boss-b09.webp";
+import k_pbb10 from "../assets/painted/klein/painted-boss-b10.webp";
+import k_pbb11 from "../assets/painted/klein/painted-boss-b11.webp";
+import k_pbb12 from "../assets/painted/klein/painted-boss-b12.webp";
+import k_pbb13 from "../assets/painted/klein/painted-boss-b13.webp";
+import k_pbb14 from "../assets/painted/klein/painted-boss-b14.webp";
+import k_pbb15 from "../assets/painted/klein/painted-boss-b15.webp";
+import k_pbb16 from "../assets/painted/klein/painted-boss-b16.webp";
+import k_pbb17 from "../assets/painted/klein/painted-boss-b17.webp";
+import k_pbb18 from "../assets/painted/klein/painted-boss-b18.webp";
+import k_pbb19 from "../assets/painted/klein/painted-boss-b19.webp";
+import k_pbb20 from "../assets/painted/klein/painted-boss-b20.webp";
+import k_pbb21 from "../assets/painted/klein/painted-boss-b21.webp";
+import k_pbb22 from "../assets/painted/klein/painted-boss-b22.webp";
+import k_pbb23 from "../assets/painted/klein/painted-boss-b23.webp";
+import k_pbb24 from "../assets/painted/klein/painted-boss-b24.webp";
+import k_pbb25 from "../assets/painted/klein/painted-boss-b25.webp";
+
 const KLASSIK_HELL = { P: kPawnH, N: kKnightH, B: kBishopH, R: kRookH, Q: kQueenH, K: kKingH };
 const KLASSIK_DUNKEL = { P: kPawnD, N: kKnightD, B: kBishopD, R: kRookD, Q: kQueenD, K: kKingD };
 /** Die klassische Figur nach Art und SEITE - weiss traegt Creme, schwarz Grau. */
 export const klassikFor = (piece) =>
   (piece?.color === "w" ? KLASSIK_HELL : KLASSIK_DUNKEL)[piece?.kind] || null;
+
+export const PAINTED_KLEIN = { "pawn": k_pPawn, "haendler": k_pHaendler, "gambit": k_pGambit, "gambit-t2": k_pGambitT2, "gambit-t3": k_pGambitT3, "gambit-t4": k_pGambitT4, "gambit-t5": k_pGambitT5, "gambit-t6": k_pGambitT6, "seeress": k_pSeeress, "knight": k_pKnight, "bishop": k_pBishop, "queen": k_pQueen, "archbishop": k_pArchbishop, "hawk": k_pHawk, "amazon": k_pAmazon, "assassin": k_pAssassin, "guardian": k_pGuardian, "captain": k_pCaptain, "sorceress": k_pSorceress, "pathfinder": k_pPathfinder, "rook": k_pRook, "king": k_pKing, "chancellor": k_pChancellor, "dragon": k_pDragon, "mage": k_pMage, "alchemist": k_pAlchemist, "warlock": k_pWarlock, "paladin": k_pPaladin, "inquisitor": k_pInquisitor, "bard": k_pBard, "engineer": k_pEngineer, "standard": k_pStandard, "strategist": k_pStrategist, "boss-golem": k_bGolem, "boss-beast": k_bBeast, "boss-serpent": k_bSerpent, "boss-wraith": k_bWraith, "boss-tyrant": k_bTyrant, "boss-archenemy": k_bArchenemy, "boss-leaguemaster": k_bLeaguemaster, "boss-b01": k_pbb01, "boss-b02": k_pbb02, "boss-b03": k_pbb03, "boss-b04": k_pbb04, "boss-b05": k_pbb05, "boss-b06": k_pbb06, "boss-b07": k_pbb07, "boss-b08": k_pbb08, "boss-b09": k_pbb09, "boss-b10": k_pbb10, "boss-b11": k_pbb11, "boss-b12": k_pbb12, "boss-b13": k_pbb13, "boss-b14": k_pbb14, "boss-b15": k_pbb15, "boss-b16": k_pbb16, "boss-b17": k_pbb17, "boss-b18": k_pbb18, "boss-b19": k_pbb19, "boss-b20": k_pbb20, "boss-b21": k_pbb21, "boss-b22": k_pbb22, "boss-b23": k_pbb23, "boss-b24": k_pbb24, "boss-b25": k_pbb25 };
 
 export const PAINTED = {
   haendler: pHaendler, pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
@@ -158,7 +245,22 @@ const KIND2ID = {
 };
 
 /** Painting for a live board piece — or null when the gallery has none yet. */
-export function paintedForPiece(piece) {
+/** v1.0.38: Dasselbe Bild in klein - fuers Brett. Findet sich keine kleine
+ *  Fassung (etwa bei geschnitzten Stilen), bleibt die grosse; ein fehlendes
+ *  Bild waere schlimmer als ein zu grosses. */
+export function kleinFuerBrett(quelle) {
+  if (!quelle) return quelle;
+  for (const [schluessel, gross] of Object.entries(PAINTED))
+    if (gross === quelle) return PAINTED_KLEIN[schluessel] || quelle;
+  return quelle;
+}
+
+export function paintedForPiece(piece, fuersBrett = false) {
+  const roh = paintedRoh(piece);
+  return fuersBrett ? kleinFuerBrett(roh) : roh;
+}
+
+function paintedRoh(piece) {
   if (!piece) return null;
   if (STIL === "carved") {
     const geschnitzt = carvedForPiece(piece);

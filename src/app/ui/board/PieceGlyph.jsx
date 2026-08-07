@@ -184,7 +184,10 @@ export function StatTriad({ piece, focus, shrink = 1 }) {
    also war die Fahne IMMER false - die Reparatur des Flug-Ruckelns aus
    v1.0.14 lief seither ins Leere, und die fliegende Figur poppte weiter.
    Jetzt steht sie, wo sie hingehoert. */
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false, fliegt = false }) {
+/* v1.0.38: "aufsBrett" waehlt die KLEINE Fassung des Gemaeldes. Nur das
+   Brett setzt sie - dort steht die Figur auf 50 px und 576 px waeren
+   neunfach zu viel. Hofstaat, Popup und Zoom bleiben gross. */
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false, fliegt = false, aufsBrett = false }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -317,9 +320,9 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const painting = carving
     ? carving
     : artStyle === "classic"
-    ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece))
+    ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece, aufsBrett))
     : (artStyle === "painted" || artStyle === "carved")
-    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece))
+    ? ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece, aufsBrett))
     : null;
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out. The carvings were already

@@ -1,5 +1,54 @@
 # Changelog - Grand Gambit
 
+## 1.0.38
+
+- DAS RUCKELN - DER BESITZER HAT ES GEFUNDEN, NICHT ICH. Seine
+  Beobachtung: klassisches Schach laeuft fluessig, mit den GEMALTEN
+  Figuren ruckelt es. Ich hatte an vier Zeichenposten gemessen und lag mit
+  allen daneben; er hat den Unterschied gesehen, an dem es wirklich haengt.
+- NACHGEMESSEN, und der Befund ist eindeutig:
+      klassische Figur   224x384 px  =  0,086 Megapixel
+      gemalte Figur      576x576 px  =  0,332 Megapixel
+  Auf einem 50-px-Feld ist das eine Verkleinerung um Faktor NEUN. Solange
+  nichts passiert, haelt der Browser das Ergebnis fest; sobald sich der
+  Massstab aendert - und genau das tut er beim ANTIPPEN, wo die Auswahl auf
+  1,58 waechst - muss er alle 32 Figuren neu abtasten. Daher das Ruckeln
+  beim Klicken, und daher nur bei den gemalten.
+- Das Brett traegt jetzt 192-px-Fassungen: bei dreifacher Pixeldichte sind
+  das 150 echte Pixel auf einem 50-px-Feld, also reichlich Reserve - aber
+  ein NEUNTEL der Flaeche. In Zahlen: 65 Figuren, 4326 KB -> 762 KB.
+- Die grossen Bilder bleiben, wo man sie wirklich gross sieht: Hofstaat,
+  Popup, Zoom, Schaukammer. Fuenf Proben halten fest, dass jede gemalte
+  Figur ihren kleinen Zwilling hat, dass es verschiedene Dateien sind und
+  dass nur das Brett danach greift.
+
+## 1.0.38
+
+- DAS RUCKELN IST GEFUNDEN - vom Besitzer, nicht von mir. Sein Befund:
+  mit den KLASSISCHEN Figuren laeuft alles fluessig, mit den gemalten
+  nicht. Das schliesst mit einem Schlag alles aus, was bei beiden
+  Saetzen gleich ist - Brett, Hintergrund, Uebergaenge, Masken, Schatten.
+  Genau die vier Dinge, an denen ich gemessen und nichts gefunden hatte.
+- DIE URSACHE LAG IN DEN DATEIEN: gemalte Figuren 1024x1024, klassische
+  224x384. Dargestellt wird eine Figur auf dem Brett mit rund 70 px, im
+  Popup mit 178 - bei dreifacher Pixeldichte also hoechstens ~534 px. Die
+  gemalten Figuren waren also rund viermal zu gross in jeder Kante.
+  Entscheidend ist nicht die Dateigroesse, sondern der BILDSPEICHER: eine
+  dekodierte 1024er Figur belegt 4 MB, zwoelf davon auf einem Brett 48 MB.
+  Der klassische Satz kam mit 3,9 MB aus - der Zwoelffache Unterschied,
+  den der Besitzer gespuert hat.
+- Alle 57 gemalten Figuren und 114 geschnitzte auf hoechstens 576 px
+  gebracht (534 gebraucht, etwas Reserve). Ergebnis:
+    Bildspeicher je Figur   4,00 MB -> 1,27 MB
+    zwoelf Figuren             48 MB ->   15 MB
+    Dateien gemalt          12,8 MB -> 4,3 MB
+    Dateien geschnitzt       5,5 MB -> 2,7 MB
+- QUALITAET NACHGEMESSEN, nicht behauptet: in der GROESSTEN Darstellung
+  (Popup, 178 px) betraegt die Abweichung zum Original 3,2 bis 4,1 von
+  255 - fuer das Auge nicht zu sehen.
+- Ein Waechter im Test meldet kuenftig jede Figur, die wieder zu gross
+  eingelagert wird.
+
 ## 1.0.37
 
 - DER SPARMODUS: vier Zeichenposten, im Profil EINZELN abschaltbar -
