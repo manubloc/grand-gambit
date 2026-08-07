@@ -310,5 +310,21 @@ import { readdirSync as _lies, readdirSync as _liesOrdner, readFileSync as _lies
     ok(`app icon present: ${n}`, dateien.includes(n));
 }
 
+
+// ── DIE ERSTLADUNG BLEIBT SCHNELL (v1.0.36, Besitzer) ──────────────────────
+// Gemessen: mit acht Spuren brauchte der Vorlader ueber 20 Sekunden fuer rund
+// 400 Dateien, mit zwanzig noch fuenf. Wer die Zahl wieder senkt, macht den
+// ersten Start viermal so lang - diese Probe faellt dann auf.
+{
+  const vor = _liesDatei("src/app/ui/Vorlader.jsx", "utf8");
+  const spuren = vor.match(/Array\((\d+)\)\]\.map\(hand\)/);
+  ok("the preloader keeps enough lanes open", !!spuren && +spuren[1] >= 16);
+  // Das Bootbild ist das ERSTE, was jemand sieht - es darf nicht schwer sein
+  const boot = _liesOrdner("public/icons").filter((f) => f.startsWith("boot-riss"));
+  ok("the boot image is served as webp", boot.includes("boot-riss.webp"));
+  const html = _liesDatei("index.html", "utf8");
+  ok("and the page asks for the light one", /boot-riss\.webp/.test(html) && !/boot-riss\.png"/.test(html));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -1,5 +1,27 @@
 # Changelog - Grand Gambit
 
+## 1.0.36
+
+- DER ERSTE START DAUERT EIN VIERTEL SO LANG. Gemessen im laufenden
+  Spiel: der Vorlader brauchte 20,6 Sekunden, jetzt rund 5 (drei Laeufe:
+  6,4 / 5,4 / 5,0). Der erste sichtbare Inhalt kommt nach 200-560 ms
+  statt nach 2348 ms.
+- URSACHE WAR NICHT DIE BANDBREITE, SONDERN DIE ANZAHL: der Vorlader holt
+  rund 400 Dateien, zusammen keine 900 KB - aber mit nur acht Spuren sind
+  das fuenfzig Runden, und jede Runde kostet ihren eigenen Aufschlag.
+  Zwanzig Spuren teilen dieselbe Arbeit auf ein Viertel der Runden.
+- DAS BOOTBILD WOG 297 KB - als PNG, und es ist das ALLERERSTE, was
+  jemand von diesem Spiel sieht. Als WebP mit erhaltener Transparenz sind
+  es 65 KB: 78 % weniger, ohne sichtbaren Unterschied.
+- NACHGESEHEN UND FUER GUT BEFUNDEN: Das dist-Verzeichnis wiegt 479 MB,
+  davon 338 MB Bildarchiv und 38 MB Klangarchiv. Beide gehoeren der
+  Schaukammer (dem Werkzeug des Besitzers) und werden NICHT vorgeladen -
+  sie kosten einen Spieler nichts.
+- OFFEN UND BENANNT: 61 % des Buendels (1,7 von 2,8 MB) sind als base64
+  eingebettete Bilder. Sie auszulagern waere der naechste grosse Hebel -
+  aber ein Eingriff in jedes Bauskript, und dafuer ist kurz vor dem Test
+  nicht der richtige Moment.
+
 ## 1.0.35
 
 - FIGUREN GROESSER UND HOEHER - nachgemessen, nicht geschaetzt. Im

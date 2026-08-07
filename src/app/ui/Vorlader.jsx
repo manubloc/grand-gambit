@@ -228,10 +228,18 @@ function starte() {
       } catch {}
       stand.zahl++; if (stand.zahl % 4 === 0 || stand.zahl === stand.gesamt) melde();
     };
-    const arbeit = (async () => {   // 8 Gaeste gleichzeitig, nicht alle auf einmal
+    /* v1.0.36 (Besitzer: "ist bei der Leistung noch was zu holen?"): GEMESSEN.
+       Der Vorlader holt rund 400 Dateien und brauchte dafuer ueber 20
+       Sekunden - nicht wegen der Bandbreite (zusammen keine 900 KB), sondern
+       wegen der Anzahl: bei acht Spuren sind das fuenfzig Runden, und jede
+       Runde kostet ihren eigenen Aufschlag. Zwanzig Spuren teilen dieselbe
+       Arbeit auf ein Viertel der Runden. Mehr waere unklug: Browser deckeln
+       gleichzeitige Verbindungen je Gegenstelle ohnehin, und ein Telefon
+       soll waehrend des Ladens noch fluessig zeichnen. */
+    const arbeit = (async () => {
       let i = 0;
       const hand = async () => { while (i < urls.length) { const u = urls[i++]; await einer(u); } };
-      await Promise.all([...Array(8)].map(hand));
+      await Promise.all([...Array(20)].map(hand));
     })();
     await Promise.race([arbeit, deckel]);
     stand.fertig = true; melde();
@@ -284,7 +292,7 @@ export default function Vorlader() {
                 animation: `ggBootTangente ${d} ease-out ${t} infinite` }} />
             ))}
           </div>
-          <img src="./icons/boot-riss.png" alt="Grand Gambit" width={208} height={208}
+          <img src="./icons/boot-riss.webp" alt="Grand Gambit" width={208} height={208}
             style={{ position: "relative", width: "100%", height: "100%", display: "block",
               animation: "ggBootAtem 3.2s ease-in-out infinite",
               filter: "drop-shadow(0 0 24px rgba(139,92,246,.6))", willChange: "transform" }} />
