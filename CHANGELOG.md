@@ -1,5 +1,37 @@
 # Changelog - Grand Gambit
 
+## 1.0.44
+- Freigabe-Fenster: sagt, wenn sich etwas geoeffnet hat (Held, hintere Reihe,
+  Lebenspunkte). Titel und Text liegen bei der Freigabe selbst, nicht in
+  App.jsx. In BEIDEN Rueckgabezweigen. Merker teilt sich profile.notices mit
+  den Lehrstunden, Praefix "frei:".
+- Drei Sichtbarkeitsstufen angeschlossen: Akademie, Chronik, Kampfleiste.
+  Verborgenes faellt weg, Verriegeltes bleibt mit seinem Grund. Die
+  Kampfleiste bot bisher die im Zug verriegelten Reichweiten-Kuenste als
+  spielbare Karten an.
+
+## 1.0.43
+- Die Freischalt-Ordnung (src/meta/freigaben.js): Kapitel I reines Schach →
+  Erwachen bringt Stufe 2, erste Faehigkeit und die Heldenspalte → erste
+  fremde Figur oeffnet die hintere Reihe → Schwelrain bringt HP.
+- Gambit-Leiter gedreht: Sprosse 2 traegt den Vorwaertsschlag statt eines
+  Schilds, damit der Erwachte sich nicht nur am Bild unterscheidet.
+
+## 1.0.42
+- Der Erwachte traegt seine Stufe wirklich (vorher nur das Bild).
+- Drei Sichtbarkeitsstufen in den Daten (sperre: riegel/verborgen) statt
+  hpOnly zu ueberladen. Kapitel I: 18 wirken, 2 verriegelt, 6 verborgen.
+- Die violette Faehigkeitskugel ersetzt den goldenen Stern; verbraucht
+  erlischt sie, statt zu verschwinden.
+
+## 1.0.41
+- RUCKELN GEFUNDEN: nicht die Bildgroesse, die Filterkette. Klassische
+  Figuren trugen einen drop-shadow, alle anderen bis zu neun. Gemessen am
+  Brett-Pruefstand: Median 1656 ms → 98 ms, Faktor 17.
+- Ein Figurensatz statt zwei; der Zweitsatz hatte keine 192-px-Fassungen.
+- Schaukammer: zuordnung.json neu gerechnet (64 → 205 sicher), 240 + 447
+  Vorschauen neu gebaut, Reiter richtiggestellt.
+
 ## 1.0.40
 
 - KEIN PASSWORT MEHR IM PROGRAMM. In v1.0.39 hatte ich das Admin-Wort im
