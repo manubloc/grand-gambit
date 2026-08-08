@@ -143,7 +143,10 @@ export async function login(email, pass) {
   const list = await ensureAccounts();
   const acc = findAccount(list, e);
   if (!acc || acc.passHash == null) throw new Error("not-found");
-  const h = await hashPass(pass || "", acc.salt);
+  /* v1.0.51: GETRIMMT - dieselbe Falle wie beim Torschloss. Ein eingefuegtes
+     Passwort bringt vom Telefon fast immer ein Leerzeichen mit; niemand
+     tippt absichtlich eines an sein Wort. */
+  const h = await hashPass((pass || "").trim(), acc.salt);
   if (h !== acc.passHash) throw new Error("wrong-pass");
   await setSession(acc.id);
   return acc;

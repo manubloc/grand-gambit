@@ -11,6 +11,7 @@ export function WerkzeugTuer({ was = "Werkzeug", onOffen }) {
   const [wort, setWort] = useState("");
   const [fehler, setFehler] = useState(false);
   const [prueft, setPrueft] = useState(false);
+  const [form, setForm] = useState(null);   // v1.0.51: Form des letzten Versuchs
 
   async function versuchen() {
     if (prueft) return;
@@ -18,7 +19,15 @@ export function WerkzeugTuer({ was = "Werkzeug", onOffen }) {
     const ok = await torOeffnen(wort);
     setPrueft(false);
     if (ok) onOffen();
-    else { setFehler(true); setWort(""); }
+    else {
+      /* v1.0.51: Der Besitzer stand dreimal vor dieser Tuer, und jedes Mal
+         sagte sie nur "Das war es nicht". Jetzt sagt sie, WAS ankam - Laenge
+         und ob unsichtbare Zeichen dabei waren. Das Wort selbst steht
+         nirgends; nur seine Form. Damit sieht man in einem Blick, ob beim
+         Einfuegen ein Leerzeichen mitkam. */
+      setForm({ laenge: wort.length, rand: wort !== wort.trim(), gross: /^[A-Z]/.test(wort) });
+      setFehler(true); setWort("");
+    }
   }
 
   return (
@@ -35,6 +44,12 @@ export function WerkzeugTuer({ was = "Werkzeug", onOffen }) {
           type="password"
           value={wort}
           autoFocus
+          /* v1.0.51: die Telefontastatur macht sonst gern den ersten
+             Buchstaben gross und "verbessert" das Zufallswort. */
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="off"
+          spellCheck={false}
           onChange={(e) => { setWort(e.target.value); setFehler(false); }}
           onKeyDown={(e) => e.key === "Enter" && versuchen()}
           style={{ width: "100%", padding: "12px 14px", fontSize: 15, fontFamily: "inherit",
@@ -43,8 +58,13 @@ export function WerkzeugTuer({ was = "Werkzeug", onOffen }) {
             border: `1px solid ${fehler ? "rgba(216,72,72,.7)" : "rgba(255,255,255,.16)"}`,
             outline: "none" }}
         />
-        {fehler && <div style={{ fontSize: 12, color: "#e08a8a", marginTop: 8 }}>
+        {fehler && <div style={{ fontSize: 12, color: "#e08a8a", marginTop: 8, lineHeight: 1.5 }}>
           Das war es nicht.
+          {form && <span style={{ display: "block", color: T.faint, fontSize: 11, marginTop: 3 }}>
+            {form.laenge} Zeichen angekommen
+            {form.rand ? " · mit Leerzeichen am Rand (wird jetzt entfernt)" : ""}
+            {form.gross ? " · beginnt mit Grossbuchstabe" : ""}
+          </span>}
         </div>}
         <div style={{ marginTop: 14 }}>
           <Button variant="primary" onClick={versuchen} disabled={prueft || !wort}>

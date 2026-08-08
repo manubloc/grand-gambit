@@ -25,9 +25,17 @@
 const PRUEFWERT = "5a7e465e58301cea152fdff6bac54910bc20328308aaafe19f78c41547426257";
 const SCHLUESSEL = "gg:werkzeug:offen";
 
-/** Prueft ein Wort gegen den hinterlegten Wert. */
+/** Prueft ein Wort gegen den hinterlegten Wert.
+ *  v1.0.51 (Besitzer kam DREIMAL nicht hinein): Das Wort wird GETRIMMT.
+ *  Der Fehler war nie das Wort und nie der Pruefwert - beide stimmten bei
+ *  jeder Nachrechnung. Er lag im Weg dorthin: wer ein 22-stelliges
+ *  Zufallswort vom Telefon einfuegt, bringt fast immer ein Leerzeichen oder
+ *  einen Zeilenumbruch mit, und ein einziges unsichtbares Zeichen macht aus
+ *  dem richtigen Wort einen falschen Pruefwert.
+ *  Lehre: eine Passwortpruefung, die an unsichtbaren Zeichen scheitert,
+ *  ist nicht sicherer - sie ist nur unbrauchbar. */
 export async function torOeffnen(wort) {
-  const hash = await pruefwert(wort || "");
+  const hash = await pruefwert((wort || "").trim());
   if (hash !== PRUEFWERT) return false;
   try { sessionStorage.setItem(SCHLUESSEL, "1"); } catch {}
   return true;

@@ -59,6 +59,32 @@ ok("first boot seeds exactly the built-in admin", seeded.length === 1 && seeded[
   await st.delete("accounts:v1", false);
 }
 
+/* ── EIN LEERZEICHEN SPERRTE DIE TUER (v1.0.51) ────────────────────────────
+   Der Besitzer kam DREIMAL nicht in seine eigenen Bereiche. Wort und
+   Pruefwert stimmten bei jeder Nachrechnung - der Fehler lag im Weg dorthin:
+   wer ein 22-stelliges Zufallswort vom Telefon einfuegt, bringt fast immer
+   ein Leerzeichen oder einen Zeilenumbruch mit. Ein einziges unsichtbares
+   Zeichen macht aus dem richtigen Wort einen falschen Hash.
+   Eine Passwortpruefung, die daran scheitert, ist nicht sicherer - nur
+   unbrauchbar. Beide Tueren trimmen jetzt. */
+{
+  const { storage: st2 } = await import("./src/platform/index.js");
+  await st2.delete("accounts:v1", false);
+  const salz = "probesalz4711";
+  const wort = "Ein-Wort-Mit-22-Zeich";
+  await st2.set("accounts:v1", JSON.stringify([{ id: "t1", email: "trimtest@example.com",
+    name: "Trim", salt: salz, passHash: await hashPass(wort, salz) }]), false);
+  let gut = 0;
+  for (const versuch of [wort, wort + " ", " " + wort, wort + "\n", "  " + wort + "  "]) {
+    try { await login("trimtest@example.com", versuch); gut++; } catch {}
+  }
+  ok("das Wort oeffnet auch mit Leerzeichen und Umbruch am Rand", gut === 5);
+  let falschAb = false;
+  try { await login("trimtest@example.com", wort + "x"); } catch { falschAb = true; }
+  ok("ein wirklich falsches Wort bleibt draussen", falschAb);
+  await st2.delete("accounts:v1", false);
+}
+
 const TESTWORT = "probe-wort-2026";
 {
   const liste = await ensureAccounts();
