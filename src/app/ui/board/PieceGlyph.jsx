@@ -399,7 +399,21 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     ? null
     : artStyle === "classic"
     ? (klassikFor(paintPiece) || CLASSIC_PAINTED[paintPiece.kind] || paintedForPiece(paintPiece, aufsBrett))
-    : ((heroTier >= 2 && paintedById("gambit-t" + heroTier)) || paintedForPiece(paintPiece, aufsBrett));
+    /* v1.0.49 (Besitzerentscheid): DER HELD IST VON ANFANG AN ZU SEHEN.
+       Bis jetzt trug er das Prunkritter-Bild erst ab Rang II - der Gedanke
+       war, dass das Erwachen ein Bruch sein soll. Der Besitzer hat den
+       staerkeren Einwand: er ist die Figur, die auf der KARTE ohnehin
+       durchgehend zu sehen ist. Wer er ist, muss vom ersten Zug an klar
+       sein, sonst erzaehlt Brett und Karte Verschiedenes.
+       Also traegt er sein goldenes Bild ab Rang I. Fuer die hoeheren Raenge
+       fehlen die gelben Fassungen noch; bis sie da sind, greift der
+       ||-Rueckfall auf dasselbe Bild, statt in den Prunkritter aus der
+       anderen Bildwelt zu springen.
+       ACHTUNG, HIER LAG EIN FEHLER: dieser Zweig gilt fuer JEDE Figur, die
+       weder klassisch noch SVG ist - im ersten Anlauf trug damit das ganze
+       Brett das Gambit-Bild, Bosse eingeschlossen. Die Bedingung muss den
+       Helden ausdruecklich nennen. test_ui hat es gefangen. */
+    : ((piece.hero && white && paintedById("gambit")) || paintedForPiece(paintPiece, aufsBrett));
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out. The carvings were already
   // cropped and levelled at build time, so they need no per-file fit.

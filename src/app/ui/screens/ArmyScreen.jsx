@@ -20,7 +20,7 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
+import { paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -35,10 +35,20 @@ function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
      nicht nur auf dem Brett. Sonst sitzt man vor einem Zwitter aus schlichtem
      Brett und gemaltem Hofstaat. */
   if (schlichtAn()) return <PieceArt kind={kind} size={size ?? "100%"} level={level} hero={hero} bossId={bossId} />;
-  const src = paintedForPiece({ kind, color: "w", hero, level, bossId });
+  const stueck = { kind, color: "w", hero, level, bossId };
+  const src = paintedForPiece(stueck);
+  /* v1.0.49 (Besitzerbefund, Aufstellung): DIE FIGUREN SASSEN ZU WEIT RECHTS.
+     Nicht die Kacheln - der INHALT der Bilder. Jede Figur sitzt anders weit
+     aus ihrer Bildmitte; das Brett gleicht das ueber PAINTED_FIT.x aus, die
+     Aufstellungskacheln taten es nicht. In der hinteren Reihe faellt es am
+     staerksten auf, weil dort acht verschiedene Figuren nebeneinander stehen
+     und die Versaetze sich nicht mehr wegmitteln. Derselbe Wert wie am
+     Brett, gegenlaeufig: -x schiebt den Inhalt in die Mitte der Kachel. */
+  const versatz = -(paintedFitFor(stueck).x || 0) * 100;
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
-        objectPosition: "center center", filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
+        objectPosition: "center center", transform: `translateX(${versatz.toFixed(2)}%)`,
+        filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
         userSelect: "none", pointerEvents: "none", display: "block", flex: "none" }} />
     : <span style={{ fontSize: size * 0.8, lineHeight: 1 }}>♟</span>;
 }
@@ -485,7 +495,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         {paintedById(char.id)
           ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
+              /* v1.0.49 (Besitzerbefund): DIE FIGUR SITZT JETZT UEBER IHRER
+                 SCHRIFT. Das Bild war zentriert, der INHALT darin aber nicht -
+                 jede Figur sitzt anders weit aus der Bildmitte, und das Brett
+                 gleicht das ueber PAINTED_FIT.x aus. Der Hofstaat tat es
+                 nicht, also standen die Figuren neben ihrem Namen. Derselbe
+                 Wert, gegenlaeufig angewandt: -x schiebt den Inhalt zurueck
+                 in die Mitte der Platte. */
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
+              transform: `translateX(${(-(paintedFitById(char.id).x || 0) * 100).toFixed(2)}%)`,
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
         {/* v1.0.11 (Besitzer): der Vektor-Zwilling im Eck ist fort — die

@@ -262,21 +262,16 @@ export function paintedForPiece(piece, fuersBrett = false) {
   return fuersBrett ? kleinFuerBrett(roh) : roh;
 }
 
-/* ── ZWEI VOELKER AM BRETT (v1.0.45, Besitzerentscheid) ────────────────────
-   Bis jetzt trugen beide Seiten DASSELBE Bild; unterschieden hat sie nur ein
-   Farbfilter und der Saum. Der Besitzer will echte Voelker, und zwar an der
-   Figur, die achtmal dasteht und darum den Ton angibt: dem BAUERN.
+/* ── EIN VOLK, EIN HELD (v1.0.49, Besitzerentscheid) ───────────────────────
+   v1.0.45 gab der eigenen Seite gruene Holzbauern und dem Gegner die blauen
+   Speertraeger. Der Besitzer hat es am Geraet gesehen und sich anders
+   entschieden: BEIDE Seiten tragen den blauen Soldaten. Was Freund von Feind
+   trennt, bleibt der Saum - und der HELD, der als einziger heraussticht.
 
-     eigene Seite   der gruene Holzbauer (carved-pawn-light)
-     Gegner         der blaue Speertraeger (painted-pawn)
-
-   Beide sind geschnitzt, beide aus demselben Haus - sie schlagen sich nicht,
-   sie stehen nur klar auf zwei Seiten. Kein Filter noetig, um Freund von
-   Feind zu trennen: man SIEHT es.
-
-   Alles andere (Offiziere, Hofstaat, Bosse) bleibt einfarbig wie bisher -
-   der Besitzer hat ausdruecklich nur die Bauern genannt, und ein halb
-   umgefaerbtes Heer waere schlimmer als ein einheitliches. */
+   Das ist das staerkere Zeichen: ein goldener Ritter zwischen acht blauen
+   Soldaten liest sich auf einen Blick, und es meint dieselbe Figur, die auch
+   auf der Karte zu sehen ist. Zwei Voelker haetten die Aufmerksamkeit auf
+   die Bauernreihe gezogen, wo sie nicht hingehoert. */
 
 function paintedRoh(piece) {
   if (!piece) return null;
@@ -290,11 +285,16 @@ function paintedRoh(piece) {
       || PAINTED["boss-" + (piece.art || "")] || null;
   }
   if (piece.hero) {
-    // the hero WEARS his rank: each gambit tier has its own likeness — on the
-    // board, in the court, everywhere this gallery serves
-    const lvl = piece.level || 1;
-    const gt = Math.min(6, Math.floor((Math.max(1, lvl) - 1) / 10) + 1); // mirrors meta gambitTier
-    return (gt > 1 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
+    /* v1.0.49: DER HELD TRAEGT VORERST IMMER SEIN ERSTES GESICHT.
+       Die Raenge II-VI liegen als schwarz-goldene Prunkritter vor - eine
+       andere Bildwelt als die geschnitzten Holzfiguren, was seit dem Fall
+       der Stilweiche (v1.0.41) auffaellt. Bis die gelben Fassungen gezeichnet
+       sind, bekommt jeder Rang denselben goldenen Ritter: lieber einheitlich
+       als stilgebrochen. Die Groesse unterscheidet die Raenge weiterhin
+       (GAMBIT_TIER_H in paintedFitFor).
+       Sobald die Bilder da sind, hier wieder auf PAINTED["gambit-t"+gt]
+       umstellen - die Schluessel existieren bereits. */
+    return PAINTED.gambit || null;
   }
   const id = KIND2ID[piece.kind];
   /* v1.0.49 (Besitzerentscheid): DER GRUENE BAUER IST FORT. In v1.0.45 trug
@@ -384,6 +384,16 @@ const GAMBIT_TIER_Y = [-0.1268, -0.1310, -0.1348, -0.1386, -0.1420, -0.1452];
    4,7 % zu weit rechts. Der Besitzer hat es auf dem Geraet gesehen. */
 const GAMBIT_TIER_X = [0, 0, 0, 0, 0, 0];
 const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
+
+/* v1.0.49: DERSELBE VERSATZ, ABER UEBER DIE ID (Besitzerbefund).
+   PAINTED_FIT haelt je Figur ein x - wie weit ihr Inhalt aus der Bildmitte
+   sitzt. Das BRETT gleicht das seit jeher aus, der HOFSTAAT nicht: dort
+   stand das Bild schlicht zentriert, und die Figuren sassen sichtbar neben
+   ihrer Beschriftung. Gemessen ueber 40 Bilder: im Mittel zwar 0, aber mit
+   Ausreissern bis 10 % der Breite - genug, um ins Auge zu fallen.
+   paintedFitFor braucht ein Spielfigur-Objekt und geht ueber kind; Karten
+   kennen aber ihre ID. Darum dieser Zugang. */
+export const paintedFitById = (id) => PAINTED_FIT[id] || { h: 1, y: 0, x: 0 };
 
 export function paintedFitFor(piece) {
   if (!piece || piece.big) return { h: 1, y: 0, x: 0 };
