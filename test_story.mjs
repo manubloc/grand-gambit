@@ -338,7 +338,11 @@ import { readdirSync as _lies, readdirSync as _liesOrdner, readFileSync as _lies
 {
   const grenze = 640;
   const zuGross = [];
-  for (const ordner of ["painted", "carved"]) {
+  /* v1.0.55: "carved" ist fort - der Zweitsatz lag seit dem Fall der
+     Stilweiche (v1.0.41) ungenutzt herum und haengt jetzt im Archiv
+     (archiv/ausgemustert/v1.0.55). Nur noch der gespielte Satz wird
+     bewacht; ein Ordner, den es nicht gibt, wird uebersprungen. */
+  for (const ordner of ["painted"]) {
     const pfad = `src/app/ui/assets/${ordner}`;
     for (const datei of _lies(pfad)) {
       if (!datei.endsWith(".webp")) continue;

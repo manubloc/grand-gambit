@@ -26,9 +26,40 @@ for (const rel of dateien) {
   await mkdir(zielPfad.slice(0, zielPfad.lastIndexOf("/")), { recursive: true });
   await copyFile(join(QUELLE, rel), zielPfad);
 }
+/* ── WAS WIRD WIRKLICH GEZOGEN? (v1.0.55, Besitzerwunsch) ──────────────────
+   Der Besitzer wollte in der Kammer aufraeumen - und was er archivierte oder
+   loeschte, war beim naechsten Bau wieder da. Kein Wunder: diese Liste
+   entsteht bei JEDEM Bau frisch aus dem Dateisystem, und was auf seinem
+   Geraet stand, war nur eine Notiz im Browserspeicher. Loeschen konnte gar
+   nicht wirken.
+   Statt eines Loeschens, das nichts loescht, sagt die Kammer jetzt die
+   Wahrheit: welche Datei der Quelltext WIRKLICH importiert. Alles andere ist
+   Beiwerk - und was gar nicht mehr gebraucht wird, gehoert ins Archiv
+   (archiv/ausgemustert/), nicht in eine Liste zum Wegklicken. */
+const quelltext = [];
+async function lies(ordner) {
+  for (const e of await readdir(ordner, { withFileTypes: true })) {
+    if (e.name === "node_modules") continue;
+    const pfad = join(ordner, e.name);
+    if (e.isDirectory()) await lies(pfad);
+    else if (/\.(js|jsx|ts|tsx|html|css)$/.test(e.name))
+      quelltext.push(await (await import("node:fs/promises")).readFile(pfad, "utf8"));
+  }
+}
+await lies("src");
+try { quelltext.push(await (await import("node:fs/promises")).readFile("index.html", "utf8")); } catch {}
+const alleQuellen = quelltext.join("\n");
+const aktiv = dateien.filter((rel) => alleQuellen.includes(rel.split("/").pop()));
+
 await writeFile("dist/schaukammer.json",
   JSON.stringify(dateien.map((r) => `/schau/${r}`), null, 0));
-console.log(`schaukammer: ${dateien.length} Bilder nach ${ZIEL}`);
+/* Getrennte Datei, damit aeltere Fassungen der Kammer unveraendert weiter
+   funktionieren - sie holen sie schlicht nicht ab. */
+await writeFile("dist/schaukammer-aktiv.json",
+  JSON.stringify(aktiv.map((r) => `/schau/${r}`), null, 0));
+console.log(`schaukammer: ${dateien.length} Bilder nach ${ZIEL}, davon ${aktiv.length} im Spiel in Gebrauch`);
+if (dateien.length - aktiv.length > 0)
+  console.log(`  ${dateien.length - aktiv.length} liegen ungenutzt herum - Kandidaten fuer archiv/ausgemustert/`);
 
 /* VORSCHAUBILDER (v0.96, Besitzerwunsch): die Kammer lud bisher jedes Bild
    in voller Groesse, nur um es als 116-px-Kachel zu zeigen - das dauerte und

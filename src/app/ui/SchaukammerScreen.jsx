@@ -30,6 +30,8 @@ import { T } from "./theme.js";
 const VERZEICHNIS = "/schaukammer.json";
 const BESTAND = "/bildarchiv/bestand.json";
 const ZUORDNUNG = "/bildarchiv/zuordnung.json";
+/* v1.0.55: welche Bilder der Quelltext WIRKLICH importiert (baue-schaukammer). */
+const AKTIV = "/schaukammer-aktiv.json";
 
 /* v1.0.3, NACHGEMESSEN: die Reiter waren TOT. Die Muster suchten
    "/assets/carved/", aber der Bau legt die Bilder unter /schau/ ab, und das
@@ -97,8 +99,10 @@ export function SchaukammerScreen() {
   const [roh, setRoh] = useState([]);
   const [zu, setZu] = useState(null);
   const [bestand, setBestand] = useState(null);
+  const [aktiv, setAktiv] = useState(null);   // v1.0.55: Set der benutzten Pfade
   useEffect(() => {
     let lebt = true;
+    fetch(AKTIV).then((r) => r.json()).then((l) => lebt && setAktiv(new Set(l))).catch(() => {});
     fetch(VERZEICHNIS).then((r) => r.json()).then((l) => lebt && setRoh(l)).catch(() => {});
     fetch(ZUORDNUNG).then((r) => r.json()).then((z) => lebt && setZu(z)).catch(() => {});
     fetch(BESTAND).then((r) => r.json()).then((b) => lebt && setBestand(b)).catch(() => {});
@@ -117,6 +121,10 @@ export function SchaukammerScreen() {
       // logo.webp auf dieselbe Datei zeigen.
       vorschau: "/schau-klein/" + (/\.webp$/i.test(rel) ? rel : rel + ".webp"),
       stand,
+      /* v1.0.55: zieht das Spiel dieses Bild wirklich? Solange die Liste noch
+         nicht da ist, gilt nichts als ungenutzt - lieber gar keine Aussage
+         als eine falsche. */
+      inGebrauch: aktiv ? aktiv.has(p) : null,
       wert: t ? t.wert : 0,
       vonHand: !!(t && t.quelle === "hand"),
       kante: t ? t.kante : 0,
@@ -127,7 +135,7 @@ export function SchaukammerScreen() {
         ? "/bildarchiv-klein/" + (/\.webp$/i.test(t.original) ? t.original : t.original + ".webp")
         : null,
     };
-  }), [roh, zu]);
+  }), [roh, zu, aktiv]);
 
   const gruppen = useMemo(() => {
     const g = [];
@@ -363,6 +371,22 @@ export function SchaukammerScreen() {
                       : e.stand === "moeglich" ? `${stufe(e.kante)}?`
                       : `${stufe(e.kante)} ${e.kante}`}
                   </span>
+                )}
+                {/* v1.0.55 (Besitzerwunsch): WAS ZIEHT DAS SPIEL WIRKLICH?
+                    Ein gruener Punkt links oben heisst: dieses Bild wird vom
+                    Quelltext importiert und ist im Spiel zu sehen. Fehlt er,
+                    liegt die Datei nur herum - dann gehoert sie ins Archiv
+                    (archiv/ausgemustert/), nicht in eine Merkliste. */}
+                {e.inGebrauch === true && (
+                  <span title="Wird im Spiel verwendet" style={{ position: "absolute", top: 4, left: 4,
+                    width: 8, height: 8, borderRadius: "50%", background: "#6fbf59",
+                    boxShadow: "0 0 5px rgba(111,191,89,.9)", border: "1px solid rgba(6,4,12,.7)" }} />
+                )}
+                {e.inGebrauch === false && (
+                  <span title="Liegt ungenutzt herum" style={{ position: "absolute", top: 3, left: 4,
+                    fontSize: 8.5, fontWeight: 900, letterSpacing: ".04em", lineHeight: 1,
+                    padding: "3px 4px", borderRadius: 4, color: "#e0b48a",
+                    background: "rgba(6,4,12,.82)", border: "1px solid #e0b48a66" }}>UNGENUTZT</span>
                 )}
                 {m && (
                   <span style={{ position: "absolute", bottom: 4, right: 5, fontSize: 9.5, fontWeight: 800,
