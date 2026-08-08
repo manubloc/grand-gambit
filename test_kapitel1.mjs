@@ -17,7 +17,7 @@ import { ABILITIES, faehigkeitZustand, faehigkeitSichtbar, SPERRGRUND } from "./
 import { defaultProfile, gambitStufe, gambitWach, GAMBIT_ERWACHT_AB,
   GAMBIT_ERWACHT_AUF_STUFE, characterLevel, resolveCharacter,
   FREIGABEN, darfHeldSetzen, darfReiheStellen, erklaertWas, naechsteErklaerung,
-  merkeErklaert, merkschluessel, ersteFigurDa } from "./src/meta/index.js";
+  merkeErklaert, merkschluessel, ersteFigurDa, freigegeben } from "./src/meta/index.js";
 import { CHARACTERS } from "./src/content/index.js";
 
 let pass = 0, fail = 0;
@@ -169,6 +169,23 @@ ok("naechsteErklaerung liefert genau die erste davon",
 // Bei "zu" ist die Held-Freigabe jetzt offen und ungelesen - also NICHT null.
 ok("ist nichts mehr offen, meldet sie null",
   naechsteErklaerung(merkeErklaert(merkeErklaert(zu, "held"), "hinterereihe")) === null);
+
+// ── GOLD OEFFNET MAEULER ERST NACH DEM ERSTEN SIEG (v1.0.50) ───────────────
+// Bestechen stand von Anfang an im Monsterbaum - ein Raetsel fuer jeden, der
+// noch nie ein Monster gesehen hat. Jetzt ist es eine Freigabe: sie oeffnet
+// mit dem ersten BESIEGTEN echten Monster (codex.beaten, geschrieben im
+// GameScreen beim Sieg; pb_-Meister zaehlen nicht).
+{
+  const leer = defaultProfile();
+  ok("bestechen ist anfangs zu", !freigegeben(leer, "bestechen"));
+  const danach = { ...leer, codex: { beaten: ["b02"] } };
+  ok("der erste Monstersieg oeffnet es", freigegeben(danach, "bestechen"));
+  const f = FREIGABEN.find((x) => x.id === "bestechen");
+  ok("und es traegt Titel und Erklaerung in beiden Sprachen",
+    !!f && !!f.titelDe && !!f.titelEn && f.textDe.length > 60 && f.textEn.length > 60);
+  ok("die Ordnung selbst: held, hinterereihe, bestechen, leben",
+    FREIGABEN.map((x) => x.id).join(",") === "held,hinterereihe,bestechen,leben");
+}
 
 console.log("\nRESULT: " + pass + " passed, " + fail + " failed");
 if (fail) process.exit(1);

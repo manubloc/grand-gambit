@@ -16,6 +16,7 @@ export function defaultProfile() {
     loadout: { formations: {} },         // per-map formations, keyed by map id
     notices: {},                          // seen one-time notices (privacy, online consent)
     spar: {},                             // v1.0.37: abgeschaltete Zeichenposten (Sparmodus)
+    gegnerStil: "farbig",                 // v1.0.50: farbig | grau | getoent (Sicht auf die Gegnerseite)
     gold: 0,
     sp: 0,
     claims: {},
@@ -65,6 +66,7 @@ function migrate(p) {
     loadout: { formations, heroCols: { ...((p.loadout || {}).heroCols || {}) } },
     notices: { ...(p.notices || {}) },
     spar: { ...(p.spar || {}) },
+    gegnerStil: p.gegnerStil || "farbig",
     campaign: {
       league: (p.campaign && p.campaign.league) || 1,
       dupes: { ...((p.campaign && p.campaign.dupes) || {}) },

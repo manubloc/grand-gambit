@@ -450,6 +450,20 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     }
     if (lessons.length) setNewSkills(lessons);
     if (campaign && next.pausedMatch?.nodeId === match.nodeId) next.pausedMatch = null;
+    /* ── EIN MONSTER FAELLT (v1.0.50, Besitzerentscheid) ─────────────────────
+       Der Codex kannte bisher nur BEGEGNET (codex.met). Fuer die Bestechen-
+       Freigabe braucht es BESIEGT: erst wer ein echtes Monster geschlagen
+       hat, erfaehrt, dass Gold und ein Opfer manche von ihnen kaufen koennen.
+       Echte Monster tragen eine bXX-Kennung; die Boss-FASSUNG einer
+       Hoffigur ("pb_...") zaehlt nicht - sie ist kein Monster, sie ist ein
+       Meister. */
+    if (result === "win" && campaign && match?.boss?.bossId && !String(match.boss.bossId).startsWith("pb_")) {
+      const beaten = new Set(next.codex?.beaten || []);
+      if (!beaten.has(match.boss.bossId)) {
+        beaten.add(match.boss.bossId);
+        next.codex = { ...(next.codex || {}), beaten: [...beaten] };
+      }
+    }
     // EVERY piece of gear is a battle prize: the first win reveals the draught,
     // the third opens the star vault, the road unveils the rest — each with its
     // own line on the victory banner, consumables landing one-for-free.

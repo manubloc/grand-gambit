@@ -212,6 +212,10 @@ flavorDe: "Hält Kurs, wo die Karten enden.", flavorEn: "Holds course where the 
     id: "assassin", kind: KIND.ASSASSIN, glyph: "🗡", nameDe: "Attentäter", nameEn: "Assassin",
 flavorDe: "Rechnet in Schritten, zahlt in Stille.", flavorEn: "Counts in steps, pays in silence.",
     unlock: { type: "boss" }, flank: true,
+    /* Attentaeter, Magier und Warlock bleiben ABSICHTLICH farbgebunden: sie
+       sind die Laeufer-Familie dieses Spiels, und die Bindung an eine
+       Feldfarbe ist deren aeltestes, lesbarstes Merkmal. Ihre Kuenste
+       (Teleport, Fernschuss) oeffnen die andere Farbe spaeter ohnehin. */
     moveSpec: { leaps: [[1,1],[1,-1],[-1,1],[-1,-1],[2,2],[2,-2],[-2,2],[-2,-2]] },
     ladder: [
       { level: 2, shield: 1 },
@@ -351,7 +355,11 @@ flavorDe: "Singt von deinen Siegen — die Gage verhandelt er vorher.", flavorEn
     id: "engineer", kind: KIND.ENGINEER, glyph: "⚙", nameDe: "Techniker", nameEn: "Engineer",
 flavorDe: "Repariert alles außer seinen Ruf.", flavorEn: "Fixes everything except his reputation.",
     unlock: { type: "boss" }, flank: true,
-    moveSpec: { leaps: [[0,2],[0,-2],[2,0],[-2,0],[2,2],[2,-2],[-2,2],[-2,-2]] },
+    /* v1.0.50: DER SCHLIMMSTE FALL der Abdeckungsanalyse. Nur gerade und
+       diagonale ZWEIERspruenge - das haelt ihn auf einem 2x2-Untergitter
+       fest: 25 von 100 Feldern, drei Viertel des Bretts fuer immer
+       unerreichbar. Der gerade Einzelschritt loest das Gitter auf. */
+    moveSpec: { leaps: [[0,2],[0,-2],[2,0],[-2,0],[2,2],[2,-2],[-2,2],[-2,-2],[1,0],[-1,0],[0,1],[0,-1]] },
     ladder: [
       { level: 3, ability: "ranged_shot" },
       { level: 5, shield: 1 },
@@ -384,7 +392,10 @@ flavorDe: "Hat diese Partie schon gestern gewonnen.", flavorEn: "Won this game y
     id: "pathfinder", kind: KIND.PATHFINDER, glyph: "🧿", nameDe: "Kundschafter", nameEn: "Pathfinder",
 flavorDe: "Kennt den Weg. Auch den, den es nicht gibt.", flavorEn: "Knows the way. Even the one that doesn't exist.",
     unlock: { type: "boss" }, flank: true,
-    moveSpec: { leaps: [[1,3],[3,1],[-1,3],[-3,1],[1,-3],[3,-1],[-1,-3],[-3,-1]] },
+    /* v1.0.50: dieselbe Kamel-Falle wie beim Hetzer - 50 von 100 Feldern, kein
+       Nahzugriff. Fuer eine SPIELERfigur doppelt aergerlich. Der gerade
+       Einzelschritt kommt dazu; die Kamel-Weite bleibt sein Kennzeichen. */
+    moveSpec: { leaps: [[1,3],[3,1],[-1,3],[-3,1],[1,-3],[3,-1],[-1,-3],[-3,-1],[1,0],[-1,0],[0,1],[0,-1]] },
     ladder: [
       { level: 3, ability: "regen" },
       { level: 5, shield: 1 },

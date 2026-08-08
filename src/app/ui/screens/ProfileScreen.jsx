@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { hashPin } from "../../../platform/index.js";
 import { SPAR_POSTEN, sparsam } from "../sparmodus.js";
+import { GEGNER_STILE } from "../gegnerstil.js";
 import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount , adminHasDefaultPass } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { T } from "../theme.js";
@@ -322,6 +323,27 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
       {sparsam() && <div style={{ fontSize: 11.5, color: "#f0c98a", marginTop: 12, padding: "8px 10px", borderRadius: 8,
         background: "rgba(216,164,65,.12)", border: "1px solid rgba(216,164,65,.4)", lineHeight: 1.45 }}>
         {t("profile.sparAktiv")}</div>}
+
+      {/* ── DIE SICHT AUF DEN GEGNER (v1.0.50, Besitzerwunsch) ──────────────
+          Drei Stile zum AUSPROBIEREN. Der klassische Satz (Law of Classical)
+          bleibt immer unberuehrt, uebergelaufene Figuren stehen auf der
+          eigenen Seite und sind automatisch farbig. */}
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${T.line}` }}>
+        <div style={{ fontSize: 13.5, fontWeight: 700, color: T.ink }}>{t("profile.gegnerTitle")}</div>
+        <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45, margin: "3px 0 10px" }}>{t("profile.gegnerHint")}</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {GEGNER_STILE.map((stil) => {
+            const an = (profile.gegnerStil || "farbig") === stil;
+            return <button key={stil} onClick={() => dispatch({ type: "SET_GEGNERSTIL", stil })}
+              style={{ padding: "8px 14px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
+                cursor: "pointer", letterSpacing: ".02em",
+                background: an ? "linear-gradient(180deg, rgba(227,192,122,.28), rgba(227,192,122,.14))" : T.bg2,
+                border: an ? "1px solid rgba(227,192,122,.6)" : `1px solid ${T.line}`,
+                color: an ? T.gold : T.dim }}>
+              {t(`profile.gegner.${stil}`)}</button>;
+          })}
+        </div>
+      </div>
     </Panel>
 
     {account?.provider === "local" && <Panel>

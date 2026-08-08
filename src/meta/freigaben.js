@@ -43,12 +43,14 @@ export const FREIGABEN = [
     wenn: gambitWach,
     titelDe: "Der Grand Gambit erwacht",
     titelEn: "The Grand Gambit awakens",
-    textDe: "Einer deiner Bauern will ein anderer sein. Er trägt jetzt Kapuze, "
-      + "Stab und Klinge — und er schlägt geradeaus, was kein Bauer kann. "
+    /* v1.0.50: "Kapuze, Stab und Klinge" beschrieb das ALTE Erwachten-Bild.
+       Seit v1.0.49 tritt er in Gold an - der Text folgt dem Bild. */
+    textDe: "Einer deiner Bauern will ein anderer sein. Von nun an tritt er "
+      + "in Gold an — und er schlägt geradeaus, was kein Bauer kann. "
       + "Vor jeder Partie darfst du entscheiden, in welcher Spalte er antritt.",
-    textEn: "One of your pawns wants to be someone else. He now wears hood, "
-      + "staff and blade — and he strikes straight ahead, which no pawn can do. "
-      + "Before each match you may choose the file he stands in.",
+    textEn: "One of your pawns wants to be someone else. From now on he "
+      + "stands in gold — and he strikes straight ahead, which no pawn can "
+      + "do. Before each match you may choose the file he stands in.",
   },
   {
     id: "hinterereihe",
@@ -60,6 +62,26 @@ export const FREIGABEN = [
       + "getrennt.",
     textEn: "A figure has joined your court. You may now arrange the back rank "
       + "freely — any figure in any position, saved per board.",
+  },
+  {
+    /* v1.0.50 (Besitzerentscheid): BESTECHEN WILL VERDIENT SEIN. Der Knopf
+       stand bisher von Anfang an im Monsterbaum - fuer einen Spieler, der
+       noch nie ein Monster gesehen hat, ein Raetsel ohne Kontext. Jetzt:
+       erst wer ein echtes Monster BESIEGT hat (codex.beaten, geschrieben im
+       GameScreen), bekommt es erklaert und darf es tun. */
+    id: "bestechen",
+    wenn: (p) => (p?.codex?.beaten || []).length > 0,
+    titelDe: "Gold öffnet Mäuler",
+    titelEn: "Gold opens mouths",
+    textDe: "Du hast ein Monster bezwungen — und manche von ihnen haben es "
+      + "gesehen. Nicht jedes Untier kämpft aus Treue. Im Verzeichnis kannst "
+      + "du begegnete Monster mit viel Gold und dem Opfer einer Kronfigur an "
+      + "deinen Hof holen. Tyrannen und die Namhaften sind unbestechlich.",
+    textEn: "You have felled a monster — and some of them saw it happen. Not "
+      + "every beast fights out of loyalty. In the codex you may bring "
+      + "monsters you have met to your court, for a great deal of gold and "
+      + "the sacrifice of a crown piece. Tyrants and the named are beyond "
+      + "corruption.",
   },
   {
     id: "leben",

@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useMedia } from "../../App.jsx";
 import { GildedFrame, goldText, GoldShineButton } from "../Gilded.jsx";
 import { SP_SHARD_GOLD, SP_VAULT_MIN_CLEARED, spShardCap, bossLevelOf, bossUpgradeCost, bossSpecLeveled, BOSS_MAX_LEVEL, gambitWach,
-  darfHeldSetzen, darfReiheStellen } from "../../../meta/index.js";
+  darfHeldSetzen, darfReiheStellen, freigegeben } from "../../../meta/index.js";
 import { CHARACTER_LIST, CHARACTERS, ABILITIES, TAGS, SPERRGRUND, faehigkeitZustand, MAPS, mapById, ITEM_LIST, bossById, BOSSES, ITEMS, itemPrice } from "../../../content/index.js";
 import { BASE_HP, BASE_ATK, SHIELD_HP, createGame, familyOf, crownHp, crownWallSoak, shadowRifts, shadowAtk } from "../../../core/index.js";
 import {
@@ -318,7 +318,9 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
   const seenChar = (ch) => isAdmin || isUnlocked(ch, profile) || met.has(ch.kind);
   const seenBoss = (b) => isAdmin || met.has("X:" + b.id) || (profile.campaign?.bribedBosses || []).includes(b.id)
     || ownedLeagueBosses(profile).includes(b.id);
-  const figures = CHARACTER_LIST;
+  /* v1.0.50: auch die Chronik schweigt ueber den Gambit, bis er erwacht ist
+     (sein kind "P" waere durch jeden Bauern sofort "begegnet"). */
+  const figures = CHARACTER_LIST.filter((c) => c.id !== "gambit" || gambitWach(profile));
   const FAM = { golem: ["Golems", "Golems"], beast: ["Bestien", "Beasts"], serpent: ["Schlangen", "Serpents"], wraith: ["Schemen", "Wraiths"], tyrant: ["Tyrannen", "Tyrants"] };
   return <div style={{ display: "grid", gap: 8 }}>
     <div className="gg-serif" style={{ fontSize: 12.5, color: "#a9a28a", fontStyle: "italic", lineHeight: 1.5, padding: "2px 4px" }}>
@@ -882,7 +884,10 @@ function FormationEditor({ profile, dispatch, t, en }) {
           chosen file. Tap it to move him. Squares the dragon covers go dark. ── */}
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${map.w}, 1fr)`, gap: 3, marginBottom: 3 }}>
         {Array.from({ length: map.w }).map((_, f) => {
-          const isHero = f === heroCol;
+          /* v1.0.50: solange der Held nicht erwacht ist, traegt KEINE Spalte
+             sein Gold - vorher gab es zwar keinen Klick (heldZu), aber die
+             Spalte glomm trotzdem und verriet ihn. */
+          const isHero = heldFrei && f === heroCol;
           const eaten = dragonPawns.includes(f);
           /* v1.0.43: DIE SPALTE DES HELDEN GEHT ERST MIT DEM ERWACHEN AUF.
              Vorher gibt es ihn nicht - eine Bauernreihe ist eine Bauernreihe,
@@ -1382,7 +1387,12 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
   const bribedSet = new Set(profile.campaign?.bribedBosses || []);
   const ownedBossSet = new Set(ownedLeagueBosses(profile)); // beaten league tyrants fight FOR you — the tree shows them in gold
   const crownOwned = CROWN_IDS.filter((cid) => unlocked.has(cid));
-  const monsterBribable = (b) => b.art !== "tyrant" && b.id !== "b23" && b.id !== "b25" && met.has("X:" + b.id) && !bribedSet.has(b.id);
+  /* v1.0.50: BESTECHEN IST EINE FREIGABE. Der Knopf existiert erst, nachdem
+     das erste echte Monster besiegt wurde (Freischalt-Ordnung "bestechen") -
+     vorher ist er nicht gesperrt, sondern GAR NICHT DA. Ein Knopf, den man
+     sieht, aber nicht versteht, ist schlechter als keiner. */
+  const bestechenOffen = freigegeben(profile, "bestechen");
+  const monsterBribable = (b) => bestechenOffen && b.art !== "tyrant" && b.id !== "b23" && b.id !== "b25" && met.has("X:" + b.id) && !bribedSet.has(b.id);
   const bribeMonster = (bossId, victim) => {
     if (gold < MONSTER_BRIBE_GOLD || !unlocked.has(victim)) return;
     // formations that fielded the victim are dissolved (they fall back to default)
@@ -1455,6 +1465,9 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
   }, [detail]);
   const champTile = (cid, origin) => {
     const ch = CHARACTERS[cid]; if (!ch) return null;
+    /* v1.0.50: VOR DEM ERWACHEN GIBT ES IHN NICHT - auch nicht im
+       Verzeichnis-Baum. Dieselbe Regel wie in Figurenliste und Chronik. */
+    if (cid === "gambit" && !gambitWach(profile)) return null;
     const img = schlichtAn() ? null : paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: characterLevel(profile, cid) || 1 });
     const own = unlocked.has(cid) || COURT_IDS.includes(cid);
     const seen = met.has(ch.kind);
@@ -1721,8 +1734,16 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
   const wide = useMedia("(min-width: 900px)");
   const [tab, setTab] = useState(initialTab || "tree"); // tree (der Hof) | formation | gear (der Haendler) | chron
   // Grand Gambit LEADS the roster — he is the piece the whole tale bends around.
-  const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
-  const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile));
+  /* v1.0.50 (Besitzerentscheid): VOR DEM ERWACHEN GIBT ES IHN NICHT. Bis zu
+     seinem Erwachen ist der Gambit ein blauer Bauer wie jeder andere - auf
+     dem Brett (leveling.js setzt army.hero nur bei gambitWach) UND hier in
+     der Figurenliste. Er taucht weder unter den eigenen noch unter den
+     verborgenen auf; das Erwachen soll ein Auftritt sein, keine Fussnote,
+     die man vorher schon nachlesen konnte. */
+  const gambitDa = gambitWach(profile);
+  const sichtbarErst = (c) => c.id !== "gambit" || gambitDa;
+  const rec = CHARACTER_LIST.filter((c) => isUnlocked(c, profile) && sichtbarErst(c)).sort((a, b) => (b.epic ? 1 : 0) - (a.epic ? 1 : 0));
+  const hid = CHARACTER_LIST.filter((c) => !isUnlocked(c, profile) && sichtbarErst(c));
   const H = ({ children }) => <div className="gg-serif" style={{ fontSize: 14, letterSpacing: ".14em",
     color: T.dim, margin: "6px 2px -4px", textTransform: "uppercase", gridColumn: wide ? "1 / -1" : undefined }}>{children}</div>;
   return <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 12, maxWidth: "100%", minWidth: 0, overflowX: "clip", paddingTop: 8 }}>

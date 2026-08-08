@@ -34,6 +34,7 @@ import { MysticBackground } from "./ui/MysticBackground.jsx";
 import { RissBoden } from "./ui/RissBoden.jsx";
 import { BrettHintergrund } from "./ui/BrettHintergrund.jsx";
 import { setSparmodus } from "./ui/sparmodus.js";
+import { setGegnerStil } from "./ui/gegnerstil.js";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
 import { WerkzeugTuer } from "./ui/WerkzeugTuer.jsx";
@@ -98,6 +99,7 @@ function reducer(state, a) {
     case "SET_CLASSIC_ELO": return { ...state, classicElo: a.elo };
     case "SET_HERO_COL": return { ...state, loadout: { ...state.loadout, heroCols: { ...(state.loadout.heroCols || {}), [a.mapId]: a.col } } };
     case "SET_SPAR": return { ...state, spar: { ...(state.spar || {}), [a.posten]: !!a.an } };   /* v1.0.37 */
+    case "SET_GEGNERSTIL": return { ...state, gegnerStil: a.stil };   /* v1.0.50: die Sicht auf den Gegner */
     case "SET_FORMATION": return { ...state, loadout: { ...state.loadout, formations: { ...(state.loadout.formations || {}), [formationKey(a.mapId, a.rules)]: a.formation } } };   /* v1.0.20: je Regelwerk ein Plan */
     case "CAMPAIGN_CLEAR": return advanceCampaign(state, a.id);
     case "RECORD_STAGE": return recordStage(state, a);
@@ -788,6 +790,7 @@ export function PlayHub({ profile, t, onQuick, onCamp, onOnline, onTutorial = nu
   /* v1.0.37: der Sparmodus steht VOR dem Zeichnen - sonst liefe ein Bild
      lang die teure Fassung. */
   setSparmodus(profile.spar);
+  setGegnerStil(profile.gegnerStil);   /* v1.0.50: die gewaehlte Sicht auf den Gegner */
   const en = profile.lang === "en";
   const hubWide = useMedia("(min-width: 900px)");
   const cur = nodeById(currentNodeId(profile));
@@ -1219,8 +1222,19 @@ function pendingTeach(profile) {
   const cleared = clearedCount(profile);
   const hasExtra = CHARACTER_LIST.some((c) => c.kind !== "P" && c.unlock?.type !== "start" && isUnlocked(c, profile));
   if (hasExtra && !n.teachFormation) return "teachFormation";
-  if (cleared >= 2 && !n.teachGambitXp) return "teachGambitXp";
-  if (cleared >= 3 && !n.teachGambitPos) return "teachGambitPos";
+  /* v1.0.50: ZWEI LEHRSTUNDEN SIND UMGEZOGEN.
+     teachGambitXp stand bei 2 Stationen - da ist der Gambit seit v1.0.50
+     noch gar nicht in der Welt (er erwacht bei 3, vorher ist er ein blauer
+     Bauer und taucht nirgends auf). Ueber die Erfahrung eines Helden zu
+     reden, den es noch nicht gibt, waere ein Loch in der Erzaehlung. Jetzt
+     kommt sie EINE Station NACH dem Erwachen, wenn sie zum ersten Mal
+     zutrifft.
+     teachGambitPos ist ganz gefallen: sie feuerte bei 3 Stationen - im
+     selben Atemzug wie die held-FREIGABE, die woertlich dasselbe sagt
+     ("Vor jeder Partie darfst du entscheiden, in welcher Spalte er
+     antritt"). Zwei Fenster nacheinander mit einem Inhalt sind keins zu
+     viel, sondern zwei. */
+  if (cleared >= 4 && !n.teachGambitXp) return "teachGambitXp";
   return null;
 }
 function TeachPopup({ which, t, dispatch }) {

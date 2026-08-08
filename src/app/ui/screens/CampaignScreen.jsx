@@ -686,7 +686,10 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                     borderRadius: "50%", background: T.danger, display: "flex", alignItems: "center", justifyContent: "center",
                     border: "1.5px solid #efe9da" }}><SkullIc color="#f6f0de" size={8} /></span>}
                 </button>
-                <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 24 : below ? 27 : 52, transform: "translateX(-50%)",
+                {/* v1.0.50 (Besitzerbefund): die Namen KLEBTEN an den Bubbles
+                    und standen teils schwer lesbar auf dem Gemaelde. Mehr
+                    Abstand (+4/+5) und darunter ein kraeftigeres Kissen. */}
+                <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 28 : below ? 32 : 57, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
                     {/* Land: a WHISPER of ground blends the label into a pale
@@ -695,9 +698,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                         name on the letters alone (bright ink, dark outline). */}
                     {/* ein weiches helles Kissen unter jedem Namen, damit die
                         Schrift auf jedem Untergrund stehen bleibt */}
-                    {!th.sea && <span aria-hidden style={{ position: "absolute", inset: "-9px -20px", borderRadius: "50%",
-                      background: "radial-gradient(ellipse at center, rgba(255,250,236,.34) 0%, rgba(255,250,236,.18) 40%, rgba(255,250,236,.06) 64%, transparent 80%)",
-                      filter: "blur(4px)", pointerEvents: "none" }} />}
+                    {!th.sea && <span aria-hidden style={{ position: "absolute", inset: "-11px -24px", borderRadius: "50%",
+                      background: "radial-gradient(ellipse at center, rgba(255,250,236,.52) 0%, rgba(255,250,236,.3) 42%, rgba(255,250,236,.11) 66%, transparent 82%)",
+                      filter: "blur(5px)", pointerEvents: "none" }} />}
                     <span className="gg-quill" style={{ position: "relative", display: "block", fontSize: 15.5, fontWeight: 700,
                       color: th.sea ? "#fbf6e8" : "#231d10",
                       lineHeight: 0.94, textShadow: th.sea

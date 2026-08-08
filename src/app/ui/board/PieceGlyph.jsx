@@ -3,6 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
+import { gegnerStil, grundfarbeWinkel } from "../gegnerstil.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -295,9 +296,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      deutlich goldener, der Gegner heller und kraeftiger im Riss-Violett
      (184,146,255 statt 150,105,255). Der Koenig behaelt sein ROYAL_HALO
      obenauf und bleibt so die Spitze des Massstabs. */
+  /* v1.0.50: DIE GEWAEHLTE SICHT AUF DEN GEGNER (gegnerstil.js). "farbig"
+     ist der Alltag; "grau" entfaerbt die Figur, laesst aber den Riss
+     violett; "getoent" macht auch den SCHIMMER grau - dort traegt die Figur
+     stattdessen ihre Grundfarbe als aufsteigenden Verlauf. Der klassische
+     Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
+  const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
       + " drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
+    : sicht === "getoent"
+    ? kante(206, 212, 224, gewaehlt ? 1.1 : 0.85)
+      + " drop-shadow(0 0 5px rgba(218,224,234,.5)) drop-shadow(0 0 12px rgba(190,198,214,.3))"
     : kante(184, 146, 255, gewaehlt ? 1.1 : 0.85)
       + " drop-shadow(0 0 5px rgba(214,196,255,.55)) drop-shadow(0 0 12px rgba(168,130,255,.34))";
   const klassisch = artStyle === "classic";
@@ -338,9 +348,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      lauter und drehte zugleich das Verhaeltnis um, in dem Gold und Violett
      zueinander standen. Beide Werte sind jetzt wieder die alten; die
      Sparsamkeit (ein Durchgang statt vier) bleibt. */
+  /* v1.0.50 (Besitzerwunsch): der RISS-SAUM des Gegners noch eine Spur
+     kraeftiger und breiter. Bewusst OHNE zusaetzlichen drop-shadow-Durchgang
+     (v1.0.41-Lektion: jeder Durchgang ist ein eigener Unschaerfe-Lauf) -
+     nur Radius 1.5 -> 2.4 und Deckung .85 -> .95. Die eigene Seite bleibt
+     beim leisen Gold von v1.0.48. */
   const SAUM_RUHIG = white
     ? "drop-shadow(0 0 1.5px rgba(240,214,138,.55))"
-    : "drop-shadow(0 0 1.5px rgba(184,146,255,.85))";
+    : sicht === "getoent"
+    ? "drop-shadow(0 0 2.4px rgba(206,213,225,.9))"
+    : "drop-shadow(0 0 2.4px rgba(184,146,255,.95))";
   const glow = klassisch
     ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
     : hervorgehoben
@@ -461,13 +478,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                 // kein Umfaerben, nur ein Hauch Licht fuer die Grossen
                 ? (isKing ? "brightness(1.08)" : isQueen ? "brightness(1.04)" : "none")
                 : white
-                ? (isKing ? "brightness(2.1) saturate(1.24) hue-rotate(8deg)"
-                  : isQueen ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
+                /* v1.0.50 (Besitzerbefund): Koenig und Dame der EIGENEN Seite
+                   standen zu hell. Die Aufhellung stammt aus der Zeit vor den
+                   HQ-Neuschnitten (v1.0.39) - seither sind die Vorlagen selbst
+                   heller, die alte Verstaerkung darauf war zu viel.
+                   Koenig 2.1 -> 1.78, Dame 1.62 -> 1.40 (~15 % zurueck). */
+                ? (isKing ? "brightness(1.78) saturate(1.22) hue-rotate(8deg)"
+                  : isQueen ? "brightness(1.40) saturate(1.22) hue-rotate(8deg)"
                   : isBoss ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
                   : piece.hero ? "brightness(1.12) saturate(1) hue-rotate(8deg)"
                   : isPawn ? "brightness(0.97) saturate(0.82) hue-rotate(8deg)"
                   : "brightness(1.32) saturate(1.02) hue-rotate(8deg)")
-                : ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
+                : (sicht !== "farbig" ? "grayscale(1) " : "") + ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
                   : isQueen ? " brightness(1.42) saturate(1.18)"
                   : isBoss ? " brightness(1.42) saturate(1.18)"
                   : piece.hero ? " brightness(1)"
@@ -475,6 +497,20 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : " brightness(1.16) saturate(0.98)"),
               userSelect: "none", pointerEvents: "none" }} />
           : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} bossId={piece.bossId} hero={showHero} />}
+        {/* v1.0.50: DIE GRUNDFARBE STEIGT AUF. Nur im getoenten Stil: eine
+            zweite, deckungsgleiche Kopie des Bildes, per sepia+hue auf die
+            Grundfarbe der Figurenart gedreht und mit einer LINEAREN
+            Verlaufsmaske von unten eingeblendet. Linear-Verlaeufe sind fuer
+            den Grafikkern trivial - die teuren Figurmasken aus der
+            Ruckel-Geschichte (v1.0.37) braucht es dafuer nicht. */}
+        {painting && sicht === "getoent" && (
+          <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "contain", objectPosition: big ? "center" : "center bottom",
+            filter: `grayscale(1) sepia(1) hue-rotate(${grundfarbeWinkel(piece.kind)}deg) saturate(2.4) brightness(0.92)`,
+            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.94) 10%, rgba(0,0,0,0) 74%)",
+            maskImage: "linear-gradient(0deg, rgba(0,0,0,.94) 10%, rgba(0,0,0,0) 74%)",
+            userSelect: "none", pointerEvents: "none" }} />)}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the

@@ -39,10 +39,13 @@ function loneBoss(boss) {
 }
 
 // 2) leap spec: camel moves from an open square
+// v1.0.50: der Hetzer traegt jetzt 8 Kamel-Weiten PLUS 4 gerade
+// Einzelschritte (Besitzerbefund: Kamel pur ist farbgebunden und ohne
+// Nahzugriff - 50 von 100 Feldern). Die Probe zaehlt beide Gangarten.
 {
-  const { s, from } = loneBoss(bossById("b02")); // camel (1,3)/(3,1)
+  const { s, from } = loneBoss(bossById("b02")); // camel (1,3)/(3,1) + ortho-1
   const mv = legalMovesFrom(s, from);
-  ok("camel boss has exactly 8 leaps in the open", mv.length === 8 && mv.every((m) => m.special === "leap"));
+  ok("camel boss has 8 leaps plus 4 steps in the open", mv.length === 12 && mv.every((m) => m.special === "leap"));
   ok("camel leap geometry (3,1)", mv.some((m) => m.to === idx(7, 5, 8)) && mv.some((m) => m.to === idx(1, 3, 8)));
 }
 
@@ -123,6 +126,53 @@ const ERWACHEN = CAMPAIGN.find((st) => /erwacht|magic wakes/.test(st.storyDe || 
   const round = decodeState(encodeState(st));
   const bi = round.board.findIndex((p) => p && p.kind === "X");
   ok("codec roundtrips boss moveSpec + spawn budget", bi !== -1 && !!round.board[bi].moveSpec && typeof round.board[bi].spawnLeft === "number");
+}
+
+// ── JEDE FIGUR ERREICHT IHR BRETT (v1.0.50, Besitzerbefund) ────────────────
+// "Sind echt alle Bewegungsmuster von Figuren sinnvoll spielbar? Gerade der
+// Hetzer - man erreicht ja am Ende gar nicht alle Felder." Die Analyse gab
+// ihm recht, und mehr: der Techniker sass auf einem 2x2-Untergitter fest,
+// 25 von 100 Feldern. Vier Muster wurden repariert (Hetzer, Bollwerk,
+// Kundschafter, Techniker: gerader Einzelschritt dazu); vier bleiben
+// ABSICHTLICH farbgebunden, weil sie die Laeufer-Familie sind - deren
+// Bindung ist das aelteste, lesbarste Merkmal des Schachs.
+// Die Probe haelt beides fest: kein Muster faellt je unter 50, und nur die
+// benannte Laeufer-Familie darf ueberhaupt unter 100 liegen.
+{
+  const { CHARACTERS } = await import("./src/content/characters.js");
+  const W = 10, H = 10;
+  const deckung = (spec) => {
+    if (!spec) return 100;
+    const leaps = spec.leaps || [], slides = spec.slides || [], range = spec.range || 99;
+    const seen = new Set([45]); const q = [45];
+    while (q.length) {
+      const i = q.pop(); const f = i % W, r = (i / W) | 0;
+      for (const [dx, dy] of leaps) { const x = f + dx, y = r + dy;
+        if (x >= 0 && x < W && y >= 0 && y < H) { const j = y * W + x; if (!seen.has(j)) { seen.add(j); q.push(j); } } }
+      for (const [dx, dy] of slides) for (let k = 1; k <= range; k++) {
+        const x = f + dx * k, y = r + dy * k;
+        if (x < 0 || x >= W || y < 0 || y >= H) break;
+        const j = y * W + x; if (!seen.has(j)) { seen.add(j); q.push(j); } }
+    }
+    return seen.size;
+  };
+  const laeuferFamilie = new Set(["b13", "assassin", "mage", "warlock"]);
+  let alleOk = true, mind50 = true;
+  for (const b of BOSSES) {
+    const d = deckung(b.moveSpec);
+    if (d < 50) mind50 = false;
+    if (d < 100 && !laeuferFamilie.has(b.id)) alleOk = false;
+  }
+  for (const c of Object.values(CHARACTERS)) {
+    if (!c.moveSpec) continue;
+    const d = deckung(c.moveSpec);
+    if (d < 50) mind50 = false;
+    if (d < 100 && !laeuferFamilie.has(c.id)) alleOk = false;
+  }
+  ok("kein Zugmuster laesst je mehr als die halbe Welt unerreichbar", mind50);
+  ok("und unter 100 liegt nur die benannte Laeufer-Familie", alleOk);
+  ok("der Hetzer erreicht jetzt jedes Feld", deckung(bossById("b02").moveSpec) === 100);
+  ok("der Techniker haengt nicht mehr auf dem 2x2-Gitter", deckung(CHARACTERS.engineer.moveSpec) === 100);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
