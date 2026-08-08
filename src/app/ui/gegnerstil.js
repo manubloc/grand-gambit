@@ -37,24 +37,52 @@ export function gegnerStil() {
   return stil;
 }
 
-/* Die Grundfarbe je FigurenART fuer den getoenten Stil - kraeftig und
-   untereinander klar unterscheidbar. Gewaehlt als hue-rotate-Winkel auf
-   sepia(1): sepia legt ein warmes Orange (~40 Grad) an, der Winkel dreht es
-   auf die Zielfarbe. So braucht es KEINE Maske auf der Figurform - nur eine
-   billige lineare Verlaufsmaske auf der Tonschicht. */
-export const GRUNDFARBE_WINKEL = {
-  P: 170,   // Bauer: stahlblau
-  N: 65,    // Springer: gruen
-  B: 140,   // Laeufer: tuerkis
-  R: 300,   // Turm: rot
-  Q: 230,   // Dame: violett
-  K: 0,     // Koenig: gold bleibt gold
-  A: 210,   // Erzbischof-Schiene: blauviolett
-  C: 320,   // Kanzler-Schiene: purpurrot
-  X: 20,    // Monster: gluehendes orange
-  D: 330,   // Drache: rot
+/* ── ALLES LILA, DIE GEFAHR MACHT DEN UNTERSCHIED (v1.0.54, Besitzerwunsch) ─
+   Die erste Fassung gab jeder Figurenart ihre eigene Farbe - Bauer blau,
+   Springer gruen, Turm rot. Der Besitzer will es anders und es ist die
+   bessere Idee: EIN Farbton fuer die ganze Gegnerseite, naemlich das Lila
+   des Risses, und was die Figuren unterscheidet, ist die HELLIGKEIT - je
+   gefaehrlicher, desto heller und satter leuchtet sie.
+
+   Damit liest sich das Brett auf einen Blick als Bedrohungskarte: der Bauer
+   glimmt dunkel, die Dame und die Monster stehen hell heraus. Das ist eine
+   Auskunft, die dem Spieler etwas SAGT - eine Farbe je Figurenart war nur
+   Dekoration.
+
+   Der Winkel bleibt fuer alle gleich (das Lila), gestaffelt werden
+   Saettigung und Helligkeit. Die Stufen folgen dem Figurenwert, wie ihn
+   jeder Schachspieler im Kopf hat. */
+const LILA_WINKEL = 232;          // sepia(1) auf das Riss-Violett gedreht
+
+/* Gefahr je Figurenart: 0 = harmlos, 1 = furchteinfloessend. */
+const GEFAHR = {
+  P: 0.00,   // Bauer
+  N: 0.34,   // Springer
+  B: 0.34,   // Laeufer
+  R: 0.55,   // Turm
+  A: 0.68,   // Erzbischof
+  C: 0.78,   // Kanzler
+  Q: 0.88,   // Dame
+  K: 0.72,   // Koenig - gewichtig, aber nicht das schaerfste Schwert
+  D: 1.00,   // Drache
+  X: 1.00,   // Monster und Meister
 };
 
-export function grundfarbeWinkel(kind) {
-  return GRUNDFARBE_WINKEL[kind] ?? 200;
+export const gefahrVon = (kind) => GEFAHR[kind] ?? 0.5;
+
+/** Die Toenung einer gegnerischen Figur: ein Lila fuer alle, aber je
+ *  gefaehrlicher die Figur, desto heller und satter. */
+export function toenung(kind) {
+  const g = gefahrVon(kind);
+  return {
+    winkel: LILA_WINKEL,
+    saettigung: (1.5 + 1.7 * g).toFixed(2),   // 1.50 -> 3.20
+    helligkeit: (0.72 + 0.5 * g).toFixed(2),  // 0.72 -> 1.22
+    deckung: (0.78 + 0.2 * g).toFixed(2),     // der Verlauf traegt weiter oben
+  };
+}
+
+/* Bleibt als Zugang erhalten - liefert jetzt fuer alle dasselbe Lila. */
+export function grundfarbeWinkel() {
+  return LILA_WINKEL;
 }

@@ -3,7 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { gegnerStil, grundfarbeWinkel } from "../gegnerstil.js";
+import { gegnerStil, toenung } from "../gegnerstil.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -302,6 +302,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      stattdessen ihre Grundfarbe als aufsteigenden Verlauf. Der klassische
      Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
   const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
+  const ton = toenung(piece.kind);   /* v1.0.54: Lila-Staerke nach Gefahr */
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
       + " drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
@@ -489,7 +490,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                   : piece.hero ? "brightness(1.12) saturate(1) hue-rotate(8deg)"
                   : isPawn ? "brightness(0.97) saturate(0.82) hue-rotate(8deg)"
                   : "brightness(1.32) saturate(1.02) hue-rotate(8deg)")
-                : (sicht !== "farbig" ? "grayscale(1) " : "") + ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
+                /* v1.0.54 (Besitzerwunsch): Graustufen mit MEHR KONTRAST und
+                   heller - ausser beim Koenig, der stand schon hell genug.
+                   contrast(1.35) und ein Helligkeitsschub von 1.18; der
+                   Koenig bekommt nur den Kontrast, keinen Schub. */
+                : (sicht === "grau" ? `grayscale(1) contrast(1.35) brightness(${isKing ? 1 : 1.18}) `
+                   : sicht === "getoent" ? "grayscale(1) " : "") + ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
                   : isQueen ? " brightness(1.42) saturate(1.18)"
                   : isBoss ? " brightness(1.42) saturate(1.18)"
                   : piece.hero ? " brightness(1)"
@@ -507,9 +513,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
             objectFit: "contain", objectPosition: big ? "center" : "center bottom",
-            filter: `grayscale(1) sepia(1) hue-rotate(${grundfarbeWinkel(piece.kind)}deg) saturate(2.4) brightness(0.92)`,
-            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.94) 10%, rgba(0,0,0,0) 74%)",
-            maskImage: "linear-gradient(0deg, rgba(0,0,0,.94) 10%, rgba(0,0,0,0) 74%)",
+            /* v1.0.54: ein Lila fuer alle, gestaffelt nach Gefahr (gegnerstil.js).
+               Der Bauer glimmt dunkel, Dame und Monster leuchten hell - das
+               Brett liest sich als Bedrohungskarte statt als Farbkasten. */
+            filter: `grayscale(1) sepia(1) hue-rotate(${ton.winkel}deg) saturate(${ton.saettigung}) brightness(${ton.helligkeit})`,
+            WebkitMaskImage: `linear-gradient(0deg, rgba(0,0,0,${ton.deckung}) 10%, rgba(0,0,0,0) 76%)`,
+            maskImage: `linear-gradient(0deg, rgba(0,0,0,${ton.deckung}) 10%, rgba(0,0,0,0) 76%)`,
             userSelect: "none", pointerEvents: "none" }} />)}
       </div>
 
