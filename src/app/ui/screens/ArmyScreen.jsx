@@ -348,6 +348,7 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
             <span style={{ width: 40, height: 50, display: "grid", placeItems: "center" }}>
               {(!schlichtAn() && paintedById(ch.id))
                 ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+                    transform: `translateX(${(-sockelVersatz(ch.id) * 100).toFixed(2)}%)`,
                     filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
                 : <PieceArt kind={ch.kind} size={32} level={1} />}
             </span>
@@ -412,6 +413,7 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
           <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
             {(paintedById("boss-" + b.id) || paintedById("boss-" + b.art))
               ? <img src={paintedById("boss-" + b.id) || paintedById("boss-" + b.art)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+                  transform: `translateX(${(-sockelVersatz("boss-" + b.id) * 100).toFixed(2)}%)`,
                   filter: seen ? "none" : "grayscale(1) brightness(.35)" }} />
               : <span style={{ fontSize: 24, filter: seen ? "none" : "grayscale(1) brightness(.4)" }}>👁</span>}
           </span>
@@ -1438,7 +1440,14 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
              noch etwas groesser sein." 104 % liessen an den Seiten Luft, die
              die Kachel groesser wirken liess als ihr Bild. Jetzt 118 % mit
              etwas mehr Ueberhang nach unten. */
+        /* v1.0.56 (Besitzerbefund, VIERTE Meldung): DIESE Kachel war es. Ich
+           hatte den Sockelausgleich in der Aufstellung und in der Detailkarte
+           gesetzt - aber der HOFSTAAT, also genau das Bild, das der Besitzer
+           jedes Mal fotografiert hat, rendert ueber einen dritten Weg, den
+           ich nie angefasst habe. Darum "hat sich nichts geaendert": es
+           stimmte, meine Aenderungen liefen an dieser Ansicht vorbei. */
         style={{ width: "118%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -7px",
+        transform: `translateX(${(-sockelVersatz(kunstId({ kind: ch.kind, hero: cid === "gambit" })) * 100).toFixed(2)}%)`,
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
@@ -1618,6 +1627,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
                 /* v1.0.14 (Besitzer): im Popup war oben Luft - das Bild nimmt sie. */
                 style={{ width: 148, height: 178, objectFit: "contain", objectPosition: "bottom", cursor: "zoom-in",
+                transform: `translateX(${(-sockelVersatz("boss-" + b.id) * 100).toFixed(2)}%)`,
                 filter: `drop-shadow(0 0 10px ${T.riftGlow})` }} />}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>

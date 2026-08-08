@@ -1055,5 +1055,24 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("wer mittig sitzt, bekommt keinen Ausgleich", sockelVersatz("gibtsnicht") === 0);
 }
 
+/* ── JEDE ANSICHT GLEICHT AUS (v1.0.56) ────────────────────────────────────
+   Der Besitzer meldete VIERMAL, dass die Figuren im Hofstaat rechts stehen.
+   Beim vierten Mal war die Antwort nicht mehr die Messung, sondern die
+   Stelle: ich hatte den Ausgleich in der Aufstellung und in der Detailkarte
+   gesetzt - der HOFSTAAT aber, genau das Bild auf seinen Fotos, rendert
+   ueber einen DRITTEN Weg (champTile), den ich nie angefasst hatte. Darum
+   "hat sich nichts geaendert": es stimmte.
+   Diese Probe zaehlt die Stellen. Wer eine neue Figurenansicht baut und den
+   Ausgleich vergisst, faellt hier auf - nicht erst beim Besitzer. */
+{
+  const { readFileSync } = await import("node:fs");
+  const quelle = readFileSync("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+  const bilder = (quelle.match(/paintedById\(|paintedForPiece\(/g) || []).length;
+  const ausgleiche = (quelle.match(/sockelVersatz\(/g) || []).length;
+  ok("der Hofstaat gleicht aus (champTile)", /width: "118%"[\s\S]{0,240}sockelVersatz\(/.test(quelle));
+  ok("mindestens sechs Ansichten tragen den Ausgleich", ausgleiche >= 6);
+  ok("und es gibt ueberhaupt Figurenbilder zu korrigieren", bilder >= 6);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
