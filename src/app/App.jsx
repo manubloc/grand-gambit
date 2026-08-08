@@ -425,18 +425,36 @@ export default function App() {
      zum Verstellen mehr, sondern der volle Blick auf alles Bildmaterial des
      Hauses, mit Titel, Dateiname und Ladeknopf. Der alte Weg ?werkstatt
      bleibt bestehen. */
-  if (werkstatt) return torAuf
-    ? <SchaukammerScreen />
-    : <WerkzeugTuer was="Schaukammer" onOffen={() => setTorAuf(true)} />;
+  /* ── WER ADMIN IST, KLOPFT NICHT (v1.0.52, Besitzerwunsch) ──────────────
+     Der Besitzer stand VIERMAL vor dieser Tuer. Sein Einwand ist richtig
+     und einfacher als alles, was ich gebaut habe: wer sich bereits als
+     Admin angemeldet hat, HAT das Wort schon gesagt. Ein zweites Mal danach
+     zu fragen ist keine zusaetzliche Sicherheit, sondern nur eine
+     zusaetzliche Fehlerquelle - und genau die hat ihn ausgesperrt.
+     Darum: erst warten, bis die Anmeldung geklaert ist (sonst faende ein
+     Admin die Tuer vor, bloss weil sein Konto noch nicht geladen war), dann
+     Admins durchlassen. Fuer alle anderen bleibt die Tuer stehen - der
+     direkte Weg ueber "?werkstatt" ohne Konto soll weiter etwas kosten. */
+  const werkzeugFrei = !!account?.isAdmin || torAuf;
+  if (werkstatt) {
+    if (!authReady) return null;
+    return werkzeugFrei ? <SchaukammerScreen />
+      : <WerkzeugTuer was="Schaukammer" onOffen={() => setTorAuf(true)} />;
+  }
   // DIE KLANGWERKSTATT (Besitzer, v0.79): alle Klaenge zum Abhoeren, ueber die
   // echte klang()-Schicht - nur ueber ?klangwerkstatt erreichbar.
-  if (klangwerkstatt) return torAuf
-    ? <KlangWerkstattScreen />
-    : <WerkzeugTuer was="Klangwerkstatt" onOffen={() => setTorAuf(true)} />;
+  if (klangwerkstatt) {
+    if (!authReady) return null;
+    return werkzeugFrei ? <KlangWerkstattScreen />
+      : <WerkzeugTuer was="Klangwerkstatt" onOffen={() => setTorAuf(true)} />;
+  }
   // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
   // DAS SPIELERBUCH (Besitzer, v0.73): Liste, Fortschritt, Herkunft.
-  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch"))
-    return torAuf ? <SpielerbuchScreen /> : <WerkzeugTuer was="Spielerbuch" onOffen={() => setTorAuf(true)} />;
+  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("spielerbuch")) {
+    if (!authReady) return null;
+    return werkzeugFrei ? <SpielerbuchScreen />
+      : <WerkzeugTuer was="Spielerbuch" onOffen={() => setTorAuf(true)} />;
+  }
   if (adminPortal) return <AdminPortal />;
   if (!authReady) return null;
   if (!account) return <LoginScreen onSignedIn={(acc) => setAccount(acc)} />;

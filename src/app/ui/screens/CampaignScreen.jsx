@@ -1,5 +1,6 @@
 // Campaign — a HORIZONTAL illustrated journey, now a full-screen WINDOW onto
 import { familyOf } from "../../../core/index.js";
+import karteGambit from "../assets/karte-gambit.webp";   /* v1.0.52: Sockel auf die Marke gestaucht */
 import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen leise */
 // the world: the map IS the screen (100dvh minus the app header), every piece
 // of UI floats above it. The Old Watch stands on the left, the crimson LIGA
@@ -659,14 +660,18 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                       : <Swords />}
                   </div>; })()}
                   </div>
+                  {/* v1.0.52 (Besitzerbefund): DER HAKEN WAR ZU LEISE. Groesser
+                      und in kraeftigerem Lila - er markiert einen Sieg, das
+                      darf man sehen. 12 -> 16 px im Buchmodus, das Siegel
+                      13 -> 17 px, und der Farbton von #c4a6ff auf das
+                      saettigere #b388ff bzw. #7c3aed im Verlauf. */}
                   {st === "cleared" && (bm
                     ? <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-72%)",
-                        // v0.73.1 (Besitzer): der Haken leuchtet LILA, nicht gruen
-                        fontSize: 12, fontWeight: 900, color: "#c4a6ff", opacity: 1,
-                        textShadow: "0 0 6px rgba(139,92,246,.95), 0 1px 2px rgba(0,0,0,.85)" }}>✓</span>
-                    : <span style={{ position: "absolute", top: 2, right: 2, width: 13, height: 13, borderRadius: "50%",
-                        background: "linear-gradient(160deg,#a78bfa,#6d28d9)", color: "#fdfbff", fontSize: 8.5, fontWeight: 900,
-                        boxShadow: "0 0 8px rgba(139,92,246,.85)", display: "flex", alignItems: "center",
+                        fontSize: 16, fontWeight: 900, color: "#b388ff", opacity: 1,
+                        textShadow: "0 0 9px rgba(124,58,237,1), 0 0 4px rgba(139,92,246,.95), 0 1px 2px rgba(0,0,0,.9)" }}>✓</span>
+                    : <span style={{ position: "absolute", top: 1, right: 1, width: 17, height: 17, borderRadius: "50%",
+                        background: "linear-gradient(160deg,#b388ff,#5b21b6)", color: "#fdfbff", fontSize: 11, fontWeight: 900,
+                        boxShadow: "0 0 11px rgba(124,58,237,.95), 0 1px 3px rgba(0,0,0,.5)", display: "flex", alignItems: "center",
                         justifyContent: "center", border: "1.5px solid #e3d8ff" }}>✓</span>)}
                   {/* DAS SCHLOSS AM WEG: eine verschlossene Station traegt ein
                       deutliches goldenes Siegel - man sieht auf einen Blick, wo
@@ -689,7 +694,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                 {/* v1.0.50 (Besitzerbefund): die Namen KLEBTEN an den Bubbles
                     und standen teils schwer lesbar auf dem Gemaelde. Mehr
                     Abstand (+4/+5) und darunter ein kraeftigeres Kissen. */}
-                <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 28 : below ? 32 : 57, transform: "translateX(-50%)",
+                <div style={{ position: "absolute", left: "50%", [bm || below ? "top" : "bottom"]: bm ? 33 : below ? 38 : 63, transform: "translateX(-50%)",
                   width: 96, textAlign: "center", opacity: st === "locked" ? 0.55 : st === "gated" ? 0.85 : 1, pointerEvents: "none" }}>
                   <span style={{ position: "relative", display: "inline-block", padding: "1px 6px" }}>
                     {/* Land: a WHISPER of ground blends the label into a pale
@@ -727,7 +732,9 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
               title="Gambit" style={{ position: "absolute", left: nx(tn), top: ny(tn),
                 width: Math.round(96 * tiefeWanderer(ny(tn), HM)), height: Math.round(98 * tiefeWanderer(ny(tn), HM)), zIndex: 5,
               pointerEvents: "auto", cursor: "pointer", transition: `left .72s ${CAM_EASE}, top .72s ${CAM_EASE}, transform .18s ease`,
-              transform: (bm ? "translate(-50%,-102%) perspective(640px) rotateX(11deg)" : "translate(-98%,-70%)"),
+              /* v1.0.52: -102% liess ihn UEBER dem Marker schweben; -88% setzt den
+                 gestauchten Sockel darauf. */
+              transform: (bm ? "translate(-50%,-88%) perspective(640px) rotateX(7deg)" : "translate(-98%,-70%)"),
               transformOrigin: "50% 96%", transformStyle: "preserve-3d" }}>
 
               {/* the wake: a golden streak trailing opposite the heading, fading once he rests */}
@@ -763,7 +770,17 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                   // v1.0.41: Es gibt nur noch EINEN Satz - die Livree-Weiche
                   // ist fort. Der Karten-Gambit zeigt seine aktuelle Stufe.
                   const gt = gambitTier(characterLevel(profile, "gambit") || 1);
-                  const src = (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit;
+                  /* v1.0.52 (Besitzerwunsch): AUF DER MARKE STEHEN, nicht
+                     daneben. Der Karten-Gambit traegt eine eigene Fassung
+                     (karte-gambit.webp): sein Sockel ist auf 1.62 Breite
+                     geweitet und auf 1.75 Hoehe gestaucht - aus dem Oval
+                     von vorn wird eine flach liegende Scheibe, wie man sie
+                     von schraeg oben sieht. Damit deckt sie den runden
+                     Stationsmarker, statt danebenzustehen.
+                     Reine Bildbearbeitung aus painted-gambit; sobald die
+                     Rangbilder da sind, laesst sich dasselbe fuer t2-t6
+                     rechnen (tools-Schnipsel im Commit v1.0.52). */
+                  const src = karteGambit;
                   return bm && src
                     ? <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%",
                         objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />

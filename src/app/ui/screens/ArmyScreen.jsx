@@ -20,7 +20,7 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
+import { sockelVersatz, kunstId, paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -44,7 +44,12 @@ function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
      staerksten auf, weil dort acht verschiedene Figuren nebeneinander stehen
      und die Versaetze sich nicht mehr wegmitteln. Derselbe Wert wie am
      Brett, gegenlaeufig: -x schiebt den Inhalt in die Mitte der Kachel. */
-  const versatz = -(paintedFitFor(stueck).x || 0) * 100;
+  /* v1.0.52 (Besitzerbefund): UEBER DEN SOCKEL, nicht ueber die Silhouette.
+     paintedFitFor(...).x misst die ganze Gestalt - ein Laeufer mit Mitra und
+     Stab zog sie zur Seite, obwohl sein Sockel gerade stand, und mein
+     Ausgleich schob ihn daraufhin erst recht nach rechts. Der Standfuss ist
+     der Anker, an dem das Auge nebeneinanderstehende Figuren ausrichtet. */
+  const versatz = -sockelVersatz(kunstId(stueck)) * 100;
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
         objectPosition: "center center", transform: `translateX(${versatz.toFixed(2)}%)`,
@@ -505,7 +510,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                  Wert, gegenlaeufig angewandt: -x schiebt den Inhalt zurueck
                  in die Mitte der Platte. */
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
-              transform: `translateX(${(-(paintedFitById(char.id).x || 0) * 100).toFixed(2)}%)`,
+              transform: `translateX(${(-sockelVersatz(char.id) * 100).toFixed(2)}%)`,
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
         {/* v1.0.11 (Besitzer): der Vektor-Zwilling im Eck ist fort — die

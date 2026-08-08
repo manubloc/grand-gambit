@@ -393,6 +393,47 @@ const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
    Ausreissern bis 10 % der Breite - genug, um ins Auge zu fallen.
    paintedFitFor braucht ein Spielfigur-Objekt und geht ueber kind; Karten
    kennen aber ihre ID. Darum dieser Zugang. */
+/* ── DER SOCKEL IST DER ANKER (v1.0.52, Besitzerbefund) ────────────────────
+   "Du musst es ueber den Sockel mittig ausrichten." Genau da lag mein
+   Fehler: PAINTED_FIT.x misst den Versatz der GESAMTEN Silhouette. Ein
+   Laeufer mit Mitra und erhobenem Stab zieht seine Bounding-Box zur Seite,
+   waehrend sein Sockel gerade steht - mein Ausgleich schob ihn daraufhin
+   erst nach rechts. Ich habe es mit dem Fix schlimmer gemacht als vorher.
+
+   SOCKEL_X misst stattdessen die Mitte der untersten 12 % des Bildinhalts:
+   den Standfuss, und der ist es, an dem das Auge Figuren in einer Reihe
+   ausrichtet. Gemessen ueber alle 65 Spielfassungen; nur Werte ab 0.6 %
+   stehen hier, darunter ist es Rauschen.
+
+   Das BRETT bleibt bei PAINTED_FIT.x - dort sitzt die Figur allein auf
+   ihrem Feld, dort stimmt der Silhouetten-Ausgleich, und der Besitzer hat
+   daran nie etwas auszusetzen gehabt. Kacheln stehen NEBENEINANDER, und
+   nur dort zaehlt der gemeinsame Standfuss. */
+const SOCKEL_X = {
+  "alchemist": 0.0434, "amazon": 0.0069, "archbishop": -0.0208, "assassin": 0.033,
+  "bard": 0.0252, "bishop": 0.0069, "boss-b01": -0.0295, "boss-b04": 0.0252,
+  "boss-b05": 0.0069, "boss-b06": -0.0069, "boss-b08": -0.013, "boss-b09": 0.0104,
+  "boss-b10": -0.0113, "boss-b11": -0.0087, "boss-b12": -0.0234, "boss-b13": 0.0295,
+  "boss-b15": 0.0191, "boss-b20": 0.0182, "boss-b22": -0.0174, "captain": 0.0061,
+  "chancellor": 0.0148, "engineer": 0.0078, "gambit": -0.013, "guardian": -0.0113,
+  "hawk": -0.0625, "inquisitor": 0.0694, "knight": -0.0113, "mage": 0.0087,
+  "paladin": 0.0095, "pathfinder": 0.0087, "pawn": 0.0191, "rook": 0.0087,
+  "standard": -0.0495, "strategist": 0.0191, "warlock": 0.0391,
+};
+
+/** Der Sockelversatz einer Figur - fuer alles, was Figuren NEBENEINANDER
+ *  zeigt (Hofstaat, Aufstellung, Verzeichnis). */
+export const sockelVersatz = (id) => SOCKEL_X[id] || 0;
+
+/** Welchen SOCKEL-Schluessel traegt diese Spielfigur? Folgt derselben
+ *  Reihenfolge wie paintedRoh: Boss vor Held vor Figurenart. */
+export function kunstId(piece) {
+  if (!piece) return "";
+  if (piece.bossId) return piece.bossId.startsWith("pb_") ? piece.bossId.slice(3) : "boss-" + piece.bossId;
+  if (piece.hero) return "gambit";
+  return KIND2ID[piece.kind] || "";
+}
+
 export const paintedFitById = (id) => PAINTED_FIT[id] || { h: 1, y: 0, x: 0 };
 
 export function paintedFitFor(piece) {
