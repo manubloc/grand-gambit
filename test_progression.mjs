@@ -89,12 +89,17 @@ ok("the climb grows steep: 2/3/4/6/8/10 SP by tier", upgradeCost("gambit", 1) ==
 ok("the full road to 60 costs 328 SP", Array.from({ length: 59 }, (_, i) => upgradeCost("gambit", i + 1)).reduce((a, b) => a + b, 0) === 328);
 ok("the risen gambit banks shields all the way: 6 at L30, 11 at L60", resolveCharacter(CHARACTERS.gambit, 30, null).shield === 6 && resolveCharacter(CHARACTERS.gambit, 60, null).shield === 11 && resolveCharacter(CHARACTERS.gambit, 10, null).shield === 2);
 ok("the gambit can be upgraded past ten", characterLevel(upgradePiece({ sp: 99, pieces: { levels: { gambit: 10 } } }, "gambit"), "gambit") === 11);
-/* v0.81: DER HELD TRITT ERST NACH DREI GESCHAFFTEN STATIONEN AN. Vorher
-   fuehrt niemand die Armee - die Bauernreihe ist eine Bauernreihe. */
+/* v1.0.49 (Besitzerentscheid): DER HELD STEHT VON ANFANG AN. Bis v1.0.48 trat
+   er erst nach drei geschafften Stationen an. Der Gambit ist aber die Figur,
+   die auf der KARTE die ganze Zeit zu sehen ist - der Spieler soll vom ersten
+   Zug an wissen, welcher seiner Bauern er ist. Ein Held, den man erst
+   kennenlernt, nachdem man ihn dreimal aufs Feld geschickt hat, erklaert sich
+   zu spaet. GAMBIT_ERWACHT_AB steht darum auf 0; die Schwelle bleibt als
+   Konstante bestehen, damit ein spaeteres Anheben eine Zahl ist, keine Regel. */
 const wach = { pieces: { levels: { gambit: 15 } }, campaign: { cleared: ["L01s01", "L01s02", "L01s03"] } };
-ok("vor dem Erwachen fuehrt KEIN Held die Armee",
-  buildArmyForMap({ pieces: { levels: { gambit: 15 } }, campaign: { cleared: ["L01s01", "L01s02"] } }, mapById("arena")).hero === undefined);
-ok("nach drei Stationen steht er wieder in Reih und Glied", !!buildArmyForMap(wach, mapById("arena")).hero);
+ok("der Held fuehrt die Armee von der ERSTEN Partie an",
+  !!buildArmyForMap({ pieces: { levels: { gambit: 15 } }, campaign: { cleared: [] } }, mapById("arena")).hero);
+ok("und bleibt es natuerlich auch spaeter", !!buildArmyForMap(wach, mapById("arena")).hero);
 ok("the hero spec carries his tier onto the board", buildArmyForMap(wach, mapById("arena")).hero.spec.tier === 2);
 /* v1.0.45 (Besitzerentscheid): DAS ERZWUNGENE STUFE-II-BILD IST FORT. Es
    zeigte ab dem ersten Atemzug den schwarz-goldenen Prunkritter - eine

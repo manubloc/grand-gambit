@@ -18,7 +18,11 @@
  * Fuer diesen Zweck ist das Schloss angemessen; fuer mehr nicht.
  */
 
-const PRUEFWERT = "eea596458e22f40ad615001323a7191eb6c9d9f03e69dbaad573fbd2df04abd3";
+/* v1.0.49: auf das NEUE Admin-Wort gezogen (v1.0.47/48). Das alte war
+   dasselbe, das in der oeffentlichen Historie steht - die Tuer stand also
+   fuer jeden offen, der dort nachsieht. Wieder nur der Pruefwert; das Wort
+   selbst hat weder Datei noch Commit beruehrt. */
+const PRUEFWERT = "5a7e465e58301cea152fdff6bac54910bc20328308aaafe19f78c41547426257";
 const SCHLUESSEL = "gg:werkzeug:offen";
 
 /** Prueft ein Wort gegen den hinterlegten Wert. */

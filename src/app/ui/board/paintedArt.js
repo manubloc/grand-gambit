@@ -277,8 +277,6 @@ export function paintedForPiece(piece, fuersBrett = false) {
    Alles andere (Offiziere, Hofstaat, Bosse) bleibt einfarbig wie bisher -
    der Besitzer hat ausdruecklich nur die Bauern genannt, und ein halb
    umgefaerbtes Heer waere schlimmer als ein einheitliches. */
-import { CARVED_LIGHT } from "./carvedArt.js";
-const EIGENER_BAUER = CARVED_LIGHT.pawn || null;
 
 function paintedRoh(piece) {
   if (!piece) return null;
@@ -299,10 +297,13 @@ function paintedRoh(piece) {
     return (gt > 1 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
   }
   const id = KIND2ID[piece.kind];
-  /* Der eigene Bauer traegt Gruen. Erst HIER geprueft, nicht oben: der
-     Gambit ist ebenfalls kind "P" und muss vorher durch seinen eigenen
-     Zweig gelaufen sein, sonst stuende der Held als schlichter Bauer da. */
-  if (id === "pawn" && piece.color === "w" && EIGENER_BAUER) return EIGENER_BAUER;
+  /* v1.0.49 (Besitzerentscheid): DER GRUENE BAUER IST FORT. In v1.0.45 trug
+     die eigene Seite den gruenen Holzbauern aus dem Zweitsatz, damit man
+     Freund und Feind am Bild unterscheidet. Der Besitzer will stattdessen
+     beidseitig den blauen Speertraeger - und die Unterscheidung ueber den
+     HELDEN: der Gambit steht in Gold zwischen ihnen, von der ersten Partie
+     an. Das ist das staerkere Zeichen, weil es dieselbe Figur meint, die
+     auch auf der Karte zu sehen ist. */
   return id ? PAINTED[id] || null : null;
 }
 
@@ -321,33 +322,33 @@ export const paintedById = (id) => PAINTED[id] || null;
 // the gambit and the big dragon keep their own size on purpose. MEASURED from
 // each painting's alpha bounding box.
 const PAINTED_FIT = {
-  "pawn": { h: 0.8977, y: -0.06, x: -0.0052 },
-  "gambit": { h: 0.94, y: -0.144, x: -0.0057 },
-  "knight": { h: 1.0498, y: -0.1427, x: -0.0171 },
-  "bishop": { h: 1.0616, y: -0.1396, x: -0.0021 },
-  "queen": { h: 1.1329, y: -0.1377, x: 0.0037 },
-  "rook": { h: 1.0485, y: -0.1262, x: -0.003 },
-  "king": { h: 1.126, y: -0.1359, x: -0.0017 },
-  "chancellor": { h: 1.0393, y: -0.1456, x: 0.0 },
-  "archbishop": { h: 1.0509, y: -0.1293, x: 0.008 },
-  "amazon": { h: 1.053, y: -0.1293, x: 0.016 },
-  "hawk": { h: 1.1044, y: -0.121, x: -0.0056 },
-  "seeress": { h: 1.0552, y: -0.1293, x: 0.0137 },
-  "assassin": { h: 1.0404, y: -0.1338, x: 0.0061 },
-  "guardian": { h: 1.0748, y: -0.1356, x: 0.0126 },
-  "captain": { h: 1.0488, y: -0.1417, x: 0.0058 },
-  "sorceress": { h: 1.0498, y: -0.1379, x: 0.0071 },
-  "pathfinder": { h: 1.0704, y: -0.1289, x: 0.0194 },
-  "mage": { h: 1.0456, y: -0.138, x: -0.0006 },
-  "alchemist": { h: 1.0332, y: -0.1513, x: -0.0054 },
-  "warlock": { h: 1.0425, y: -0.1439, x: 0.0003 },
-  "paladin": { h: 1.0562, y: -0.1378, x: 0.0005 },
-  "inquisitor": { h: 1.0605, y: -0.1378, x: -0.0067 },
-  "bard": { h: 1.066, y: -0.1444, x: 0.0104 },
-  "engineer": { h: 1.0584, y: -0.133, x: 0.0052 },
-  "standard": { h: 1.0446, y: -0.1295, x: -0.0206 },
-  "strategist": { h: 1.052, y: -0.1398, x: 0.0032 },
-  "dragon": { h: 1.0, y: 0.0, x: 0.0145 },
+  "pawn": { h: 0.8977, y: -0.06, x: 0 },
+  "gambit": { h: 0.94, y: -0.144, x: 0 },
+  "knight": { h: 1.0498, y: -0.1427, x: 0 },
+  "bishop": { h: 1.0616, y: -0.1396, x: 0 },
+  "queen": { h: 1.1329, y: -0.1377, x: 0 },
+  "rook": { h: 1.0485, y: -0.1262, x: 0 },
+  "king": { h: 1.126, y: -0.1359, x: 0 },
+  "chancellor": { h: 1.0393, y: -0.1456, x: 0 },
+  "archbishop": { h: 1.0509, y: -0.1293, x: 0 },
+  "amazon": { h: 1.053, y: -0.1293, x: 0 },
+  "hawk": { h: 1.1044, y: -0.121, x: 0 },
+  "seeress": { h: 1.0552, y: -0.1293, x: 0 },
+  "assassin": { h: 1.0404, y: -0.1338, x: 0 },
+  "guardian": { h: 1.0748, y: -0.1356, x: 0 },
+  "captain": { h: 1.0488, y: -0.1417, x: 0 },
+  "sorceress": { h: 1.0498, y: -0.1379, x: 0 },
+  "pathfinder": { h: 1.0704, y: -0.1289, x: 0 },
+  "mage": { h: 1.0456, y: -0.138, x: 0 },
+  "alchemist": { h: 1.0332, y: -0.1513, x: 0 },
+  "warlock": { h: 1.0425, y: -0.1439, x: 0 },
+  "paladin": { h: 1.0562, y: -0.1378, x: 0 },
+  "inquisitor": { h: 1.0605, y: -0.1378, x: 0 },
+  "bard": { h: 1.066, y: -0.1444, x: 0 },
+  "engineer": { h: 1.0584, y: -0.133, x: 0 },
+  "standard": { h: 1.0446, y: -0.1295, x: 0 },
+  "strategist": { h: 1.052, y: -0.1398, x: 0 },
+  "dragon": { h: 1.0, y: 0.0, x: 0 },
 };
 /** Per-figure { h, y }: box-fit height scale + baseline shift (em). Default
  *  { h:1, y:0 } for bosses, big pieces and unknown ids. Mirrors
@@ -356,10 +357,10 @@ const PAINTED_FIT = {
 // Bosses measured per portrait: every master stands queen-tall (effective
 // 1.082) whatever share of the canvas the painting fills; y offsets the foot
 // gap so the base stays planted when the scale grows.
-const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001, x: -0.0 }, "b01": { h: 1.11, y: 0.001, x: 0.0047 }, "b02": { h: 1.42, y: 0.037, x: 0.0101 }, "b03": { h: 1.305, y: 0.024, x: 0.0036 }, "b04": { h: 1.507, y: 0.049, x: -0.0018 }, "b05": { h: 1.308, y: 0.03, x: 0.0016 }, "b06": { h: 1.383, y: 0.038, x: -0.0012 }, "b07": { h: 1.345, y: 0.037, x: -0.0056 }, "b08": { h: 1.399, y: 0.048, x: -0.0048 }, "b09": { h: 1.166, y: 0.006, x: -0.0043 }, "b10": { h: 1.471, y: 0.049, x: 0.0015 }, "b11": { h: 1.294, y: 0.027, x: 0.003 }, "b12": { h: 1.248, y: 0.021, x: 0.0021 }, "b13": { h: 1.314, y: 0.028, x: 0.002 }, "b14": { h: 1.147, y: 0.003, x: -0.001 }, "b15": { h: 1.132, y: 0.002, x: 0.0144 }, "b16": { h: 1.147, y: 0.003, x: -0.0008 }, "b17": { h: 1.096, y: 0.001, x: -0.0085 }, "b18": { h: 1.23, y: 0.01, x: -0.0061 }, "b19": { h: 1.182, y: 0.005, x: -0.0029 }, "b20": { h: 1.147, y: 0.004, x: -0.0068 }, "b21": { h: 1.132, y: 0.0, x: -0.0007 }, "b22": { h: 1.085, y: 0.0, x: -0.0142 }, "b23": { h: 1.089, y: 0.0, x: 0.0029 }, "b24": { h: 1.361, y: 0.029, x: 0.0142 }, "b25": { h: 1.188, y: 0.012, x: 0.0022 }, "beast": { h: 1.099, y: 0.001, x: 0.003 }, "golem": { h: 1.099, y: 0.001, x: 0.0005 }, "leaguemaster": { h: 1.091, y: 0.0, x: -0.0011 }, "serpent": { h: 1.099, y: 0.001, x: 0.0041 }, "tyrant": { h: 1.102, y: 0.001, x: -0.0018 }, "wraith": { h: 1.096, y: 0.001, x: 0.0018 } };
+const BOSS_FIT = { "archenemy": { h: 1.102, y: 0.001, x: 0 }, "b01": { h: 1.11, y: 0.001, x: 0 }, "b02": { h: 1.42, y: 0.037, x: 0 }, "b03": { h: 1.305, y: 0.024, x: 0 }, "b04": { h: 1.507, y: 0.049, x: 0 }, "b05": { h: 1.308, y: 0.03, x: 0 }, "b06": { h: 1.383, y: 0.038, x: 0 }, "b07": { h: 1.345, y: 0.037, x: 0 }, "b08": { h: 1.399, y: 0.048, x: 0 }, "b09": { h: 1.166, y: 0.006, x: 0 }, "b10": { h: 1.471, y: 0.049, x: 0 }, "b11": { h: 1.294, y: 0.027, x: 0 }, "b12": { h: 1.248, y: 0.021, x: 0 }, "b13": { h: 1.314, y: 0.028, x: 0 }, "b14": { h: 1.147, y: 0.003, x: 0 }, "b15": { h: 1.132, y: 0.002, x: 0 }, "b16": { h: 1.147, y: 0.003, x: 0 }, "b17": { h: 1.096, y: 0.001, x: 0 }, "b18": { h: 1.23, y: 0.01, x: 0 }, "b19": { h: 1.182, y: 0.005, x: 0 }, "b20": { h: 1.147, y: 0.004, x: 0 }, "b21": { h: 1.132, y: 0.0, x: 0 }, "b22": { h: 1.085, y: 0.0, x: 0 }, "b23": { h: 1.089, y: 0.0, x: 0 }, "b24": { h: 1.361, y: 0.029, x: 0 }, "b25": { h: 1.188, y: 0.012, x: 0 }, "beast": { h: 1.099, y: 0.001, x: 0 }, "golem": { h: 1.099, y: 0.001, x: 0 }, "leaguemaster": { h: 1.091, y: 0.0, x: 0 }, "serpent": { h: 1.099, y: 0.001, x: 0 }, "tyrant": { h: 1.102, y: 0.001, x: 0 }, "wraith": { h: 1.096, y: 0.001, x: 0 } };
 // A piece serving as a boss (pb_*) wears its own portrait, raised to the
 // same queen-tall stature.
-const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: -0.0054 }, "amazon": { h: 1.121, y: 0.003, x: 0.016 }, "archbishop": { h: 1.119, y: 0.003, x: 0.008 }, "assassin": { h: 1.108, y: 0.002, x: 0.0061 }, "bard": { h: 1.135, y: 0.001, x: 0.0104 }, "bishop": { h: 1.131, y: 0.002, x: -0.0021 }, "captain": { h: 1.117, y: 0.002, x: 0.0058 }, "chancellor": { h: 1.107, y: 0.001, x: 0.0 }, "engineer": { h: 1.127, y: 0.003, x: 0.0052 }, "gambit": { h: 1.116, y: 0.001, x: -0.0057 }, "guardian": { h: 1.145, y: 0.003, x: 0.0126 }, "hawk": { h: 1.176, y: 0.006, x: -0.0056 }, "inquisitor": { h: 1.129, y: 0.002, x: -0.0067 }, "king": { h: 1.126, y: 0.002, x: -0.0017 }, "knight": { h: 1.118, y: 0.001, x: -0.0171 }, "mage": { h: 1.114, y: 0.002, x: -0.0006 }, "paladin": { h: 1.125, y: 0.002, x: 0.0005 }, "pathfinder": { h: 1.14, y: 0.004, x: 0.0194 }, "pawn": { h: 1.12, y: 0.001, x: -0.0052 }, "queen": { h: 1.133, y: 0.002, x: 0.0037 }, "rook": { h: 1.153, y: 0.003, x: -0.003 }, "seeress": { h: 1.124, y: 0.003, x: 0.0137 }, "sorceress": { h: 1.118, y: 0.002, x: 0.0071 }, "standard": { h: 1.112, y: 0.003, x: -0.0206 }, "strategist": { h: 1.12, y: 0.002, x: 0.0032 }, "warlock": { h: 1.11, y: 0.001, x: 0.0003 } };
+const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: 0 }, "amazon": { h: 1.121, y: 0.003, x: 0 }, "archbishop": { h: 1.119, y: 0.003, x: 0 }, "assassin": { h: 1.108, y: 0.002, x: 0 }, "bard": { h: 1.135, y: 0.001, x: 0 }, "bishop": { h: 1.131, y: 0.002, x: 0 }, "captain": { h: 1.117, y: 0.002, x: 0 }, "chancellor": { h: 1.107, y: 0.001, x: 0 }, "engineer": { h: 1.127, y: 0.003, x: 0 }, "gambit": { h: 1.116, y: 0.001, x: 0 }, "guardian": { h: 1.145, y: 0.003, x: 0 }, "hawk": { h: 1.176, y: 0.006, x: 0 }, "inquisitor": { h: 1.129, y: 0.002, x: 0 }, "king": { h: 1.126, y: 0.002, x: 0 }, "knight": { h: 1.118, y: 0.001, x: 0 }, "mage": { h: 1.114, y: 0.002, x: 0 }, "paladin": { h: 1.125, y: 0.002, x: 0 }, "pathfinder": { h: 1.14, y: 0.004, x: 0 }, "pawn": { h: 1.12, y: 0.001, x: 0 }, "queen": { h: 1.133, y: 0.002, x: 0 }, "rook": { h: 1.153, y: 0.003, x: 0 }, "seeress": { h: 1.124, y: 0.003, x: 0 }, "sorceress": { h: 1.118, y: 0.002, x: 0 }, "standard": { h: 1.112, y: 0.003, x: 0 }, "strategist": { h: 1.12, y: 0.002, x: 0 }, "warlock": { h: 1.11, y: 0.001, x: 0 } };
 
 /* ── DER HELD IST KEIN BAUER MEHR (v1.0.48, Besitzerbefund) ────────────────
    Die alte Staffel begann bei 0.894 - MINIMAL KLEINER als ein Bauer (0.898).
@@ -375,7 +376,13 @@ const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: -0.0054 }, "amazon": 
    y waechst mit: der Fussversatz haelt den Sockel auf der Standlinie,
    sonst schwebte die Figur mit jeder Stufe hoeher ueber ihrem Feld. */
 const GAMBIT_TIER_Y = [-0.1268, -0.1310, -0.1348, -0.1386, -0.1420, -0.1452];
-const GAMBIT_TIER_X = [-0.0057, -0.003, -0.0021, 0.0022, -0.0021, -0.002];
+/* v1.0.49: NULL. Die Figurenbilder sind seit diesem Stand selbst horizontal
+   zentriert (93 Dateien, Restversatz unter einem halben Pixel), also braucht
+   das Brett keinen Ausgleich mehr - und, wichtiger, Aufstellung und Hofstaat
+   zeigen sie endlich an derselben Stelle. Vorher kannte nur das Brett den
+   Versatz; ueberall sonst sass der Laeufer 10 % zu weit links und der Koenig
+   4,7 % zu weit rechts. Der Besitzer hat es auf dem Geraet gesehen. */
+const GAMBIT_TIER_X = [0, 0, 0, 0, 0, 0];
 const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
 
 export function paintedFitFor(piece) {

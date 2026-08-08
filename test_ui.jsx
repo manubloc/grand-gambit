@@ -144,10 +144,15 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 {
   const bauer = (color) => paintedForPiece({ kind: "P", color });
   const held = (color) => paintedForPiece({ kind: "P", color, hero: true, level: 2 });
-  ok("eigener und gegnerischer Bauer tragen VERSCHIEDENE Bilder",
-    !!bauer("w") && !!bauer("b") && bauer("w") !== bauer("b"));
-  ok("der Held ist von seinen eigenen Bauern zu unterscheiden",
-    !!held("w") && held("w") !== bauer("w"));
+  /* v1.0.49 (Besitzerentscheid): DER GRUENE BAUER IST FORT. In v1.0.45 trug
+     die eigene Seite den gruenen Holzbauern, damit man Freund und Feind am
+     Bild unterscheidet. Der Besitzer will beidseitig den blauen Speertraeger
+     - und die Unterscheidung ueber den HELDEN, der von der ersten Partie an
+     in Gold zwischen ihnen steht. Das ist das staerkere Zeichen, weil es
+     dieselbe Figur meint, die auch auf der Karte zu sehen ist. */
+  ok("beide Seiten tragen jetzt denselben Bauern", bauer("w") === bauer("b"));
+  ok("der Held hebt sich von den Bauern ab - auf BEIDEN Seiten",
+    !!held("w") && held("w") !== bauer("w") && held("b") !== bauer("b"));
   // DER GAMBIT IST AUCH EIN BAUER (kind "P"). Liefe die Bauernweiche vor
   // seinem Zweig, staende der Held als schlichter Bauer da.
   ok("...und faellt nicht durch die Bauernweiche",

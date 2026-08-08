@@ -37,7 +37,20 @@ export function hpWach(profile) {
    Bewusst an der ZAHL DER GESCHAFFTEN STATIONEN gemessen, nicht an einer
    bestimmten Station: dann bleibt der Moment auch dann heil, wenn die
    Kampagne spaeter umgebaut wird. */
-export const GAMBIT_ERWACHT_AB = 3;
+/* ── DER GAMBIT STEHT VON ANFANG AN (v1.0.49, Besitzerentscheid) ───────────
+   Bis hierher trat der Held erst nach drei geschafften Stationen auf. Das
+   war als Bruch gedacht - aber der Gambit ist die Figur, die auf der KARTE
+   die ganze Zeit zu sehen ist, und der Spieler soll vom ersten Zug an
+   wissen, welcher seiner Bauern er ist. Ein Held, den man erst kennenlernt,
+   nachdem man ihn dreimal aufs Feld geschickt hat, erklaert sich zu spaet.
+
+   Null heisst: er ist da, sobald das Heer steht. Der goldene Ritter zwischen
+   den blauen Speertraegern ist damit das Erkennungszeichen, das in v1.0.45
+   noch die gruenen Bauern tragen sollten.
+
+   Die Schwelle bleibt als KONSTANTE stehen und wird weiter geprueft - wer
+   sie je wieder anheben will, aendert eine Zahl, nicht eine Regel. */
+export const GAMBIT_ERWACHT_AB = 0;
 export function gambitWach(profile) {
   const erledigt = profile?.campaign?.cleared || [];
   return erledigt.length >= GAMBIT_ERWACHT_AB;

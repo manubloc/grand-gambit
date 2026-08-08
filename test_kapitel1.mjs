@@ -91,11 +91,15 @@ const erwacht = defaultProfile();
 erwacht.campaign = { ...(erwacht.campaign || {}), cleared:
   Array.from({ length: GAMBIT_ERWACHT_AB }, (_, i) => "st" + i) };
 
-ok("vor dem Erwachen fuehrt niemand die Armee an", !gambitWach(frisch));
-ok("nach " + GAMBIT_ERWACHT_AB + " Stationen erwacht er", gambitWach(erwacht));
-ok("vorher steht er auf Stufe 1", gambitStufe(frisch) === 1);
-ok("mit dem Erwachen springt er auf Stufe " + GAMBIT_ERWACHT_AUF_STUFE,
-  gambitStufe(erwacht) === GAMBIT_ERWACHT_AUF_STUFE);
+/* v1.0.49: DIE SCHWELLE STEHT AUF 0 - der Held ist von der ersten Partie an
+   da, weil er die Figur ist, die auf der Karte ohnehin die ganze Zeit zu
+   sehen ist. Geprueft wird darum nicht mehr sein Fehlen davor, sondern dass
+   er SOFORT dasteht und seine Stufe traegt. */
+ok("der Held ist von Anfang an da", gambitWach(frisch));
+ok("und bleibt es", gambitWach(erwacht));
+ok("er steht sofort auf Stufe " + GAMBIT_ERWACHT_AUF_STUFE,
+  gambitStufe(frisch) === GAMBIT_ERWACHT_AUF_STUFE
+  && gambitStufe(erwacht) === GAMBIT_ERWACHT_AUF_STUFE);
 
 // DER SPRUNG IST EINE UNTERGRENZE, KEINE FESTSETZUNG: wer sich schon
 // hochgearbeitet hat, faellt nicht auf 2 zurueck.
@@ -121,7 +125,9 @@ ok("der Erwachte traegt sie auch wirklich im Heer",
 console.log("\n── DIE FREISCHALT-ORDNUNG ──");
 const zu = defaultProfile();
 zu.campaign = { ...(zu.campaign || {}), cleared: [] };
-ok("in Kapitel I ist die Heldenspalte zu", !darfHeldSetzen(zu));
+/* Die Heldenspalte geht mit dem Helden auf - also sofort. Die HINTERE REIHE
+   bleibt unberuehrt: sie haengt weiter an der ersten fremden Figur. */
+ok("die Heldenspalte steht von Anfang an offen", darfHeldSetzen(zu));
 ok("in Kapitel I ist die hintere Reihe zu", !darfReiheStellen(zu));
 ok("und noch ist keine Figur beigetreten", !ersteFigurDa(zu));
 
@@ -160,7 +166,9 @@ ok("mehrere offene Freigaben kommen in der Ordnung der Liste",
   reihenfolge.length >= 2 && reihenfolge[0] === "held");
 ok("naechsteErklaerung liefert genau die erste davon",
   naechsteErklaerung(zweiZugleich).id === reihenfolge[0]);
-ok("ist nichts offen, meldet sie null", naechsteErklaerung(zu) === null);
+// Bei "zu" ist die Held-Freigabe jetzt offen und ungelesen - also NICHT null.
+ok("ist nichts mehr offen, meldet sie null",
+  naechsteErklaerung(merkeErklaert(merkeErklaert(zu, "held"), "hinterereihe")) === null);
 
 console.log("\nRESULT: " + pass + " passed, " + fail + " failed");
 if (fail) process.exit(1);
