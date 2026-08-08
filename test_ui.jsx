@@ -1074,5 +1074,22 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("und es gibt ueberhaupt Figurenbilder zu korrigieren", bilder >= 6);
 }
 
+/* ── AUCH DAS BRETT GLEICHT AUS (v1.0.57) ──────────────────────────────────
+   Der Besitzer sah es zuletzt IM SPIEL: "Koenig zu weit links, Bishop zu
+   weit rechts". Der Grund war schlicht: PAINTED_FIT.x ist bei jeder Figur 0,
+   der Ausgleich am Brett stand nur im Kommentar. Jetzt nimmt es dieselbe
+   Sockelzahl wie Hofstaat und Aufstellung. */
+{
+  const { readFileSync: _rf } = await import("node:fs");
+  const glyph = _rf("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  ok("das Brett zieht den Sockelversatz", /const sockelX = sockelVersatz\(/.test(glyph));
+  ok("und wendet ihn auf die Figur an", /translate\(\$\{\(-sockelX \* fit\.h\)/.test(glyph));
+
+  const art = _rf("src/app/ui/board/paintedArt.js", "utf8");
+  const y = art.match(/const GAMBIT_TIER_Y = \[([^\]]+)\]/)[1].split(",").map(Number);
+  ok("die Gambit-Staffel steigt durchgehend", y.every((v, i) => i === 0 || v < y[i - 1]));
+  ok("und beginnt nahe der Bauernlinie, nicht bei den Offizieren", y[0] > -0.09);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

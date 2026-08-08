@@ -375,7 +375,17 @@ const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: 0 }, "amazon": { h: 1
    die Groesse hat ihre Arbeit schon getan, das Bild macht den Rest.
    y waechst mit: der Fussversatz haelt den Sockel auf der Standlinie,
    sonst schwebte die Figur mit jeder Stufe hoeher ueber ihrem Feld. */
-const GAMBIT_TIER_Y = [-0.1268, -0.1310, -0.1348, -0.1386, -0.1420, -0.1452];
+/* v1.0.57 (Besitzerbefund: "Gambit zu weit oben"). Die Staffel stammte aus
+   v1.0.48, als der Held auf Turmgroesse wuchs - ich habe seinen Fussversatz
+   damals mit den OFFIZIEREN verrechnet (Turm -0.1262). Er steht aber in der
+   BAUERNREIHE, und dort ist der Nachbarwert -0.06. Neben acht Bauern hing er
+   darum sichtbar in der Luft.
+   Gemessen: der Leerraum unter dem Sockel ist bei Bauer (3.5 %) und Gambit
+   (4.3 %) fast gleich - das Bild ist also nicht die Ursache, die Zahl war es.
+   Jetzt beginnt die Staffel dicht am Bauern und steigt sanft: wer aufsteigt,
+   wird groesser, aber sein Fuss bleibt auf derselben Linie wie der seiner
+   Reihe. */
+const GAMBIT_TIER_Y = [-0.0720, -0.0790, -0.0860, -0.0930, -0.1000, -0.1070];
 /* v1.0.49: NULL. Die Figurenbilder sind seit diesem Stand selbst horizontal
    zentriert (93 Dateien, Restversatz unter einem halben Pixel), also braucht
    das Brett keinen Ausgleich mehr - und, wichtiger, Aufstellung und Hofstaat

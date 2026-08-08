@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, paintedFitFor, sockelVersatz, kunstId, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
 import { gegnerStil, toenung } from "../gegnerstil.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -303,6 +303,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
   const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
   const ton = toenung(piece.kind);   /* v1.0.54: Lila-Staerke nach Gefahr */
+  const sockelX = sockelVersatz(kunstId(paintPiece));   /* v1.0.57: auch das Brett gleicht aus */
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
       + " drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
@@ -460,10 +461,15 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           base stays planted on the square. */}
       <div style={{ position: "relative", zIndex: 1, width: big ? "1.48em" : pieceSize, height: big ? "1.48em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
         marginTop: big ? 0 : "-0.16em",
-        // the horizontal nudge re-centres each painting: its subject sits a
-        // touch off the image middle (measured per file), and scaling would
-        // otherwise push that bias outward — so we pull it back by x·h.
-        transform: (fit.h !== 1 || fit.y !== 0 || fit.x) ? `translate(${(-(fit.x || 0) * fit.h).toFixed(4)}em, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
+        /* v1.0.57 (Besitzerbefund am BRETT: "Koenig zu weit links, Bishop zu
+           weit rechts"): Der waagerechte Ausgleich stand hier zwar seit jeher
+           im Kommentar - aber PAINTED_FIT.x ist bei JEDER Figur 0. Es wurde
+           also nie etwas ausgeglichen; die Figuren standen so schief, wie sie
+           im Bild sitzen. Jetzt nimmt auch das Brett den SOCKEL-Versatz, die
+           gleiche Zahl wie Hofstaat und Aufstellung: Bishop +9.0 %,
+           Koenig -3.0 %. Weiterhin mal fit.h, weil das Skalieren den Versatz
+           sonst nach aussen traegt. */
+        transform: (fit.h !== 1 || fit.y !== 0 || sockelX) ? `translate(${(-sockelX * fit.h).toFixed(4)}em, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
         {painting
           ? <img src={painting} alt="" draggable={false} decoding="async" style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:
