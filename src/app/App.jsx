@@ -177,6 +177,19 @@ export default function App() {
   const [locked, setLocked] = useState(false);
   const [tab, setTab] = useState("play");
   const [view, setView] = useState("hub"); // play tab: hub | quick | camp | online
+  /* ── JEDER RAUM BEGINNT OBEN (v1.0.53, Besitzerbefund) ────────────────────
+     "Manchmal ist das Menue Spielen runtergescrollt." Der Grund: der Browser
+     behaelt die Scroll-Position des DOKUMENTS, wenn nur der Inhalt darin
+     ausgetauscht wird. Wer im Hofstaat weit unten stand und dann auf Spielen
+     wechselte, landete dort ebenso weit unten - im Leeren, weil der neue
+     Raum kuerzer ist.
+     Bei jedem Wechsel von Reiter ODER Ansicht springt das Fenster zurueck
+     nach oben. Ohne weiches Gleiten: das ist kein Weg, den jemand
+     zuruecklegen will, sondern der Anfang eines neuen Raums. */
+  useEffect(() => {
+    try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
+    catch { try { window.scrollTo(0, 0); } catch {} }
+  }, [tab, view]);
   const [match, setMatch] = useState(null);
   const [pvp, setPvp] = useState(null);
   const [quick, setQuick] = useState(null);   // running quick match (config decided in QuickSetup)

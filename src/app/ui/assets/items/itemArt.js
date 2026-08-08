@@ -30,6 +30,14 @@ import kPotion from "./item-potion.carved.webp";
 import kSternenkompass from "./item-sternenkompass.carved.webp";
 import kSternensplitter from "./item-sternensplitter.carved.webp";
 import kTorch from "./item-torch.carved.webp";
-const CLASSIC = { anker: cAnker, bergschluessel: cBergschluessel, boat: cBoat, brieftaube: cBrieftaube, donnerpulver: cDonnerpulver, grapnel: cGrapnel, hourglass: cHourglass, kamel: cKamel, kriegsaxt: cKriegsaxt, machete: cMachete, potion: cPotion, sternensplitter: cSternensplitter, torch: cTorch };
+/* v1.0.53 (Besitzerbefund): DER STERNENSPLITTER TRAEGT DEN EINFACHEN STIL.
+   Von ihm lagen zwei Fassungen vor: ein aufwendiges goldenes Gefaess mit
+   Galaxie darin (die alte, "klassische") und der geschnitzte blaue Kristall
+   mit goldenem Stern. Der Besitzer will den zweiten - vereinfacht, klar,
+   auf einen Blick erkennbar wie die uebrige Ausruestung. Das Goldgefaess
+   stach zwischen Axt, Fackel und Trank heraus wie aus einem anderen Spiel.
+   Ausserdem hatte CLASSIC gar keinen sternenkompass - wer nicht auf
+   "carved" stand, sah fuer diesen Gegenstand NICHTS. Beide Luecken zu. */
+const CLASSIC = { anker: cAnker, bergschluessel: cBergschluessel, boat: cBoat, brieftaube: cBrieftaube, donnerpulver: cDonnerpulver, grapnel: cGrapnel, hourglass: cHourglass, kamel: cKamel, kriegsaxt: cKriegsaxt, machete: cMachete, potion: cPotion, sternenkompass: kSternenkompass, sternensplitter: kSternensplitter, torch: cTorch };
 const CARVED = { anker: kAnker, bergschluessel: kBergschluessel, boat: kBoat, brieftaube: kBrieftaube, donnerpulver: kDonnerpulver, grapnel: kGrapnel, hourglass: kHourglass, kamel: kKamel, kriegsaxt: kKriegsaxt, machete: kMachete, potion: kPotion, sternenkompass: kSternenkompass, sternensplitter: kSternensplitter, torch: kTorch };
 export const itemArt = (id) => (livery() === "carved" ? CARVED : CLASSIC)[id] || null;

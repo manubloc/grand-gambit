@@ -73,8 +73,15 @@ export function RissBoden({ profile, staerke = 1 }) {
     // laeuft das Bild in einem weichen Verlauf ins Schwarze aus. Der alte
     // Hoch-Verlauf bleibt; beide Masken schneiden sich (mask-composite).
     <div aria-hidden data-riss={stufe} style={{
-      position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none",
-      height: "min(30vh, 270px)", // v0.60: kurzer Bodenstreifen statt halber Schirm
+      /* v1.0.53 (Besitzerbefund): "als wuerde er darueber sein". Genau das
+         tat er. Der Kommentar oben verspricht seit jeher "hinter allem
+         (zIndex -1)", der Code stand aber auf 0 - und weil der Boden im DOM
+         VOR dem Menueinhalt steht, aber auf gleicher Stapelhoehe liegt,
+         entschied allein die Reihenfolge. Beim Scrollen schob sich der
+         fixierte Streifen sichtbar ueber die Figurenkacheln.
+         Jetzt -1: er liegt wirklich dahinter, so wie es immer gemeint war. */
+      position: "fixed", left: 0, right: 0, bottom: 0, zIndex: -1, pointerEvents: "none",
+      height: "min(24vh, 210px)", // v1.0.53: kuerzer - er soll grundieren, nicht mitreden
       // Der Desktop-Shell-Zoom (theme.js: #root zoom 1.15/1.3 ab 1440/1760 px)
       // multipliziert Layout-Pixel - 1280 wurden sichtbar 1472. Gegenrechnung
       // ueber die --vhz-Variable: das Band ist auf JEDEM Schirm sichtbar
@@ -84,7 +91,7 @@ export function RissBoden({ profile, staerke = 1 }) {
       backgroundSize: "cover",
       backgroundPosition: "50% 100%",
       backgroundRepeat: "no-repeat",
-      opacity: 0.6 * staerke,      // v0.60: schimmert dezenter durch
+      opacity: 0.46 * staerke,     // v1.0.53: leiser, er stand zu weit vorn
       WebkitMaskImage:
         "linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 58%), " +
         "linear-gradient(90deg, transparent 0%, #000 clamp(48px, 9%, 130px), #000 calc(100% - clamp(48px, 9%, 130px)), transparent 100%)",
