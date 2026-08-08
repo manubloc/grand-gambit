@@ -393,7 +393,34 @@ const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
    Ausreissern bis 10 % der Breite - genug, um ins Auge zu fallen.
    paintedFitFor braucht ein Spielfigur-Objekt und geht ueber kind; Karten
    kennen aber ihre ID. Darum dieser Zugang. */
-/* ── DER SOCKEL IST DER ANKER (v1.0.52, Besitzerbefund) ────────────────────
+/* ── DER SOCKEL IST DER ANKER (v1.0.52) - UND ER WURDE FALSCH GEMESSEN
+   (v1.0.56, Besitzerbefund mit Bildern: "schau wie Schildtraeger, Bishop und
+   Dame jeweils immer zu weit rechts sind").
+
+   Zwei Fehler lagen uebereinander. Der erste war v1.0.49: PAINTED_FIT.x misst
+   die GESAMTE Silhouette, und ein Laeufer mit Mitra und Stab zieht sie zur
+   Seite, waehrend sein Sockel gerade steht. Das war in v1.0.52 erkannt.
+
+   Der zweite steckte in der MESSUNG selbst und hat mich drei Anlaeufe
+   gekostet: ich zaehlte jedes Pixel ab Alpha 12 als Inhalt. Damit gingen der
+   weiche Schlagschatten und der halbtransparente Saum mit ein - und die
+   liegen ziemlich symmetrisch um die Figur, egal wo der Sockel wirklich
+   steht. Die Messung sagte darum brav "fast zentriert" (Laeufer +0.7 %),
+   waehrend der Besitzer auf seinem Geraet einen deutlichen Versatz sah.
+   Ab Alpha 60 zaehlt nur noch das HOLZ: Laeufer +9.0 %, Schildtraeger
+   +6.1 %, Dame +3.8 % - genau die drei, die er benannt hat, und in genau
+   der Reihenfolge.
+
+   Lehre: eine Schwelle ist eine Entscheidung darueber, WAS man misst. Alpha
+   12 hat den Schatten zur Figur erklaert, und danach war jede weitere
+   Rechnung sauber und trotzdem falsch.
+
+   Gemessen wird die breiteste Zeile im unteren Drittel - der Aequator der
+   Sockel-Ellipse. Ihn nimmt das Auge als Standpunkt.
+
+   Das BRETT bleibt bei PAINTED_FIT.x: dort steht jede Figur allein auf ihrem
+   Feld. Nur wo Figuren NEBENEINANDER stehen, zaehlt der gemeinsame Fuss. */
+/* (Vorgaenger-Kommentar v1.0.52) ────────────────────
    "Du musst es ueber den Sockel mittig ausrichten." Genau da lag mein
    Fehler: PAINTED_FIT.x misst den Versatz der GESAMTEN Silhouette. Ein
    Laeufer mit Mitra und erhobenem Stab zieht seine Bounding-Box zur Seite,
@@ -410,15 +437,17 @@ const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
    daran nie etwas auszusetzen gehabt. Kacheln stehen NEBENEINANDER, und
    nur dort zaehlt der gemeinsame Standfuss. */
 const SOCKEL_X = {
-  "alchemist": 0.0434, "amazon": 0.0069, "archbishop": -0.0208, "assassin": 0.033,
-  "bard": 0.0252, "bishop": 0.0069, "boss-b01": -0.0295, "boss-b04": 0.0252,
-  "boss-b05": 0.0069, "boss-b06": -0.0069, "boss-b08": -0.013, "boss-b09": 0.0104,
-  "boss-b10": -0.0113, "boss-b11": -0.0087, "boss-b12": -0.0234, "boss-b13": 0.0295,
-  "boss-b15": 0.0191, "boss-b20": 0.0182, "boss-b22": -0.0174, "captain": 0.0061,
-  "chancellor": 0.0148, "engineer": 0.0078, "gambit": -0.013, "guardian": -0.0113,
-  "hawk": -0.0625, "inquisitor": 0.0694, "knight": -0.0113, "mage": 0.0087,
-  "paladin": 0.0095, "pathfinder": 0.0087, "pawn": 0.0191, "rook": 0.0087,
-  "standard": -0.0495, "strategist": 0.0191, "warlock": 0.0391,
+  "amazon": -0.0208, "archbishop": 0.0095, "assassin": 0.0061, "bard": -0.026,
+  "bishop": 0.0903, "boss-b01": 0.0061, "boss-b03": 0.0521, "boss-b04": 0.0703,
+  "boss-b06": -0.0069, "boss-b08": 0.0929, "boss-b09": -0.02, "boss-b10": 0.0182,
+  "boss-b11": -0.0087, "boss-b12": -0.0234, "boss-b13": 0.0061, "boss-b16": -0.0165,
+  "boss-b18": 0.0998, "boss-b19": -0.0269, "boss-b21": 0.0156, "boss-b22": -0.0182,
+  "captain": -0.0226, "chancellor": -0.0382, "dragon": -0.0139, "engineer": -0.0182,
+  "guardian": 0.0608, "haendler": 0.0156, "hawk": -0.0087, "inquisitor": 0.0417,
+  "king": -0.0295, "knight": 0.0139, "mage": -0.0156, "paladin": -0.033,
+  "pathfinder": -0.0391, "pawn": -0.02, "queen": 0.0382, "rook": -0.0104,
+  "seeress": 0.0408, "sorceress": -0.0399, "standard": -0.0113, "strategist": -0.0321,
+  "warlock": 0.0061,
 };
 
 /** Der Sockelversatz einer Figur - fuer alles, was Figuren NEBENEINANDER

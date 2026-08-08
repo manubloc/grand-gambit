@@ -1035,5 +1035,25 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("the board passes the flag on every piece", (brett.match(/<PieceGlyph aufsBrett/g) || []).length >= 3);
 }
 
+/* ── DER SOCKEL, RICHTIG GEMESSEN (v1.0.56) ────────────────────────────────
+   Der Besitzer meldete dreimal, dass Figuren nebeneinander nicht mittig
+   stehen - Laeufer, Schildtraeger, Dame. Meine Messung sagte jedes Mal
+   "fast zentriert", weil sie ab Alpha 12 zaehlte und damit den weichen
+   Schlagschatten mitnahm; der liegt symmetrisch um die Figur, egal wo der
+   Sockel steht. Ab Alpha 60 zaehlt nur das Holz - und dann sind es 9.0 %,
+   6.1 % und 3.8 %, genau die drei in genau der Reihenfolge.
+   Diese Probe haelt fest, dass die Werte in der Groessenordnung bleiben:
+   waere jemand versucht, wieder mit einer weichen Schwelle zu messen,
+   faellt die Tabelle sofort auf nahezu Null zusammen. */
+{
+  const { sockelVersatz } = await import("./src/app/ui/board/paintedArt.js");
+  ok("der Laeufer traegt den groessten Sockelversatz", sockelVersatz("bishop") > 0.07);
+  ok("der Schildtraeger folgt", sockelVersatz("guardian") > 0.04);
+  ok("die Dame steht ebenfalls rechts", sockelVersatz("queen") > 0.02);
+  ok("und die Werte sind nicht auf Schattenmass zusammengefallen",
+    ["bishop", "guardian", "queen"].every((id) => sockelVersatz(id) > 0.02));
+  ok("wer mittig sitzt, bekommt keinen Ausgleich", sockelVersatz("gibtsnicht") === 0);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
