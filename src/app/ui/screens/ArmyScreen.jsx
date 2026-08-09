@@ -1420,7 +1420,15 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       campaign: { ...profile.campaign, unlocked: [...new Set([...(profile.campaign?.unlocked || []), ch.id])],
         bossWins: { ...(profile.campaign?.bossWins || {}), [ch.id]: 99 } } } });
   };
-  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null, kind = null, hero = false, lvl = 1 }) => (
+  /* v1.0.60 (Besitzer, SECHSTE Meldung - und die Live-Messung gab ihm recht):
+     der Sockelausgleich griff NUR bei den sechs Grundarten. Tile schluesselte
+     ueber die Figurenart (kind), die Sockeltabelle kennt Hofstaat-Charaktere
+     und Monster aber unter ihrer ID ("guardian", "boss-b04"). Der Schluessel
+     lief ins Leere, Versatz 0 - Schildtraeger (+6.1 %!) und alle Monster
+     standen weiter schief, waehrend Laeufer und Dame laengst sassen.
+     Jetzt reicht champTile die ID als artId durch; Tile prueft ID, dann
+     boss-ID, dann erst die Art. */
+  const Tile = ({ img, name, dim, dark, action, glow, origin, onOpen, sigil = null, sigilBig = null, stufe = null, kind = null, hero = false, lvl = 1, artId = null }) => (
     /* v1.0.11 (Besitzer): die Kachel KLINGT beim Tippen. Der Klangfaenger
        hoert nur auf button/[role=button] — diese div blieb stumm. */
     <div onClick={onOpen ? () => { klang("menue"); onOpen(); } : undefined} style={{ position: "relative",
@@ -1455,7 +1463,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
            ReferenceError und der Fehlervorhang stand. Die Proben fingen es
            nicht, weil sie den QUELLTEXT lasen statt zu rendern - das ist
            jetzt nachgeholt (test_ui rendert die Kachel). */
-        transform: `translateX(${(-sockelVersatz(kunstId({ kind, hero })) * 100).toFixed(2)}%)`,
+        transform: `translateX(${(-(artId && (sockelVersatz(artId) || sockelVersatz("boss-" + artId)) || sockelVersatz(kunstId({ kind, hero }))) * 100).toFixed(2)}%)`,
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
@@ -1498,10 +1506,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
     const sigBig = <PieceArt kind={ch.kind} hero={cid === "gambit"} size={58} level={1}
       fill="#c9a45c" rim="#1b1408" rimW={1.6} detail="#7a5c26" accent="#eac96b" />;
-    if (own) return <Tile key={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} stufe={unlocked.has(cid) ? characterLevel(profile, cid) : null} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
+    if (own) return <Tile key={cid} artId={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} stufe={unlocked.has(cid) ? characterLevel(profile, cid) : null} name={en ? ch.nameEn : ch.nameDe} glow origin={origin} sigil={sig} sigilBig={sigBig} onOpen={() => setDetail(cid)} />;
     if (seen || wins > 0) {
       const price = bribePrice(ch);
-      return <Tile key={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}
+      return <Tile key={cid} artId={cid} img={img} kind={ch.kind} hero={cid === "gambit"} lvl={characterLevel(profile, cid) || 1} dim name={en ? ch.nameEn : ch.nameDe} sigil={sig} sigilBig={sigBig} origin={origin} onOpen={() => setDetail(cid)}
         action={wins >= 1 ? <button onClick={(e) => { e.stopPropagation(); bribe(ch); }} disabled={gold < price}
           title={t("tree.bribeHint")}
           style={{ marginTop: 5, width: "100%", padding: "4px 4px", borderRadius: 7, fontFamily: "inherit", fontWeight: 800,
@@ -1509,7 +1517,7 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
             background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)", color: "#17110a" }}>
           {t("tree.bribe", { g: price })}</button> : null} />;
     }
-    return <Tile key={cid} img={img} dark name={"???"} sigil={sig} sigilBig={sigBig} />;
+    return <Tile key={cid} artId={cid} img={img} dark name={"???"} sigil={sig} sigilBig={sigBig} />;
   };
   const monsterTile = (b) => {
     // paintedById is a FUNCTION — reading it with brackets returned undefined

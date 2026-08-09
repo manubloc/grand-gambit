@@ -3,7 +3,7 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, sockelVersatz, kunstId, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { gegnerStil, toenung } from "../gegnerstil.js";
+import { gegnerStil, gefahrVon } from "../gegnerstil.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -302,7 +302,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      stattdessen ihre Grundfarbe als aufsteigenden Verlauf. Der klassische
      Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
   const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
-  const ton = toenung(piece.kind);   /* v1.0.54: Lila-Staerke nach Gefahr */
+  const gefahr = gefahrVon(piece.kind);   /* v1.0.60: Sockel-Leuchtstaerke */
   const sockelX = sockelVersatz(kunstId(paintPiece));   /* v1.0.57: auch das Brett gleicht aus */
   const SIDE_GLOW = white
     ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
@@ -500,8 +500,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                    heller - ausser beim Koenig, der stand schon hell genug.
                    contrast(1.35) und ein Helligkeitsschub von 1.18; der
                    Koenig bekommt nur den Kontrast, keinen Schub. */
+                /* v1.0.60 (Besitzerentscheid): BEIDE Gegnerstile tragen den
+                   LILA LEUCHTENDEN SOCKEL - der Unterschied ist nur die Figur
+                   darueber. "grau": Figur in Graustufen (contrast 1.35,
+                   brightness 1.18, Koenig ohne Schub). "getoent": die Figur
+                   BEHAELT ihre Farben exakt wie die eigenen - kein Filter,
+                   keine Volltoenung mehr; nur der Sockel glueht. */
                 : (sicht === "grau" ? `grayscale(1) contrast(1.35) brightness(${isKing ? 1 : 1.18}) `
-                   : sicht === "getoent" ? "grayscale(1) " : "") + ENEMY_FILTER + (isKing ? " brightness(1.85) saturate(1.2)"
+                   : "") + (sicht === "getoent" ? "" : ENEMY_FILTER) + (sicht === "getoent" ? "" : isKing ? " brightness(1.85) saturate(1.2)"
                   : isQueen ? " brightness(1.42) saturate(1.18)"
                   : isBoss ? " brightness(1.42) saturate(1.18)"
                   : piece.hero ? " brightness(1)"
@@ -515,17 +521,29 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
             Verlaufsmaske von unten eingeblendet. Linear-Verlaeufe sind fuer
             den Grafikkern trivial - die teuren Figurmasken aus der
             Ruckel-Geschichte (v1.0.37) braucht es dafuer nicht. */}
-        {painting && sicht === "getoent" && (
+        {/* v1.0.60 (Besitzerwunsch): DER SOCKEL GLUEHT LILA - in BEIDEN
+            Gegnerstilen. Nicht mehr die halbe Figur toenen: die Lila-Kopie
+            wird per Verlaufsmaske auf die untersten ~22 % beschraenkt (dort
+            sitzt der Sockel bei jeder Figur) und krachend gesaettigt, dazu
+            ein weicher Lichtschein hinter dem Fuss. Gefahrenstaffel bleibt:
+            je gefaehrlicher, desto heller glueht es (gegnerstil.js). Linearer
+            Verlauf + radialer Schein sind fuer den Grafikkern trivial - die
+            teuren Figurmasken aus der Ruckel-Geschichte (v1.0.37) braucht es
+            nicht. */}
+        {painting && (sicht === "getoent" || sicht === "grau") && (<>
+          <span aria-hidden style={{
+            position: "absolute", left: "50%", bottom: "-2%", width: "94%", height: "30%",
+            transform: "translateX(-50%)", borderRadius: "50%", pointerEvents: "none",
+            background: `radial-gradient(ellipse 50% 46% at 50% 62%, rgba(196,166,255,${0.5 + 0.35 * gefahr}) 0%, rgba(124,58,237,${0.32 + 0.3 * gefahr}) 46%, rgba(124,58,237,0) 74%)`,
+            filter: "blur(1.5px)" }} />
           <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
             objectFit: "contain", objectPosition: big ? "center" : "center bottom",
-            /* v1.0.54: ein Lila fuer alle, gestaffelt nach Gefahr (gegnerstil.js).
-               Der Bauer glimmt dunkel, Dame und Monster leuchten hell - das
-               Brett liest sich als Bedrohungskarte statt als Farbkasten. */
-            filter: `grayscale(1) sepia(1) hue-rotate(${ton.winkel}deg) saturate(${ton.saettigung}) brightness(${ton.helligkeit})`,
-            WebkitMaskImage: `linear-gradient(0deg, rgba(0,0,0,${ton.deckung}) 10%, rgba(0,0,0,0) 76%)`,
-            maskImage: `linear-gradient(0deg, rgba(0,0,0,${ton.deckung}) 10%, rgba(0,0,0,0) 76%)`,
-            userSelect: "none", pointerEvents: "none" }} />)}
+            filter: `grayscale(1) sepia(1) hue-rotate(232deg) saturate(${(3.4 + 1.6 * gefahr).toFixed(2)}) brightness(${(1.15 + 0.45 * gefahr).toFixed(2)})`,
+            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 6%, rgba(0,0,0,.55) 15%, rgba(0,0,0,0) 26%)",
+            maskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 6%, rgba(0,0,0,.55) 15%, rgba(0,0,0,0) 26%)",
+            userSelect: "none", pointerEvents: "none" }} />
+        </>)}
       </div>
 
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
