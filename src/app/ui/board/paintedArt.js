@@ -385,7 +385,9 @@ const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: 0 }, "amazon": { h: 1
    Jetzt beginnt die Staffel dicht am Bauern und steigt sanft: wer aufsteigt,
    wird groesser, aber sein Fuss bleibt auf derselben Linie wie der seiner
    Reihe. */
-const GAMBIT_TIER_Y = [-0.0720, -0.0790, -0.0860, -0.0930, -0.1000, -0.1070];
+/* v1.0.59 (Besitzer: "noch zu hoch"): Stufe 1 steht jetzt EXAKT auf dem
+   Bauernwert (-0.06) - er ist ein Bauer unter Bauern, nur groesser. */
+const GAMBIT_TIER_Y = [-0.0600, -0.0670, -0.0740, -0.0810, -0.0880, -0.0950];
 /* v1.0.49: NULL. Die Figurenbilder sind seit diesem Stand selbst horizontal
    zentriert (93 Dateien, Restversatz unter einem halben Pixel), also braucht
    das Brett keinen Ausgleich mehr - und, wichtiger, Aufstellung und Hofstaat

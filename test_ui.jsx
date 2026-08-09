@@ -1069,7 +1069,7 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   const quelle = readFileSync("src/app/ui/screens/ArmyScreen.jsx", "utf8");
   const bilder = (quelle.match(/paintedById\(|paintedForPiece\(/g) || []).length;
   const ausgleiche = (quelle.match(/sockelVersatz\(/g) || []).length;
-  ok("der Hofstaat gleicht aus (champTile)", /width: "118%"[\s\S]{0,240}sockelVersatz\(/.test(quelle));
+  ok("der Hofstaat gleicht aus (champTile)", /width: "118%"[\s\S]{0,900}sockelVersatz\(/.test(quelle));
   ok("mindestens sechs Ansichten tragen den Ausgleich", ausgleiche >= 6);
   ok("und es gibt ueberhaupt Figurenbilder zu korrigieren", bilder >= 6);
 }
@@ -1089,6 +1089,25 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   const y = art.match(/const GAMBIT_TIER_Y = \[([^\]]+)\]/)[1].split(",").map(Number);
   ok("die Gambit-Staffel steigt durchgehend", y.every((v, i) => i === 0 || v < y[i - 1]));
   ok("und beginnt nahe der Bauernlinie, nicht bei den Offizieren", y[0] > -0.09);
+}
+
+/* ── TILE IST EIN PROPS-BAUSTEIN (v1.0.59, nach Live-Absturz) ──────────────
+   "ch is not defined" stand auf dem Fehlervorhang des Besitzers: mein
+   v1.0.56-Edit hatte in die generische Tile-Kachel Variablen aus champTile
+   kopiert (ch, cid), die es dort nie gab. Die Render-Proben fingen es
+   nicht, weil die Kacheln erst nach dem Bild-Vorladen erscheinen
+   (artReady) - im Server-Rendering laeuft kein Effekt, Tile rendert nie.
+   Diese Probe prueft darum die STRUKTUR: innerhalb der Tile-Definition
+   duerfen ch und cid nicht vorkommen. */
+{
+  const { readFileSync: _rf2 } = await import("node:fs");
+  const q = _rf2("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+  const von = q.indexOf("const Tile = (");
+  const bis = q.indexOf("\n  const ", von + 10);
+  const tile = q.slice(von, bis);
+  ok("Tile existiert und ist abgegrenzt", von > 0 && bis > von);
+  ok("Tile greift nicht auf ch zu", !/\bch\./.test(tile));
+  ok("Tile greift nicht auf cid zu", !/\bcid\b/.test(tile));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

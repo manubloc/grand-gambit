@@ -187,8 +187,12 @@ export default function App() {
      nach oben. Ohne weiches Gleiten: das ist kein Weg, den jemand
      zuruecklegen will, sondern der Anfang eines neuen Raums. */
   useEffect(() => {
-    try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
-    catch { try { window.scrollTo(0, 0); } catch {} }
+    /* v1.0.59: window.scrollTo liess die CI rot werden - JSDOM implementiert
+       es nicht und meldet das als Konsolenfehler, den KEIN try/catch faengt
+       (es wird nichts geworfen, nur geloggt). Die Zuweisung an scrollTop
+       tut im Browser dasselbe und ist in JSDOM ein stilles No-op. */
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [tab, view]);
   const [match, setMatch] = useState(null);
   const [pvp, setPvp] = useState(null);

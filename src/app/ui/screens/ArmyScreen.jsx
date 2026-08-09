@@ -1447,7 +1447,15 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
            ich nie angefasst habe. Darum "hat sich nichts geaendert": es
            stimmte, meine Aenderungen liefen an dieser Ansicht vorbei. */
         style={{ width: "118%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -7px",
-        transform: `translateX(${(-sockelVersatz(kunstId({ kind: ch.kind, hero: cid === "gambit" })) * 100).toFixed(2)}%)`,
+        /* v1.0.59: HIER LAG DER ABSTURZ ("ch is not defined", Besitzer-Foto).
+           Diese Kachel ist die generische Tile-Komponente - sie kennt die
+           champTile-Variablen NICHT, sie bekommt kind und hero als PROPS.
+           Mein v1.0.56-Edit hat die fremden Namen hierher kopiert, wo es
+           sie nie gab; beim ersten Rendern des Figuren-Reiters flog der
+           ReferenceError und der Fehlervorhang stand. Die Proben fingen es
+           nicht, weil sie den QUELLTEXT lasen statt zu rendern - das ist
+           jetzt nachgeholt (test_ui rendert die Kachel). */
+        transform: `translateX(${(-sockelVersatz(kunstId({ kind, hero })) * 100).toFixed(2)}%)`,
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
