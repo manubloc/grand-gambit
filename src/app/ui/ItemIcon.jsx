@@ -6,6 +6,8 @@
 import { ICON_ART } from "./art.generated.js";
 import { itemArt } from "./assets/items/itemArt.js";
 import { schlichtAn } from "./board/paintedArt.js";
+import { sperrBild } from "./board/sperrenArt.js";
+import { SperrVektor } from "./board/sperrenVektor.jsx";
 import { ITEMS } from "../../content/index.js";
 
 export function ItemIcon({ id, size = 22, style = null }) {
@@ -14,12 +16,19 @@ export function ItemIcon({ id, size = 22, style = null }) {
      Vektorzeichnung uebernimmt. Entweder das eine oder das andere; ein
      Haus aus gemalten Truhen und schlichten Figuren war der Zwitter, den
      der Besitzer zu Recht bemaengelt hat. */
-  const painted = schlichtAn() ? null : itemArt(id);
+  /* v1.0.63: die SPERREN im Laden tragen genau das Gesicht, das gleich auf
+     dem Brett stehen wird - das gemalte Bild, wo es eines gibt (die Mauer),
+     sonst die Zeichnung aus sperrenVektor. Ein Zaun als Emoji im Bündel des
+     Kraemers waere die einzige Stelle im ganzen Haus gewesen, an der ein
+     Systemzeichen fuer ein Spielstueck steht. */
+  const sperrArt = ITEMS[id]?.sperre || null;
+  const painted = schlichtAn() ? null : itemArt(id) || (sperrArt ? sperrBild(sperrArt, "heil") : null);
   if (painted) {
     return <img src={painted} alt="" draggable={false} decoding="async" aria-hidden="true"
       style={{ width: size, height: size, objectFit: "contain", display: "block",
         filter: "drop-shadow(0 1px 2px rgba(0,0,0,.45))", ...style }} />;
   }
+  if (sperrArt) return <SperrVektor art={sperrArt} zustand="heil" size={size} style={style} />;
   const art = ICON_ART[id];
   if (!art) return <span style={{ fontSize: size * 0.86, ...style }}>{ITEMS[id]?.emoji || "❔"}</span>;
   return <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"

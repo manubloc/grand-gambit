@@ -148,7 +148,7 @@ export function zugDauerMs(lastMove, pov, hotseat, w) {
   return Math.round((leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52)) * 1000);
 }
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false }) {
+export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false, setzFelder = null, onSetz = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -367,7 +367,16 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
     return k && inCheck(state, state.turn) ? k.i : -1;
   }, [state]);
 
+  /* v1.0.63: DAS SETZEN DER SPERREN. Vor dem ersten Zug leuchten die
+     erlaubten Felder (dritte und vierte eigene Reihe) - ein Tipp setzt, ein
+     Tipp auf die eigene Sperre nimmt sie wieder auf. Die Menge kommt fertig
+     vom Kampfschirm; das Brett kennt die REGEL nicht, nur die Felder. */
+  const setzSet = useMemo(() => new Set(setzFelder || []), [setzFelder]);
+
   function tap(i) {
+    /* Der Setzmodus liegt VOR der Zugsperre: waehrend gesetzt wird, ist noch
+       niemand am Zug, das Brett also bewusst nicht "interactive". */
+    if (onSetz && (setzSet.has(i) || (setzFelder && state?.sperren?.[i]))) { onSetz(i); return; }
     if (!interactive) return;
     // A selected dragon moving one square forward lands on a square its own 2x2
     // block currently covers (a wing marker). That target must WIN over the
@@ -652,6 +661,13 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                 background: metal.face, border: `1.5px solid ${tgt.special ? "#f6e4a2" : metal.rim}`,
                 boxShadow: `0 1px 4px rgba(0,0,0,.6), 0 0 8px ${metal.glow}, inset 0 1px 1px rgba(255,255,255,.5)`,
                 pointerEvents: "none" }} />)}
+          {/* v1.0.63: EIN FREIES FELD FUER EINE SPERRE. Kein Zielpunkt aus
+              Metall (der gehoert den Zuegen), sondern ein ruhig atmender
+              Steinrahmen - man baut hier, man schlaegt nicht. */}
+          {setzSet.has(i) && <div aria-hidden style={{ position: "absolute", inset: "6%", borderRadius: 4,
+            pointerEvents: "none", boxShadow: "inset 0 0 0 2px rgba(214,203,178,.85), 0 0 10px rgba(214,203,178,.28)",
+            background: "rgba(214,203,178,.12)",
+            animation: ruhig ? "none" : "ggSetzPuls 1.6s ease-in-out infinite" }} />}
         </div>
       );
     }

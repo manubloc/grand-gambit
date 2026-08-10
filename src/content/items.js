@@ -1,3 +1,5 @@
+import { SPERR_ARTEN } from "../core/index.js";
+
 // Equipment & expedition gear — bought with gold in the court's supply
 // chest. Two flavors: CONSUMABLES burn per use (draughts), KEYS are owned
 // once and forever — they unlock hidden paths on the campaign map, and one
@@ -108,6 +110,42 @@ export const ITEMS = {
     textEn: "Resets one court piece's abilities — every skill point returns.",
     loreDe: "Ein Schluck, und die Figur vergisst jede erlernte Fähigkeit — die dafür ausgegebenen Skillpunkte kehren vollständig in deine Kasse zurück. Der Händler weiß, was Vergessen wert ist: Mit jedem gekauften Trank verdoppelt sich sein Preis. Angewendet wird er im Hofstaat, auf dem Blatt der Figur.",
     loreEn: "One draught, and the piece forgets every learned ability — the skill points spent on them return to your purse in full. The merchant knows what forgetting is worth: each bought draught doubles his price. Applied in the court, on the piece's own sheet.",
+  },
+
+  /* ── DIE SPERREN (v1.0.63) ────────────────────────────────────────────────
+     Regelwerk und Bilder gab es seit v0.90 bzw. v1.0.46 - nur KAUFEN konnte
+     man nie eine. Sie sind Verbrauchsware wie der Trank: gekauft im Lager,
+     gesetzt vor dem ersten Zug, danach fort. Die Preise stehen NICHT hier,
+     sondern in core/rules/sperren.js bei der Haerte, zu der sie gehoeren -
+     zwei Zahlen an zwei Orten waeren zwei Wahrheiten.
+     Zwei je Partie duerfen aufs Brett (MAX_SPERREN), drei duerfen im Vorrat
+     liegen: so ueberlebt der Vorrat eine Partie. */
+  zaun: {
+    id: "zaun", emoji: "🚧", kind: "consumable", gold: SPERR_ARTEN.zaun.gold, max: 3, minCleared: 4,
+    sperre: "zaun",
+    nameDe: "Zaun", nameEn: "Fence",
+    textDe: "Sperre für ein Feld deiner dritten oder vierten Reihe — hält einen Schlag.",
+    textEn: "A barrier for your third or fourth rank — it holds one blow.",
+    loreDe: "Vor dem ersten Zug setzt du ihn auf ein freies Feld deiner dritten oder vierten Reihe. Wer gleitend darauf trifft, hält davor an; wer zuschlägt, verliert seinen ganzen Zug — die Figur bleibt unversehrt stehen. Springer setzen darüber hinweg. Ein Zaun hält einen einzigen Schlag aus und zerfällt ohnehin nach sechs Zügen von selbst. Höchstens zwei Sperren stehen gleichzeitig auf deiner Seite.",
+    loreEn: "Before the first move you set it on a free square of your third or fourth rank. Sliding pieces stop in front of it; striking it costs a whole turn — the piece itself stays unharmed. Knights leap over. A fence takes a single blow and crumbles by itself after six moves anyway. At most two barriers stand on your side at once.",
+  },
+  mauer: {
+    id: "mauer", emoji: "🧱", kind: "consumable", gold: SPERR_ARTEN.mauer.gold, max: 3, minCleared: 6,
+    sperre: "mauer",
+    nameDe: "Mauer", nameEn: "Wall",
+    textDe: "Sperre für ein Feld deiner dritten oder vierten Reihe — hält zwei Schläge.",
+    textEn: "A barrier for your third or fourth rank — it holds two blows.",
+    loreDe: "Das Rückgrat der Sperren: zwei Schläge, bis sie fällt — zwei Züge, die dem Gegner fehlen. Gesetzt wird sie vor dem ersten Zug auf ein freies Feld deiner dritten oder vierten Reihe. Sie zerfällt von selbst: nach sechs Zügen bekommt sie Risse, nach zwölf ist sie Schutt. Höchstens zwei Sperren stehen gleichzeitig auf deiner Seite.",
+    loreEn: "The backbone of barriers: two blows before it falls — two moves the enemy loses. It is set before the first move on a free square of your third or fourth rank. It crumbles on its own: cracks after six moves, rubble after twelve. At most two barriers stand on your side at once.",
+  },
+  bergfried: {
+    id: "bergfried", emoji: "🏰", kind: "consumable", gold: SPERR_ARTEN.bergfried.gold, max: 2, minCleared: 9,
+    sperre: "bergfried",
+    nameDe: "Bollwerk", nameEn: "Bulwark",
+    textDe: "Sperre für ein Feld deiner dritten oder vierten Reihe — hält drei Schläge.",
+    textEn: "A barrier for your third or fourth rank — it holds three blows.",
+    loreDe: "Der teuerste Stein im Bündel und der zäheste: drei Schläge, also drei verlorene Züge für den, der hindurchwill. Auch er hält nicht ewig — alle sechs Züge bröckelt eine Schicht ab, nach achtzehn Zügen liegt er. Gesetzt wird er vor dem ersten Zug auf deine dritte oder vierte Reihe; höchstens zwei Sperren stehen gleichzeitig auf deiner Seite.",
+    loreEn: "The dearest stone in the bundle and the toughest: three blows, so three lost moves for whoever wants through. It does not last either — a layer crumbles every six moves, and after eighteen it lies flat. Set before the first move on your third or fourth rank; at most two barriers stand on your side at once.",
   },
 
   boat: {

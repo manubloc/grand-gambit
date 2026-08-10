@@ -91,8 +91,21 @@ const DE = {
   "camp.reward": "Bonus", "camp.league": "Das Kapitel", "camp.boss": "Meister", "camp.rival": "Gegner", "camp.newPiece": "Neue Figur", "camp.unknown": "Bewegung unbekannt", "camp.back": "Zurück zur Kampagne", "game.stageCleared": "Etappe geschafft!",
   "army.formation": "Aufstellung", "army.planChess": "Schach", "army.planHp": "HP-Gefecht", "army.planHint": "Zwei Pläne: der Schach-Plan gilt für die Schach-Stationen der Kampagne, der HP-Plan für jedes HP-Gefecht — auch in der Halle. Klassisch bleibt davon unberührt: dort spielt immer das alte Standard-Schach ohne jedes Extra.", "army.mapPick": "Karte wählen", "army.classicHint": "Das klassische 8×8-Feld — hier darfst du deine Reihe genauso ordnen wie auf jeder Karte. (Im Schnellspiel bleibt Klassik immer die traditionelle Aufstellung.)", "army.formationHint": "Ordne deine Hinterreihe. Tippe ein Feld und wähle eine Figur.",
   "army.standard": "Standard", "army.flex": "Frei", "army.invalid": "Aufstellung unvollständig",
+  /* v1.0.63: die Setzphase der Sperren - vor dem ersten Zug. */
+  "sperre.title": "Sperren setzen",
+  "sperre.hint": "Tippe ein leuchtendes Feld deiner dritten oder vierten Reihe. Höchstens {n} — nochmal antippen nimmt sie zurück.",
+  "sperre.none": "Keine Sperre gewählt",
+  "sperre.go": "Los geht's",
+  "sperre.skip": "Ohne Sperren beginnen",
+  "sperre.left": "{n} übrig",
 };
 const EN = {
+  "sperre.title": "Set your barriers",
+  "sperre.hint": "Tap a glowing square on your third or fourth rank. At most {n} — tap again to take one back.",
+  "sperre.none": "No barrier chosen",
+  "sperre.go": "Begin",
+  "sperre.skip": "Begin without barriers",
+  "sperre.left": "{n} left",
   "lager.tabSchatz": "Treasury", "lager.tabHaendler": "Trader",
   "nav.play": "Play", "nav.army": "Pieces", "nav.camp": "Campaign", "nav.ach": "Stores", "nav.profile": "Profile",
   "home.level": "Level", "home.next": "Next level",

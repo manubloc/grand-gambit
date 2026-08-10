@@ -15,6 +15,7 @@
 // Fehler.
 import { useEffect, useRef, useState } from "react";
 import { sperrBild, SPERR_SITZ } from "./sperrenArt.js";
+import { SperrVektor, hatVektor } from "./sperrenVektor.jsx";
 
 const VOLL_MS = 2000;      // so lange bleibt der Schutt voll sichtbar
 const BLASS_MS = 1500;     // so lange dauert das Sinken
@@ -37,7 +38,12 @@ export function SperrGlyph({ art, zustand, ruhig = false }) {
     return () => { if (uhr.current) clearTimeout(uhr.current); uhr.current = null; };
   }, [truemmer, ruhig, art]);
 
-  if (!bild) return null;   // Art hat noch keine Bilder - lieber nichts als falsch
+  /* v1.0.63: FEHLT DAS BILD, ZEICHNET DIE HAND. Bis hierher gab dieser Zweig
+     null zurueck - richtig, solange keine Sperre je auf einem echten Brett
+     stand. Seit man sie KAUFT, waere das ein bezahltes Nichts: Zaun und
+     Bollwerk haben noch keine Gemaelde. Die Zeichnung springt ein, bis sie
+     kommen. */
+  if (!bild && !hatVektor(art)) return null;
 
   return (
     <div style={{
@@ -54,6 +60,7 @@ export function SperrGlyph({ art, zustand, ruhig = false }) {
       opacity: blass ? REST : 1,
       transition: ruhig ? "none" : `opacity ${BLASS_MS}ms ease-out`,
     }}>
+      {!bild ? <SperrVektor art={art} zustand={zustand} fuellt /> :
       <img src={bild} alt="" draggable={false} style={{
         maxWidth: "100%", maxHeight: "100%", objectFit: "contain",
         objectPosition: "bottom center",
@@ -62,7 +69,7 @@ export function SperrGlyph({ art, zustand, ruhig = false }) {
            Ursache des Ruckelns; eine Sperre steht auf jedem zweiten Feld und
            darf erst recht nicht teuer sein. */
         filter: "drop-shadow(0 2px 3px rgba(0,0,0,.6))",
-      }} />
+      }} />}
     </div>
   );
 }

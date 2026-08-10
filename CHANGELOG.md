@@ -1,5 +1,47 @@
 # Changelog - Grand Gambit
 
+## 1.0.63
+- SPERREN LASSEN SICH ENDLICH KAUFEN UND SETZEN. Regelwerk (v0.90) und Bilder
+  (v1.0.46) standen laengst - nur konnte niemand je eine Sperre besitzen. Zaun,
+  Mauer und Bollwerk liegen jetzt im Buendel des Kraemers (40/110/240 Gold, ab
+  4/6/9 gemeisterten Stationen); die Preise stehen weiterhin allein in
+  core/rules/sperren.js, damit es sie nicht zweimal gibt.
+- Gesetzt wird VOR dem ersten Zug, auf ein freies Feld der dritten oder vierten
+  EIGENEN Reihe, hoechstens zwei je Seite. Nochmal antippen nimmt zurueck;
+  verbraucht ist nur, was beim Start wirklich steht. Waehrend des Setzens ruhen
+  Brett und Uhr.
+- NICHTS HAELT EWIG: jede Sperre verliert alle sechs Zuege einen Punkt, ganz
+  ohne Schlag. Zaun 6, Mauer 12, Bollwerk 18 Zuege - keine ueberdauert die 20
+  Zuege, die der Besitzer als Grenze gezogen hat.
+- URSACHE, nicht Symptom (drei Fehler, die erst jetzt schaden konnten, weil nie
+  jemand eine Sperre auf ein echtes Brett bekam):
+  * Der Schlag gegen eine Sperre legte den ZUG in die Historie, aus der undo()
+    einen ZUSTAND zurueckgibt - der Zeitenwender haette ein Zugobjekt als Brett
+    ausgeliefert. Jetzt legt auch dieser Zweig den vorigen Zustand ab.
+  * Derselbe Zweig zaehlte in `ns.ply` weiter, ein Feld, das cloneState gar
+    nicht mitkopiert und niemand liest. Der Schlag kostet den Zug, also dreht er
+    jetzt moveCount - sonst alterte keine Sperre, waehrend man auf sie einschlug.
+  * Der Doppelschritt des Bauern prueft nur das Brett, nicht die Sperren - und
+    sein Ziel IST die dritte Reihe. Er waere mitten in die eigene Mauer gelaufen.
+- Der Schnappschuss (encodeState) traegt Sperren und Fallen mit. Ohne das
+  verlor eine pausierte Kampagnenpartie beim Fortsetzen jede bezahlte Mauer;
+  fortgesetzte Partien rechnen ihre stehenden Sperren jetzt auch korrekt ab
+  (vorher: pausieren, fortsetzen, Mauer geschenkt).
+- Zaun und Bollwerk haben noch keine Gemaelde und wurden darum GAR NICHT
+  gezeichnet ("lieber nichts als falsch" - richtig, solange niemand sie kaufen
+  konnte, falsch ab dem ersten bezahlten Zaun). Bis die Bilder kommen, springt
+  eine Zeichnung ein (sperrenVektor.jsx), auf dem Brett wie im Laden.
+- Am lebenden DOM gemessen und danach geaendert: der Setzbalken hing im
+  Brettkasten und verdeckte auf einem 390er Telefon 128 px des Bretts - zwei
+  Drittel der dritten Reihe, also genau eines der Felder, die man antippen
+  soll. Er sitzt jetzt darunter (verdeckt: 0). Ebenfalls gemessen: 20 leuchtende
+  Felder, Setzen/Zuruecknehmen, und der Bauer vor der Sperre hat nur noch EIN
+  Ziel - den Schlag gegen sie.
+- Messwerkzeug messe_sperren.mjs (Konto anlegen, Vorrat fuellen, Setzphase am
+  lebenden DOM vermessen). drive3.mjs duldet jetzt auch
+  ERR_TUNNEL_CONNECTION_FAILED fuer die bekannt unerreichbare Halle - in einer
+  Sandbox mit Netz-Vermittler meldet Chromium denselben Fehlschlag anders.
+
 ## 1.0.47
 - Admin-Passwort gewechselt. Das vorherige stand seit v1.0.39 im Klartext in
   der (oeffentlichen) Commit-Historie; der Klartext des neuen hat das

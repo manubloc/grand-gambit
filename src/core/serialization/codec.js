@@ -22,6 +22,12 @@ export function encodeState(state) {
     ohneSchaden: state.ohneSchaden || 0,
     seed: state.seed ?? 0,
     log: state.log ?? [],
+    /* v1.0.63: Sperren und Fallen gehoeren in den Schnappschuss. Ohne diese
+       zwei Zeilen verlor eine PAUSIERTE Kampagnenpartie beim Fortsetzen jede
+       gesetzte Mauer - bezahlt, gesetzt, verschwunden. Nur mitschreiben, was
+       da ist: Partien ohne Sperren behalten exakt ihre alte Schnappschussform. */
+    ...(state.sperren && Object.keys(state.sperren).length ? { sperren: state.sperren } : {}),
+    ...(state.fallen && Object.keys(state.fallen).length ? { fallen: state.fallen } : {}),
   });
 }
 
@@ -43,5 +49,7 @@ export function decodeState(json) {
     ohneSchaden: o.ohneSchaden || 0,
     seed: o.seed || 0,
     log: o.log || [],
+    ...(o.sperren ? { sperren: o.sperren } : {}),
+    ...(o.fallen ? { fallen: o.fallen } : {}),
   };
 }

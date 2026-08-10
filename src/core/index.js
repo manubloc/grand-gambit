@@ -14,6 +14,13 @@ export { DEFAULT_BACK_RANK, FLANK_SLOTS, defaultArmy, createInitialState } from 
 // Rules: move generation + attack/check detection
 export { pieceMoves, pseudoMoves, hasAbility } from "./rules/moves.js";
 export { isSquareAttacked, inCheck } from "./rules/attacks.js";
+/* v1.0.63: die Sperren treten aus dem Maschinenraum heraus - Laden, Brett und
+   Kampfschirm brauchen sie beim Namen (kaufen, setzen, zeichnen). */
+export {
+  SPERR_ARTEN, FALLEN_ARTEN, MAX_SPERREN, ZERFALL_TAKT,
+  stadium, versperrt, sperreAuf, sperrenAnzahl,
+  setzReihen, setzFelder, feldFrei, darfSetzen, setzeSperre, nimmSperre, zerfalleSperren,
+} from "./rules/sperren.js";
 
 // Simulation: state, transitions, commands, events, reducer
 export { createGame } from "./sim/state.js";

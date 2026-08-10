@@ -27,8 +27,15 @@ const errors = [];
 // boot-time GET /design is DESIGNED to fail silently offline (livery.js
 // catches and falls back to APP_DESIGN). Chromium still logs the CORS/network
 // line itself; that expected pair is the ONLY thing this gate tolerates.
+/* v1.0.63: In einer Sandbox mit vorgeschaltetem Netz-Vermittler meldet
+   Chromium denselben Fehlschlag als ERR_TUNNEL_CONNECTION_FAILED statt
+   ERR_FAILED - gemessen: die einzige fehlgeschlagene Anfrage ist weiterhin
+   GET https://duell.grandgambit.win/design. Ein Tunnelfehler kann ohnehin nur
+   bei einer AUSWAERTIGEN Anfrage entstehen; alles Eigene liefert der lokale
+   Server dieser Datei (und im Zweifel seine SPA-Rueckfallseite mit 200). */
 const EXPECTED_OFFLINE = (t) =>
-  /duell\.grandgambit\.win/.test(t) || /^Failed to load resource: net::ERR_FAILED/.test(t);
+  /duell\.grandgambit\.win/.test(t)
+  || /^Failed to load resource: net::ERR_(FAILED|TUNNEL_CONNECTION_FAILED)/.test(t);
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 const page = await browser.newPage();
 page.on("console", (m) => { if (m.type() === "error" && !EXPECTED_OFFLINE(m.text())) errors.push(m.text().slice(0, 160)); });

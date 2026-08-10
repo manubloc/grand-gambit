@@ -346,6 +346,10 @@ export const GLOBAL_CSS = `
     50% { box-shadow: 0 0 18px rgba(139,92,246,.65), 0 0 34px rgba(124,58,237,.3), inset 0 0 14px rgba(124,58,237,.2); } }
   @keyframes ggNewPulse { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(240,206,122,.25), 0 0 10px rgba(240,206,122,.15); }
     50% { box-shadow: inset 0 0 0 4.5px rgba(246,233,164,.95), 0 0 30px rgba(240,206,122,.8); } }
+  /* v1.0.63: das Atmen der freien Setzfelder. Stein, kein Gold - hier wird
+     gebaut, nicht geschlagen; der Puls ist entsprechend flach. */
+  @keyframes ggSetzPuls { 0%, 100% { box-shadow: inset 0 0 0 2px rgba(214,203,178,.55), 0 0 8px rgba(214,203,178,.16); }
+    50% { box-shadow: inset 0 0 0 3px rgba(238,231,212,.95), 0 0 16px rgba(214,203,178,.42); } }
   @keyframes ggSmokeUp { 0% { transform: translateX(-50%) translateY(6%) scaleY(.92); opacity: .45 }
     50% { transform: translateX(-47%) translateY(-6%) scaleY(1.04); opacity: .8 }
     100% { transform: translateX(-50%) translateY(-14%) scaleY(1.1); opacity: .35 } }

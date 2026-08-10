@@ -2,7 +2,7 @@ import { other, WHITE, BLACK, BASE_HP, BASE_ATK, HP_REMIS_HALBZUEGE } from "../d
 import { cloneBoard, findKing } from "../domain/board.js";
 import { pseudoMoves, pieceMoves } from "../rules/moves.js";
 import { inCheck } from "../rules/attacks.js";
-import { schlageSperre, loeseFalleAus } from "../rules/sperren.js";
+import { schlageSperre, loeseFalleAus, zerfalleSperren } from "../rules/sperren.js";
 import { familyOf, familyCount, crownWallSoak } from "../rules/families.js";
 
 export function cloneState(state) {
@@ -28,6 +28,20 @@ export function cloneState(state) {
     log: state.log,
     seed: state.seed,
   };
+}
+
+/* v1.0.63: DER STILLE ZERFALL. Jeder Halbzug laesst die stehenden Sperren
+   altern (siehe ZERFALL_TAKT in rules/sperren.js). Er haengt an jedem Ausgang
+   von applyMove, nicht an einem davon - eine Mauer, die nur beim gewoehnlichen
+   Zug broeckelt, waere beim Drachenschritt unsterblich.
+   Steht nichts an, kommt DASSELBE Verzeichnis zurueck: die KI-Suche laeuft
+   millionenfach hier durch und darf dabei nichts kopieren. */
+function altern(ns) {
+  if (ns.sperren) {
+    const s = zerfalleSperren(ns.sperren, ns.moveCount || 0);
+    if (s !== ns.sperren) ns.sperren = s;
+  }
+  return ns;
 }
 
 // In HP mode a promoting piece adopts the new kind's stats.
@@ -64,9 +78,21 @@ export function applyMove(state, move, opts) {
     ns.sperren = sperren;
     ns.turn = piece.color === WHITE ? BLACK : WHITE;
     ns.lastMove = { ...move, schlag: true, gefallen };
-    ns.ply = (ns.ply || 0) + 1;
-    if (record) ns.history = [...(ns.history || []), { ...move, schlag: true }];
-    return ns;
+    /* v1.0.63: hier stand `ns.ply` - ein Zaehler, den cloneState gar nicht
+       mitkopiert und den niemand liest. Der Schlag gegen eine Sperre KOSTET
+       den Zug, also muss er auch den Zugzaehler weiterdrehen; sonst alterte
+       keine Sperre, waehrend jemand auf sie einschlug, und die Uhr des
+       HP-Remis stand still. */
+    ns.moveCount = state.moveCount + 1;
+    ns.ohneSchaden = (state.ohneSchaden || 0) + 1;   // Schutt ist kein Schaden an Figuren
+    /* v1.0.63: hier lag der ZWEITE Fehler dieses Zweigs, und er haette
+       abgestuerzt, sobald ein Spieler wirklich eine Sperre haette schlagen
+       koennen: in die Historie wanderte der ZUG, waehrend undo() von dort
+       einen ZUSTAND zurueckgibt. Der Zeitenwender haette ein Zugobjekt als
+       Brett ausgeliefert. Jetzt legt auch dieser Zweig den vorigen Zustand ab
+       - wie jeder andere. */
+    if (record) ns.history = [...state.history, state];
+    return altern(ns);
   }
   // blows aimed at a dragon's WING strike the dragon himself; when the beast
   // falls, all four of his squares clear at once
@@ -102,7 +128,7 @@ export function applyMove(state, move, opts) {
     ns.moveCount = state.moveCount + 1;
     ns.ohneSchaden = geschaffen ? 0 : (state.ohneSchaden || 0) + 1;
     if (record) { ns.history = [...state.history, state]; }
-    return ns;
+    return altern(ns);
   }
 
 
@@ -152,7 +178,7 @@ export function applyMove(state, move, opts) {
     ns.moveCount = state.moveCount + 1;
     ns.ohneSchaden = (damaged || lethal) ? 0 : (state.ohneSchaden || 0) + 1;
     if (record) { ns.history = [...state.history, state]; }
-    return ns;
+    return altern(ns);
   }
 
   if (hp) {
@@ -283,7 +309,7 @@ export function applyMove(state, move, opts) {
     rookFrom: move.rookFrom ?? null, rookTo: move.rookTo ?? null,
   };
   if (record) ns.history = state.history.concat([state]);
-  return ns;
+  return altern(ns);
 }
 
 /** Legal moves. Chess: pseudo moves that don't leave your king in check.

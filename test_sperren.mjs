@@ -1,7 +1,12 @@
 // ── Mauern, Zaeune, Fallen (v0.90) ──────────────────────────────────────────
 import { createGame, legalMoves, applyMove } from "./src/core/index.js";
 import { buildArmyFromFormation } from "./src/meta/index.js";
-import { SPERR_ARTEN, FALLEN_ARTEN, stadium, loeseFalleAus, falleSichtbar } from "./src/core/rules/sperren.js";
+import { SPERR_ARTEN, FALLEN_ARTEN, stadium, loeseFalleAus, falleSichtbar,
+  MAX_SPERREN, ZERFALL_TAKT, setzReihen, setzFelder, darfSetzen, setzeSperre, nimmSperre,
+  sperrenAnzahl, zerfalleSperren } from "./src/core/rules/sperren.js";
+import { ITEMS, buyItem } from "./src/content/index.js";
+import { applyResult } from "./src/meta/rewards.js";
+import { encodeState, decodeState, undo } from "./src/core/index.js";
 
 let pass = 0, fail = 0;
 const ok = (was, bed) => { if (bed) { pass++; console.log("  ok  - " + was); } else { fail++; console.log("  FAIL- " + was); } };
@@ -84,6 +89,122 @@ function feld() {
 {
   const g = createGame(armee(), armee(), { rules: "chess" });
   ok("ein Brett ohne Sperren zieht wie immer", legalMoves(g).length > 0 && !legalMoves(g).some((m) => m.schlag));
+}
+
+// ── v1.0.63: KAUFEN, SETZEN, ZERFALLEN ──────────────────────────────────────
+
+// 8. Gesetzt wird nur in der dritten und vierten EIGENEN Reihe
+{
+  const g = createGame(armee(), armee(), { rules: "chess" });
+  const W = g.w;
+  ok("Weiss setzt in Reihe 3 und 4", setzReihen(g, "w").join() === "2,3");
+  ok("Schwarz spiegelbildlich", setzReihen(g, "b").sort().join() === [g.h - 4, g.h - 3].sort().join());
+  ok("die eigene Grundreihe ist tabu", !darfSetzen(g, 0, "w"));
+  ok("die Bauernreihe auch", !darfSetzen(g, W, "w"));
+  ok("die dritte Reihe geht", darfSetzen(g, 2 * W, "w"));
+  ok("die vierte Reihe auch", darfSetzen(g, 3 * W + 4, "w"));
+  ok("die Mitte nicht mehr", !darfSetzen(g, 4 * W, "w"));
+  ok("Schwarz darf nicht in Weiss' Reihen", !darfSetzen(g, 2 * W, "b"));
+  ok("zwei volle Reihen stehen offen", setzFelder(g, "w").length === 2 * W);
+}
+
+// 9. Hoechstens zwei je Seite - und das Feld muss frei sein
+{
+  const g = createGame(armee(), armee(), { rules: "chess" });
+  const W = g.w;
+  let s = { ...g, sperren: setzeSperre(g, 2 * W, "mauer", "w", 0) };
+  s = { ...s, sperren: setzeSperre(s, 2 * W + 1, "zaun", "w", 0) };
+  ok("zwei stehen", sperrenAnzahl(s.sperren, "w") === MAX_SPERREN);
+  ok("die dritte wird abgewiesen", setzeSperre(s, 2 * W + 2, "zaun", "w", 0) === s.sperren);
+  ok("kein zweites Stueck auf dasselbe Feld", setzeSperre({ ...g, sperren: s.sperren }, 2 * W, "zaun", "w", 0) === s.sperren);
+  ok("das Gegenueber hat sein eigenes Kontingent", setzeSperre(s, (g.h - 3) * W, "mauer", "b", 0) !== s.sperren);
+  ok("zuruecknehmen gibt das Feld frei", !nimmSperre(s.sperren, 2 * W)[2 * W]);
+  ok("eine erfundene Art wird nicht gesetzt", setzeSperre(g, 2 * W, "burgtor", "w", 0) === (g.sperren || null));
+}
+
+// 10. Der Zerfall: keine Sperre ueberdauert 20 Zuege
+{
+  const bau = (art) => ({ [5]: { art, hp: SPERR_ARTEN[art].hp, von: "w", bis: ZERFALL_TAKT } });
+  for (const art of Object.keys(SPERR_ARTEN)) {
+    let sp = bau(art);
+    let halbzug = 0;
+    while (sp[5] && halbzug < 200) { halbzug++; sp = zerfalleSperren(sp, halbzug); }
+    const zuege = halbzug / 2;
+    ok(`${art} zerfaellt von selbst (${zuege} Zuege)`, !sp[5] && zuege < 20);
+    ok(`${art} haelt so lange, wie sie Punkte hat`, halbzug === SPERR_ARTEN[art].hp * ZERFALL_TAKT);
+  }
+  const sp = bau("mauer");
+  ok("vor dem Takt bleibt alles, wie es ist", zerfalleSperren(sp, ZERFALL_TAKT - 1) === sp);
+  ok("nach dem Takt steht sie angeschlagen", stadium(zerfalleSperren(sp, ZERFALL_TAKT)[5]) === "angeschlagen");
+  ok("mehrere faellige Takte auf einmal", !zerfalleSperren(sp, 5 * ZERFALL_TAKT)[5]);
+}
+
+// 11. Am lebenden Brett: sie altert mit jedem Halbzug und der Schlag zaehlt mit
+{
+  const g = createGame(armee(), armee(), { rules: "chess" });
+  const W = g.w;
+  let s = { ...g, sperren: setzeSperre(g, 3 * W + 1, "mauer", "w", 0) };
+  for (let n = 0; n < ZERFALL_TAKT; n++) {
+    const z = legalMoves(s).find((m) => !m.schlag && !m.capture);
+    s = applyMove(s, z, { record: true });
+  }
+  ok("nach zwoelf Halbzuegen hat die Mauer Risse", stadium(s.sperren[3 * W + 1]) === "angeschlagen");
+  ok("der Zugzaehler laeuft mit", s.moveCount === ZERFALL_TAKT);
+}
+
+// 12. Der Schlag gegen die Sperre kostet einen Halbzug - und laesst sich zuruecknehmen
+{
+  const { g, t, ziel } = feld();
+  const s = { ...g, sperren: { [ziel]: { art: "mauer", hp: 2, von: "b", bis: 999 } } };
+  const n = applyMove(s, legalMoves(s).find((m) => m.to === ziel && m.schlag), { record: true });
+  ok("der Schlag dreht den Zugzaehler weiter", n.moveCount === s.moveCount + 1);
+  const zurueck = undo(n);
+  ok("die Historie traegt einen ZUSTAND, kein Zugobjekt", Array.isArray(zurueck.board) && !!zurueck.board[t]);
+  ok("und die Mauer steht wieder heil", zurueck.sperren[ziel].hp === 2);
+}
+
+// 13. Der Bauer laeuft nicht durch die eigene Mauer
+{
+  const g = createGame(armee(), armee(), { rules: "chess" });
+  const W = g.w;
+  const bauer = W + 3;                      // Weisser Bauer, Reihe 2
+  const s = { ...g, sperren: setzeSperre(g, 3 * W + 3, "zaun", "w", 0) };
+  const z = legalMoves(s).filter((m) => m.from === bauer);
+  ok("der Einzelschritt bleibt", z.some((m) => m.to === 2 * W + 3));
+  ok("der Doppelschritt in die eigene Sperre entfaellt", !z.some((m) => m.to === 3 * W + 3 && !m.schlag));
+}
+
+// 14. Der Schnappschuss vergisst die Sperren nicht mehr
+{
+  const g = createGame(armee(), armee(), { rules: "chess" });
+  const W = g.w;
+  const s = { ...g, sperren: setzeSperre(g, 2 * W + 2, "bergfried", "w", 0) };
+  const zurueck = decodeState(encodeState(s));
+  ok("die gesetzte Sperre ueberlebt das Pausieren", zurueck.sperren?.[2 * W + 2]?.art === "bergfried");
+  ok("ohne Sperren bleibt der Schnappschuss schlank", !("sperren" in JSON.parse(encodeState(g))));
+}
+
+// 15. Der Kraemer fuehrt sie - zum Preis des Regelwerks
+{
+  for (const art of Object.keys(SPERR_ARTEN)) {
+    ok(`${art} liegt im Buendel`, ITEMS[art]?.sperre === art && ITEMS[art].kind === "consumable");
+    ok(`${art} kostet, was das Regelwerk sagt`, ITEMS[art].gold === SPERR_ARTEN[art].gold);
+  }
+  const arm = { gold: 30, items: {} };
+  ok("ohne Gold kein Zaun", buyItem(arm, "zaun") === arm);
+  const reich = buyItem({ gold: 500, items: {} }, "mauer");
+  ok("gekauft wird abgezogen", reich.gold === 500 - SPERR_ARTEN.mauer.gold && reich.items.mauer === 1);
+}
+
+// 16. Was gesetzt wurde, ist nach der Partie fort
+{
+  const profil = { gold: 0, xp: 0, xpEarned: 0, sp: 0, items: { mauer: 2, zaun: 1, potion: 1 },
+    pieces: { levels: {} }, stats: { games: 0, wins: 0, losses: 0, draws: 0, captures: 0, promotions: 0, checkmates: 0, winStreak: 0, bestStreak: 0, flawlessQueenWins: 0, fastWins: 0 },
+    campaign: { league: 1, cleared: [], unlocked: [], dupes: {} } };
+  const { profile: nachher } = applyResult(profil, { result: "win", moveCount: 30, sperrenGesetzt: { mauer: 1, zaun: 1 } });
+  ok("die gesetzte Mauer fehlt im Vorrat", nachher.items.mauer === 1);
+  ok("der gesetzte Zaun ebenso", nachher.items.zaun === 0);
+  ok("was nicht gesetzt wurde, bleibt liegen", nachher.items.potion === 1);
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

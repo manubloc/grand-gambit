@@ -9,7 +9,11 @@ import { renderToStaticMarkup as html } from "react-dom/server";
 import { PieceGlyph, StatTriad, StatOrbBadge } from "./src/app/ui/board/PieceGlyph.jsx";
 import { paintedForPiece, paintedFitFor } from "./src/app/ui/board/paintedArt.js";
 import { SperrGlyph } from "./src/app/ui/board/SperrGlyph.jsx";
-import { stadium } from "./src/core/rules/sperren.js";
+import { stadium, setzFelder, setzeSperre } from "./src/core/rules/sperren.js";
+import { BoardView } from "./src/app/ui/board/BoardView.jsx";
+import { createGame } from "./src/core/index.js";
+import { buildArmyFromFormation } from "./src/meta/index.js";
+const einfachesHeer = () => buildArmyFromFormation(() => 1, ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"]);
 import { ABILITIES, BOSSES } from "./src/content/index.js";
 import { ACHIEVEMENTS } from "./src/meta/achievements.js";
 import { PIECE_ART, BOSS_ART } from "./src/app/ui/art.generated.js";
@@ -158,11 +162,45 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
     hoehe(schutt) !== null && hoehe(heil) !== null && hoehe(schutt) < hoehe(heil) * 0.6);
   // Truemmer gehoeren UNTER die Figur, sonst verdecken sie das Brett.
   ok("die Truemmer liegen unter der Figur (zIndex 0)", /z-?index:\s*0/i.test(schutt));
-  // EINE Art ohne Bilder darf nichts zeichnen statt etwas Falsches.
-  ok("eine Art ohne Bilder zeichnet gar nichts", zeig("zaun", 1) === "");
+  /* v1.0.63: HIER STAND FRUEHER "eine Art ohne Bilder zeichnet gar nichts".
+     Das war richtig, solange niemand eine Sperre setzen konnte - lieber
+     nichts als etwas Falsches. Seit man sie fuer Gold KAUFT, ist Nichts das
+     Falsche: Zaun und Bollwerk haben noch keine Gemaelde und muessen bis
+     dahin als Zeichnung dastehen. Die Probe kehrt sich also um. */
+  const zaun = zeig("zaun", 1), bollwerk = zeig("bergfried", 3);
+  ok("der Zaun steht auch ohne Gemaelde da", zaun.includes("<svg"));
+  ok("das Bollwerk ebenso", bollwerk.includes("<svg"));
+  ok("und beide sehen verschieden aus", zaun !== bollwerk);
+  ok("eine erfundene Art zeichnet weiterhin gar nichts", zeig("burgtor", 1) === "");
+  ok("die Zeichnung kennt auch ihre Truemmer", zeig("zaun", 0) !== zaun);
   // SPARSAM: ein Schatten, nicht neun - dieselbe Lehre wie v1.0.41.
   ok("die Sperre traegt hoechstens einen Unschaerfe-Durchgang",
     (heil.match(/drop-shadow/g) || []).length <= 1);
+  ok("auch die Zeichnung bleibt bei einem Schatten",
+    (zaun.match(/drop-shadow/g) || []).length <= 1);
+}
+
+/* ── DAS SETZEN DER SPERREN, AM GERENDERTEN BRETT (v1.0.63) ───────────────
+   Die Mechanik-Probe (test_sperren) prueft die REGEL, diese hier prueft, dass
+   das Brett sie auch ZEIGT: leuchtende Felder dort, wo gesetzt werden darf,
+   und nirgends sonst. Am lebenden DOM nachgemessen (messe_sperren.mjs), hier
+   als Wache gegen das Zurueckrutschen. */
+{
+  const g = createGame(einfachesHeer(), einfachesHeer(), { rules: "chess" });
+  const felder = setzFelder(g, "w");
+  /* OHNE `ruhig`: das ruhende Brett (Vorschau, Blatt) schaltet Bewegung ab -
+     die Marke traegt dort animation "none". Gemessen wird hier das LEBENDE
+     Brett, auf dem gesetzt wird. */
+  const mit = html(<BoardView state={g} onMove={() => {}} interactive={false} setzFelder={felder} onSetz={() => {}} />);
+  const ohne = html(<BoardView state={g} onMove={() => {}} interactive={false} ruhig />);
+  const zaehle = (m) => (m.match(/ggSetzPuls/g) || []).length;
+  ok("jedes erlaubte Feld leuchtet", zaehle(mit) === felder.length && felder.length === 2 * g.w);
+  ok("ohne Setzphase leuchtet gar nichts", zaehle(ohne) === 0);
+  const belegt = { ...g, sperren: setzeSperre(g, felder[0], "mauer", "w", 0) };
+  const nachher = html(<BoardView state={belegt} onMove={() => {}} interactive={false}
+    setzFelder={setzFelder(belegt, "w")} onSetz={() => {}} />);
+  ok("das belegte Feld leuchtet nicht mehr", zaehle(nachher) === felder.length - 1);
+  ok("und die Sperre steht dort sichtbar", nachher.includes("mauer-heil") || nachher.includes("<svg"));
 }
 
 const star = (m) => m.includes("#7c3aed");

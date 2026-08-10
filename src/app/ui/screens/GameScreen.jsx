@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mitHeld } from "../namen.js";   /* v1.0.13: {held} in Erzaehltexten */
 import { klang, klangVorwaermen, klangEinstellen } from "../klang.js";
 import { musikBereich } from "../musik.js";
-import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE, VALUE } from "../../../core/index.js";
+import { WHITE, BLACK, createGame, reduce, moveCommand, potionCommand, shiftCommand, status, undo, encodeState, decodeState, HP_REMIS_HALBZUEGE, VALUE,
+  SPERR_ARTEN, MAX_SPERREN, setzFelder as sperrFelder, setzeSperre, nimmSperre, sperrenAnzahl } from "../../../core/index.js";
 import { difficultyById, mapById, MAPS, campaignTag, chapterForRow, CHARACTERS as CHARACTERS_BY_ID, voiceFor, ITEMS, KIND_TO_CHAR } from "../../../content/index.js";
 import { buildArmy, buildAiArmyForMap, buildArmyFromFormation, hasForesight, applyResult, summarizeMatch, mapUnlocked, hpUnlocked, winGold, characterLevel, gambitTier, itemRevealed, clearedCount, SP_VAULT_MIN_CLEARED } from "../../../meta/index.js";
 import { chooseMove } from "../../../ai/index.js";
@@ -221,6 +222,69 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   const potionsUsedRef = useRef(resume?.potionsUsed || 0);
   const hourglassUsedRef = useRef(resume?.hourglassUsed || 0);   // time-turners burned this match
+
+  /* ── DIE SPERREN SETZEN (v1.0.63) ────────────────────────────────────────
+     Gekauft wird beim Kraemer, GESETZT hier - vor dem ersten Zug, auf die
+     dritte oder vierte eigene Reihe, hoechstens zwei. Danach ist der Vorrat
+     verbraucht, ob die Mauer nun haelt oder nicht.
+     NICHT ueberall: im Duell (beide Seiten muessten setzen duerfen, und der
+     Netzcode traegt die Sperren noch nicht), in der Fernpartie, am geteilten
+     Geraet und im REINEN Schach ("Klassisch", das ausdruecklich nichts als
+     Schach sein will) bleibt das Brett leer. Und eine fortgesetzte Partie
+     hat ihre Sperren laengst stehen. */
+  const sperrenErlaubt = !pvp && !daily && !hotseat && !classic && !resume;
+  const [vorrat, setVorrat] = useState(() => {
+    const v = {};
+    if (sperrenErlaubt) for (const art of Object.keys(SPERR_ARTEN)) {
+      const n = profile.items?.[art] || 0;
+      if (n > 0) v[art] = n;
+    }
+    return v;
+  });
+  const [sperrWahl, setSperrWahl] = useState(() => Object.keys(vorrat)[0] || null);
+  const [setzen, setSetzen] = useState(() => Object.keys(vorrat).length > 0);
+  /* Was am Ende wirklich stand, wird abgerechnet. WICHTIG bei der
+     FORTGESETZTEN Partie: dort laeuft keine Setzphase mehr, die Mauern
+     stehen aber schon auf dem Brett - ohne diese Zaehlung waere der Vorrat
+     nie belastet worden (pausieren, fortsetzen, Mauer geschenkt). */
+  const sperrenVerbrauchtRef = useRef((() => {
+    const z = {};
+    for (const sp of Object.values(state.sperren || {})) if (sp?.von === WHITE) z[sp.art] = (z[sp.art] || 0) + 1;
+    return z;
+  })());
+  const vorratLeer = Object.values(vorrat).every((n) => !n);
+  /* Die Felder kommen aus dem Regelwerk, nicht aus dem Schirm: dieselbe
+     Wahrheit, die auch der Netzcode spaeter lesen wird. */
+  const setzbar = useMemo(() => (setzen && !vorratLeer ? sperrFelder(state, WHITE) : []), [setzen, state, vorratLeer]);
+  function setzeOderNimm(i) {
+    const steht = state.sperren?.[i];
+    if (steht) {
+      if (steht.von !== WHITE) return;                 // fremde Mauer bleibt stehen
+      setState((s) => ({ ...s, sperren: nimmSperre(s.sperren, i) }));
+      setVorrat((v) => ({ ...v, [steht.art]: (v[steht.art] || 0) + 1 }));
+      if (!sperrWahl) setSperrWahl(steht.art);
+      try { klang("wahl"); } catch {}
+      return;
+    }
+    const art = sperrWahl;
+    if (!art || !(vorrat[art] > 0)) return;
+    setState((s) => {
+      const neu = setzeSperre(s, i, art, WHITE, 0);
+      if (neu === s.sperren) return s;                 // Regel sagt nein
+      setVorrat((v) => ({ ...v, [art]: v[art] - 1 }));
+      return { ...s, sperren: neu };
+    });
+    try { klang("wahl"); } catch {}
+  }
+  /* Beim Abschluss der Setzphase steht fest, was das Feld gekostet hat: nur
+     was WIRKLICH auf dem Brett steht, wird vom Vorrat abgezogen. Wer nichts
+     setzt, zahlt nichts. */
+  function setzenFertig() {
+    const zaehlung = {};
+    for (const s of Object.values(state.sperren || {})) if (s?.von === WHITE) zaehlung[s.art] = (zaehlung[s.art] || 0) + 1;
+    sperrenVerbrauchtRef.current = zaehlung;
+    setSetzen(false);
+  }
   function usePotion(i) {
     setPotionArm(false);
     setState((s) => {
@@ -370,10 +434,10 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     if (pvp && timer && foeClock != null && foeClock <= 0 && !finished.current) finish("win", "time");
   }, [foeClock]); // eslint-disable-line
   useEffect(() => {
-    if (!timer || clock == null || banner || intro || scout || scoutWaitOpp || state.turn !== myColor) return;
+    if (!timer || clock == null || banner || intro || scout || scoutWaitOpp || setzen || state.turn !== myColor) return;
     const id = setInterval(() => setClock((c) => (c == null ? c : c - 1)), 1000);
     return () => clearInterval(id);
-  }, [timer, state.turn, myColor, banner, intro, scout, scoutWaitOpp]); // eslint-disable-line
+  }, [timer, state.turn, myColor, banner, intro, scout, scoutWaitOpp, setzen]); // eslint-disable-line
   useEffect(() => {
     if (timer && clock != null && clock <= 0 && !finished.current) finish("loss", "time");
   }, [clock]); // eslint-disable-line
@@ -420,6 +484,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     summary.hpRules = rules === "hp";
     summary.potionsUsed = potionsUsedRef.current;
     summary.hourglassUsed = hourglassUsedRef.current;
+    summary.sperrenGesetzt = sperrenVerbrauchtRef.current;   // v1.0.63: gesetzte Sperren sind verbraucht
     summary.resigned = reason === "resign" && result === "loss";
     // The purse (v0.5): every win pays gold — stages carry their own reward
     // (bosses more, replays half), free play scales with difficulty.
@@ -746,7 +811,18 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
 
   const hsFlip = quick?.hotseatFlip !== false;        // optional: keep the board fixed (phone stays in hand)
   const viewColor = hotseat ? (hsFlip ? state.turn : WHITE) : myColor; // the board faces whoever moves
-  const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp && !(daily && dailySent);
+  /* v1.0.63: waehrend die Sperren gesetzt werden, ruht das Spiel - erst
+     "Los" gibt das Brett fuer Zuege frei.
+     setzPhase heisst: der Balken steht WIRKLICH auf dem Schirm. Liegt noch
+     eine Erzaehlkarte oder die HP-Einweisung darueber, leuchten auch die
+     Felder nicht - sonst pulsiert das Brett unter einem Fenster, das es
+     verdeckt (am lebenden DOM gemessen, v1.0.63). */
+  /* GEMESSEN, nicht vermutet: `brief` allein taugt hier nicht als Sperre. Die
+     HP-Einweisung ERSCHEINT nur im HP-Gefecht (brief && hpMode); im
+     Schach-Modus bleibt das Merkmal ewig wahr, ohne dass je ein Fenster
+     stuende - der Setzbalken kam dann nie. */
+  const setzPhase = setzen && !intro && !(brief && state.rules === "hp") && !banner && !scout && !scoutWaitOpp;
+  const myTurn = (hotseat ? true : state.turn === myColor) && !banner && !scout && !scoutWaitOpp && !setzen && !(daily && dailySent);
   const st = status(state);
   const hpMode = state.rules === "hp";
   /* v0.86 (Besitzer): REINES SCHACH IST REINES SCHACH - gleich, auf welchem
@@ -981,6 +1057,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel} ruhig={armResign || !!banner}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
+          setzFelder={setzPhase ? setzbar : null} onSetz={setzPhase ? setzeOderNimm : null}
           knownKinds={knownAtStart} seerVision={seerVision} onEnemyTap={onEnemyTap} introSpot={introSpots} onInspect={setInspect}
           texture={boardTexture(match, profile)} ground={boardGround(match, profile)} artStyle={profile.pieceStyle === "svg" ? "svg" : klassikOptik ? "classic" : livery() === "carved" ? "carved" : "painted"} friendly={!!match?.friendly}
           pulse={classic ? 0.2 : match?.boss
@@ -1024,6 +1101,49 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         {potionArm && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", zIndex: 4,
           background: "#0d1017ee", border: `1px solid ${T.gold}`, color: T.gold, fontSize: 12.5, fontWeight: 800,
           borderRadius: 999, padding: "6px 14px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}><ItemIcon id="potion" size={14} /> {t("game.potionPick")} · <span onClick={() => setPotionArm(false)} style={{ cursor: "pointer", textDecoration: "underline" }}>{t("online.cancel")}</span></div>}
+        {/* ── DIE SETZPHASE (v1.0.63) ─────────────────────────────────────
+            Sie sitzt UNTEN am Brett, nicht darueber: oben stehen die Reihen
+            des Gegners, unten die eigenen - und genau dort wird gesetzt. Der
+            Balken zeigt, was im Bündel liegt, und gibt das Brett erst frei,
+            wenn der Spieler es sagt. */}
+        {setzPhase && (() => {
+          const gesetzt = sperrenAnzahl(state.sperren, WHITE);
+          const arten = Object.keys(SPERR_ARTEN).filter((a) => (vorrat[a] || 0) > 0 || state.sperren && Object.values(state.sperren).some((s) => s?.von === WHITE && s.art === a));
+          /* GEMESSEN (v1.0.63): als der Balken noch IM Brettkasten hing
+             (position:absolute, bottom 6), verdeckte er auf einem 390er
+             Telefon 128 px des Bretts - darunter zwei Drittel der dritten
+             Reihe, also genau eines der Felder, die man antippen soll. Er
+             haengt jetzt am unteren Bildrand, UNTER dem Brett (Brettfuss 610,
+             Balkenkopf ~686). */
+          return <div style={{ position: "fixed", left: 8, right: 8, bottom: "calc(8px + env(safe-area-inset-bottom))", zIndex: 45,
+            background: "linear-gradient(178deg, rgba(20,26,40,.95), rgba(13,17,25,.97))",
+            border: `1px solid ${T.gold}66`, borderRadius: 12, padding: "8px 10px 9px",
+            boxShadow: "0 10px 26px rgba(0,0,0,.55)" }}>
+            <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".14em", textTransform: "uppercase",
+              color: T.goldBright, textAlign: "center" }}>{t("sperre.title")}</div>
+            <div className="gg-serif" style={{ fontSize: 11, color: T.dim, lineHeight: 1.45, textAlign: "center", marginTop: 2 }}>
+              {t("sperre.hint", { n: MAX_SPERREN })}</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+              {arten.map((a) => {
+                const n = vorrat[a] || 0;
+                const an = sperrWahl === a;
+                return <button key={a} onClick={() => n > 0 && setSperrWahl(a)} disabled={!n}
+                  style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "inherit", cursor: n ? "pointer" : "default",
+                    borderRadius: 999, padding: "5px 11px 5px 7px", opacity: n ? 1 : 0.4,
+                    background: an ? "rgba(240,206,122,.18)" : "#07050d",
+                    border: `1.5px solid ${an ? T.gold : `${T.gold}44`}` }}>
+                  <ItemIcon id={a} size={20} />
+                  <span style={{ fontSize: 12, fontWeight: 800, color: an ? T.goldBright : T.dim }}>
+                    {en ? SPERR_ARTEN[a].nameEn : SPERR_ARTEN[a].nameDe} · {n}</span>
+                </button>;
+              })}
+            </div>
+            <button onClick={setzenFertig} style={{ marginTop: 9, width: "100%", padding: "9px 14px", borderRadius: 10,
+              background: "linear-gradient(165deg, #e0b76c, #b78d43)", border: "1px solid rgba(255,240,200,.5)",
+              color: "#17110a", fontWeight: 800, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer" }}>
+              {gesetzt ? t("sperre.go") : t("sperre.skip")}</button>
+          </div>;
+        })()}
         {intro && !banner && <StoryIntro profile={profile} node={match.node} boss={match.boss} t={t} en={profile.lang === "en"} onBegin={() => { setIntro(false); if (foresight) setScout(true); }} timer={timer} />}
         {brief && hpMode && !intro && !banner && <HpBriefing t={t}
           onBegin={() => setBrief(false)}

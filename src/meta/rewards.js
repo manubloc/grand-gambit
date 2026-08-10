@@ -45,10 +45,16 @@ export function applyResult(profile, summary) {
   p.xp = p.xpEarned; // legacy mirror: XP is no longer spendable
   const goldGain = summary.resigned ? 0 : (GOLD[summary.result] || 0) + (summary.result === "win" ? (summary.gold || 0) : 0);
   p.gold = (p.gold || 0) + goldGain;
-  if (summary.potionsUsed || summary.hourglassUsed) {
+  const sperrenGesetzt = summary.sperrenGesetzt || null;
+  if (summary.potionsUsed || summary.hourglassUsed || sperrenGesetzt) {
     const items = { ...(p.items || {}) };
     if (summary.potionsUsed) items.potion = Math.max(0, (items.potion || 0) - summary.potionsUsed);
     if (summary.hourglassUsed) items.hourglass = Math.max(0, (items.hourglass || 0) - summary.hourglassUsed);
+    /* v1.0.63: eine gesetzte Sperre ist fort - ob sie hielt oder fiel. Der
+       Vorrat schrumpft um das, was WIRKLICH auf dem Brett stand (der
+       Kampfschirm zaehlt beim Abschluss der Setzphase, nicht beim Kauf). */
+    if (sperrenGesetzt) for (const [art, n] of Object.entries(sperrenGesetzt))
+      if (n > 0) items[art] = Math.max(0, (items[art] || 0) - n);
     p.items = items;
   }
 

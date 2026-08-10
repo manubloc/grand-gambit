@@ -73,7 +73,13 @@ function pawnMoves(moves, from, f, r, piece, board, D, state) {
   } else if (onBoard(f, fwd, D) && !board[ix(f, fwd, D)]) {
     push(moves, from, ix(f, fwd, D), piece, false, null, isPromo(fwd) ? { promotion: KIND.QUEEN } : {});
     const r2 = r + 2 * dir;
-    if (r === startR && onBoard(f, r2, D) && !board[ix(f, r2, D)])
+    /* v1.0.63: der DOPPELSCHRITT muss die Sperre ebenso sehen. Bisher pruefte
+       er nur `board` - und weil die Sperren genau in der dritten und vierten
+       Reihe stehen duerfen, waere der Doppelschritt des Bauern MITTEN IN die
+       eigene Mauer gelaufen (sein Ziel ist die dritte Reihe). Das fiel nicht
+       auf, solange nie jemand eine Sperre setzen konnte. */
+    if (r === startR && onBoard(f, r2, D) && !board[ix(f, r2, D)]
+        && !(D.sperren && versperrt(D.sperren, ix(f, r2, D))))
       push(moves, from, ix(f, r2, D), piece, false, null, { double: true });
   }
   // diagonal captures
