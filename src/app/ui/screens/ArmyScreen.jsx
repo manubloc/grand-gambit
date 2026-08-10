@@ -20,7 +20,7 @@ import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, M
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
-import { sockelVersatz, kunstId, paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
+import { paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -49,10 +49,10 @@ function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
      Stab zog sie zur Seite, obwohl sein Sockel gerade stand, und mein
      Ausgleich schob ihn daraufhin erst recht nach rechts. Der Standfuss ist
      der Anker, an dem das Auge nebeneinanderstehende Figuren ausrichtet. */
-  const versatz = -sockelVersatz(kunstId(stueck)) * 100;
+  /* v1.0.62: kein Versatz mehr - die Bilder selbst sind gerichtet. */
   return src
     ? <img src={src} alt="" draggable={false} style={{ width: size ?? "100%", height: size ?? "100%", objectFit: "contain",
-        objectPosition: "center center", transform: `translateX(${versatz.toFixed(2)}%)`,
+        objectPosition: "center center",
         filter: "brightness(1.16) saturate(1.05) drop-shadow(0 2px 3px rgba(0,0,0,.6))",
         userSelect: "none", pointerEvents: "none", display: "block", flex: "none" }} />
     : <span style={{ fontSize: size * 0.8, lineHeight: 1 }}>♟</span>;
@@ -348,7 +348,6 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
             <span style={{ width: 40, height: 50, display: "grid", placeItems: "center" }}>
               {(!schlichtAn() && paintedById(ch.id))
                 ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
-                    transform: `translateX(${(-sockelVersatz(ch.id) * 100).toFixed(2)}%)`,
                     filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
                 : <PieceArt kind={ch.kind} size={32} level={1} />}
             </span>
@@ -413,7 +412,6 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
           <span style={{ width: 40, height: 50, flex: "0 0 auto", display: "grid", placeItems: "center" }}>
             {(paintedById("boss-" + b.id) || paintedById("boss-" + b.art))
               ? <img src={paintedById("boss-" + b.id) || paintedById("boss-" + b.art)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
-                  transform: `translateX(${(-sockelVersatz("boss-" + b.id) * 100).toFixed(2)}%)`,
                   filter: seen ? "none" : "grayscale(1) brightness(.35)" }} />
               : <span style={{ fontSize: 24, filter: seen ? "none" : "grayscale(1) brightness(.4)" }}>👁</span>}
           </span>
@@ -512,7 +510,6 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                  Wert, gegenlaeufig angewandt: -x schiebt den Inhalt zurueck
                  in die Mitte der Platte. */
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
-              transform: `translateX(${(-sockelVersatz(char.id) * 100).toFixed(2)}%)`,
               filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
         {/* v1.0.11 (Besitzer): der Vektor-Zwilling im Eck ist fort — die
@@ -1463,7 +1460,6 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
            ReferenceError und der Fehlervorhang stand. Die Proben fingen es
            nicht, weil sie den QUELLTEXT lasen statt zu rendern - das ist
            jetzt nachgeholt (test_ui rendert die Kachel). */
-        transform: `translateX(${(-(artId && (sockelVersatz(artId) || sockelVersatz("boss-" + artId)) || sockelVersatz(kunstId({ kind, hero }))) * 100).toFixed(2)}%)`,
         filter: dark ? "brightness(0) opacity(.55)" : dim ? "grayscale(1) brightness(.8)" : "brightness(1.14) saturate(1.05)",
         userSelect: "none" }} />
         : <div style={{ width: "100%", aspectRatio: "1 / 1", display: "grid", placeItems: "center", margin: "0 auto" }}>
@@ -1643,7 +1639,6 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
                 title={en ? "Tap to enlarge" : "Antippen zum Vergrößern"}
                 /* v1.0.14 (Besitzer): im Popup war oben Luft - das Bild nimmt sie. */
                 style={{ width: 148, height: 178, objectFit: "contain", objectPosition: "bottom", cursor: "zoom-in",
-                transform: `translateX(${(-sockelVersatz("boss-" + b.id) * 100).toFixed(2)}%)`,
                 filter: `drop-shadow(0 0 10px ${T.riftGlow})` }} />}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="gg-quill" style={{ fontSize: 21, color: "#e7b7c9" }}>{en ? b.nameEn : b.nameDe}</div>

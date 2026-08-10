@@ -18,6 +18,11 @@ export function makePiece(spec) {
     abilities: spec.abilities ? [...spec.abilities] : [],
     shield: spec.shield ?? 0,
     ...(spec.hero ? { hero: true } : {}),
+    /* v1.0.62: DER RANG KOMMT JETZT AN. heroSpec und die Bauern-Specs setzen
+       tier, aber diese Fabrik hat es bis heute verworfen - am Brett stand
+       darum immer Rang 1. Ein Feld, das die Bildwahl (paintedRoh) und die
+       Groessenstaffel (paintedFitFor) gleichermassen speist. */
+    ...(spec.tier ? { tier: spec.tier } : {}),
     ...(spec.big ? { big: true } : {}),   // the 2x2 dragon
     used: {},
     hasMoved: false,

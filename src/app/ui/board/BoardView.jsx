@@ -821,7 +821,9 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
               display: "grid", placeItems: "center", cursor: interactive ? "pointer" : "default",
               pointerEvents: selHere ? "none" : "auto",
               borderRadius: 10,
-              boxShadow: selHere ? "inset 0 0 0 3px rgba(240,214,138,.85), 0 0 18px rgba(240,214,138,.35)" : "none",
+              /* v1.0.62 (Besitzer): der aeussere Auswahl-Schein war "besonders
+                 krass" - gestrichen. Der Innenring sagt alles Noetige. */
+              boxShadow: selHere ? "inset 0 0 0 3px rgba(240,214,138,.85)" : "none",
               fontSize: `calc(${typeof glyph === "string" ? glyph : glyph + "px"} * 1.88)` }}>
               <PieceGlyph piece={pc} showLevel={showLevel} pov={pov} artStyle={artStyle} focus={selHere} big />
             </div>

@@ -324,16 +324,17 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         background: "rgba(216,164,65,.12)", border: "1px solid rgba(216,164,65,.4)", lineHeight: 1.45 }}>
         {t("profile.sparAktiv")}</div>}
 
-      {/* ── DIE SICHT AUF DEN GEGNER (v1.0.50, Besitzerwunsch) ──────────────
-          Drei Stile zum AUSPROBIEREN. Der klassische Satz (Law of Classical)
-          bleibt immer unberuehrt, uebergelaufene Figuren stehen auf der
-          eigenen Seite und sind automatisch farbig. */}
-      <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${T.line}` }}>
+      {/* ── DIE SICHT AUF DEN GEGNER (v1.0.50 -> v1.0.62) ────────────────────
+          Der Besitzer hat gewaehlt: die TOENUNG (farbige Figur, lila
+          Sockel-Glut) ist der Standard fuer ALLE Spieler. Die drei Stile
+          zum Ausprobieren sieht nur noch der Admin - als Werkzeug, nicht
+          als Einstellung. Der klassische Satz bleibt immer unberuehrt. */}
+      {account?.isAdmin && <div style={{ marginTop: 18, paddingTop: 14, borderTop: `1px solid ${T.line}` }}>
         <div style={{ fontSize: 13.5, fontWeight: 700, color: T.ink }}>{t("profile.gegnerTitle")}</div>
         <div style={{ fontSize: 11.5, color: T.faint, lineHeight: 1.45, margin: "3px 0 10px" }}>{t("profile.gegnerHint")}</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {GEGNER_STILE.map((stil) => {
-            const an = (profile.gegnerStil || "farbig") === stil;
+            const an = (profile.gegnerStil || "getoent") === stil;
             return <button key={stil} onClick={() => dispatch({ type: "SET_GEGNERSTIL", stil })}
               style={{ padding: "8px 14px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, fontFamily: "inherit",
                 cursor: "pointer", letterSpacing: ".02em",
@@ -343,7 +344,10 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
               {t(`profile.gegner.${stil}`)}</button>;
           })}
         </div>
-      </div>
+        <div style={{ fontSize: 11, color: T.faint, marginTop: 8, lineHeight: 1.45 }}>
+          Nur fuer dich sichtbar. Alle Spieler sehen fest: Getoent (farbige Figur, lila Sockel-Glut).
+          Deine Wahl hier gilt nur fuer dieses Konto.</div>
+      </div>}
     </Panel>
 
     {account?.provider === "local" && <Panel>

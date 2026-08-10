@@ -208,7 +208,7 @@ export function buildArmyFrom(levelOf, flank = ["knight", "knight"], chosenOf = 
   });
   const pl = Math.max(1, levelOf("pawn") || 1);
   const pr = resolveCharacter(CHARACTERS.pawn, pl, chosenOf ? chosenOf("pawn") : null);
-  return { back, pawn: { kind: KIND.PAWN, level: pl, abilities: pr.abilities, shield: pr.shield, ...boostSpec(CHARACTERS.pawn, boostOf && boostOf("pawn")) } };
+  return { back, pawn: { kind: KIND.PAWN, level: pl, tier: pawnTier(pl), abilities: pr.abilities, shield: pr.shield, ...boostSpec(CHARACTERS.pawn, boostOf && boostOf("pawn")) } };
 }
 
 /** League duplication: extra recruit copies harden a piece (+1 HP each, +1 ATK at ★2). */
@@ -307,6 +307,12 @@ export function upgradeBoss(profile, bossId) {
   return { ...profile, sp: profile.sp - cost, pieces };
 }
 
+/* v1.0.62 (Besitzer): DIE BAUERN HABEN JETZT DREI GESICHTER. Stufe 1 die
+   Muetze ohne Waffe, Stufe 2 der Wanderstab, Stufe 3 der Speer - drei
+   handgefuehrte GPT-Bilder in Gruen. Die Staffel haengt am Bauern-Level:
+   1-2 -> Stufe 1, 3-4 -> Stufe 2, ab 5 -> Stufe 3. */
+export const pawnTier = (level) => (level >= 5 ? 3 : level >= 3 ? 2 : 1);
+
 export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boostOf = null) {
   // (null slots — the dragon's wing — become empty back-rank squares)
   const back = formation.map((id) => {
@@ -322,7 +328,7 @@ export function buildArmyFromFormation(levelOf, formation, chosenOf = null, boos
   });
   const pl = Math.max(1, levelOf("pawn") || 1);
   const pr = resolveCharacter(CHARACTERS.pawn, pl, chosenOf ? chosenOf("pawn") : null);
-  return { back, pawn: { kind: KIND.PAWN, level: pl, abilities: pr.abilities, shield: pr.shield, ...boostSpec(CHARACTERS.pawn, boostOf && boostOf("pawn")) } };
+  return { back, pawn: { kind: KIND.PAWN, level: pl, tier: pawnTier(pl), abilities: pr.abilities, shield: pr.shield, ...boostSpec(CHARACTERS.pawn, boostOf && boostOf("pawn")) } };
 }
 
 // ── Map-aware formation & army ────────────────────────────────────────────────

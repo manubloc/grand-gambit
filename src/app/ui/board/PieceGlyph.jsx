@@ -2,7 +2,7 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, paintedFitFor, sockelVersatz, kunstId, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
+import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
 import { gegnerStil, gefahrVon } from "../gegnerstil.js";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
@@ -247,17 +247,8 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
     .map((ab) => ({ id: ab.id, color: (TAGS[ab.tag] || { color: T.gold }).color, spent: !!(ab.once && piece.used?.[ab.id]) }));
 
   // Crisp, modern: a short drop shadow for depth — no neon bloom. The risen
-  // Gambit (Stufe II-VI) carries a quiet golden aura on top — OWN side only;
-  // the opponent always sees the plain hero. The glow deepens per tier.
-  const heroTier = piece.hero && white ? Math.min(6, piece.tier || 1) : 1;
-  const AURA = [
-    "", // tier 1: plain
-    "drop-shadow(0 0 6px rgba(240,214,138,.38))",
-    "drop-shadow(0 0 5px rgba(240,214,138,.5)) drop-shadow(0 0 11px rgba(240,214,138,.28))",
-    "drop-shadow(0 0 6px rgba(240,214,138,.58)) drop-shadow(0 0 13px rgba(240,214,138,.34))",
-    "drop-shadow(0 0 7px rgba(240,214,138,.66)) drop-shadow(0 0 15px rgba(240,214,138,.4))",
-    "drop-shadow(0 0 8px rgba(246,224,150,.74)) drop-shadow(0 0 18px rgba(240,214,138,.46))",
-  ];
+  /* v1.0.62: die Rang-Aura ist Geschichte - der Rang zeigt sich im BILD
+     (paintedRoh waehlt gambit-t2..t6 nach piece.tier). */
   // POWER READS AS LIGHT: the mightier the piece, the brighter and shinier.
   // King > queen > masters-in-the-queen's-place > everyone else > pawns. The
   // king's portrait is painted far darker than the queen's (measured: median
@@ -269,14 +260,6 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const isQueen = !piece.hero && !isBoss && piece.kind === "Q";
   const isPawn = !piece.hero && !isBoss && piece.kind === "P";
   const royal = isKing || isQueen || isBoss;
-  const ROYAL_HALO = white
-    ? (isKing ? "drop-shadow(0 0 6px rgba(248,228,158,.64)) drop-shadow(0 0 16px rgba(240,214,138,.4))"
-              : "drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))")
-    : (isKing ? "drop-shadow(0 0 6px rgba(196,181,253,.54)) drop-shadow(0 0 16px rgba(139,92,246,.34))"
-              : "drop-shadow(0 0 5px rgba(196,181,253,.42)) drop-shadow(0 0 12px rgba(139,92,246,.26))");
-  const HERO_SHEEN = white
-    ? "drop-shadow(0 0 5px rgba(240,214,138,.45)) drop-shadow(0 0 10px rgba(240,214,138,.22))"
-    : "drop-shadow(0 0 5px rgba(196,181,253,.42)) drop-shadow(0 0 10px rgba(139,92,246,.24))";
   // Der Saum folgt der Silhouette: erste Stufe schmal und hell (die Kante),
   // die weiteren breiter und schwaecher (das Abklingen ins Violett). Die
   // EIGENEN glimmen nur leise golden, die Gegner tragen den Riss - und beim
@@ -284,9 +267,6 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // EINE KONTUR, KEIN NEBEL: zwei enge Schatten statt dreier weiter - das
   // Licht liegt AUF der Silhouette, frisst kein halbes Feld und kostet die
   // Haelfte an Rechenzeit.
-  const kante = (r, g2, b2, staerke = 1) =>
-    `drop-shadow(0 0 1px rgba(${r},${g2},${b2},${(1 * staerke).toFixed(2)})) `
-    + `drop-shadow(0 0 2.5px rgba(${r},${g2},${b2},${(0.5 * staerke).toFixed(2)}))`;
   const gewaehlt = !!piece.selected;
   // v0.71.14 (Besitzer): DIE FIGUR DES LETZTEN ZUGES zuckt einmal auf und
   // glimmt langsam aus - Gegner im Riss-Violett, eigene im Gold. Nur DIESE
@@ -303,20 +283,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
   const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
   const gefahr = gefahrVon(piece.kind);   /* v1.0.60: Sockel-Leuchtstaerke */
-  const sockelX = sockelVersatz(kunstId(paintPiece));   /* v1.0.57: auch das Brett gleicht aus */
-  const SIDE_GLOW = white
-    ? kante(240, 214, 138, gewaehlt ? 1.0 : 0.55)
-      + " drop-shadow(0 0 5px rgba(246,224,150,.5)) drop-shadow(0 0 12px rgba(240,214,138,.3))"
-    : sicht === "getoent"
-    ? kante(206, 212, 224, gewaehlt ? 1.1 : 0.85)
-      + " drop-shadow(0 0 5px rgba(218,224,234,.5)) drop-shadow(0 0 12px rgba(190,198,214,.3))"
-    : kante(184, 146, 255, gewaehlt ? 1.1 : 0.85)
-      + " drop-shadow(0 0 5px rgba(214,196,255,.55)) drop-shadow(0 0 12px rgba(168,130,255,.34))";
   const klassisch = artStyle === "classic";
   // v0.71.14: alle Figuren minimal aufgehellt und kontrastreicher; die
   // Gegenseite traegt DIESELBE Kunst, nur eine Spur dunkler - die Trennung
   // leisten Goldschein (eigene) und Riss-Violett (Gegner).
-  const tonung = white ? "brightness(1.10) contrast(1.10) saturate(1.04)"
+  /* v1.0.62 (Besitzer): die EIGENE Seite und der getoente Blick tragen die
+     ORIGINALFARBEN - kein brightness, kein contrast, nichts. Nur der graue
+     Blick behaelt seine leichte Abdunklung als Teil seines Looks. */
+  const tonung = white || sicht === "getoent" ? ""
                        : "brightness(0.94) contrast(1.12) saturate(0.98)";
   /* ── v1.0.41: HIER LAG DAS RUCKELN. GEMESSEN, NICHT VERMUTET. ────────────
      Der klassische Satz bekam genau EINEN drop-shadow, jede andere Figur bis
@@ -355,20 +329,22 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      (v1.0.41-Lektion: jeder Durchgang ist ein eigener Unschaerfe-Lauf) -
      nur Radius 1.5 -> 2.4 und Deckung .85 -> .95. Die eigene Seite bleibt
      beim leisen Gold von v1.0.48. */
+  /* v1.0.62 (Besitzer, Grossputz am Schimmer): "man braucht es nicht mehr
+     in diesem Masse." Die eigene Seite traegt GAR KEINEN Saum mehr - nur
+     ihren ehrlichen Schatten. Der Gegner behaelt einen HAUCH Riss-Violett
+     (Deckung .95 -> .38), damit Freund und Feind unterscheidbar bleiben.
+     Und die Auswahl-Pracht - vierteiliger Seitensaum, Aura, Heldenglanz,
+     Koenigshalo - ist GESTRICHEN: "wenn man's anwaehlt ... besonders krass,
+     eigentlich unnoetig." Der gewaehlte Zustand zeigt sich am Feldring und
+     an der Vergroesserung, nicht an einem Lichtspektakel. Nebeneffekt: die
+     teuerste Filterkette des Bretts (v1.0.41-Messung) ist damit Geschichte. */
   const SAUM_RUHIG = white
-    ? "drop-shadow(0 0 1.5px rgba(240,214,138,.55))"
-    : sicht === "getoent"
-    ? "drop-shadow(0 0 2.4px rgba(206,213,225,.9))"
-    : "drop-shadow(0 0 2.4px rgba(184,146,255,.95))";
+    ? ""
+    : "drop-shadow(0 0 2.4px rgba(184,146,255,.38))";
   const glow = klassisch
     ? "drop-shadow(0 2px 3px rgba(0,0,0,.55))"     // nur ein ehrlicher Schatten
-    : hervorgehoben
-    ? tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65))"
-      + " " + SIDE_GLOW
-      + (AURA[heroTier - 1] ? " " + AURA[heroTier - 1] : "")
-      + (piece.hero ? " " + HERO_SHEEN : "")
-      + (royal ? " " + ROYAL_HALO : "")
-    : tonung + " drop-shadow(0 2px 3px rgba(0,0,0,.65)) " + SAUM_RUHIG;
+    : (tonung ? tonung + " " : "") + "drop-shadow(0 2px 3px rgba(0,0,0,.65))"
+      + (SAUM_RUHIG ? " " + SAUM_RUHIG : "");
   // v0.71.1: klassische Figuren einen Hauch kleiner (Besitzer: "noch etwas zu gross")
   const pieceSize = isBoss ? "1.14em" /* v0.71.12: Bosse stehen groesser - der Waechter war kaum zu erkennen */
     /* v1.0.14 (Besitzer): KLASSIK WAECHST. 0.9em liess besonders den Bauern
@@ -469,7 +445,7 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
            gleiche Zahl wie Hofstaat und Aufstellung: Bishop +9.0 %,
            Koenig -3.0 %. Weiterhin mal fit.h, weil das Skalieren den Versatz
            sonst nach aussen traegt. */
-        transform: (fit.h !== 1 || fit.y !== 0 || sockelX) ? `translate(${(-sockelX * fit.h).toFixed(4)}em, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
+        transform: (fit.h !== 1 || fit.y !== 0) ? `translate(0, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
         {painting
           ? <img src={painting} alt="" draggable={false} decoding="async" style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:
@@ -485,17 +461,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                 // kein Umfaerben, nur ein Hauch Licht fuer die Grossen
                 ? (isKing ? "brightness(1.08)" : isQueen ? "brightness(1.04)" : "none")
                 : white
-                /* v1.0.50 (Besitzerbefund): Koenig und Dame der EIGENEN Seite
-                   standen zu hell. Die Aufhellung stammt aus der Zeit vor den
-                   HQ-Neuschnitten (v1.0.39) - seither sind die Vorlagen selbst
-                   heller, die alte Verstaerkung darauf war zu viel.
-                   Koenig 2.1 -> 1.78, Dame 1.62 -> 1.40 (~15 % zurueck). */
-                ? (isKing ? "brightness(1.78) saturate(1.22) hue-rotate(8deg)"
-                  : isQueen ? "brightness(1.40) saturate(1.22) hue-rotate(8deg)"
-                  : isBoss ? "brightness(1.62) saturate(1.24) hue-rotate(8deg)"
-                  : piece.hero ? "brightness(1.12) saturate(1) hue-rotate(8deg)"
-                  : isPawn ? "brightness(0.97) saturate(0.82) hue-rotate(8deg)"
-                  : "brightness(1.32) saturate(1.02) hue-rotate(8deg)")
+                /* v1.0.62 (Besitzer, dritter Anlauf und der letzte): DIE EIGENE
+                   SEITE TRAEGT DIE ORIGINALFARBEN. Punkt. Jede Aufhellung
+                   stammte aus der Zeit vor den HQ-Neuschnitten und wurde
+                   seither nur verringert statt entfernt - "insbesondere der
+                   Koenig" stand immer noch zu hell. Die Vorlagen sind gut;
+                   der Filter hat ihnen nichts mehr zu sagen. */
+                ? "none"
                 /* v1.0.54 (Besitzerwunsch): Graustufen mit MEHR KONTRAST und
                    heller - ausser beim Koenig, der stand schon hell genug.
                    contrast(1.35) und ein Helligkeitsschub von 1.18; der
@@ -531,17 +503,25 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
             teuren Figurmasken aus der Ruckel-Geschichte (v1.0.37) braucht es
             nicht. */}
         {painting && (sicht === "getoent" || sicht === "grau") && (<>
+          {/* v1.0.62 (Besitzer): der Lichtschein hinter dem Fuss ist fast
+              ganz fort - "man braucht es nicht mehr in diesem Masse". Was
+              bleibt, ist ein Hauch: schmaler, flacher, ein Viertel der alten
+              Deckung, nur damit die Glut einen Boden hat. */}
           <span aria-hidden style={{
-            position: "absolute", left: "50%", bottom: "-2%", width: "94%", height: "30%",
+            position: "absolute", left: "50%", bottom: "-1%", width: "78%", height: "16%",
             transform: "translateX(-50%)", borderRadius: "50%", pointerEvents: "none",
-            background: `radial-gradient(ellipse 50% 46% at 50% 62%, rgba(196,166,255,${0.5 + 0.35 * gefahr}) 0%, rgba(124,58,237,${0.32 + 0.3 * gefahr}) 46%, rgba(124,58,237,0) 74%)`,
+            background: `radial-gradient(ellipse 50% 46% at 50% 58%, rgba(196,166,255,${(0.12 + 0.10 * gefahr).toFixed(2)}) 0%, rgba(124,58,237,${(0.08 + 0.08 * gefahr).toFixed(2)}) 46%, rgba(124,58,237,0) 72%)`,
             filter: "blur(1.5px)" }} />
           <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
             objectFit: "contain", objectPosition: big ? "center" : "center bottom",
+            /* v1.0.62 (Besitzer): die Glut startet DUNKEL und steigt ins
+               helle Lila - aber sie endet am Sockelrand. Vorher lief der
+               Verlauf bis 26 % hoch und leckte an den Stiefeln; jetzt ist
+               bei 19 % Schluss (der Sockel selbst reicht bis ~15 %). */
             filter: `grayscale(1) sepia(1) hue-rotate(232deg) saturate(${(3.4 + 1.6 * gefahr).toFixed(2)}) brightness(${(1.15 + 0.45 * gefahr).toFixed(2)})`,
-            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 6%, rgba(0,0,0,.55) 15%, rgba(0,0,0,0) 26%)",
-            maskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 6%, rgba(0,0,0,.55) 15%, rgba(0,0,0,0) 26%)",
+            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 5%, rgba(0,0,0,.5) 12%, rgba(0,0,0,0) 19%)",
+            maskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 5%, rgba(0,0,0,.5) 12%, rgba(0,0,0,0) 19%)",
             userSelect: "none", pointerEvents: "none" }} />
         </>)}
       </div>

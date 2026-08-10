@@ -25,12 +25,15 @@
  * muss durch zwanzig Ebenen gereicht werden.
  */
 
-let stil = "farbig";
+let stil = "getoent";
 
 export const GEGNER_STILE = ["farbig", "grau", "getoent"];
 
+/* v1.0.62 (Besitzerentscheid): DIE TOENUNG IST DER STANDARD - "die ist
+   ziemlich gut geworden". Wer nichts waehlt (und waehlen kann kuenftig nur
+   noch der Admin), sieht den Gegner farbig mit der lila Sockel-Glut. */
 export function setGegnerStil(s) {
-  stil = GEGNER_STILE.includes(s) ? s : "farbig";
+  stil = GEGNER_STILE.includes(s) ? s : "getoent";
 }
 
 export function gegnerStil() {

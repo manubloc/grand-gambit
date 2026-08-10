@@ -75,42 +75,24 @@ const piece = (x = {}) => ({ id: 1, kind: "Q", color: "w", level: 1, abilities: 
 }
 
 
-// ── DAS KANTENGLÜHEN ────────────────────────────────────────────────────────
-// "starke leuchtende kante um die kontur der figur und langsam ins lilane" -
-// gestapelte Schatten mit 0 Versatz und WACHSENDEM Radius; die eigenen leiser
-// als die Gegner, und beim Auswaehlen glimmt die Figur auf.
+// ── DER RUHIGE LOOK (v1.0.62, Besitzer-Grossputz) ───────────────────────────
+// "man braucht es nicht mehr in diesem Masse": die eigene Seite traegt GAR
+// KEINEN Saum und KEINEN Filter mehr (Originalfarben!), der Gegner einen
+// einzigen leisen Lila-Hauch, und die Auswahl bringt KEINE Extra-Pracht -
+// der gewaehlte Zustand zeigt sich am Feldring, nicht am Lichtspektakel.
 {
-  /* v1.0.41: Das Muster zaehlte nur GANZZAHLIGE Radien - der 2.5px-Ring aus
-     kante() fiel seit jeher durch, die Probe war also schon vorher blinder
-     als sie aussah. Jetzt zaehlt sie auch Nachkommastellen. */
-  const radien = (h) => [...h.matchAll(/drop-shadow\(0 0 (\d+(?:\.\d+)?)px/g)].map((m) => +m[1]);
   const eigen = html(<PieceGlyph piece={piece({ color: "w" })} />);
   const feind = html(<PieceGlyph piece={piece({ color: "b" })} />);
   const gewaehlt = html(<PieceGlyph piece={{ ...piece({ color: "w" }), selected: true }} />);
-  /* v1.0.41: Die gestapelten Radien gelten jetzt nur noch fuer die
-     HERVORGEHOBENE Figur. Eine ruhende traegt zwei Durchgaenge statt neun -
-     das war die gemessene Ursache des Ruckelns (Faktor 75 im A/B,
-     tools/messe-ruckeln2.mjs). Die Probe prueft beides: am Ausgewaehlten,
-     dass der Saum weiter nach aussen abklingt, und am Ruhenden, dass er
-     UEBERHAUPT noch eine Kante traegt - sonst waere die Sparsamkeit auf
-     Kosten der Erkennbarkeit gegangen. */
-  const rGew = radien(gewaehlt);
-  ok("the glow hugs the contour: radii grow outward (selected)",
-    rGew.length >= 3 && rGew[0] < rGew[1] && rGew[1] < rGew[2]);
-  const rRuhig = radien(eigen);
-  ok("a resting piece still wears its edge", rRuhig.length >= 1);
-  ok("but it is CHEAP: at most two blur passes when resting",
-    (eigen.match(/drop-shadow/g) || []).length <= 2);
-  ok("friend and foe stay tellable apart at rest",
-    eigen.includes("240,214,138") && feind.includes("184,146,255"));
-  const staerke = (h, farbe) => [...h.matchAll(new RegExp(farbe.replace(/,/g, ",\\s*") + ",\\s*([\\d.]+)\\)", "g"))].map((m) => +m[1]);
-  /* v1.0.11 (Besitzer): der Riss traegt jetzt das HELLERE Violett 184,146,255
-     - beide Seiten leuchten auf Koenigs-Mass, die Relation bleibt. */
-  const meine = staerke(eigen, "240,214,138"), seine = staerke(feind, "184,146,255");
-  const meineGew = staerke(gewaehlt, "240,214,138");
-  ok("your pieces glow softer than the enemy's", Math.max(...meine) < Math.max(...seine));
-  ok("a chosen piece flares up", Math.max(...meineGew) > Math.max(...meine));
-  ok("the enemy wears the rift, you wear gold", feind.includes("184,146,255") && eigen.includes("240,214,138"));
+  const schatten = (h) => (h.match(/drop-shadow/g) || []).length;
+  ok("die eigene Seite traegt nur ihren Schatten (1 Durchgang)", schatten(eigen) === 1);
+  ok("die eigene Seite ist UNGEFAERBT (kein brightness/saturate)",
+    !/brightness\(1\.[0-9]+\) contrast/.test(eigen) && !eigen.includes("240,214,138"));
+  ok("der Gegner traegt genau EINEN leisen Lila-Hauch",
+    schatten(feind) === 2 && feind.includes("184,146,255,.38"));
+  ok("die Auswahl bringt KEINE Extra-Pracht mehr", schatten(gewaehlt) === schatten(eigen));
+  ok("kein Koenigshalo, keine Aura, kein Heldenglanz im Markup",
+    ![eigen, feind, gewaehlt].some((h) => h.includes("0 0 16px") || h.includes("0 0 18px")));
 }
 
 // ── 3. ONE SIZE OF NUMERAL ──────────────────────────────────────────────────
@@ -1046,46 +1028,39 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
    waere jemand versucht, wieder mit einer weichen Schwelle zu messen,
    faellt die Tabelle sofort auf nahezu Null zusammen. */
 {
-  const { sockelVersatz } = await import("./src/app/ui/board/paintedArt.js");
-  ok("der Laeufer traegt den groessten Sockelversatz", sockelVersatz("bishop") > 0.07);
-  ok("der Schildtraeger folgt", sockelVersatz("guardian") > 0.04);
-  ok("die Dame steht ebenfalls rechts", sockelVersatz("queen") > 0.02);
-  ok("und die Werte sind nicht auf Schattenmass zusammengefallen",
-    ["bishop", "guardian", "queen"].every((id) => sockelVersatz(id) > 0.02));
-  ok("wer mittig sitzt, bekommt keinen Ausgleich", sockelVersatz("gibtsnicht") === 0);
-}
-
-/* ── JEDE ANSICHT GLEICHT AUS (v1.0.56) ────────────────────────────────────
-   Der Besitzer meldete VIERMAL, dass die Figuren im Hofstaat rechts stehen.
-   Beim vierten Mal war die Antwort nicht mehr die Messung, sondern die
-   Stelle: ich hatte den Ausgleich in der Aufstellung und in der Detailkarte
-   gesetzt - der HOFSTAAT aber, genau das Bild auf seinen Fotos, rendert
-   ueber einen DRITTEN Weg (champTile), den ich nie angefasst hatte. Darum
-   "hat sich nichts geaendert": es stimmte.
-   Diese Probe zaehlt die Stellen. Wer eine neue Figurenansicht baut und den
-   Ausgleich vergisst, faellt hier auf - nicht erst beim Besitzer. */
-{
-  const { readFileSync } = await import("node:fs");
-  const quelle = readFileSync("src/app/ui/screens/ArmyScreen.jsx", "utf8");
-  const bilder = (quelle.match(/paintedById\(|paintedForPiece\(/g) || []).length;
-  const ausgleiche = (quelle.match(/sockelVersatz\(/g) || []).length;
-  ok("der Hofstaat gleicht aus (champTile)", /width: "118%"[\s\S]{0,900}sockelVersatz\(/.test(quelle));
-  ok("mindestens sechs Ansichten tragen den Ausgleich", ausgleiche >= 6);
-  ok("und es gibt ueberhaupt Figurenbilder zu korrigieren", bilder >= 6);
-}
-
-/* ── AUCH DAS BRETT GLEICHT AUS (v1.0.57) ──────────────────────────────────
-   Der Besitzer sah es zuletzt IM SPIEL: "Koenig zu weit links, Bishop zu
-   weit rechts". Der Grund war schlicht: PAINTED_FIT.x ist bei jeder Figur 0,
-   der Ausgleich am Brett stand nur im Kommentar. Jetzt nimmt es dieselbe
-   Sockelzahl wie Hofstaat und Aufstellung. */
-{
-  const { readFileSync: _rf } = await import("node:fs");
-  const glyph = _rf("src/app/ui/board/PieceGlyph.jsx", "utf8");
-  ok("das Brett zieht den Sockelversatz", /const sockelX = sockelVersatz\(/.test(glyph));
-  ok("und wendet ihn auf die Figur an", /translate\(\$\{\(-sockelX \* fit\.h\)/.test(glyph));
-
-  const art = _rf("src/app/ui/board/paintedArt.js", "utf8");
+  /* ── DIE BILDER STEHEN SELBST GERADE (v1.0.62) ───────────────────────────
+     Fuenf Runden Code-Verschieberei sind Geschichte: der Sockelfuss sitzt
+     jetzt IN JEDEM BILD mittig, und keine Ansicht darf mehr verschieben.
+     Diese Proben halten beides fest - die Bilder UND das Verbot. */
+  {
+    const { sockelVersatz } = await import("./src/app/ui/board/paintedArt.js");
+    ok("die Tabelle ist stillgelegt (Vertrag: immer 0)",
+      ["bishop", "guardian", "queen", "boss-b04", "gibtsnicht"].every((id) => sockelVersatz(id) === 0));
+    const { readFileSync: _rf3 } = await import("node:fs");
+    const armee = _rf3("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+    const glyph = _rf3("src/app/ui/board/PieceGlyph.jsx", "utf8");
+    ok("der Hofstaat verschiebt nicht mehr", !/sockelVersatz\(/.test(armee));
+    ok("das Brett verschiebt nicht mehr", !/sockelVersatz\(/.test(glyph) && !/sockelX/.test(glyph));
+    const { PngLeser: _x } = {};
+    // Stichprobe an den drei alten Suendern: Sockelfuss wirklich mittig?
+    const { default: sharp } = await import("sharp").catch(() => ({ default: null }));
+    if (sharp) {
+      for (const n of ["bishop", "guardian", "queen"]) {
+        const { data, info } = await sharp(`src/app/ui/assets/painted/painted-${n}.webp`)
+          .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+        let unten = -1;
+        for (let y = info.height - 1; y >= 0 && unten < 0; y--)
+          for (let x = 0; x < info.width; x++) if (data[(y * info.width + x) * 4 + 3] > 60) { unten = y; break; }
+        let mi = 1e9, ma = -1;
+        for (let y = Math.max(0, unten - 4); y <= unten; y++)
+          for (let x = 0; x < info.width; x++) if (data[(y * info.width + x) * 4 + 3] > 60) { if (x < mi) mi = x; if (x > ma) ma = x; }
+        const dx = (mi + ma + 1) / 2 - info.width / 2;
+        ok(`der Sockelfuss von ${n} steht mittig (|${dx.toFixed(1)}| < 3px)`, Math.abs(dx) < 3);
+      }
+    } else ok("sharp fehlt - Sockel-Stichprobe uebersprungen", true);
+  }
+  const { readFileSync: _rfA } = await import("node:fs");
+  const art = _rfA("src/app/ui/board/paintedArt.js", "utf8");
   const y = art.match(/const GAMBIT_TIER_Y = \[([^\]]+)\]/)[1].split(",").map(Number);
   ok("die Gambit-Staffel steigt durchgehend", y.every((v, i) => i === 0 || v < y[i - 1]));
   ok("und beginnt nahe der Bauernlinie, nicht bei den Offizieren", y[0] > -0.09);

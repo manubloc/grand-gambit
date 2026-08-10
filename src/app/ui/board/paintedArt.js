@@ -13,6 +13,8 @@ import pHaendler from "../assets/painted/painted-haendler.webp";  // der fahrend
 import pGambit from "../assets/painted/painted-gambit.webp";
 // the risen hero: tier portraits (Stufe II/III) — currently placeholder copies
 // of the base painting; the user's generated art replaces these files 1:1
+import pPawnT2 from "../assets/painted/painted-pawn-t2.webp";
+import pPawnT3 from "../assets/painted/painted-pawn-t3.webp";
 import pGambitT2 from "../assets/painted/painted-gambit-t2.webp";
 import pGambitT3 from "../assets/painted/painted-gambit-t3.webp";
 import pGambitT4 from "../assets/painted/painted-gambit-t4.webp";
@@ -128,6 +130,8 @@ import kKingD from "../assets/klassik/king-dunkel.webp";
 import k_pPawn from "../assets/painted/klein/painted-pawn.webp";
 import k_pHaendler from "../assets/painted/klein/painted-haendler.webp";
 import k_pGambit from "../assets/painted/klein/painted-gambit.webp";
+import k_pPawnT2 from "../assets/painted/klein/painted-pawn-t2.webp";
+import k_pPawnT3 from "../assets/painted/klein/painted-pawn-t3.webp";
 import k_pGambitT2 from "../assets/painted/klein/painted-gambit-t2.webp";
 import k_pGambitT3 from "../assets/painted/klein/painted-gambit-t3.webp";
 import k_pGambitT4 from "../assets/painted/klein/painted-gambit-t4.webp";
@@ -197,10 +201,10 @@ const KLASSIK_DUNKEL = { P: kPawnD, N: kKnightD, B: kBishopD, R: kRookD, Q: kQue
 export const klassikFor = (piece) =>
   (piece?.color === "w" ? KLASSIK_HELL : KLASSIK_DUNKEL)[piece?.kind] || null;
 
-export const PAINTED_KLEIN = { "pawn": k_pPawn, "haendler": k_pHaendler, "gambit": k_pGambit, "gambit-t2": k_pGambitT2, "gambit-t3": k_pGambitT3, "gambit-t4": k_pGambitT4, "gambit-t5": k_pGambitT5, "gambit-t6": k_pGambitT6, "seeress": k_pSeeress, "knight": k_pKnight, "bishop": k_pBishop, "queen": k_pQueen, "archbishop": k_pArchbishop, "hawk": k_pHawk, "amazon": k_pAmazon, "assassin": k_pAssassin, "guardian": k_pGuardian, "captain": k_pCaptain, "sorceress": k_pSorceress, "pathfinder": k_pPathfinder, "rook": k_pRook, "king": k_pKing, "chancellor": k_pChancellor, "dragon": k_pDragon, "mage": k_pMage, "alchemist": k_pAlchemist, "warlock": k_pWarlock, "paladin": k_pPaladin, "inquisitor": k_pInquisitor, "bard": k_pBard, "engineer": k_pEngineer, "standard": k_pStandard, "strategist": k_pStrategist, "boss-golem": k_bGolem, "boss-beast": k_bBeast, "boss-serpent": k_bSerpent, "boss-wraith": k_bWraith, "boss-tyrant": k_bTyrant, "boss-archenemy": k_bArchenemy, "boss-leaguemaster": k_bLeaguemaster, "boss-b01": k_pbb01, "boss-b02": k_pbb02, "boss-b03": k_pbb03, "boss-b04": k_pbb04, "boss-b05": k_pbb05, "boss-b06": k_pbb06, "boss-b07": k_pbb07, "boss-b08": k_pbb08, "boss-b09": k_pbb09, "boss-b10": k_pbb10, "boss-b11": k_pbb11, "boss-b12": k_pbb12, "boss-b13": k_pbb13, "boss-b14": k_pbb14, "boss-b15": k_pbb15, "boss-b16": k_pbb16, "boss-b17": k_pbb17, "boss-b18": k_pbb18, "boss-b19": k_pbb19, "boss-b20": k_pbb20, "boss-b21": k_pbb21, "boss-b22": k_pbb22, "boss-b23": k_pbb23, "boss-b24": k_pbb24, "boss-b25": k_pbb25 };
+export const PAINTED_KLEIN = { "pawn": k_pPawn, "pawn-t2": k_pPawnT2, "pawn-t3": k_pPawnT3, "haendler": k_pHaendler, "gambit": k_pGambit, "gambit-t2": k_pGambitT2, "gambit-t3": k_pGambitT3, "gambit-t4": k_pGambitT4, "gambit-t5": k_pGambitT5, "gambit-t6": k_pGambitT6, "seeress": k_pSeeress, "knight": k_pKnight, "bishop": k_pBishop, "queen": k_pQueen, "archbishop": k_pArchbishop, "hawk": k_pHawk, "amazon": k_pAmazon, "assassin": k_pAssassin, "guardian": k_pGuardian, "captain": k_pCaptain, "sorceress": k_pSorceress, "pathfinder": k_pPathfinder, "rook": k_pRook, "king": k_pKing, "chancellor": k_pChancellor, "dragon": k_pDragon, "mage": k_pMage, "alchemist": k_pAlchemist, "warlock": k_pWarlock, "paladin": k_pPaladin, "inquisitor": k_pInquisitor, "bard": k_pBard, "engineer": k_pEngineer, "standard": k_pStandard, "strategist": k_pStrategist, "boss-golem": k_bGolem, "boss-beast": k_bBeast, "boss-serpent": k_bSerpent, "boss-wraith": k_bWraith, "boss-tyrant": k_bTyrant, "boss-archenemy": k_bArchenemy, "boss-leaguemaster": k_bLeaguemaster, "boss-b01": k_pbb01, "boss-b02": k_pbb02, "boss-b03": k_pbb03, "boss-b04": k_pbb04, "boss-b05": k_pbb05, "boss-b06": k_pbb06, "boss-b07": k_pbb07, "boss-b08": k_pbb08, "boss-b09": k_pbb09, "boss-b10": k_pbb10, "boss-b11": k_pbb11, "boss-b12": k_pbb12, "boss-b13": k_pbb13, "boss-b14": k_pbb14, "boss-b15": k_pbb15, "boss-b16": k_pbb16, "boss-b17": k_pbb17, "boss-b18": k_pbb18, "boss-b19": k_pbb19, "boss-b20": k_pbb20, "boss-b21": k_pbb21, "boss-b22": k_pbb22, "boss-b23": k_pbb23, "boss-b24": k_pbb24, "boss-b25": k_pbb25 };
 
 export const PAINTED = {
-  haendler: pHaendler, pawn: pPawn, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
+  haendler: pHaendler, pawn: pPawn, "pawn-t2": pPawnT2, "pawn-t3": pPawnT3, gambit: pGambit, "gambit-t2": pGambitT2, "gambit-t3": pGambitT3, "gambit-t4": pGambitT4, "gambit-t5": pGambitT5, "gambit-t6": pGambitT6, seeress: pSeeress, knight: pKnight, bishop: pBishop, queen: pQueen,
   archbishop: pArchbishop, hawk: pHawk, amazon: pAmazon, assassin: pAssassin, guardian: pGuardian,
   captain: pCaptain, pathfinder: pPathfinder, sorceress: pSorceress,
   rook: pRook, king: pKing, chancellor: pChancellor, dragon: pDragon, mage: pMage,
@@ -293,8 +297,11 @@ function paintedRoh(piece) {
        als stilgebrochen. Die Groesse unterscheidet die Raenge weiterhin
        (GAMBIT_TIER_H in paintedFitFor).
        Sobald die Bilder da sind, hier wieder auf PAINTED["gambit-t"+gt]
-       umstellen - die Schluessel existieren bereits. */
-    return PAINTED.gambit || null;
+       umstellen - die Schluessel existieren bereits.
+       v1.0.62: SIE SIND DA. Die handgefuehrte Reihe des Besitzers traegt
+       alle sechs Raenge in einer Bildwelt - der Rang schaltet das Bild. */
+    const gt = Math.min(6, Math.max(1, piece.tier || 1));
+    return (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
   }
   const id = KIND2ID[piece.kind];
   /* v1.0.49 (Besitzerentscheid): DER GRUENE BAUER IST FORT. In v1.0.45 trug
@@ -303,7 +310,11 @@ function paintedRoh(piece) {
      beidseitig den blauen Speertraeger - und die Unterscheidung ueber den
      HELDEN: der Gambit steht in Gold zwischen ihnen, von der ersten Partie
      an. Das ist das staerkere Zeichen, weil es dieselbe Figur meint, die
-     auch auf der Karte zu sehen ist. */
+     auch auf der Karte zu sehen ist.
+     v1.0.62: die Bauern tragen nun ihre eigene Stufenreihe (gruen, mit
+     Muetze/Stab/Speer) - der tier waehlt das Bild, beidseitig. */
+  if (piece.kind === "P" && (piece.tier || 1) >= 2)
+    return PAINTED["pawn-t" + Math.min(3, piece.tier)] || PAINTED[id] || null;
   return id ? PAINTED[id] || null : null;
 }
 
@@ -448,19 +459,15 @@ const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
    ihrem Feld, dort stimmt der Silhouetten-Ausgleich, und der Besitzer hat
    daran nie etwas auszusetzen gehabt. Kacheln stehen NEBENEINANDER, und
    nur dort zaehlt der gemeinsame Standfuss. */
-const SOCKEL_X = {
-  "amazon": -0.0208, "archbishop": 0.0095, "assassin": 0.0061, "bard": -0.026,
-  "bishop": 0.0903, "boss-b01": 0.0061, "boss-b03": 0.0521, "boss-b04": 0.0703,
-  "boss-b06": -0.0069, "boss-b08": 0.0929, "boss-b09": -0.02, "boss-b10": 0.0182,
-  "boss-b11": -0.0087, "boss-b12": -0.0234, "boss-b13": 0.0061, "boss-b16": -0.0165,
-  "boss-b18": 0.0998, "boss-b19": -0.0269, "boss-b21": 0.0156, "boss-b22": -0.0182,
-  "captain": -0.0226, "chancellor": -0.0382, "dragon": -0.0139, "engineer": -0.0182,
-  "guardian": 0.0608, "haendler": 0.0156, "hawk": -0.0087, "inquisitor": 0.0417,
-  "king": -0.0295, "knight": 0.0139, "mage": -0.0156, "paladin": -0.033,
-  "pathfinder": -0.0391, "pawn": -0.02, "queen": 0.0382, "rook": -0.0104,
-  "seeress": 0.0408, "sorceress": -0.0399, "standard": -0.0113, "strategist": -0.0321,
-  "warlock": 0.0061,
-};
+/* v1.0.62: DIE TABELLE IST GESCHICHTE - DIE BILDER SELBST SIND GERICHTET.
+   Fuenf Runden lang haben wir per Code verschoben, was in Wahrheit die
+   BILDER schief trugen: der Sockel sass nicht in der Bildmitte (Laeufer
+   -58 px!), die Silhouette schon. Kein Verschiebewert konnte beides
+   zentrieren; die Schaukammer sah gut aus, der Reiter schief. Jetzt steht
+   der Sockelfuss (unterste 5 Zeilen, Alpha>60) in jedem Bild exakt mittig
+   (tools/richten - Leinwand erweitert, nie beschnitten; Kontaktbogen
+   gesichtet). sockelVersatz() bleibt als Vertrag bestehen und antwortet 0.*/
+const SOCKEL_X = {};
 
 /** Der Sockelversatz einer Figur - fuer alles, was Figuren NEBENEINANDER
  *  zeigt (Hofstaat, Aufstellung, Verzeichnis). */
