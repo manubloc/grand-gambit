@@ -1123,5 +1123,27 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("Tile greift nicht auf cid zu", !/\bcid\b/.test(tile));
 }
 
+/* ── DIE FEHLLISTE RECHNET SICH SELBST (v1.0.64) ───────────────────────────
+   Die Schaukammer zeigt seit v1.0.64 einen Reiter "Fehlt noch". Er darf
+   nicht von Hand gepflegt sein - eine abgeschriebene Liste steht am Tag des
+   ersten neuen Gemaeldes falsch da, und niemandem faellt es auf. Diese
+   Probe haelt beides fest: die Liste nennt genau die Arten OHNE Bild, und
+   fuer jede davon gibt es wirklich eine Ersatzzeichnung, sonst zeigte der
+   Reiter leere Kacheln. */
+{
+  const { fehlendeSperrBilder, sperrBild, SPERR_ZUSTAENDE } =
+    await import("./src/app/ui/board/sperrenArt.js");
+  const { hatVektor } = await import("./src/app/ui/board/sperrenVektor.jsx");
+  const fehlt = fehlendeSperrBilder();
+  ok("die Fehlliste nennt Zaun und Bollwerk in allen drei Zustaenden", fehlt.length === 6);
+  ok("drei Zustaende, nicht mehr", SPERR_ZUSTAENDE.length === 3);
+  ok("die Mauer steht NICHT darin - sie ist gemalt",
+    !fehlt.some((f) => f.art === "mauer"));
+  ok("kein Eintrag hat in Wahrheit doch ein Bild",
+    fehlt.every((f) => !sperrBild(f.art, f.zustand)));
+  ok("jede Luecke traegt eine Ersatzzeichnung",
+    fehlt.every((f) => hatVektor(f.art)));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

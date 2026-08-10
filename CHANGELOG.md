@@ -1,5 +1,32 @@
 # Changelog - Grand Gambit
 
+## 1.0.64
+- DIE SCHAUKAMMER SAGT JETZT AUCH, WAS FEHLT. Sie zeigte bisher nur, was DA
+  IST - und genau darum war die Luecke unsichtbar, die v1.0.63 aufgerissen
+  hat: Zaun und Bollwerk sind seither kaufbar, ohne dass es ein Gemaelde zu
+  ihnen gibt. Man sah das nur, wenn man im Spiel zufaellig einen Zaun setzte,
+  nicht dort, wo die Bilder verwaltet werden. Neuer Reiter "Fehlt noch": sechs
+  Kacheln (Zaun und Bollwerk, je heil/angeschlagen/Truemmer), jede mit der
+  Ersatzzeichnung, die derzeit an ihrer Stelle steht, und dem Dateinamen, unter
+  dem das Gemaelde erwartet wird.
+- DIE LISTE IST NICHT ABGESCHRIEBEN, sie rechnet sich aus den Nullen in
+  sperrenArt.js selbst aus (fehlendeSperrBilder()). Eine zweite, von Hand
+  gepflegte Liste stuende am Tag des ersten neuen Gemaeldes falsch da, und
+  niemandem fiele es auf - derselbe Fehler, der die Kammer schon einmal 382
+  Bilder in den Sammelreiter schieben liess. Sobald ein Bild unter dem
+  genannten Namen liegt, verschwindet seine Kachel von allein.
+- Der Reiter steht bewusst NEBEN den Gruppen, nicht darin: die Bestandstafel
+  rechnet je Gruppe sicher/gesamt und haette bei einer Gruppe ohne ein einziges
+  vorhandenes Bild durch null geteilt.
+- URSACHE, nicht Symptom: scripts/verify-boot.mjs meldete gruen und kam nie
+  zurueck. jsdom haelt mit pretendToBeVisual einen Bildtaktgeber offen, und
+  Node beendet sich nicht, solange ein Zeitgeber laeuft - das CI-Tor blieb
+  haengen und jede Sitzung musste seinen Ausgang aus dem Text lesen statt am
+  Rueckgabewert. window.close() nimmt jsdom die Taktgeber, exit(0) macht den
+  Erfolg zur Zahl.
+- Proben: 22 Suiten, 1143 Assertionen (test_ui +5: die Fehlliste nennt genau
+  die Arten ohne Bild, und jede Luecke traegt wirklich eine Ersatzzeichnung).
+
 ## 1.0.63
 - SPERREN LASSEN SICH ENDLICH KAUFEN UND SETZEN. Regelwerk (v0.90) und Bilder
   (v1.0.46) standen laengst - nur konnte niemand je eine Sperre besitzen. Zaun,

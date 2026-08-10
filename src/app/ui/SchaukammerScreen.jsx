@@ -13,6 +13,12 @@
 // werden muss).
 import { useEffect, useMemo, useState } from "react";
 import { T } from "./theme.js";
+/* Die Kammer zeigt bisher nur, WAS DA IST. Sie soll auch sagen, was fehlt -
+   siehe FEHLT_REITER weiter unten. Diese drei Einbindungen kosten nichts:
+   Brett und Laden ziehen sie ohnehin schon ins Buendel. */
+import { fehlendeSperrBilder } from "./board/sperrenArt.js";
+import { SperrVektor } from "./board/sperrenVektor.jsx";
+import { SPERR_ARTEN } from "../../core/rules/sperren.js";
 
 /* Die Bilder werden NICHT statisch eingebunden. Der erste Versuch tat das
    (348 Importe) und blies das Spielbuendel von 1,7 auf 2,82 MB auf - so
@@ -142,8 +148,30 @@ export function SchaukammerScreen() {
     for (const e of ALLE) if (!g.includes(e.gruppe)) g.push(e.gruppe);
     return g;
   }, [ALLE]);
+  /* ── WAS FEHLT (v1.0.64) ────────────────────────────────────────────────
+     Seit v1.0.63 sind Zaun und Bollwerk kaufbar, ohne dass es ein Gemaelde
+     zu ihnen gibt; auf dem Brett springt die Ersatzzeichnung ein. Solange
+     die Kammer nur zeigte, was DA IST, war diese Luecke genau dort
+     unsichtbar, wo der Besitzer seine Bilder verwaltet - man sah sie nur,
+     wenn man im Spiel zufaellig einen Zaun setzte.
+     Die Liste rechnet sich in sperrenArt.js aus den fehlenden Bildern selbst
+     aus, wird also am Tag des ersten Gemaeldes von allein kuerzer.
+     Der Reiter steht BEWUSST NEBEN gruppen und nicht darin: die
+     Bestandstafel rechnet je Gruppe sicher/gesamt, und eine Gruppe ohne ein
+     einziges vorhandenes Bild teilte dort durch null. */
+  const FEHLT_REITER = "Fehlt noch";
+  const FEHLT = useMemo(() => fehlendeSperrBilder().map((f) => ({
+    ...f,
+    name: (SPERR_ARTEN[f.art] && SPERR_ARTEN[f.art].nameDe) || f.art,
+    datei: `src/app/ui/assets/sperren/${f.art}-${
+      { heil: "heil", angeschlagen: "riss", truemmer: "schutt" }[f.zustand]}.webp`,
+  })), []);
+  const reiter = useMemo(
+    () => (FEHLT.length ? [...gruppen, FEHLT_REITER] : gruppen), [gruppen, FEHLT]);
+
   const [gruppe, setGruppe] = useState(null);
   const zeigeGruppe = gruppe || gruppen[0];
+  const imFehlreiter = zeigeGruppe === FEHLT_REITER;
   const [suche, setSuche] = useState("");
   const [filter, setFilter] = useState("alle");
   const [spalten, setSpalten] = useState(4);
@@ -290,11 +318,13 @@ export function SchaukammerScreen() {
         )}
 
         <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 10 }}>
-          {gruppen.map((g) => {
-            const n = ALLE.filter((e) => e.gruppe === g).length;
+          {reiter.map((g) => {
+            const fehl = g === FEHLT_REITER;
+            const n = fehl ? FEHLT.length : ALLE.filter((e) => e.gruppe === g).length;
             return (
               <button key={g} onClick={() => { setGruppe(g); setSuche(""); setWahl([]); }}
-                style={knopf(g === zeigeGruppe)}>
+                style={{ ...knopf(g === zeigeGruppe),
+                  ...(fehl ? { borderColor: ZUSTAND.ohne.farbe, color: "#e0a0a8" } : null) }}>
                 {g} <span style={{ opacity: .65 }}>{n}</span>
               </button>
             );
@@ -324,6 +354,42 @@ export function SchaukammerScreen() {
           style={{ width: "100%", maxWidth: 320, fontFamily: "inherit", fontSize: 13.5, color: "#e8e2cf",
             background: "rgba(8,6,16,.6)", border: "1px solid rgba(167,139,250,.3)", borderRadius: 10,
             padding: "9px 12px", marginBottom: 12 }} />
+
+        {imFehlreiter && (
+          <>
+            <div className="gg-serif" style={{ fontSize: 12.5, color: T.dim, fontStyle: "italic",
+              lineHeight: 1.6, marginBottom: 12 }}>
+              Diese Bilder sind im Spiel <b style={{ color: "#e0a0a8", fontStyle: "normal" }}>angemeldet,
+              aber nicht gemalt</b>. Bis sie kommen, zeichnet das Brett den Ersatz, den du hier siehst —
+              auf dem Feld wie im Laden. Die Liste rechnet sich selbst aus; sobald ein Gemälde unter
+              dem genannten Namen liegt, verschwindet die Kachel von allein.
+            </div>
+            <div style={{ display: "grid", gap: 8, marginBottom: 4,
+              gridTemplateColumns: `repeat(${spalten}, minmax(0,1fr))` }}>
+              {FEHLT.map((f) => (
+                <div key={f.art + f.zustand} style={{ position: "relative",
+                  background: "linear-gradient(165deg,rgba(52,26,34,.5),rgba(14,10,24,.6))",
+                  border: `1px dashed ${ZUSTAND.ohne.farbe}88`, borderRadius: 11, padding: 6 }}>
+                  <div style={{ aspectRatio: "1 / 1", display: "grid", placeItems: "center",
+                    background: "rgba(8,6,16,.5)", borderRadius: 8, overflow: "hidden" }}>
+                    <SperrVektor art={f.art} zustand={f.zustand} size={72} />
+                  </div>
+                  <div style={{ position: "absolute", top: 10, right: 10, fontSize: 8.5, fontWeight: 700,
+                    color: ZUSTAND.ohne.farbe, background: ZUSTAND.ohne.grund,
+                    border: `1px solid ${ZUSTAND.ohne.farbe}66`, borderRadius: 6, padding: "2px 5px" }}>
+                    Ersatzzeichnung
+                  </div>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, marginTop: 5, lineHeight: 1.25 }}>
+                    {f.name} · {f.zustand}
+                  </div>
+                  <div style={{ fontSize: 8.5, color: T.dim, marginTop: 2, wordBreak: "break-all" }}>
+                    {f.datei}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         <div style={{ display: "grid", gap: 8,
           gridTemplateColumns: `repeat(${spalten}, minmax(0,1fr))` }}>
@@ -401,12 +467,14 @@ export function SchaukammerScreen() {
             );
           })}
         </div>
-        {!sichtbar.length && <div className="gg-serif" style={{ color: T.dim, fontStyle: "italic", padding: "20px 2px" }}>
+        {!imFehlreiter && !sichtbar.length && <div className="gg-serif" style={{ color: T.dim, fontStyle: "italic", padding: "20px 2px" }}>
           Nichts gefunden.</div>}
 
         <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginTop: 12 }}>
-          <button onClick={() => setWahl(sichtbar.map((e) => e.rel))} style={{ ...knopf(false), fontSize: 11.5 }}>
-            alle {sichtbar.length} sichtbaren wählen</button>
+          {!imFehlreiter && (
+            <button onClick={() => setWahl(sichtbar.map((e) => e.rel))} style={{ ...knopf(false), fontSize: 11.5 }}>
+              alle {sichtbar.length} sichtbaren wählen</button>
+          )}
           {Object.values(merk).filter(Boolean).length > 0 && (
             <>
               <button onClick={merkListe} style={{ ...knopf(true), fontSize: 11.5 }}>

@@ -45,6 +45,29 @@ export function sperrBild(art, zustand, gross = false) {
   return (satz && satz[zustand]) || null;
 }
 
+/* Die drei Zustaende, in der Reihenfolge, in der eine Sperre sie durchlaeuft. */
+export const SPERR_ZUSTAENDE = ["heil", "angeschlagen", "truemmer"];
+
+/** WAS NOCH FEHLT, RECHNET SICH SELBST AUS.
+ *
+ *  Seit v1.0.63 kann man Zaun und Bollwerk kaufen, ohne dass ein Gemaelde
+ *  dazu existiert - auf dem Brett springt die Ersatzzeichnung ein. Damit die
+ *  Luecke nicht nur im Spiel steht, sondern auch dort sichtbar wird, wo der
+ *  Besitzer seine Bilder verwaltet, holt die Schaukammer diese Liste.
+ *
+ *  Sie wird NICHT von Hand gepflegt: sie faellt aus den Nullen oben heraus.
+ *  Eine zweite, abgeschriebene Liste waere am Tag des ersten neuen Bildes
+ *  falsch und niemandem faellt es auf - genau der Fehler, der die Kammer
+ *  schon einmal 382 Bilder in den Sammelreiter schieben liess.
+ */
+export function fehlendeSperrBilder() {
+  const fehlt = [];
+  for (const art of Object.keys(SPERR_BILDER))
+    for (const zustand of SPERR_ZUSTAENDE)
+      if (!sperrBild(art, zustand)) fehlt.push({ art, zustand });
+  return fehlt;
+}
+
 /* WIE HOCH SITZT WAS. Die aufrechten Zustaende fuellen das Feld fast ganz und
    stehen auf der Grundkante; die Truemmer liegen flach und breit im unteren
    Drittel. Ohne diese Trennung schwebte der Schutt in der Feldmitte wie ein
