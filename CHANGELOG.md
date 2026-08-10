@@ -1,5 +1,44 @@
 # Changelog - Grand Gambit
 
+## 1.0.65
+- DIE FIGUREN SASSEN NIE SCHIEF - DIE KACHEL TAT ES. Vierter Besitzerbefund
+  zur Mitte, und diesmal gemessen statt geschlossen: am lebenden DOM sitzt
+  JEDE Hofstaat-Figur exakt 9,2 px von 119 px rechts der Kachelmitte, alle
+  gleich viel. Genau das verraet die Bauweise und nicht das Gemaelde. Ursache:
+  `margin: 0 auto` zentriert nicht, wenn der Kasten breiter ist als sein Elter
+  (die Kachelbilder stehen auf 118 %) - CSS verwirft bei ueberbestimmten
+  Raendern den rechten und macht den linken zu null, das Bild haengt mit seiner
+  ganzen Ueberbreite nach rechts. Jetzt linker Rand 50 % und das Bild um seine
+  halbe eigene Breite zurueck; nachgemessen 0,0 % bei allen 14 Kacheln.
+  Damit ist auch erklaert, warum v1.0.49 (x-Versatz), v1.0.52 (Sockel statt
+  Silhouette) und v1.0.62 (Bilder gerichtet) das Problem nie loesten: sie haben
+  die GEMAELDE vermessen, waehrend der Versatz aus dem RAND kam. Die Bilder
+  selbst sind gut - nachgemessen mit enger Alphaschwelle: Hoehe 92,0-92,9 %,
+  Sockelmitte innerhalb von 0,5 %.
+- DER BAUER IST SO GROSS WIE DER GRAND GAMBIT und steht genauso hoch.
+  v1.0.14 hatte dem Helden absichtlich eine Stufe mehr gegeben (10,5vw gegen
+  9,4vw); auf 390 px sind das 41 gegen 37 px, und weil beide Bilder in ihrer
+  Zelle mittig sitzen, lagen auch Ober- und Unterkante auseinander - eine
+  Reihe, die nicht auf einer Linie steht. Jetzt ein Mass fuer alle acht
+  (nachgemessen: 37x41, Oberkante 246, Unterkante 287, ausnahmslos). Kenntlich
+  bleibt der Held durch goldenen Schein, goldene Kontur und den Stern - Zeichen,
+  die keine Groesse brauchen. Im schlichten Stil ebenso.
+- DAS FIGURENBLATT ZEIGT SEIN BILD FREI, wie das Monsterblatt es immer tat.
+  Die gerahmte Platte ist fort: keine goldene Kontur, kein eigener Grund, kein
+  overflow-hidden (das schnitt gross gezogene Figuren an). Statt dessen genau
+  die Behandlung der Monsterkarte - 148x178, unten verankert, violetter Schein.
+  Besitzerentscheid nach Vergleich beider Blaetter.
+- ZUR FRAGE, warum Monster und Meister ueberhaupt anders aussahen: es sind zwei
+  getrennte Bauwerke (CharCard fuer Figuren, der X:-Zweig fuer Meister), keine
+  Zustandsfrage. Bestechen aendert die Blattform NICHT - es schaltet im selben
+  Blatt nur die Verbessern-Steuerung frei.
+- Neues Messwerkzeug messe_hofstaat.mjs: misst Kachelmitte gegen Bildmitte,
+  Bauer gegen Held und den Kopf beider Blattformen. Haelt zwei Stolpersteine
+  fest: der Dock-Knopf "Figuren" fuehrt in die AKADEMIE, der Hofstaat liegt
+  unter "Lager"; und zwei Knoepfe tragen dieselbe Aufschrift - der Reiter steht
+  im DOM zuerst.
+- Proben: 22 Suiten, 1150 Assertionen (test_ui +7).
+
 ## 1.0.64
 - DIE SCHAUKAMMER SAGT JETZT AUCH, WAS FEHLT. Sie zeigte bisher nur, was DA
   IST - und genau darum war die Luecke unsichtbar, die v1.0.63 aufgerissen

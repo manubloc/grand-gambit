@@ -1145,5 +1145,34 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
     fehlt.every((f) => hatVektor(f.art)));
 }
 
+/* ── DREI BESITZERBEFUNDE VOM 10.8. (v1.0.65) ──────────────────────────────
+   Alle drei sind STRUKTURPROBEN am Quelltext, weil die Ursachen dort liegen
+   und beim naechsten Umbau leicht zurueckfallen. Die Abnahme selbst geschah
+   am lebenden DOM (messe_hofstaat.mjs). */
+{
+  const { readFileSync: _rf3 } = await import("node:fs");
+  const q = _rf3("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+
+  /* 1. Ein ueberbreites Bild laesst sich mit auto-Raendern NICHT zentrieren:
+        CSS verwirft bei ueberbestimmten Raendern den rechten und macht den
+        linken zu null - das Bild haengt rechts ueber. Genau das war der
+        Versatz von 7,78 %, den der Besitzer viermal gemeldet hat. */
+  const ueberbreit = /width:\s*"1[1-9]\d?%"[^}]*margin:\s*"0 auto/.test(q);
+  ok("kein ueberbreites Kachelbild mehr mit auto-Raendern", !ueberbreit);
+  ok("die Kachel zentriert ueber halben Rand und Rueckversatz",
+    /margin:\s*"0 0 -7px 50%"/.test(q) && /translateX\(-50%\)/.test(q));
+
+  /* 2. Bauer und Grand Gambit tragen in der Aufstellung EIN Mass. */
+  ok("kein getrenntes Mass mehr fuer Held und Bauer",
+    !/isHero \? "clamp\(26px, 10\.5vw, 86px\)" : "clamp\(24px, 9\.4vw, 76px\)"/.test(q));
+  ok("die Bauernreihe misst durchgehend 10,5vw", /height: "clamp\(26px, 10\.5vw, 86px\)"/.test(q));
+
+  /* 3. Das Figurenblatt traegt keine gerahmte Platte mehr - wie das Monster. */
+  const kopf = q.slice(q.indexOf("THE DOSSIER HEAD"), q.indexOf("masthead + orbs + ledger"));
+  ok("die Platte hat keinen Rahmen mehr", !/border: "1px solid rgba\(227,192,122,\.28\)"/.test(kopf));
+  ok("und keinen eigenen Grund", !/linear-gradient\(180deg, rgba\(30,36,54,\.5\)/.test(kopf));
+  ok("das Bild steht unten wie im Monsterblatt", /objectPosition: "bottom"/.test(kopf));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

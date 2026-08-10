@@ -493,12 +493,20 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         the vital lines beneath in a ledger rhythm. */}
     <div style={{ display: "flex", gap: 13, alignItems: "stretch", cursor: onToggle ? "pointer" : "default" }}
       onClick={onToggle ? (e) => { e.stopPropagation(); onToggle(); } : undefined}>
-      {/* portrait, framed like a poster plate — the figure centred and as
-          large as the plate allows */}
-      <div style={{ flex: "0 0 auto", position: "relative", borderRadius: 12, overflow: "hidden",
-        width: bigArt ? 128 : 92, minHeight: bigArt ? 176 : 128,
-        background: "linear-gradient(180deg, rgba(30,36,54,.5), rgba(10,12,20,.7))",
-        border: "1px solid rgba(227,192,122,.28)", display: "grid", placeItems: "center" }}>
+      {/* v1.0.65 (Besitzerentscheid): DAS BILD STEHT FREI - wie beim Monster.
+          Bis hierher sass die Figur in einer gerahmten Platte: goldene Kontur,
+          eigener Grund, abgerundete Ecken, Bild darin beschnitten. Das
+          Monsterblatt hat nie eine gehabt; es stellt sein Gemaelde einfach neben
+          den Namen und laesst es leuchten. Der Besitzer hat beide nebeneinander
+          gesehen und das freie Bild gewaehlt - "das bitte komplett uebernehmen
+          auf alle Figuren".
+          Also faellt die Platte: kein Rahmen, kein Grund, kein overflow-hidden
+          (das schnitt eine gross gezogene Figur ab). Was bleibt, ist das MASS -
+          sonst rutschte die Schrift daneben - und was dazukommt, ist genau die
+          Behandlung der Monsterkarte: unten verankert, mit Schein. */}
+      <div style={{ flex: "0 0 auto", position: "relative",
+        width: bigArt ? 148 : 92, minHeight: bigArt ? 178 : 128,
+        display: "grid", placeItems: "center" }}>
         {paintedById(char.id)
           ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
@@ -509,8 +517,13 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                  nicht, also standen die Figuren neben ihrem Namen. Derselbe
                  Wert, gegenlaeufig angewandt: -x schiebt den Inhalt zurueck
                  in die Mitte der Platte. */
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center",
-              filter: "drop-shadow(0 3px 5px rgba(0,0,0,.5))", cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
+              /* v1.0.65: dieselben Werte wie im Monsterblatt - unten verankert
+                 (die Figuren stehen auf einer Linie statt in der Luft zu
+                 schweben) und mit dem violetten Schein statt eines Rahmens. */
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain",
+              objectPosition: "bottom",
+              filter: `drop-shadow(0 0 10px ${T.riftGlow}) drop-shadow(0 3px 5px rgba(0,0,0,.5))`,
+              cursor: unlocked && onZoom ? "zoom-in" : "default" }} />
           : <div style={{ padding: 8 }}><Glyph kind={char.kind} level={level} abilities={abilities} shield={shield} hero={epic} art={"painted"} size={bigArt ? 104 : 76} /></div>}
         {/* v1.0.11 (Besitzer): der Vektor-Zwilling im Eck ist fort — die
             Platte gehört ganz dem Gemälde. Das Zeichen lehrt die Chronik. */}
@@ -917,11 +930,25 @@ function FormationEditor({ profile, dispatch, t, en }) {
                      vw am Schirm - beides zusammen liess sie klein und nach
                      unten gerutscht wirken. Jetzt zentriert und eine Stufe
                      hoeher; der Grand Gambit steht als Held noch groesser. */
-                  style={{ height: isHero ? "clamp(26px, 10.5vw, 86px)" : "clamp(24px, 9.4vw, 76px)",
+                  /* v1.0.65 (Besitzer): DER BAUER IST SO GROSS WIE DER GAMBIT
+                     UND STEHT GENAUSO HOCH. v1.0.14 gab dem Helden absichtlich
+                     eine Stufe mehr (10,5vw gegen 9,4vw) - das machte die
+                     Bauernreihe uneben: bei 390 px Schirm 41 gegen 37 px, und
+                     weil beide Bilder in ihrer Zelle MITTIG sitzen, lagen auch
+                     Ober- und Unterkante zwei Pixel auseinander. Eine Reihe
+                     gleicher Figuren muss eine Linie bilden.
+                     Der Held bleibt trotzdem kenntlich: goldener Schein,
+                     goldene Zellkontur, Stern in der Ecke - Zeichen, die keine
+                     Groesse brauchen. Da beide Gemaelde gleich gerichtet sind
+                     (gemessen: Hoehe 92,88 %, gleicher Fussabstand), steht die
+                     Reihe damit auf einer Linie. */
+                  style={{ height: "clamp(26px, 10.5vw, 86px)",
                     maxWidth: "100%", maxHeight: "100%",
                     objectFit: "contain", objectPosition: "center", pointerEvents: "none",
                     filter: isHero ? "drop-shadow(0 1px 3px rgba(201,164,92,.5))" : "none" }} />
-              : <SlotGlyph kind="P" size={isHero ? "clamp(30px, 12vw, 98px)" : "clamp(28px, 11vw, 90px)"} hero={isHero} level={gLvl} />}
+              /* v1.0.65: derselbe Entscheid im SCHLICHTEN Stil - sonst haette
+                 der Besitzer die Ungleichheit dort weiterhin gesehen. */
+              : <SlotGlyph kind="P" size={"clamp(30px, 12vw, 98px)"} hero={isHero} level={gLvl} />}
             {isHero && <span style={{ position: "absolute", bottom: 1, right: 2, fontSize: 8, fontWeight: 800,
               color: "#e9d296", textShadow: "0 1px 2px #000", pointerEvents: "none" }}>★</span>}
           </button>;
@@ -1451,7 +1478,22 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
            jedes Mal fotografiert hat, rendert ueber einen dritten Weg, den
            ich nie angefasst habe. Darum "hat sich nichts geaendert": es
            stimmte, meine Aenderungen liefen an dieser Ansicht vorbei. */
-        style={{ width: "118%", aspectRatio: "1 / 1", objectFit: "contain", display: "block", margin: "0 auto -7px",
+        /* v1.0.65 (Besitzerbefund "immer noch nicht mittig", GEMESSEN):
+           HIER lag es - und es waren nie die Bilder. `margin: 0 auto` zentriert
+           NICHT, wenn der Kasten breiter ist als sein Elter: bei ueberbestimmten
+           Raendern verwirft CSS den rechten und macht den linken zu null. Das
+           Bild hing also mit seinen vollen 18 Ueberbreite nach RECHTS ueber,
+           seine Mitte lag 9 % neben der Kachelmitte. Am lebenden DOM gemessen:
+           +9,2 px bei 119 px Kachel, bei JEDER Figur exakt gleich - das
+           verraet die Bauweise, nicht das Gemaelde (die Bilder selbst messen
+           nur ±0,5 % Sockelversatz).
+           Darum drei Anlaeufe (v1.0.49 x, v1.0.52 Sockel, v1.0.62 Bilder
+           gerichtet) am Ziel vorbei: sie haben die Gemaelde vermessen, waehrend
+           der Versatz aus dem Rand kam.
+           linker Rand 50 % der Kachel, dann das Bild um seine halbe eigene
+           Breite zurueck - das trifft die Mitte bei jeder Ueberbreite. */
+        style={{ width: "118%", aspectRatio: "1 / 1", objectFit: "contain", display: "block",
+        margin: "0 0 -7px 50%", transform: "translateX(-50%)",
         /* v1.0.59: HIER LAG DER ABSTURZ ("ch is not defined", Besitzer-Foto).
            Diese Kachel ist die generische Tile-Komponente - sie kennt die
            champTile-Variablen NICHT, sie bekommt kind und hero als PROPS.
