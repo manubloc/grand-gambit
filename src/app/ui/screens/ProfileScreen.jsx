@@ -345,7 +345,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           })}
         </div>
         <div style={{ fontSize: 11, color: T.faint, marginTop: 8, lineHeight: 1.45 }}>
-          Nur fuer dich sichtbar. Alle Spieler sehen fest: Getoent (farbige Figur, lila Sockel-Glut).
+          Nur fuer dich sichtbar. Alle Spieler sehen fest die farbige Fassung (Gegner lila, eigene Seite gold).
           Deine Wahl hier gilt nur fuer dieses Konto.</div>
       </div>}
     </Panel>

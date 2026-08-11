@@ -1174,5 +1174,47 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("das Bild steht unten wie im Monsterblatt", /objectPosition: "bottom"/.test(kopf));
 }
 
+/* ── BAUER UND GAMBIT, SOCKELGLUT, ZWEI SEHWEISEN (v1.0.66) ────────────────
+   Drei Besitzerbefunde, drei Proben - damit keiner davon beim naechsten
+   Umbau zurueckfaellt. */
+{
+  const { paintedFitFor } = await import("./src/app/ui/board/paintedArt.js");
+  const bauer = paintedFitFor({ kind: "P" });
+  const held  = paintedFitFor({ kind: "P", hero: true, tier: 1 });
+  ok("Bauer und Gambit Stufe I sind gleich hoch gezeichnet", bauer.h === held.h);
+  ok("und stehen auf derselben Fusslinie", bauer.y === held.y);
+  const held6 = paintedFitFor({ kind: "P", hero: true, tier: 6 });
+  ok("die Raenge wachsen weiterhin", held6.h > held.h);
+}
+{
+  const { GEGNER_STILE, setGegnerStil, gegnerStil, glutTon, glutFilter, GLUT_SCHEIN } =
+    await import("./src/app/ui/gegnerstil.js");
+  ok("es gibt genau zwei Sehweisen", GEGNER_STILE.length === 2);
+  setGegnerStil("getoent");
+  ok("farbig: der Gegner glueht lila", glutTon(false) === "lila");
+  ok("farbig: die eigene Seite glueht gold", glutTon(true) === "gold");
+  setGegnerStil("schwarzweiss");
+  ok("ohne Farbe: der Gegner glueht schwarz", glutTon(false) === "schwarz");
+  ok("ohne Farbe: die eigene Seite glueht weiss", glutTon(true) === "weiss");
+  setGegnerStil("grau");
+  ok("der alte Name grau faellt auf schwarzweiss", gegnerStil() === "schwarzweiss");
+  setGegnerStil("farbig");
+  ok("der alte Name farbig faellt auf getoent", gegnerStil() === "getoent");
+  setGegnerStil("getoent");
+  ok("jeder Ton hat einen Schein", ["lila","gold","schwarz","weiss"].every((t) => GLUT_SCHEIN[t]));
+  ok("die Gefahr staffelt die Glut",
+    glutFilter("lila", 1) !== glutFilter("lila", 0));
+}
+{
+  /* Der Verlauf: dunkel am Boden, Gipfel am Sockelrand, aus bei 19 % - die
+     Obergrenze wollte der Besitzer ausdruecklich NICHT hoeher haben. */
+  const { readFileSync: _rf3 } = await import("node:fs");
+  const q = _rf3("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  const v = q.slice(q.indexOf("const SOCKEL_VERLAUF"), q.indexOf("const SOCKEL_VERLAUF") + 320);
+  ok("der Verlauf beginnt dunkel am Boden", /rgba\(0,0,0,\.18\) 0%/.test(v));
+  ok("sein Gipfel liegt am Sockelrand", /rgba\(0,0,0,1\) 13%/.test(v));
+  ok("und er endet weiterhin bei 19 %", /rgba\(0,0,0,0\) 19%/.test(v));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

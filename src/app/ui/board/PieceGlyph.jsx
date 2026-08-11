@@ -2,8 +2,15 @@ import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
-import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor, ENEMY_FILTER } from "./paintedArt.js";
-import { gegnerStil, gefahrVon } from "../gegnerstil.js";
+import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor } from "./paintedArt.js";
+import { gegnerStil, gefahrVon, glutTon, glutFilter, GLUT_SCHEIN } from "../gegnerstil.js";
+
+/* v1.0.66: DER SOCKELVERLAUF, an einer Stelle. Dunkel am Boden (0,18),
+   Gipfel am Sockelrand (1,0 bei 13 %), aus bei 19 % - dieselbe Obergrenze
+   wie seit v1.0.62, der Besitzer wollte sie ausdruecklich NICHT hoeher. */
+const SOCKEL_VERLAUF =
+  "linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) 6%, "
+  + "rgba(0,0,0,1) 13%, rgba(0,0,0,.55) 16%, rgba(0,0,0,0) 19%)";
 
 // Fixed display order so the emblem row is stable as abilities are gained.
 const TAG_ORDER = ["move", "ranged", "blink", "aoe", "control", "sustain", "promo"];
@@ -283,15 +290,22 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      Satz und die eigene Seite bleiben grundsaetzlich unberuehrt. */
   const sicht = (white || artStyle === "classic") ? "farbig" : gegnerStil();
   const gefahr = gefahrVon(piece.kind);   /* v1.0.60: Sockel-Leuchtstaerke */
+  /* v1.0.66 (Besitzerwunsch): DIE GLUT GILT FUER BEIDE SEITEN. Bisher glomm
+     nur der Gegner; die eigene Seite stand ohne Sockel da und war allein am
+     Goldschein zu erkennen. Jetzt dasselbe Bauwerk in Gold - "dann ist da
+     eine klare Unterscheidung". Der klassische Satz bleibt aussen vor:
+     normales Schach sieht aus wie normales Schach. */
   const klassisch = artStyle === "classic";
+  const ton = klassisch ? null : glutTon(white);
   // v0.71.14: alle Figuren minimal aufgehellt und kontrastreicher; die
   // Gegenseite traegt DIESELBE Kunst, nur eine Spur dunkler - die Trennung
   // leisten Goldschein (eigene) und Riss-Violett (Gegner).
   /* v1.0.62 (Besitzer): die EIGENE Seite und der getoente Blick tragen die
      ORIGINALFARBEN - kein brightness, kein contrast, nichts. Nur der graue
      Blick behaelt seine leichte Abdunklung als Teil seines Looks. */
-  const tonung = white || sicht === "getoent" ? ""
-                       : "brightness(0.94) contrast(1.12) saturate(0.98)";
+  /* v1.0.66: keine Sonderabdunklung mehr - beide Fassungen zeigen die
+     Originalfarben, siehe den Filterzweig weiter unten. */
+  const tonung = "";
   /* ── v1.0.41: HIER LAG DAS RUCKELN. GEMESSEN, NICHT VERMUTET. ────────────
      Der klassische Satz bekam genau EINEN drop-shadow, jede andere Figur bis
      zu NEUN - Basisschatten, vierteiliger SIDE_GLOW, ROYAL_HALO, HERO_SHEEN,
@@ -468,23 +482,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                    Koenig" stand immer noch zu hell. Die Vorlagen sind gut;
                    der Filter hat ihnen nichts mehr zu sagen. */
                 ? "none"
-                /* v1.0.54 (Besitzerwunsch): Graustufen mit MEHR KONTRAST und
-                   heller - ausser beim Koenig, der stand schon hell genug.
-                   contrast(1.35) und ein Helligkeitsschub von 1.18; der
-                   Koenig bekommt nur den Kontrast, keinen Schub. */
-                /* v1.0.60 (Besitzerentscheid): BEIDE Gegnerstile tragen den
-                   LILA LEUCHTENDEN SOCKEL - der Unterschied ist nur die Figur
-                   darueber. "grau": Figur in Graustufen (contrast 1.35,
-                   brightness 1.18, Koenig ohne Schub). "getoent": die Figur
-                   BEHAELT ihre Farben exakt wie die eigenen - kein Filter,
-                   keine Volltoenung mehr; nur der Sockel glueht. */
-                : (sicht === "grau" ? `grayscale(1) contrast(1.35) brightness(${isKing ? 1 : 1.18}) `
-                   : "") + (sicht === "getoent" ? "" : ENEMY_FILTER) + (sicht === "getoent" ? "" : isKing ? " brightness(1.85) saturate(1.2)"
-                  : isQueen ? " brightness(1.42) saturate(1.18)"
-                  : isBoss ? " brightness(1.42) saturate(1.18)"
-                  : piece.hero ? " brightness(1)"
-                  : isPawn ? " brightness(0.9) saturate(0.8)"
-                  : " brightness(1.16) saturate(0.98)"),
+                /* v1.0.66: DIE GEGNERFIGUR TRAEGT IHRE ORIGINALFARBEN - in
+                   BEIDEN Fassungen. Bis v1.0.65 stand hier noch die alte
+                   Dreiteilung: "grau" entfaerbte die Figur, "farbig" legte
+                   ENEMY_FILTER und Helligkeitsschuebe auf. Der Besitzer hat
+                   die Graustufen abgeschafft ("die fallen jetzt eh weg"), und
+                   die verbliebene Wahl betrifft ausdruecklich nur die GLUT am
+                   Sockel, nicht die Figur darueber. Was die Seiten trennt,
+                   ist also allein das Licht am Boden - lila gegen gold, oder
+                   schwarz gegen weiss. */
+                : "none",
               userSelect: "none", pointerEvents: "none" }} />
           : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} bossId={piece.bossId} hero={showHero} />}
         {/* v1.0.50: DIE GRUNDFARBE STEIGT AUF. Nur im getoenten Stil: eine
@@ -502,27 +509,45 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
             Verlauf + radialer Schein sind fuer den Grafikkern trivial - die
             teuren Figurmasken aus der Ruckel-Geschichte (v1.0.37) braucht es
             nicht. */}
-        {painting && (sicht === "getoent" || sicht === "grau") && (<>
+        {painting && ton && (<>
           {/* v1.0.62 (Besitzer): der Lichtschein hinter dem Fuss ist fast
               ganz fort - "man braucht es nicht mehr in diesem Masse". Was
               bleibt, ist ein Hauch: schmaler, flacher, ein Viertel der alten
-              Deckung, nur damit die Glut einen Boden hat. */}
+              Deckung, nur damit die Glut einen Boden hat.
+              v1.0.66: im Ton der jeweiligen Seite. */}
           <span aria-hidden style={{
             position: "absolute", left: "50%", bottom: "-1%", width: "78%", height: "16%",
             transform: "translateX(-50%)", borderRadius: "50%", pointerEvents: "none",
-            background: `radial-gradient(ellipse 50% 46% at 50% 58%, rgba(196,166,255,${(0.12 + 0.10 * gefahr).toFixed(2)}) 0%, rgba(124,58,237,${(0.08 + 0.08 * gefahr).toFixed(2)}) 46%, rgba(124,58,237,0) 72%)`,
+            background: `radial-gradient(ellipse 50% 46% at 50% 58%, rgba(${GLUT_SCHEIN[ton][0]},${(0.12 + 0.10 * gefahr).toFixed(2)}) 0%, rgba(${GLUT_SCHEIN[ton][1]},${(0.08 + 0.08 * gefahr).toFixed(2)}) 46%, rgba(${GLUT_SCHEIN[ton][1]},0) 72%)`,
             filter: "blur(1.5px)" }} />
           <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
             objectFit: "contain", objectPosition: big ? "center" : "center bottom",
-            /* v1.0.62 (Besitzer): die Glut startet DUNKEL und steigt ins
-               helle Lila - aber sie endet am Sockelrand. Vorher lief der
-               Verlauf bis 26 % hoch und leckte an den Stiefeln; jetzt ist
-               bei 19 % Schluss (der Sockel selbst reicht bis ~15 %). */
-            filter: `grayscale(1) sepia(1) hue-rotate(232deg) saturate(${(3.4 + 1.6 * gefahr).toFixed(2)}) brightness(${(1.15 + 0.45 * gefahr).toFixed(2)})`,
-            WebkitMaskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 5%, rgba(0,0,0,.5) 12%, rgba(0,0,0,0) 19%)",
-            maskImage: "linear-gradient(0deg, rgba(0,0,0,.96) 5%, rgba(0,0,0,.5) 12%, rgba(0,0,0,0) 19%)",
+            /* v1.0.66 (Besitzerbefund "zu hell"): DIE GLUT STEHT JETZT AUF DEM
+               KOPF - im Sinne des Besitzers. Bisher lag ihr Maximum ganz
+               UNTEN (0,96 bei 5 %) und verlosch nach oben: die Figur sass in
+               ihrem hellsten Punkt, der Fuss leuchtete greller als der Sockel
+               darueber. Gewuenscht ist das Gegenteil: "von mehr Dunkel,
+               Schwarz starten und dann nach oben hin zum Sockel grell werden,
+               aber nicht hoeher machen."
+               Also wandert der Gipfel an den SOCKELRAND (13 %) und der Fuss
+               wird dunkel gehalten (0,18 am Boden). Die Obergrenze bleibt
+               unangetastet bei 19 % - die Glut wird nicht hoeher, nur anders
+               verteilt. Darunter liegt zusaetzlich ein schwarzer Schleier
+               (siehe unten), damit der Boden wirklich dunkel ANFAENGT und die
+               Glut aus dem Schatten aufsteigt. */
+            filter: glutFilter(ton, gefahr),
+            WebkitMaskImage: SOCKEL_VERLAUF,
+            maskImage: SOCKEL_VERLAUF,
             userSelect: "none", pointerEvents: "none" }} />
+          {/* v1.0.66: DER SCHATTEN, AUS DEM SIE AUFSTEIGT. Ein schmaler
+              schwarzer Schleier ueber den untersten Prozenten - er nimmt dem
+              Fuss die Helligkeit, ohne die Glut zu senken. Im weissen Ton
+              faellt er schwaecher aus, sonst frisst er das Licht. */}
+          <span aria-hidden style={{
+            position: "absolute", left: 0, right: 0, bottom: 0, height: "13%",
+            pointerEvents: "none", borderRadius: "0 0 4px 4px",
+            background: `linear-gradient(0deg, rgba(0,0,0,${ton === "weiss" ? 0.42 : 0.62}) 0%, rgba(0,0,0,${ton === "weiss" ? 0.18 : 0.28}) 45%, rgba(0,0,0,0) 100%)` }} />
         </>)}
       </div>
 

@@ -146,6 +146,26 @@ const gleich = held && bauer && held.h === bauer.h && held.unten === bauer.unten
 console.log("  gleich gross UND gleich hoch:", gleich ? "JA" : "NEIN"
   + (held && bauer ? ` (Hoehe ${bauer.h} gegen ${held.h}, Unterkante ${bauer.unten} gegen ${held.unten})` : ""));
 
+/* ── v1.0.66: DER KASTEN IST NICHT DIE FIGUR ────────────────────────────────
+   Genau hier hat v1.0.65 danebengegriffen. Die Kaesten waren gleich gross
+   (121x121, beide gemessen), und der Besitzer sah trotzdem einen groesseren
+   Gambit - weil die FIGUR im Kasten von einem eigenen Hoehenfaktor gezeichnet
+   wird (paintedFitFor in paintedArt.js). Die Aufstellung zeigt das rohe
+   Gemaelde und war darum immer schon gleich; das BRETT wendet den Faktor an.
+   Also wird der Faktor hier mitgemessen - er ist die Zahl, die der Besitzer
+   auf dem Brett sieht. */
+const faktoren = await page.evaluate(async () => {
+  try {
+    const m = window.__ggFit;
+    return m ? { bauer: m.P, held: m.HERO } : null;
+  } catch { return null; }
+});
+console.log("\n── 2b. DER HOEHENFAKTOR (was das BRETT zeichnet) ──");
+console.log(faktoren
+  ? `  Bauer ${faktoren.bauer}  Gambit I ${faktoren.held}  gleich: ${faktoren.bauer === faktoren.held ? "JA" : "NEIN"}`
+  : "  (nicht ausgelesen - die Probe in test_ui haelt den Gleichstand fest:\n"
+    + "   paintedFitFor P gegen hero/tier 1)");
+
 // ── 2. HOFSTAAT: sitzt die Figur mittig in ihrer Kachel? ────────────────────
 const kacheln = await page.evaluate(() => {
   const out = [];

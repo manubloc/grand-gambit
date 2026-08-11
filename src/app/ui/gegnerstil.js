@@ -27,13 +27,28 @@
 
 let stil = "getoent";
 
-export const GEGNER_STILE = ["farbig", "grau", "getoent"];
+/* v1.0.66 (Besitzerentscheid): ZWEI SEHWEISEN, NICHT DREI.
+   "die Graustufen fallen jetzt eh weg" - der graue Figurenfilter war seit
+   v1.0.60 ohnehin nur noch eine Abdunklung unter derselben Sockelglut. Sein
+   Platz traegt jetzt die zweite Glutfarbe:
+
+     getoent        Farbig. Gegner glueht LILA, die eigene Seite GOLD.
+                    Voreinstellung fuer alle Spieler.
+     schwarzweiss   Dieselbe Glut, ohne Farbe: Gegner SCHWARZ, eigene WEISS.
+                    "das hat echt gut funktioniert, dass wir den Sockel
+                    schwarz machen und bei mir weiss."
+
+   Die alten Namen bleiben lesbar, damit gespeicherte Profile nicht auf die
+   Voreinstellung zurueckfallen und stillschweigend etwas anderes zeigen. */
+export const GEGNER_STILE = ["getoent", "schwarzweiss"];
+const ALTNAMEN = { farbig: "getoent", grau: "schwarzweiss" };
 
 /* v1.0.62 (Besitzerentscheid): DIE TOENUNG IST DER STANDARD - "die ist
    ziemlich gut geworden". Wer nichts waehlt (und waehlen kann kuenftig nur
    noch der Admin), sieht den Gegner farbig mit der lila Sockel-Glut. */
 export function setGegnerStil(s) {
-  stil = GEGNER_STILE.includes(s) ? s : "getoent";
+  const g = ALTNAMEN[s] || s;
+  stil = GEGNER_STILE.includes(g) ? g : "getoent";
 }
 
 export function gegnerStil() {
@@ -89,3 +104,44 @@ export function toenung(kind) {
 export function grundfarbeWinkel() {
   return LILA_WINKEL;
 }
+
+/* ── DIE FARBE DER SOCKELGLUT (v1.0.66) ────────────────────────────────────
+   Bis hierher glueht nur die Gegnerseite. Der Besitzer will die Glut auch
+   fuer die EIGENEN Figuren - "genau das Gleiche, bloss in leuchtend gelb,
+   dann ist da eine klare Unterscheidung". Zwei Seiten, zwei Toene, ein
+   Bauprinzip; im schwarz-weissen Blick dieselbe Trennung ohne Farbe.
+
+   Die Werte sind Filter auf eine graustufige Kopie des Gemaeldes:
+   sepia(1) faerbt sie in ein Braungold, hue-rotate dreht von dort weg.
+   Gold braucht darum fast keine Drehung, Lila die vollen 232 Grad. */
+const GLUT = {
+  lila:    { winkel: 232, saettigung: [3.4, 1.6], helligkeit: [1.15, 0.45] },
+  gold:    { winkel: -6,  saettigung: [3.8, 1.4], helligkeit: [1.30, 0.40] },
+  schwarz: { winkel: 0,   saettigung: [0.0, 0.0], helligkeit: [0.16, 0.10] },
+  weiss:   { winkel: 0,   saettigung: [0.0, 0.0], helligkeit: [2.10, 0.60] },
+};
+
+/** Welcher Ton glueht unter dieser Figur?
+ *  eigen = die eigene Seite (weiss), sonst die Gegenseite. */
+export function glutTon(eigen) {
+  if (stil === "schwarzweiss") return eigen ? "weiss" : "schwarz";
+  return eigen ? "gold" : "lila";
+}
+
+/** Der fertige Filter fuer die Glutkopie - Gefahr staffelt Saettigung und
+ *  Helligkeit wie bisher (je gefaehrlicher, desto greller). */
+export function glutFilter(ton, gefahr) {
+  const g = GLUT[ton] || GLUT.lila;
+  const sat = (g.saettigung[0] + g.saettigung[1] * gefahr).toFixed(2);
+  const hel = (g.helligkeit[0] + g.helligkeit[1] * gefahr).toFixed(2);
+  return `grayscale(1) sepia(${g.saettigung[0] ? 1 : 0}) hue-rotate(${g.winkel}deg) `
+    + `saturate(${sat}) brightness(${hel})`;
+}
+
+/** Der weiche Lichtschein hinter dem Fuss, im selben Ton. */
+export const GLUT_SCHEIN = {
+  lila:    ["196,166,255", "124,58,237"],
+  gold:    ["255,226,150", "216,164,65"],
+  schwarz: ["40,36,52", "10,8,16"],
+  weiss:   ["255,255,255", "214,214,224"],
+};

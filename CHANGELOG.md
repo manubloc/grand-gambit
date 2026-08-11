@@ -1,5 +1,37 @@
 # Changelog - Grand Gambit
 
+## 1.0.66
+- DER BAUER IST JETZT WIRKLICH SO GROSS WIE DER GAMBIT - und v1.0.65 war es
+  nicht, obwohl die Messung "gleich gross" sagte. Sie hat die KAESTEN
+  verglichen (beide 121x121), gezeichnet wird die Figur aber vom Hoehenfaktor
+  in paintedArt.js: Bauer 0.8977 gegen Gambit 1.0625, also 18 % hoeher. Kein
+  Auge sieht den Kasten, jedes sieht die Figur. Beide Gemaelde messen 92,9 %
+  Figurenhoehe und 3,5 % Fussabstand, der Gleichstand ist also echt. Die
+  Raenge II-VI wachsen weiter.
+- DIE SOCKELGLUT STEHT AUF DEM KOPF - im Sinne des Besitzers ("zu hell").
+  Ihr Maximum lag ganz UNTEN (0,96 bei 5 %): der Fuss leuchtete greller als
+  der Sockel darueber. Jetzt beginnt sie dunkel (0,18 am Boden), erreicht
+  ihren Gipfel am Sockelrand (13 %) und endet unveraendert bei 19 % - nicht
+  hoeher, nur anders verteilt. Darunter liegt ein schwarzer Schleier, damit
+  die Glut aus dem Schatten aufsteigt statt im Hellen zu beginnen.
+- DIE EIGENE SEITE GLUEHT MIT - in Gold. Bisher glomm nur der Gegner; jetzt
+  dasselbe Bauwerk in zwei Toenen, "dann ist da eine klare Unterscheidung".
+- ZWEI SEHWEISEN STATT DREI. Die Graustufen fallen weg ("die fallen jetzt eh
+  weg") - ihr Platz traegt die zweite Glutfassung: farbig (Gegner lila, eigene
+  Seite gold) oder ohne Farbe (Gegner schwarz, eigene weiss). Beide betreffen
+  NUR die Glut; die Figur zeigt in beiden ihre Originalfarben. Die Wahl steht
+  weiterhin allein in der Admin-Rubrik, alle Spieler sehen die farbige
+  Fassung. Alte Profilwerte werden gelesen: farbig -> getoent, grau ->
+  schwarzweiss, damit niemand stillschweigend etwas anderes sieht.
+- DAS FAVICON ZEIGT DIE FIGUR, NICHT EIN WAPPEN. Die alte Zeichnung war bei
+  16 px ein Fleck ("ist ein bisschen untergegangen"). Jetzt steht der Grand
+  Gambit selbst auf 88 % der Hoehe - bei 32 px belegt er 28 Pixel -, auf
+  dunklem Grund mit violettem Schein und dem goldenen Rand als Abschluss.
+  Vier Fassungen erneuert: favicon.svg (in Chrome die massgebliche, sonst
+  waere die alte Zeichnung stehen geblieben), favicon.ico, favicon-32,
+  favicon-16. Beide Sammelfassungen sind dabei kleiner geworden.
+- Proben: 22 Suiten, 1165 Assertionen (test_ui +15).
+
 ## 1.0.65
 - DIE FIGUREN SASSEN NIE SCHIEF - DIE KACHEL TAT ES. Vierter Besitzerbefund
   zur Mitte, und diesmal gemessen statt geschlossen: am lebenden DOM sitzt

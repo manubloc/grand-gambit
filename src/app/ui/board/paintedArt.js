@@ -333,7 +333,21 @@ export const paintedById = (id) => PAINTED[id] || null;
 // the gambit and the big dragon keep their own size on purpose. MEASURED from
 // each painting's alpha bounding box.
 const PAINTED_FIT = {
-  "pawn": { h: 0.8977, y: -0.06, x: 0 },
+  "pawn": { h: 1.0625, y: -0.06, x: 0 },
+  /* v1.0.66 (Besitzer, dritter Anlauf - und DIESMAL die richtige Zahl):
+     "der Grand Gambit ist immer noch groesser als die Bauern".
+     v1.0.65 hat die KAESTEN gleich gemacht (beide 121x121, gemessen) - und
+     genau darum blieb der Befund stehen: die Figur wird nicht vom Kasten
+     gezeichnet, sondern von diesem Hoehenfaktor. Der Bauer stand auf 0.8977,
+     der Gambit auf GAMBIT_TIER_H[0] = 1.0625 - der Held war 18 % hoeher
+     GEZEICHNET, bei gleich grossem Kasten. Kein Auge sieht den Kasten, jedes
+     sieht die Figur.
+     Die Gemaelde erlauben den Gleichstand: painted-pawn und painted-gambit
+     messen beide 92,9 % Figurenhoehe und 3,5 % Fussabstand (Alphaschwelle 12),
+     unterscheiden sich also nur in der Breite. Derselbe Faktor heisst hier
+     also wirklich dieselbe Groesse - und derselbe y-Versatz (-0.06) setzt
+     beide auf dieselbe Fusslinie. Die Raenge II-VI wachsen weiter, das bleibt
+     die Auszeichnung des Aufstiegs. */
   "gambit": { h: 0.94, y: -0.144, x: 0 },
   "knight": { h: 1.0498, y: -0.1427, x: 0 },
   "bishop": { h: 1.0616, y: -0.1396, x: 0 },
