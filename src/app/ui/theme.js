@@ -424,4 +424,41 @@ export const GLOBAL_CSS = `
   @keyframes splashRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes ggEdgeSweep { 0% { background-position: 230% 0; } 60%, 100% { background-position: -130% 0; } }
   @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+
+  /* ── v1.0.67: DIE ANIMATIONEN DES SPIELS (Register in anim.js) ──────────
+     Alles hier arbeitet NUR mit transform und opacity - die beiden Kanaele,
+     die der Grafikkern ohne Neuaufbau der Seite bewegt. Die Ruckel-Lehre aus
+     v1.0.37/41 gilt: kein width/height, kein box-shadow im Takt. */
+  @keyframes ggAtmen { 0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-1.1%) rotate(.25deg); } }
+  @keyframes ggStoss { 0% { transform: translate(0,0); } 45% { transform: translate(var(--sx,0), var(--sy,-7%)); } 100% { transform: translate(0,0); } }
+  @keyframes ggKlinge { 0% { opacity: 0; transform: rotate(-38deg) scale(.4); }
+    22% { opacity: 1; } 60% { opacity: .85; transform: rotate(24deg) scale(1.06); }
+    100% { opacity: 0; transform: rotate(34deg) scale(1.12); } }
+  @keyframes ggWucht { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-3.5%,1.5%); }
+    40% { transform: translate(3%,-1%); } 60% { transform: translate(-2%,1%); } 80% { transform: translate(1.5%,-.5%); } }
+  @keyframes ggBann { 0% { opacity: 0; transform: scaleY(.2); } 30% { opacity: .95; transform: scaleY(1.05); }
+    100% { opacity: 0; transform: scaleY(1.25); } }
+  @keyframes ggFeuer { 0% { opacity: 0; transform: scaleX(.15); } 25% { opacity: .95; }
+    70% { opacity: .8; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(1.04); } }
+  @keyframes ggFunken { 0% { opacity: .95; transform: scale(.3) rotate(0deg); }
+    70% { opacity: .55; } 100% { opacity: 0; transform: scale(1.45) rotate(18deg); } }
+  @keyframes ggZielGlut { 0% { opacity: 0; transform: scale(.5); } 30% { opacity: .8; }
+    100% { opacity: 0; transform: scale(1.6); } }
+  @keyframes ggSchachPuls { 0%,100% { opacity: .25; transform: scale(.94); } 50% { opacity: .8; transform: scale(1.04); } }
+  @keyframes ggKoenigFall { 0% { transform: rotate(0deg) translateY(0); opacity: 1; }
+    55% { transform: rotate(64deg) translateY(4%); opacity: 1; }
+    100% { transform: rotate(78deg) translateY(10%); opacity: 0; } }
+  @keyframes ggStufenStern { 0% { opacity: 0; transform: scale(.2) rotate(0deg); }
+    30% { opacity: 1; transform: scale(1.15) rotate(18deg); }
+    100% { opacity: 0; transform: scale(1.7) rotate(40deg); } }
+  @keyframes ggMuenzFall { 0% { opacity: 0; transform: translateY(-260%) rotateY(0deg); }
+    18% { opacity: 1; } 78% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(40%) rotateY(720deg); } }
+  @keyframes ggMuenzDreh { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+  @keyframes ggAuftritt { 0% { opacity: 0; transform: translateY(9px) scale(.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes ggGlanzLauf { 0% { transform: translateX(-160%) skewX(-16deg); opacity: 0; }
+    12% { opacity: .9; } 55% { transform: translateX(240%) skewX(-16deg); opacity: .9; }
+    100% { transform: translateX(240%) skewX(-16deg); opacity: 0; } }
 `;

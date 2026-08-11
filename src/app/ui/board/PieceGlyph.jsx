@@ -1,9 +1,11 @@
+import { useRef, useState, useEffect } from "react";
 import { ABILITIES, TAGS } from "../../../content/index.js";
 import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor } from "./paintedArt.js";
 import { gegnerStil, gefahrVon, glutTon, glutFilter, GLUT_SCHEIN } from "../gegnerstil.js";
+import { animAn } from "../anim.js";
 
 /* v1.0.66: DER SOCKELVERLAUF, an einer Stelle. Dunkel am Boden (0,18),
    Gipfel am Sockelrand (1,0 bei 13 %), aus bei 19 % - dieselbe Obergrenze
@@ -235,6 +237,17 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   const detail = white ? "#7a5c26" : "#8fa0bb";
   const accent = piece.accent || T.gold;
   const lvl = piece.level || 1;
+  /* v1.0.67: STUFENGLANZ AUF DEM BRETT (Besitzer: der Aufstieg muss auch
+     auf dem Schachbrett sichtbar sein, nicht nur im Figurenblatt). Steigt
+     der Rang DIESER Figur, waehrend sie auf dem Brett steht, birst einmal
+     ein goldener Stern ueber ihr. Gemerkt wird der vorige Rang je Glyph -
+     kein globaler Zustand, kein Re-Render der Nachbarn. */
+  const rangVorher = useRef(lvl);
+  const [stufenStern, setStufenStern] = useState(0);
+  useEffect(() => {
+    if (lvl > rangVorher.current && animAn() && !big) setStufenStern((n) => n + 1);
+    rangVorher.current = lvl;
+  }, [lvl, big]);
   const hpMode = piece.atk != null;
   // A master stands in the QUEEN'S PLACE — that is a matter of formation, not
   // of disguise. He shows his true face to both sides: the whole point of
@@ -440,9 +453,19 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
          pop nur, wenn eine Figur wirklich NEU auf dem Brett erscheint
          (Verwandlung, Aufbau). Wer gerade geflogen ist, LANDET stattdessen -
          ein kurzes, gerichtetes Setzen aufs Feld statt eines Sprungs. */
-      animation: fliegt ? "none"
+      /* v1.0.67: DIE AUFSTELLUNG LEBT (Besitzer: "auch obwohl es statisch
+         ist, trotzdem eine gewisse Dynamik"). Jede Figur atmet kaum merklich
+         - transform-only, 4,6 s Takt, und der NEGATIVE Startversatz aus
+         Figurenart und Rang laesst alle sofort, aber phasenversetzt atmen:
+         kein synchrones Wippen, kein Wartezoegern. Haengt sich als weitere
+         Animation an die bestehenden (Landung, Blitz), ueberschreibt nichts.
+         Aus, wenn der Schalter aus ist, im Grossformat und im Flug. */
+      animation: (fliegt ? "none"
         : zuletzt ? `${white ? "ggGoldBlitz" : "ggRissBlitz"} 2.6s ease-out both, ggLandung .26s cubic-bezier(.2,1.5,.4,1) both`
-        : "pop .18s ease",
+        : "pop .18s ease")
+        + (animAn() && !big && !fliegt && artStyle !== "classic"
+           ? `, ggAtmen 4.6s ease-in-out ${-(((piece.kind.charCodeAt(0) * 7 + lvl * 3) % 9) * 0.53).toFixed(2)}s infinite`
+           : ""),
       boxSizing: "border-box" }}>
 
       {/* the head may rise above the square: the art gets MORE than the tile.
@@ -551,6 +574,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
         </>)}
       </div>
 
+      {stufenStern > 0 && <span key={stufenStern} aria-hidden style={{
+        position: "absolute", inset: "-12%", display: "grid", placeItems: "center",
+        pointerEvents: "none", zIndex: 5 }}>
+        <span style={{ fontSize: "0.62em", color: T.gold,
+          textShadow: "0 0 10px rgba(233,207,138,.95), 0 0 22px rgba(233,207,138,.6)",
+          animation: "ggStufenStern 1.05s ease-out forwards" }}>✦</span>
+      </span>}
       {/* the twin gauges: LIFE bubbles on the left flank, ENERGY bubbles on the
           right — same jewel language, only the cold blue tells them apart.
           Level, strike and every richer detail live in the tap-to-inspect sheet. */}

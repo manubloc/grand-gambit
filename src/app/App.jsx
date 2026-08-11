@@ -37,6 +37,7 @@ import { setSparmodus } from "./ui/sparmodus.js";
 import { setGegnerStil } from "./ui/gegnerstil.js";
 import { MENUE_LEHREN } from "../content/lehren.js";
 import { SchaukammerScreen } from "./ui/SchaukammerScreen.jsx";
+import { AnimKammerScreen } from "./ui/AnimKammerScreen.jsx";
 import { WerkzeugTuer } from "./ui/WerkzeugTuer.jsx";
 import { torOffen } from "./ui/torschloss.js";
 import { KlangWerkstattScreen } from "./ui/KlangWerkstattScreen.jsx";
@@ -464,6 +465,13 @@ export default function App() {
     if (!authReady) return null;
     return werkzeugFrei ? <KlangWerkstattScreen />
       : <WerkzeugTuer was="Klangwerkstatt" onOffen={() => setTorAuf(true)} />;
+  }
+  // DIE ANIMATIONSKAMMER (Besitzer, v1.0.67): das Register aller Bewegungen
+  // des Spiels, jede vorfuehrbar, mit dem einen Schalter - ?animkammer.
+  if (typeof location !== "undefined" && new URLSearchParams(location.search).has("animkammer")) {
+    if (!authReady) return null;
+    return werkzeugFrei ? <AnimKammerScreen />
+      : <WerkzeugTuer was="Animationskammer" onOffen={() => setTorAuf(true)} />;
   }
   // DAS ADMIN-PORTAL (Besitzer, v0.57): eine Tuer zu allen Unterseiten.
   // DAS SPIELERBUCH (Besitzer, v0.73): Liste, Fortschritt, Herkunft.

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { hashPin } from "../../../platform/index.js";
 import { SPAR_POSTEN, sparsam } from "../sparmodus.js";
 import { GEGNER_STILE } from "../gegnerstil.js";
+import { animAn, setAnimAn } from "../anim.js";
 import { serializeSave, parseSave, listRestorePoints, readSnapshot, withProgressPct, listReports, clearLocalReports, getAdminToken, setAdminToken, deleteAccount , adminHasDefaultPass } from "../../../meta/index.js";
 import { CHARACTERS } from "../../../content/index.js";
 import { T } from "../theme.js";
@@ -347,6 +348,18 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
         <div style={{ fontSize: 11, color: T.faint, marginTop: 8, lineHeight: 1.45 }}>
           Nur fuer dich sichtbar. Alle Spieler sehen fest die farbige Fassung (Gegner lila, eigene Seite gold).
           Deine Wahl hier gilt nur fuer dieses Konto.</div>
+        {/* v1.0.67: DER EINE SCHALTER FUER ALLE ANIMATIONEN. Er schreibt in
+            den Geraetespeicher (gg:anim) - dieselbe Stelle, die Brett, Banner
+            und Figurenblatt zur Zeichenzeit lesen. Die Kammer (?animkammer)
+            fuehrt jede Bewegung einzeln vor. */}
+        <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.line}` }}>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: T.ink, marginBottom: 6 }}>Animationen</div>
+          <AnimSchalter />
+          <div style={{ fontSize: 11, color: T.faint, marginTop: 7, lineHeight: 1.45 }}>
+            Gilt fuer dieses Geraet und wirkt ueberall: Zugschweif, Schlagarten, Drachenfeuer,
+            lebende Aufstellung, Schachpuls, Koenigsfall, Muenzregen, gestaffelte Beute,
+            Verbessern-Glanz. Einzeln vorfuehren: <code>?animkammer</code>.</div>
+        </div>
       </div>}
     </Panel>
 
@@ -632,4 +645,21 @@ function PasswortAendern({ t, account, onDone }) {
     <Button onClick={los} disabled={!alt || neu.length < 6} style={{ width: "100%" }}>{t("profile.pwGo")}</Button>
     <div style={{ fontSize: 11.5, color: T.faint, marginTop: 8, lineHeight: 1.45 }}>{t("profile.pwReset")}</div>
   </div>;
+}
+
+/* v1.0.67: der Animations-Hauptschalter - gleicher Bau wie in der Kammer. */
+function AnimSchalter() {
+  const [an, setAn] = useState(animAn());
+  return <button onClick={() => { setAnimAn(!an); setAn(!an); }}
+    style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 13px", borderRadius: 999,
+      cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 12.5,
+      background: an ? "linear-gradient(180deg, rgba(227,192,122,.26), rgba(227,192,122,.12))" : T.bg2,
+      border: an ? "1px solid rgba(227,192,122,.6)" : `1px solid ${T.line}`,
+      color: an ? T.gold : T.dim }}>
+    <span style={{ width: 30, height: 18, borderRadius: 99, position: "relative",
+      background: an ? T.gold : "#3a4058", transition: "background .2s" }}>
+      <span style={{ position: "absolute", top: 2, left: an ? 14 : 2, width: 14, height: 14,
+        borderRadius: "50%", background: "#0d1017", transition: "left .2s" }} /></span>
+    {an ? "An" : "Aus"}
+  </button>;
 }

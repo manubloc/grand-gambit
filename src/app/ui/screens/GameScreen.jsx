@@ -19,6 +19,7 @@ import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { KampfLeiste } from "../KampfLeiste.jsx";
 import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
+import { animAn } from "../anim.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
@@ -1054,7 +1055,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel} ruhig={armResign || !!banner}
+        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel} ruhig={armResign || !!banner} mattSeite={banner && (banner.reason === "checkmate" || banner.reason === "regicide") ? (banner.result === "win" ? (myColor === "w" ? "b" : "w") : myColor) : null}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           setzFelder={setzPhase ? setzbar : null} onSetz={setzPhase ? setzeOderNimm : null}
@@ -1531,18 +1532,50 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
     : t("game.resigned");
   const g = banner.gained;
   const leveled = g.levelAfter > g.levelBefore;
+  /* v1.0.67: DAS BANNER TRITT AUF, DIE BEUTE FOLGT GESTAFFELT, DAS GOLD
+     ZAEHLT (Besitzer: "wenn man Geld verdient, soll man wirklich SEHEN,
+     dass man Geld verdient"). Drei Bausteine, alle hinter dem Schalter:
+     - ggAuftritt versetzt Titel, Beutezeile, Stufenmeldung nacheinander
+     - ueber der Goldmarke fallen drehende Muenzen (ggMuenzFall, rotateY)
+     - der Betrag zaehlt in ~0,9 s hoch statt fertig dazustehen.
+     Der Zaehllauf haengt an banner.gained.gold, laeuft also genau einmal. */
+  const anAn = animAn();
+  const [goldZahl, setGoldZahl] = useState(anAn ? 0 : (g?.gold || 0));
+  useEffect(() => {
+    if (!anAn || !g || !g.gold) { setGoldZahl(g?.gold || 0); return; }
+    const start = performance.now(); let raf = 0;
+    const tick = (jetzt) => {
+      const f = Math.min(1, (jetzt - start) / 900);
+      setGoldZahl(Math.round(g.gold * (1 - Math.pow(1 - f, 3))));
+      if (f < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [g?.gold, anAn]);   // eslint-disable-line
+  const tritt = (nr) => anAn ? { animation: `ggAuftritt .5s ease-out ${(0.12 * nr).toFixed(2)}s both` } : null;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "grid", placeItems: "center", background: "rgba(8,10,14,.72)", backdropFilter: "blur(2px)", padding: 14 }}>
-      <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", borderColor: color + "66" }}>
-        <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1 }}>{sub}</div>
-        <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px" }}>{title}</div>
-        {!banner.hotseat && <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12 }}>
+      <Panel style={{ width: "100%", maxWidth: 320, textAlign: "center", borderColor: color + "66",
+        ...(anAn ? { animation: "ggAuftritt .45s ease-out both" } : null) }}>
+        <div style={{ fontSize: 13, color: T.dim, textTransform: "uppercase", letterSpacing: 1, ...tritt(0) }}>{sub}</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color, margin: "4px 0 10px", ...tritt(1) }}>{title}</div>
+        {!banner.hotseat && <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: leveled ? 8 : 12, ...tritt(2) }}>
           <Chip color={T.limeInk} bg={T.lime}>+{g.xp} {t("game.rewards")}</Chip>
           {g.sp > 0 && <Chip color={"#17110a"} bg={T.gold}><SkillStar size={12} /> {t("banner.sp", { n: g.sp })}</Chip>}
-          {g.gold > 0 && <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{g.gold}</Chip>}
+          {g.gold > 0 && <span style={{ position: "relative", display: "inline-flex" }}>
+            <Chip color={"#17110a"} bg={"#e8c96a"}><GoldCoin size={12} /> +{goldZahl}</Chip>
+            {anAn && <span aria-hidden style={{ position: "absolute", inset: "-160% -12% 0", overflow: "visible", pointerEvents: "none" }}>
+              {[0, 1, 2, 3, 4].map((m) => <span key={m} style={{ position: "absolute",
+                left: `${12 + m * 18}%`, top: 0, animation: `ggMuenzFall ${(0.9 + (m % 3) * 0.22).toFixed(2)}s ease-in ${(m * 0.14).toFixed(2)}s both` }}>
+                <GoldCoin size={11} /></span>)}
+            </span>}
+          </span>}
           {g.newAchievements.length > 0 && <Chip color={T.gold} bg={T.panel2}>★ {g.newAchievements.length}</Chip>}
         </div>}
-        {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12 }}>{t("game.levelup", { n: g.levelAfter })}</div>}
+        {leveled && <div style={{ color: T.lime, fontWeight: 800, marginBottom: 12, ...tritt(3) }}>
+          {anAn && <span aria-hidden style={{ display: "inline-block", marginRight: 6, color: T.gold,
+            animation: "ggStufenStern 1.1s ease-out .5s both" }}>✦</span>}
+          {t("game.levelup", { n: g.levelAfter })}</div>}
         {g.newItems?.length > 0 && <div style={{ display: "grid", gap: 5, margin: "2px 0 12px" }}>
           {g.newItems.map((ni) => {
             const it = ITEMS[ni.id];

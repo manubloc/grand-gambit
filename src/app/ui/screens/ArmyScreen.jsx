@@ -16,6 +16,7 @@ import {
 import { CAMPAIGN } from "../../../content/index.js";
 import { klang } from "../klang.js";   /* v0.77: Stufe, Freischalten, Gold bekommen ihren Klang */
 import { T } from "../theme.js";
+import { animAn } from "../anim.js";
 import { Panel, Bar, Chip, Shields, Button, Segmented, PanelTitle, FieldLabel, MapChip } from "../primitives.jsx";
 import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons.jsx";
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
@@ -439,6 +440,13 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
 }
 
 function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggle, bigArt = false }) {
+  /* v1.0.67: VERBESSERN-GLANZ (Besitzer: "dass hier wirklich, richtig
+     gestiegen ist" - und auch die Figur, deren Bild sich nicht aendert,
+     "trotzdem so einen Schein bekommt"). Jeder Stufenkauf zaehlt glanz hoch;
+     der key erzwingt den Neustart der Animation, ein Lichtstreif laeuft
+     uebers Portraet und ein Sternenstoss feiert - unabhaengig davon, ob die
+     Stufe ein neues Gemaelde bringt. */
+  const [glanz, setGlanz] = useState(0);
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const abWide = useMedia("(min-width: 680px)");
@@ -507,6 +515,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
       <div style={{ flex: "0 0 auto", position: "relative",
         width: bigArt ? 148 : 92, minHeight: bigArt ? 178 : 128,
         display: "grid", placeItems: "center" }}>
+        {glanz > 0 && <span key={glanz} aria-hidden style={{ position: "absolute", inset: 0,
+          overflow: "hidden", borderRadius: 10, pointerEvents: "none", zIndex: 3 }}>
+          <span style={{ position: "absolute", top: "-8%", bottom: "-8%", width: "34%",
+            background: "linear-gradient(105deg, rgba(255,246,214,0) 0%, rgba(255,246,214,.85) 50%, rgba(255,246,214,0) 100%)",
+            animation: "ggGlanzLauf 1.15s ease-out both" }} />
+          <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
+            fontSize: 30, color: T.gold, textShadow: "0 0 12px rgba(233,207,138,.95)",
+            animation: "ggStufenStern 1.1s ease-out .12s both" }}>✦</span>
+        </span>}
         {paintedById(char.id)
           ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
@@ -613,7 +630,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
-          onClick={() => { klang("stufe"); dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
+          onClick={() => { klang("stufe"); if (animAn()) setGlanz((n) => n + 1); dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
           className={affordable ? "gg-funkenkontur" : undefined}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",

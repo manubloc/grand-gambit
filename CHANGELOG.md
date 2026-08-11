@@ -1,5 +1,35 @@
 # Changelog - Grand Gambit
 
+## 1.0.67
+- DIE ANIMATIONEN DES SPIELS, in einem Zug und mit einer Liste. Neues Modul
+  anim.js traegt das REGISTER aller zehn Bewegungen - was dort nicht steht,
+  existiert nicht, und was dort steht, prueft test_anim.mjs (neue Suite, 41
+  Zusicherungen) gegen Kammer, Theme und jede Einbaustelle.
+- AUF DEM BRETT: der Zugschweif ist kraeftiger (mehr Gold, breiter, weisser
+  Kern) und glueht am Ziel kurz auf. Jede Figurenart SCHLAEGT auf ihre Weise
+  (Besitzerbild "der Schildtraeger schiebt"): stoss / klinge / wucht / bann,
+  der Drache speit bei Distanzschlaegen eine Feuerzunge. Die Aufstellung LEBT:
+  jede Figur atmet kaum merklich, phasenversetzt ueber negativen Start (kein
+  synchrones Wippen, keine Wartezeit). Der bedrohte Koenig traegt einen roten
+  SCHACHPULS; beim Matt KIPPT der geschlagene Koenig sichtbar durch das
+  durchscheinende Banner. Steigt eine Figur mitten im Gefecht auf, birst ein
+  Stufenstern ueber ihr.
+- SIEG UND BELOHNUNG: das Banner tritt gestaffelt auf (Titel, Beute, Stufe
+  nacheinander), ueber der Goldmarke fallen DREHENDE MUENZEN (rotateY) und
+  der Betrag ZAEHLT in 0,9 s hoch - man sieht, dass man Geld verdient.
+- IM FIGURENBLATT: jedes Verbessern schickt einen Lichtstreif uebers
+  Portraet und einen Sternenstoss - auch wenn die Stufe kein neues Gemaelde
+  bringt ("trotzdem so einen Schein").
+- DER EINE SCHALTER: an/aus im Geraetespeicher (gg:anim), bedienbar im
+  Admin-Profil und in der neuen ANIMATIONSKAMMER (?animkammer, hinter dem
+  Torschloss) - sie liest das Register und fuehrt jede Bewegung auf einer
+  Buehne mit den ECHTEN Keyframes vor. Wer im Betriebssystem "Bewegung
+  reduzieren" waehlt, startet mit aus.
+- DIE RUCKEL-LEHRE GILT: alle neuen Keyframes bewegen nur transform und
+  opacity - kein width/height, kein box-shadow im Takt (v1.0.37/41). Eine
+  eigene Probe haelt das blockgenau fest.
+- Proben: 23 Suiten (neu: test_anim), 1206 Assertionen, 0 Fehler.
+
 ## 1.0.66
 - DER BAUER IST JETZT WIRKLICH SO GROSS WIE DER GAMBIT - und v1.0.65 war es
   nicht, obwohl die Messung "gleich gross" sagte. Sie hat die KAESTEN

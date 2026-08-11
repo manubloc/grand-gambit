@@ -7,6 +7,7 @@ import { T } from "../theme.js";
 import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../core/index.js";
 import { gespart } from "../sparmodus.js";
 import { SperrGlyph } from "./SperrGlyph.jsx";
+import { animAn, schlagArt } from "../anim.js";
 import { stadium } from "../../../core/rules/sperren.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { BrettRahmen, lageAusBrett } from "./BrettRahmen.jsx";
@@ -148,7 +149,7 @@ export function zugDauerMs(lastMove, pov, hotseat, w) {
   return Math.round((leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52)) * 1000);
 }
 
-export function BoardView({ state, onMove, interactive, lastMove, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false, setzFelder = null, onSetz = null }) {
+export function BoardView({ state, onMove, interactive, lastMove, mattSeite = null, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false, setzFelder = null, onSetz = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -580,9 +581,21 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
             background: "radial-gradient(circle at 34% 30%, #ddd2ff, #8f76e8 62%, #5b47a8)", border: "2px solid #17110a",
             boxShadow: "0 1px 5px rgba(0,0,0,.55), 0 0 7px rgba(167,139,250,.55)", pointerEvents: "none" }} />}
           {checkSq === i && <div style={{ position: "absolute", inset: "8%", borderRadius: 6, animation: "glow 1.1s infinite" }} />}
+          {/* v1.0.67: SCHACHPULS (Besitzer: man uebersieht das Schach). Ein
+              roter Saum pulst unter dem bedrohten Koenig - transform+opacity,
+              zusaetzlich zum stillen glow, der als Fallback bleibt. */}
+          {checkSq === i && animAn() && <div aria-hidden style={{ position: "absolute", inset: "4%",
+            borderRadius: 8, border: "2.5px solid rgba(255,92,92,.9)", pointerEvents: "none",
+            animation: "ggSchachPuls 1.05s ease-in-out infinite" }} />}
           {piece && <div style={{ opacity: anim && anim.phase < 2 && i === anim.to ? 0 : 1, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none",
             transform: `translateY(${pieceLift})` + ((isSel || isSpy) && !piece.big ? (artStyle === "svg" ? " scale(1.4)" : " scale(1.58)") : ""),
-            transformOrigin: PIECE_ORIGIN,
+            /* v1.0.67: KOENIGSFALL. Beim Matt kippt der geschlagene Koenig
+               langsam um seinen Fuss zur Seite, statt einfach hinter dem
+               Banner zu verschwinden - das Banner ist durchscheinend, der
+               Fall bleibt sichtbar. Nur dieser eine Koenig, nur einmal. */
+            ...(animAn() && mattSeite && piece.kind === "K" && piece.color === mattSeite
+              ? { animation: "ggKoenigFall 1.15s ease-in .3s forwards", transformOrigin: "58% 92%" }
+              : { transformOrigin: PIECE_ORIGIN }),
             // MEASURED, then nailed: this layer's 1em box lives in the piece font
             // (court 1.16em), so it grew WIDER than the square and sat flush to
             // its LEFT edge — every court figure drifted (em-cell)/2 = ~4-5px
@@ -876,19 +889,97 @@ export function BoardView({ state, onMove, interactive, lastMove, theme = null, 
                 hellerer darueber, beide von durchsichtig (Start) zu Gold
                 (Ziel), runde Kappen. */}
             <defs>
+              {/* v1.0.67 (Besitzer: "noch ein bisschen kraeftiger"): der
+                  Verlauf traegt mehr Gold (0.30/0.72 statt 0.16/0.42), der
+                  Strahl ist breiter (4.4/1.8), und ein weisser Kern gibt ihm
+                  die Klinge. Am Ziel glueht kurz ein Ring auf (ggZielGlut),
+                  damit das Ende des Zuges einen Punkt hat - alles nur
+                  opacity und transform, nichts davon kostet Layout. */}
               <linearGradient id="zugschweif" gradientUnits="userSpaceOnUse"
                 x1={a.x} y1={a.y} x2={b.x} y2={b.y}>
                 <stop offset="0%" stopColor={T.gold} stopOpacity="0" />
-                <stop offset="55%" stopColor={T.gold} stopOpacity="0.16" />
-                <stop offset="100%" stopColor={T.gold} stopOpacity="0.42" />
+                <stop offset="45%" stopColor={T.gold} stopOpacity="0.30" />
+                <stop offset="100%" stopColor={T.gold} stopOpacity="0.72" />
+              </linearGradient>
+              <linearGradient id="zugschweifKern" gradientUnits="userSpaceOnUse"
+                x1={a.x} y1={a.y} x2={b.x} y2={b.y}>
+                <stop offset="0%" stopColor="#fff6dc" stopOpacity="0" />
+                <stop offset="60%" stopColor="#fff6dc" stopOpacity="0.28" />
+                <stop offset="100%" stopColor="#fff6dc" stopOpacity="0.85" />
               </linearGradient>
             </defs>
             <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="url(#zugschweif)"
-              strokeWidth="3.1" strokeLinecap="round" />
-            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="url(#zugschweif)"
-              strokeWidth="1.3" strokeLinecap="round" opacity="0.9" />
+              strokeWidth="4.4" strokeLinecap="round" />
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="url(#zugschweifKern)"
+              strokeWidth="1.8" strokeLinecap="round" />
+            {animAn() && <circle cx={b.x} cy={b.y} r="3.6" fill="none" stroke={T.gold}
+              strokeWidth="1.1" style={{ transformOrigin: `${b.x}px ${b.y}px`,
+              animation: "ggZielGlut .7s ease-out forwards" }} />}
           </svg>
         );
+      })()}
+
+      {/* ── v1.0.67: DER EINSCHLAG JE FIGUR (Besitzer: "dass jede Figur auf
+          eine andere Art und Weise zieht - ein Schildtraeger, der schiebt").
+          Ein transientes Overlay am ZIELFELD, nur bei Schlag oder Fernstoss,
+          getragen vom selben anim-Zustand wie Gleiter und Schweif - kein
+          eigener Takt, kein zusaetzliches Re-Render. Vier Handschriften
+          (anim.js: stoss/klinge/wucht/bann) plus das Drachenfeuer. Alles
+          transform+opacity; die Ruckel-Lehre aus v1.0.37 gilt. */}
+      {animAn() && anim && lastMove && (lastMove.capture || lastMove.lethal) && !lastMove.bounced && (() => {
+        const art = schlagArt(anim.piece.kind);
+        const zt = disp(lastMove.to), zf = disp(lastMove.from);
+        const dx = zt.x - zf.x, dy = zt.y - zf.y;
+        const winkel = Math.atan2(dy, dx) * 180 / Math.PI;
+        const dauer = Math.max(0.32, anim.dur * 0.6);
+        const verz = anim.dur;   // der Einschlag sitzt, WENN der Schlaeger landet
+        const feld = { position: "absolute", left: `${zt.l}%`, top: `${zt.t}%`,
+          width: `${100 / W}%`, height: `${100 / H}%`, pointerEvents: "none", zIndex: 6 };
+        const funken = <span style={{ ...feld, display: "grid", placeItems: "center" }}>
+          <span style={{ width: "62%", height: "62%", borderRadius: "50%", opacity: 0,
+            background: "radial-gradient(circle, rgba(255,240,200,.9) 0%, rgba(233,207,138,.5) 42%, rgba(233,207,138,0) 70%)",
+            animation: `ggFunken ${dauer}s ease-out ${verz}s forwards` }} />
+        </span>;
+        if (art === "feuer") {
+          const laenge = Math.hypot(dx * W, dy * H) / W;   // in Feldbreiten
+          return <>
+            <span style={{ position: "absolute", left: `${zf.x}%`, top: `${zf.y}%`,
+              width: `${(laenge * 100) / W}%`, height: `${52 / H}%`, pointerEvents: "none", zIndex: 6,
+              transform: `translateY(-50%) rotate(${winkel}deg)`, transformOrigin: "0 50%" }}>
+              <span style={{ position: "absolute", inset: 0, opacity: 0, transformOrigin: "0 50%",
+                background: "linear-gradient(90deg, rgba(255,120,40,0) 0%, rgba(255,150,50,.85) 18%, rgba(255,220,120,.95) 55%, rgba(255,240,180,.9) 100%)",
+                borderRadius: 999, filter: "blur(1px)",
+                animation: `ggFeuer ${Math.max(0.5, anim.dur)}s ease-out ${verz * 0.4}s forwards` }} />
+            </span>
+            {funken}
+          </>;
+        }
+        if (art === "klinge") return <>
+          <span style={{ ...feld, display: "grid", placeItems: "center" }}>
+            <span style={{ width: "108%", height: "14%", borderRadius: 999, opacity: 0,
+              background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,250,230,.95) 50%, rgba(255,255,255,0) 100%)",
+              animation: `ggKlinge ${dauer}s ease-out ${verz}s forwards` }} />
+          </span>
+          {funken}
+        </>;
+        if (art === "bann") return <>
+          <span style={{ ...feld, display: "grid", placeItems: "end center" }}>
+            <span style={{ width: "26%", height: "120%", opacity: 0, transformOrigin: "50% 100%",
+              background: "linear-gradient(0deg, rgba(233,207,138,.9) 0%, rgba(255,246,220,.75) 55%, rgba(255,246,220,0) 100%)",
+              borderRadius: 999, animation: `ggBann ${dauer + 0.15}s ease-out ${verz}s forwards` }} />
+          </span>
+          {funken}
+        </>;
+        /* stoss und wucht: die Richtung des Schlages faehrt in die Karte */
+        return <>
+          <span style={{ ...feld }}>
+            <span style={{ position: "absolute", inset: "8%", borderRadius: 10, opacity: 0,
+              border: "2px solid rgba(255,246,220,.8)",
+              "--sx": `${(dx ? Math.sign(dx) : 0) * 7}%`, "--sy": `${(dy ? Math.sign(dy) : 0) * 7}%`,
+              animation: `${art === "wucht" ? "ggWucht" : "ggStoss"} ${dauer}s ease-out ${verz}s both` }} />
+          </span>
+          {funken}
+        </>;
       })()}
       {/* v1.0.14 (Besitzer): DER TREFFER WIRD SICHTBAR. Hier schuettelte
           bisher ein LEERES Feld ueber der Zelle - eine Animation ohne Koerper,
