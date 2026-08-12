@@ -461,4 +461,15 @@ export const GLOBAL_CSS = `
   @keyframes ggGlanzLauf { 0% { transform: translateX(-160%) skewX(-16deg); opacity: 0; }
     12% { opacity: .9; } 55% { transform: translateX(240%) skewX(-16deg); opacity: .9; }
     100% { transform: translateX(240%) skewX(-16deg); opacity: 0; } }
+  /* v1.0.70: Trank, Sanduhr, Faehigkeit - weiter nur transform+opacity. */
+  @keyframes ggTrankLauf { 0% { transform: translateY(115%); opacity: 0; }
+    14% { opacity: .95; } 82% { opacity: .9; }
+    100% { transform: translateY(-115%); opacity: 0; } }
+  @keyframes ggUhrPuls { 0%, 100% { transform: scale(1); opacity: 0; }
+    12% { opacity: .9; } 50% { transform: scale(1.55); opacity: .35; }
+    88% { opacity: .9; } }
+  @keyframes ggSprossePuls { 0%, 100% { transform: scale(1); opacity: 1; }
+    25% { transform: scale(1.025); opacity: .82; }
+    50% { transform: scale(1); opacity: 1; }
+    75% { transform: scale(1.02); opacity: .86; } }
 `;

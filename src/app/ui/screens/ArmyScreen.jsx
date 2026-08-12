@@ -447,6 +447,12 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
      uebers Portraet und ein Sternenstoss feiert - unabhaengig davon, ob die
      Stufe ein neues Gemaelde bringt. */
   const [glanz, setGlanz] = useState(0);
+  /* v1.0.70: bringt die NAECHSTE Stufe eine Faehigkeit, wird der Glanz
+     violett und die frisch erwachte Sprosse pulst - der Spieler soll den
+     Unterschied zwischen "eine Stufe mehr" und "eine FAEHIGKEIT mehr"
+     sehen, nicht nachlesen. */
+  const [faehig, setFaehig] = useState(null);      // ability-id der eben erwachten Sprosse
+  const [frisch, setFrisch] = useState(0);         // deren Stufe, fuer den Sprossenpuls
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
   const abWide = useMedia("(min-width: 680px)");
@@ -518,10 +524,13 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
         {glanz > 0 && <span key={glanz} aria-hidden style={{ position: "absolute", inset: 0,
           overflow: "hidden", borderRadius: 10, pointerEvents: "none", zIndex: 3 }}>
           <span style={{ position: "absolute", top: "-8%", bottom: "-8%", width: "34%",
-            background: "linear-gradient(105deg, rgba(255,246,214,0) 0%, rgba(255,246,214,.85) 50%, rgba(255,246,214,0) 100%)",
+            background: faehig
+              ? "linear-gradient(105deg, rgba(196,181,253,0) 0%, rgba(196,181,253,.9) 50%, rgba(196,181,253,0) 100%)"
+              : "linear-gradient(105deg, rgba(255,246,214,0) 0%, rgba(255,246,214,.85) 50%, rgba(255,246,214,0) 100%)",
             animation: "ggGlanzLauf 1.15s ease-out both" }} />
           <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center",
-            fontSize: 30, color: T.gold, textShadow: "0 0 12px rgba(233,207,138,.95)",
+            fontSize: 30, color: faehig ? "#c4b5fd" : T.gold,
+            textShadow: faehig ? "0 0 12px rgba(167,139,250,.95)" : "0 0 12px rgba(233,207,138,.95)",
             animation: "ggStufenStern 1.1s ease-out .12s both" }}>✦</span>
         </span>}
         {paintedById(char.id)
@@ -630,7 +639,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           })()}
         </div>
         {!maxed && <button disabled={!affordable}
-          onClick={() => { klang("stufe"); if (animAn()) setGlanz((n) => n + 1); dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
+          onClick={() => { klang("stufe");
+            if (animAn()) {
+              const sprosse = rungs.find((r) => r.level === level + 1);
+              setFaehig(sprosse ? sprosse.id : null);
+              setFrisch(sprosse ? sprosse.level : 0);
+              setGlanz((n) => n + 1);
+            }
+            dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
           className={affordable ? "gg-funkenkontur" : undefined}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 15px", borderRadius: 10,
             fontFamily: "inherit", fontWeight: 800, fontSize: 13, letterSpacing: ".02em",
@@ -701,10 +717,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
           const price = abilityCost(rg.level);
           const cost = 0; // energy is gone — talents are once-per-game now
           const can = reach && !owned && canUnlockAbility(profile, char.id, rg.id);
-          return <AbilityAccordion key={rg.id} ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
+          /* v1.0.70: die eben erwachte Sprosse pulst dreimal - key=glanz
+             startet den Puls je Stufenkauf genau einmal neu. */
+          const eben = rg.level === frisch;
+          return <div key={rg.id + (eben ? ":" + glanz : "")}
+            style={eben ? { animation: "ggSprossePuls 1.5s ease-in-out" } : undefined}>
+            <AbilityAccordion ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
             owned={owned} reach={reach} can={can} kind={char.kind} en={en} sperre={zustand === "wirkt" ? null : zustand}
             open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
-            onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} />;
+            onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} /></div>;
         })}
         {chosen.length > 0 && (() => {
           /* v1.0.11 (Besitzer): Vergessen kostet einen VERGESSENSTRANK aus

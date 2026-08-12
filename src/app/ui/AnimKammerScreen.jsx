@@ -73,6 +73,26 @@ function Buehne({ id, takt }) {
       <span style={{ position: "absolute", top: "-8%", bottom: "-8%", width: "34%",
         background: "linear-gradient(105deg, rgba(255,246,214,0), rgba(255,246,214,.85), rgba(255,246,214,0))",
         animation: "ggGlanzLauf 1.15s ease-out both" }} /></span>;
+    case "trank": return <span style={{ ...s, inset: 0, display: "grid", placeItems: "center" }}>
+      <span style={{ position: "relative", fontSize: 36, overflow: "hidden", display: "inline-block" }}>
+        <span>♟</span>
+        <span style={{ position: "absolute", left: 0, right: 0, top: "-15%", bottom: "-15%",
+          background: "linear-gradient(0deg, rgba(255,60,60,0) 0%, rgba(255,80,70,.6) 35%, rgba(255,190,160,.95) 50%, rgba(255,80,70,.6) 65%, rgba(255,60,60,0) 100%)",
+          mixBlendMode: "screen", animation: "ggTrankLauf 1.05s ease-in-out infinite" }} />
+      </span></span>;
+    case "sanduhr": return <span style={{ ...s, inset: 0, display: "grid", placeItems: "center" }}>
+      <span style={{ position: "relative", fontSize: 26 }}>⌛
+        <span style={{ position: "absolute", inset: -8, borderRadius: 999,
+          border: `2px solid ${T.gold}`, animation: "ggUhrPuls .55s ease-out infinite" }} /></span></span>;
+    case "faehigkeit": return <>
+      <span style={{ ...s, left: "16%", right: "16%", top: "30%", height: 26, borderRadius: 9,
+        border: "1px solid rgba(167,139,250,.8)", background: "rgba(76,54,140,.35)",
+        animation: "ggSprossePuls 1.5s ease-in-out infinite" }} />
+      <span style={{ ...s, left: "16%", right: "16%", top: "30%", height: 26, borderRadius: 9, overflow: "hidden" }}>
+        <span style={{ position: "absolute", top: "-20%", bottom: "-20%", width: "34%",
+          background: "linear-gradient(105deg, rgba(196,181,253,0), rgba(196,181,253,.9), rgba(196,181,253,0))",
+          animation: "ggGlanzLauf 1.3s ease-out infinite" }} /></span>
+    </>;
     default: return null;
   }
 }

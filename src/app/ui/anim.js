@@ -63,6 +63,12 @@ export const ANIMATIONEN = [
     was: "Sieg-Banner und Belohnungszeilen treten nacheinander auf - erst der Titel, dann Erfahrung, Gold, Funde." },
   { id: "glanz",    bereich: "figuren", name: "Verbessern-Glanz",
     was: "Beim Verbessern läuft ein Lichtstreif über das Porträt und ein Sternenstoß feiert die neue Stufe - auch wenn das Bild dasselbe bleibt." },
+  { id: "trank",    bereich: "brett", name: "Lebenstrank",
+    was: "Beim Einsatz eines Trankes läuft ein roter Heilglanz einmal von unten nach oben DURCH die Figur - maskiert auf ihr eigenes Gemälde, nicht über das Feld." },
+  { id: "sanduhr",  bereich: "brett", name: "Zeitenwender",
+    was: "Verbrennt eine Sanduhr, pulst die Uhr dreimal golden auf - die zurückgeholte Zeit hat einen Ort." },
+  { id: "faehigkeit", bereich: "figuren", name: "Fähigkeitsglanz",
+    was: "Bringt die neue Stufe eine Fähigkeit, läuft der Lichtstreif VIOLETT statt gold, und die frisch erwachte Sprosse pulst in der Leiter auf." },
 ];
 
 export const animById = (id) => ANIMATIONEN.find((a) => a.id === id) || null;

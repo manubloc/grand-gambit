@@ -1,5 +1,26 @@
 # Changelog - Grand Gambit
 
+## 1.0.70
+- DER LEBENSTRANK LEUCHTET DURCH DIE FIGUR (Besitzerwunsch woertlich): beim
+  Einsatz laeuft ein roter Heilglanz einmal von unten nach oben - MASKIERT
+  auf das eigene Gemaelde (WebkitMaskImage = die Bilddatei selbst), nicht als
+  Fleck ueber dem Feld. Der Glanz liegt im selben Wrapper wie das Bild und
+  erbt dessen fit-Transform: Glanz und Figur sind deckungsgleich.
+- DER ZEITENWENDER HAT EINEN ORT: verbrennt eine Sanduhr, pulst die Uhr
+  dreimal golden auf.
+- FAEHIGKEIT SICHTBAR ERLANGT: bringt die neue Stufe eine Faehigkeit,
+  laeuft der Verbessern-Glanz VIOLETT statt gold und die frisch erwachte
+  Sprosse pulst in der Leiter - der Unterschied zwischen "eine Stufe mehr"
+  und "eine FAEHIGKEIT mehr" ist zu sehen, nicht nachzulesen. Die
+  Lernzeilen im Siegesbanner treten jetzt gestaffelt auf.
+- Register 10 -> 13 (trank, sanduhr, faehigkeit), Kammer fuehrt alle drei
+  vor, drei neue Keyframes (weiter nur transform+opacity).
+- URSACHE eines Kettenbruchs unterwegs: ein abgebrochener Patch-Lauf hatte
+  die effekt-VERWENDUNG geschrieben, aber nicht die SIGNATUR - 529
+  Kampagnenknoten fielen im Smoke. Der Reinraum haette es gefangen; der
+  Smoke fing es frueher.
+- Proben: 24 Suiten, 1219 Assertionen, 0 Fehler (test_anim jetzt 51).
+
 ## 1.0.69
 - DER CI-LAUF SCHEITERTE AN 73 DATEINAMEN, nicht am Code: die Figurenbilder
   019 bis 091 hiessen woertlich "NNN_?.png". Unter Linux erlaubt, fuer NTFS

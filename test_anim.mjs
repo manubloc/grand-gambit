@@ -24,7 +24,7 @@ const { ANIMATIONEN, animById, animAn, setAnimAn, schlagArt, SCHLAG_ARTEN } =
   await import("./src/app/ui/anim.js");
 
 console.log("\n== test_anim: das Register ==");
-ok("das Register traegt zehn Bewegungen", ANIMATIONEN.length === 10);
+ok("das Register traegt dreizehn Bewegungen", ANIMATIONEN.length === 13);
 ok("jede hat Kennung, Namen, Bereich und Beschreibung",
   ANIMATIONEN.every((a) => a.id && a.name && a.bereich && a.was && a.was.length > 30));
 ok("keine Kennung doppelt", new Set(ANIMATIONEN.map((a) => a.id)).size === ANIMATIONEN.length);
@@ -32,7 +32,7 @@ ok("die drei Bereiche sind brett, belohnung, figuren",
   [...new Set(ANIMATIONEN.map((a) => a.bereich))].sort().join(",") === "belohnung,brett,figuren");
 ok("animById findet den Schweif", animById("schweif")?.name === "Zugschweif");
 ok("animById kennt Erfundenes nicht", animById("quatsch") === null);
-const PFLICHT = ["schweif", "einschlag", "feuer", "atmen", "schach", "matt", "stufe", "muenzen", "beute", "glanz"];
+const PFLICHT = ["schweif", "einschlag", "feuer", "atmen", "schach", "matt", "stufe", "muenzen", "beute", "glanz", "trank", "sanduhr", "faehigkeit"];
 ok("alle vom Besitzer verlangten Bewegungen stehen darin",
   PFLICHT.every((id) => animById(id)));
 
@@ -58,14 +58,16 @@ ok("die Kammer fuehrt JEDE Registerbewegung vor (case je id)",
   ANIMATIONEN.every((a) => kammer.includes(`case "${a.id}"`)));
 const theme = readFileSync("src/app/ui/theme.js", "utf8");
 for (const kf of ["ggAtmen", "ggStoss", "ggKlinge", "ggWucht", "ggBann", "ggFeuer", "ggFunken",
-  "ggZielGlut", "ggSchachPuls", "ggKoenigFall", "ggStufenStern", "ggMuenzFall", "ggAuftritt", "ggGlanzLauf"])
+  "ggZielGlut", "ggSchachPuls", "ggKoenigFall", "ggStufenStern", "ggMuenzFall", "ggAuftritt", "ggGlanzLauf",
+  "ggTrankLauf", "ggUhrPuls", "ggSprossePuls"])
   ok(`Keyframe ${kf} existiert im Theme`, theme.includes(`@keyframes ${kf}`));
 {
   /* Die Ruckel-Lehre je BLOCK pruefen, nicht ueber Blockgrenzen hinweg -
      die erste Fassung dieser Probe lief in fremde Keyframes hinein
      (ggSetzPuls traegt zu Recht box-shadow) und schlug falsch an. */
   const MEINE = ["ggAtmen", "ggStoss", "ggKlinge", "ggWucht", "ggBann", "ggFeuer", "ggFunken",
-    "ggZielGlut", "ggSchachPuls", "ggKoenigFall", "ggStufenStern", "ggMuenzFall", "ggAuftritt", "ggGlanzLauf"];
+    "ggZielGlut", "ggSchachPuls", "ggKoenigFall", "ggStufenStern", "ggMuenzFall", "ggAuftritt", "ggGlanzLauf",
+    "ggTrankLauf", "ggUhrPuls", "ggSprossePuls"];
   const bloecke = theme.split("@keyframes ").slice(1);
   const suender = MEINE.filter((n) => {
     const b = bloecke.find((x) => x.startsWith(n + " "));
@@ -84,6 +86,12 @@ const orte = {
   "das Profil traegt den Schalter": ["src/app/ui/screens/ProfileScreen.jsx", "setAnimAn"],
   "die App kennt die Kammer": ["src/app/App.jsx", "animkammer"],
   "die Verwaltung im Profil verlinkt die Kammer": ["src/app/ui/screens/ProfileScreen.jsx", '["?animkammer", "Die Animationskammer"'],
+  "der Trank-Heilglanz ist auf das Gemaelde maskiert": ["src/app/ui/board/PieceGlyph.jsx", "WebkitMaskImage: `url(${painting})`"],
+  "GameScreen setzt den Trank-Effekt": ["src/app/ui/screens/GameScreen.jsx", '"trank"'],
+  "die Uhr pulst beim Zeitenwender": ["src/app/ui/screens/GameScreen.jsx", "ggUhrPuls"],
+  "das Board reicht den Effekt an den Glyph": ["src/app/ui/board/BoardView.jsx", "effekt={effekt && effekt.at === i"],
+  "die Faehigkeit faerbt den Glanz violett": ["src/app/ui/screens/ArmyScreen.jsx", "rgba(196,181,253"],
+  "die erwachte Sprosse pulst": ["src/app/ui/screens/ArmyScreen.jsx", "ggSprossePuls"],
 };
 for (const [name, [datei, marke]] of Object.entries(orte))
   ok(name, readFileSync(datei, "utf8").includes(marke));

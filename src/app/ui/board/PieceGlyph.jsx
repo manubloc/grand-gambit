@@ -220,7 +220,7 @@ export function StatTriad({ piece, focus, shrink = 1 }) {
 /* v1.0.38: "aufsBrett" waehlt die KLEINE Fassung des Gemaeldes. Nur das
    Brett setzt sie - dort steht die Figur auf 50 px und 576 px waeren
    neunfach zu viel. Hofstaat, Popup und Zoom bleiben gross. */
-export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false, fliegt = false, aufsBrett = false }) {
+export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "painted", focus = false, big = false, fliegt = false, aufsBrett = false, effekt = null }) {
   if (!piece) return null;
   const white = piece.color === "w";
   const neon = white ? T.lime : T.magenta; // badge/frame color per faction
@@ -483,6 +483,24 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
            Koenig -3.0 %. Weiterhin mal fit.h, weil das Skalieren den Versatz
            sonst nach aussen traegt. */
         transform: (fit.h !== 1 || fit.y !== 0) ? `translate(0, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
+        {/* v1.0.70 (Besitzer): DER LEBENSTRANK LAEUFT DURCH DIE FIGUR. Ein
+            roter Heilglanz wandert einmal von unten nach oben - MASKIERT auf
+            das eigene Gemaelde (WebkitMaskImage: die Bilddatei selbst), nicht
+            als Fleck ueber dem Feld. Der Span liegt im selben Wrapper wie das
+            Bild und erbt dessen fit-Transform, die Maske nutzt dieselbe
+            Ausrichtung wie objectFit/objectPosition - Glanz und Figur sind
+            deckungsgleich. key=effekt.id startet jeden Einsatz neu. */}
+        {painting && effekt && effekt.art === "trank" && animAn() && (
+          <span key={effekt.id} aria-hidden style={{ position: "absolute", inset: 0, overflow: "hidden",
+            pointerEvents: "none", zIndex: 4,
+            WebkitMaskImage: `url(${painting})`, maskImage: `url(${painting})`,
+            WebkitMaskSize: "contain", maskSize: "contain",
+            WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+            WebkitMaskPosition: big ? "center" : "center bottom", maskPosition: big ? "center" : "center bottom" }}>
+            <span style={{ position: "absolute", left: 0, right: 0, top: "-15%", bottom: "-15%",
+              background: "linear-gradient(0deg, rgba(255,60,60,0) 0%, rgba(255,80,70,.55) 35%, rgba(255,190,160,.95) 50%, rgba(255,80,70,.55) 65%, rgba(255,60,60,0) 100%)",
+              animation: "ggTrankLauf 1.05s ease-in-out both" }} />
+          </span>)}
         {painting
           ? <img src={painting} alt="" draggable={false} decoding="async" style={{ width: "100%", height: "100%",
               // the gallery hangs in a dim hall — lift the paintings a step:

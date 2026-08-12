@@ -196,6 +196,11 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   });
   const [desync, setDesync] = useState(false);
   const [potionArm, setPotionArm] = useState(false);
+  /* v1.0.70: der Brett-Effekt des Augenblicks (Trank-Heilglanz). Transient:
+     gesetzt beim Einsatz, nach 1,3 s geraeumt - der Glyph startet ihn ueber
+     key=id selbst neu, hier lebt nur der Ort. */
+  const [brettEffekt, setBrettEffekt] = useState(null);
+  const [uhrGlut, setUhrGlut] = useState(0);   // v1.0.70: Sanduhr-Puls an der Uhr
   // THE BOARD BELONGS IN THE MIDDLE OF THE SCREEN — not in the middle of
   // whatever is left over. Measured on a 390x844 phone, the chrome above (back
   // bar + the foe's row) stood 75px tall while your row below took 34, so the
@@ -290,7 +295,16 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
     setPotionArm(false);
     setState((s) => {
       const r = reduce(s, potionCommand(WHITE, i));
-      if (r.state !== s) { potionsUsedRef.current++; try { klang("trank"); } catch {} }
+      if (r.state !== s) {
+        potionsUsedRef.current++; try { klang("trank"); } catch {}
+        /* v1.0.70 (Besitzer): der Lebenstrank LEUCHTET - ein roter Heilglanz
+           laeuft einmal durch die getraenkte Figur (Maske im PieceGlyph). */
+        if (animAn()) {
+          const id = Date.now();
+          setBrettEffekt({ at: i, art: "trank", id });
+          setTimeout(() => setBrettEffekt((cur) => (cur && cur.id === id ? null : cur)), 1300);
+        }
+      }
       return r.state;
     });
   }
@@ -679,6 +693,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       if (n === s) return s;
       if (n.turn === BLACK) { const m = undo(n); if (m !== n) n = m; }
       hourglassUsedRef.current++;
+      if (animAn()) setUhrGlut(Date.now());   // v1.0.70: die Uhr pulst golden
       try { klang("zeitenwender"); } catch {}
       return n;
     });
@@ -938,7 +953,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
             background: clockAlarm ? "linear-gradient(160deg, rgba(140,28,42,.92), rgba(60,10,18,.94))" : undefined,
             boxShadow: clockAlarm ? `0 0 18px ${T.danger}aa` : undefined,
             animation: clockAlarm ? "ggUhrAlarm .85s ease-in-out infinite" : "none",
-            zIndex: 3 }}><HourglassIc size={clockAlarm ? 19 : clockGross ? 16 : 14}
+            zIndex: 3 }}>{uhrGlut > 0 && <span key={uhrGlut} aria-hidden style={{ position: "absolute",
+              inset: -3, borderRadius: 999, border: `2px solid ${T.gold}`, pointerEvents: "none",
+              animation: "ggUhrPuls .55s ease-out 3" }} />}<HourglassIc size={clockAlarm ? 19 : clockGross ? 16 : 14}
               color={clockAlarm ? "#ffd9de" : clockHot ? T.goldBright : T.gold} /> {clockLbl}</span>
         )}
         {foeLbl && (
@@ -1055,7 +1072,7 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
           transformOrigin: "50% 50%", transition: zPtrs.current.size ? "none" : "transform .18s ease",
           animation: flyGo && !flyDone && !zoomMode ? "ggBoardZoomIn 1.9s cubic-bezier(.2,.85,.25,1) both" : "none", // the STATION rushes up: a clean zoom from map-height to the board, no more flyover
           opacity: flyGo ? 1 : 0.985 }}>
-        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel} ruhig={armResign || !!banner} mattSeite={banner && (banner.reason === "checkmate" || banner.reason === "regicide") ? (banner.result === "win" ? (myColor === "w" ? "b" : "w") : myColor) : null}
+        <BoardView state={state} onMove={play} interactive={myTurn} showCoords={klassikOptik} lastMove={state.lastMove} animateFor={null} hotseat={hotseat} feld={feld} feldDunkel={feldDunkel} ruhig={armResign || !!banner} mattSeite={banner && (banner.reason === "checkmate" || banner.reason === "regicide") ? (banner.result === "win" ? (myColor === "w" ? "b" : "w") : myColor) : null} effekt={brettEffekt}
           flip={viewColor === BLACK} theme={{ ...(map.theme || {}), ...boardPalette(profile) }} fitBox pick={scout && pvp ? myColor : potionArm ? WHITE : null}
           onPick={scout && pvp ? scoutTap : usePotion} pov={viewColor}
           setzFelder={setzPhase ? setzbar : null} onSetz={setzPhase ? setzeOderNimm : null}
@@ -1623,11 +1640,13 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
         })()}
         {newSkills.length > 0 && (
           <div style={{ margin: "2px 0 12px", padding: "11px 13px 10px", borderRadius: 12, textAlign: "left",
-            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))" }}>
+            border: "1px solid #8a6d3577", background: "linear-gradient(170deg, rgba(46,37,16,.5), rgba(22,20,14,.4))",
+            ...tritt(4) }}>
             <div className="gg-serif" style={{ fontSize: 11.5, letterSpacing: ".16em", color: T.gold, textAlign: "center", marginBottom: 7 }}>
               {t("banner.learned")}</div>
             {newSkills.map((l, i) => (
-              <div key={i} style={{ padding: "5px 0", borderTop: i ? "1px dashed rgba(233,210,150,.18)" : "none" }}>
+              <div key={i} style={{ padding: "5px 0", borderTop: i ? "1px dashed rgba(233,210,150,.18)" : "none",
+                ...tritt(5 + i) }}>
                 <div className="gg-serif" style={{ fontSize: 13, color: T.goldBright }}>
                   {l.ab ? t("banner.learnsAbility", { ch: l.nm, ab: en ? l.ab.nameEn : l.ab.nameDe })
                     : l.shield ? t("banner.gainsShield", { ch: l.nm, n: l.shield })

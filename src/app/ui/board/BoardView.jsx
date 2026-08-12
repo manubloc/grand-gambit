@@ -149,7 +149,7 @@ export function zugDauerMs(lastMove, pov, hotseat, w) {
   return Math.round((leaps ? (foe ? 1.25 : 0.95) : (foe ? 0.9 : 0.52)) * 1000);
 }
 
-export function BoardView({ state, onMove, interactive, lastMove, mattSeite = null, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false, setzFelder = null, onSetz = null }) {
+export function BoardView({ state, onMove, interactive, lastMove, mattSeite = null, effekt = null, theme = null, maxPx = 520, animateFor = null, flip = false, fitBox = false, feld = null, feldDunkel = null, ruhig = false, pick = null, onPick = null, pov = "w", texture = null, ground = null, artStyle = "painted", showLevel = true, showCoords = false, pulse = 0.4, friendly = false, knownKinds = null, seerVision = false, onEnemyTap = null, introSpot = null, onInspect = null, hotseat = false, setzFelder = null, onSetz = null }) {
   const sqL0 = theme?.sqLight || T.sqLight, sqD0 = theme?.sqDark || T.sqDark;
   // a GROUND painting beneath the field: the squares open further so meadow,
   // stream and path shimmer through — the land itself hosts the battle
@@ -634,7 +634,7 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
             /* v1.0.14: WER EINEN SCHLAG UEBERSTEHT, WACKELT. Nicht die Zelle,
                die FIGUR - und sie faellt nicht, sie fasst sich wieder. */
             ...(lastMove && lastMove.damaged && !lastMove.lethal && lastMove.to === i && !ruhig
-              ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph aufsBrett piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} /></div>}
+              ? { animation: "ggShake .5s ease-in-out" } : {}) }}><PieceGlyph aufsBrett piece={{ ...piece, selected: isSel || isSpy, justMoved: !!lastMove && lastMove.to === i && !ruhig }} showLevel={showLevel} pov={pov} artStyle={artStyle} effekt={effekt && effekt.at === i ? effekt : null} /></div>}
           {/* v1.0.46: DIE SPERRE AUF DIESEM FELD. Die Regeln dazu gibt es seit
               v0.90, gezeichnet wurde sie nie - sperren.js hing allein an
               transitions.js. stadium() liefert genau die drei Worte, zu denen
