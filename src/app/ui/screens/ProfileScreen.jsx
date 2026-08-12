@@ -186,6 +186,11 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           ["?spielerbuch", "Das Spielerbuch", "Spieler, Fortschritt, Herkunft, Zahlen"],
           ["?werkstatt", "Die Figurenwerkstatt", "Figurenpaare malen und ausspielen"],
           ["?klangwerkstatt", "Die Klangwerkstatt", "Alle Klänge abhören, wie sie im Spiel klingen"],
+          /* v1.0.68 (Besitzer): die Animationskammer bekommt ihre Tuer in der
+             Verwaltung - bisher stand sie nur als nackte Adresse im
+             Hinweistext des Schalters, und wer die Liste hier als DEN Zugang
+             zu allen Werkbaenken kennt, haette sie nie gefunden. */
+          ["?animkammer", "Die Animationskammer", "Alle Bewegungen des Spiels vorführen, an- und ausschalten"],
           ["?galerie", "Die Musterkammer", "Farben, Knöpfe, Bausteine"],
           ["/landing.html", "Die Landingpage", "Die öffentliche Seite"]].map(([ziel, name, was]) => (
           <a key={ziel} href={ziel} target={ziel.startsWith("/landing") ? "_blank" : undefined}
@@ -358,7 +363,7 @@ export function ProfileScreen({ profile, dispatch, t, account, onSwitchSave, onL
           <div style={{ fontSize: 11, color: T.faint, marginTop: 7, lineHeight: 1.45 }}>
             Gilt fuer dieses Geraet und wirkt ueberall: Zugschweif, Schlagarten, Drachenfeuer,
             lebende Aufstellung, Schachpuls, Koenigsfall, Muenzregen, gestaffelte Beute,
-            Verbessern-Glanz. Einzeln vorfuehren: <code>?animkammer</code>.</div>
+            Verbessern-Glanz. Einzeln vorfuehren: die Animationskammer unter Verwaltung.</div>
         </div>
       </div>}
     </Panel>

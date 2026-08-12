@@ -83,6 +83,7 @@ const orte = {
   "ArmyScreen glaenzt beim Verbessern": ["src/app/ui/screens/ArmyScreen.jsx", "ggGlanzLauf"],
   "das Profil traegt den Schalter": ["src/app/ui/screens/ProfileScreen.jsx", "setAnimAn"],
   "die App kennt die Kammer": ["src/app/App.jsx", "animkammer"],
+  "die Verwaltung im Profil verlinkt die Kammer": ["src/app/ui/screens/ProfileScreen.jsx", '["?animkammer", "Die Animationskammer"'],
 };
 for (const [name, [datei, marke]] of Object.entries(orte))
   ok(name, readFileSync(datei, "utf8").includes(marke));

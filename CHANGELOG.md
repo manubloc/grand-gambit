@@ -1,5 +1,14 @@
 # Changelog - Grand Gambit
 
+## 1.0.68
+- DIE ANIMATIONSKAMMER HAT IHRE TUER IN DER VERWALTUNG. Sie stand seit
+  v1.0.67 nur als nackte Adresse im Hinweistext des Schalters - wer die
+  Verwaltungsliste im Profil als DEN Zugang zu allen Werkbaenken kennt
+  (Spielerbuch, Werkstatt, Klangwerkstatt, Musterkammer), haette sie dort
+  nie gefunden. Jetzt steht sie in derselben Liste; der Hinweistext beim
+  Schalter verweist auf die Tuer statt auf die Adresse. Probe in test_anim
+  (42 Zusicherungen).
+
 ## 1.0.67
 - DIE ANIMATIONEN DES SPIELS, in einem Zug und mit einer Liste. Neues Modul
   anim.js traegt das REGISTER aller zehn Bewegungen - was dort nicht steht,
