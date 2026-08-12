@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.69
+- DER CI-LAUF SCHEITERTE AN 73 DATEINAMEN, nicht am Code: die Figurenbilder
+  019 bis 091 hiessen woertlich "NNN_?.png". Unter Linux erlaubt, fuer NTFS
+  und damit fuer GitHubs Artefaktspeicher verboten - der Fehler lag Monate
+  unsichtbar im Baum, weil lokal alles lief; erst der Artefakt-Upload deckte
+  ihn auf. Alle 73 (plus ihre 73 Vorschauen in public/bildarchiv-klein)
+  heissen jetzt NNN_unbenannt.png.
+- DAMIT ES NIE WIEDER PASSIERT: neue Waechterprobe
+  tools/pruefe-dateinamen.mjs als Suite in der Kette. Sie prueft JEDEN
+  Dateinamen, den git kennt, gegen die Verbotsliste des Artefaktspeichers
+  (" : < > | * ? und Zeilenumbrueche) - mit NUL-getrennter Messung, damit
+  auch ein Name MIT Zeilenumbruch die Pruefung nicht taeuscht.
+- DIE NODE-20-WARNUNG IST BEHOBEN: checkout, setup-node und upload-artifact
+  von @v4 auf @v7 gehoben - die Hauptversionen per GitHub-API gemessen, nicht
+  geraten. Gilt fuer ci.yml und release-itch.yml.
+- Proben: 24 Suiten (neu: pruefe-dateinamen), 1210 Assertionen, 0 Fehler.
+
 ## 1.0.68
 - DIE ANIMATIONSKAMMER HAT IHRE TUER IN DER VERWALTUNG. Sie stand seit
   v1.0.67 nur als nackte Adresse im Hinweistext des Schalters - wer die
