@@ -31,12 +31,22 @@ const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
 /** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
  *  so no bottom-anchoring, no hp padding, no badge chrome. */
-function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
+function TileArt({ kind, size, hero = false, level = 1, bossId = null, tier = 0 }) {
   /* v0.83: im schlichten Stil zeichnet ueberall dieselbe Hand - auch hier,
      nicht nur auf dem Brett. Sonst sitzt man vor einem Zwitter aus schlichtem
      Brett und gemaltem Hofstaat. */
   if (schlichtAn()) return <PieceArt kind={kind} size={size ?? "100%"} level={level} hero={hero} bossId={bossId} />;
-  const stueck = { kind, color: "w", hero, level, bossId };
+  /* v1.0.74 (Besitzerbefund: "er hat nie eine neue Figur bekommen, auch wenn
+     eine Stufe gestiegen ist"): DAS FIGURENBLATT REICHTE DEN RANG NIE WEITER.
+     paintedForPiece waehlt das Gambit-Gemaelde ueber piece.TIER - hier stand
+     aber nur level, und tier blieb undefined, also zeigte das Blatt seit
+     v1.0.62 immer Rang I. Die sechs handgefuehrten Bilder existieren und
+     unterscheiden sich (geprueft: sechs verschiedene Pruefsummen); allein
+     der Weg dorthin fehlte. Das Brett bekam tier ueber buildArmy, die Karte
+     rechnet es selbst - nur das Blatt, wo man den Aufstieg am ehesten sucht,
+     ging leer aus. */
+  const stueck = { kind, color: "w", hero, level, bossId,
+    ...(tier ? { tier } : null) };
   const src = paintedForPiece(stueck);
   /* v1.0.49 (Besitzerbefund, Aufstellung): DIE FIGUREN SASSEN ZU WEIT RECHTS.
      Nicht die Kacheln - der INHALT der Bilder. Jede Figur sitzt anders weit
@@ -60,7 +70,7 @@ function TileArt({ kind, size, hero = false, level = 1, bossId = null }) {
 }
 function Glyph({ kind, level, abilities, shield, size = 50, hero = false, art = "painted" }) {
   return <div style={{ width: size * 1.3, height: size * 1.3, display: "grid", placeItems: "center", background: T.bg2, borderRadius: 10, border: `1px solid ${T.line}`, flex: "none" }}>
-    <TileArt kind={kind} size={size} hero={hero} level={level} />
+    <TileArt kind={kind} size={size} hero={hero} level={level} tier={hero ? gambitTier(level) : 0} />
   </div>;
 }
 
@@ -754,7 +764,7 @@ const SlotGlyph = ({ kind, size = 29, art = "painted", hero = false, level = 1, 
   // beisst nur, wenn es eng wird; die Glyphe darin passt sich ein (gg-fit-svg).
   <span className="gg-fit-svg" style={{ width: typeof size === "number" ? size : size, height: typeof size === "number" ? size : size,
     maxWidth: "100%", maxHeight: "100%" }}>
-    <TileArt kind={kind} size={typeof size === "number" ? size : undefined} hero={hero} level={level} bossId={bossId} />
+    <TileArt kind={kind} size={typeof size === "number" ? size : undefined} hero={hero} level={level} bossId={bossId} tier={hero ? gambitTier(level) : 0} />
   </span>
 );
 

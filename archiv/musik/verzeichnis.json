@@ -214,5 +214,23 @@
   "gruppe": "Weitere",
   "titel": "Schnelles Spiel C · Munter (G-Dur)",
   "bemerkung": "v0.91"
+ },
+ {
+  "datei": "probe-hof-v1073.mp3",
+  "gruppe": "Kompositionsproben",
+  "titel": "Der Hof · Kammerstück in Moll",
+  "bemerkung": "v1.0.73 · frei komponiert (kein Vorbild) · tiefe Streicher, Gambe, Laute, Gong · Vorschlag: Halle / Menü"
+ },
+ {
+  "datei": "probe-radetzky-v1073.mp3",
+  "gruppe": "Kompositionsproben",
+  "titel": "Radetzky-Marsch · nach Johann Strauss I (1848)",
+  "bemerkung": "v1.0.73 · stolzer Marsch, zieht im Tempo an · Vorschlag: Gefecht / Meister-Auftritt / Aufbruch ins Kapitel"
+ },
+ {
+  "datei": "probe-hummelflug-v1073.mp3",
+  "gruppe": "Kompositionsproben",
+  "titel": "Hummelflug · nach Rimski-Korsakow (1900)",
+  "bemerkung": "v1.0.73 · rastlose Jagd, Spannung steigt zum Schluss · Vorschlag: Zeitdruck / Blitzpartie / Verfolgung"
  }
 ]

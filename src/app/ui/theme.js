@@ -446,9 +446,20 @@ export const GLOBAL_CSS = `
   @keyframes ggZielGlut { 0% { opacity: 0; transform: scale(.5); } 30% { opacity: .8; }
     100% { opacity: 0; transform: scale(1.6); } }
   @keyframes ggSchachPuls { 0%,100% { opacity: .25; transform: scale(.94); } 50% { opacity: .8; transform: scale(1.04); } }
-  @keyframes ggKoenigFall { 0% { transform: rotate(0deg) translateY(0); opacity: 1; }
-    55% { transform: rotate(64deg) translateY(4%); opacity: 1; }
-    100% { transform: rotate(78deg) translateY(10%); opacity: 0; } }
+  /* v1.0.74 (Besitzer: "dass er halt einfach dann so wirklich da liegt und
+     umfaellt"): DER KOENIG BLEIBT LIEGEN. Bis v1.0.73 verblasste er am Ende
+     auf opacity 0 - er kippte und loeste sich auf, statt zu liegen. Jetzt
+     faellt er schwer (kurzes Ueberkippen bei 62 %, dann ein kleiner
+     Rueckpraller wie echtes Holz) und BLEIBT bei 92 Grad auf dem Brett -
+     volle Deckkraft, kein Verschwinden. Der Fall dauert laenger (Traegheit
+     eines schweren Stuecks) und beginnt langsam. */
+  @keyframes ggKoenigFall {
+    0% { transform: rotate(0deg) translate(0, 0); }
+    18% { transform: rotate(9deg) translate(1%, 0); }
+    62% { transform: rotate(88deg) translate(15%, 8%); }
+    74% { transform: rotate(80deg) translate(14%, 7%); }
+    86% { transform: rotate(94deg) translate(16%, 9%); }
+    100% { transform: rotate(92deg) translate(16%, 9%); } }
   @keyframes ggStufenStern { 0% { opacity: 0; transform: scale(.2) rotate(0deg); }
     30% { opacity: 1; transform: scale(1.15) rotate(18deg); }
     100% { opacity: 0; transform: scale(1.7) rotate(40deg); } }
@@ -468,6 +479,10 @@ export const GLOBAL_CSS = `
   @keyframes ggUhrPuls { 0%, 100% { transform: scale(1); opacity: 0; }
     12% { opacity: .9; } 50% { transform: scale(1.55); opacity: .35; }
     88% { opacity: .9; } }
+  /* v1.0.74: das ZIELFELD atmet. Sehr ruhig (2,4 s), sehr flach - nur die
+     Deckkraft wandert, kein Layout, keine Groesse. Der Besitzer ausdruecklich:
+     "sehr langsam, darf nicht stoeren". */
+  @keyframes ggZielAtem { 0%, 100% { opacity: .62; } 50% { opacity: 1; } }
   @keyframes ggSprossePuls { 0%, 100% { transform: scale(1); opacity: 1; }
     25% { transform: scale(1.025); opacity: .82; }
     50% { transform: scale(1); opacity: 1; }

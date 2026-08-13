@@ -594,7 +594,7 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
                Banner zu verschwinden - das Banner ist durchscheinend, der
                Fall bleibt sichtbar. Nur dieser eine Koenig, nur einmal. */
             ...(animAn() && mattSeite && piece.kind === "K" && piece.color === mattSeite
-              ? { animation: "ggKoenigFall 1.15s ease-in .3s forwards", transformOrigin: "58% 92%" }
+              ? { animation: "ggKoenigFall 1.8s cubic-bezier(.5,.02,.72,.6) .35s forwards", transformOrigin: "50% 94%", zIndex: 30 }
               : { transformOrigin: PIECE_ORIGIN }),
             // MEASURED, then nailed: this layer's 1em box lives in the piece font
             // (court 1.16em), so it grew WIDER than the square and sat flush to
@@ -660,20 +660,39 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
               zIndex: (!ruhig && (isSel || isSpy)) ? 41 : rr + 4 }}>
               <StatTriad piece={piece} focus={isSel || isSpy} />
             </div>}
-          {tgt && (tgt.capture
-            ? <>
-                <div style={{ position: "absolute", inset: 0, background: `${T.danger}1f`, pointerEvents: "none" }} />
-                {/* a strike: the same metal drawn as a polished ring around the
-                    prey. Built from one radial gradient with a clear centre —
-                    no masks, so it renders identically on every engine. */}
-                <div style={{ position: "absolute", inset: "7%", borderRadius: "50%", pointerEvents: "none",
-                  background: metal.ring,
-                  boxShadow: `0 0 9px ${metal.glow}, 0 1px 4px rgba(0,0,0,.5)` }} />
-              </>
-            : <div style={{ position: "absolute", width: "30%", height: "30%", borderRadius: "50%",
-                background: metal.face, border: `1.5px solid ${tgt.special ? "#f6e4a2" : metal.rim}`,
-                boxShadow: `0 1px 4px rgba(0,0,0,.6), 0 0 8px ${metal.glow}, inset 0 1px 1px rgba(255,255,255,.5)`,
-                pointerEvents: "none" }} />)}
+          {/* ── v1.0.74: DAS GANZE FELD ZEIGT DAS ZIEL ────────────────────
+              Besitzerbefund: "es ist extrem stoerend, dass dieser Punkt
+              manchmal von den Figuren verdeckt wird". Genau so ist es - der
+              Punkt sass in der Feldmitte, und dort steht bei belegten
+              Nachbarfeldern der Fuss der davorstehenden Figur. Jetzt faerbt
+              sich das FELD: eine getoente Flaeche mit Innenkontur, die kein
+              Figurenfuss verdecken kann, weil sie bis an die Feldkante geht.
+              Sie liegt UNTER den Figuren (zIndex 1), damit sie nichts
+              zudeckt, und atmet sehr ruhig (ggZielAtem, 2,4 s, nur opacity -
+              kein Layout, kein Ruckeln).
+              Zwei Toene wie im ganzen Haus: Gold fuer die eigene Seite,
+              Riss-Violett, wenn man fremde Zuege liest (Seherin). Ein
+              SCHLAG faerbt roeter und traegt zusaetzlich den Ring - der
+              Unterschied zwischen "hier hin" und "den da" muss auf einen
+              Blick lesbar bleiben. */}
+          {tgt && (() => {
+            const schlag = !!tgt.capture;
+            const eigen = !(movingPiece && movingPiece.color !== pov);
+            const ton = schlag ? "244,90,90" : eigen ? "233,207,138" : "168,124,255";
+            return <>
+              <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+                background: `radial-gradient(ellipse at 50% 50%, rgba(${ton},${schlag ? .30 : .24}) 0%, rgba(${ton},${schlag ? .17 : .13}) 62%, rgba(${ton},.06) 100%)`,
+                boxShadow: `inset 0 0 0 2px rgba(${ton},${schlag ? .78 : .62})`,
+                borderRadius: 3,
+                animation: ruhig ? "none" : `ggZielAtem 2.4s ease-in-out ${((i * 37) % 9) * 0.12}s infinite` }} />
+              {schlag && <div aria-hidden style={{ position: "absolute", inset: "7%", borderRadius: "50%",
+                pointerEvents: "none", zIndex: 1, background: metal.ring,
+                boxShadow: `0 0 9px ${metal.glow}, 0 1px 4px rgba(0,0,0,.5)` }} />}
+              {tgt.special && <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none",
+                zIndex: 1, display: "grid", placeItems: "center", fontSize: "0.42em", color: "#f6e4a2",
+                textShadow: "0 0 6px rgba(246,228,162,.9)" }}>✦</div>}
+            </>;
+          })()}
           {/* v1.0.63: EIN FREIES FELD FUER EINE SPERRE. Kein Zielpunkt aus
               Metall (der gehoert den Zuegen), sondern ein ruhig atmender
               Steinrahmen - man baut hier, man schlaegt nicht. */}

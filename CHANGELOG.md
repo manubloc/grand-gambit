@@ -1,5 +1,31 @@
 # Changelog - Grand Gambit
 
+## 1.0.74
+- DAS FIGURENBLATT ZEIGTE DEN GAMBIT-RANG NIE (Besitzerbefund: "er hat nie
+  eine neue Figur bekommen"). URSACHE: TileArt baute sein Stueck aus
+  { kind, color, hero, level, bossId } - OHNE tier. paintedForPiece waehlt
+  das Gemaelde aber ueber piece.tier, also blieb es seit v1.0.62 immer bei
+  Rang I. Die sechs handgefuehrten Bilder existieren und sind verschieden
+  (sechs Pruefsummen geprueft); allein der Weg dorthin fehlte. Brett (ueber
+  buildArmy) und Karte (rechnet selbst) waren nie betroffen - ausgerechnet
+  das Blatt, wo man den Aufstieg sucht, ging leer aus.
+- ZIELFELDER STATT ZIELPUNKTE ("der Punkt wird manchmal von den Figuren
+  verdeckt - extrem stoerend"). Das ganze Feld faerbt sich jetzt: getoente
+  Flaeche mit Innenkontur, UNTER den Figuren (zIndex 1), atmet sehr ruhig
+  (ggZielAtem, 2,4 s, nur opacity - kein Layout, kein Ruckeln), mit leichtem
+  Phasenversatz je Feld. Gold fuer die eigene Seite, Riss-Violett beim Lesen
+  fremder Zuege, Rot beim Schlag (dort bleibt zusaetzlich der Metallring, weil
+  "hier hin" und "den da" unterscheidbar bleiben muessen).
+- DER KOENIG BLEIBT LIEGEN ("dass er wirklich da liegt und umfaellt"). Bis
+  v1.0.73 verblasste er am Ende auf opacity 0 - er loeste sich auf, statt zu
+  liegen. Jetzt faellt er schwer (1,8 s, langsamer Beginn, Ueberkippen bei
+  62 %, kleiner Rueckpraller wie echtes Holz) und BLEIBT bei 92 Grad liegen.
+- Zwei weitere Musikproben, beide mit Steigerung und Kampfgeist:
+  Radetzky-Marsch (nach J. Strauss I) und Hummelflug (nach Rimski-Korsakow).
+  Das Musikverzeichnis fuehrt sie in neuer Gruppe "Kompositionsproben" mit
+  ORIGINALTITEL, Komponist samt Jahr, Version und Einsatzvorschlag - die
+  Werkstatt liest Gruppen dynamisch, sie erscheint also von selbst.
+
 ## 1.0.73
 - DER GAMBIT IST ENDLICH IN JEDEM RANG SO GROSS WIE EIN BAUER. v1.0.66 hatte
   nur Stufe I geradegezogen - der Besitzer spielt laengst hoeher, und BEIDE
