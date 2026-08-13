@@ -645,6 +645,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               setFaehig(sprosse ? sprosse.id : null);
               setFrisch(sprosse ? sprosse.level : 0);
               setGlanz((n) => n + 1);
+              /* v1.0.73: der Glanz klingt - und eine FAEHIGKEIT klingt
+                 anders als eine blosse Stufe (violetter Kristallschimmer
+                 statt goldenem Wusch), genau wie im Bild. */
+              setTimeout(() => { try { klang(sprosse ? "faehigkeit" : "glanz"); } catch {} }, 140);
             }
             dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
           className={affordable ? "gg-funkenkontur" : undefined}

@@ -412,7 +412,19 @@ const PIECE_BOSS_FIT = { "alchemist": { h: 1.1, y: 0.0, x: 0 }, "amazon": { h: 1
    Reihe. */
 /* v1.0.59 (Besitzer: "noch zu hoch"): Stufe 1 steht jetzt EXAKT auf dem
    Bauernwert (-0.06) - er ist ein Bauer unter Bauern, nur groesser. */
-const GAMBIT_TIER_Y = [-0.0600, -0.0670, -0.0740, -0.0810, -0.0880, -0.0950];
+/* v1.0.73 (Besitzer, endgueltig): "Der Grand Gambit ist immer ein bisschen
+   hoeher und das sieht doof aus. Der muss genau gleich gross sein wie die
+   Bauern und auch genau in der gleichen Position."
+   DAS WAR DER REST DES ALTEN FEHLERS. v1.0.66 hat Stufe I auf den Bauernwert
+   gezogen - aber der Besitzer spielt laengst mit einem hoeheren Rang, und
+   BEIDE Staffeln stiegen weiter: die Hoehe bis 1.1330 (+6,6 % ueber dem
+   Bauern) und der y-Versatz bis -0.0950 (der Held wanderte zusaetzlich nach
+   oben). Wer Rang IV traegt, ragt sichtbar heraus - genau der Befund.
+   Jetzt sind beide Staffeln FLACH auf dem Bauernwert: gleiche Groesse,
+   gleiche Fusslinie, in jedem Rang. Der Aufstieg zeigt sich weiterhin am
+   BILD (die sechs handgefuehrten Gemaelde), am Goldschein, an der Kontur
+   und am Rangstern - nicht mehr an der Koerpergroesse. */
+const GAMBIT_TIER_Y = [-0.0600, -0.0600, -0.0600, -0.0600, -0.0600, -0.0600];
 /* v1.0.49: NULL. Die Figurenbilder sind seit diesem Stand selbst horizontal
    zentriert (93 Dateien, Restversatz unter einem halben Pixel), also braucht
    das Brett keinen Ausgleich mehr - und, wichtiger, Aufstellung und Hofstaat
@@ -420,7 +432,7 @@ const GAMBIT_TIER_Y = [-0.0600, -0.0670, -0.0740, -0.0810, -0.0880, -0.0950];
    Versatz; ueberall sonst sass der Laeufer 10 % zu weit links und der Koenig
    4,7 % zu weit rechts. Der Besitzer hat es auf dem Geraet gesehen. */
 const GAMBIT_TIER_X = [0, 0, 0, 0, 0, 0];
-const GAMBIT_TIER_H = [1.0625, 1.0775, 1.0915, 1.1045, 1.1195, 1.1330];
+const GAMBIT_TIER_H = [1.0625, 1.0625, 1.0625, 1.0625, 1.0625, 1.0625];   // v1.0.73: flach, siehe oben
 
 /* v1.0.49: DERSELBE VERSATZ, ABER UEBER DIE ID (Besitzerbefund).
    PAINTED_FIT haelt je Figur ein x - wie weit ihr Inhalt aus der Bildmitte

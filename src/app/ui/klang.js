@@ -45,6 +45,21 @@ import trankKlang from "./assets/klang/trank.webm";
 import zeitenwenderKlang from "./assets/klang/zeitenwender.webm";
 import zeitrissKlang from "./assets/klang/zeitriss.webm";
 import rissBlitzKlang from "./assets/klang/rissblitz.webm";
+/* v1.0.73: elf neue Klaenge zu den Animationen aus v1.0.67-70 (ElevenLabs
+   Sound Effects, Prompts nach design/KLANG-PROMPTS.md - Hof = Holz auf Holz,
+   Riss = Kristall und Entladung, wuerdevoll statt niedlich). Alle auf
+   -18 LUFS normiert, Vorlauf abgeschnitten, Opus 96k mono. */
+import muenzregenKlang from "./assets/klang/muenzregen.webm";
+import stossKlang from "./assets/klang/stoss.webm";
+import klingeKlang from "./assets/klang/klinge.webm";
+import wuchtKlang from "./assets/klang/wucht.webm";
+import bannKlang from "./assets/klang/bann.webm";
+import drachenfeuerKlang from "./assets/klang/drachenfeuer.webm";
+import koenigsfallKlang from "./assets/klang/koenigsfall.webm";
+import faehigkeitKlang from "./assets/klang/faehigkeit.webm";
+import zerfallKlang from "./assets/klang/zerfall.webm";
+import sperrsetzenKlang from "./assets/klang/sperrsetzen.webm";
+import glanzKlang from "./assets/klang/glanz.webm";
 import bestieKlang from "./assets/klang/bestie.webm";
 import meisterKlang from "./assets/klang/meister.webm";
 import werbungKlang from "./assets/klang/werbung.webm";
@@ -124,6 +139,19 @@ const QUELLEN = {
      Dafuer zwei neue Klaenge der Weltkarte: */
   kapitel: [kapitelKlang],           // ein neues Kapitel tut sich auf
   karteSchritt: [karteSchrittKlang], // der Gambit rueckt vor: Holz auf Stein
+  /* v1.0.73: die Klaenge zu den Animationen. Die vier Schlagarten folgen
+     schlagArt() aus anim.js - wer wie zuschlaegt, klingt auch so. */
+  muenzregen: [muenzregenKlang],     // Gold faellt ins Banner
+  stoss: [stossKlang],               // Schild schiebt (Bauer, Wache)
+  klinge: [klingeKlang],             // Klinge schlitzt (Springer, Laeufer)
+  wucht: [wuchtKlang],               // Turm rammt
+  bann: [bannKlang],                 // Dame/Koenig richten
+  drachenfeuer: [drachenfeuerKlang], // Fernstoss des Drachen
+  koenigsfall: [koenigsfallKlang],   // Matt: der Koenig kippt
+  faehigkeit: [faehigkeitKlang],     // eine Sprosse erwacht
+  zerfall: [zerfallKlang],           // eine Sperre broeckelt
+  sperrsetzen: [sperrsetzenKlang],   // Sperre wird gesetzt
+  glanz: [glanzKlang],               // Verbessern-Glanz
 };
 
 // Lautstaerke je Art: der Zug klingt hundertmal, der Sturz selten - also darf
@@ -141,7 +169,12 @@ const PEGEL = { wahl: 0.5, zug: 0.7, treffer: 0.85, fall: 0.85, nein: 0.45,
   kapitelEnde: 0.75,
   // Menue und Karte: das Minimalste im Haus - fuehlbar, nie aufdringlich.
   menue: 0.22, blattAuf: 0.3, blattZu: 0.26, karteStation: 0.3, karteFrei: 0.5,
-  kapitel: 0.6, karteSchritt: 0.4 };
+  kapitel: 0.6, karteSchritt: 0.4,
+  /* v1.0.73: Schlagklaenge liegen bei den Zug-Klaengen (oft gehoert, also
+     leise), Feierklaenge etwas darueber. */
+  muenzregen: 0.55, stoss: 0.42, klinge: 0.40, wucht: 0.48, bann: 0.42,
+  drachenfeuer: 0.6, koenigsfall: 0.7, faehigkeit: 0.55, zerfall: 0.5,
+  sperrsetzen: 0.45, glanz: 0.4 };
 
 let ctx = null;
 let meister = null;          // Summenregler

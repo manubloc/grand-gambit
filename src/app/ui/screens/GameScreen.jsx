@@ -19,7 +19,7 @@ import { CHARACTERS, ABILITIES } from "../../../content/index.js";
 import { KampfLeiste } from "../KampfLeiste.jsx";
 import { paintedById, paintedForPiece, ENEMY_FILTER } from "../board/paintedArt.js";
 import { SkillStar, GoldCoin, SkullIc, BladesIc, LockIc, FlagIc, HourglassIc, ZoomIc, OrbIc } from "../icons.jsx";
-import { animAn } from "../anim.js";
+import { animAn, schlagArt } from "../anim.js";
 import { ItemIcon } from "../ItemIcon.jsx";
 import texWear1 from "../assets/tex-wear-1.webp";
 import texWear2 from "../assets/tex-wear-2.webp";
@@ -200,6 +200,12 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
      gesetzt beim Einsatz, nach 1,3 s geraeumt - der Glyph startet ihn ueber
      key=id selbst neu, hier lebt nur der Ort. */
   const [brettEffekt, setBrettEffekt] = useState(null);
+  /* v1.0.73: DER ZERFALL KLINGT, WENN ER ZU SEHEN IST. Der Kern altert die
+     Sperren still (transitions.altern); hier wird nur bemerkt, wenn eine
+     Sperre ein STADIUM wechselt (heil -> angeschlagen -> Truemmer) oder ganz
+     verschwindet - genau dann broeckelt es hoerbar. Kein Klang je Halbzug,
+     sonst knirschte es pausenlos. */
+  const sperrStandRef = useRef("");
   const [uhrGlut, setUhrGlut] = useState(0);   // v1.0.70: Sanduhr-Puls an der Uhr
   // THE BOARD BELONGS IN THE MIDDLE OF THE SCREEN — not in the middle of
   // whatever is left over. Measured on a 390x844 phone, the chrome above (back
@@ -262,6 +268,17 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
   /* Die Felder kommen aus dem Regelwerk, nicht aus dem Schirm: dieselbe
      Wahrheit, die auch der Netzcode spaeter lesen wird. */
   const setzbar = useMemo(() => (setzen && !vorratLeer ? sperrFelder(state, WHITE) : []), [setzen, state, vorratLeer]);
+  useEffect(() => {
+    const stand = Object.entries(state.sperren || {})
+      .map(([i, sp]) => `${i}:${sp?.art}:${sp?.hp}`).sort().join("|");
+    const vorher = sperrStandRef.current;
+    sperrStandRef.current = stand;
+    if (!vorher || vorher === stand || !animAn() || setzen) return;
+    /* nur wenn WENIGER Leben oder eine Sperre fort ist - Setzen klingt schon */
+    if (stand.length < vorher.length || vorher.split("|").some((e) => e && !stand.includes(e)))
+      { try { klang("zerfall"); } catch {} }
+  }, [state.sperren]);   // eslint-disable-line
+
   function setzeOderNimm(i) {
     const steht = state.sperren?.[i];
     if (steht) {
@@ -280,7 +297,9 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       setVorrat((v) => ({ ...v, [art]: v[art] - 1 }));
       return { ...s, sperren: neu };
     });
-    try { klang("wahl"); } catch {}
+    /* v1.0.73: eine Sperre wird SATT gesetzt - Stein auf Holz, nicht der
+       leichte Waehlen-Tipp. Das Zuruecknehmen bleibt beim Tipp. */
+    try { klang("sperrsetzen"); } catch {}
   }
   /* Beim Abschluss der Setzphase steht fest, was das Feld gekostet hat: nur
      was WIRKLICH auf dem Brett steht, wird vom Vorrat abgezogen. Wer nichts
@@ -607,7 +626,21 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
         else if (springt) setTimeout(() => { try { klang("sprung"); } catch {} }, flug);
         else klang("zug");
         if (einschlag && !schuss) {
-          setTimeout(() => { try { klang(einschlag); if (next.welle) klang("treffer"); } catch {} }, flug);
+          setTimeout(() => { try {
+            klang(einschlag);
+            /* v1.0.73: DIE HANDSCHRIFT DES SCHLAGES KLINGT MIT. Die
+               Schlagart kommt aus derselben Quelle wie die Animation
+               (schlagArt in anim.js) - Bild und Klang koennen also nicht
+               auseinanderlaufen. Der Drache speit statt zu schlagen; sein
+               drachenflug-Klang bleibt dem Flug, das Feuer kommt hier.
+               Leise unter dem Einschlag (Pegel 0,40-0,48), damit die
+               vertraute Holz-Ebene fuehrt und die Handschrift nur faerbt. */
+            if (animAn()) {
+              const art = schlagArt(lm.kind);
+              klang(art === "feuer" ? "drachenfeuer" : art);
+            }
+            if (next.welle) klang("treffer");
+          } catch {} }, flug);
         } else if (einschlag) {
           setTimeout(() => { try { klang(einschlag); } catch {} }, 160);   // der Pfeil braucht einen Wimpernschlag
         }
@@ -1558,6 +1591,19 @@ function ResultBanner({ banner, t, onNew, campaign = false, onExit = null, onSet
      Der Zaehllauf haengt an banner.gained.gold, laeuft also genau einmal. */
   const anAn = animAn();
   const [goldZahl, setGoldZahl] = useState(anAn ? 0 : (g?.gold || 0));
+  /* v1.0.73: die Klaenge zum Bild - Muenzregen, wenn Gold faellt; der
+     Koenigsfall, wenn ein Koenig kippt. Einmal je Banner (leerer Abhaenger). */
+  useEffect(() => {
+    if (!anAn) return;
+    if (g && g.gold > 0) { const t = setTimeout(() => { try { klang("muenzregen"); } catch {} }, 260); return () => clearTimeout(t); }
+  }, []);   // eslint-disable-line
+  useEffect(() => {
+    if (!anAn) return;
+    if (banner && (banner.reason === "checkmate" || banner.reason === "regicide")) {
+      const t = setTimeout(() => { try { klang("koenigsfall"); } catch {} }, 420);
+      return () => clearTimeout(t);
+    }
+  }, []);   // eslint-disable-line
   useEffect(() => {
     if (!anAn || !g || !g.gold) { setGoldZahl(g?.gold || 0); return; }
     const start = performance.now(); let raf = 0;

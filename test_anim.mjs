@@ -96,5 +96,29 @@ const orte = {
 for (const [name, [datei, marke]] of Object.entries(orte))
   ok(name, readFileSync(datei, "utf8").includes(marke));
 
+console.log("\n== test_anim: die Klaenge zu den Bildern (v1.0.73) ==");
+{
+  const NEU = ["muenzregen", "stoss", "klinge", "wucht", "bann", "drachenfeuer",
+    "koenigsfall", "faehigkeit", "zerfall", "sperrsetzen", "glanz"];
+  const kl = readFileSync("src/app/ui/klang.js", "utf8");
+  const wk = readFileSync("src/app/ui/KlangWerkstattScreen.jsx", "utf8");
+  const { existsSync } = await import("node:fs");
+  for (const n of NEU) {
+    ok(`${n}: Datei liegt im Klangordner`, existsSync(`src/app/ui/assets/klang/${n}.webm`));
+    ok(`${n}: in klang.js registriert`, new RegExp(`\\n  ${n}: \\[`).test(kl));
+    ok(`${n}: hat einen Pegel`, new RegExp(`${n}: 0\\.`).test(kl));
+    ok(`${n}: in der Klangwerkstatt hoerbar`, wk.includes(`["${n}",`));
+  }
+  const gs = readFileSync("src/app/ui/screens/GameScreen.jsx", "utf8");
+  ok("die Schlagart klingt aus DERSELBEN Quelle wie das Bild",
+    gs.includes("schlagArt(lm.kind)") && gs.includes('import { animAn, schlagArt }'));
+  ok("der Muenzregen haengt am Gold des Banners", gs.includes('klang("muenzregen")'));
+  ok("der Koenigsfall haengt am Matt", gs.includes('klang("koenigsfall")'));
+  ok("der Zerfall klingt nur bei sichtbarer Aenderung", gs.includes("sperrStandRef"));
+  const as = readFileSync("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+  ok("Faehigkeit und blosse Stufe klingen verschieden",
+    as.includes('klang(sprosse ? "faehigkeit" : "glanz")'));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

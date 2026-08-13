@@ -43,6 +43,22 @@ const GRUPPEN = [
     ["zeitriss", "Zeitriss spannen", "Ladung baut sich auf und schnappt"],
     ["rissBlitz", "Riss-Blitz", "violette Entladung, kristallener Schweif"],
   ]],
+  /* v1.0.73: die Klaenge zu den Animationen aus v1.0.67-70. Eigene Gruppe,
+     weil sie zusammen entstanden sind und zusammen beurteilt werden wollen -
+     die vier Schlagarten hoert man am besten direkt hintereinander. */
+  ["Schlagarten & Animationen", [
+    ["stoss", "Schlagart: Stoß", "Schild schiebt — Bauer, Wache, Hauptmann"],
+    ["klinge", "Schlagart: Klinge", "heller Schlitz — Springer, Läufer, Assassine"],
+    ["wucht", "Schlagart: Wucht", "Rammstoß mit Beben — Turm, Golem"],
+    ["bann", "Schlagart: Bann", "aufsteigendes Licht — Dame, König, Erzbischof"],
+    ["drachenfeuer", "Drachenfeuer", "Feuerzunge beim Fernstoß des Drachen"],
+    ["koenigsfall", "Königsfall (Matt)", "schweres Holz kippt und schlägt auf"],
+    ["muenzregen", "Münzregen", "Gold fällt ins Siegesbanner"],
+    ["glanz", "Verbessern-Glanz", "goldener Schimmer über dem Porträt"],
+    ["faehigkeit", "Fähigkeit erwacht", "violetter Kristallschimmer"],
+    ["sperrsetzen", "Sperre setzen", "Stein wird satt aufgesetzt"],
+    ["zerfall", "Sperre zerfällt", "trockenes Bröckeln, Schutt löst sich"],
+  ]],
   ["Auftritte & Feier", [
     ["bestie", "Bestie erscheint", "Stein öffnet sich, kalter Atem"],
     ["meister", "Meister betritt das Feld", "tiefe Glocke, dunkler Chor"],

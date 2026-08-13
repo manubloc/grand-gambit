@@ -1,5 +1,38 @@
 # Changelog - Grand Gambit
 
+## 1.0.73
+- DER GAMBIT IST ENDLICH IN JEDEM RANG SO GROSS WIE EIN BAUER. v1.0.66 hatte
+  nur Stufe I geradegezogen - der Besitzer spielt laengst hoeher, und BEIDE
+  Staffeln stiegen weiter: die Hoehe bis 1.1330 (+6,6 % ueber dem Bauern) und
+  der y-Versatz bis -0.0950 (der Held wanderte zusaetzlich nach oben). Jetzt
+  sind GAMBIT_TIER_H und GAMBIT_TIER_Y flach auf dem Bauernwert; der Aufstieg
+  zeigt sich am Bild, am Goldschein, an der Kontur und am Rangstern - nicht
+  mehr an der Koerpergroesse. Proben fuer alle sechs Raenge; die alte Probe
+  "die Staffel steigt durchgehend" wurde bewusst umgedreht.
+- DIE SOCKELFAERBUNG SITZT TIEFER ("man soll immer noch ein Stueckchen von
+  der Farbe des Sockels sehen"). Bis v1.0.72 lief die volle Deckung bis knapp
+  unter die gemessene Tellerkante - der ganze Teller war eingefaerbt. Jetzt
+  endet sie bei 55 % der Kante, der Auslauf ist AN der Kante fertig: die
+  obere Haelfte behaelt ihren Stein, die Faerbung sitzt darunter wie ein
+  Schatten, aus dem die Figur waechst.
+- ELF NEUE KLAENGE zu den Animationen aus v1.0.67-70, erzeugt nach
+  design/KLANG-PROMPTS.md (Hof = Holz auf Holz, Riss = Kristall und
+  Entladung, wuerdevoll statt niedlich), Vorlauf abgeschnitten, auf -18 LUFS
+  normiert, Opus 96k mono: muenzregen, die vier Schlagarten stoss/klinge/
+  wucht/bann, drachenfeuer, koenigsfall, faehigkeit, zerfall, sperrsetzen,
+  glanz.
+- KLANG UND BILD KOENNEN NICHT AUSEINANDERLAUFEN: die Schlagart kommt beim
+  Klang aus DERSELBEN Quelle wie bei der Animation (schlagArt in anim.js).
+  Muenzregen haengt am Gold des Banners, Koenigsfall am Matt, Zerfall NUR am
+  sichtbaren Stadienwechsel (sonst knirschte es jeden Halbzug), und eine
+  Faehigkeit klingt anders als eine blosse Stufe.
+- Die Klangwerkstatt fuehrt sie als eigene Gruppe "Schlagarten & Animationen"
+  vor - die vier Schlagarten hoert man am besten direkt hintereinander.
+- Erste Musikprobe der Hausklangwelt in archiv/musik/probe-hof.mp3 (45 s,
+  Kammermusik in Moll, -20 LUFS, 112 kbps mono wie die 36 bestehenden).
+- Proben: 24 Suiten, 1244 Assertionen, 0 Fehler (test_anim 100: jede neue
+  Datei liegt, ist registriert, hat einen Pegel und steht in der Werkstatt).
+
 ## 1.0.72
 - DER SOCKEL WIRD JE FIGUR GEMESSEN, NICHT PAUSCHAL ANGENOMMEN (Besitzer:
   "jede Figur einzeln durchpruefen ... nicht die Fuesse oder der Rock der

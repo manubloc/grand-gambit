@@ -156,15 +156,24 @@ export const GLUT_SCHEIN = {
      ueber gut vier Prozent, damit keine Schnittkante entsteht ("mit einem
      ganz sanften Verlauf ... sonst wird man das sehen"). */
 export function sockelVerlauf(kante, nurSockel) {
+  /* v1.0.73 (Besitzer): "Du musst die Sockeleinfaerbung deutlich weiter
+     runterziehen - es waere gut, wenn man immer noch ein Stueckchen von der
+     Farbe vom Sockel sieht, aktuell bist Du bei jeder Figur zu weit oben."
+     Bis v1.0.72 lief die Deckung bis knapp UNTER die gemessene Tellerkante -
+     der ganze Teller war eingefaerbt, seine eigene Farbe verschwand. Jetzt
+     endet die volle Deckung bei 55 % der Kante, und der Auslauf ist an der
+     Kante fertig: die obere Haelfte des Tellers behaelt ihren Stein, die
+     Faerbung sitzt darunter wie ein Schatten, aus dem die Figur waechst. */
   const k = Math.round(kante * 1000) / 10;   // in %
   if (nurSockel) {
-    const voll = Math.max(2, k - 1.2).toFixed(1);
-    const aus = (k + 4.2).toFixed(1);
+    const voll = Math.max(1.5, k * 0.55).toFixed(1);
+    const aus = Math.max(3, k * 1.0).toFixed(1);
     return `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) ${voll}%, rgba(0,0,0,0) ${aus}%)`;
   }
-  const gipfel = Math.max(3, k - 4).toFixed(1);
-  const schulter = Math.max(4, k - 1.5).toFixed(1);
-  const aus = (k + 2.5).toFixed(1);
-  return `linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) ${Math.max(2, k * 0.35).toFixed(1)}%, `
+  const gipfel = Math.max(2, k * 0.45).toFixed(1);
+  const schulter = Math.max(3, k * 0.68).toFixed(1);
+  const aus = Math.max(4, k * 1.0).toFixed(1);
+  return `linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) ${Math.max(1.5, k * 0.2).toFixed(1)}%, `
     + `rgba(0,0,0,1) ${gipfel}%, rgba(0,0,0,.55) ${schulter}%, rgba(0,0,0,0) ${aus}%)`;
 }
+

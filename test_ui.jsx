@@ -1100,7 +1100,15 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   const { readFileSync: _rfA } = await import("node:fs");
   const art = _rfA("src/app/ui/board/paintedArt.js", "utf8");
   const y = art.match(/const GAMBIT_TIER_Y = \[([^\]]+)\]/)[1].split(",").map(Number);
-  ok("die Gambit-Staffel steigt durchgehend", y.every((v, i) => i === 0 || v < y[i - 1]));
+  /* v1.0.73: DIESE PROBE HAT SICH UMGEDREHT - bewusst, auf Besitzerbefehl.
+     Bis v1.0.72 sollte die Staffel STEIGEN (jeder Rang etwas hoeher). Der
+     Besitzer will das Gegenteil: "genau gleich gross wie die Bauern und auch
+     genau in der gleichen Position". Also ist die Staffel jetzt FLACH, und
+     die Probe haelt genau das fest - sonst kaeme das Wachsen beim naechsten
+     Umbau unbemerkt zurueck. */
+  ok("die Gambit-Staffel ist flach (kein Rang ragt heraus)", y.every((v) => v === y[0]));
+  const hArr = art.match(/const GAMBIT_TIER_H = \[([^\]]+)\]/)[1].split(",").map(Number);
+  ok("auch die Hoehenstaffel ist flach", hArr.every((v) => v === hArr[0]));
   ok("und beginnt nahe der Bauernlinie, nicht bei den Offizieren", y[0] > -0.09);
 }
 
@@ -1183,8 +1191,14 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   const held  = paintedFitFor({ kind: "P", hero: true, tier: 1 });
   ok("Bauer und Gambit Stufe I sind gleich hoch gezeichnet", bauer.h === held.h);
   ok("und stehen auf derselben Fusslinie", bauer.y === held.y);
-  const held6 = paintedFitFor({ kind: "P", hero: true, tier: 6 });
-  ok("die Raenge wachsen weiterhin", held6.h > held.h);
+  /* v1.0.73 (Besitzer): der Held ist in JEDEM Rang so gross wie ein Bauer und
+     steht auf derselben Fusslinie - der Aufstieg zeigt sich am Bild, nicht an
+     der Koerpergroesse. v1.0.66 hatte nur Stufe I geradegezogen. */
+  for (let t = 1; t <= 6; t++) {
+    const r = paintedFitFor({ kind: "P", hero: true, tier: t });
+    ok(`Rang ${t}: gleiche Groesse wie der Bauer`, r.h === bauer.h);
+    ok(`Rang ${t}: gleiche Fusslinie wie der Bauer`, r.y === bauer.y);
+  }
 }
 {
   const { GEGNER_STILE, setGegnerStil, gegnerStil, glutTon, glutFilter, GLUT_SCHEIN } =
@@ -1262,10 +1276,15 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
 {
   const { sockelVerlauf } = await import("./src/app/ui/gegnerstil.js");
   const sw = sockelVerlauf(0.15, true), glut = sockelVerlauf(0.15, false);
-  ok("schwarz/weiss: der Sockel ist VOLL gedeckt und laeuft sanft aus",
-    sw.includes("rgba(0,0,0,1) 0%") && sw.includes("rgba(0,0,0,1) 13.8%") && sw.includes("rgba(0,0,0,0) 19.2%"));
-  ok("farbig: die Glut startet dunkel und gipfelt unter der Kante",
-    glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 11.0%"));
+  /* v1.0.73: die Faerbung sitzt TIEFER - der Teller behaelt oben seine
+     eigene Farbe ("man soll immer noch ein Stueckchen davon sehen"). Bei
+     Kante 15 %: voll bis 8,3 %, aus bei 15 % statt vorher 13,8/19,2 %. */
+  ok("schwarz/weiss: die volle Deckung endet bei gut der halben Kante",
+    sw.includes("rgba(0,0,0,1) 0%") && sw.includes("rgba(0,0,0,1) 8.3%"));
+  ok("und der Auslauf ist AN der Kante fertig, nicht darueber",
+    sw.includes("rgba(0,0,0,0) 15.0%"));
+  ok("farbig: die Glut gipfelt jetzt tiefer",
+    glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 6.8%"));
   ok("eine hoehere Kante verschiebt beide Formen",
     sockelVerlauf(0.22, true) !== sw && sockelVerlauf(0.22, false) !== glut);
   const { readFileSync: _rfK } = await import("node:fs");
