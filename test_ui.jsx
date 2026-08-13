@@ -1216,5 +1216,17 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("und er endet weiterhin bei 19 %", /rgba\(0,0,0,0\) 19%/.test(v));
 }
 
+/* ── SCHWARZ/WEISS TRAEGT NUR DEN SOCKEL (v1.0.71) ─────────────────────────
+   Besitzerbefund: bei Schwarz lief ein "komischer Verlauf" uebers Feld -
+   Schein und Bodenschleier der farbigen Fassung liefen mit. Diese Probe
+   haelt fest, dass beide Schichten hinter dem nurSockel-Riegel stehen. */
+{
+  const { readFileSync: _rfSW } = await import("node:fs");
+  const q = _rfSW("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  ok("der Riegel existiert und kennt beide Toene",
+    q.includes('const nurSockel = ton === "schwarz" || ton === "weiss"'));
+  ok("Schein UND Bodenschleier stehen dahinter", (q.match(/\{!nurSockel && <span/g) || []).length === 2);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

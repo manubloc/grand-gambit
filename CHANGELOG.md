@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 1.0.71
+- SCHWARZ/WEISS TRAEGT JETZT WIRKLICH NUR DEN SOCKEL. Der Besitzerbefund
+  ("das Schwarz hat einen Fehler - nicht nur der Sockel ist gefaerbt, so
+  ein komischer Verlauf") hatte zwei Ursachen: der radiale SCHEIN hinter
+  dem Fuss (78 % Feldbreite) und der BODENSCHLEIER ueber die VOLLE
+  Feldbreite (bei Schwarz 0,62 Deckung - ein dunkler Balken uebers Feld)
+  liefen aus der farbigen Fassung mit. Beide stehen jetzt hinter dem
+  nurSockel-Riegel: bei Schwarz/Weiss bleibt allein die auf die Figur
+  maskierte Glutkopie. Die farbige Fassung ist unveraendert.
+- Probe in test_ui (+2): der Riegel existiert, Schein und Schleier stehen
+  dahinter. 24 Suiten, 1221 Assertionen, 0 Fehler.
+
 ## 1.0.70
 - DER LEBENSTRANK LEUCHTET DURCH DIE FIGUR (Besitzerwunsch woertlich): beim
   Einsatz laeuft ein roter Heilglanz einmal von unten nach oben - MASKIERT

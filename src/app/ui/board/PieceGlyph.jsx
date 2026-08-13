@@ -550,17 +550,29 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
             Verlauf + radialer Schein sind fuer den Grafikkern trivial - die
             teuren Figurmasken aus der Ruckel-Geschichte (v1.0.37) braucht es
             nicht. */}
-        {painting && ton && (<>
+        {painting && ton && (() => {
+          /* v1.0.71 (Besitzerbefund: "das Schwarz hat irgendeinen Fehler
+             drin - nicht nur der Sockel ist gefaerbt, so ein komischer
+             Verlauf"): GENAU. Zwei Schichten liefen bei Schwarz/Weiss mit,
+             die dort nichts verloren haben - der radiale SCHEIN hinter dem
+             Fuss (78 % Feldbreite) und der BODENSCHLEIER ueber die VOLLE
+             Feldbreite (bei Schwarz 0,62 Deckung: ein dunkler Balken uebers
+             Feld). Beide gehoeren zur farbigen Fassung, wo Licht die
+             Geschichte traegt. Schwarz/Weiss will das Gegenteil: NUR der
+             Sockel traegt die Farbe - die maskierte Glutkopie allein, kein
+             Schein, kein Schleier. */
+          const nurSockel = ton === "schwarz" || ton === "weiss";
+          return (<>
           {/* v1.0.62 (Besitzer): der Lichtschein hinter dem Fuss ist fast
               ganz fort - "man braucht es nicht mehr in diesem Masse". Was
               bleibt, ist ein Hauch: schmaler, flacher, ein Viertel der alten
               Deckung, nur damit die Glut einen Boden hat.
               v1.0.66: im Ton der jeweiligen Seite. */}
-          <span aria-hidden style={{
+          {!nurSockel && <span aria-hidden style={{
             position: "absolute", left: "50%", bottom: "-1%", width: "78%", height: "16%",
             transform: "translateX(-50%)", borderRadius: "50%", pointerEvents: "none",
             background: `radial-gradient(ellipse 50% 46% at 50% 58%, rgba(${GLUT_SCHEIN[ton][0]},${(0.12 + 0.10 * gefahr).toFixed(2)}) 0%, rgba(${GLUT_SCHEIN[ton][1]},${(0.08 + 0.08 * gefahr).toFixed(2)}) 46%, rgba(${GLUT_SCHEIN[ton][1]},0) 72%)`,
-            filter: "blur(1.5px)" }} />
+            filter: "blur(1.5px)" }} />}
           <img src={painting} alt="" aria-hidden draggable={false} decoding="async" style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
             objectFit: "contain", objectPosition: big ? "center" : "center bottom",
@@ -585,11 +597,12 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
               schwarzer Schleier ueber den untersten Prozenten - er nimmt dem
               Fuss die Helligkeit, ohne die Glut zu senken. Im weissen Ton
               faellt er schwaecher aus, sonst frisst er das Licht. */}
-          <span aria-hidden style={{
+          {!nurSockel && <span aria-hidden style={{
             position: "absolute", left: 0, right: 0, bottom: 0, height: "13%",
             pointerEvents: "none", borderRadius: "0 0 4px 4px",
-            background: `linear-gradient(0deg, rgba(0,0,0,${ton === "weiss" ? 0.42 : 0.62}) 0%, rgba(0,0,0,${ton === "weiss" ? 0.18 : 0.28}) 45%, rgba(0,0,0,0) 100%)` }} />
-        </>)}
+            background: `linear-gradient(0deg, rgba(0,0,0,${ton === "weiss" ? 0.42 : 0.62}) 0%, rgba(0,0,0,${ton === "weiss" ? 0.18 : 0.28}) 45%, rgba(0,0,0,0) 100%)` }} />}
+        </>);
+        })()}
       </div>
 
       {stufenStern > 0 && <span key={stufenStern} aria-hidden style={{
