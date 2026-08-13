@@ -145,3 +145,26 @@ export const GLUT_SCHEIN = {
   schwarz: ["40,36,52", "10,8,16"],
   weiss:   ["255,255,255", "214,214,224"],
 };
+
+/* ── DER VERLAUF FOLGT DER GEMESSENEN KANTE (v1.0.72) ──────────────────────
+   Zwei Formen, eine Obergrenze je Figur (sockelmass.js):
+   - farbig: die GLUT - dunkel am Boden, Gipfel knapp unter der Kante,
+     sanft aus kurz darueber. Der Look aus v1.0.66, nur nicht mehr auf
+     pauschale 19 % genagelt.
+   - schwarz/weiss: der ANSTRICH - voll deckend vom Boden bis knapp unter
+     die Kante ("der Sockel komplett schwarz"), dann ein weicher Auslauf
+     ueber gut vier Prozent, damit keine Schnittkante entsteht ("mit einem
+     ganz sanften Verlauf ... sonst wird man das sehen"). */
+export function sockelVerlauf(kante, nurSockel) {
+  const k = Math.round(kante * 1000) / 10;   // in %
+  if (nurSockel) {
+    const voll = Math.max(2, k - 1.2).toFixed(1);
+    const aus = (k + 4.2).toFixed(1);
+    return `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) ${voll}%, rgba(0,0,0,0) ${aus}%)`;
+  }
+  const gipfel = Math.max(3, k - 4).toFixed(1);
+  const schulter = Math.max(4, k - 1.5).toFixed(1);
+  const aus = (k + 2.5).toFixed(1);
+  return `linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) ${Math.max(2, k * 0.35).toFixed(1)}%, `
+    + `rgba(0,0,0,1) ${gipfel}%, rgba(0,0,0,.55) ${schulter}%, rgba(0,0,0,0) ${aus}%)`;
+}

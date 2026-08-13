@@ -4,13 +4,16 @@ import { T } from "../theme.js";
 import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor } from "./paintedArt.js";
-import { gegnerStil, gefahrVon, glutTon, glutFilter, GLUT_SCHEIN } from "../gegnerstil.js";
+import { gegnerStil, gefahrVon, glutTon, glutFilter, GLUT_SCHEIN, sockelVerlauf } from "../gegnerstil.js";
+import { holeSockelKante, sockelKanteAusCache, KANTE_FALLBACK } from "./sockelmass.js";
 import { animAn } from "../anim.js";
 
 /* v1.0.66: DER SOCKELVERLAUF, an einer Stelle. Dunkel am Boden (0,18),
    Gipfel am Sockelrand (1,0 bei 13 %), aus bei 19 % - dieselbe Obergrenze
    wie seit v1.0.62, der Besitzer wollte sie ausdruecklich NICHT hoeher. */
-const SOCKEL_VERLAUF =
+/* v1.0.72: ausser Dienst - der Verlauf kommt jetzt je Figur aus
+   sockelVerlauf(kante) mit der GEMESSENEN Kante (sockelmass.js). */
+const SOCKEL_VERLAUF_ALT =
   "linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) 6%, "
   + "rgba(0,0,0,1) 13%, rgba(0,0,0,.55) 16%, rgba(0,0,0,0) 19%)";
 
@@ -440,6 +443,16 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
   // baseline; big pieces and the drawn SVG opt out. The carvings were already
   // cropped and levelled at build time, so they need no per-file fit.
   const fit = (painting && !big) ? paintedFitFor(paintPiece) : { h: 1, y: 0 };
+  /* v1.0.72: die Sockelkante DIESER Figur - aus dem Speicher sofort, sonst
+     einmal gemessen (Boss-Grossbilder big tragen keine Glut-Maske, dort
+     bleibt der Fallback ungenutzt). */
+  const [sockelKante, setSockelKante] = useState(
+    () => (painting && sockelKanteAusCache(painting)) || KANTE_FALLBACK);
+  useEffect(() => {
+    let lebt = true;
+    if (painting && !big) holeSockelKante(painting).then((k) => { if (lebt) setSockelKante(k); });
+    return () => { lebt = false; };
+  }, [painting, big]);
 
   return (
     <div style={{ position: "relative", width: "1em", height: "1em", display: "flex", flexDirection: "column",
@@ -590,8 +603,8 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                (siehe unten), damit der Boden wirklich dunkel ANFAENGT und die
                Glut aus dem Schatten aufsteigt. */
             filter: glutFilter(ton, gefahr),
-            WebkitMaskImage: SOCKEL_VERLAUF,
-            maskImage: SOCKEL_VERLAUF,
+            WebkitMaskImage: sockelVerlauf(sockelKante, nurSockel),
+            maskImage: sockelVerlauf(sockelKante, nurSockel),
             userSelect: "none", pointerEvents: "none" }} />
           {/* v1.0.66: DER SCHATTEN, AUS DEM SIE AUFSTEIGT. Ein schmaler
               schwarzer Schleier ueber den untersten Prozenten - er nimmt dem

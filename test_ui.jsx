@@ -1228,5 +1228,52 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   ok("Schein UND Bodenschleier stehen dahinter", (q.match(/\{!nurSockel && <span/g) || []).length === 2);
 }
 
+/* ── DIE SOCKELKANTE WIRD JE FIGUR GEMESSEN (v1.0.72) ──────────────────────
+   Besitzer: "jede Figur einzeln durchpruefen ... nicht die Fuesse oder der
+   Rock der Koenigin mitfaerben." Die pure Messfunktion wird hier mit
+   synthetischen Profilen geprueft; die echten Bilder misst der Browser. */
+{
+  const { messeSockelKante, KANTE_FALLBACK, KANTE_MIN, KANTE_MAX } =
+    await import("./src/app/ui/board/sockelmass.js");
+  const bild = (h, w, breiteJeZeile) => {
+    const data = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) {
+      const b = breiteJeZeile(y), links = Math.floor((w - b) / 2);
+      for (let x = links; x < links + b; x++) data[(y * w + x) * 4 + 3] = 255;
+    }
+    return { width: w, height: h, data };
+  };
+  // Teller: 12 Zeilen Plateau (80), darueber Figur 40 -> Kante = Plateau-Ende
+  const a = messeSockelKante(bild(100, 100, (y) => (y >= 88 ? 80 : 40)));
+  ok("die Tellerkante wird am Plateau-Ende gefunden (~13 %)", a > 0.11 && a < 0.145);
+  // Rock der Koenigin: 95 %-Grenze feuert bei 95 % Rockbreite NICHT -> Hauswert
+  const b = messeSockelKante(bild(100, 100, (y) => (y >= 88 ? 80 : 76)));
+  ok("ein Rock nahe Tellerbreite loest keine falsche Kante aus", b === KANTE_FALLBACK);
+  // Teller-Ende jenseits der Klemme -> auf KANTE_MAX gefangen
+  const c = messeSockelKante(bild(100, 100, (y) => (y >= 98 ? 0 : y >= 74 ? 80 : 40)));
+  ok("die Klemme haelt Ausreisser bei " + KANTE_MAX * 100 + " %", c === KANTE_MAX);
+  // Teller hoeher als die Suchzone -> ehrlicher Hauswert statt Fantasiewert
+  const d = messeSockelKante(bild(100, 100, (y) => (y >= 60 ? 80 : 30)));
+  ok("jenseits der Zone greift der Hauswert", d === KANTE_FALLBACK);
+  // leeres Bild
+  ok("ein leeres Bild faellt sicher auf den Hauswert",
+    messeSockelKante(bild(100, 100, () => 0)) === KANTE_FALLBACK);
+}
+{
+  const { sockelVerlauf } = await import("./src/app/ui/gegnerstil.js");
+  const sw = sockelVerlauf(0.15, true), glut = sockelVerlauf(0.15, false);
+  ok("schwarz/weiss: der Sockel ist VOLL gedeckt und laeuft sanft aus",
+    sw.includes("rgba(0,0,0,1) 0%") && sw.includes("rgba(0,0,0,1) 13.8%") && sw.includes("rgba(0,0,0,0) 19.2%"));
+  ok("farbig: die Glut startet dunkel und gipfelt unter der Kante",
+    glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 11.0%"));
+  ok("eine hoehere Kante verschiebt beide Formen",
+    sockelVerlauf(0.22, true) !== sw && sockelVerlauf(0.22, false) !== glut);
+  const { readFileSync: _rfK } = await import("node:fs");
+  const q = _rfK("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  ok("der Glyph misst je Bild und nutzt den Cache",
+    q.includes("holeSockelKante(painting)") && q.includes("sockelKanteAusCache(painting)"));
+  ok("die Maske kommt aus sockelVerlauf(kante)", q.includes("sockelVerlauf(sockelKante, nurSockel)"));
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

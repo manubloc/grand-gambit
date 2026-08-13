@@ -1,5 +1,29 @@
 # Changelog - Grand Gambit
 
+## 1.0.72
+- DER SOCKEL WIRD JE FIGUR GEMESSEN, NICHT PAUSCHAL ANGENOMMEN (Besitzer:
+  "jede Figur einzeln durchpruefen ... nicht die Fuesse oder der Rock der
+  Koenigin mitfaerben"). Neues Modul sockelmass.js: beim ersten Zeichnen
+  misst jede Figur ihr eigenes Gemaelde (Alpha-Zeilenprofil, einmal je Bild,
+  ~3 ms, Cache) und traegt ihre EIGENE Kante - gemessen an 28 Bildern
+  streuen sie von 14,6 % bis 21,9 %; der Drache haengt an der Klemme (24 %),
+  der Barde ohne messbaren Teller faellt auf konservative 12 %.
+- DIE MESSREGEL KOMMT AUS VIER ECHTEN PROFILEN, und der Weg dahin steht im
+  Modul: eine naive "Breite faellt unter x %"-Suche feuert auf die
+  ELLIPTISCHE Bodenrundung des Tellers (Kanten von 1-4 % - daher wirkte der
+  Anstrich wie ein Balken am Boden), und die 72-%-Schwelle unterscheidet
+  Teller und Koeniginnenrock (82 % Tellerbreite) NICht. Richtig ist: das
+  PLATEAU betreten (>= 97 %), sein ENDE suchen (< 95 %), eine Zeile
+  Rundungszuschlag, Klemme [6 %, 24 %]. Der Schlagschatten (Alpha 60-100)
+  zaehlt nicht mehr als Zeichnung (Schwelle 130).
+- ZWEI VERLAUFSFORMEN AUS EINER KANTE (gegnerstil.sockelVerlauf): farbig
+  die Glut (dunkel unten, Gipfel unter der Kante), schwarz/weiss der
+  ANSTRICH - voll deckend vom Boden ("der Sockel komplett schwarz"), dann
+  vier Prozent weicher Auslauf ("mit einem ganz sanften Verlauf").
+- messe_hofstaat 2c: misst die Kanten aller Aufstellungsbilder unabhaengig
+  nach (zweite Quelle kontrolliert die erste). test_ui +9 auf die pure
+  Messfunktion mit synthetischen Profilen. 24 Suiten, 1230 Assertionen.
+
 ## 1.0.71
 - SCHWARZ/WEISS TRAEGT JETZT WIRKLICH NUR DEN SOCKEL. Der Besitzerbefund
   ("das Schwarz hat einen Fehler - nicht nur der Sockel ist gefaerbt, so

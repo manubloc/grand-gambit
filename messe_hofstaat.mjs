@@ -160,6 +160,60 @@ const faktoren = await page.evaluate(async () => {
     return m ? { bauer: m.P, held: m.HERO } : null;
   } catch { return null; }
 });
+console.log("\n── 2c. DIE SOCKELKANTE JE FIGUR (v1.0.72, echte Bilder) ──");
+{
+  /* Dieselbe Messlogik wie sockelmass.js, hier UNABHAENGIG nachgebaut und
+     auf die echten, geladenen Gemaelde angewandt - eine zweite Quelle, die
+     die erste kontrolliert. */
+  const kanten = await page.evaluate(() => {
+    const mess = (im) => {
+      const w = 96, h = Math.max(24, Math.round((im.naturalHeight / im.naturalWidth) * 96));
+      const c = document.createElement("canvas"); c.width = w; c.height = h;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(im, 0, 0, w, h);
+      const d = g.getImageData(0, 0, w, h).data;
+      const breite = [];
+      for (let y = 0; y < h; y++) {
+        let l = -1, r = -1;
+        for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 130) { if (l < 0) l = x; r = x; }
+        breite[y] = l < 0 ? 0 : r - l + 1;
+      }
+      const zone = Math.max(3, Math.round(h * 0.25));
+      let sb = 0, boden = -1;
+      for (let y = h - 1; y >= h - zone && y >= 0; y--) { if (breite[y] > 0 && boden < 0) boden = y; if (breite[y] > sb) sb = breite[y]; }
+      if (boden < 0 || sb < w * 0.1) return null;
+      let drin = false;
+      for (let y = boden; y >= boden - zone && y >= 0; y--) {
+        if (!drin) { if (breite[y] >= sb * 0.97) drin = true; continue; }
+        if (breite[y] < sb * 0.95)
+          return Math.min(0.24, Math.max(0.06, (boden - y + 1) / h + (h - 1 - boden) / h));
+      }
+      return null;
+    };
+    const aus = []; const gesehenSrc = new Set(); const debug = [];
+    for (const im of document.querySelectorAll("img")) {
+      const r = im.getBoundingClientRect();
+      if (r.width > 20) debug.push(Math.round(r.width) + ":" + im.src.split("/").pop().slice(0, 28));
+      if (r.width > 20 && /painted/.test(im.src) && !gesehenSrc.has(im.src)) {
+        gesehenSrc.add(im.src);
+        const roh = im.src.split("/").pop().split(".")[0];
+        const name = (roh.match(/painted-([a-z]+)/) || [null, roh])[1];
+        try { aus.push({ name, kante: mess(im) }); } catch { aus.push({ name, kante: "FEHLER" }); }
+      }
+    }
+    return { aus, debug: debug.slice(0, 10) };
+  });
+  console.log("  (Bilder auf der Seite:", kanten.debug.join(" | ") + ")");
+  const gesehen = new Set();
+  let gut = 0, fallback = 0;
+  for (const k of kanten.aus) {
+    if (gesehen.has(k.name)) continue; gesehen.add(k.name);
+    const wert = k.kante == null ? "Hauswert 12 %" : (k.kante * 100).toFixed(1) + " %";
+    console.log(`  ${k.name.padEnd(10)} Kante ${wert}`);
+    if (k.kante == null) fallback++; else if (k.kante >= 0.06 && k.kante <= 0.24) gut++;
+  }
+  console.log(`  vermessen: ${gesehen.size} Figurenbilder, ${gut} in den Grenzen, ${fallback} auf Hauswert`);
+}
 console.log("\n── 2b. DER HOEHENFAKTOR (was das BRETT zeichnet) ──");
 console.log(faktoren
   ? `  Bauer ${faktoren.bauer}  Gambit I ${faktoren.held}  gleich: ${faktoren.bauer === faktoren.held ? "JA" : "NEIN"}`
