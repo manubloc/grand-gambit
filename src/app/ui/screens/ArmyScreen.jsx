@@ -22,6 +22,7 @@ import { SkillStar, GoldCoin, LockIc, BladesIc, SealIc, HeartIc } from "../icons
 import { PieceGlyph } from "../board/PieceGlyph.jsx";
 import { PieceArt } from "../board/PieceArt.jsx";
 import { paintedFitById, paintedFitFor, paintedById, paintedForPiece, schlichtAn } from "../board/paintedArt.js";
+import { GAMBIT_STUFEN } from "../board/gambitStufen.js";
 import { CoinIc, SkillIc } from "../icons.jsx";
 import { ItemIcon } from "../ItemIcon.jsx";
 import { BoardView } from "../board/BoardView.jsx";
@@ -462,6 +463,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
      Unterschied zwischen "eine Stufe mehr" und "eine FAEHIGKEIT mehr"
      sehen, nicht nachlesen. */
   const [faehig, setFaehig] = useState(null);      // ability-id der eben erwachten Sprosse
+  /* v1.0.75: die Feier - was gerade gefeiert wird, oder null. */
+  const [feier, setFeier] = useState(null);
   const [frisch, setFrisch] = useState(0);         // deren Stufe, fuer den Sprossenpuls
   const unlocked = isUnlocked(char, profile);
   const bossNode = CAMPAIGN.find((n) => n.boss?.piece === char.id);
@@ -648,6 +651,8 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
               </span>;
           })()}
         </div>
+        {feier && <AufstiegsFeier art={feier.art} gambitTier={feier.tier || 1} bild={feier.bild}
+          chName={en ? char.nameEn : char.nameDe} ab={feier.ab} t={t} onClose={() => setFeier(null)} />}
         {!maxed && <button disabled={!affordable}
           onClick={() => { klang("stufe");
             if (animAn()) {
@@ -659,6 +664,15 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
                  anders als eine blosse Stufe (violetter Kristallschimmer
                  statt goldenem Wusch), genau wie im Bild. */
               setTimeout(() => { try { klang(sprosse ? "faehigkeit" : "glanz"); } catch {} }, 140);
+            }
+            /* v1.0.75: WECHSELT DER GAMBIT SEINE STUFE, wird das gefeiert -
+               mit seinem neuen Antlitz und der Zeile dazu. Der Vergleich
+               laeuft ueber gambitTier VOR und NACH dem Schritt; nur der
+               Sprung zaehlt, nicht jedes Level. */
+            if (char.id === "gambit" && gambitTier(level + 1) > gambitTier(level)) {
+              const neuerRang = gambitTier(level + 1);
+              setTimeout(() => setFeier({ art: "rang", tier: neuerRang,
+                bild: paintedForPiece({ kind: "P", color: "w", hero: true, level: level + 1, tier: neuerRang }) }), 620);
             }
             dispatch({ type: "UPGRADE_PIECE", id: char.id }); }}
           className={affordable ? "gg-funkenkontur" : undefined}
@@ -739,7 +753,16 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             <AbilityAccordion ab={{ ...ab, _lvl: rg.level }} tg={tg} price={price} cost={cost}
             owned={owned} reach={reach} can={can} kind={char.kind} en={en} sperre={zustand === "wirkt" ? null : zustand}
             open={openAb === rg.id} onToggle={() => setOpenAb(openAb === rg.id ? null : rg.id)}
-            onBuy={() => { klang("frei"); dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id }); }} /></div>;
+            onBuy={() => { klang("frei");
+              dispatch({ type: "UNLOCK_ABILITY", id: char.id, ability: rg.id });
+              /* v1.0.75 (Besitzer: "megawichtig, dass Du mir zeigst, was die
+                 Faehigkeit dann ist"): die frisch gekaufte Faehigkeit erklaert
+                 sich sofort selbst - Zeichen, Name und ihre WIRKUNG im
+                 Klartext aus ABILITIES.descDe/descEn. Kein Nachschlagen. */
+              setFeier({ art: "faehigkeit", ab: {
+                icon: ab.icon, name: en ? ab.nameEn : ab.nameDe,
+                desc: en ? ab.descEn : ab.descDe, once: ab.once } });
+            }} /></div>;
         })}
         {chosen.length > 0 && (() => {
           /* v1.0.11 (Besitzer): Vergessen kostet einen VERGESSENSTRANK aus
@@ -1883,4 +1906,85 @@ export function ArmyScreen({ profile, dispatch, t, initialTab, account = null, i
     {/* Die Chronik wohnt seit v0.51 in der AKADEMIE - ChroniclePanel bleibt hier nur exportiert. */}
     {tab === "tree" && <CodexTree profile={profile} dispatch={dispatch} t={t} en={en} onZoom={setZoomChar} account={account} />}
   </div>;
+}
+
+
+/* ── DIE AUFSTIEGSFEIER (v1.0.75, Besitzerwunsch) ──────────────────────────
+ * "Ich moechte nicht nur beim Aufstieg eine kleine Story dazu haben - ich
+ *  moechte auch, wenn eine Faehigkeit dazukommt, dass die gesondert erklaert
+ *  wird, was die machen kann."
+ *
+ * Ein Fenster, zwei Anlaesse:
+ *  - RANG: der Gambit wechselt seine Stufe (alle zehn Level). Es zeigt sein
+ *    NEUES Gemaelde gross, den Stufennamen und die Zeile aus GAMBIT_STUFEN.
+ *  - FAEHIGKEIT: eine Figur lernt etwas. Es zeigt das Zeichen der Faehigkeit,
+ *    ihren Namen und - das war der Kern des Auftrags - ihre WIRKUNG im
+ *    Klartext aus ABILITIES.descDe. Der Spieler soll nicht nachschlagen
+ *    muessen, was er gerade gekauft hat.
+ *
+ * Der Strahlenkranz laeuft nur einmal und verglueht; ohne Animationen
+ * (Schalter aus) erscheint das Fenster still, aber vollstaendig.
+ */
+export function AufstiegsFeier({ art, gambitTier = 1, bild = null, chName = "", ab = null, t, onClose }) {
+  const an = animAn();
+  const stufe = GAMBIT_STUFEN[Math.max(0, Math.min(5, gambitTier - 1))];
+  const rang = art === "rang";
+  const ton = rang ? "233,207,138" : "196,181,253";
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 260, display: "grid",
+      placeItems: "center", padding: 16, background: "rgba(6,7,12,.78)", backdropFilter: "blur(3px)" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", width: "100%", maxWidth: 330,
+        borderRadius: 16, padding: "20px 18px 16px", textAlign: "center",
+        background: "linear-gradient(170deg, rgba(34,30,52,.97), rgba(14,13,24,.99))",
+        border: `1px solid rgba(${ton},.55)`,
+        boxShadow: `0 18px 50px rgba(0,0,0,.6), 0 0 40px rgba(${ton},.16)`,
+        ...(an ? { animation: "ggFeierKarte .5s cubic-bezier(.2,1.2,.35,1) both" } : null) }}>
+
+        {an && <span aria-hidden style={{ position: "absolute", left: "50%", top: rang ? 96 : 74,
+          width: 200, height: 200, marginLeft: -100, marginTop: -100, pointerEvents: "none",
+          background: `conic-gradient(from 0deg, rgba(${ton},0) 0deg, rgba(${ton},.5) 22deg, rgba(${ton},0) 44deg, rgba(${ton},0) 90deg, rgba(${ton},.5) 112deg, rgba(${ton},0) 134deg, rgba(${ton},0) 180deg, rgba(${ton},.5) 202deg, rgba(${ton},0) 224deg, rgba(${ton},0) 270deg, rgba(${ton},.5) 292deg, rgba(${ton},0) 314deg)`,
+          borderRadius: "50%", animation: "ggFeierKranz 1.5s ease-out both" }} />}
+
+        <div style={{ position: "relative", fontSize: 10.5, letterSpacing: 1.6, fontWeight: 800,
+          color: `rgba(${ton},.95)`, textTransform: "uppercase" }}>
+          {rang ? t("rang.titel") : t("rang.faehigTitel")}
+        </div>
+
+        {rang ? <>
+          <div style={{ position: "relative", height: 132, display: "grid", placeItems: "center", margin: "6px 0 2px" }}>
+            {bild && <img src={bild} alt="" draggable={false} style={{ maxHeight: "100%", maxWidth: "70%",
+              objectFit: "contain", filter: `drop-shadow(0 4px 10px rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(${ton},.5))`,
+              ...(an ? { animation: "ggFeierBild .8s cubic-bezier(.2,1.3,.4,1) .1s both" } : null) }} />}
+          </div>
+          <div className="gg-serif" style={{ fontSize: 21, fontWeight: 900, color: T.gold }}>{stufe.name}</div>
+          <div style={{ fontSize: 11.5, color: T.dim, marginTop: 2, letterSpacing: .4 }}>
+            {t("rang.stufe", { r: stufe.r })} · {t("rang.neuesAntlitz")}</div>
+          <div className="gg-serif" style={{ fontSize: 13, lineHeight: 1.62, color: T.ink, fontStyle: "italic",
+            margin: "11px 4px 4px" }}>{stufe.text}</div>
+        </> : <>
+          <div style={{ position: "relative", fontSize: 44, lineHeight: 1.1, margin: "10px 0 4px",
+            color: `rgba(${ton},1)`, textShadow: `0 0 18px rgba(${ton},.7)`,
+            ...(an ? { animation: "ggFeierBild .8s cubic-bezier(.2,1.3,.4,1) .1s both" } : null) }}>
+            {ab?.icon || "✦"}</div>
+          <div style={{ fontSize: 11, color: T.dim }}>{t("rang.faehigVon", { ch: chName })}</div>
+          <div className="gg-serif" style={{ fontSize: 20, fontWeight: 900, color: "#dcd2ff", marginTop: 1 }}>
+            {ab?.name || ""}</div>
+          <div style={{ margin: "12px 2px 4px", padding: "11px 12px", borderRadius: 11, textAlign: "left",
+            background: "rgba(76,54,140,.22)", border: "1px solid rgba(167,139,250,.35)" }}>
+            <div style={{ fontSize: 9.5, letterSpacing: 1.1, fontWeight: 800, color: "rgba(196,181,253,.9)",
+              textTransform: "uppercase", marginBottom: 4 }}>{t("rang.wirkung")}</div>
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: T.ink }}>{ab?.desc || ""}</div>
+            {ab?.once != null && <div style={{ fontSize: 10.5, color: T.faint, marginTop: 6 }}>
+              {ab.once ? t("rang.einmal") : t("rang.immer")}</div>}
+          </div>
+        </>}
+
+        <button onClick={onClose} style={{ marginTop: 12, width: "100%", padding: "11px 0", borderRadius: 11,
+          cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 14, color: "#17110a",
+          border: "none", background: `linear-gradient(180deg, rgba(${ton},1), rgba(${ton},.72))` }}>
+          {t("rang.weiter")}
+        </button>
+      </div>
+    </div>
+  );
 }

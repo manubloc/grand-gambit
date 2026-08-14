@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.75
+- DIE AUFSTIEGSFEIER. Ein Fenster, zwei Anlaesse - beide mit Strahlenkranz,
+  aufsteigender Karte und aufspringendem Bild (nur transform/opacity):
+  - RANG: wechselt der Gambit seine Stufe (alle zehn Level), zeigt die Feier
+    sein NEUES Gemaelde gross, den Stufennamen und eine Zeile Geschichte aus
+    GAMBIT_STUFEN (Der Bauer / Der Gepruefte / Der Getragene / Der
+    Standhafte / Der Gezeichnete / Der Grand Gambit).
+  - FAEHIGKEIT: jede frisch gekaufte Faehigkeit erklaert sich sofort selbst -
+    Zeichen, Name und ihre WIRKUNG im Klartext aus ABILITIES.descDe, dazu ob
+    sie einmal je Partie oder dauerhaft wirkt. Der Spieler soll nicht
+    nachschlagen muessen, was er gerade gekauft hat.
+- Die Stufentexte liegen in einer eigenen, IMPORTFREIEN Datei
+  (board/gambitStufen.js): erst in paintedArt.js abgelegt, brachen dessen
+  webp-Importe die Proben mit ERR_UNKNOWN_FILE_EXTENSION - Daten, die
+  Proben lesen sollen, duerfen keine Bilder mitschleppen.
+- Proben: test_anim +16 (sechs Stufen mit Text, jede Faehigkeit kann ihre
+  Wirkung in beiden Sprachen erklaeren, Rangwechsel wird am TIER erkannt
+  statt am Level, drei Keyframes, vier Texte zweisprachig).
+
 ## 1.0.74
 - DAS FIGURENBLATT ZEIGTE DEN GAMBIT-RANG NIE (Besitzerbefund: "er hat nie
   eine neue Figur bekommen"). URSACHE: TileArt baute sein Stueck aus

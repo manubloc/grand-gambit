@@ -482,6 +482,17 @@ export const GLOBAL_CSS = `
   /* v1.0.74: das ZIELFELD atmet. Sehr ruhig (2,4 s), sehr flach - nur die
      Deckkraft wandert, kein Layout, keine Groesse. Der Besitzer ausdruecklich:
      "sehr langsam, darf nicht stoeren". */
+  /* v1.0.75: die AUFSTIEGSFEIER. Der Strahlenkranz dreht sich langsam und
+     verglueht, die Karte steigt mit leichtem Ueberschwung auf. transform und
+     opacity, sonst nichts. */
+  @keyframes ggFeierKranz { 0% { opacity: 0; transform: scale(.4) rotate(0deg); }
+    22% { opacity: .95; } 100% { opacity: 0; transform: scale(1.9) rotate(140deg); } }
+  @keyframes ggFeierKarte { 0% { opacity: 0; transform: translateY(16px) scale(.9); }
+    62% { opacity: 1; transform: translateY(-4px) scale(1.03); }
+    100% { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes ggFeierBild { 0% { opacity: 0; transform: scale(.55) rotate(-8deg); }
+    55% { opacity: 1; transform: scale(1.12) rotate(3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); } }
   @keyframes ggZielAtem { 0%, 100% { opacity: .62; } 50% { opacity: 1; } }
   @keyframes ggSprossePuls { 0%, 100% { transform: scale(1); opacity: 1; }
     25% { transform: scale(1.025); opacity: .82; }

@@ -120,5 +120,32 @@ console.log("\n== test_anim: die Klaenge zu den Bildern (v1.0.73) ==");
     as.includes('klang(sprosse ? "faehigkeit" : "glanz")'));
 }
 
+console.log("\n== test_anim: die Aufstiegsfeier (v1.0.75) ==");
+{
+  const { GAMBIT_STUFEN } = await import("./src/app/ui/board/gambitStufen.js");
+  ok("es gibt sechs Stufengeschichten", GAMBIT_STUFEN.length === 6);
+  ok("jede traegt Ziffer, Namen und Text",
+    GAMBIT_STUFEN.every((g) => g.r && g.name && g.text && g.text.length > 40));
+  ok("die sechste ist der Grand Gambit", GAMBIT_STUFEN[5].name.includes("Grand Gambit"));
+  const { ABILITIES } = await import("./src/content/abilities.js");
+  const alle = Object.values(ABILITIES).filter((a) => a.id);
+  ok("jede Faehigkeit kann ihre Wirkung erklaeren (descDe)",
+    alle.length > 20 && alle.every((a) => a.descDe && a.descDe.length > 10));
+  ok("und auf englisch", alle.every((a) => a.descEn && a.descEn.length > 8));
+  const as = readFileSync("src/app/ui/screens/ArmyScreen.jsx", "utf8");
+  ok("die Feier existiert als eigene Komponente", as.includes("export function AufstiegsFeier"));
+  ok("der Rangwechsel wird am TIER erkannt, nicht am Level",
+    as.includes("gambitTier(level + 1) > gambitTier(level)"));
+  ok("die Feier zeigt das NEUE Gemaelde", as.includes("tier: neuerRang"));
+  ok("die gekaufte Faehigkeit erklaert ihre Wirkung",
+    as.includes("desc: en ? ab.descEn : ab.descDe"));
+  const th = readFileSync("src/app/ui/theme.js", "utf8");
+  for (const kf of ["ggFeierKranz", "ggFeierKarte", "ggFeierBild"])
+    ok(`Keyframe ${kf} existiert`, th.includes(`@keyframes ${kf}`));
+  const st = readFileSync("src/app/i18n/strings.js", "utf8");
+  for (const k of ["rang.titel", "rang.faehigTitel", "rang.wirkung", "rang.weiter"])
+    ok(`Text ${k} steht in beiden Sprachen`, (st.match(new RegExp(`"${k}"`, "g")) || []).length === 2);
+}
+
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
