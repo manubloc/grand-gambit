@@ -166,13 +166,17 @@ export function sockelVerlauf(kante, nurSockel) {
      Faerbung sitzt darunter wie ein Schatten, aus dem die Figur waechst. */
   const k = Math.round(kante * 1000) / 10;   // in %
   if (nurSockel) {
-    const voll = Math.max(1.5, k * 0.55).toFixed(1);
-    const aus = Math.max(3, k * 1.0).toFixed(1);
+    /* v1.0.76: "bei manchen Figuren minimal zu hoch" - volle Deckung endet
+       jetzt bei 42 % statt 55 % der Kante, der Auslauf bei 85 % statt 100 %.
+       Die Faerbung bleibt damit sicher unter dem Tellerrand, auch bei den
+       Figuren mit flachem Teller. */
+    const voll = Math.max(1.2, k * 0.42).toFixed(1);
+    const aus = Math.max(2.5, k * 0.85).toFixed(1);
     return `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) ${voll}%, rgba(0,0,0,0) ${aus}%)`;
   }
-  const gipfel = Math.max(2, k * 0.45).toFixed(1);
-  const schulter = Math.max(3, k * 0.68).toFixed(1);
-  const aus = Math.max(4, k * 1.0).toFixed(1);
+  const gipfel = Math.max(2, k * 0.36).toFixed(1);
+  const schulter = Math.max(2.5, k * 0.56).toFixed(1);
+  const aus = Math.max(3.5, k * 0.85).toFixed(1);
   return `linear-gradient(0deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.45) ${Math.max(1.5, k * 0.2).toFixed(1)}%, `
     + `rgba(0,0,0,1) ${gipfel}%, rgba(0,0,0,.55) ${schulter}%, rgba(0,0,0,0) ${aus}%)`;
 }

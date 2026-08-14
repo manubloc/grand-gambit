@@ -681,10 +681,14 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
             const ton = schlag ? "244,90,90" : eigen ? "233,207,138" : "168,124,255";
             return <>
               <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-                background: `radial-gradient(ellipse at 50% 50%, rgba(${ton},${schlag ? .30 : .24}) 0%, rgba(${ton},${schlag ? .17 : .13}) 62%, rgba(${ton},.06) 100%)`,
-                boxShadow: `inset 0 0 0 2px rgba(${ton},${schlag ? .78 : .62})`,
+                /* v1.0.76 (Besitzer: "noch zu schwach, man erkennt es fast
+                   nicht"): Deckung glatt verdoppelt (.24 -> .52 in der Mitte)
+                   und die Innenkontur auf 2,5 px bei voller Deckkraft. Auf
+                   dem dunklen Brett traegt erst das. */
+                background: `radial-gradient(ellipse at 50% 50%, rgba(${ton},${schlag ? .58 : .52}) 0%, rgba(${ton},${schlag ? .40 : .34}) 62%, rgba(${ton},.18) 100%)`,
+                boxShadow: `inset 0 0 0 2.5px rgba(${ton},${schlag ? .95 : .88}), 0 0 10px rgba(${ton},.30)`,
                 borderRadius: 3,
-                animation: ruhig ? "none" : `ggZielAtem 2.4s ease-in-out ${((i * 37) % 9) * 0.12}s infinite` }} />
+                animation: ruhig ? "none" : `ggZielAtem 2.6s ease-in-out ${((i * 37) % 9) * 0.12}s infinite` }} />
               {schlag && <div aria-hidden style={{ position: "absolute", inset: "7%", borderRadius: "50%",
                 pointerEvents: "none", zIndex: 1, background: metal.ring,
                 boxShadow: `0 0 9px ${metal.glow}, 0 1px 4px rgba(0,0,0,.5)` }} />}

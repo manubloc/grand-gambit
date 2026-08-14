@@ -473,12 +473,21 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
          kein synchrones Wippen, kein Wartezoegern. Haengt sich als weitere
          Animation an die bestehenden (Landung, Blitz), ueberschreibt nichts.
          Aus, wenn der Schalter aus ist, im Grossformat und im Flug. */
-      animation: (fliegt ? "none"
+      /* v1.0.76 (Besitzerbefund: "sie zieht und hat dann so einen Sprung
+         drin, als wuerde sie nicht sauber landen"): DAS ATMEN LAG AUF
+         DERSELBEN EBENE WIE DIE LANDUNG. Beide animieren transform, und bei
+         mehreren Animationen auf derselben Eigenschaft gewinnt die ZULETZT
+         genannte - ggAtmen ueberschrieb also ggLandung und sprang beim
+         Aufsetzen sofort auf seine (per negativem Versatz zufaellige)
+         Phase. Deshalb ruckelte gerade der Springer, dessen Flug am
+         laengsten dauert.
+         Das Atmen wandert jetzt eine Ebene tiefer (siehe unten am
+         Bildkasten) - Landung, Blitz und Pop bleiben hier allein auf
+         transform, und die Bewegungen koennen sich nicht mehr ins Gehege
+         kommen. */
+      animation: fliegt ? "none"
         : zuletzt ? `${white ? "ggGoldBlitz" : "ggRissBlitz"} 2.6s ease-out both, ggLandung .26s cubic-bezier(.2,1.5,.4,1) both`
-        : "pop .18s ease")
-        + (animAn() && !big && !fliegt && artStyle !== "classic"
-           ? `, ggAtmen 4.6s ease-in-out ${-(((piece.kind.charCodeAt(0) * 7 + lvl * 3) % 9) * 0.53).toFixed(2)}s infinite`
-           : ""),
+        : "pop .18s ease",
       boxSizing: "border-box" }}>
 
       {/* the head may rise above the square: the art gets MORE than the tile.
@@ -486,6 +495,13 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
           levels each figure's base to one width, anchored at the foot so the
           base stays planted on the square. */}
       <div style={{ position: "relative", zIndex: 1, width: big ? "1.48em" : pieceSize, height: big ? "1.48em" : "calc(" + pieceSize + " * 1.16)", filter: glow, flex: "0 0 auto",
+        /* v1.0.76: HIER atmet die Figur - eine Ebene unter Landung und Pop,
+           damit sich zwei transform-Animationen nie mehr ueberschreiben.
+           Waehrend des Fluges und im Zug danach ruht es zusaetzlich
+           (zuletzt), damit das Aufsetzen die volle Aufmerksamkeit hat. */
+        ...(animAn() && !big && !fliegt && !zuletzt && artStyle !== "classic"
+          ? { animation: `ggAtmen 4.6s ease-in-out ${-(((piece.kind.charCodeAt(0) * 7 + lvl * 3) % 9) * 0.53).toFixed(2)}s infinite` }
+          : null),
         marginTop: big ? 0 : "-0.16em",
         /* v1.0.57 (Besitzerbefund am BRETT: "Koenig zu weit links, Bishop zu
            weit rechts"): Der waagerechte Ausgleich stand hier zwar seit jeher
@@ -545,7 +561,18 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
                    Sockel, nicht die Figur darueber. Was die Seiten trennt,
                    ist also allein das Licht am Boden - lila gegen gold, oder
                    schwarz gegen weiss. */
-                : "none",
+                /* v1.0.76 (Besitzer: "wir muessen die gegnerische Mannschaft
+                   trotzdem noch etwas entfaerben Richtung Graustufen und
+                   dunkler machen, da man sonst nicht sofort den Unterschied
+                   erkennt"). v1.0.66 hatte den alten ENEMY_FILTER ganz
+                   entfernt, weil die Trennung allein die Sockelglut tragen
+                   sollte - am Geraet reicht das nicht, beide Seiten zeigen ja
+                   dasselbe Gemaelde. Jetzt traegt die Gegenseite wieder eine
+                   MASSVOLLE Entfaerbung (halbe Saettigung) und ist spuerbar
+                   dunkler; die eigene Seite bleibt unangetastet in ihren
+                   Originalfarben. Kein Grauschleier wie frueher - die Figur
+                   bleibt erkennbar, sie tritt nur zurueck. */
+                : "grayscale(0.5) saturate(0.72) brightness(0.76) contrast(1.06)",
               userSelect: "none", pointerEvents: "none" }} />
           : <PieceArt kind={piece.kind} fill={fill} rim={rim} rimW={rimW} detail={detail} accent={accent} size="100%" level={showLevel ? lvl : 1} art={piece.art} bossId={piece.bossId} hero={showHero} />}
         {/* v1.0.50: DIE GRUNDFARBE STEIGT AUF. Nur im getoenten Stil: eine

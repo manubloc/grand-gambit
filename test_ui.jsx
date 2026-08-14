@@ -1279,12 +1279,20 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
   /* v1.0.73: die Faerbung sitzt TIEFER - der Teller behaelt oben seine
      eigene Farbe ("man soll immer noch ein Stueckchen davon sehen"). Bei
      Kante 15 %: voll bis 8,3 %, aus bei 15 % statt vorher 13,8/19,2 %. */
-  ok("schwarz/weiss: die volle Deckung endet bei gut der halben Kante",
-    sw.includes("rgba(0,0,0,1) 0%") && sw.includes("rgba(0,0,0,1) 8.3%"));
-  ok("und der Auslauf ist AN der Kante fertig, nicht darueber",
-    sw.includes("rgba(0,0,0,0) 15.0%"));
+  /* v1.0.76: noch tiefer - "bei manchen Figuren minimal zu hoch". Bei
+     Kante 15 %: voll bis 6,3 %, aus bei 12,8 % (statt 8,3 / 15,0). */
+  ok("schwarz/weiss: die volle Deckung endet unter der halben Kante",
+    sw.includes("rgba(0,0,0,1) 0%") && sw.includes("rgba(0,0,0,1) 6.3%"));
+  ok("und der Auslauf endet UNTER dem Tellerrand",
+    sw.includes("rgba(0,0,0,0) 12.8%"));
   ok("farbig: die Glut gipfelt jetzt tiefer",
-    glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 6.8%"));
+    glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 5.4%"));
+  const { readFileSync: _rfG } = await import("node:fs");
+  const pg = _rfG("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  ok("die Gegenseite ist entfaerbt und dunkler (v1.0.76)",
+    pg.includes("grayscale(0.5) saturate(0.72) brightness(0.76)"));
+  ok("das Atmen liegt NICHT mehr auf derselben Ebene wie die Landung",
+    !/ggLandung[^`]*ggAtmen/.test(pg));
   ok("eine hoehere Kante verschiebt beide Formen",
     sockelVerlauf(0.22, true) !== sw && sockelVerlauf(0.22, false) !== glut);
   const { readFileSync: _rfK } = await import("node:fs");

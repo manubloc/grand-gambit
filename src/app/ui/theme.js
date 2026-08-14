@@ -493,7 +493,7 @@ export const GLOBAL_CSS = `
   @keyframes ggFeierBild { 0% { opacity: 0; transform: scale(.55) rotate(-8deg); }
     55% { opacity: 1; transform: scale(1.12) rotate(3deg); }
     100% { opacity: 1; transform: scale(1) rotate(0deg); } }
-  @keyframes ggZielAtem { 0%, 100% { opacity: .62; } 50% { opacity: 1; } }
+  @keyframes ggZielAtem { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
   @keyframes ggSprossePuls { 0%, 100% { transform: scale(1); opacity: 1; }
     25% { transform: scale(1.025); opacity: .82; }
     50% { transform: scale(1); opacity: 1; }

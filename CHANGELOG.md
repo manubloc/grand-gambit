@@ -1,5 +1,31 @@
 # Changelog - Grand Gambit
 
+## 1.0.76
+- DER SPRUNG BEIM LANDEN WAR EIN CSS-KONFLIKT, kein Ruckeln. Am gerade
+  gezogenen Stueck liefen ggLandung UND ggAtmen auf DEMSELBEN Element -
+  beide animieren transform, und bei mehreren Animationen auf derselben
+  Eigenschaft gewinnt die ZULETZT genannte. Das Atmen ueberschrieb also die
+  Landung und sprang beim Aufsetzen sofort auf seine (per negativem Versatz
+  zufaellige) Phase; am staerksten beim Springer, dessen Flug am laengsten
+  dauert. Das Atmen liegt jetzt eine Ebene tiefer (am Bildkasten) und ruht
+  im Zug nach der Landung - Landung, Blitz und Pop haben transform fuer sich.
+- ZIELFELDER DEUTLICH KRAEFTIGER ("man erkennt es fast nicht"): Deckung
+  verdoppelt (.24 -> .52 in der Feldmitte), Innenkontur auf 2,5 px bei
+  voller Deckkraft plus zarter Aussenschein, und der Atem senkt die
+  Deckkraft nur noch auf 82 % statt 62 %.
+- DIE SOCKELFAERBUNG SITZT NOCH TIEFER ("bei manchen Figuren minimal zu
+  hoch"): volle Deckung bis 42 % der gemessenen Kante (statt 55 %), Auslauf
+  bei 85 % (statt 100 %) - sie bleibt jetzt auch bei flachen Tellern sicher
+  darunter.
+- DIE GEGENSEITE IST WIEDER ENTFAERBT UND DUNKLER. v1.0.66 hatte den alten
+  Feindfilter ganz entfernt, weil die Trennung allein die Sockelglut tragen
+  sollte - am Geraet reicht das nicht, beide Seiten zeigen ja dasselbe
+  Gemaelde. Jetzt halbe Entfaerbung und spuerbar dunkler, aber kein
+  Grauschleier: die Figur bleibt erkennbar, sie tritt nur zurueck. Die
+  eigene Seite behaelt ihre Originalfarben.
+- Proben: test_ui +2 (Gegenfilter vorhanden, Atmen NICHT mehr in derselben
+  Animationsliste wie die Landung).
+
 ## 1.0.75
 - DIE AUFSTIEGSFEIER. Ein Fenster, zwei Anlaesse - beide mit Strahlenkranz,
   aufsteigender Karte und aufspringendem Bild (nur transform/opacity):
