@@ -1289,6 +1289,12 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
     glut.includes("rgba(0,0,0,.18) 0%") && glut.includes("rgba(0,0,0,1) 5.4%"));
   const { readFileSync: _rfG } = await import("node:fs");
   const pg = _rfG("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  /* v1.0.77: die blauen Schild-Perlen sind vom Brett fort (Besitzerwunsch).
+     Der Schild selbst bleibt: er wirkt im Kampf und steht im Blatt. */
+  ok("keine blauen Schild-Perlen mehr am Brett-Glyph",
+    !/piece\.shield > 0 && \(/.test(pg));
+  ok("der Schild wirkt weiterhin im Kern",
+    (await import("node:fs")).readFileSync("src/core/rules/moves.js", "utf8").includes("shield"));
   ok("die Gegenseite ist entfaerbt und dunkler (v1.0.76)",
     pg.includes("grayscale(0.5) saturate(0.72) brightness(0.76)"));
   ok("das Atmen liegt NICHT mehr auf derselben Ebene wie die Landung",

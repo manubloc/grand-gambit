@@ -1,5 +1,17 @@
 # Changelog - Grand Gambit
 
+## 1.0.77
+- DIE BLAUEN PUNKTE UNTER DEM GAMBIT SIND FORT. Es waren keine Stufenpunkte,
+  sondern die SCHILD-Perlen des Schach-Modus: eine blaue Kugel je Schildpunkt,
+  unten rechts an der Figur. Weil der Gambit seine Schilde beim Aufsteigen
+  bekommt, erschienen sie scheinbar "von den Stufen" - daher die Verwirrung.
+  Der Schild geht nicht verloren: er wirkt unveraendert im Kampf und steht
+  weiterhin im Figurenblatt und in der Nahansicht; nur das Brett bleibt ruhig.
+  Der HP-Modus mit seinem Perlenpaar (Leben links, Kraft rechts) ist davon
+  nicht beruehrt.
+- Probe in test_ui (+2): die Perlen sind weg UND der Schild wirkt im Kern
+  weiter - damit niemand spaeter "aufraeumt" und dabei die Regel mitnimmt.
+
 ## 1.0.76
 - DER SPRUNG BEIM LANDEN WAR EIN CSS-KONFLIKT, kein Ruckeln. Am gerade
   gezogenen Stueck liefen ggLandung UND ggAtmen auf DEMSELBEN Element -

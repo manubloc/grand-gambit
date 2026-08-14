@@ -658,14 +658,17 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
       {big && hpMode && piece.maxHp > 0 && <StatTriad piece={piece} focus={focus} shrink={0.98 / 1.48} />}
 
 
-      {!hpMode && piece.shield > 0 && (
-        <span style={{ position: "absolute", bottom: "-0.02em", right: "-0.04em", display: "flex", gap: "0.05em" }}>
-          {Array.from({ length: Math.min(piece.shield, 4) }).map((_, i) => (
-            <span key={i} style={{ width: "max(4px,0.1em)", height: "max(4px,0.1em)", borderRadius: "50%",
-              background: T.blue, boxShadow: "0 1px 2px rgba(0,0,0,.6)" }} />
-          ))}
-        </span>
-      )}
+      {/* v1.0.77 (Besitzer: "unter dem Grand Gambit sind so blaue Punkte,
+          ich weiss nicht, woher die kommen - bitte entfernen"). Es waren
+          keine Stufenpunkte, sondern die SCHILD-Perlen des Schach-Modus:
+          eine blaue Kugel je Schildpunkt, unten rechts an der Figur. Weil
+          der Gambit seine Schilde beim Aufsteigen bekommt, erschienen sie
+          scheinbar "von den Stufen".
+          Sie sind fort. Der Schild geht dabei nicht verloren: er steht
+          weiterhin im Figurenblatt, in der Nahansicht (Antippen) und wirkt
+          unveraendert im Kampf - nur das Brett bleibt ruhig. Im HP-Modus
+          zeigt ohnehin das Perlenpaar links/rechts Leben und Kraft, das
+          davon unberuehrt bleibt. */}
     </div>
   );
 }
