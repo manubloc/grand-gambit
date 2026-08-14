@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 1.0.78
+- DREI WEITERE KOMPOSITIONSPROBEN, motivierender als die erste Runde und in
+  derselben Klangwelt: Ungarischer Tanz Nr. 5 (nach Brahms, 1869), Danse
+  macabre (nach Saint-Saens, 1874), Leichte Kavallerie (nach Suppe, 1866).
+  Die Viola da gamba und tiefe Celli bleiben das Rueckgrat - was der Besitzer
+  an den bestehenden Stuecken erkannt hatte -, aber jedes Stueck ENTWICKELT
+  sich jetzt: Tempowechsel, wachsende Kuehnheit, ein Anziehen zum Schluss.
+  Weiterhin kein Schlagzeug, keine tiefen Baesse (klingt auf dem Handy doof).
+- Das Musikverzeichnis fuehrt sie mit Originaltitel, Komponist samt Jahr,
+  Version (v1.0.78 - so ist beim Hoeren klar, aus welcher Runde ein Stueck
+  stammt) und Einsatzvorschlag. Jetzt sechs Proben in der Gruppe
+  "Kompositionsproben".
+
 ## 1.0.77
 - DIE BLAUEN PUNKTE UNTER DEM GAMBIT SIND FORT. Es waren keine Stufenpunkte,
   sondern die SCHILD-Perlen des Schach-Modus: eine blaue Kugel je Schildpunkt,
