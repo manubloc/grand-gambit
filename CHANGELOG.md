@@ -1,5 +1,19 @@
 # Changelog - Grand Gambit
 
+## 1.0.79
+- DAS PORTRAET IM FIGURENBLATT ZEIGTE WEITER RANG I. v1.0.74 hatte nur die
+  KACHEL (TileArt) geheilt - das grosse Bild darunter nahm stur
+  paintedById(char.id), also immer "gambit", und hat den Rang nie gelesen.
+  Jetzt waehlt es das Rangbild. Aufstellung und Weltkarte rechneten ihn
+  ohnehin schon selbst; damit stimmen alle drei Orte.
+- DAS FEIER-BILD UEBERDECKTE DEN TEXT. maxHeight allein hielt es nicht: der
+  Kasten hatte 132 px, aber das Bild wuchs waehrend der Feier auf scale(1.12)
+  und ragte unten heraus, mitten in Titel und Geschichte. Jetzt fester
+  Kasten mit overflow: hidden, Bild auf height 100 %, Vergroesserung vom FUSS
+  aus (transformOrigin bottom) - es waechst nach oben in den freien Raum -,
+  der Ueberschwung bleibt unter 1.0, und darunter steht ein fester Abstand.
+- Proben: test_anim +5 (Rangbild an allen drei Orten, Kasten schneidet ab).
+
 ## 1.0.78
 - DREI WEITERE KOMPOSITIONSPROBEN, motivierender als die erste Runde und in
   derselben Klangwelt: Ungarischer Tanz Nr. 5 (nach Brahms, 1869), Danse

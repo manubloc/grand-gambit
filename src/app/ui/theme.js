@@ -490,9 +490,11 @@ export const GLOBAL_CSS = `
   @keyframes ggFeierKarte { 0% { opacity: 0; transform: translateY(16px) scale(.9); }
     62% { opacity: 1; transform: translateY(-4px) scale(1.03); }
     100% { opacity: 1; transform: translateY(0) scale(1); } }
-  @keyframes ggFeierBild { 0% { opacity: 0; transform: scale(.55) rotate(-8deg); }
-    55% { opacity: 1; transform: scale(1.12) rotate(3deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+  /* v1.0.79: der Ueberschwung bleibt UNTER 1.0 in der Hoehe - er wuchs
+     vorher auf 1.12 und schob das Bild aus seinem Kasten in den Text. */
+  @keyframes ggFeierBild { 0% { opacity: 0; transform: scale(.62) rotate(-6deg); }
+    55% { opacity: 1; transform: scale(1.0) rotate(2deg); }
+    100% { opacity: 1; transform: scale(.98) rotate(0deg); } }
   @keyframes ggZielAtem { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
   @keyframes ggSprossePuls { 0%, 100% { transform: scale(1); opacity: 1; }
     25% { transform: scale(1.025); opacity: .82; }

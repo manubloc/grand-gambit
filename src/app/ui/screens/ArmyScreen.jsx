@@ -500,6 +500,10 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
   }
 
   const level = unlocked ? characterLevel(profile, char.id) : 1;
+  /* v1.0.79: das Bildnis dieser Figur - beim Gambit das seines RANGES. */
+  const portraet = (char.id === "gambit"
+    ? (paintedById("gambit-t" + gambitTier(level)) || paintedById("gambit"))
+    : paintedById(char.id));
   const chosen = chosenAbilities(profile, char.id);
   const { abilities, shield } = resolveCharacter(char, level, chosen);
   const stars = dupeCount(profile, char.id);
@@ -546,8 +550,14 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
             textShadow: faehig ? "0 0 12px rgba(167,139,250,.95)" : "0 0 12px rgba(233,207,138,.95)",
             animation: "ggStufenStern 1.1s ease-out .12s both" }}>✦</span>
         </span>}
-        {paintedById(char.id)
-          ? <img src={paintedById(char.id)} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
+        {/* v1.0.79 (Besitzer: "das neue Bild wird danach gar nicht
+            uebernommen"): DAS PORTRAET NAHM STUR paintedById(char.id), also
+            immer "gambit" - den Rang hat es nie gelesen. v1.0.74 hatte nur
+            die KACHEL (TileArt) geheilt, nicht das grosse Bild darunter.
+            Jetzt waehlt eine Zeile das Rangbild; fuer alle anderen Figuren
+            aendert sich nichts. */}
+        {portraet
+          ? <img src={portraet} alt="" onClick={unlocked && onZoom ? (e) => { e.stopPropagation(); onZoom(char); } : undefined}
               title={unlocked && onZoom ? (en ? "Tap to enlarge" : "Antippen zum Vergrößern") : undefined}
               /* v1.0.49 (Besitzerbefund): DIE FIGUR SITZT JETZT UEBER IHRER
                  SCHRIFT. Das Bild war zentriert, der INHALT darin aber nicht -
@@ -1951,9 +1961,21 @@ export function AufstiegsFeier({ art, gambitTier = 1, bild = null, chName = "", 
         </div>
 
         {rang ? <>
-          <div style={{ position: "relative", height: 132, display: "grid", placeItems: "center", margin: "6px 0 2px" }}>
-            {bild && <img src={bild} alt="" draggable={false} style={{ maxHeight: "100%", maxWidth: "70%",
-              objectFit: "contain", filter: `drop-shadow(0 4px 10px rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(${ton},.5))`,
+          {/* v1.0.79 (Besitzer: "das Bild ueberdeckt den Text, das geht
+              nicht"): maxHeight allein hat das nicht gehalten - der Kasten
+              hatte zwar 132 px, aber das Bild wuchs waehrend der Feier auf
+              scale(1.12) und ragte damit unten heraus, mitten in Titel und
+              Geschichte. Jetzt hat der Kasten eine FESTE Hoehe, schneidet ab
+              (overflow: hidden), das Bild bekommt height 100% statt einer
+              blossen Obergrenze, und die Vergroesserung wirkt vom FUSS aus
+              (transformOrigin bottom) - sie waechst also nach oben in den
+              freien Raum statt nach unten in den Text. Darunter ein fester
+              Abstand, der nicht mehr unterschritten werden kann. */}
+          <div style={{ position: "relative", height: 150, overflow: "hidden",
+            display: "grid", placeItems: "end center", margin: "8px 0 14px" }}>
+            {bild && <img src={bild} alt="" draggable={false} style={{ height: "100%", width: "auto",
+              maxWidth: "72%", objectFit: "contain", objectPosition: "bottom", transformOrigin: "50% 100%",
+              filter: `drop-shadow(0 4px 10px rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(${ton},.5))`,
               ...(an ? { animation: "ggFeierBild .8s cubic-bezier(.2,1.3,.4,1) .1s both" } : null) }} />}
           </div>
           <div className="gg-serif" style={{ fontSize: 21, fontWeight: 900, color: T.gold }}>{stufe.name}</div>

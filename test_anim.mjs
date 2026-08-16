@@ -137,6 +137,16 @@ console.log("\n== test_anim: die Aufstiegsfeier (v1.0.75) ==");
   ok("der Rangwechsel wird am TIER erkannt, nicht am Level",
     as.includes("gambitTier(level + 1) > gambitTier(level)"));
   ok("die Feier zeigt das NEUE Gemaelde", as.includes("tier: neuerRang"));
+  /* v1.0.79: das Rangbild muss an ALLEN drei Orten ankommen. */
+  ok("Figurenblatt: das Portraet waehlt das Rangbild",
+    as.includes('paintedById("gambit-t" + gambitTier(level))'));
+  ok("Aufstellung: waehlt das Rangbild",
+    as.includes('paintedById("gambit-t" + gambitTier(gLvl))'));
+  ok("Kachel: bekommt tier durchgereicht", as.includes("tier={hero ? gambitTier(level) : 0}"));
+  const cs = readFileSync("src/app/ui/screens/CampaignScreen.jsx", "utf8");
+  ok("Weltkarte: rechnet den Rang selbst", cs.includes('gambitTier(characterLevel(profile, "gambit")'));
+  ok("die Feier schneidet ihr Bild ab, statt in den Text zu wachsen",
+    as.includes("height: 150, overflow: \"hidden\"") && as.includes('transformOrigin: "50% 100%"'));
   ok("die gekaufte Faehigkeit erklaert ihre Wirkung",
     as.includes("desc: en ? ab.descEn : ab.descDe"));
   const th = readFileSync("src/app/ui/theme.js", "utf8");
