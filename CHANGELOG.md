@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.80
+- ALLE FUESSE AUF EINE LINIE (Besitzer: "die Figuren sind nicht perfekt
+  ausgemittelt von der Hoehe, die muessen alle gleich hoch sein"). GEMESSEN:
+  die Gemaelde tragen unterschiedlich viel Leerraum unter dem Sockel - er
+  streut von 2,1 % (Barde) bis 6,8 % (Haendler) der Bildhoehe, ueber alle
+  52 Bilder eine Spanne von 7,3 %. Da alle mit derselben Hoehe ins Feld
+  gesetzt werden, schwebt der Haendler damit fast 5 % der Feldhoehe ueber
+  der Linie des Barden - genau das sieht man auf dem Brett.
+- Jede Figur misst jetzt ihren eigenen Leerraum (sockelmass.messeFusslinie,
+  einmal je Bild, Cache wie bei der Sockelkante) und der Glyph zieht die
+  Abweichung von der HAUSLINIE (3,1 %, der haeufigste gemessene Wert) ab -
+  mit der Bildhoehe skaliert, weil der Leerraum mitwaechst.
+- DIE GEPFLEGTEN GROESSEN BLEIBEN UNBERUEHRT: eine Dame darf groesser sein
+  als ein Bauer, sie soll nur auf derselben Linie stehen. Ohne Messung
+  (Bild noch nicht geladen) ist der Ausgleich null - also exakt der Stand
+  von vorher, nie ein Sprung.
+- Proben: test_ui +6 auf die pure Messfunktion (kein Leerraum, sieben
+  Zeilen, leeres Bild, Hauslinie) und die Anbindung im Glyph.
+
 ## 1.0.79
 - DAS PORTRAET IM FIGURENBLATT ZEIGTE WEITER RANG I. v1.0.74 hatte nur die
   KACHEL (TileArt) geheilt - das grosse Bild darunter nahm stur

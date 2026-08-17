@@ -5,7 +5,8 @@ import { PieceArt } from "./PieceArt.jsx";
 import { BladesIc } from "../icons.jsx";
 import { paintedForPiece, paintedById, paintedFitFor, CLASSIC_PAINTED, klassikFor } from "./paintedArt.js";
 import { gegnerStil, gefahrVon, glutTon, glutFilter, GLUT_SCHEIN, sockelVerlauf } from "../gegnerstil.js";
-import { holeSockelKante, sockelKanteAusCache, KANTE_FALLBACK } from "./sockelmass.js";
+import { holeSockelKante, sockelKanteAusCache, KANTE_FALLBACK,
+  holeFusslinie, fusslinieAusCache, HAUSLINIE } from "./sockelmass.js";
 import { animAn } from "../anim.js";
 
 /* v1.0.66: DER SOCKELVERLAUF, an einer Stelle. Dunkel am Boden (0,18),
@@ -448,9 +449,15 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
      bleibt der Fallback ungenutzt). */
   const [sockelKante, setSockelKante] = useState(
     () => (painting && sockelKanteAusCache(painting)) || KANTE_FALLBACK);
+  /* v1.0.80: der Leerraum unter DIESER Figur - fuer die gemeinsame Fusslinie. */
+  const [fussLinie, setFussLinie] = useState(
+    () => (painting && fusslinieAusCache(painting)) ?? HAUSLINIE);
   useEffect(() => {
     let lebt = true;
-    if (painting && !big) holeSockelKante(painting).then((k) => { if (lebt) setSockelKante(k); });
+    if (painting && !big) {
+      holeSockelKante(painting).then((k) => { if (lebt) setSockelKante(k); });
+      holeFusslinie(painting).then((f) => { if (lebt) setFussLinie(f); });
+    }
     return () => { lebt = false; };
   }, [painting, big]);
 
@@ -511,7 +518,23 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
            gleiche Zahl wie Hofstaat und Aufstellung: Bishop +9.0 %,
            Koenig -3.0 %. Weiterhin mal fit.h, weil das Skalieren den Versatz
            sonst nach aussen traegt. */
-        transform: (fit.h !== 1 || fit.y !== 0) ? `translate(0, ${fit.y}em) scale(${fit.h})` : undefined, transformOrigin: "50% 100%" }}>
+        /* v1.0.80 (Besitzer: "die Figuren sind nicht perfekt ausgemittelt
+           von der Hoehe, die muessen alle gleich hoch sein"): ALLE FUESSE AUF
+           EINE LINIE. Die Gemaelde tragen unterschiedlich viel Leerraum unter
+           dem Sockel - gemessen streut er von 2,1 % (Barde) bis 6,8 %
+           (Haendler) der Bildhoehe. Da alle mit derselben Hoehe ins Feld
+           gesetzt werden, schwebt der Haendler damit fast 5 % ueber der Linie
+           des Barden. Der Ausgleich zieht die Abweichung von der Hauslinie
+           (3,1 %) ab, mit der Bildhoehe (fit.h) skaliert, weil der Leerraum
+           mitwaechst. Die gepflegten GROESSEN bleiben unberuehrt: eine Dame
+           darf groesser sein als ein Bauer - sie soll nur auf derselben Linie
+           stehen. Ohne Messung (noch nicht geladen) ist der Ausgleich null,
+           also genau der Stand von vorher. */
+        transform: (() => {
+          const ausgleich = big ? 0 : (fussLinie - HAUSLINIE) * fit.h * 1.16;
+          const y = (fit.y || 0) + ausgleich;
+          return (fit.h !== 1 || y !== 0) ? `translate(0, ${y.toFixed(4)}em) scale(${fit.h})` : undefined;
+        })(), transformOrigin: "50% 100%" }}>
         {/* v1.0.70 (Besitzer): DER LEBENSTRANK LAEUFT DURCH DIE FIGUR. Ein
             roter Heilglanz wandert einmal von unten nach oben - MASKIERT auf
             das eigene Gemaelde (WebkitMaskImage: die Bilddatei selbst), nicht

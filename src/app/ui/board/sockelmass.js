@@ -101,3 +101,56 @@ export function holeSockelKante(url) {
     } catch { fertig(KANTE_FALLBACK); }
   });
 }
+
+
+/* ── DIE FUSSLINIE JE FIGUR (v1.0.80, Besitzerbefund) ──────────────────────
+ * "Figuren sind nicht perfekt ausgemittelt von der Hoehe im Schachbrett -
+ *  die muessen alle gleich hoch sein."
+ *
+ * GEMESSEN, nicht vermutet: die Gemaelde tragen unterschiedlich viel
+ * Leerraum unter dem Sockel. Ueber alle Figuren streut er von 2,1 %
+ * (Barde) bis 6,8 % (Haendler) der Bildhoehe, die meisten liegen bei 3,1 %.
+ * Da alle Bilder mit derselben Hoehe ins Feld gesetzt werden, steht der
+ * Haendler damit fast 5 % der Feldhoehe ueber der Linie des Barden - genau
+ * das sieht man auf dem Brett als "nicht ausgemittelt".
+ *
+ * Diese Messung liefert den Leerraum unter der Figur; PieceGlyph zieht die
+ * Abweichung von der HAUSLINIE (3,1 %) vom Versatz ab, sodass alle Fuesse
+ * auf derselben Hoehe sitzen. Die gepflegten Groessen (PAINTED_FIT.h)
+ * bleiben unberuehrt - eine Dame DARF groesser sein als ein Bauer, sie soll
+ * nur auf derselben Linie stehen.
+ */
+export const HAUSLINIE = 0.031;
+
+export function messeFusslinie({ width, height, data }) {
+  for (let y = height - 1; y >= 0; y--) {
+    const zeile = y * width * 4;
+    for (let x = 0; x < width; x++)
+      if (data[zeile + x * 4 + 3] > ALPHA_SCHWELLE) return (height - 1 - y) / height;
+  }
+  return HAUSLINIE;
+}
+
+const FUESSE = new Map();
+export function fusslinieAusCache(url) { return FUESSE.get(url); }
+export function holeFusslinie(url) {
+  if (FUESSE.has(url)) return Promise.resolve(FUESSE.get(url));
+  return new Promise((fertig) => {
+    try {
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const c = document.createElement("canvas");
+          const w = 96, h = Math.max(24, Math.round((im.naturalHeight / im.naturalWidth) * 96));
+          c.width = w; c.height = h;
+          const g = c.getContext("2d", { willReadFrequently: true });
+          g.drawImage(im, 0, 0, w, h);
+          const f = messeFusslinie(g.getImageData(0, 0, w, h));
+          FUESSE.set(url, f); fertig(f);
+        } catch { FUESSE.set(url, HAUSLINIE); fertig(HAUSLINIE); }
+      };
+      im.onerror = () => { FUESSE.set(url, HAUSLINIE); fertig(HAUSLINIE); };
+      im.src = url;
+    } catch { fertig(HAUSLINIE); }
+  });
+}

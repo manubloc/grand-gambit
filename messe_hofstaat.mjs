@@ -160,6 +160,43 @@ const faktoren = await page.evaluate(async () => {
     return m ? { bauer: m.P, held: m.HERO } : null;
   } catch { return null; }
 });
+console.log("\n── 2d. STEHEN ALLE FUESSE AUF EINER LINIE? (v1.0.80) ──");
+{
+  const fuesse = await page.evaluate(() => {
+    const aus = [];
+    for (const im of document.querySelectorAll("img")) {
+      const r = im.getBoundingClientRect();
+      if (r.width < 30 || !/painted/.test(im.src)) continue;
+      const w = 96, h = Math.max(24, Math.round((im.naturalHeight / im.naturalWidth) * 96));
+      const c = document.createElement("canvas"); c.width = w; c.height = h;
+      const g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(im, 0, 0, w, h);
+      const d = g.getImageData(0, 0, w, h).data;
+      let leer = 0;
+      for (let y = h - 1; y >= 0; y--) {
+        let voll = false;
+        for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 130) { voll = true; break; }
+        if (voll) { leer = (h - 1 - y) / h; break; }
+      }
+      /* wo sitzt der Fuss WIRKLICH auf dem Schirm? */
+      const stil = getComputedStyle(im.parentElement);
+      const m = stil.transform.match(/matrix\(([^)]+)\)/);
+      const ty = m ? Number(m[1].split(",")[5]) : 0;
+      aus.push({ name: (im.src.split("/").pop().split(".")[0] || "?").replace("painted-", ""),
+        leerProzent: +(leer * 100).toFixed(1), unten: Math.round(r.bottom), ty: +ty.toFixed(1) });
+    }
+    return aus;
+  });
+  const gesehen = new Map();
+  for (const f of fuesse) if (!gesehen.has(f.name)) gesehen.set(f.name, f);
+  const liste = [...gesehen.values()];
+  for (const f of liste.slice(0, 10))
+    console.log(`  ${f.name.padEnd(12)} Leerraum ${String(f.leerProzent).padStart(4)} %  Versatz ${String(f.ty).padStart(6)} px`);
+  const versaetze = liste.map((f) => f.ty);
+  const spanne = Math.max(...versaetze) - Math.min(...versaetze);
+  console.log(`  ${liste.length} Bilder · Leerraum-Spanne ${(Math.max(...liste.map(f=>f.leerProzent)) - Math.min(...liste.map(f=>f.leerProzent))).toFixed(1)} %`);
+  console.log(`  Ausgleich wirkt: Versatz-Spanne ${spanne.toFixed(1)} px (0 = kein Ausgleich sichtbar)`);
+}
 console.log("\n── 2c. DIE SOCKELKANTE JE FIGUR (v1.0.72, echte Bilder) ──");
 {
   /* Dieselbe Messlogik wie sockelmass.js, hier UNABHAENGIG nachgebaut und

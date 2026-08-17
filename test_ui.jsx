@@ -1274,6 +1274,29 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
     messeSockelKante(bild(100, 100, () => 0)) === KANTE_FALLBACK);
 }
 {
+/* ── ALLE FUESSE AUF EINE LINIE (v1.0.80) ─────────────────────────────────
+   Besitzer: "die Figuren sind nicht perfekt ausgemittelt von der Hoehe".
+   Gemessen streut der Leerraum unter dem Sockel von 2,1 % bis 6,8 %. */
+{
+  const { messeFusslinie, HAUSLINIE } = await import("./src/app/ui/board/sockelmass.js");
+  const bild = (h, w, fussLeer) => {
+    const data = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h - fussLeer; y++)
+      for (let x = 10; x < w - 10; x++) data[(y * w + x) * 4 + 3] = 255;
+    return { width: w, height: h, data };
+  };
+  ok("ein Bild ohne Leerraum meldet 0", messeFusslinie(bild(100, 100, 0)) === 0);
+  ok("sieben leere Zeilen melden 7 %", Math.abs(messeFusslinie(bild(100, 100, 7)) - 0.07) < 0.001);
+  ok("ein voellig leeres Bild faellt auf die Hauslinie",
+    messeFusslinie({ width: 8, height: 8, data: new Uint8ClampedArray(8 * 8 * 4) }) === HAUSLINIE);
+  ok("die Hauslinie ist der haeufigste gemessene Wert (3,1 %)", HAUSLINIE === 0.031);
+  const { readFileSync: _rfF } = await import("node:fs");
+  const pgf = _rfF("src/app/ui/board/PieceGlyph.jsx", "utf8");
+  ok("der Glyph gleicht die Abweichung von der Hauslinie aus",
+    pgf.includes("(fussLinie - HAUSLINIE) * fit.h"));
+  ok("im Grossformat bleibt der Ausgleich aus", pgf.includes("big ? 0 :"));
+}
+
   const { sockelVerlauf } = await import("./src/app/ui/gegnerstil.js");
   const sw = sockelVerlauf(0.15, true), glut = sockelVerlauf(0.15, false);
   /* v1.0.73: die Faerbung sitzt TIEFER - der Teller behaelt oben seine
