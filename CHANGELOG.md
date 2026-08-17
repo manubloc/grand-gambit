@@ -1,5 +1,21 @@
 # Changelog - Grand Gambit
 
+## 1.0.81
+- DAS APP-ICON TRAEGT SEIN GOLD JETZT BIS AN DEN RAND (Besitzer: "Goldrand
+  bitte bis zum Rand", und groesser). Bisher sass der Ring weit innen, mit
+  schwarzem Saum davor - auf dem Startbildschirm wirkte das Zeichen dadurch
+  klein und schwammig. Jetzt liegt der Ring auf dem aeussersten Kreis, die
+  Figur fuellt 62 % der Hoehe.
+- DIE FIGUR HEBT SICH AB, weil sie HINTERLEUCHTET ist: ein heller Kern in
+  ihrer eigenen Form, vierfach ueberlagert und weich gestreut, dazu ein
+  Strahlenkranz - davor steht sie als dunkle Silhouette. Der erste Anlauf
+  hatte nur einen diffusen Grund und verschwand bei 72 px im Dunkeln.
+- ZWEI FASSUNGEN, wie es die Plattformen verlangen: "any" (icon-192,
+  icon-512, apple-touch) mit Ring bis zur Kante, und maskable-512 mit Ring
+  auf 90 % Durchmesser und kleinerer Figur - Android beschneidet maskable
+  je nach Launcher, ein randstaendiger Ring waere dort weggeschnitten
+  worden.
+
 ## 1.0.80
 - ALLE FUESSE AUF EINE LINIE (Besitzer: "die Figuren sind nicht perfekt
   ausgemittelt von der Hoehe, die muessen alle gleich hoch sein"). GEMESSEN:
