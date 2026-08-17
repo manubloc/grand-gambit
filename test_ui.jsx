@@ -1203,17 +1203,18 @@ import { PAINTED, PAINTED_KLEIN } from "./src/app/ui/board/paintedArt.js";   /* 
 {
   const { GEGNER_STILE, setGegnerStil, gegnerStil, glutTon, glutFilter, GLUT_SCHEIN } =
     await import("./src/app/ui/gegnerstil.js");
-  ok("es gibt genau zwei Sehweisen", GEGNER_STILE.length === 2);
+  /* v1.0.83: nur noch EINE Sehweise - der Besitzer hat die farbige
+     Fassung abgeschafft. Alte Profilwerte fallen alle auf schwarzweiss. */
+  ok("es gibt nur noch eine Sehweise", GEGNER_STILE.length === 1);
   setGegnerStil("getoent");
-  ok("farbig: der Gegner glueht lila", glutTon(false) === "lila");
-  ok("farbig: die eigene Seite glueht gold", glutTon(true) === "gold");
+  ok("der alte Wert getoent faellt auf schwarzweiss", gegnerStil() === "schwarzweiss");
   setGegnerStil("schwarzweiss");
   ok("ohne Farbe: der Gegner glueht schwarz", glutTon(false) === "schwarz");
   ok("ohne Farbe: die eigene Seite glueht weiss", glutTon(true) === "weiss");
   setGegnerStil("grau");
   ok("der alte Name grau faellt auf schwarzweiss", gegnerStil() === "schwarzweiss");
   setGegnerStil("farbig");
-  ok("der alte Name farbig faellt auf getoent", gegnerStil() === "getoent");
+  ok("auch der alte Name farbig faellt auf schwarzweiss", gegnerStil() === "schwarzweiss");
   setGegnerStil("getoent");
   ok("jeder Ton hat einen Schein", ["lila","gold","schwarz","weiss"].every((t) => GLUT_SCHEIN[t]));
   ok("die Gefahr staffelt die Glut",

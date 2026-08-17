@@ -1,5 +1,22 @@
 # Changelog - Grand Gambit
 
+## 1.0.83
+- ENDLICH DIE ECHTE URSACHE: Der Grand Gambit zeigte NIRGENDS seinen Rang,
+  weil in PieceGlyph ein RIEGEL stand - `piece.hero && white &&
+  paintedById("gambit")` griff das Grundbild ab, bevor paintedForPiece
+  ueberhaupt gefragt wurde. Ein Rest aus v1.0.49, als die Rangbilder noch
+  stilfremd waren und absichtlich unterdrueckt wurden; seit v1.0.62 sind sie
+  da, der Riegel blieb. Alle Korrekturen der letzten Fassungen (v1.0.74
+  Kachel, v1.0.79 Portraet) waren richtig, konnten aber nichts ausrichten,
+  solange dieser Zweig davor lag.
+- EIN WEG ZUM BILDNIS: neue Hilfsfunktion bildnisVon(id, level) - jede
+  Stelle, die frueher paintedById(id) einzeln aufrief (Hofstaat-Kachel,
+  Zoom-Ansicht, Portraet), geht jetzt darueber und kennt damit den Rang.
+- NUR NOCH SCHWARZ UND WEISS BEIM SOCKEL (Besitzerentscheid): die farbige
+  Fassung (Gegner lila, eigene Seite gold) ist fort, samt ihrer Wahl im
+  Profil - es gibt nichts mehr zu waehlen. Alte Profilwerte (farbig,
+  getoent, grau) fallen alle auf schwarzweiss.
+
 ## 1.0.82
 - DER ONLINE-BILDSCHIRM WAR IM ZUSTAND "GETRENNT" SCHLICHT LEER. Wer nicht
   verbunden war, aber weder lud noch einen Fehler hatte, sah nur die

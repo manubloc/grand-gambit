@@ -32,6 +32,14 @@ const aName = (id, en) => ABILITIES[id][en ? "nameEn" : "nameDe"];
 
 /** A painted figure, DEAD-CENTERED in its frame — tiles are not the board,
  *  so no bottom-anchoring, no hp padding, no badge chrome. */
+/* v1.0.83: EIN Weg zum Bildnis - und er kennt den Rang. Bis hierher rief
+   jede Stelle paintedById(id) einzeln auf und bekam beim Gambit immer sein
+   erstes Gesicht; das hat den Besitzer durch drei Fassungen begleitet. */
+export function bildnisVon(id, level = 1) {
+  if (id === "gambit") return paintedById("gambit-t" + gambitTier(level)) || paintedById("gambit");
+  return paintedById(id);
+}
+
 function TileArt({ kind, size, hero = false, level = 1, bossId = null, tier = 0 }) {
   /* v0.83: im schlichten Stil zeichnet ueberall dieselbe Hand - auch hier,
      nicht nur auf dem Brett. Sonst sitzt man vor einem Zwitter aus schlichtem
@@ -358,8 +366,8 @@ export function ChroniclePanel({ profile, t, en, account = null }) {
               on the board. The chronicle is a reference, so it shows both. */}
           <span style={{ display: "flex", alignItems: "flex-end", gap: 6, flex: "0 0 auto" }}>
             <span style={{ width: 40, height: 50, display: "grid", placeItems: "center" }}>
-              {(!schlichtAn() && paintedById(ch.id))
-                ? <img src={paintedById(ch.id)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
+              {(!schlichtAn() && bildnisVon(ch.id, characterLevel(profile, ch.id) || 1))
+                ? <img src={bildnisVon(ch.id, characterLevel(profile, ch.id) || 1)} alt="" style={{ width: 40, height: 50, objectFit: "contain", objectPosition: "bottom",
                     filter: seen ? "none" : "grayscale(1) brightness(.4)" }} />
                 : <PieceArt kind={ch.kind} size={32} level={1} />}
             </span>
@@ -501,9 +509,7 @@ function CharCard({ char, profile, dispatch, t, en, onZoom, open = true, onToggl
 
   const level = unlocked ? characterLevel(profile, char.id) : 1;
   /* v1.0.79: das Bildnis dieser Figur - beim Gambit das seines RANGES. */
-  const portraet = (char.id === "gambit"
-    ? (paintedById("gambit-t" + gambitTier(level)) || paintedById("gambit"))
-    : paintedById(char.id));
+  const portraet = bildnisVon(char.id, level);
   const chosen = chosenAbilities(profile, char.id);
   const { abilities, shield } = resolveCharacter(char, level, chosen);
   const stars = dupeCount(profile, char.id);
@@ -1412,7 +1418,7 @@ export function GearPanel({ profile, dispatch, t, en, initialGearInfo = null }) 
 function CharLightbox({ char, en, onClose }) {
   if (!char) return null;
   // ein Wesen kommt als { boss: true, id: "boss-bXX" } - dieselbe Lupe
-  const src = char.boss ? (paintedById("boss-" + char.bid) || paintedById("boss-" + char.art)) : paintedById(char.id);
+  const src = char.boss ? (paintedById("boss-" + char.bid) || paintedById("boss-" + char.art)) : bildnisVon(char.id, char.level || 1);
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 80, background: "rgba(5, 8, 16, .88)",
       backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)", display: "grid", placeItems: "center",

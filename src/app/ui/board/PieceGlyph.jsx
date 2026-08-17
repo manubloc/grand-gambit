@@ -439,7 +439,14 @@ export function PieceGlyph({ piece, showLevel = true, pov = "w", artStyle = "pai
        weder klassisch noch SVG ist - im ersten Anlauf trug damit das ganze
        Brett das Gambit-Bild, Bosse eingeschlossen. Die Bedingung muss den
        Helden ausdruecklich nennen. test_ui hat es gefangen. */
-    : ((piece.hero && white && paintedById("gambit")) || paintedForPiece(paintPiece, aufsBrett));
+    /* v1.0.83 (Besitzer, zum wiederholten Mal: "in allen diesen Screens ist
+       nie der aktualisierte Grand Gambit drin"): HIER STAND DER RIEGEL. Der
+       Zweig griff paintedById("gambit") ab - das GRUNDBILD, Rang I - und kam
+       damit paintedForPiece zuvor, das den Rang laengst richtig waehlt. Ein
+       Rest aus v1.0.49, als die Rangbilder noch stilfremd waren und
+       ausdruecklich unterdrueckt werden sollten; seit v1.0.62 sind sie da.
+       Jetzt entscheidet allein paintedForPiece - und das liest piece.tier. */
+    : paintedForPiece(paintPiece, aufsBrett);
   // every painting fitted to one box (uniform height) and dropped onto one
   // baseline; big pieces and the drawn SVG opt out. The carvings were already
   // cropped and levelled at build time, so they need no per-file fit.

@@ -25,7 +25,7 @@
  * muss durch zwanzig Ebenen gereicht werden.
  */
 
-let stil = "getoent";
+let stil = "schwarzweiss";
 
 /* v1.0.66 (Besitzerentscheid): ZWEI SEHWEISEN, NICHT DREI.
    "die Graustufen fallen jetzt eh weg" - der graue Figurenfilter war seit
@@ -40,15 +40,22 @@ let stil = "getoent";
 
    Die alten Namen bleiben lesbar, damit gespeicherte Profile nicht auf die
    Voreinstellung zurueckfallen und stillschweigend etwas anderes zeigen. */
-export const GEGNER_STILE = ["getoent", "schwarzweiss"];
-const ALTNAMEN = { farbig: "getoent", grau: "schwarzweiss" };
+/* v1.0.83 (Besitzerentscheid): NUR NOCH SCHWARZ UND WEISS. "Entferne
+   diesen lila-gold Style, nur schwarz-weiss beim Sockel ist interessant -
+   die Option kann weg." Damit faellt die zweite Sehweise: es gibt keine
+   Wahl mehr, weil es nichts mehr zu waehlen gibt. Gegner schwarz, eigene
+   Seite weiss - eine Trennung, die auf jedem Geraet und bei jeder
+   Helligkeit traegt. Alte Profilwerte (farbig/getoent/grau) landen alle
+   hier. */
+export const GEGNER_STILE = ["schwarzweiss"];
+const ALTNAMEN = { farbig: "schwarzweiss", grau: "schwarzweiss", getoent: "schwarzweiss" };
 
 /* v1.0.62 (Besitzerentscheid): DIE TOENUNG IST DER STANDARD - "die ist
    ziemlich gut geworden". Wer nichts waehlt (und waehlen kann kuenftig nur
    noch der Admin), sieht den Gegner farbig mit der lila Sockel-Glut. */
 export function setGegnerStil(s) {
   const g = ALTNAMEN[s] || s;
-  stil = GEGNER_STILE.includes(g) ? g : "getoent";
+  stil = GEGNER_STILE.includes(g) ? g : "schwarzweiss";
 }
 
 export function gegnerStil() {
@@ -124,8 +131,9 @@ const GLUT = {
 /** Welcher Ton glueht unter dieser Figur?
  *  eigen = die eigene Seite (weiss), sonst die Gegenseite. */
 export function glutTon(eigen) {
-  if (stil === "schwarzweiss") return eigen ? "weiss" : "schwarz";
-  return eigen ? "gold" : "lila";
+  /* v1.0.83: gold und lila sind fort - siehe GEGNER_STILE. Die Toene
+     bleiben in GLUT stehen, falls der Besitzer es sich anders ueberlegt. */
+  return eigen ? "weiss" : "schwarz";
 }
 
 /** Der fertige Filter fuer die Glutkopie - Gefahr staffelt Saettigung und
