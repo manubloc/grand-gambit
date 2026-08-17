@@ -1,5 +1,20 @@
 # Changelog - Grand Gambit
 
+## 1.0.82
+- DER ONLINE-BILDSCHIRM WAR IM ZUSTAND "GETRENNT" SCHLICHT LEER. Wer nicht
+  verbunden war, aber weder lud noch einen Fehler hatte, sah nur die
+  Kopfkarte und darunter nichts - kein Knopf, keine Erklaerung. Genau dort
+  landet jeder, der "Beim Start verbinden: von Hand" gewaehlt hat oder dessen
+  Verbindung still abriss. Daher die Frage des Besitzers, wofuer es diesen
+  Bildschirm ueberhaupt braucht. Jetzt steht dort eine klare Zeile und der
+  Verbinden-Knopf.
+- DIE SCHIENEN SIND EINZEILIG. Bei "Anfragen von" und "Beim Start verbinden"
+  stand das Etikett NEBEN der Schiene und nahm ihr die Breite - "Nur
+  Freunden" brach dreizeilig um. Jetzt steht das Etikett darueber, die
+  Schiene laeuft ueber die volle Breite.
+- "Zufallsgegner suchen" heisst jetzt "Spiel starten" (en: "Start match") -
+  kuerzer und naeher an dem, was der Knopf tut.
+
 ## 1.0.81
 - DAS APP-ICON TRAEGT SEIN GOLD JETZT BIS AN DEN RAND (Besitzer: "Goldrand
   bitte bis zum Rand", und groesser). Bisher sass der Ring weit innen, mit

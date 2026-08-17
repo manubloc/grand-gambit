@@ -343,6 +343,20 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
             {conn !== "busy" && !server && (
               <div style={{ fontSize: 13, color: T.dim, lineHeight: 1.55 }}>{t("online.noServer")}</div>
             )}
+            {/* v1.0.82 (Besitzerbefund "wofuer braucht es dieses Menue?" -
+                der Bildschirm war schlicht LEER): getrennt, aber weder am
+                Laden noch fehlgeschlagen - dieser Fall zeigte NICHTS. Kein
+                Knopf, keine Meldung, nur die Kopfkarte im Nichts. Wer "Beim
+                Start verbinden: von Hand" gewaehlt hat oder dessen Verbindung
+                still abriss, landete genau hier. Jetzt steht da, was Sache
+                ist, und ein Knopf, der es tut. */}
+            {conn === "off" && server && !askConsent && (
+              <>
+                <div style={{ fontSize: 13, color: T.dim, lineHeight: 1.55 }}>
+                  {en ? "Not connected to the duel hall." : "Nicht mit der Duell-Halle verbunden."}</div>
+                <Button variant="primary" onClick={connect}>{t("online.connect")}</Button>
+              </>
+            )}
             {conn === "fail" && server && (
               <>
                 <div style={{ fontSize: 13.5, color: T.danger }}>{t("online.unreachable")}</div>
@@ -447,19 +461,27 @@ export function OnlineScreen({ profile, dispatch, t, net, account, onDaily = nul
             )}
                       {/* EINSTELLUNGEN ANS ENDE: erst spielen, dann verwalten - der
                 Spielmodus (Gambit/Klassisch) steht jetzt ganz oben. */}
-<Line>
-              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{t("online.privacy")}:</span>
+{/* v1.0.82 (Besitzer: "die Buttons laenger, so dass nur einzeilig"): das
+                Etikett stand NEBEN der Schiene und nahm ihr die Breite -
+                "Nur Freunden" brach dreizeilig um. Jetzt steht es DARUEBER
+                und die Schiene laeuft ueber die volle Breite. */}
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 6, width: "100%" }}>{t("online.privacy")}:</div>
               <Segmented value={o.privacy || "public"} onChange={setPrivacy}
                 options={[{ value: "public", label: t("online.public") }, { value: "friends", label: t("online.friendsOnly") }]} />
-            </Line>
+            </div>
             {/* KEIN ZWANG: die Halle steht beim Start von selbst offen - wer
                 das nicht will, stellt es hier ab und verbindet wieder von Hand. */}
-            <Line>
-              <span style={{ fontSize: 12.5, color: T.dim, flex: "0 0 auto" }}>{en ? "Connect on start" : "Beim Start verbinden"}:</span>
+            {/* v1.0.82 (Besitzer: "die Buttons laenger, so dass nur einzeilig"): das
+                Etikett stand NEBEN der Schiene und nahm ihr die Breite -
+                "Nur Freunden" brach dreizeilig um. Jetzt steht es DARUEBER
+                und die Schiene laeuft ueber die volle Breite. */}
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 12.5, color: T.dim, marginBottom: 6, width: "100%" }}>{en ? "Connect on start" : "Beim Start verbinden"}:</div>
               <Segmented value={o.autoConnect === false ? "off" : "on"}
                 onChange={(v) => dispatch({ type: "SET_ONLINE", online: { ...o, autoConnect: v !== "off" } })}
                 options={[{ value: "on", label: en ? "automatic" : "automatisch" }, { value: "off", label: en ? "manual" : "von Hand" }]} />
-            </Line>
+            </div>
 </div>
         )}
         {note && <div style={{ marginTop: 8, fontSize: 12.5, color: T.gold }}>{note}</div>}
