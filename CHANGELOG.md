@@ -1,5 +1,29 @@
 # Changelog - Grand Gambit
 
+## 1.0.84
+- REGELFEHLER, per Probe reproduziert: das geschlossene Buch ("ein Zauber je
+  Partie") sperrte auch die PASSIVEN Talente. Der Gambit verlor nach seinem
+  ersten Zauber den Sturmlauf, den die Chronik als "jederzeit" verspricht -
+  und mit ihm Fruehumwandlung, Langsprung, Fernsalve, Fluegel-Erweiterungen,
+  Lebensraub, Regeneration, Bollwerk. Ein passives Talent ist kein Zauber; es
+  bleibt, egal was das Buch sagt. Neue Liste PASSIVE_TALENTE im Kern, die
+  eine Probe gegen die once:false-Eintraege der Chronik abgleicht - der
+  Abgleich fand sofort den ersten Fehler in der Liste (dragon_flight ist ein
+  Zauber, seine Erweiterungen sind passiv).
+- DAS TALENTBAND (Besitzer: "man sollte Faehigkeiten bewusst auswaehlen
+  koennen"): bei jeder ausgewaehlten Figur steht unter dem Brett, welche
+  Talente sie kennt - ZAUBER (violett, ✦, einer je Partie) getrennt von
+  DAUERHAFTEN (gold, ◆) -, welcher schon eingesetzt ist, und ob das Buch zu
+  ist. Die ✦-Zielfelder auf dem Brett tragen dasselbe Zeichen.
+- Neue Suite test_zauber.mjs (17 Zusicherungen): Ausweichen einmal und nie
+  wieder, in Schach- und HP-Modus; das Buch sperrt aktive Talente; passive
+  ueberleben; Kern und Chronik einig; Talentband vorhanden.
+- BEFUND OHNE REPRODUKTION: "der Gambit ist dreimal ausgewichen". Der Kern
+  laesst das nicht zu (Probe an allen Ausgaengen, Klonen und Schnappschuss
+  tragen used mit). Moegliche Ursachen ausserhalb des Kerns: Zeitenwender
+  (Undo gibt den Zauber zurueck - korrekt), oder ein aelterer Build auf dem
+  Geraet. Offen, bis ein Spielstand vorliegt.
+
 ## 1.0.83
 - ENDLICH DIE ECHTE URSACHE: Der Grand Gambit zeigte NIRGENDS seinen Rang,
   weil in PieceGlyph ein RIEGEL stand - `piece.hero && white &&

@@ -8,6 +8,8 @@ import { FILES, RANKS, idx, legalMovesFrom, inCheck, findKing } from "../../../c
 import { gespart } from "../sparmodus.js";
 import { SperrGlyph } from "./SperrGlyph.jsx";
 import { animAn, schlagArt } from "../anim.js";
+import { ABILITIES } from "../../../content/abilities.js";
+import { PASSIVE_TALENTE } from "../../../core/rules/moves.js";
 import { stadium } from "../../../core/rules/sperren.js";
 import { PieceGlyph, StatTriad } from "./PieceGlyph.jsx";
 import { BrettRahmen, lageAusBrett } from "./BrettRahmen.jsx";
@@ -764,6 +766,53 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
      Verlaeufe, aber nicht umsonst. */
   const brettSchatten = gespart("schatten") ? "none"
     : "0 2px 6px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.5), 0 22px 60px rgba(0,0,0,.38)";
+  /* ── DAS TALENTBAND (Besitzerauftrag 4.9.2026) ──────────────────────────
+     "Man sollte Faehigkeiten bewusst auswaehlen koennen." Bisher standen die
+     Zauber-Zuege stumm zwischen den normalen Zielfeldern - der Spieler sah
+     ein Feld mehr, wusste aber weder, dass es ein Talent ist, noch dass es
+     das Buch schliesst. Jetzt zeigt das Band unter dem Brett bei jeder
+     ausgewaehlten Figur: welche Talente sie kennt, welche ein ZAUBER sind
+     (einer je Partie - der erste schliesst das Buch), welche dauerhaft
+     gelten, und ob das Buch schon zu ist. Die Zauber-Ziele tragen auf dem
+     Brett das gleiche Zeichen (✦). */
+  const selPiece = sel != null ? state.board[sel] : null;
+  const talentBand = (() => {
+    if (!selPiece || !selPiece.abilities || !selPiece.abilities.length || state.rules === "chess" && !selPiece.abilities.length) return null;
+    const zu = Object.keys(selPiece.used || {}).length > 0;
+    const en = false;
+    const eintraege = selPiece.abilities.map((id) => {
+      const ab = ABILITIES[id]; if (!ab) return null;
+      const passiv = PASSIVE_TALENTE.has(id);
+      const verbraucht = !!(selPiece.used || {})[id];
+      return { id, name: en ? ab.nameEn : ab.nameDe, icon: ab.icon, passiv, verbraucht };
+    }).filter(Boolean);
+    if (!eintraege.length) return null;
+    return (
+      <div className="gg-talentband" style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center",
+        justifyContent: "center", padding: "7px 8px 6px", fontSize: 11.5, lineHeight: 1.3,
+        color: "#d8ccfb", background: "linear-gradient(180deg, rgba(26,20,44,.92), rgba(14,12,24,.94))",
+        border: "1px solid rgba(167,139,250,.35)", borderRadius: 10, marginTop: 6 }}>
+        {eintraege.map((e) => (
+          <span key={e.id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px",
+            borderRadius: 999, whiteSpace: "nowrap",
+            background: e.passiv ? "rgba(233,207,138,.14)" : (zu ? "rgba(120,120,140,.14)" : "rgba(124,58,237,.22)"),
+            border: `1px solid ${e.passiv ? "rgba(233,207,138,.45)" : (zu ? "rgba(140,140,160,.35)" : "rgba(167,139,250,.6)")}`,
+            color: e.passiv ? "#f1e3b2" : (zu ? "#9a97ad" : "#e6ddff"),
+            textDecoration: e.verbraucht ? "line-through" : "none" }}>
+            <span aria-hidden>{e.passiv ? "◆" : "✦"}</span>{e.name}
+            <span style={{ opacity: .7, fontSize: 10 }}>{e.passiv ? "dauerhaft" : (e.verbraucht ? "eingesetzt" : "Zauber")}</span>
+          </span>
+        ))}
+        {!eintraege.every((e) => e.passiv) && (
+          <span style={{ width: "100%", textAlign: "center", fontSize: 10.5, color: zu ? "#b8a7ea" : "#a89ac9", marginTop: 2 }}>
+            {zu ? "Das Buch ist geschlossen — ein Zauber je Partie, er ist eingesetzt."
+                : "✦ Ein Zauber je Partie: der erste schließt das Buch. ✦-Felder sind Zauber-Züge."}
+          </span>
+        )}
+      </div>
+    );
+  })();
+
   const board = (
     <div style={{ position: "relative", width: bw ?? `min(100%, ${maxPx}px)`, maxWidth: "100%",
       margin: fitBox ? 0 : "0 auto", fontSize: glyph,
@@ -1150,6 +1199,6 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
   if (fitBox) return <div ref={wrapRef} style={{ position: "absolute", inset: 0, display: "grid",
     alignItems: "center", justifyItems: "center",
     paddingTop: tight && cell ? Math.round(cell * 0.95) : 0,
-    paddingBottom: tight && cell ? Math.round(cell * 0.3) : 0 }}>{board}</div>;
-  return <div ref={wrapRef} style={{ width: "100%" }}>{board}</div>;
+    paddingBottom: tight && cell ? Math.round(cell * 0.3) : 0 }}>{board}{talentBand}</div>;
+  return <div ref={wrapRef} style={{ width: "100%" }}>{board}{talentBand}</div>;
 }

@@ -1495,7 +1495,10 @@ function CodexTree({ profile, dispatch, t, en, onZoom, account = null }) {
     const push = (u) => { if (u) urls.add(u); };
     for (const cid of [...COURT_IDS, ...CROWN_IDS, ...SHADOW_IDS]) {
       const ch = CHARACTERS[cid];
-      if (ch) push(paintedForPiece({ kind: ch.kind, color: "w", hero: cid === "gambit", level: 1 }));
+      /* v1.0.84: alle SECHS Raenge vorladen, sonst blitzt beim Aufstieg ein
+         leeres Bild auf, bis die Datei geholt ist. */
+      if (ch) { if (cid === 'gambit') for (let t = 1; t <= 6; t++) push(paintedForPiece({ kind: ch.kind, color: "w", hero: true, tier: t }));
+        else push(paintedForPiece({ kind: ch.kind, color: "w", hero: false, level: 1 })); }
     }
     for (const b of BOSSES) push(paintedById("boss-" + b.id) || paintedById("boss-" + b.art));
     const list = [...urls];

@@ -3,11 +3,27 @@ import {
   fileOf, rankOf, dirOf, startPawnRank, promoRank,
 } from "../domain/constants.js";
 
+/* PASSIVE TALENTE - dauerhaft, kein Zauber. Sie kosten nichts, sie werden
+   nicht gebucht, und sie ueberleben das geschlossene Buch. Die Liste steht
+   hier im Kern, weil der Kern die Chronik (content/abilities.js) nicht
+   importieren darf; sie muss mit deren once:false-Eintraegen uebereinstimmen
+   - test_zauber.mjs prueft das. */
+export const PASSIVE_TALENTE = new Set([
+  "pawn_charge", "pawn_early_promo", "knight_longleap", "knight_outrider",
+  "rook_diag_step", "ranged_volley", "dragon_flight2", "dragon_flight3", "gambit_masquerade",
+  "lifesteal", "regen", "bulwark",
+]);
+
 export function hasAbility(piece, id) {
   // ONE SPELL PER GAME: a piece may KNOW many talents, but may FIRE only one
   // across the whole battle. The first use closes the book — used{} is the
   // ledger, so any prior entry silences every remaining active talent.
   if (!piece.abilities.includes(id)) return false;
+  /* 4.9.2026 (Besitzerbefund, per Probe reproduziert): das geschlossene Buch
+     sperrte auch die PASSIVEN Talente - der Gambit verlor nach seinem ersten
+     Zauber den Sturmlauf, den die Chronik als "jederzeit" verspricht. Ein
+     passives Talent ist kein Zauber; es bleibt, egal was das Buch sagt. */
+  if (PASSIVE_TALENTE.has(id)) return true;
   return Object.keys(piece.used || {}).length === 0;
 }
 

@@ -300,7 +300,16 @@ function paintedRoh(piece) {
        umstellen - die Schluessel existieren bereits.
        v1.0.62: SIE SIND DA. Die handgefuehrte Reihe des Besitzers traegt
        alle sechs Raenge in einer Bildwelt - der Rang schaltet das Bild. */
-    const gt = Math.min(6, Math.max(1, piece.tier || 1));
+    /* v1.0.84 (Besitzer, vierte Meldung: "immer noch nicht ueberall"):
+       DER RANG DARF NICHT NUR AUS piece.tier KOMMEN. Bis hierher las diese
+       Stelle ausschliesslich tier - und wer paintedForPiece mit level statt
+       tier aufrief (die Hofstaat-Kachel tat genau das, Zeile 1630, ebenso
+       die Vorladeliste), bekam still Rang I. Der Riegel aus v1.0.83 war
+       richtig, aber er heilte nur den Weg, nicht die Quelle.
+       Jetzt rechnet die Bildwahl den Rang notfalls SELBST aus dem Level -
+       eine Stelle, die nicht mehr vergessen werden kann. */
+    const gt = Math.min(6, Math.max(1,
+      piece.tier || (piece.level ? Math.min(6, Math.floor((Math.max(1, piece.level) - 1) / 10) + 1) : 1)));
     return (gt >= 2 && PAINTED["gambit-t" + gt]) || PAINTED.gambit || null;
   }
   const id = KIND2ID[piece.kind];

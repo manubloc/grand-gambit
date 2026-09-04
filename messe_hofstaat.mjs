@@ -82,6 +82,11 @@ await page.evaluate(() => {
     const p = JSON.parse(roh);
     p.gold = 9000; p.sp = 60;
     p.unlocked = ["gambit", "pawn", "knight", "bishop", "rook", "queen", "king"];
+    /* v1.0.84-Messung: der Gambit auf Rang II (Level 15) - zeigt der Hofstaat
+       dann wirklich gambit-t2? Das ist die Frage, die dreimal "behoben"
+       wurde, ohne je am lebenden DOM geprueft zu werden. */
+    p.pieces = p.pieces || {}; p.pieces.levels = p.pieces.levels || {};
+    p.pieces.levels.gambit = 15;
     p.cleared = p.cleared || {};
     return JSON.stringify(p);
   };
@@ -160,6 +165,15 @@ const faktoren = await page.evaluate(async () => {
     return m ? { bauer: m.P, held: m.HERO } : null;
   } catch { return null; }
 });
+console.log("\n── 2e. ZEIGT DER HOFSTAAT DEN RANG? (Gambit auf Level 15 = Rang II) ──");
+{
+  const bilder = await page.evaluate(() => [...document.querySelectorAll("img")]
+    .filter((i) => i.getBoundingClientRect().width > 30 && /gambit/.test(i.src))
+    .map((i) => i.src.split("/").pop().slice(0, 40)));
+  const uniq = [...new Set(bilder)];
+  console.log("  Gambit-Bilder auf der Seite:", uniq.join(" | ") || "KEINE");
+  console.log("  Rangbild (t2) dabei:", uniq.some((u) => /gambit-t2/.test(u)) ? "JA" : "NEIN - zeigt noch Rang I");
+}
 console.log("\n── 2d. STEHEN ALLE FUESSE AUF EINER LINIE? (v1.0.80) ──");
 {
   const fuesse = await page.evaluate(() => {
