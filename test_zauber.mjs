@@ -107,9 +107,40 @@ console.log("\n== Die Oberflaeche zeigt die Talente ==");
   const { readFileSync } = await import("node:fs");
   const bv = readFileSync("src/app/ui/board/BoardView.jsx", "utf8");
   ok("das Talentband existiert im Board", bv.includes('className="gg-talentband"'));
-  ok("es unterscheidet Zauber und dauerhafte Talente", bv.includes('"dauerhaft"') && bv.includes('"Zauber"'));
+  ok("es unterscheidet Zauber und dauerhafte Talente", bv.includes('"dauerhaft"') && bv.includes('"antippen"'));
   ok("es sagt, wenn das Buch geschlossen ist", bv.includes("Das Buch ist geschlossen"));
   ok("es liest die Chronik, nicht eine zweite Liste", bv.includes('from "../../../content/abilities.js"'));
+  ok("ZAUBER RUHEN, bis ihr Chip gewaehlt ist (scharf)", bv.includes("mv.consumes && mv.consumes !== scharf"));
+  ok("Auswahlwechsel entschaerft", bv.includes("setScharf(null); }, [sel])"));
+  ok("der Schild steht im Band", bv.includes("Schild ×{schild}"));
+  const gs = readFileSync("src/app/ui/screens/GameScreen.jsx", "utf8");
+  ok("das Abprallen wird gemeldet (Schild! ... faengt den Schlag ab)", gs.includes("lm.bounced && lm.hitKind"));
+}
+
+console.log("\n== Der Schild im Schachmodus (Besitzerbefund: 'er ist nicht gestorben') ==");
+{
+  const b = leer();
+  b[3 * W + 3] = { ...pawn("w", [], "gambit"), shield: 2 };            // d4, zwei Schilde
+  b[4 * W + 4] = { id: "bp", kind: "P", color: "b", level: 1, abilities: [], used: {}, shield: 0 }; // e5 schlaegt d4
+  b[7 * W + 4] = { id: "bk", kind: "K", color: "b", level: 1, abilities: [], used: {} };
+  b[0 * W + 4] = { id: "wk", kind: "K", color: "w", level: 1, abilities: [], used: {} };
+  let g = spiel(b, "b");
+  const schlag = legalMoves(g, 4 * W + 4).find((m) => m.to === 3 * W + 3 && m.capture);
+  ok("Schwarz kann d4 schlagen (als Zug angeboten)", !!schlag);
+  g = applyMove(g, schlag);
+  const gambit = g.board[3 * W + 3], angreifer = g.board[4 * W + 4];
+  ok("SCHACH + SCHILD: der Gambit STEHT NOCH", !!gambit && gambit.id === "gambit");
+  ok("der Angreifer ist ABGEPRALLT und steht wieder auf e5", !!angreifer && angreifer.id === "bp");
+  ok("ein Schild ist verbraucht (2 -> 1)", gambit.shield === 1);
+  ok("lastMove meldet bounced", g.lastMove && g.lastMove.bounced === true);
+  // zweiter und dritter Schlag
+  g = { ...g, turn: "b" };
+  g = applyMove(g, legalMoves(g, 4 * W + 4).find((m) => m.to === 3 * W + 3 && m.capture));
+  ok("zweiter Schlag: letzter Schild faellt (1 -> 0), Gambit steht", g.board[3 * W + 3]?.shield === 0);
+  g = { ...g, turn: "b" };
+  g = applyMove(g, legalMoves(g, 4 * W + 4).find((m) => m.to === 3 * W + 3 && m.capture));
+  ok("dritter Schlag: OHNE Schild stirbt der Gambit, der Angreifer steht auf d4",
+    g.board[3 * W + 3]?.id === "bp" && !g.board.some((p) => p && p.id === "gambit"));
 }
 
 console.log(`\nRESULT: ${pass} passed, ${fail} failed`);

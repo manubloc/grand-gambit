@@ -352,11 +352,23 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
   const holes = state.holes; // Set of blocked indices (or undefined)
   const hpMode = state.rules === "hp";
 
+  /* ── ZAUBER ERST AUF WUNSCH (Besitzer, 4.9.2026): "Ich moechte die
+     Faehigkeiten nicht am Anfang alle verbrauchen, sondern sie vielleicht
+     erst spaeter einsetzen duerfen." Bisher lagen ALLE Zauber-Ziele zwischen
+     den normalen Zuegen - wer den Gambit anfasste, sah ein Dutzend Felder,
+     und ein Fingertipp aufs falsche verbrannte den einen Zauber der Partie.
+     Jetzt zeigt das Brett nur normale und dauerhafte Zuege; ein Zauber
+     erscheint erst, wenn sein Chip im Talentband angetippt ist. */
+  const [scharf, setScharf] = useState(null);   // id des scharfgeschalteten Zaubers
+  useEffect(() => { setScharf(null); }, [sel]);  // Auswahlwechsel entschaerft
   const targets = useMemo(() => {
     const m = new Map();
-    if (sel != null) for (const mv of legalMovesFrom(state, sel)) m.set(mv.to, mv);
+    if (sel != null) for (const mv of legalMovesFrom(state, sel)) {
+      if (mv.consumes && mv.consumes !== scharf) continue;   // Zauber ruhen, bis gewaehlt
+      m.set(mv.to, mv);
+    }
     return m;
-  }, [sel, state]);
+  }, [sel, state, scharf]);
   const spyTargets = useMemo(() => {
     const m = new Set();
     if (spy != null && state.board[spy]) {
@@ -780,33 +792,53 @@ export function BoardView({ state, onMove, interactive, lastMove, mattSeite = nu
     if (!selPiece || !selPiece.abilities || !selPiece.abilities.length || state.rules === "chess" && !selPiece.abilities.length) return null;
     const zu = Object.keys(selPiece.used || {}).length > 0;
     const en = false;
+    const schild = selPiece.shield || 0;
     const eintraege = selPiece.abilities.map((id) => {
       const ab = ABILITIES[id]; if (!ab) return null;
       const passiv = PASSIVE_TALENTE.has(id);
       const verbraucht = !!(selPiece.used || {})[id];
       return { id, name: en ? ab.nameEn : ab.nameDe, icon: ab.icon, passiv, verbraucht };
     }).filter(Boolean);
-    if (!eintraege.length) return null;
+    if (!eintraege.length && !schild) return null;
     return (
       <div className="gg-talentband" style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center",
         justifyContent: "center", padding: "7px 8px 6px", fontSize: 11.5, lineHeight: 1.3,
         color: "#d8ccfb", background: "linear-gradient(180deg, rgba(26,20,44,.92), rgba(14,12,24,.94))",
         border: "1px solid rgba(167,139,250,.35)", borderRadius: 10, marginTop: 6 }}>
-        {eintraege.map((e) => (
-          <span key={e.id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px",
-            borderRadius: 999, whiteSpace: "nowrap",
-            background: e.passiv ? "rgba(233,207,138,.14)" : (zu ? "rgba(120,120,140,.14)" : "rgba(124,58,237,.22)"),
-            border: `1px solid ${e.passiv ? "rgba(233,207,138,.45)" : (zu ? "rgba(140,140,160,.35)" : "rgba(167,139,250,.6)")}`,
+        {/* DER SCHILD (Besitzerbefund "er ist nicht gestorben"): seit v1.0.77
+            sind die blauen Perlen vom Brett - und damit war der Schild
+            unsichtbar, obwohl er im Schachmodus jeden Schlag abfaengt. Hier
+            steht er wieder, in Worten. */}
+        {schild > 0 && (
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px",
+            borderRadius: 999, whiteSpace: "nowrap", background: "rgba(74,163,232,.16)",
+            border: "1px solid rgba(74,163,232,.55)", color: "#bfe0ff" }}>
+            <span aria-hidden>⛨</span>Schild ×{schild}
+            <span style={{ opacity: .7, fontSize: 10 }}>fängt {schild === 1 ? "einen Schlag" : schild + " Schläge"} ab</span>
+          </span>
+        )}
+        {eintraege.map((e) => {
+          const aktiv = !e.passiv && scharf === e.id;
+          const waehlbar = !e.passiv && !zu && interactive && selPiece.color === state.turn;
+          return (
+          <span key={e.id} role={waehlbar ? "button" : undefined}
+            onClick={waehlbar ? (ev) => { ev.stopPropagation(); setScharf(aktiv ? null : e.id); } : undefined}
+            style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px",
+            borderRadius: 999, whiteSpace: "nowrap", cursor: waehlbar ? "pointer" : "default",
+            background: e.passiv ? "rgba(233,207,138,.14)" : (zu ? "rgba(120,120,140,.14)" : aktiv ? "rgba(167,139,250,.55)" : "rgba(124,58,237,.22)"),
+            border: `1px solid ${e.passiv ? "rgba(233,207,138,.45)" : (zu ? "rgba(140,140,160,.35)" : aktiv ? "#e6ddff" : "rgba(167,139,250,.6)")}`,
+            boxShadow: aktiv ? "0 0 10px rgba(167,139,250,.6)" : "none",
             color: e.passiv ? "#f1e3b2" : (zu ? "#9a97ad" : "#e6ddff"),
             textDecoration: e.verbraucht ? "line-through" : "none" }}>
             <span aria-hidden>{e.passiv ? "◆" : "✦"}</span>{e.name}
-            <span style={{ opacity: .7, fontSize: 10 }}>{e.passiv ? "dauerhaft" : (e.verbraucht ? "eingesetzt" : "Zauber")}</span>
-          </span>
-        ))}
+            <span style={{ opacity: .7, fontSize: 10 }}>{e.passiv ? "dauerhaft" : (e.verbraucht ? "eingesetzt" : aktiv ? "bereit — Feld wählen" : "antippen")}</span>
+          </span>);
+        })}
         {!eintraege.every((e) => e.passiv) && (
           <span style={{ width: "100%", textAlign: "center", fontSize: 10.5, color: zu ? "#b8a7ea" : "#a89ac9", marginTop: 2 }}>
             {zu ? "Das Buch ist geschlossen — ein Zauber je Partie, er ist eingesetzt."
-                : "✦ Ein Zauber je Partie: der erste schließt das Buch. ✦-Felder sind Zauber-Züge."}
+                : scharf ? "Zauber bereit: tippe ein ✦-Feld. Nochmal antippen entschärft."
+                : "Ein Zauber je Partie — tippe ein Talent an, um seine Züge zu sehen."}
           </span>
         )}
       </div>

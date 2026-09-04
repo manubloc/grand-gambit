@@ -1,5 +1,24 @@
 # Changelog - Grand Gambit
 
+## 1.0.85
+- "ER IST NICHT GESTORBEN" - AUFGEKLAERT: kein Fehler, sondern der SCHILD.
+  Der Gambit traegt ab Level 12 drei Schilde; im Schachmodus faengt jeder
+  einen Schlag ab, der Angreifer prallt zurueck (per Probe nachgestellt:
+  zwei Schilde, drei Schlaege, erst der dritte toetet). Unsichtbar wurde die
+  Regel, als v1.0.77 die blauen Perlen vom Brett nahm - seitdem sah ein
+  abgefangener Schlag aus wie ein Fehler. Jetzt: der Schild steht im
+  Talentband in Worten ("Schild x3 - faengt drei Schlaege ab"), und das
+  Statusband meldet jeden Abpraller ("Schild! Grand Gambit faengt den
+  Schlag ab - noch 2").
+- ZAUBER ERST AUF WUNSCH (Besitzer: "ich moechte die Faehigkeiten nicht am
+  Anfang alle verbrauchen"): das Brett zeigt bei einer Figur nur noch normale
+  und dauerhafte Zuege. Ein Zauber erscheint erst, wenn sein Chip im
+  Talentband angetippt ist ("bereit - Feld waehlen"); nochmal antippen oder
+  Auswahlwechsel entschaerft. Kein versehentlich verbrannter Zauber mehr
+  durch einen Fingertipp aufs falsche Feld.
+- test_zauber jetzt 28 Zusicherungen: Schildmechanik in drei Schlaegen,
+  Scharfschalten, Entschaerfen, Schild im Band, Abprall-Meldung.
+
 ## 1.0.84
 - REGELFEHLER, per Probe reproduziert: das geschlossene Buch ("ein Zauber je
   Partie") sperrte auch die PASSIVEN Talente. Der Gambit verlor nach seinem

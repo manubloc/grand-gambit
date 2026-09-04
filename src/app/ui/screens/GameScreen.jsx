@@ -422,7 +422,19 @@ export function GameScreen({ profile, dispatch, t, match = null, onExit = null, 
       return ch ? (en ? ch.nameEn : ch.nameDe) : (en ? "Piece" : "Figur");
     };
     let text = null;
-    if ((lm.capture || lm.lethal) && lm.hitKind) text = en ? `${wer(lm.hitKind)} falls` : `${wer(lm.hitKind)} gefallen`;
+    /* 4.9.2026 (Besitzerbefund "jemand wollte ihn umwerfen, aber er ist
+       nicht gestorben"): DER SCHILD MELDET SICH. Im Schachmodus faengt ein
+       Schild den Schlag ab und der Angreifer prallt zurueck - eine Regel, die
+       ohne Meldung wie ein Fehler aussah, seit die Schildperlen vom Brett
+       sind. Jetzt sagt das Band, was geschah und was bleibt. */
+    if (lm.bounced && lm.hitKind) {
+      const ziel = state.board[lm.to];   // beim Abprallen steht das Ziel noch auf seinem Feld
+      const rest = ziel && typeof ziel.shield === "number" ? ziel.shield : null;
+      const name = ziel && ziel.hero ? "Grand Gambit" : wer(lm.hitKind);
+      text = en ? `Shield! ${name} blocked the blow${rest != null ? ` — ${rest} left` : ""}`
+                : `Schild! ${name} fängt den Schlag ab${rest != null ? ` — noch ${rest}` : ""}`;
+    }
+    else if ((lm.capture || lm.lethal) && lm.hitKind) text = en ? `${wer(lm.hitKind)} falls` : `${wer(lm.hitKind)} gefallen`;
     else if (lm.damaged && lm.hitKind) text = en ? `Hit — ${wer(lm.hitKind)} −${lm.dmg || 1}` : `Treffer — ${wer(lm.hitKind)} −${lm.dmg || 1}`;
     else if (lm.special === "castle") text = en ? "Castled" : "Rochade";
     else if (lm.promotion) text = en ? "Promoted!" : "Krönung!";
