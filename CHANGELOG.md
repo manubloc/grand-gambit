@@ -1,5 +1,18 @@
 # Changelog - Grand Gambit
 
+## 1.0.86
+- DIE WELTKARTE ZEIGT DEN RANG DES GAMBIT. Sie kannte ihn laengst (gambitTier
+  wurde ausgerechnet), nahm dann aber stur karteGambit - die Sonderfassung
+  aus v1.0.52 mit dem auf die Marke gestauchten Sockel; ihr Kommentar sagte
+  selbst "sobald die Rangbilder da sind, dasselbe fuer t2-t6 rechnen". Das
+  ist jetzt geschehen: sechs Kartenfassungen (karte-gambit-t1..t6), je der
+  Rangkoerper aus painted-gambit-tX auf dem ORIGINALSOCKEL aus v1.0.52 - so
+  bleibt die Marke gedeckt und alle sechs stehen auf derselben Fusslinie.
+  Werkzeug: Plateau-Regel aus sockelmass, in Python nachgebaut.
+- Damit stimmen jetzt wirklich alle drei Orte: Figurenblatt (v1.0.83), Brett
+  (v1.0.83) und Karte (jetzt). Probe: die Karte WAEHLT nach dem Rang, und
+  alle sechs Dateien liegen vor.
+
 ## 1.0.85
 - "ER IST NICHT GESTORBEN" - AUFGEKLAERT: kein Fehler, sondern der SCHILD.
   Der Gambit traegt ab Level 12 drei Schilde; im Schachmodus faengt jeder

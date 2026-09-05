@@ -1,6 +1,21 @@
 // Campaign — a HORIZONTAL illustrated journey, now a full-screen WINDOW onto
 import { familyOf } from "../../../core/index.js";
 import karteGambit from "../assets/karte-gambit.webp";   /* v1.0.52: Sockel auf die Marke gestaucht */
+/* v1.0.86 (Besitzer, zum vierten Mal: "auf der Map immer nur das erste
+   Bild"): DIE KARTE KANNTE DEN RANG, NUTZTE IHN ABER NICHT. Der Wanderer
+   rechnete gambitTier aus, nahm dann aber stur karteGambit - die Sonder-
+   fassung aus v1.0.52, deren Kommentar selbst sagte: "sobald die Rangbilder
+   da sind, dasselbe fuer t2-t6 rechnen". Das ist jetzt geschehen: sechs
+   Kartenfassungen, je der Rangkoerper auf dem ORIGINALSOCKEL aus v1.0.52,
+   damit die Marke weiterhin gedeckt wird und alle sechs auf derselben
+   Fusslinie stehen. */
+import karteGambitT1 from "../assets/karte-gambit-t1.webp";
+import karteGambitT2 from "../assets/karte-gambit-t2.webp";
+import karteGambitT3 from "../assets/karte-gambit-t3.webp";
+import karteGambitT4 from "../assets/karte-gambit-t4.webp";
+import karteGambitT5 from "../assets/karte-gambit-t5.webp";
+import karteGambitT6 from "../assets/karte-gambit-t6.webp";
+const KARTE_GAMBIT = [karteGambitT1, karteGambitT2, karteGambitT3, karteGambitT4, karteGambitT5, karteGambitT6];
 import { klang } from "../klang.js";   /* v0.79: Stationen und Blaetter klingen leise */
 // the world: the map IS the screen (100dvh minus the app header), every piece
 // of UI floats above it. The Old Watch stands on the left, the crimson LIGA
@@ -780,7 +795,7 @@ export function CampaignScreen({ profile, dispatch, t, onStart, onBack, onOpenTr
                      Reine Bildbearbeitung aus painted-gambit; sobald die
                      Rangbilder da sind, laesst sich dasselbe fuer t2-t6
                      rechnen (tools-Schnipsel im Commit v1.0.52). */
-                  const src = karteGambit;
+                  const src = KARTE_GAMBIT[Math.max(0, Math.min(5, gt - 1))] || karteGambit;
                   return bm && src
                     ? <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%",
                         objectFit: "contain", objectPosition: "bottom", userSelect: "none", pointerEvents: "none" }} />

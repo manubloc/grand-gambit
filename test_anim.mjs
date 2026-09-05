@@ -145,6 +145,11 @@ console.log("\n== test_anim: die Aufstiegsfeier (v1.0.75) ==");
   ok("Kachel: bekommt tier durchgereicht", as.includes("tier={hero ? gambitTier(level) : 0}"));
   const cs = readFileSync("src/app/ui/screens/CampaignScreen.jsx", "utf8");
   ok("Weltkarte: rechnet den Rang selbst", cs.includes('gambitTier(characterLevel(profile, "gambit")'));
+  /* v1.0.86: rechnen reichte nicht - die Karte muss den Rang auch ZEIGEN. */
+  ok("Weltkarte: waehlt das Kartenbild nach dem Rang", cs.includes("KARTE_GAMBIT[Math.max(0, Math.min(5, gt - 1))]"));
+  const { existsSync: _ex } = await import("node:fs");
+  ok("alle sechs Kartenfassungen liegen als Datei vor",
+    [1,2,3,4,5,6].every((t) => _ex(`src/app/ui/assets/karte-gambit-t${t}.webp`)));
   ok("die Feier schneidet ihr Bild ab, statt in den Text zu wachsen",
     as.includes("height: 150, overflow: \"hidden\"") && as.includes('transformOrigin: "50% 100%"'));
   ok("die gekaufte Faehigkeit erklaert ihre Wirkung",
